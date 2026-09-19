@@ -19,3 +19,4 @@
 | Strapi undocumented behavior | Import surprises | Inspect schemas/lifecycles/routes, staging export, fixture-based comparison |
 | Operational overload from premature infra | Delivery slowdown/cost | Modular monolith, managed services, explicit revisit triggers |
 | Undefined data-retention policy (IP hashes, AI/rewrite logs, source snapshots) | Privacy/compliance exposure | Define retention/deletion policy before cutover (see [open questions](./19-open-questions.md) 4, 9, 10) |
+| Story-view/"most read" ranking manipulated by bot traffic or spam | Misleading editorial signal, reputational harm | Per-session/story/window de-duplication, rate limits on the beacon endpoint, bot/UA heuristics, anomaly monitoring |

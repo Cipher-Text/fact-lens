@@ -35,11 +35,12 @@ erDiagram
 - **EditorialAssignment, EditorialComment, Correction, AuditEvent:** workflow and traceability primitives.
 - **PublishingSchedule:** desired time zone/time, target locale/channel, idempotency key and status.
 - **Advertiser, AdCampaign, AdPlacement, Ad, AdEvent:** commercial/distribution capability carried forward from CipherPress's current design — campaign dates/status, weighted/device/locale/category targeting, HMAC-signed redirect tokens and IP-hashed event records. Kept as a separate module from the editorial Story graph; ads are not Story relations and do not appear in editorial workflow states.
+- **StoryPerformanceDaily:** first-party story-level view rollup (story, locale, date, view count, unique-session estimate) powering "most read"/"trending" rankings; real-time counters live in Redis and flush here (see [target architecture](./03-target-architecture.md)).
 - **CardTemplate, GeneratedCard:** branded photocard/poster templates (logo/frame/gradient, text-overlay slots, aspect ratio) and the composited outputs produced from a `MediaAsset` plus story text. `GeneratedCard` is a `MediaAsset` variant linked to its source photo, template id/version and originating story revision (see [media architecture](./10-media-architecture.md)).
 
 ## Later entities
 
-Claims/Evidence, rich Entity resolution, Distribution jobs/connectors, AIRun/AIProposal, PromptTemplate (versioned saved prompts referenced by AI use cases; see [AI architecture](./11-ai-architecture.md)), analytics facts and source snapshots belong after the basic editorial loop works. Add them as bounded modules, not as mandatory fields on every story.
+Claims/Evidence, rich Entity resolution, Distribution jobs/connectors, AIRun/AIProposal, PromptTemplate (versioned saved prompts referenced by AI use cases; see [AI architecture](./11-ai-architecture.md)), campaign/distribution analytics facts and source snapshots belong after the basic editorial loop works. Add them as bounded modules, not as mandatory fields on every story.
 
 Entity types can include PERSON, ORGANIZATION, COMPANY, GOVERNMENT_AGENCY, POLITICAL_PARTY, COUNTRY, LOCATION, EVENT and INSTITUTION. Start with a simple typed entity table and aliases; defer graph algorithms and automatic resolution.
 

@@ -26,9 +26,9 @@ Exit: staging import passes data/SEO/media/relation checks for a full source sna
 
 ## Phase 4 — Public web and cutover
 
-Deliverables: Next.js public site, article/category/tag/search routes, SEO/schema/sitemap/robots, cache tags, analytics consent, legacy redirects, performance tests, Cloudflare/CDN configuration, and ad serving/signed-redirect endpoints with strict target-URL validation.
+Deliverables: Next.js public site, article/category/tag/search routes, SEO/schema/sitemap/robots, cache tags, GA4 tag and GSC site verification with analytics consent, legacy redirects, performance tests, Cloudflare/CDN configuration, ad serving/signed-redirect endpoints with strict target-URL validation, and first-party story-view tracking (beacon endpoint, Redis trending counters, `StoryPerformanceDaily` rollup) powering "most read"/trending surfaces.
 
-Exit: URL coverage and representative page parity are signed off; rollback switch and monitoring are tested; ad delivery and redirect abuse controls are verified; only then cut over public traffic.
+Exit: URL coverage and representative page parity are signed off; rollback switch and monitoring are tested; ad delivery and redirect abuse controls are verified; story-view tracking is abuse-resistant and rollups are accurate; only then cut over public traffic.
 
 ## Phase 5 — Ingestion and AI assistance
 

@@ -25,13 +25,14 @@ The public site is a consumer of approved publication state. It must not become 
 - OIDC login and capability-based permissions.
 - Advertising: Advertiser, Campaign, Placement, Ad and AdEvent records with signed ad-redirect delivery, carried forward from CipherPress's current design. Modeled as a commercial/distribution capability, separate from the editorial Story graph (see [domain model](./05-domain-model.md)).
 - Branded photocard/poster generation from a raw photo, using deterministic FactLens template compositing — not generative AI (see [media architecture](./10-media-architecture.md)).
+- Per-story performance tracking (first-party view counts, not GA4-derived) powering "most read"/"trending" rankings — ships with Phase 4 public web launch, since it requires the public site to exist (see [target architecture](./03-target-architecture.md)).
 
 ### Later product boundary
 
 - Automated RSS/API ingestion (including Telegram channels via Bot API) and source intelligence.
 - AI research summaries, extraction, translation, article rewrite drafts and headline/SEO proposals.
 - Social/distribution connectors and advanced campaign analytics/optimization.
-- Claims/evidence graph, entity resolution, semantic search and advanced newsroom analytics.
+- Claims/evidence graph, entity resolution, semantic search and advanced newsroom analytics (including pulling GSC/GA4 performance data back into the newsroom via their APIs — GA4 tag and GSC verification themselves are Phase 4 scope).
 
 ### Explicit non-goals initially
 

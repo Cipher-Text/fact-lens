@@ -17,6 +17,7 @@
 | AI | Central AI Gateway/module, Google Gemini as initial provider | Provider-neutral calls, budgets, prompt versions, provenance and safety in one place. No direct provider calls from domain modules. The Gateway's adapter pattern keeps Gemini swappable/addable alongside other providers rather than hard-wired into business logic. |
 | Repo | pnpm + Turborepo-compatible TypeScript monorepo | Shared contracts/config/UI and coordinated changes are valuable. Start with workspace boundaries; add Turborepo caching when build graph justifies it. |
 | Infra | Docker, GitHub Actions, managed services | Fits current deployment skills and keeps operations small. Cloudflare is the confirmed edge/WAF/CDN and object storage provider (R2); choose managed PostgreSQL/Redis first. |
+| Web analytics/SEO tracking | Google Analytics 4 tag + Google Search Console site verification | Carries forward CipherPress's current tag-based approach (`GoogleTag.tsx`/GTM) onto the public site; GSC verification plus the existing sitemap satisfies indexing needs. Tag/verification only for now — pulling GSC/GA4 performance data back into the newsroom via their APIs is a later enhancement, not a Phase 1/4 dependency. |
 
 ## Alternatives considered
 

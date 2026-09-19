@@ -10,7 +10,7 @@ These require product, editorial or business input; they are not unresolved mere
 6. What publishing SLA, RPO/RTO, traffic baseline and peak-event assumptions should set capacity targets?
 7. Which OIDC provider constraints apply: managed tenancy, self-hosting, region, MFA, directory integration and lifecycle automation?
 8. Which distribution channels are launch requirements versus later experiments?
-9. What analytics consent, retention and newsroom access policy applies to public readers and internal users?
+9. What analytics consent, retention and newsroom access policy applies to public readers and internal users (including consent-gating the GA4 tag)?
 10. IP-hash retention window and IP-hashing algorithm for AdEvent records: what policy governs how long hashed IPs are kept and how they may be used?
 11. What editorial transformation-threshold policy applies to AI-drafted rewrites of ingested source articles before they may be approved — e.g. minimum original reporting/editing, mandatory attribution wording, and any source types excluded from rewrite entirely?
 

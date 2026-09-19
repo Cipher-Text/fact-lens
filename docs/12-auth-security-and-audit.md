@@ -9,7 +9,8 @@ Map identity claims to capabilities, desk membership and scoped resources. Keep 
 ## Controls
 
 - Validate and sanitize Tiptap/HTML server-side and at rendering boundaries; apply CSP and safe link/image policies.
-- Rate-limit login, public search, ingestion, uploads, ad redirects, media/card-generation processing and expensive AI operations with shared Redis counters.
+- Rate-limit login, public search, ingestion, uploads, ad redirects, the story-view tracking beacon, media/card-generation processing and expensive AI operations with shared Redis counters.
+- De-duplicate story-view beacon hits per session per story per time window to resist "most read"/trending manipulation; apply basic bot/UA heuristics on the beacon endpoint.
 - CSRF protection for cookie-authenticated state-changing requests; strict CORS and origin checks.
 - SSRF protection for source fetches: allowlists, private-IP blocking, DNS re-checks, redirects/size/time limits.
 - Upload controls: extension/MIME/content verification, size limits, malware-scanning option, isolated image processing and safe SVG policy.

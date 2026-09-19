@@ -61,6 +61,15 @@ sequenceDiagram
 
 Editorial transactions are tightly coupled: a publish command touches revision state, translation readiness, audit, schedule, URL, search/indexing intent and cache invalidation. A modular monolith keeps these invariants transactional and deployable as one unit while giving each domain explicit ownership. Split a module only when independent scaling, security isolation, release cadence or failure containment is demonstrated.
 
+## Story performance tracking
+
+FactLens tracks per-story reads with first-party telemetry rather than a third-party analytics API, so "most read"/"trending" rankings are low-latency and don't depend on GA4's reporting delay or query quotas (GA4/GSC remain the source for broader web analytics and SEO reporting; see [technology decisions](./04-technology-decisions.md)).
+
+1. The public web sends a lightweight view beacon once per story render (story id, locale, an anonymized session identifier, referrer) — no PII, no cross-site tracking.
+2. A public, rate-limited API endpoint accepts the beacon and increments Redis counters keyed by story id and rolling time windows (e.g. 1h/24h/7d), de-duplicated per session per story per window to resist inflation. These counters drive real-time "most read"/"trending" ranking directly.
+3. The `analytics.rollup` worker job periodically flushes Redis counters into a durable `StoryPerformanceDaily` table in PostgreSQL (see [domain model](./05-domain-model.md)), which is the source for historical "most read this week/month" and newsroom reporting.
+4. Redis counters are rebuildable/ephemeral, matching Redis's existing role in this architecture; PostgreSQL rollups are the durable record.
+
 ## Availability and scaling posture
 
 Run multiple stateless API replicas behind a managed load balancer when traffic justifies it. Use PostgreSQL connection pooling, indexes on publication state/locale/slug/time, CDN caching for public reads, Redis for short-lived coordination, and independently scalable workers. Add read replicas only after measured read pressure. Queue backpressure and idempotency are more valuable than adding infrastructure early.
