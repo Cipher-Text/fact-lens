@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactLens Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  :root {
+    --bg: #F4F5F8;
+    --surface: #FFFFFF;
+    --surface-2: #EAECF1;
+    --ink: #1B1E27;
+    --ink-muted: #5B6274;
+    --ink-faint: #8891A0;
+    --border: #D3D7E0;
+    --accent: #96701A;
+    --accent-soft: rgba(150,112,26,0.10);
+    --accent-line: rgba(150,112,26,0.55);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10131A;
+      --surface: #171B22;
+      --surface-2: #1B212C;
+      --ink: #E8EAF0;
+      --ink-muted: #9BA2B4;
+      --ink-faint: #6C7383;
+      --border: #2B3140;
+      --accent: #D9A63F;
+      --accent-soft: rgba(217,166,63,0.12);
+      --accent-line: rgba(217,166,63,0.65);
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 56px 28px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 44px;
+  }
+
+  header.masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  h1 {
+    font-family: "Archivo", sans-serif;
+    font-weight: 800;
+    font-size: clamp(32px, 4.2vw, 46px);
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .dek {
+    max-width: 68ch;
+    color: var(--ink-muted);
+    font-size: 16px;
+  }
+
+  .dek code, .inline-code {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.92em;
+    background: var(--surface-2);
+    padding: 0.05em 0.4em;
+    border-radius: 3px;
+  }
+
+  section.figure-block {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .figure-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  h2 {
+    font-family: "Archivo", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+
+  .fig-num {
+    font-family: "IBM Plex Mono", monospace;
+    color: var(--ink-faint);
+    font-size: 13px;
+    margin-right: 10px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-family: "IBM Plex Mono", monospace;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { display: inline-block; width: 20px; height: 0; border-top-width: 2px; border-top-style: solid; }
+  .swatch.solid { border-color: var(--ink-faint); }
+  .swatch.accent { border-color: var(--accent); border-top-width: 3px; }
+  .swatch.dashed { border-color: var(--ink-faint); border-top-style: dashed; }
+  .swatch.dotted { border-color: var(--ink-faint); border-top-style: dotted; }
+
+  .fig-frame {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    overflow-x: auto;
+  }
+
+  figure { margin: 0; }
+  figcaption {
+    margin-top: 12px;
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    max-width: 78ch;
+  }
+
+  svg { display: block; width: 100%; height: auto; min-width: 920px; }
+
+  .node rect, .node-shape { fill: var(--surface); stroke: var(--border); stroke-width: 1.3; }
+  .node-2 rect { fill: var(--surface-2); }
+  .node-ext rect { fill: var(--surface); stroke: var(--ink-faint); stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .node-ghost rect { fill: none; stroke: var(--ink-faint); stroke-width: 1; stroke-dasharray: 2 3; }
+  .node-worker rect { fill: var(--surface); stroke: var(--border); stroke-width: 1.3; }
+  .node-outbox rect { fill: var(--accent-soft); stroke: var(--accent-line); stroke-width: 1.2; stroke-dasharray: 3 2; }
+
+  text { fill: var(--ink); font-family: "IBM Plex Sans", sans-serif; }
+  .t-title { font-weight: 600; font-size: 15px; }
+  .t-title-sm { font-weight: 600; font-size: 13px; }
+  .t-sub { font-size: 11px; fill: var(--ink-muted); }
+  .t-mono { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; fill: var(--ink-muted); }
+  .t-mono-accent { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; fill: var(--accent); font-weight: 500; }
+  .t-ghost { font-size: 10px; fill: var(--ink-faint); font-style: italic; }
+  .t-label { font-size: 10.5px; fill: var(--ink-muted); }
+  .t-label-accent { font-size: 10.5px; fill: var(--accent); font-weight: 500; }
+  .label-halo { fill: var(--surface); }
+
+  .edge { fill: none; stroke: var(--ink-faint); stroke-width: 1.3; }
+  .edge-accent { fill: none; stroke: var(--accent); stroke-width: 1.8; }
+  .edge-ext { fill: none; stroke: var(--ink-faint); stroke-width: 1.2; stroke-dasharray: 4 3; }
+  .edge-dotted { fill: none; stroke: var(--ink-faint); stroke-width: 1.1; stroke-dasharray: 1.5 3; }
+
+  .zone-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    fill: var(--ink-faint);
+  }
+
+  table.ref {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  table.ref th {
+    text-align: left;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 500;
+    padding: 0 12px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  table.ref td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--ink-muted);
+  }
+  table.ref td:first-child {
+    color: var(--ink);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  table.ref tr:last-child td { border-bottom: none; }
+  .ref-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); padding: 4px 8px; }
+
+  footer {
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  footer .src { font-family: "IBM Plex Mono", monospace; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="masthead">
+    <div class="eyebrow">FactLens rebuild — system diagram</div>
+    <h1>How the system fits together</h1>
+    <p class="dek">A layered view of FactLens's target architecture: two Next.js frontends, one NestJS API, one BullMQ worker, PostgreSQL as the single source of truth — and the sync/async publish pattern that holds them together. Drawn from <code>docs/03</code>, <code>08</code>, <code>10</code>, <code>11</code> and the decisions confirmed across this planning session.</p>
+  </header>
+
+  <section class="figure-block">
+    <div class="figure-head">
+      <h2><span class="fig-num">Fig. 1</span>System topology &amp; the publish path</h2>
+      <div class="legend">
+        <span><i class="swatch solid"></i>request / data flow</span>
+        <span><i class="swatch accent"></i>outbox → async handoff</span>
+        <span><i class="swatch dashed"></i>external service</span>
+        <span><i class="swatch dotted"></i>deferred / later</span>
+      </div>
+    </div>
+    <div class="fig-frame">
+      <figure>
+        <svg viewBox="0 0 1500 900" role="img" aria-label="System topology diagram: readers reach the public web through Cloudflare's CDN, editors reach the newsroom directly; both call one NestJS API; the API writes state, audit and an outbox row to PostgreSQL in one transaction; a BullMQ worker claims outbox rows and fans out to Redis, R2 and back to PostgreSQL, then invalidates the CDN cache, closing the publish loop; OpenSearch is shown as a deferred, not-yet-built option.">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-faint)"/>
+            </marker>
+            <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+            </marker>
+          </defs>
+
+          <!-- zone labels -->
+          <text class="zone-label" x="8" y="24">ACTORS</text>
+          <text class="zone-label" x="8" y="134">EDGE</text>
+          <text class="zone-label" x="8" y="264">FRONTENDS</text>
+          <text class="zone-label" x="8" y="404">API</text>
+          <text class="zone-label" x="8" y="564">DATA</text>
+          <text class="zone-label" x="8" y="754">ASYNC</text>
+
+          <!-- Actors -->
+          <g class="node"><rect x="190" y="30" width="180" height="54" rx="4"/>
+            <text class="t-title" x="280" y="54" text-anchor="middle">Reader</text>
+            <text class="t-sub" x="280" y="72" text-anchor="middle">public · anonymous</text></g>
+
+          <g class="node"><rect x="1130" y="30" width="180" height="54" rx="4"/>
+            <text class="t-title" x="1220" y="54" text-anchor="middle">Editor</text>
+            <text class="t-sub" x="1220" y="72" text-anchor="middle">newsroom staff</text></g>
+
+          <!-- Edge -->
+          <g class="node"><rect x="170" y="140" width="220" height="60" rx="4"/>
+            <text class="t-title" x="280" y="166" text-anchor="middle">Cloudflare CDN / WAF</text>
+            <text class="t-sub" x="280" y="184" text-anchor="middle">edge cache · DDoS / WAF</text></g>
+
+          <!-- Frontends -->
+          <g class="node"><rect x="150" y="270" width="260" height="76" rx="4"/>
+            <text class="t-title" x="280" y="296" text-anchor="middle">Public Web — Next.js</text>
+            <text class="t-sub" x="280" y="314" text-anchor="middle">reads · ad redirects</text>
+            <text class="t-sub" x="280" y="330" text-anchor="middle">view beacon · no editorial writes</text></g>
+
+          <g class="node"><rect x="1090" y="270" width="260" height="76" rx="4"/>
+            <text class="t-title" x="1220" y="296" text-anchor="middle">Newsroom — Next.js</text>
+            <text class="t-sub" x="1220" y="314" text-anchor="middle">OIDC session · writes via API</text>
+            <text class="t-sub" x="1220" y="330" text-anchor="middle">editor, ads, config, media</text></g>
+
+          <!-- API -->
+          <g class="node"><rect x="590" y="410" width="320" height="96" rx="4"/>
+            <text class="t-title" x="750" y="440" text-anchor="middle">API — NestJS / Fastify</text>
+            <text class="t-sub" x="750" y="460" text-anchor="middle">commands · queries · authz</text>
+            <text class="t-sub" x="750" y="476" text-anchor="middle">REST contracts · stateless</text></g>
+
+          <g class="node node-ext"><rect x="1120" y="428" width="210" height="60" rx="4"/>
+            <text class="t-title-sm" x="1225" y="454" text-anchor="middle">OIDC Provider</text>
+            <text class="t-sub" x="1225" y="472" text-anchor="middle">external · staff identity</text></g>
+
+          <!-- Data layer -->
+          <g class="node"><rect x="190" y="570" width="300" height="110" rx="4"/>
+            <text class="t-title" x="340" y="596" text-anchor="middle">PostgreSQL — source of truth</text>
+            <text class="t-sub" x="340" y="614" text-anchor="middle">stories · revisions · translations</text>
+            <text class="t-sub" x="340" y="630" text-anchor="middle">taxonomy · ads · config · audit</text>
+            <g class="node-outbox"><rect x="240" y="648" width="200" height="24" rx="3"/>
+              <text class="t-mono-accent" x="340" y="664" text-anchor="middle">outbox rows</text></g>
+          </g>
+
+          <g class="node"><rect x="630" y="570" width="240" height="110" rx="4"/>
+            <text class="t-title" x="750" y="596" text-anchor="middle">Redis</text>
+            <text class="t-sub" x="750" y="614" text-anchor="middle">queue state · rate limits</text>
+            <text class="t-sub" x="750" y="630" text-anchor="middle">trending counters · rebuildable</text></g>
+
+          <g class="node"><rect x="1010" y="570" width="240" height="110" rx="4"/>
+            <text class="t-title" x="1130" y="596" text-anchor="middle">Cloudflare R2</text>
+            <text class="t-sub" x="1130" y="614" text-anchor="middle">originals · variants</text>
+            <text class="t-sub" x="1130" y="630" text-anchor="middle">generated cards</text></g>
+
+          <!-- OpenSearch ghost -->
+          <g class="node-ghost"><rect x="30" y="592" width="140" height="50" rx="4"/>
+            <text class="t-ghost" x="100" y="613" text-anchor="middle">OpenSearch</text>
+            <text class="t-ghost" x="100" y="628" text-anchor="middle">later · deferred</text></g>
+          <path class="edge-dotted" d="M190,620 L172,617" marker-end="url(#arrow)"/>
+
+          <!-- Worker -->
+          <g class="node node-worker"><rect x="570" y="760" width="360" height="100" rx="4"/>
+            <rect x="570" y="760" width="360" height="4" fill="var(--accent)"/>
+            <text class="t-title" x="750" y="792" text-anchor="middle">BullMQ Worker</text>
+            <text class="t-sub" x="750" y="810" text-anchor="middle">idempotent jobs · retry / backoff</text>
+            <text class="t-sub" x="750" y="826" text-anchor="middle">six job domains → see Fig. 2</text></g>
+
+          <!-- Edges: actors to edge/frontends -->
+          <path class="edge" d="M280,84 L280,138" marker-end="url(#arrow)"/>
+          <path class="edge" d="M280,200 L280,268" marker-end="url(#arrow)"/>
+          <path class="edge" d="M1220,84 L1220,268" marker-end="url(#arrow)"/>
+
+          <!-- frontends to API -->
+          <path class="edge" d="M280,346 L280,458 L588,458" marker-end="url(#arrow)"/>
+          <rect class="label-halo" x="330" y="440" width="118" height="16"/>
+          <text class="t-label" x="332" y="452">reads / commands</text>
+
+          <path class="edge" d="M1220,346 L1220,458 L912,458" marker-end="url(#arrow)"/>
+          <rect class="label-halo" x="1000" y="440" width="150" height="16"/>
+          <text class="t-label" x="1002" y="452">writes (authenticated)</text>
+
+          <!-- API to OIDC -->
+          <path class="edge-ext" d="M910,450 L1118,452" marker-end="url(#arrow)"/>
+
+          <!-- API to data layer -->
+          <path class="edge-accent" d="M680,506 L680,540 L400,540 L340,568" marker-end="url(#arrow-accent)"/>
+          <rect class="label-halo" x="400" y="522" width="272" height="16"/>
+          <text class="t-label-accent" x="402" y="534">writes state + audit + outbox — one transaction</text>
+
+          <path class="edge" d="M750,506 L750,568" marker-end="url(#arrow)"/>
+          <rect class="label-halo" x="758" y="530" width="110" height="16"/>
+          <text class="t-label" x="760" y="542">rate limits</text>
+
+          <path class="edge" d="M820,506 L820,540 L1100,540 L1100,568" marker-end="url(#arrow)"/>
+          <rect class="label-halo" x="900" y="522" width="110" height="16"/>
+          <text class="t-label" x="902" y="534">upload intents</text>
+
+          <!-- outbox to worker -->
+          <path class="edge-accent" d="M340,672 L340,720 L650,720 L650,758" marker-end="url(#arrow-accent)"/>
+          <rect class="label-halo" x="360" y="702" width="220" height="16"/>
+          <text class="t-label-accent" x="362" y="714">claims rows, dispatches jobs</text>
+
+          <!-- worker back to data layer -->
+          <path class="edge" d="M700,760 L700,682" marker-end="url(#arrow)"/>
+          <rect class="label-halo" x="620" y="720" width="76" height="16"/>
+          <text class="t-label" x="622" y="732">job state</text>
+
+          <path class="edge" d="M600,760 L600,720 L430,720 L430,682" marker-end="url(#arrow)"/>
+          <rect class="label-halo" x="440" y="736" width="150" height="16"/>
+          <text class="t-label" x="442" y="748">rollups · search · audit</text>
+
+          <path class="edge" d="M850,760 L850,720 L1080,720 L1080,682" marker-end="url(#arrow)"/>
+          <rect class="label-halo" x="900" y="736" width="150" height="16"/>
+          <text class="t-label" x="902" y="748">media / card writes</text>
+
+          <!-- worker to CDN: cache invalidation, closes the loop -->
+          <path class="edge-accent" d="M570,790 L12,790 L12,170 L168,170" marker-end="url(#arrow-accent)"/>
+          <rect class="label-halo" x="18" y="460" width="16" height="220"/>
+          <text class="t-label-accent" x="26" y="470" transform="rotate(90 26 470)" text-anchor="middle">invalidates cache tags after commit</text>
+
+        </svg>
+      </figure>
+      <figcaption>The one mechanism this whole architecture is built around: a publish command writes domain state, an audit row and an outbox row in a single PostgreSQL transaction (gold). The worker claims that outbox row independently, does the async work, and only then invalidates the CDN — so a slow or failed job never blocks the editor, and the public cache is never stale relative to what actually committed.</figcaption>
+    </div>
+  </section>
+
+  <section class="figure-block">
+    <div class="figure-head">
+      <h2><span class="fig-num">Fig. 2</span>Worker job domains &amp; integrations</h2>
+      <div class="legend">
+        <span><i class="swatch dashed"></i>external service</span>
+        <span><i class="swatch dotted"></i>deferred / later</span>
+      </div>
+    </div>
+    <div class="fig-frame">
+      <figure>
+        <svg viewBox="0 0 1500 560" role="img" aria-label="Worker job domains diagram: the BullMQ worker fans out into six domains — ingestion, AI gateway, media, search indexing, analytics, and newsletter. Ingestion pulls from RSS, partner APIs, approved URLs and Telegram's Bot API. The AI gateway calls Gemini as its initial, swappable provider. Media generation is deterministic template compositing, not AI. Search runs on PostgreSQL full-text search today, with OpenSearch shown as a deferred option. Analytics rolls Redis view counters into a daily performance table. Newsletter dispatch sends through an external email provider, with social distribution shown as a deferred option.">
+          <defs>
+            <marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="var(--ink-faint)"/>
+            </marker>
+          </defs>
+
+          <g class="node node-worker"><rect x="605" y="20" width="290" height="64" rx="4"/>
+            <rect x="605" y="20" width="290" height="4" fill="var(--accent)"/>
+            <text class="t-title" x="750" y="48" text-anchor="middle">BullMQ Worker</text>
+            <text class="t-sub" x="750" y="66" text-anchor="middle">async job dispatcher</text></g>
+
+          <!-- fan lines -->
+          <path class="edge" d="M680,84 L120,150" marker-end="url(#arrow2)"/>
+          <path class="edge" d="M710,84 L350,150" marker-end="url(#arrow2)"/>
+          <path class="edge" d="M740,84 L580,150" marker-end="url(#arrow2)"/>
+          <path class="edge" d="M760,84 L810,150" marker-end="url(#arrow2)"/>
+          <path class="edge" d="M790,84 L1040,150" marker-end="url(#arrow2)"/>
+          <path class="edge" d="M820,84 L1270,150" marker-end="url(#arrow2)"/>
+
+          <!-- Domain 1: Ingestion -->
+          <g class="node"><rect x="15" y="150" width="210" height="180" rx="4"/>
+            <text class="t-title-sm" x="120" y="174" text-anchor="middle">Ingestion</text>
+            <text class="t-mono" x="120" y="196" text-anchor="middle">source.fetch</text>
+            <text class="t-mono" x="120" y="212" text-anchor="middle">source.normalize</text>
+            <text class="t-mono" x="120" y="228" text-anchor="middle">source.dedupe</text>
+            <text class="t-sub" x="120" y="254" text-anchor="middle">canonical URL / GUID</text>
+            <text class="t-sub" x="120" y="268" text-anchor="middle">then title / time / content</text>
+            <text class="t-sub" x="120" y="292" text-anchor="middle">human triage before</text>
+            <text class="t-sub" x="120" y="306" text-anchor="middle">any story is created</text></g>
+
+          <!-- Domain 2: AI Gateway -->
+          <g class="node"><rect x="245" y="150" width="210" height="180" rx="4"/>
+            <text class="t-title-sm" x="350" y="174" text-anchor="middle">AI Gateway</text>
+            <text class="t-mono" x="350" y="196" text-anchor="middle">ai.propose</text>
+            <text class="t-sub" x="350" y="222" text-anchor="middle">Gemini, via adapter —</text>
+            <text class="t-sub" x="350" y="236" text-anchor="middle">swappable, not exclusive</text>
+            <text class="t-sub" x="350" y="256" text-anchor="middle">saved, versioned</text>
+            <text class="t-sub" x="350" y="270" text-anchor="middle">prompt templates</text>
+            <text class="t-sub" x="350" y="296" text-anchor="middle">rewrite · translate</text>
+            <text class="t-sub" x="350" y="310" text-anchor="middle">headline/SEO · taxonomy</text></g>
+
+          <!-- Domain 3: Media -->
+          <g class="node"><rect x="475" y="150" width="210" height="180" rx="4"/>
+            <text class="t-title-sm" x="580" y="174" text-anchor="middle">Media</text>
+            <text class="t-mono" x="580" y="196" text-anchor="middle">media.variant</text>
+            <text class="t-mono" x="580" y="212" text-anchor="middle">media.card_generate</text>
+            <text class="t-sub" x="580" y="238" text-anchor="middle">CardTemplate →</text>
+            <text class="t-sub" x="580" y="252" text-anchor="middle">GeneratedCard</text>
+            <text class="t-sub" x="580" y="276" text-anchor="middle">deterministic compositing —</text>
+            <text class="t-sub" x="580" y="290" text-anchor="middle">not a generative model</text></g>
+
+          <!-- Domain 4: Search -->
+          <g class="node"><rect x="705" y="150" width="210" height="180" rx="4"/>
+            <text class="t-title-sm" x="810" y="174" text-anchor="middle">Search Indexing</text>
+            <text class="t-mono" x="810" y="196" text-anchor="middle">search.index</text>
+            <text class="t-sub" x="810" y="222" text-anchor="middle">PostgreSQL FTS +</text>
+            <text class="t-sub" x="810" y="236" text-anchor="middle">pg_trgm, today</text>
+            <g class="node-ghost"><rect x="735" y="260" width="150" height="46" rx="3"/>
+              <text class="t-ghost" x="810" y="280" text-anchor="middle">→ OpenSearch</text>
+              <text class="t-ghost" x="810" y="294" text-anchor="middle">later · measured need</text></g>
+          </g>
+
+          <!-- Domain 5: Analytics -->
+          <g class="node"><rect x="935" y="150" width="210" height="180" rx="4"/>
+            <text class="t-title-sm" x="1040" y="174" text-anchor="middle">Analytics</text>
+            <text class="t-mono" x="1040" y="196" text-anchor="middle">analytics.rollup</text>
+            <text class="t-sub" x="1040" y="222" text-anchor="middle">Redis view counters →</text>
+            <text class="t-sub" x="1040" y="236" text-anchor="middle">StoryPerformanceDaily</text>
+            <text class="t-sub" x="1040" y="262" text-anchor="middle">powers "most read" /</text>
+            <text class="t-sub" x="1040" y="276" text-anchor="middle">trending — first-party,</text>
+            <text class="t-sub" x="1040" y="290" text-anchor="middle">not GA4-derived</text></g>
+
+          <!-- Domain 6: Newsletter -->
+          <g class="node"><rect x="1165" y="150" width="210" height="180" rx="4"/>
+            <text class="t-title-sm" x="1270" y="174" text-anchor="middle">Newsletter</text>
+            <text class="t-mono" x="1270" y="196" text-anchor="middle">newsletter.dispatch</text>
+            <text class="t-sub" x="1270" y="222" text-anchor="middle">double opt-in ·</text>
+            <text class="t-sub" x="1270" y="236" text-anchor="middle">unsubscribe every send</text>
+            <g class="node-ghost"><rect x="1195" y="258" width="150" height="46" rx="3"/>
+              <text class="t-ghost" x="1270" y="278" text-anchor="middle">+ distribution.prepare</text>
+              <text class="t-ghost" x="1270" y="292" text-anchor="middle">later · social channels</text></g>
+          </g>
+
+          <!-- externals -->
+          <path class="edge-ext" d="M120,440 L120,332" marker-end="url(#arrow2)"/>
+          <g class="node node-ext"><rect x="5" y="440" width="230" height="70" rx="4"/>
+            <text class="t-title-sm" x="120" y="464" text-anchor="middle">RSS · Partner API</text>
+            <text class="t-sub" x="120" y="482" text-anchor="middle">Approved URL · Telegram</text>
+            <text class="t-sub" x="120" y="496" text-anchor="middle">(Bot API)</text></g>
+          <rect class="label-halo" x="128" y="378" width="46" height="14"/>
+          <text class="t-label" x="130" y="389">poll</text>
+
+          <path class="edge-ext" d="M350,332 L350,438" marker-end="url(#arrow2)"/>
+          <g class="node node-ext"><rect x="245" y="440" width="210" height="70" rx="4"/>
+            <text class="t-title-sm" x="350" y="466" text-anchor="middle">Gemini (Google)</text>
+            <text class="t-sub" x="350" y="484" text-anchor="middle">initial provider,</text>
+            <text class="t-sub" x="350" y="498" text-anchor="middle">swappable</text></g>
+          <rect class="label-halo" x="358" y="378" width="30" height="14"/>
+          <text class="t-label" x="360" y="389">call</text>
+
+          <path class="edge-ext" d="M1270,332 L1270,438" marker-end="url(#arrow2)"/>
+          <g class="node node-ext"><rect x="1165" y="440" width="210" height="70" rx="4"/>
+            <text class="t-title-sm" x="1270" y="466" text-anchor="middle">Email Provider</text>
+            <text class="t-sub" x="1270" y="484" text-anchor="middle">e.g. Resend /</text>
+            <text class="t-sub" x="1270" y="498" text-anchor="middle">SendGrid</text></g>
+          <rect class="label-halo" x="1276" y="378" width="54" height="14"/>
+          <text class="t-label" x="1278" y="389">dispatch</text>
+
+        </svg>
+      </figure>
+      <figcaption>The worker is the only thing that talks to third parties — providers are reached through adapters (Gemini, email) so they stay swappable, and every ingestion source is an explicit allowlist entry the worker polls, never an open crawl. Media generation is deliberately deterministic, not AI — see ADR-010.</figcaption>
+    </div>
+  </section>
+
+  <section>
+    <h2 style="margin-bottom: 14px;">Component reference</h2>
+    <div class="ref-wrap">
+      <table class="ref">
+        <thead><tr><th>Component</th><th>Responsibility</th><th>Boundary</th></tr></thead>
+        <tbody>
+          <tr><td>Public web</td><td>Render approved stories, listing pages, metadata, sitemap, redirects, cache tags</td><td>No editorial writes; safe public API only</td></tr>
+          <tr><td>Newsroom</td><td>Editor, source inbox, assignments, review, media, ads, configuration, analytics screens</td><td>OIDC session; writes through API</td></tr>
+          <tr><td>API</td><td>Domain commands/queries, authz, REST contracts, transactions, outbox records</td><td>Stateless; no direct UI-specific DB coupling</td></tr>
+          <tr><td>Worker</td><td>Ingestion, media variants, search indexing, AI proposals, analytics rollups, newsletter, distribution</td><td>Idempotent jobs with retry / backoff</td></tr>
+          <tr><td>PostgreSQL</td><td>Stories, revisions, translations, taxonomy, sources, media metadata, ads, config, workflow, audit, outbox</td><td>Source of truth</td></tr>
+          <tr><td>Redis</td><td>Queue state, short-lived cache, rate-limit counters, trending counters</td><td>Rebuildable / ephemeral</td></tr>
+          <tr><td>Cloudflare R2</td><td>Originals and derived media, including generated cards</td><td>Immutable-ish objects plus DB metadata</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <span>Modular monolith · not microservices (ADR-002) · no application code implemented by this plan</span>
+    <span class="src">docs/03 · 08 · 10 · 11 · 17</span>
+  </footer>
+
+</div>
+</body>
+</html>

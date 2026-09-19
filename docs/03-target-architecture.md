@@ -1,5 +1,7 @@
 # 03 — Target architecture
 
+A rendered, two-figure version of this architecture (system topology + the publish path, and the worker's job domains/integrations) is kept at [architecture-diagram.html](./architecture-diagram.html) — open it directly in a browser.
+
 ## Recommendation
 
 Use a TypeScript monorepo with two Next.js applications, one NestJS/Fastify API, and one worker process. Keep domain modules in a modular monolith and use PostgreSQL as the authoritative store. Redis/BullMQ handles work that should not block HTTP requests. The public web reads a publication-oriented API, not the newsroom database directly.
@@ -30,7 +32,7 @@ flowchart LR
 | Public web | Render approved stories, listing pages, metadata, sitemap, redirects and cache tags | No editorial writes; safe public API only |
 | Newsroom | Editor, source inbox, assignments, review, media and analytics screens | OIDC session; writes through API |
 | API | Domain commands/queries, authz, REST contracts, transactions, outbox records | Stateless; no direct UI-specific database coupling |
-| Worker | Ingestion, media variants, search indexing, AI proposals, notifications, distribution | Idempotent jobs with retry/backoff |
+| Worker | Ingestion, media variants, search indexing, AI proposals, notifications, newsletter dispatch, distribution | Idempotent jobs with retry/backoff |
 | PostgreSQL | Stories, revisions, translations, taxonomy, sources, media metadata, workflow, audit, outbox | Source of truth |
 | Redis | Queue state, short-lived cache, rate-limit counters, locks where needed | Rebuildable/ephemeral |
 | Object storage (Cloudflare R2) | Originals and derived media | Immutable-ish objects plus DB metadata |

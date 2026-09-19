@@ -13,6 +13,8 @@ These require product, editorial or business input; they are not unresolved mere
 9. What analytics consent, retention and newsroom access policy applies to public readers and internal users (including consent-gating the GA4 tag)?
 10. IP-hash retention window and IP-hashing algorithm for AdEvent records: what policy governs how long hashed IPs are kept and how they may be used?
 11. What editorial transformation-threshold policy applies to AI-drafted rewrites of ingested source articles before they may be approved — e.g. minimum original reporting/editing, mandatory attribution wording, and any source types excluded from rewrite entirely?
+12. Should FactLens support public comments on articles? This carries significant moderation, spam/abuse and legal exposure — many newsrooms have removed on-site comments in favor of social-platform discussion. Needs an explicit editorial/business decision before any design work begins; not assumed in scope.
+13. Should FactLens support a paid subscription/paywall alongside advertising? This is a monetization/business decision (pricing, payment provider, what content is gated) requiring explicit confirmation, the same way advertising scope required confirmation — not assumed in scope.
 
 Resolved: advertising is confirmed part of the Phase 1 launch scope, carrying forward CipherPress's current Advertiser/Campaign/Placement/Ad/Event design as-is (see [product and platform scope](./02-product-and-platform-scope.md) and [domain model](./05-domain-model.md)).
 

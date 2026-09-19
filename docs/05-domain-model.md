@@ -21,7 +21,7 @@ erDiagram
   STORY ||--o{ EDITORIAL_COMMENT : receives
 ```
 
-## Phase 1 entities
+## Committed entities (Phase 1–4, i.e. by public launch)
 
 - **Story:** stable public identity, lifecycle status, canonical key, current published revision pointer, slug history and timestamps.
 - **StoryRevision:** authoring snapshot, changedBy/changedAt, change reason, submitted/approved metadata, correction/AI flags, content hash.
@@ -36,6 +36,7 @@ erDiagram
 - **PublishingSchedule:** desired time zone/time, target locale/channel, idempotency key and status.
 - **Advertiser, AdCampaign, AdPlacement, Ad, AdEvent:** commercial/distribution capability carried forward from CipherPress's current design — campaign dates/status, weighted/device/locale/category targeting, HMAC-signed redirect tokens and IP-hashed event records. Kept as a separate module from the editorial Story graph; ads are not Story relations and do not appear in editorial workflow states.
 - **Configuration, FeatureFlag:** admin-editable runtime policy records (workflow-transition requirements, AI provider/model/budget per use case, rate limits, retention rules, supported locales) and module-level feature toggles. See [configuration and feature flags](./21-configuration-and-feature-flags.md) for what belongs here versus in code.
+- **NewsletterSubscriber:** email, locale preference, double opt-in/confirmed status, subscribe/unsubscribe timestamps, unsubscribe token, source. Reader-facing but not an account — no login, no other public identity.
 - **StoryPerformanceDaily:** first-party story-level view rollup (story, locale, date, view count, unique-session estimate) powering "most read"/"trending" rankings; real-time counters live in Redis and flush here (see [target architecture](./03-target-architecture.md)).
 - **CardTemplate, GeneratedCard:** branded photocard/poster templates (logo/frame/gradient, text-overlay slots, aspect ratio) and the composited outputs produced from a `MediaAsset` plus story text. `GeneratedCard` is a `MediaAsset` variant linked to its source photo, template id/version and originating story revision (see [media architecture](./10-media-architecture.md)).
 

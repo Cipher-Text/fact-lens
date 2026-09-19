@@ -12,7 +12,7 @@ The public site is a consumer of approved publication state. It must not become 
 
 ## Functional boundaries
 
-### Phase 1 product boundary
+### Committed product boundary (Phase 1–4, i.e. by public launch)
 
 - Story creation and revisioned editing.
 - English/Bengali translations linked to a story.
@@ -26,6 +26,7 @@ The public site is a consumer of approved publication state. It must not become 
 - Advertising: Advertiser, Campaign, Placement, Ad and AdEvent records with signed ad-redirect delivery, carried forward from CipherPress's current design. Modeled as a commercial/distribution capability, separate from the editorial Story graph (see [domain model](./05-domain-model.md)).
 - Branded photocard/poster generation from a raw photo, using deterministic FactLens template compositing — not generative AI (see [media architecture](./10-media-architecture.md)).
 - Per-story performance tracking (first-party view counts, not GA4-derived) powering "most read"/"trending" rankings — ships with Phase 4 public web launch, since it requires the public site to exist (see [target architecture](./03-target-architecture.md)).
+- Newsletter/email subscription capture on the public site (double opt-in, unsubscribe), integrated with an email-sending provider — ships with Phase 4 public web launch.
 
 ### Later product boundary
 
@@ -33,6 +34,7 @@ The public site is a consumer of approved publication state. It must not become 
 - AI research summaries, extraction, translation, article rewrite drafts and headline/SEO proposals.
 - Social/distribution connectors and advanced campaign analytics/optimization.
 - Claims/evidence graph, entity resolution, semantic search and advanced newsroom analytics (including pulling GSC/GA4 performance data back into the newsroom via their APIs — GA4 tag and GSC verification themselves are Phase 4 scope).
+- Reader accounts (login, saved/bookmarked articles, following desks/tags) — deferred; would need a separate, lighter-weight public identity system from staff OIDC, not an extension of it.
 
 ### Explicit non-goals initially
 
