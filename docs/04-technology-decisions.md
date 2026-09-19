@@ -12,11 +12,11 @@
 | Cache/ephemeral | Redis | Good fit for BullMQ, rate limits, short-lived cache and locks. Never use it as the only record of editorial state. |
 | Jobs | BullMQ + Redis | Simple TypeScript queue with retry/backoff and delayed jobs. Operationally smaller than Kafka. |
 | Search | PostgreSQL FTS + `pg_trgm` first | Reduces moving parts and keeps writes transactional. Move to OpenSearch only with measured advanced query/scale requirements. |
-| Media | R2 or S3 + CDN/image transforms | Durable object storage, inexpensive delivery and immutable variants. Store metadata/rights in PostgreSQL. |
+| Media | Cloudflare R2 + CDN/image transforms | Durable object storage, no egress fees when paired with Cloudflare's CDN, and immutable variants. Store metadata/rights in PostgreSQL. |
 | Auth | OIDC provider | Avoid custom password/session security. Evaluate managed provider and self-hosted Keycloak-style option against cost, availability and editorial admin requirements. |
 | AI | Central AI Gateway/module | Provider-neutral calls, budgets, prompt versions, provenance and safety in one place. No direct provider calls from domain modules. |
 | Repo | pnpm + Turborepo-compatible TypeScript monorepo | Shared contracts/config/UI and coordinated changes are valuable. Start with workspace boundaries; add Turborepo caching when build graph justifies it. |
-| Infra | Docker, GitHub Actions, managed services | Fits current deployment skills and keeps operations small. Cloudflare is a likely edge/WAF/CDN; choose managed PostgreSQL/Redis/object storage first. |
+| Infra | Docker, GitHub Actions, managed services | Fits current deployment skills and keeps operations small. Cloudflare is the confirmed edge/WAF/CDN and object storage provider (R2); choose managed PostgreSQL/Redis first. |
 
 ## Alternatives considered
 

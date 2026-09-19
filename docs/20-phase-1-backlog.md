@@ -6,7 +6,7 @@ This is a capability backlog, not an estimate.
 
 - Create pnpm workspace and app/package boundaries.
 - Add TypeScript config, lint/test/build conventions, environment validation and secret scanning.
-- Add Docker images, local PostgreSQL/Redis/object-storage emulators, GitHub Actions CI and managed deployment skeleton.
+- Add Docker images, local PostgreSQL/Redis emulators, an R2-compatible local object-storage emulator (e.g. Miniflare/Wrangler R2 or MinIO in S3-API mode), GitHub Actions CI and managed deployment skeleton.
 - Add OpenAPI generation and contract compatibility checks.
 
 ## Epic B — API and persistence

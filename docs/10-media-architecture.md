@@ -3,7 +3,7 @@
 ## Storage flow
 
 1. API creates an upload intent with allowed MIME/size/context.
-2. Client uploads to R2/S3 using short-lived signed URL or controlled proxy.
+2. Client uploads to Cloudflare R2 using a short-lived signed URL or controlled proxy.
 3. Worker verifies MIME by content, scans where required, extracts dimensions/metadata, strips unsafe metadata as policy requires, and creates variants.
 4. PostgreSQL records immutable object key, checksum, dimensions, rights, attribution, source URL, crop/focal point and processing status.
 5. CDN serves approved variants with immutable/versioned URLs.

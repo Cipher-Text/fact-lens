@@ -12,7 +12,7 @@ flowchart LR
   NEWS --> API
   API --> DB[(PostgreSQL source of truth)]
   API --> REDIS[(Redis)]
-  API --> OBJ[(R2/S3 object storage)]
+  API --> OBJ[(Cloudflare R2 object storage)]
   API --> OUTBOX[Transactional outbox]
   OUTBOX --> WORKER[BullMQ worker]
   WORKER --> REDIS
@@ -33,7 +33,7 @@ flowchart LR
 | Worker | Ingestion, media variants, search indexing, AI proposals, notifications, distribution | Idempotent jobs with retry/backoff |
 | PostgreSQL | Stories, revisions, translations, taxonomy, sources, media metadata, workflow, audit, outbox | Source of truth |
 | Redis | Queue state, short-lived cache, rate-limit counters, locks where needed | Rebuildable/ephemeral |
-| Object storage | Originals and derived media | Immutable-ish objects plus DB metadata |
+| Object storage (Cloudflare R2) | Originals and derived media | Immutable-ish objects plus DB metadata |
 
 ## Sync versus async
 
