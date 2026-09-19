@@ -34,6 +34,7 @@ erDiagram
 - **SEO metadata:** per translation plus canonical/redirect records; do not bury all SEO in arbitrary JSON.
 - **EditorialAssignment, EditorialComment, Correction, AuditEvent:** workflow and traceability primitives.
 - **PublishingSchedule:** desired time zone/time, target locale/channel, idempotency key and status.
+- **Advertiser, AdCampaign, AdPlacement, Ad, AdEvent:** commercial/distribution capability carried forward from CipherPress's current design — campaign dates/status, weighted/device/locale/category targeting, HMAC-signed redirect tokens and IP-hashed event records. Kept as a separate module from the editorial Story graph; ads are not Story relations and do not appear in editorial workflow states.
 
 ## Later entities
 

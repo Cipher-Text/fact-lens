@@ -12,6 +12,7 @@ The newsroom is a separate Next.js app using the same contracts and design primi
 - **Publishing calendar:** schedules, locale/channel readiness, conflicts, failed jobs and cancellation.
 - **Taxonomy/entities:** controlled vocabulary, aliases, merge/archive workflows and impact preview.
 - **Analytics:** publication and distribution metrics with access controls; operational metrics remain in observability tooling.
+- **Advertising:** advertiser/campaign/placement management, targeting rules, redirect-token health and ad-event delivery status; gated by `ads.manage`.
 - **Audit/admin:** capability assignments, audit search, redirect registry, provider/config health.
 
 ## Editor behavior

@@ -23,12 +23,13 @@ The public site is a consumer of approved publication state. It must not become 
 - Scheduled publishing and public delivery.
 - PostgreSQL search and basic newsroom filters.
 - OIDC login and capability-based permissions.
+- Advertising: Advertiser, Campaign, Placement, Ad and AdEvent records with signed ad-redirect delivery, carried forward from CipherPress's current design. Modeled as a commercial/distribution capability, separate from the editorial Story graph (see [domain model](./05-domain-model.md)).
 
 ### Later product boundary
 
 - Automated RSS/API ingestion and source intelligence.
 - AI research summaries, extraction, translation, headline/SEO proposals and image/card generation.
-- Social/distribution connectors and campaign analytics.
+- Social/distribution connectors and advanced campaign analytics/optimization.
 - Claims/evidence graph, entity resolution, semantic search and advanced newsroom analytics.
 
 ### Explicit non-goals initially

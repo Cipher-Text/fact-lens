@@ -44,6 +44,14 @@ This is a capability backlog, not an estimate.
 - Source inbox placeholder and media library.
 - Publish/schedule review screen with capability-aware controls.
 
+## Epic G — Advertising module
+
+- Implement Advertiser, AdCampaign, AdPlacement, Ad and AdEvent tables, carrying forward CipherPress's current design.
+- Ad serving and HMAC-signed redirect endpoints with strict target-URL validation and abuse controls.
+- Weighted/device/locale/category targeting rules.
+- IP-hashed ad-event tracking with a reviewed retention policy (see [open questions](./19-open-questions.md)).
+- Newsroom admin screens for campaign/placement management, gated by an `ads.manage` capability.
+
 ## Recommended sequence
 
-A → B → C → D → E → F, with contract tests and migration fixtures introduced during B rather than postponed. Do not begin public cutover work until D can publish a complete bilingual story and E can invalidate/update derived projections safely.
+A → B → C → D → E → F, with contract tests and migration fixtures introduced during B rather than postponed. Epic G is an independent commercial domain module; it can proceed in parallel with D/E once B and C land, since it does not extend the editorial workflow. Do not begin public cutover work until D can publish a complete bilingual story, E can invalidate/update derived projections safely, and G's ad-serving/redirect endpoints pass abuse-control review.

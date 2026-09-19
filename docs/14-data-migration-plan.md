@@ -20,7 +20,7 @@ Authoritative source files are Strapi schemas under `cipher-press/apps/cms/src/a
 | seoTitle/seoDescription | Translation SEO metadata | Preserve values; validate length and canonical/OG fallback behavior. |
 | isFeatured/isBreaking/readingTime | Story publication flags/read-time projection | Keep history in import metadata; make flags workflow-controlled in target. |
 | Site Setting/Meta Data | Publication settings/tracking config | Separate public settings from secret/runtime config; verify analytics consent behavior. |
-| Ads/Advertiser/Campaign/Placement/Event | Advertising module or archive | Migrate only if commercial scope is approved; hash/event retention policy must be reviewed. |
+| Ads/Advertiser/Campaign/Placement/Event | Advertising module (Phase 1 scope) | Approved for Phase 1: migrate Advertiser/Campaign/Placement/Ad/Event as-is, preserving HMAC redirect-token behavior and targeting rules; IP-hash event retention policy must still be reviewed against data-retention policy before cutover. |
 
 ## Stages
 
