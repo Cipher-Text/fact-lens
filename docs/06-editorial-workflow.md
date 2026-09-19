@@ -48,4 +48,4 @@ Record actor, action, object type/id, previous and new state, revision id, reaso
 
 ## AI rules
 
-AI can propose text, extract claims, classify, translate or suggest metadata. It cannot silently overwrite approved content or transition to Published. Store provider/model, prompt/template version, input references, output hash, token/cost/latency and reviewer decision. External source text must be treated as untrusted prompt content.
+AI can propose text (including a full rewrite of ingested source content), extract claims, classify, translate or suggest metadata. It cannot silently overwrite approved content or transition to Published. Store provider/model, prompt/template version, input references, output hash, token/cost/latency and reviewer decision. External source text must be treated as untrusted prompt content.

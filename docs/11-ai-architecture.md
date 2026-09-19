@@ -31,7 +31,7 @@ Each use case references a **saved prompt template** by id and version, not a li
 - **article rewrite: draft an original-language rewrite of one or more ingested source articles as a starting StoryRevision body, clearly not a verbatim reproduction of the source;**
 - claim and named-entity extraction;
 - taxonomy suggestions: proposed category, tags/topics and desk, alongside the rewrite draft;
-- alt-text and social-card copy;
+- alt-text and social-card caption copy (text only — the branded card/poster image itself is deterministic template compositing, not AI-generated; see [media architecture](./10-media-architecture.md));
 - duplicate-story similarity signal.
 
 These produce drafts/proposals. AI must not publish, overwrite an approved revision, or change workflow state without an explicit authorized human command. A rewrite proposal lands in the story's `DRAFT` state marked AI-proposed (per doc 07's field-provenance UI) and requires a human editor to rewrite/edit it before it can move to review — it is a starting point, not publishable content.

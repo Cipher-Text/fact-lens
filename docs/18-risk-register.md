@@ -18,3 +18,4 @@
 | Ad redirect abuse/open-redirect surface carried forward from CipherPress | Click fraud, malicious redirects, reputational harm | Strict target-URL allowlisting, HMAC-signed tokens, Redis-backed rate limits on ad redirects, abuse-control review before Phase 4 cutover |
 | Strapi undocumented behavior | Import surprises | Inspect schemas/lifecycles/routes, staging export, fixture-based comparison |
 | Operational overload from premature infra | Delivery slowdown/cost | Modular monolith, managed services, explicit revisit triggers |
+| Undefined data-retention policy (IP hashes, AI/rewrite logs, source snapshots) | Privacy/compliance exposure | Define retention/deletion policy before cutover (see [open questions](./19-open-questions.md) 4, 9, 10) |

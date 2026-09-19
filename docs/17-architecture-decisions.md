@@ -11,6 +11,7 @@
 7. **ADR-007: Central AI Gateway.** Provider/model/prompt/cost/provenance policy is centralized and human approval is mandatory. Google Gemini is the initial provider, reached only through the Gateway's adapter pattern, never called directly from domain modules.
 8. **ADR-008: Cloudflare R2 plus CDN.** Object storage is separate from database and public delivery is cache-friendly. R2 is confirmed over generic S3; no egress fees when paired with Cloudflare's CDN.
 9. **ADR-009: Capability authorization over role branching.** Roles compose capabilities and scopes.
+10. **ADR-010: Branded cards/posters are deterministic template compositing, not generative AI.** A `CardTemplate` plus a raw photo and story text are composited by a worker job; AI may only ever suggest an input to that pipeline (crop/focal point, caption copy), never generate the base image.
 
 ## Deferred with revisit triggers
 

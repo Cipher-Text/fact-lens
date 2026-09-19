@@ -29,6 +29,7 @@
 - **Kafka:** defer until event volume, independent consumers, replay/retention and cross-system streaming justify the operational cost.
 - **Kubernetes:** defer until multi-service scheduling, autoscaling or multi-environment operational requirements exceed managed containers/Compose-like deployment.
 - **ClickHouse:** defer until analytics volume/query patterns demand columnar analysis; start with operational PostgreSQL plus an external analytics product if needed.
+- **Other AI providers (OpenAI, Anthropic, etc.):** not excluded — the AI Gateway's adapter pattern supports adding or swapping providers per use case; Gemini is the confirmed initial provider, not an exclusivity decision.
 
 ## Deliberate initial omissions
 
