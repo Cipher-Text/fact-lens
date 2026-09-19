@@ -27,7 +27,7 @@ The public site is a consumer of approved publication state. It must not become 
 
 ### Later product boundary
 
-- Automated RSS/API ingestion and source intelligence.
+- Automated RSS/API ingestion (including Telegram channels via Bot API) and source intelligence.
 - AI research summaries, extraction, translation, headline/SEO proposals and image/card generation.
 - Social/distribution connectors and advanced campaign analytics/optimization.
 - Claims/evidence graph, entity resolution, semantic search and advanced newsroom analytics.

@@ -7,6 +7,7 @@ flowchart LR
   RSS[RSS] --> FETCH[Fetch/parse]
   APIIN[Partner API] --> FETCH
   URL[Approved URL fetch] --> FETCH
+  TG[Telegram channel via Bot API] --> FETCH
   FETCH --> NORM[Normalize + validate]
   NORM --> DEDUP[Deduplicate]
   DEDUP --> INBOX[Source inbox]
@@ -24,6 +25,15 @@ flowchart LR
 - Normalize title, publisher, canonical URL, published time, retrieved time, language and extracted text. Keep raw payload snapshots only under retention/rights policy.
 - Deduplicate first by canonical URL/source GUID, then by normalized title/time and content similarity. Never auto-merge ambiguous stories without review.
 - AI classification, summarization, translation and entity proposals are separate jobs with provenance; a failed proposal cannot block manual editing.
+
+## Source types
+
+- **RSS:** standard feed polling per source with ETag/Last-Modified checkpoints.
+- **Partner API:** authenticated pull integrations with provider-specific pagination/cursor handling.
+- **Approved URL fetch:** single-URL retrieval from an explicit allowlist, not a general crawler.
+- **Telegram channel (Bot API):** a bot account joins each approved channel as admin/member and receives channel posts via webhook or polling. Checkpoint by Telegram message ID; treat the bot token as a managed secret, not environment-committed config. Validate Telegram's webhook secret token on inbound calls. Channel access requires the channel owner's cooperation to add the bot — this is not a way to ingest arbitrary public channels without their participation. Message text/media is untrusted input, normalized and deduplicated identically to RSS/API sources before reaching the source inbox.
+
+Each source type is an explicit allowlist entry, not an open-ended discovery mechanism; adding a new source (including a new Telegram channel) is a configuration change reviewed like any other trust boundary.
 
 ## Transactional outbox
 

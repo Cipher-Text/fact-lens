@@ -32,7 +32,7 @@ Exit: URL coverage and representative page parity are signed off; rollback switc
 
 ## Phase 5 — Ingestion and AI assistance
 
-Deliverables: RSS/API connectors, source inbox, normalization/dedupe, AI Gateway, proposals, provenance/cost controls and worker dashboards.
+Deliverables: RSS/API connectors (including a Telegram channel connector via Bot API), source inbox, normalization/dedupe, AI Gateway, proposals, provenance/cost controls and worker dashboards.
 
 Exit: ingestion is rate-limited/idempotent, AI cannot publish silently, failures are retryable/visible, and editors accept/reject proposals in the newsroom.
 
