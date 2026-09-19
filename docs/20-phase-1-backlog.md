@@ -15,6 +15,7 @@ This is a capability backlog, not an estimate.
 - Add PostgreSQL migrations, connection pooling and transaction helpers.
 - Implement Story, StoryRevision, StoryTranslation, Contributor, Category, Tag, Desk and MediaAsset tables.
 - Implement Source/StorySource, Assignment, Comment, Correction, AuditEvent and Outbox tables.
+- Implement CardTemplate and GeneratedCard tables.
 - Add slug/canonical/redirect registry and publication read models.
 
 ## Epic C — Authentication and authorization
@@ -34,14 +35,14 @@ This is a capability backlog, not an estimate.
 
 - Add Redis/BullMQ worker scaffold and idempotent job envelope.
 - Add transactional outbox dispatcher with retries/dead-letter visibility.
-- Add cache invalidation, search projection and media-variant job stubs.
+- Add cache invalidation, search projection, media-variant and branded photocard/poster generation (`media.card_generate`) job stubs.
 - Add structured logs, traces/metrics baseline, Sentry integration and queue/database dashboards.
 
 ## Epic F — Newsroom shell
 
 - Desk queue and story workspace.
 - Revision/history and comments panels.
-- Source inbox placeholder and media library.
+- Source inbox placeholder and media library, including branded photocard/poster generation from a photo using FactLens templates.
 - Publish/schedule review screen with capability-aware controls.
 
 ## Epic G — Advertising module

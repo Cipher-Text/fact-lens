@@ -41,7 +41,7 @@ Domain mutations write the state change, audit event and outbox row in one Postg
 
 ## Job classes
 
-`source.fetch`, `source.normalize`, `source.dedupe`, `ai.propose`, `media.variant`, `search.index`, `cache.invalidate`, `distribution.prepare`, `analytics.rollup`, and `notification.send`. Keep worker code in module boundaries and make payloads versioned contracts.
+`source.fetch`, `source.normalize`, `source.dedupe`, `ai.propose`, `media.variant`, `media.card_generate`, `search.index`, `cache.invalidate`, `distribution.prepare`, `analytics.rollup`, and `notification.send`. Keep worker code in module boundaries and make payloads versioned contracts.
 
 ## Retry and backpressure
 

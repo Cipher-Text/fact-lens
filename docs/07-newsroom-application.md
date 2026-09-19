@@ -8,7 +8,7 @@ The newsroom is a separate Next.js app using the same contracts and design primi
 - **Story workspace:** Tiptap/ProseMirror editor, revision timeline, autosave draft, side-by-side locale view, sources, entities, SEO and publish controls.
 - **Source inbox:** ingested items, deduplication candidates, source metadata, retrieval status and triage actions.
 - **Review/fact-check:** comments, claims/evidence checklist, unresolved issues and approval history.
-- **Media library:** search, upload, rights/attribution, crops/variants and attachment context.
+- **Media library:** search, upload, rights/attribution, crops/variants, attachment context, and branded photocard/poster generation from a photo using FactLens templates.
 - **Publishing calendar:** schedules, locale/channel readiness, conflicts, failed jobs and cancellation.
 - **Taxonomy/entities:** controlled vocabulary, aliases, merge/archive workflows and impact preview.
 - **Analytics:** publication and distribution metrics with access controls; operational metrics remain in observability tooling.

@@ -14,9 +14,9 @@ Exit: authenticated users can create a draft story/revision/translation through 
 
 ## Phase 2 — Editorial core
 
-Deliverables: taxonomy/contributors, source records, Tiptap editor, revision timeline, comments/assignments, workflow transitions, corrections, media library, scheduling primitives. In parallel, build the advertising module (Advertiser/Campaign/Placement/Ad/AdEvent tables, targeting rules, admin screens) as a separate commercial domain module — it does not block or extend the editorial workflow.
+Deliverables: taxonomy/contributors, source records, Tiptap editor, revision timeline, comments/assignments, workflow transitions, corrections, media library, scheduling primitives, and branded photocard/poster generation (CardTemplate/GeneratedCard, deterministic template compositing). In parallel, build the advertising module (Advertiser/Campaign/Placement/Ad/AdEvent tables, targeting rules, admin screens) as a separate commercial domain module — it does not block or extend the editorial workflow.
 
-Exit: a human can draft, review, fact-check, approve, schedule, publish and correct a bilingual story with complete audit history; campaigns/placements can be created and targeted in the newsroom.
+Exit: a human can draft, review, fact-check, approve, schedule, publish and correct a bilingual story with complete audit history; campaigns/placements can be created and targeted in the newsroom; an editor can generate a branded photocard/poster from a photo.
 
 ## Phase 3 — Migration tooling and rehearsal
 
@@ -38,7 +38,7 @@ Exit: ingestion is rate-limited/idempotent, AI cannot publish silently, failures
 
 ## Phase 6 — Distribution and analytics
 
-Deliverables: social-card generation, distribution jobs/connectors, publication analytics, advanced campaign analytics/optimization and operational dashboards.
+Deliverables: automated distribution of already-generated photocards/posters to social channels, distribution jobs/connectors, publication analytics, advanced campaign analytics/optimization and operational dashboards.
 
 Exit: distribution retries are idempotent and attribution/consent boundaries are documented.
 
