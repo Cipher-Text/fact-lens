@@ -13,7 +13,7 @@ fact-lens/
     contracts/           # OpenAPI/DTO/Zod schemas, generated clients
     domain/              # shared value objects and policy types only
     ui/                  # accessible shared primitives
-    config/              # typed runtime/build config
+    config/              # typed environment/deployment config only — not editorial/runtime configuration or feature flags (those are DB-backed, see docs/21)
     shared/              # small framework-neutral utilities
   infrastructure/        # Docker, migrations, deploy/runbooks, IaC later
   docs/

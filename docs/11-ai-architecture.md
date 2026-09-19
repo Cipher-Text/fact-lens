@@ -17,7 +17,7 @@ flowchart LR
   REVIEW -->|accept/edit| REV[Story revision]
 ```
 
-Gemini (Google) is the initial provider, reached through a dedicated adapter — never called directly from domain modules. The adapter pattern keeps the Gateway able to add or swap providers later without changing use-case call sites.
+Gemini (Google) is the initial provider, reached through a dedicated adapter — never called directly from domain modules. The adapter pattern keeps the Gateway able to add or swap providers later without changing use-case call sites. Which provider/model/budget serves each use case is admin-editable runtime configuration, not a code constant — see [configuration and feature flags](./21-configuration-and-feature-flags.md).
 
 ## Prompt templates
 

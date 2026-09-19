@@ -24,7 +24,7 @@ stateDiagram-v2
   PUBLISHED --> ARCHIVED
 ```
 
-`INGESTED` and `RESEARCHING` are optional for manually originated work. Do not force every story through fact-check if editorial policy says the desk can approve directly; the transition permission should express the policy.
+`INGESTED` and `RESEARCHING` are optional for manually originated work. Do not force every story through fact-check if editorial policy says the desk can approve directly; the transition permission should express the policy. Transition requirements are desk-scoped runtime configuration, not a hardcoded global rule — see [configuration and feature flags](./21-configuration-and-feature-flags.md). The state machine's shape (the states themselves) is not configurable this way; changing it is a product decision.
 
 ## Transition rules
 
@@ -40,7 +40,7 @@ stateDiagram-v2
 
 ## Roles and capabilities
 
-Prefer capabilities (`story.edit`, `story.submit`, `story.review`, `story.fact_check`, `story.publish`, `story.correct`, `media.manage`, `taxonomy.manage`, `audit.read`, `ads.manage`) over hard-coded role checks. Roles are collections of capabilities: Reporter, Desk Editor, Copy Editor, Fact Checker, Managing Editor, Media Editor, Admin, Analyst. `ads.manage` is a commercial capability, independent of editorial roles; Admin holds it by default until an Ad Operations role is defined.
+Prefer capabilities (`story.edit`, `story.submit`, `story.review`, `story.fact_check`, `story.publish`, `story.correct`, `media.manage`, `taxonomy.manage`, `audit.read`, `ads.manage`, `config.manage`) over hard-coded role checks. Roles are collections of capabilities: Reporter, Desk Editor, Copy Editor, Fact Checker, Managing Editor, Media Editor, Admin, Analyst. `ads.manage` is a commercial capability, independent of editorial roles; Admin holds it by default until an Ad Operations role is defined. `config.manage` gates the runtime configuration/feature-flag surface (see [configuration and feature flags](./21-configuration-and-feature-flags.md)) and should stay narrowly held — it can change rate limits, AI budgets and retention rules without a deploy.
 
 ## Audit requirements
 

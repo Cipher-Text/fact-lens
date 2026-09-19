@@ -12,6 +12,7 @@
 8. **ADR-008: Cloudflare R2 plus CDN.** Object storage is separate from database and public delivery is cache-friendly. R2 is confirmed over generic S3; no egress fees when paired with Cloudflare's CDN.
 9. **ADR-009: Capability authorization over role branching.** Roles compose capabilities and scopes.
 10. **ADR-010: Branded cards/posters are deterministic template compositing, not generative AI.** A `CardTemplate` plus a raw photo and story text are composited by a worker job; AI may only ever suggest an input to that pipeline (crop/focal point, caption copy), never generate the base image.
+11. **ADR-011: Editorial/runtime configuration is PostgreSQL-backed and admin-editable, separate from deployment config.** `packages/config` holds only environment/deployment values; policy that legitimately varies by desk, market or time (workflow rules, AI budgets, rate limits, retention, locales) is DB-backed, `config.manage`-gated, and audited. Feature flags gate risk-bearing modules independently of deploys. See [configuration and feature flags](./21-configuration-and-feature-flags.md).
 
 ## Deferred with revisit triggers
 

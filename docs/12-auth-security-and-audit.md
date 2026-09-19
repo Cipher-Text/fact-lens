@@ -22,4 +22,4 @@ Map identity claims to capabilities, desk membership and scoped resources. Keep 
 
 ## Audit
 
-Audit authentication, authorization changes, story/revision state, publish/correct/archive, source/media changes, AI acceptance/rejection, redirects, exports and administrative configuration. Audit records include actor, time, request/trace ID, object/revision, action, reason and before/after references without logging secrets.
+Audit authentication, authorization changes, story/revision state, publish/correct/archive, source/media changes, AI acceptance/rejection, redirects, exports and administrative configuration — including every runtime configuration/feature-flag change (see [configuration and feature flags](./21-configuration-and-feature-flags.md)). Audit records include actor, time, request/trace ID, object/revision, action, reason and before/after references without logging secrets.

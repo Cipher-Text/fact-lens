@@ -36,6 +36,7 @@ This set of documents plans a rebuild of FactLens as a digital newsroom platform
 18. [Risk register](./18-risk-register.md)
 19. [Open questions](./19-open-questions.md)
 20. [Phase 1 backlog](./20-phase-1-backlog.md)
+21. [Configuration and feature flags](./21-configuration-and-feature-flags.md)
 
 ## Scope note
 

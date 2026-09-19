@@ -13,6 +13,7 @@ The newsroom is a separate Next.js app using the same contracts and design primi
 - **Taxonomy/entities:** controlled vocabulary, aliases, merge/archive workflows and impact preview.
 - **Analytics:** per-story performance (first-party view counts, "most read"/trending rankings), publication and distribution metrics with access controls; operational metrics remain in observability tooling.
 - **Advertising:** advertiser/campaign/placement management, targeting rules, redirect-token health and ad-event delivery status; gated by `ads.manage`.
+- **Configuration:** workflow-transition policy per desk, AI provider/model/budget per use case, rate limits, retention rules, supported locales, and module feature flags; gated by `config.manage` and audited like any other privileged action (see [configuration and feature flags](./21-configuration-and-feature-flags.md)).
 - **Audit/admin:** capability assignments, audit search, redirect registry, provider/config health.
 
 ## Editor behavior

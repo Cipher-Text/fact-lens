@@ -18,5 +18,6 @@
 | Ad redirect abuse/open-redirect surface carried forward from CipherPress | Click fraud, malicious redirects, reputational harm | Strict target-URL allowlisting, HMAC-signed tokens, Redis-backed rate limits on ad redirects, abuse-control review before Phase 4 cutover |
 | Strapi undocumented behavior | Import surprises | Inspect schemas/lifecycles/routes, staging export, fixture-based comparison |
 | Operational overload from premature infra | Delivery slowdown/cost | Modular monolith, managed services, explicit revisit triggers |
+| Unreviewed runtime configuration change (rate limit, AI budget, retention rule, feature flag) causes an outage or policy violation | Availability/compliance exposure | Narrow `config.manage` grant, server-side validation, audit trail, staged/canary rollout for high-risk flags (see [configuration and feature flags](./21-configuration-and-feature-flags.md)) |
 | Undefined data-retention policy (IP hashes, AI/rewrite logs, source snapshots) | Privacy/compliance exposure | Define retention/deletion policy before cutover (see [open questions](./19-open-questions.md) 4, 9, 10) |
 | Story-view/"most read" ranking manipulated by bot traffic or spam | Misleading editorial signal, reputational harm | Per-session/story/window de-duplication, rate limits on the beacon endpoint, bot/UA heuristics, anomaly monitoring |

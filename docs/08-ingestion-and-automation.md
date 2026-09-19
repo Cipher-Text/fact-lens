@@ -33,7 +33,7 @@ flowchart LR
 - **Approved URL fetch:** single-URL retrieval from an explicit allowlist, not a general crawler.
 - **Telegram channel (Bot API):** a bot account joins each approved channel as admin/member and receives channel posts via webhook or polling. Checkpoint by Telegram message ID; treat the bot token as a managed secret, not environment-committed config. Validate Telegram's webhook secret token on inbound calls. Channel access requires the channel owner's cooperation to add the bot — this is not a way to ingest arbitrary public channels without their participation. Message text/media is untrusted input, normalized and deduplicated identically to RSS/API sources before reaching the source inbox.
 
-Each source type is an explicit allowlist entry, not an open-ended discovery mechanism; adding a new source (including a new Telegram channel) is a configuration change reviewed like any other trust boundary.
+Each source type is an explicit allowlist entry, not an open-ended discovery mechanism; adding a new source (including a new Telegram channel) is a configuration change reviewed like any other trust boundary — see [configuration and feature flags](./21-configuration-and-feature-flags.md).
 
 ## Transactional outbox
 

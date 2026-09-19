@@ -16,6 +16,7 @@ This is a capability backlog, not an estimate.
 - Implement Story, StoryRevision, StoryTranslation, Contributor, Category, Tag, Desk and MediaAsset tables.
 - Implement Source/StorySource, Assignment, Comment, Correction, AuditEvent and Outbox tables.
 - Implement CardTemplate and GeneratedCard tables.
+- Implement Configuration and FeatureFlag tables (workflow-transition policy, AI provider/model/budget, rate limits, retention rules, supported locales; see [configuration and feature flags](./21-configuration-and-feature-flags.md)).
 - Add slug/canonical/redirect registry and publication read models.
 
 ## Epic C — Authentication and authorization
@@ -44,6 +45,7 @@ This is a capability backlog, not an estimate.
 - Revision/history and comments panels.
 - Source inbox placeholder and media library, including branded photocard/poster generation from a photo using FactLens templates.
 - Publish/schedule review screen with capability-aware controls.
+- Configuration screen (workflow policy, AI budgets, rate limits, retention rules, feature flags), gated by `config.manage`.
 
 ## Epic G — Advertising module
 
@@ -55,4 +57,4 @@ This is a capability backlog, not an estimate.
 
 ## Recommended sequence
 
-A → B → C → D → E → F, with contract tests and migration fixtures introduced during B rather than postponed. Epic G is an independent commercial domain module; it can proceed in parallel with D/E once B and C land, since it does not extend the editorial workflow. Do not begin public cutover work until D can publish a complete bilingual story, E can invalidate/update derived projections safely, and G's ad-serving/redirect endpoints pass abuse-control review.
+A → B → C → D → E → F, with contract tests and migration fixtures introduced during B rather than postponed. Configuration/FeatureFlag tables (part of B) land before D, since D's workflow-transition policy and E's rate limits/budgets read from them rather than hardcoding values. Epic G is an independent commercial domain module; it can proceed in parallel with D/E once B and C land, since it does not extend the editorial workflow. Do not begin public cutover work until D can publish a complete bilingual story, E can invalidate/update derived projections safely, and G's ad-serving/redirect endpoints pass abuse-control review.
