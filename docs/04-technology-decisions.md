@@ -14,7 +14,7 @@
 | Search | PostgreSQL FTS + `pg_trgm` first | Reduces moving parts and keeps writes transactional. Move to OpenSearch only with measured advanced query/scale requirements. |
 | Media | Cloudflare R2 + CDN/image transforms | Durable object storage, no egress fees when paired with Cloudflare's CDN, and immutable variants. Store metadata/rights in PostgreSQL. |
 | Auth | OIDC provider | Avoid custom password/session security. Evaluate managed provider and self-hosted Keycloak-style option against cost, availability and editorial admin requirements. |
-| AI | Central AI Gateway/module | Provider-neutral calls, budgets, prompt versions, provenance and safety in one place. No direct provider calls from domain modules. |
+| AI | Central AI Gateway/module, Google Gemini as initial provider | Provider-neutral calls, budgets, prompt versions, provenance and safety in one place. No direct provider calls from domain modules. The Gateway's adapter pattern keeps Gemini swappable/addable alongside other providers rather than hard-wired into business logic. |
 | Repo | pnpm + Turborepo-compatible TypeScript monorepo | Shared contracts/config/UI and coordinated changes are valuable. Start with workspace boundaries; add Turborepo caching when build graph justifies it. |
 | Infra | Docker, GitHub Actions, managed services | Fits current deployment skills and keeps operations small. Cloudflare is the confirmed edge/WAF/CDN and object storage provider (R2); choose managed PostgreSQL/Redis first. |
 

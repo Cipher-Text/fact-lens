@@ -24,7 +24,7 @@ flowchart LR
 - Fetch only approved schemes/hosts, apply DNS rebinding/SSRF protections, timeouts, response-size limits and content-type checks.
 - Normalize title, publisher, canonical URL, published time, retrieved time, language and extracted text. Keep raw payload snapshots only under retention/rights policy.
 - Deduplicate first by canonical URL/source GUID, then by normalized title/time and content similarity. Never auto-merge ambiguous stories without review.
-- AI classification, summarization, translation and entity proposals are separate jobs with provenance; a failed proposal cannot block manual editing.
+- AI classification, summarization, translation, rewrite and entity proposals are separate jobs with provenance; a failed proposal cannot block manual editing.
 
 ## Source types
 

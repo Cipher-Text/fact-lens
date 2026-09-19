@@ -8,7 +8,7 @@
 4. **ADR-004: REST-first contracts.** Use OpenAPI/typed DTOs; reserve realtime protocols for measured needs.
 5. **ADR-005: Revisioned editorial model.** Published content points to an approved revision/translation; corrections create new revisions.
 6. **ADR-006: Transactional outbox.** Async consumers never depend on dual writes from a request handler.
-7. **ADR-007: Central AI Gateway.** Provider/model/prompt/cost/provenance policy is centralized and human approval is mandatory.
+7. **ADR-007: Central AI Gateway.** Provider/model/prompt/cost/provenance policy is centralized and human approval is mandatory. Google Gemini is the initial provider, reached only through the Gateway's adapter pattern, never called directly from domain modules.
 8. **ADR-008: Cloudflare R2 plus CDN.** Object storage is separate from database and public delivery is cache-friendly. R2 is confirmed over generic S3; no egress fees when paired with Cloudflare's CDN.
 9. **ADR-009: Capability authorization over role branching.** Roles compose capabilities and scopes.
 

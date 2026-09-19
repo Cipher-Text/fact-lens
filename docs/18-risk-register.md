@@ -9,6 +9,7 @@
 | Timestamp/attribution drift | Trust and audit loss | Preserve source timestamps/legacy IDs; compare exports and display attribution |
 | Workflow too complex for desks | Adoption failure | Phase 1 minimal transitions, capability rules, pilot with editors |
 | AI hallucination/prompt injection | Editorial/reputational harm | Proposal-only policy, provenance, source isolation, human review and audits |
+| AI rewrite insufficiently transformed from source | Copyright/plagiarism exposure, reputational harm | Proposal-only rewrite drafts, mandatory human rewrite/edit before review, retained source attribution, editorial transformation-threshold policy |
 | Queue duplication or stuck jobs | Duplicate posts/distribution | Idempotency keys, leases, retries, dead-letter inspection and alerts |
 | PostgreSQL search bottleneck | Slow newsroom/public search | Index/rank benchmarks, caching, read replica later, OpenSearch trigger |
 | Dual-run divergence | Inconsistent public truth | Read-only old source, reconciliation IDs, controlled delta import and rollback |

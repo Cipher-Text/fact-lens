@@ -38,7 +38,7 @@ erDiagram
 
 ## Later entities
 
-Claims/Evidence, rich Entity resolution, Distribution jobs/connectors, AIRun/AIProposal, analytics facts and source snapshots belong after the basic editorial loop works. Add them as bounded modules, not as mandatory fields on every story.
+Claims/Evidence, rich Entity resolution, Distribution jobs/connectors, AIRun/AIProposal, PromptTemplate (versioned saved prompts referenced by AI use cases; see [AI architecture](./11-ai-architecture.md)), analytics facts and source snapshots belong after the basic editorial loop works. Add them as bounded modules, not as mandatory fields on every story.
 
 Entity types can include PERSON, ORGANIZATION, COMPANY, GOVERNMENT_AGENCY, POLITICAL_PARTY, COUNTRY, LOCATION, EVENT and INSTITUTION. Start with a simple typed entity table and aliases; defer graph algorithms and automatic resolution.
 
