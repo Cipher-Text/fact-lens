@@ -38,9 +38,9 @@ Exit: ingestion is rate-limited/idempotent, AI cannot publish silently, failures
 
 ## Phase 6 — Distribution and analytics
 
-Deliverables: automated distribution of already-generated photocards/posters to social channels, distribution jobs/connectors, publication analytics, advanced campaign analytics/optimization and operational dashboards.
+Deliverables: automated distribution of already-generated photocards/posters to social channels, distribution jobs/connectors, publication analytics, advanced campaign analytics/optimization and operational dashboards. Facebook Page connector: a `distribution.social_post` job publishes already-generated photocards/posters to FactLens's own Facebook Page via the Graph API using a Business Manager System User access token (managed secret, not env-committed, per [configuration and feature flags](./21-configuration-and-feature-flags.md)); a companion `analytics.facebook_sync` job pulls Page- and post-level Insights (reach, reactions, clicks) back for posts FactLens published, checkpointed by post ID/since-timestamp, and rolls them up against the originating Story/GeneratedCard alongside `StoryPerformanceDaily`.
 
-Exit: distribution retries are idempotent and attribution/consent boundaries are documented.
+Exit: distribution retries are idempotent and attribution/consent boundaries are documented; Facebook Insights rollups are linked to their originating Story and gated by the same retention/consent policy as other performance data (open question 9 in [open questions](./19-open-questions.md)).
 
 ## Phase 7 — Advanced discovery
 
