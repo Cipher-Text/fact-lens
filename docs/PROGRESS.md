@@ -6,7 +6,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-05 Header
+- Ticket: FL-06 Hero
 - Status: To do
 - Next action: tajmin types `/ticket`
 
@@ -18,6 +18,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-02 Design foundations | Token CSS copied from the three specs; `next/font` with four families; `[lang]` routes with `src/proxy.ts` (Bangla at `/`, English at `/en`, `fl-lang` cookie); three-state theme switch set before first paint; `bn.ts`/`en.ts` string tables; temporary page `/foundations`. DOC-01 to DOC-07 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-03 Layout parts | `Shell`, `WithRail`, `Wrapper`, `Rail`, `SectionHeading`, `PeerRow`/`PeerCard`, `AdRow` with `AdPlaceholder`; ad tokens in `src/styles/ads.css` (DOC-08); temporary page `/layout-parts`; Playwright at 11 widths. DOC-08, DOC-09, U-06, IMP-08, IMP-09 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-04 Mock content | 52 bilingual stories in `src/content/`, read through `getHomepage(lang, { variant })` with full and sparse versions; category and region labels in the string tables; placeholder SVGs in `public/mock/`; ESLint rule keeps components on `@/content` (DR-01). U-07, IMP-10 to IMP-12 in `docs/prototype-findings.md` |
+| 2026-10-07 | FL-05 Header | Top ad above a sticky top bar (`1fr auto 1fr`); nav row from 1280 that hides items that do not fit; drawer and search dialog as native modal dialogs with keyboard focus handling; one-button theme toggle. DOC-10 to DOC-12, U-08 to U-10, IMP-13 to IMP-17 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -36,6 +37,10 @@ Ideas that are outside the current ticket.
 - FL-04: The placeholder SVGs in `public/mock/` use one fixed neutral gray in both themes. Fine for mock images; real photos replace them.
 - FL-04: Some mock headlines name real countries with invented figures (design-reviewer note on skill rule 2). Make them more generic if the editorial team prefers.
 - FL-04: The `mock-content` skill's `Story` shape has no reading time. `readingMinutes` was added in code (IMP-10). Update the skill if wanted.
+- FL-05: Give the homepage sections the anchor ids that the nav, drawer and Subscribe links use: `category-<id>` (FL-08, FL-09), `regions` and `region-<id>` (FL-11), `newsletter` (FL-09). IMP-14.
+- FL-05: Remove `min-h-dvh` from the placeholder `main` in `src/app/[lang]/page.tsx` in FL-06 (it only lets the page scroll to test the bar).
+- FL-05: The scroll lock (`overflow-hidden` on `html` while a dialog is open) can shift the page by the scrollbar width on systems with classic scrollbars. Add `scrollbar-gutter: stable` if it shows.
+- FL-05: Check the Bangla nav row at 1280 again when the real IA labels arrive (IMP-16).
 
 ## Unresolved design-system items
 
@@ -48,6 +53,9 @@ Ideas that are outside the current ticket.
 | U-05 | Minimum touch target size (no spec value; switches are about 33px) | None yet. Proposed `--target-min` 44px | Open |
 | U-06 | Section heading rule thickness (`src/components/layout/SectionHeading.tsx`) | 1px `border-brand` top border | Open |
 | U-07 | Region list and labels (`src/content/homepage.ts`, `src/i18n/*.ts` `regions`) | Seven working regions; আফ্রিকা has no stories | Open |
+| U-08 | Logo (`src/components/header/SiteHeader.tsx`) | Site name as text, `type-section-title`, `text-brand`; 2.37:1 in dark (logo exempt) | Open |
+| U-09 | Theme control in the bar (`src/components/header/ThemeToggle.tsx`) | One icon button that cycles system, light, dark | Open |
+| U-10 | Drawer and search dialog look (`Drawer.tsx`, `SearchDialog.tsx`) | `surface-elevated` on the `overlay` scrim, no shadow, no radius | Open |
 
 ## Spec issues (DOC-)
 
@@ -64,3 +72,6 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-02 | `color-system.md` COL-13 and 2.8 | DOC-07: COL-13 names ring utilities, 2.8 gives values only; no shared focus CSS, offset color set by hand per surface | Open |
 | 2026-10-07 FL-03 | `spacing-layout-system.md` 9 and 12.2 | DOC-08: Reserved ad heights and creative sizes are only in the Section 9 table; 12.2 has no tokens. Workaround: project file `src/styles/ads.css` (tajmin's choice), imported as a fourth file in `globals.css` | Open |
 | 2026-10-07 FL-03 | `spacing-layout-system.md` 9, 12.3 and 13 | DOC-09: The 336×280 phone creative is wider than the 320 test width, and `.ad-row` has no column template, so the page scrolls sideways. Workaround: `grid-cols-1` on `AdRow`, `max-w-full` on the placeholder | Open |
+| 2026-10-07 FL-05 | `spacing-layout-system.md` 6 | DOC-10: "Logo in the center at every width" does not hold at 320 and 360: the right side (full language name per DR-78, theme button) is wider than the menu button. Logo is off by 30px at 320 and 10px at 360, centered from about 400 | Open |
+| 2026-10-07 FL-05 | `color-system.md` 5, COL-15 | DOC-11: `--shadow` has no `--color-shadow` or shadow-size token, so COL-15 needs a raw Tailwind shadow. Drawer and search dialog have no shadow | Open |
+| 2026-10-07 FL-05 | `spacing-layout-system.md` 10 | DOC-12: With native modal dialogs (top layer), `--z-scrim` and `--z-drawer` are not used | Open |

@@ -16,6 +16,20 @@ export const en: Dictionary = {
     optionLight: "Light",
     optionDark: "Dark",
   },
+  header: {
+    menu: "Menu",
+    closeMenu: "Close menu",
+    drawerNav: "All sections",
+    mainNav: "Main sections",
+    home: "Fact Lens, front page",
+    search: "Search",
+    searchField: "What are you looking for?",
+    searchSubmit: "Search",
+    closeSearch: "Close search",
+    // Mock search (DR-01): the prototype has no results page.
+    searchUnavailable: "This prototype does not show search results.",
+    subscribe: "Subscribe",
+  },
   home: {
     placeholder: "The homepage is being built.",
     foundationsLink: "See the temporary design foundations page",

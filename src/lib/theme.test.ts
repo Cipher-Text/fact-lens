@@ -1,6 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { applyTheme, readThemeChoice, setThemeChoice } from "./theme";
+import {
+  applyTheme,
+  nextThemeChoice,
+  readThemeChoice,
+  setThemeChoice,
+} from "./theme";
 
 function mockSystemDark(dark: boolean) {
   vi.stubGlobal(
@@ -59,5 +64,11 @@ describe("theme", () => {
     setThemeChoice("dark");
     expect(readThemeChoice()).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
+  });
+
+  it("the toggle cycles system, light, dark, then system", () => {
+    expect(nextThemeChoice("system")).toBe("light");
+    expect(nextThemeChoice("light")).toBe("dark");
+    expect(nextThemeChoice("dark")).toBe("system");
   });
 });

@@ -25,7 +25,7 @@ export function LanguageSwitch({ lang, path = "/" }: Props) {
       href={href}
       lang={target}
       hrefLang={target}
-      className="inline-flex px-3 py-2 type-ui-sm text-interactive underline-offset-4 hover:text-interactive-hover hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:text-interactive-pressed"
+      className="inline-flex min-h-11 items-center px-2 type-ui-sm text-interactive underline-offset-4 hover:text-interactive-hover hover:underline focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:text-interactive-pressed"
     >
       {getDictionary(lang).language.other}
     </a>

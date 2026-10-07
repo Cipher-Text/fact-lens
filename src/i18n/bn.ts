@@ -14,6 +14,20 @@ export const bn = {
     optionLight: "লাইট",
     optionDark: "ডার্ক",
   },
+  header: {
+    menu: "মেনু",
+    closeMenu: "মেনু বন্ধ করুন",
+    drawerNav: "সব বিভাগ",
+    mainNav: "প্রধান বিভাগ",
+    home: "ফ্যাক্ট লেন্স, প্রথম পাতা",
+    search: "অনুসন্ধান",
+    searchField: "কী খুঁজছেন?",
+    searchSubmit: "খুঁজুন",
+    closeSearch: "অনুসন্ধান বন্ধ করুন",
+    // Mock search (DR-01): the prototype has no results page.
+    searchUnavailable: "এই প্রোটোটাইপে অনুসন্ধানের ফল দেখানো হয় না।",
+    subscribe: "সাবস্ক্রাইব",
+  },
   home: {
     placeholder: "হোমপেজ তৈরি হচ্ছে।",
     foundationsLink: "ডিজাইন ভিত্তির অস্থায়ী পাতা দেখুন",

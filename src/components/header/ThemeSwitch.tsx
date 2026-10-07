@@ -1,41 +1,16 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-
 import type { Dictionary } from "@/i18n";
-import {
-  THEME_CHANGE_EVENT,
-  THEME_STORAGE_KEY,
-  readThemeChoice,
-  setThemeChoice,
-  type ThemeChoice,
-} from "@/lib/theme";
+import { setThemeChoice, type ThemeChoice } from "@/lib/theme";
 
-function subscribe(onChange: () => void) {
-  const onStorage = (event: StorageEvent) => {
-    if (event.key === THEME_STORAGE_KEY) onChange();
-  };
-  window.addEventListener(THEME_CHANGE_EVENT, onChange);
-  window.addEventListener("storage", onStorage);
-  return () => {
-    window.removeEventListener(THEME_CHANGE_EVENT, onChange);
-    window.removeEventListener("storage", onStorage);
-  };
-}
-
-// The server does not know the stored choice, so it renders "system".
-const getServerChoice = (): ThemeChoice => "system";
+import { useThemeChoice } from "./useThemeChoice";
 
 type Props = { strings: Dictionary["theme"] };
 
 // Three-state theme switch (spacing-layout-system.md Section 6).
 // Neutral treatment until the header is designed (U-02).
 export function ThemeSwitch({ strings }: Props) {
-  const choice = useSyncExternalStore(
-    subscribe,
-    readThemeChoice,
-    getServerChoice,
-  );
+  const choice = useThemeChoice();
 
   const options: { value: ThemeChoice; label: string }[] = [
     { value: "system", label: strings.optionSystem },

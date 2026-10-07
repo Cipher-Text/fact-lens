@@ -60,3 +60,9 @@ export const themeScript = `(function () {
     apply(read());
   });
 })();`;
+
+/** The next choice for the one-button theme toggle: system, light, dark, then system again. */
+export function nextThemeChoice(choice: ThemeChoice): ThemeChoice {
+  const index = themeChoices.indexOf(choice);
+  return themeChoices[(index + 1) % themeChoices.length];
+}
