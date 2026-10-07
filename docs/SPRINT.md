@@ -17,7 +17,9 @@ This is a small sprint for a simple prototype: one homepage, mock data, Bangla a
 
 ## Board
 
-Claude keeps this table current. Status values: To do, In progress, In review, Done.
+Claude keeps this table current. Status values: To do, In progress, In review, Done, Rejected.
+
+**Milestone 2 prototype: finished on 8 October 2026.** tajmin rejected FL-14. The report is `docs/milestone-2-report.md` and the handover note is `docs/HANDOVER.md`.
 
 | Ticket | Title | Status |
 | --- | --- | --- |
@@ -34,7 +36,7 @@ Claude keeps this table current. Status values: To do, In progress, In review, D
 | FL-11 | Regions | Done |
 | FL-12 | Footer | Done |
 | FL-13 | Final check | Done |
-| FL-14 | Preview deploy (optional) | To do |
+| FL-14 | Preview deploy (optional) | Rejected |
 
 ## Every ticket is done when
 
@@ -337,6 +339,8 @@ Run /verify. Then test every case in spacing-layout-system.md Section 13 (all wi
 </details>
 
 ## FL-14 Preview deploy (optional)
+
+> **Rejected on 8 October 2026 (tajmin).** The prototype has too many open findings (`docs/prototype-findings.md`) for a preview link to be useful. No Vercel project was made and nothing was deployed. Do this ticket again in the next milestone, after the fixes.
 
 **Goal:** a preview link that tajmin can share.
 

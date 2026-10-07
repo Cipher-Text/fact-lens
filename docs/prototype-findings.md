@@ -1,8 +1,8 @@
 # Fact Lens Prototype Findings
 
-The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
+The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 2 is closed; the summary is `docs/milestone-2-report.md`. Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-13 (accepted). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 8 October 2026, Milestone 2 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -82,11 +82,11 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
-| IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
+| IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check before the first deploy (FL-14 rejected) |
 | IMP-04 | FL-02 | Theme choice kept in local storage, not a cookie | Low | Closed (no action) |
 | IMP-05 | FL-01 | shadcn `base-nova` preset | Medium | Needs decision before `shadcn add` |
 | IMP-06 | FL-01 | `agentRules: false` in `next.config.ts` | Low | Closed (no action) |
-| IMP-07 | FL-01 | Playwright runs Chromium only | Low | Decide in FL-13 |
+| IMP-07 | FL-01 | Playwright runs Chromium only | Low | Open (not added in FL-13) |
 | IMP-08 | FL-03 | Which creative the ad placeholder shows | Low | Needs confirmation |
 | IMP-09 | FL-03 | Extra layout part `WithRail` | Low | Needs confirmation |
 | IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Needs confirmation |
@@ -585,9 +585,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### IMP-03 Cookie redirect and CDN caching
 
-- **Found:** FL-02 · **Severity:** Medium · **Status:** Check in FL-14
+- **Found:** FL-02 · **Severity:** Medium · **Status:** Check before the first deploy (FL-14 rejected)
 - **Risk:** If a CDN caches the response for `/`, readers can get another reader's language.
-- **Suggested solution:** In the FL-14 preview deploy, test `/` with and without the `fl-lang` cookie. If needed, send `Cache-Control: private, no-store` on the redirect.
+- **Suggested solution:** In the first preview deploy, test `/` with and without the `fl-lang` cookie. If needed, send `Cache-Control: private, no-store` on the redirect.
 
 ### IMP-04 Theme choice kept in local storage, not a cookie
 
@@ -608,8 +608,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### IMP-07 Playwright runs Chromium only
 
-- **Found:** FL-01 · **Severity:** Low · **Status:** Decide in FL-13
-- **Suggested solution:** Add WebKit (Safari on iPhone) in FL-13. It matters most for Bangla text shaping and `text-wrap: balance`.
+- **Found:** FL-01 · **Severity:** Low · **Status:** Open (not added in FL-13)
+- **Suggested solution:** Add WebKit (Safari on iPhone) in the next milestone. It matters most for Bangla text shaping and `text-wrap: balance`.
 
 ### IMP-08 Which creative the ad placeholder shows
 
@@ -810,3 +810,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-11 | DOC-20, DOC-21, U-28, U-29, IMP-27, IMP-28 added. IMP-14 updated (all anchors have targets) |
 | 2026-10-07 | FL-12 | DOC-22, U-30, IMP-29 added |
 | 2026-10-07 | FL-13 | DOC-23, DOC-24, IMP-30 added. Results table with the Section 13 and §9 checks in `docs/PROGRESS.md` |
+| 2026-10-08 | FL-14 | FL-14 rejected; no deploy. Milestone 2 closed. IMP-03 and IMP-07 status updated. Report: `docs/milestone-2-report.md` |
