@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-07 (accepted)
+- Last updated: 7 October 2026, after FL-08 (accepted)
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -42,6 +42,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-14 | FL-06 | Headline links: `ink` or `interactive` | Low | Open |
 | DOC-15 | FL-06 | The 64px lead overlap has no token | Low | Workaround in code |
 | DOC-16 | FL-07 | LAY-12 section-to-ad space on a section with its own background | Low | Workaround in code |
+| DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -59,6 +60,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-15 | FL-07 | Analysis item layout (image-led list) | Low | Open |
 | U-16 | FL-07 | Opinion chip padding and quote icon | Low | Open |
 | U-17 | FL-07 | Padding inside the বিশ্লেষণ ও মতামত background | Low | Open |
+| U-18 | FL-08 | P-2 lead: image and text split from 1280px | Low | Open |
+| U-19 | FL-08 | P-2 rail at 600–1023px | Low | Open |
+| U-20 | FL-08 | Story labels inside a category section | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -81,6 +85,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Needs confirmation |
 | IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Needs confirmation |
 | IMP-22 | FL-07 | Shared `MoreLink` and elevated link classes | Low | Needs confirmation |
+| IMP-23 | FL-08 | P-2 has no "আরও দেখুন" link | Low | Needs confirmation |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -217,6 +222,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Workaround:** `space-module` as margin outside the background, above (after the hero ad row) and below (before its own ad row), set by the page in `src/app/[lang]/page.tsx`. The padding inside the background is a separate gap (U-17).
 - **Suggested solution:** State in 7.4 that P-4 keeps `space-module` outside its background, and give the inner padding (U-17).
 
+### DOC-17 Typography 7.1 has no role for the lead of a category section
+
+- **Found:** FL-08 · **Severity:** Low · **Status:** Open
+- **Source:** `typography-system.md` Section 7.1
+- **Problem:** 7.1 maps "Lead story headline" to `type-story-lead` and "Second-level story in a lead group" to `type-story-title-lg`. The P-2 lead (বাংলাদেশ, ভূরাজনীতি) is the lead of its section, but not the page lead. Either reading fits.
+- **Workaround:** `type-story-title-lg`, so the hero lead stays the largest headline on the page. From 1280px the text column beside the image is about 440–460px wide; `type-story-lead` would be very large there.
+- **Suggested solution:** Add a row "Featured category lead" to 7.1.
+
 ---
 
 ## Design-system gaps (U-)
@@ -343,6 +356,30 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Treatment used:** `space-module` on every side (24 / 32 / 40). The section heading rule and the columns start inside this padding, so their start edge is inset from the other sections' start edge.
 - **Suggested solution:** Add a token such as `--space-panel` to 5.1, or confirm `space-module`.
 
+### U-18 P-2 lead: image and text split from 1280px
+
+- **Found:** FL-08 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/featured/FeaturedLead.tsx`
+- **Gap:** 7.2 and DR-55 put the text beside the image from 1280px, but give no split.
+- **Treatment used:** Two equal columns with `grid-column-gap`, text aligned to the top of the image. Below 1280px the text is under the image with `space-story-media-text`. A lead with no image is text only.
+- **Suggested solution:** Give the split in 7.4 (for example 8 + 4 of the wrapper columns, or 1:1).
+
+### U-19 P-2 rail at 600–1023px
+
+- **Found:** FL-08 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/featured/FeaturedRail.tsx`
+- **Gap:** 7.2 says only "Rail below the wrapper". In one column the rail image would be as wide as the shell (up to 976px), larger than the lead.
+- **Treatment used:** Two columns, like the hero Latest list: the image story on the left over both rows, the two stories on the right with a rule between them. Source order unchanged (LAY-14). One column on phones and in the 304px rail.
+- **Suggested solution:** Confirm, or state the rail layout at 600–1023px in 7.2.
+
+### U-20 Story labels inside a category section
+
+- **Found:** FL-08 · **Severity:** Low · **Status:** Open
+- **Files:** `FeaturedLead.tsx`, `FeaturedRail.tsx`
+- **Gap:** 7.1 gives the category label role, but not whether a story inside its own category section shows it.
+- **Treatment used:** No category label in P-2: the section heading names the category. A breaking story keeps the filled label (COL-11). Rail stories use `type-story-title-sm` (compact card or list) with no summary.
+- **Suggested solution:** Confirm in the component pass (U-02).
+
 ---
 
 ## Implementation choices to confirm (IMP-)
@@ -432,6 +469,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 - **Found:** FL-05 · **Severity:** Low · **Status:** Needs confirmation
 - **Choice:** Category and region pages do not exist (DR-01). Links go to `#category-<id>`, `#regions`, `#region-<id>` and `#newsletter`. FL-06 to FL-11 must give the sections these ids. A drawer link closes the drawer and moves the focus to its target when the target exists; otherwise focus returns to the menu button.
+- **FL-08:** `#category-bangladesh` and `#category-geopolitics` now exist. The header test that used a stand-in target uses the real section. The other categories get ids in FL-09.
 
 ### IMP-15 Search field is `type="text"`, not `type="search"`
 
@@ -480,6 +518,12 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Choice:** The "আরও দেখুন" link is now one component, `src/components/story/MoreLink.tsx`, used by Latest and both P-4 columns. `links.ts` has `headlineLinkElevated` and `textLinkElevated`, with the focus ring offset in `surface-elevated` (COL-13, DOC-07), as `header/classes.ts` already does. The analysis and opinion "more" links go to `/analysis` and `/opinion`, which are 404 until those pages exist (IMP-18).
 - **Suggested solution:** Confirm. Later sections reuse `MoreLink`.
 
+### IMP-23 P-2 has no "আরও দেখুন" link
+
+- **Found:** FL-08 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** 7.2 lists the P-2 content (lead, one image story, two stories) with no "more" link, so none is built. A link to the category page would sit below the last rail story (LAY-18) and lead to a 404 page until category pages exist (IMP-18).
+- **Suggested solution:** Decide whether category sections link to their category page.
+
 ---
 
 ## Kit issues (KIT-)
@@ -520,3 +564,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-05 | DOC-10 to DOC-12, U-08 to U-10, IMP-13 to IMP-17 added. KIT-03 updated |
 | 2026-10-07 | FL-06 | DOC-13 to DOC-15, U-11 to U-14, IMP-18 to IMP-20 added. IMP-11 updated |
 | 2026-10-07 | FL-07 | DOC-16, U-15 to U-17, IMP-21, IMP-22 added. IMP-18 and U-03 updated |
+| 2026-10-07 | FL-08 | DOC-17, U-18 to U-20, IMP-23 added. IMP-14 updated (category anchors now have targets) |

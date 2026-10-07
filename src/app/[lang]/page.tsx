@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
+import { Fragment } from "react";
 
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { AnalysisOpinion } from "@/components/home/analysis-opinion/AnalysisOpinion";
+import { FeaturedCategory } from "@/components/home/featured/FeaturedCategory";
 import { Hero } from "@/components/home/hero/Hero";
 import { AdRow } from "@/components/layout/AdRow";
 import { getHomepage } from "@/content";
@@ -21,6 +23,9 @@ export default async function HomePage({
   const home = getHomepage(lang, {
     variant: content === "sparse" ? "sparse" : "full",
   });
+  const featured = [home.featured.bangladesh, home.featured.geopolitics].filter(
+    (section) => section !== null,
+  );
 
   return (
     <>
@@ -58,6 +63,23 @@ export default async function HomePage({
             <AdRow slot="ad-band" strings={t.ads} />
           </>
         ) : null}
+        {/* P-2 for বাংলাদেশ, then ভূরাজনীতি, each with its ad row (DR-68). */}
+        {featured.map((section, index) => (
+          <Fragment key={section.category}>
+            <FeaturedCategory
+              section={section}
+              t={t}
+              className={cn(
+                // After an ad row: space-module above (LAY-12). First on
+                // the page: main sets space-page-start.
+                (index > 0 || home.hero || home.analysisOpinion) &&
+                  "pt-(--space-module)",
+                "pb-(--space-module)",
+              )}
+            />
+            <AdRow slot="ad-band" strings={t.ads} />
+          </Fragment>
+        ))}
       </main>
     </>
   );

@@ -249,13 +249,7 @@ for (const p of PAGES) {
       const menu = page.getByRole("button", { name: p.menu, exact: true });
       const drawer = page.locator("dialog[data-drawer]");
       await openWithKeyboard(menu, drawer);
-      // The category sections come in FL-06 to FL-09; a stand-in target is added here,
-      // after hydration (the drawer is open), so React does not remove it.
-      await page.evaluate(() => {
-        const section = document.createElement("section");
-        section.id = "category-bangladesh";
-        document.querySelector("main")?.append(section);
-      });
+      // The target is the P-2 বাংলাদেশ section (FL-08).
       await drawer.locator('nav a[href="#category-bangladesh"]').click();
       await expect(drawer).toHaveJSProperty("open", false);
       await expect(page.locator("#category-bangladesh")).toBeFocused();

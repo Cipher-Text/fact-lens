@@ -6,7 +6,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-08 Featured categories
+- Ticket: FL-09 Grouped categories
 - Status: To do
 - Next action: tajmin types `/ticket`
 
@@ -21,6 +21,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-05 Header | Top ad above a sticky top bar (`1fr auto 1fr`); nav row from 1280 that hides items that do not fit; drawer and search dialog as native modal dialogs with keyboard focus handling; one-button theme toggle. DOC-10 to DOC-12, U-08 to U-10, IMP-13 to IMP-17 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-06 Hero | `Hero` with `LeadStory` (64px panel overlap from 768, inset end for the cut corner), two `StoryCard` top stories on a subgrid peer row, `LatestList` rail (2 columns at 600–1023); ad-band after the hero; `?content=sparse`; `formatTime` and `fill` helpers; Playwright at 12 widths. DOC-13 to DOC-15, U-11 to U-14, IMP-18 to IMP-20 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-07 বিশ্লেষণ ও মতামত | `AnalysisOpinion` in the shell on `surface-elevated` (margin outside the background), `AnalysisList` (image beside text) and `OpinionList` (মতামত chip as the column heading, quote icon, author and time), 2 equal columns from 768, one column spans when the other is empty; shared `MoreLink`; elevated link classes for the focus ring offset; Playwright at 13 widths. DOC-16, U-15 to U-17, IMP-21, IMP-22 in `docs/prototype-findings.md` |
+| 2026-10-07 | FL-08 Featured categories | `FeaturedCategory` for বাংলাদেশ and ভূরাজনীতি: `FeaturedLead` (text under the image to 1279, beside it from 1280, DR-55) and `FeaturedRail` (one image story and two stories; 2 columns at 600–1023); wrapper spans the shell with no rail stories; ad-band after each; `category-<id>` anchors; Playwright at 14 widths. DOC-17, U-18 to U-20, IMP-23 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -46,6 +47,7 @@ Ideas that are outside the current ticket.
 - FL-06: The hero `next/image` calls have no `sizes`. The mock SVGs are not optimized, so it has no effect now. Add `sizes` when real photos arrive.
 - FL-07: The analysis thumbnails have no `sizes` either (same as FL-06). Add it with real photos.
 - FL-07: `/analysis` and `/opinion` (the P-4 "more" links) are 404 until those pages exist (IMP-22).
+- FL-08: P-2 has no "আরও দেখুন" link to its category page, because 7.2 lists none (IMP-23).
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
 ## Unresolved design-system items
@@ -69,6 +71,9 @@ Ideas that are outside the current ticket.
 | U-15 | Analysis item layout (`src/components/home/analysis-opinion/AnalysisList.tsx`) | 16:9 image at one third of the column, text beside it, at every width | Open |
 | U-16 | Opinion chip padding and quote icon (`OpinionList.tsx`) | Chip `px-1`, `space-list-item` below; `lucide-react` `Quote` 24px `text-ink-muted` | Open |
 | U-17 | Padding inside the P-4 background (`AnalysisOpinion.tsx`) | `space-module` on every side | Open |
+| U-18 | P-2 lead split from 1280 (`src/components/home/featured/FeaturedLead.tsx`) | Two equal columns, text top-aligned beside the image | Open |
+| U-19 | P-2 rail at 600–1023 (`FeaturedRail.tsx`) | Two columns: image story left over both rows, two stories right | Open |
+| U-20 | Story labels in a category section (`FeaturedLead.tsx`, `FeaturedRail.tsx`) | No category label (the heading names it); breaking label kept; rail in `type-story-title-sm` | Open |
 
 ## Spec issues (DOC-)
 
@@ -92,3 +97,4 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-06 | `color-system.md` COL-05 and 2 | DOC-14: COL-05 says links use `interactive`; headlines use `ink`. A headline link fits both. Built as `ink` with interactive hover and press (U-11) | Open |
 | 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 and 12.2 | DOC-15: The 64px lead overlap has no token. Built with the Tailwind scale (`md:-mt-16`) | Open |
 | 2026-10-07 FL-07 | `spacing-layout-system.md` LAY-12 and 7.4 | DOC-16: LAY-12 puts section-to-ad space on the section, but does not say whether it is inside or outside P-4's own background. Built as margin outside the background | Open |
+| 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |
