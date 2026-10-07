@@ -1,0 +1,274 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Fact Lens Decision Register</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Sans+Bengali:wght@400;600&display=swap" rel="stylesheet">
+<style>  /* Fact Lens tokens, light theme */
+  :root {
+    --background: #FFF9ED; --surface: #FFFCF7; --surface-alt: #F6EEDF;
+    --text-primary: #1F1A17; --text-secondary: #342F2C; --text-muted: #4F4B48;
+    --brand: #993314; --interactive: #993314; --interactive-hover: #7F2A11;
+    --border: #DDD2C4; --border-soft: #EAE1D6; --accent-subtle: #F6E6E0;
+    --error: #B3261E; --success: #1D7248; --warning: #8D5A16;
+    --font-editorial: "Source Serif 4", Georgia, serif;
+    --font-ui: "Plus Jakarta Sans", system-ui, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    color-scheme: light dark;
+  }
+  /* Dark theme (color-system.md v2.0) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #18191E; --surface: #202126; --surface-alt: #27292F;
+      --text-primary: #F5F5F5; --text-secondary: #D0D0D0; --text-muted: #A3A3A3;
+      --interactive: #FC774F; --interactive-hover: #FDA287;
+      --border: #3A3D44; --border-soft: #2D3036; --accent-subtle: #281B18;
+      --error: #E5827B; --success: #60AE7C; --warning: #D59A42;
+    }
+  }
+  :lang(bn) { font-family: "Noto Sans Bengali", var(--font-ui); }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--background); color: var(--text-secondary);
+    font-family: var(--font-ui); font-size: 1rem; line-height: 1.55;
+    font-synthesis: none;
+  }
+  .shell { width: min(100% - 2rem, 60rem); margin-inline: auto; padding-block: 3rem 5rem; }
+  header.masthead { border-bottom: 1px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+  .kicker { font-size: .8125rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); }
+  @media (prefers-color-scheme: dark) { .kicker { color: var(--interactive); } }
+  h1, h2, h3 { font-family: var(--font-editorial); color: var(--text-primary); font-weight: 600; text-wrap: balance; }
+  h1 { font-size: clamp(2.25rem, 1.9rem + 1.6vw, 3.25rem); line-height: 1.06; letter-spacing: -.025em; margin: .4rem 0 .6rem; }
+  h2 { font-size: clamp(1.6rem, 1.45rem + .6vw, 2.1rem); line-height: 1.15; letter-spacing: -.015em; margin: 3.5rem 0 1rem; scroll-margin-top: 1rem; }
+  h2::before { content: ""; display: block; width: 2.5rem; height: 4px; background: var(--brand); margin-bottom: .9rem; }
+  .meta { font-size: .875rem; color: var(--text-muted); }
+  .lead { font-family: var(--font-editorial); font-size: clamp(1.15rem, 1.08rem + .3vw, 1.35rem); line-height: 1.5; color: var(--text-secondary); }
+  p { max-width: 44rem; }
+  a { color: var(--interactive); text-underline-offset: 2px; }
+  a:hover { color: var(--interactive-hover); }
+  a:focus-visible { outline: 2px solid var(--interactive); outline-offset: 2px; border-radius: 2px; }
+  code { font-family: var(--font-mono); font-size: .85em; background: var(--surface-alt); color: var(--text-primary); padding: .1em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+  pre { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; overflow-x: auto; font-size: .875rem; line-height: 1.5; }
+  pre code { background: none; padding: 0; font-size: inherit; }
+  nav.toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; margin: 2rem 0; }
+  nav.toc strong { display: block; font-size: .8125rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: .5rem; }
+  nav.toc ol { margin: 0; padding-left: 1.25rem; columns: 2 16rem; }
+  nav.toc li { margin: .2rem 0; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; }
+  .stat b { display: block; font-family: var(--font-editorial); font-size: 2rem; line-height: 1.1; color: var(--text-primary); font-weight: 600; }
+  .stat span { font-size: .875rem; color: var(--text-muted); }
+  .table-wrap { overflow-x: auto; margin: 1rem 0 1.5rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+  th, td { text-align: left; vertical-align: top; padding: .65rem .8rem; border-bottom: 1px solid var(--border-soft); }
+  th { font-weight: 600; color: var(--text-primary); background: var(--surface-alt); white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; color: var(--error); }
+  .pill { display: inline-block; font-size: .75rem; font-weight: 600; padding: .1rem .5rem; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+  .high { color: var(--success); } .medium { color: var(--warning); } .low, .none { color: var(--error); }
+  td.num.ok { color: var(--success); }
+  h3 { font-size: 1.05rem; margin: 1.75rem 0 .5rem; color: var(--text-primary); }
+  .sw { display: inline-flex; align-items: center; justify-content: center; min-width: 4.5rem; padding: .2rem .5rem; border-radius: 4px; font-size: .8rem; font-weight: 600; border: 1px solid #0003; }
+  ul.checks { list-style: none; padding: 0; }
+  ul.checks li { padding: .6rem 0 .6rem 2rem; border-bottom: 1px solid var(--border-soft); position: relative; max-width: 44rem; }
+  ul.checks li::before { content: ""; position: absolute; left: 0; top: .85rem; width: 1rem; height: 1rem; border: 2px solid var(--text-muted); border-radius: 3px; }
+  .default { color: var(--text-muted); }
+  .note { background: var(--accent-subtle); border-left: 4px solid var(--brand); padding: .9rem 1.1rem; border-radius: 0 8px 8px 0; max-width: 44rem; }
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: .875rem; color: var(--text-muted); }
+  @media print { nav.toc { display: none; } h2 { break-after: avoid; } .table-wrap { overflow: visible; } }
+  .pill.done { color: var(--success); } .pill.open { color: var(--warning); } .pill.track { color: var(--interactive); }
+  td.r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  details.history { margin: 1.5rem 0; border: 1px solid var(--border); border-radius: 8px; padding: .75rem 1rem; background: var(--surface); }
+  details.history summary { cursor: pointer; font-weight: 600; color: var(--text-primary); }
+  h3 { font-family: var(--font-editorial); font-size: 1.3rem; margin: 2rem 0 .5rem; }
+.pill.def { color: var(--text-muted); } .pill.rej { color: var(--error); }
+.phases { display: grid; align-items: start; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; margin: 1.25rem 0 .5rem; }
+.phase { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; border-top: 4px solid var(--border); }
+.phase.doing { border-top-color: var(--interactive); } .phase.done { border-top-color: var(--success); }
+.ph-h { display: flex; gap: .75rem; align-items: flex-start; margin-bottom: .5rem; }
+.ph-n { font-family: var(--font-editorial); font-size: 1.75rem; line-height: 1; color: var(--text-primary); font-weight: 600; }
+.ph-h b { display: block; color: var(--text-primary); line-height: 1.3; }
+.ph-s { font-size: .8rem; color: var(--text-muted); }
+.phase ul { list-style: none; padding: 0; margin: 0; font-size: .875rem; }
+.phase li { padding: .25rem 0; display: flex; gap: .4rem; }
+.phase li.done span:first-child { color: var(--success); } .phase li.doing span:first-child { color: var(--interactive); }
+.phase li.blocked span:first-child { color: var(--error); font-weight: 700; } .phase li.todo { color: var(--text-muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.filters { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 0; }
+.filters button { font: inherit; font-size: .85rem; padding: .35rem .8rem; min-height: 44px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-primary); cursor: pointer; }
+.filters button[aria-pressed="true"] { background: var(--interactive); border-color: var(--interactive); color: var(--background); }
+.filters button:focus-visible { outline: 2px solid var(--interactive); outline-offset: 2px; }
+#reg td:first-child, #reg td:nth-child(2) { white-space: nowrap; }
+
+.bar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin:16px 0 8px;border:1px solid var(--border)}
+.bar span{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:.875rem;color:var(--text-secondary);margin-bottom:24px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+figure.viz{margin:20px 0 28px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:10px}
+figure.viz figcaption{font-size:.9rem;color:var(--text-secondary);margin-top:12px;line-height:1.5}
+figure.viz{overflow-x:auto}
+figure.viz svg{display:block;width:100%;min-width:640px;height:auto;font-family:var(--font-ui)}
+.viz .box{fill:var(--surface-alt);stroke:var(--border)}
+.viz .ad{fill:var(--accent-subtle);stroke:var(--border)}
+.viz .brand{fill:var(--brand)}
+.viz .hl{fill:none;stroke:#F2C14E;stroke-width:3}
+.viz .ic{fill:none;stroke:var(--text-primary);stroke-width:2;stroke-linecap:round}
+.viz .icf{fill:var(--text-primary)}
+.viz .btn{fill:var(--surface);stroke:var(--border)}
+.viz text{fill:var(--text-primary);font-size:13px}
+.viz text.s{fill:var(--text-muted);font-size:11px}
+.viz text.w{fill:#FFF9ED;font-size:13px;font-weight:700}
+.viz text.h{font-weight:700;font-size:14px}
+.opts{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.opts>div{border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:.9rem;line-height:1.5}
+.opts b{display:block;margin-bottom:4px}
+</style></head><body><main class="shell">
+<header class="masthead"><div class="kicker">Fact Lens · Milestone 1 · Phase 0</div><h1>Decision register</h1>
+<div class="meta">Draft 2 · 6 October 2026 · 79 decisions · Generated from <code>tools/scope-audit/gen_report.py</code></div>
+<p class="lead">Every product, design and process decision so far, grouped by area. Drawings show the decisions that are easier to see than to read. The search entry (S-16) is decided and drawn under IA.</p></header>
+<div class="bar" role="img" aria-label="69 Approved, 0 Open, 3 Hypothesis, 2 Deferred, 5 Rejected"><span style="width:87.34%;background:var(--success)"></span><span style="width:3.80%;background:var(--interactive)"></span><span style="width:2.53%;background:var(--text-muted)"></span><span style="width:6.33%;background:var(--error)"></span></div>
+<div class="legend"><span><i style="background:var(--success)"></i>Approved 69</span><span><i style="background:var(--warning)"></i>Open 0</span><span><i style="background:var(--interactive)"></i>Hypothesis 3</span><span><i style="background:var(--text-muted)"></i>Deferred 2</span><span><i style="background:var(--error)"></i>Rejected 5</span></div>
+<p class="meta">Approved = accepted. Hypothesis = to test in the prototype. Open = needs a decision. Deferred = outside this milestone. Rejected = considered and not selected. Nothing is tested in a browser yet; the prototype adds a "Validated" column.</p>
+<nav class="toc"><strong>Areas</strong><ol><li><a href="#a-product">Product</a> (3)</li><li><a href="#a-process">Process</a> (13)</li><li><a href="#a-stack">Stack</a> (1)</li><li><a href="#a-ia">IA</a> (5)</li><li><a href="#a-color">Color</a> (8)</li><li><a href="#a-type">Type</a> (10)</li><li><a href="#a-layout">Layout</a> (26)</li><li><a href="#a-ads">Ads</a> (12)</li><li><a href="#a-scope">Scope</a> (1)</li></ol></nav>
+<div class="filters" role="group" aria-label="Filter by status"><button type="button" aria-pressed="true" data-f="all">All 79</button><button type="button" aria-pressed="false" data-f="Approved">Approved 69</button><button type="button" aria-pressed="false" data-f="Open">Open 0</button><button type="button" aria-pressed="false" data-f="Hypothesis">Hypothesis 3</button><button type="button" aria-pressed="false" data-f="Deferred">Deferred 2</button><button type="button" aria-pressed="false" data-f="Rejected">Rejected 5</button></div>
+<h2 id="a-product">Product</h2>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Approved"><td>DR-01</td><td><a href="../audit/fact-lens-stack-audit.html#STK-07">STK-07</a></td><td>Build the frontend first. Connect the existing backend later. The prototype uses mock data.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>Plan, memory</td></tr>
+<tr data-s="Approved"><td>DR-02</td><td><a href="../audit/fact-lens-accessibility-audit.html#A11Y-09">A11Y-09</a></td><td>Publish in Bangla and English. Both languages use the same layout and roles.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>Guideline §2, TYP-03, LAY-16</td></tr>
+<tr data-s="Approved"><td>DR-03</td><td><a href="../audit/fact-lens-ia-audit.html#IA-01">IA-01</a></td><td>Fact Lens has no fact-checking product. Normal verification is a journalistic task.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>Guideline §2, memory</td></tr>
+</tbody></table></div>
+<h2 id="a-process">Process</h2>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Approved"><td>DR-04</td><td><a href="../audit/fact-lens-research-audit.html#RES-04">RES-04</a></td><td>Milestone 1 is the complete blueprint. Milestone 2 builds the site, pushes it to GitHub, hosts it (Vercel or similar) and tests it. Milestone 3 replaces the codebase of the existing Fact Lens website.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Plan; tajmin 6 Oct</td></tr>
+<tr data-s="Approved"><td>DR-05</td><td><a href="../audit/fact-lens-docs-audit.html#DOC-07">DOC-07</a></td><td>The work is a public portfolio piece, so every doc must be easy for people to read.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>Plan</td></tr>
+<tr data-s="Approved"><td>DR-06</td><td>–</td><td>Write docs in ASD-STE100 with stable rule IDs; state each value once.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>COL, TYP, LAY docs</td></tr>
+<tr data-s="Approved"><td>DR-07</td><td>–</td><td>Deliverables read as the current spec, with no before/after or &quot;updated&quot; wording.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>Memory</td></tr>
+<tr data-s="Approved"><td>DR-08</td><td><a href="../audit/fact-lens-docs-audit.html#DOC-08">DOC-08</a></td><td>Keep one canonical audit file and update it in place.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>audit/fact-lens-design-system-audit.html</td></tr>
+<tr data-s="Approved"><td>DR-09</td><td>–</td><td>Deliver audits and issue lists as visual HTML files.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>Memory</td></tr>
+<tr data-s="Approved"><td>DR-10</td><td>–</td><td>Work on the homepage first. Article and other-page issues wait.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>Audits (&quot;Affects&quot; column)</td></tr>
+<tr data-s="Approved"><td>DR-11</td><td>–</td><td>Wireframes are placement guides. Do not take measurements from them.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Layout v2.0 intro</td></tr>
+<tr data-s="Deferred"><td>DR-12</td><td><a href="../audit/fact-lens-stack-audit.html#STK-02">STK-02</a></td><td>tajmin creates the GitHub repo later, when Milestone 2 needs it.</td><td><span class="pill def">Deferred</span></td><td class="r">10-04</td><td>Memory</td></tr>
+<tr data-s="Approved"><td>DR-13</td><td>–</td><td>One topic per thread; save decisions as you go; hand off with a note.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Project instructions</td></tr>
+<tr data-s="Approved"><td>DR-14</td><td><a href="../audit/fact-lens-docs-audit.html#DOC-04">DOC-04</a></td><td>Milestone 1 plan: phases 0 to 7 from the guideline, with audit fixes, stack, Storybook, agent playbook and a research track added. Revised for M2 and M3 (DR-04); M3 includes connecting the existing backend.</td><td><span class="pill done">Approved</span></td><td class="r">10-07</td><td>Plan doc; tajmin 7 Oct</td></tr>
+<tr data-s="Approved"><td>DR-16</td><td>–</td><td>tajmin draws the wireframes; the prototype is built in the browser.</td><td><span class="pill done">Approved</span></td><td class="r">10-07</td><td>Plan approved; register review 7 Oct</td></tr>
+<tr data-s="Approved"><td>DR-79</td><td><a href="../audit/fact-lens-research-audit.html#RES-01">RES-01</a>, <a href="../audit/fact-lens-research-audit.html#RES-02">RES-02</a>, <a href="../audit/fact-lens-research-audit.html#RES-03">RES-03</a>, <a href="../audit/fact-lens-research-audit.html#RES-04">RES-04</a></td><td>Research track in Milestone 1: journalism, marketing and product studies beside phases 0 to 2; post-launch research in Milestone 3.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>RES-01..04; tajmin 6 Oct</td></tr>
+</tbody></table></div>
+<h2 id="a-stack">Stack</h2>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Approved"><td>DR-15</td><td><a href="../audit/fact-lens-stack-audit.html#STK-01">STK-01</a>, <a href="../audit/fact-lens-stack-audit.html#STK-03">STK-03</a></td><td>Next.js 16 App Router, React 19, TypeScript strict, Tailwind CSS 4, shadcn/ui, next/font, pnpm; Storybook from phase 4.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>STK-01 (tajmin 22:36)</td></tr>
+</tbody></table></div>
+<h2 id="a-ia">IA</h2>
+<h3 id="s16">Search entry (S-16, DR-21): decided 6 October</h3><figure class="viz"><svg viewBox="0 0 1000 420" role="img" aria-label="Top bar at phone, tablet and desktop widths: on phones menu left, logo center, language and theme right, search in the drawer; from 768px menu and search left, logo center, language, theme and Subscribe right">
+<text class="h" x="0" y="18">Phone · below 768px</text><text class="s" x="0" y="34">No search button in the bar</text>
+<rect class="brand" x="0" y="46" width="320" height="56" rx="4"/>
+<rect class="btn" x="16" y="54" width="40" height="40" rx="6"/><line class="ic" x1="28" y1="68" x2="44" y2="68"/><line class="ic" x1="28" y1="74" x2="44" y2="74"/><line class="ic" x1="28" y1="80" x2="44" y2="80"/>
+<text class="w" x="160" y="79" text-anchor="middle">Fact Lens</text>
+<rect class="btn" x="220" y="54" width="40" height="40" rx="6"/><text x="240" y="79" text-anchor="middle">EN</text><rect class="btn" x="264" y="54" width="40" height="40" rx="6"/><circle class="ic" cx="284" cy="74" r="8"/><path class="icf" d="M284 66a8 8 0 0 1 0 16z"/>
+<rect class="box" x="0" y="110" width="200" height="150" rx="4"/>
+<rect class="btn" x="12" y="122" width="176" height="36" rx="6"/><circle class="ic" cx="30" cy="138" r="6"/><line class="ic" x1="35" y1="143" x2="40" y2="148"/><text class="s" x="52" y="145">Search</text>
+<rect class="hl" x="9" y="119" width="182" height="42" rx="8"/>
+<text class="s" x="12" y="182">Menu drawer (from the left)</text><text class="s" x="12" y="200">Search field at the top,</text><text class="s" x="12" y="218">then the sections</text>
+<text class="s" x="210" y="130">Two steps:</text><text class="s" x="210" y="148">menu, then search</text>
+<text class="h" x="380" y="18">Tablet · from 768px</text><text class="s" x="380" y="34">Search button beside the menu; Subscribe on the right</text>
+<rect class="brand" x="380" y="46" width="620" height="56" rx="4"/>
+<rect class="btn" x="404" y="54" width="40" height="40" rx="6"/><line class="ic" x1="416" y1="68" x2="432" y2="68"/><line class="ic" x1="416" y1="74" x2="432" y2="74"/><line class="ic" x1="416" y1="80" x2="432" y2="80"/><rect class="btn" x="448" y="54" width="40" height="40" rx="6"/><circle class="ic" cx="466" cy="72" r="6"/><line class="ic" x1="471" y1="77" x2="476" y2="82"/><rect class="hl" x="445" y="51" width="46" height="46" rx="8"/>
+<text class="w" x="690" y="79" text-anchor="middle">Fact Lens</text>
+<rect class="btn" x="812" y="54" width="40" height="40" rx="6"/><text x="832" y="79" text-anchor="middle">EN</text><rect class="btn" x="856" y="54" width="40" height="40" rx="6"/><circle class="ic" cx="876" cy="74" r="8"/><path class="icf" d="M876 66a8 8 0 0 1 0 16z"/>
+<rect class="btn" x="900" y="54" width="84" height="40" rx="6"/><text x="942" y="79" text-anchor="middle">Subscribe</text>
+<text class="h" x="0" y="290">Desktop · from 1024px</text><text class="s" x="0" y="306">Same pattern; the nav row sits below the bar from 1280px</text>
+<rect class="brand" x="0" y="318" width="1000" height="64" rx="4"/>
+<rect class="btn" x="24" y="330" width="40" height="40" rx="6"/><line class="ic" x1="36" y1="344" x2="52" y2="344"/><line class="ic" x1="36" y1="350" x2="52" y2="350"/><line class="ic" x1="36" y1="356" x2="52" y2="356"/><rect class="btn" x="72" y="330" width="40" height="40" rx="6"/><circle class="ic" cx="90" cy="348" r="6"/><line class="ic" x1="95" y1="353" x2="100" y2="358"/><rect class="hl" x="69" y="327" width="46" height="46" rx="8"/>
+<text class="w" x="500" y="355" text-anchor="middle">Fact Lens</text>
+<rect class="btn" x="780" y="330" width="40" height="40" rx="6"/><text x="800" y="355" text-anchor="middle">EN</text><rect class="btn" x="828" y="330" width="40" height="40" rx="6"/><circle class="ic" cx="848" cy="350" r="8"/><path class="icf" d="M848 342a8 8 0 0 1 0 16z"/>
+<rect class="btn" x="880" y="330" width="96" height="40" rx="6"/><text x="928" y="355" text-anchor="middle">Subscribe</text>
+<text class="s" x="0" y="406">The search button opens a search dialog: one input, focus moves into it, Escape closes it and focus returns to the button. Yellow outline = search entry.</text>
+</svg><figcaption>tajmin, 6 October. Phones: menu left, logo center, language and theme right; no search button, search is the first item in the menu drawer (two steps). From 768px: menu and search buttons left, logo center, language, theme and Subscribe right; the search button opens a search dialog.</figcaption></figure>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Approved"><td>DR-17</td><td><a href="../audit/fact-lens-ia-audit.html#IA-03">IA-03</a></td><td>Bangla at the root URL, English under /en. The site remembers the reader’s choice. No redirect by browser language.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>IA-03</td></tr>
+<tr data-s="Approved"><td>DR-18</td><td><a href="../audit/fact-lens-ia-audit.html#IA-01">IA-01</a></td><td>Remove ফ্যাক্টচেক from the navigation. It is not a tag either.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>IA-01; main audit conflict 5</td></tr>
+<tr data-s="Approved"><td>DR-19</td><td><a href="../audit/fact-lens-ia-audit.html#IA-02">IA-02</a></td><td>চীন is not in the navigation. It is an entry under the অঞ্চল (Regions) category, with its own landing page later, like a category page.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>IA-02; main audit conflict 7</td></tr>
+<tr data-s="Rejected"><td>DR-20</td><td><a href="../audit/fact-lens-ia-audit.html#IA-12">IA-12</a>, <a href="../audit/fact-lens-scope-audit.html">S-23</a></td><td>Editor&#x27;s Picks module.</td><td><span class="pill rej">Rejected</span></td><td class="r">10-06</td><td>S-23; guideline §2</td></tr>
+<tr data-s="Approved"><td>DR-21</td><td><a href="../audit/fact-lens-ia-audit.html#IA-09">IA-09</a>, <a href="../audit/fact-lens-layout-audit.html#L-31">L-31</a>, <a href="../audit/fact-lens-scope-audit.html">S-16</a></td><td>Search entry: phones have no search button; search is the first item in the menu drawer. From 768px the search button sits beside the menu button on the left and opens a search dialog. Bar from 768px: menu and search left, logo center, language, theme and Subscribe right.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>S-16 (corrected 20:29), main audit conflict 17, layout L-31</td></tr>
+</tbody></table></div>
+<h2 id="a-color">Color</h2>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Approved"><td>DR-22</td><td><a href="../audit/fact-lens-accessibility-audit.html#A11Y-01">A11Y-01</a></td><td>Fix contrast by tweaking values, not by a new palette.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>color-system.md</td></tr>
+<tr data-s="Approved"><td>DR-23</td><td><a href="../audit/fact-lens-accessibility-audit.html#A11Y-01">A11Y-01</a></td><td>Color v2.0 values: every text pair passes AA on every surface.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>color-system.md §2–3</td></tr>
+<tr data-s="Approved"><td>DR-24</td><td><a href="../audit/fact-lens-accessibility-audit.html#A11Y-01">A11Y-01</a></td><td>Dark ink steps #F5F5F5 / #D0D0D0 / #A3A3A3.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>color-system.md §2.2</td></tr>
+<tr data-s="Approved"><td>DR-25</td><td><a href="../audit/fact-lens-docs-audit.html#DOC-14">DOC-14</a>, <a href="../audit/fact-lens-docs-audit.html#DOC-15">DOC-15</a>, <a href="../audit/fact-lens-design-system-audit.html#typography">T-05</a></td><td>Links in article text are underlined and keep the paragraph weight (no 600). Hover changes the color only.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>COL-06, COL-07, TYP-16</td></tr>
+<tr data-s="Approved"><td>DR-26</td><td>–</td><td>Status tints, live label, selection, overlay, shadow and skeleton tokens.</td><td><span class="pill done">Approved</span></td><td class="r">10-04</td><td>color-system.md §2.6–2.7</td></tr>
+<tr data-s="Hypothesis"><td>DR-27</td><td><a href="../audit/fact-lens-brand-audit.html#BRD-04">BRD-04</a></td><td>Some colors look off; review them after a few prototype rounds.</td><td><span class="pill track">Hypothesis</span></td><td class="r">10-05</td><td>color-system.md §6</td></tr>
+<tr data-s="Approved"><td>DR-28</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-06">ADS-06</a></td><td>Ad rows and the ad-inset box use surface-alt; the label uses ink-muted.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Ad proposal item 8</td></tr>
+<tr data-s="Approved"><td>DR-76</td><td><a href="../audit/fact-lens-brand-audit.html#BRD-02">BRD-02</a></td><td>বিশ্লেষণ ও মতামত has the shell width (1280px on FHD), not full width. Its background is surface-elevated, inside the shell, different from the page and from the ad rows.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY P-4; BRD-02</td></tr>
+</tbody></table></div>
+<h2 id="a-type">Type</h2>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Approved"><td>DR-29</td><td><a href="../audit/fact-lens-design-system-audit.html#typography">T-16</a></td><td>Source Serif 4 for English editorial text (replaces Newsreader).</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>typography-system.md §2</td></tr>
+<tr data-s="Approved"><td>DR-30</td><td><a href="../audit/fact-lens-design-system-audit.html#typography">T-15</a></td><td>Noto Sans Bengali from Google Fonts for Bangla interface text.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>typography-system.md §2</td></tr>
+<tr data-s="Approved"><td>DR-31</td><td><a href="../audit/fact-lens-design-system-audit.html#typography">T-03</a></td><td>Reader sizes A 1, A+ 1.2, A++ 1.4; no A−.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>typography-system.md §4</td></tr>
+<tr data-s="Approved"><td>DR-32</td><td><a href="../audit/fact-lens-design-system-audit.html#typography">T-10</a></td><td>The reader size scales all article-body text. Title, deck, metadata and interface stay fixed.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>TYP-15</td></tr>
+<tr data-s="Approved"><td>DR-33</td><td><a href="../audit/fact-lens-design-system-audit.html#typography">T-01</a>, <a href="../audit/fact-lens-design-system-audit.html#typography">T-16</a></td><td>All typography fixes T-01 to T-16.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>typography-system.md v2.0</td></tr>
+<tr data-s="Hypothesis"><td>DR-34</td><td><a href="../audit/fact-lens-design-system-audit.html#typography">T-21</a></td><td>Article title looser and wider; Bangla body line height 1.70; Bangla small text 15px.</td><td><span class="pill track">Hypothesis</span></td><td class="r">10-05</td><td>typography-system.md §9</td></tr>
+<tr data-s="Approved"><td>DR-36</td><td><a href="../audit/fact-lens-design-system-audit.html#typography">T-23</a>, <a href="../audit/fact-lens-design-system-audit.html#typography">T-31</a></td><td>Homepage role map and new type-rank role (T-23 to T-31).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>typography-system.md v2.2 §7.1</td></tr>
+<tr data-s="Approved"><td>DR-77</td><td><a href="../audit/fact-lens-content-audit.html#CNT-07">CNT-07</a>, <a href="../audit/fact-lens-design-system-audit.html#typography">T-26</a></td><td>Chip on the opinion column only, plain, no link; no chip on analysis. &quot;আরও দেখুন&quot; sits below each block everywhere (T-26).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY-18</td></tr>
+<tr data-s="Approved"><td>DR-78</td><td><a href="../audit/fact-lens-content-audit.html#CNT-10">CNT-10</a>, <a href="../audit/fact-lens-design-system-audit.html#typography">T-27</a></td><td>Bangla pages show only Bangla interface text; the language switch reads &quot;English&quot; (T-27).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Main audit T-27</td></tr>
+<tr data-s="Rejected"><td>DR-75</td><td><a href="../audit/fact-lens-design-system-audit.html#typography">T-03</a>, <a href="../audit/fact-lens-design-system-audit.html#typography">T-15</a>, <a href="../audit/fact-lens-design-system-audit.html#typography">T-16</a></td><td>Newsreader, Noto Sans Bengali UI, the A− step.</td><td><span class="pill rej">Rejected</span></td><td class="r">10-05</td><td>DR-29 to DR-31</td></tr>
+</tbody></table></div>
+<h2 id="a-layout">Layout</h2>
+<figure class="viz"><svg viewBox="0 0 1000 250" role="img" aria-label="Hero wrapper and fixed 304px rail at three widths">
+<text class="h" x="0" y="22">1024px</text>
+<rect class="box" x="0" y="30" width="506.25" height="44" rx="4"/><text class="" x="253.125" y="56.0" text-anchor="middle">Wrapper · lead + 2 top stories · 648px</text>
+<rect class="ad" x="525.0" y="30" width="237.5" height="44" rx="4"/><text class="" x="643.75" y="56.0" text-anchor="middle">Rail · Latest · 304px</text>
+<text class="h" x="0" y="100">1280px</text>
+<rect class="box" x="0" y="108" width="706.25" height="44" rx="4"/><text class="" x="353.125" y="134.0" text-anchor="middle">Wrapper · lead + 2 top stories · 904px</text>
+<rect class="ad" x="725.0" y="108" width="237.5" height="44" rx="4"/><text class="" x="843.75" y="134.0" text-anchor="middle">Rail · Latest · 304px</text>
+<text class="h" x="0" y="178">1366px and up</text>
+<rect class="box" x="0" y="186" width="743.75" height="44" rx="4"/><text class="" x="371.875" y="212.0" text-anchor="middle">Wrapper · lead + 2 top stories · 952px</text>
+<rect class="ad" x="762.5" y="186" width="237.5" height="44" rx="4"/><text class="" x="881.25" y="212.0" text-anchor="middle">Rail · Latest · 304px</text>
+</svg><figcaption>DR-35, DR-39: the first prototype uses only the fixed 304px rail. The wrapper takes the rest of the shell. Below 1024px the rail stacks under the wrapper at full width.</figcaption></figure><figure class="viz"><svg viewBox="0 0 1000 446" role="img" aria-label="Homepage section order with full-width ad bands"><rect class="ad" x="0" y="0" width="1000" height="34" rx="4"/><text class="" x="500.0" y="21.0" text-anchor="middle">Top ad · 970×250 · above the masthead</text><rect class="brand" x="120" y="40" width="760" height="26" rx="4"/><text class="w" x="500.0" y="57.0" text-anchor="middle">Top bar + nav row (sticky)</text><rect class="box" x="120" y="72" width="760" height="44" rx="4"/><text class="" x="500.0" y="98.0" text-anchor="middle">Hero · wrapper + 304px rail</text><rect class="ad" x="0" y="122" width="1000" height="20" rx="4"/><text class="" x="500.0" y="136.0" text-anchor="middle">Ad band</text><rect class="box" x="120" y="148" width="760" height="34" rx="4"/><text class="" x="500.0" y="169.0" text-anchor="middle">বিশ্লেষণ ও মতামত · 2 columns · own background</text><rect class="ad" x="0" y="188" width="1000" height="20" rx="4"/><text class="" x="500.0" y="202.0" text-anchor="middle">Ad band</text><rect class="box" x="120" y="214" width="760" height="34" rx="4"/><text class="" x="500.0" y="235.0" text-anchor="middle">Featured categories · wrapper + rail</text><rect class="ad" x="0" y="254" width="1000" height="20" rx="4"/><text class="" x="500.0" y="268.0" text-anchor="middle">Ad band after each</text><rect class="box" x="120" y="280" width="760" height="40" rx="4"/><text class="" x="500.0" y="304.0" text-anchor="middle">Grouped categories · rows of 2 · ad-inset between rows · newsletter + poll rail</text><rect class="box" x="120" y="326" width="760" height="28" rx="4"/><text class="" x="500.0" y="344.0" text-anchor="middle">Most read · top 5</text><rect class="ad" x="0" y="360" width="1000" height="20" rx="4"/><text class="" x="500.0" y="374.0" text-anchor="middle">Ad band</text><rect class="box" x="120" y="386" width="760" height="26" rx="4"/><text class="" x="500.0" y="403.0" text-anchor="middle">Regions slider</text><rect class="box" x="120" y="418" width="760" height="22" rx="4"/><text class="" x="500.0" y="433.0" text-anchor="middle">Footer (open)</text></svg><figcaption>DR-58, DR-68: homepage order from wireframe V2. Ad bands span the full viewport; editorial sections sit in the shell. Two ad rows never touch.</figcaption></figure>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Hypothesis"><td>DR-35</td><td><a href="../audit/fact-lens-scope-audit.html">S-15</a></td><td>Hero 8+4 variant (411px rail). The first prototype uses only the fixed 304px rail. Test 8+4 in a later prototype if 304px looks too narrow.</td><td><span class="pill track">Hypothesis</span></td><td class="r">10-06</td><td>S-15; LAY-05</td></tr>
+<tr data-s="Approved"><td>DR-37</td><td><a href="../audit/fact-lens-layout-audit.html#L-24">L-24</a></td><td>Breakpoints phone, 600, 768, 1024, 1280; gutter 16px, then 24px from 600px.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>LAY §3</td></tr>
+<tr data-s="Approved"><td>DR-38</td><td><a href="../audit/fact-lens-layout-audit.html#L-07">L-07</a></td><td>The shell is 1280px on FHD. Nothing changes from 1366px. No 2xl tier.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>LAY-06</td></tr>
+<tr data-s="Approved"><td>DR-39</td><td><a href="../audit/fact-lens-layout-audit.html#L-06">L-06</a>, <a href="../audit/fact-lens-layout-audit.html#L-11">L-11</a>, <a href="../audit/fact-lens-layout-audit.html#L-23">L-23</a></td><td>Hero = wrapper (lead + 2 top stories) + rail (Latest, 5–6 items). Fixed 304px rail beside the wrapper from 1024px; below the wrapper under 1024px.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>LAY-05, LAY §7</td></tr>
+<tr data-s="Approved"><td>DR-40</td><td><a href="../audit/fact-lens-layout-audit.html#L-04">L-04</a></td><td>Layout owns container widths. Typography owns line length caps, in rem.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>LAY-04, typography §5</td></tr>
+<tr data-s="Approved"><td>DR-41</td><td><a href="../audit/fact-lens-layout-audit.html#L-08">L-08</a></td><td>Sticky top bar; nav row at shell width only when all items fit (from 1280px); menu button on the left at all widths opens a full-height drawer from the left; no &quot;More&quot;.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>LAY §6</td></tr>
+<tr data-s="Approved"><td>DR-42</td><td><a href="../audit/fact-lens-layout-audit.html#L-08">L-08</a>, <a href="../audit/fact-lens-layout-audit.html#L-31">L-31</a></td><td>Phone header: menu left, logo center, language and theme right.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §6</td></tr>
+<tr data-s="Approved"><td>DR-43</td><td><a href="../audit/fact-lens-layout-audit.html#L-31">L-31</a></td><td>Header (L-31): one top bar at every width (menu left, logo center, language and theme right), Subscribe from 768px, no sub-navigation, 3-state theme switch. The search button is DR-21.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Layout v2.2, L-31</td></tr>
+<tr data-s="Approved"><td>DR-44</td><td><a href="../audit/fact-lens-layout-audit.html#L-09">L-09</a></td><td>Homepage story rows: 1, then 2 from 600px. No row has 4 story cards (Most read is a numbered list in 4 columns, DR-51). The hero has two top-story cards. Other pages: 3 from 1024px.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY-07</td></tr>
+<tr data-s="Approved"><td>DR-45</td><td><a href="../audit/fact-lens-layout-audit.html#L-09">L-09</a></td><td>Spacing token set (L-09).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §5</td></tr>
+<tr data-s="Approved"><td>DR-46</td><td><a href="../audit/fact-lens-layout-audit.html#L-12">L-12</a></td><td>One shell wraps every homepage section.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>LAY-03</td></tr>
+<tr data-s="Approved"><td>DR-47</td><td><a href="../audit/fact-lens-layout-audit.html#L-27">L-27</a></td><td>Several editorial containers and one separate full-width ad container. No breakouts, no vw.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §2</td></tr>
+<tr data-s="Approved"><td>DR-48</td><td><a href="../audit/fact-lens-layout-audit.html#L-14">L-14</a></td><td>Peer rows: one card variant per row, aligned with subgrid.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY-08</td></tr>
+<tr data-s="Approved"><td>DR-49</td><td><a href="../audit/fact-lens-layout-audit.html#L-25">L-25</a></td><td>Section patterns P-1 to P-5 and P-3b. Featured and grouped categories use the hero wrapper + rail.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §7.2</td></tr>
+<tr data-s="Approved"><td>DR-50</td><td><a href="../audit/fact-lens-layout-audit.html#L-25">L-25</a>, <a href="../audit/fact-lens-layout-audit.html#L-36">L-36</a></td><td>Sparse rules: odd last category keeps its size; Most read shows what exists; a hidden section hides its ad.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §7.3</td></tr>
+<tr data-s="Approved"><td>DR-51</td><td><a href="../audit/fact-lens-layout-audit.html#L-25">L-25</a></td><td>Most read: top 5, 4 per row with item 5 alone; 2 per row from 600px; 1 per row on phones.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §7.2</td></tr>
+<tr data-s="Approved"><td>DR-52</td><td>–</td><td>Section title বিশ্লেষণ ও মতামত. Shell width, 2 equal columns, no rail.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY P-4</td></tr>
+<tr data-s="Approved"><td>DR-53</td><td><a href="../audit/fact-lens-layout-audit.html#L-25">L-25</a></td><td>Grouped categories: one section, rows of 2, an ad between rows, rail with newsletter and daily poll (below the block on phones).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §7.2</td></tr>
+<tr data-s="Approved"><td>DR-54</td><td><a href="../audit/fact-lens-layout-audit.html#L-38">L-38</a></td><td>Regions on the homepage as a slider: 4 in view, previous/next, subtle animation; scrollable chips on phones. Rules open (L-38).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §7.2</td></tr>
+<tr data-s="Approved"><td>DR-55</td><td><a href="../audit/fact-lens-layout-audit.html#L-29">L-29</a></td><td>Featured category: text under the image from 1024px to 1279px.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §7.2</td></tr>
+<tr data-s="Approved"><td>DR-56</td><td><a href="../audit/fact-lens-layout-audit.html#L-26">L-26</a></td><td>Layers: content 0, top bar 30, scrim 40, drawer 50.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §10</td></tr>
+<tr data-s="Approved"><td>DR-57</td><td><a href="../audit/fact-lens-accessibility-audit.html#A11Y-06">A11Y-06</a>, <a href="../audit/fact-lens-layout-audit.html#L-21">L-21</a></td><td>Test widths 320 to 1920px with A++ and the content cases.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §13</td></tr>
+<tr data-s="Approved"><td>DR-58</td><td><a href="../audit/fact-lens-content-audit.html#CNT-07">CNT-07</a>, <a href="../audit/fact-lens-scope-audit.html">S-22</a></td><td>Homepage order from wireframe V2: Opinion and analysis second, above বাংলাদেশ (S-22, conflict 16).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §7.1</td></tr>
+<tr data-s="Approved"><td>DR-59</td><td><a href="../audit/fact-lens-ia-audit.html#IA-13">IA-13</a>, <a href="../audit/fact-lens-layout-audit.html#L-42">L-42</a></td><td>Footer (L-42): a minimum footer until tajmin designs it. Full-width row, labels in the page language, Contact, Corrections and Privacy links.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Layout v2.2, L-42</td></tr>
+<tr data-s="Approved"><td>DR-60</td><td><a href="../audit/fact-lens-components-audit.html#CMP-07">CMP-07</a>, <a href="../audit/fact-lens-layout-audit.html#L-39">L-39</a>, <a href="../audit/fact-lens-layout-audit.html#L-40">L-40</a>, <a href="../audit/fact-lens-layout-audit.html#L-41">L-41</a></td><td>One section list for phone and web (L-39); lead panel overlaps the image from 768px, under it on phones (L-40); daily poll and newsletter boxes, never styled as ads (L-41).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Layout v2.2</td></tr>
+<tr data-s="Rejected"><td>DR-72</td><td><a href="../audit/fact-lens-layout-audit.html#L-08">L-08</a></td><td>Short navigation with a &quot;More&quot; item.</td><td><span class="pill rej">Rejected</span></td><td class="r">10-05</td><td>L-08</td></tr>
+</tbody></table></div>
+<h2 id="a-ads">Ads</h2>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Approved"><td>DR-61</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-01">ADS-01</a></td><td>Ads are the main revenue source. Follow IAB sizes, viewability and CLS rules.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>Ad proposal</td></tr>
+<tr data-s="Approved"><td>DR-62</td><td><a href="../audit/fact-lens-layout-audit.html#L-10">L-10</a></td><td>Horizontal ads sit in full-viewport bands; a standard creative is centered.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>LAY-09</td></tr>
+<tr data-s="Approved"><td>DR-63</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-11">ADS-11</a></td><td>Phase 1: static images from direct-sold networks, no timed refresh. Phase 2: programmatic in the same slots.</td><td><span class="pill done">Approved</span></td><td class="r">10-05</td><td>Ad proposal</td></tr>
+<tr data-s="Approved"><td>DR-64</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-01">ADS-01</a></td><td>Top ad above the masthead; 970×250 from 1024px; no padding (as on reuters.com).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §9</td></tr>
+<tr data-s="Approved"><td>DR-65</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-02">ADS-02</a></td><td>No sticky or fixed ad at any width.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY-11</td></tr>
+<tr data-s="Approved"><td>DR-66</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-03">ADS-03</a></td><td>No rail ad on the homepage. Rail ads may go on article pages.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY §9</td></tr>
+<tr data-s="Approved"><td>DR-67</td><td><a href="../audit/fact-lens-layout-audit.html#L-10">L-10</a></td><td>Ads have no padding, margin or gutter.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY-09</td></tr>
+<tr data-s="Approved"><td>DR-68</td><td><a href="../audit/fact-lens-layout-audit.html#L-33">L-33</a></td><td>A band after the hero, Opinion, each featured category and Most read. Two ad rows never touch.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>LAY-13</td></tr>
+<tr data-s="Approved"><td>DR-69</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-04">ADS-04</a>, <a href="../audit/fact-lens-layout-audit.html#L-33">L-33</a>, <a href="../audit/fact-lens-layout-audit.html#L-34">L-34</a></td><td>ad-inset slot at wrapper width: 728×90 from 1280px, 300×250 below (reserve 250); at most 3 per page; 600px of content between two ads on phones (L-33, L-34).</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>Layout v2.2, ad proposal item 6</td></tr>
+<tr data-s="Approved"><td>DR-70</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-05">ADS-05</a>, <a href="../audit/fact-lens-scope-audit.html">S-12</a></td><td>Ad label line 24px (1.5rem), so the top band is 274px.</td><td><span class="pill done">Approved</span></td><td class="r">10-06</td><td>S-12; LAY §9; ad proposal item 7</td></tr>
+<tr data-s="Rejected"><td>DR-73</td><td><a href="../audit/fact-lens-ads-audit.html#ADS-02">ADS-02</a></td><td>Mobile anchor ad and sticky homepage rail ad (approved 5 Oct).</td><td><span class="pill rej">Rejected</span></td><td class="r">10-06</td><td>DR-65, DR-66</td></tr>
+<tr data-s="Rejected"><td>DR-74</td><td><a href="../audit/fact-lens-layout-audit.html#L-28">L-28</a></td><td>Top band below the navigation (approved 5 Oct); smaller top band on short screens.</td><td><span class="pill rej">Rejected</span></td><td class="r">10-06</td><td>DR-64, L-28</td></tr>
+</tbody></table></div>
+<h2 id="a-scope">Scope</h2>
+<div class="table-wrap"><table class="reg"><thead><tr><th>ID</th><th>Issue</th><th>Decision</th><th>Status</th><th>Date</th><th>Recorded in</th></tr></thead><tbody>
+<tr data-s="Deferred"><td>DR-71</td><td>–</td><td>Postponed: explainer systems, dossiers, power maps, search filters, personalization, live blogs, accounts, comments, real newsletter signup, complex motion, separate component package, Figma sync.</td><td><span class="pill def">Deferred</span></td><td class="r">10-04</td><td>Guideline §4, plan</td></tr>
+</tbody></table></div>
+<footer>Markdown copy: <code>decisions/decision-register.md</code>. Scope audit: <a href="../audit/fact-lens-scope-audit.html">fact-lens-scope-audit.html</a>. Canonical audit: <a href="../audit/fact-lens-design-system-audit.html">fact-lens-design-system-audit.html</a>.</footer></main>
+<script>document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".filters button").forEach(x=>x.setAttribute("aria-pressed",x===b));const f=b.dataset.f;document.querySelectorAll("table.reg tbody tr").forEach(r=>r.hidden=!(f==="all"||r.dataset.s===f));}));</script></body></html>
