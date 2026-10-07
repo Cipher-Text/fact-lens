@@ -49,6 +49,12 @@ export const en: Dictionary = {
   mostRead: {
     title: "Most read",
   },
+  // P-3b slider buttons (spacing-layout-system.md 7.4). Not under regions: the nav
+  // lists every key of regions as a region.
+  regionSlider: {
+    previous: "Previous region",
+    next: "Next region",
+  },
   story: {
     readingTime: "{minutes} min read",
     breaking: "Breaking",

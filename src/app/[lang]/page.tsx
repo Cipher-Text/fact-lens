@@ -7,6 +7,7 @@ import { FeaturedCategory } from "@/components/home/featured/FeaturedCategory";
 import { GroupedCategories } from "@/components/home/grouped/GroupedCategories";
 import { Hero } from "@/components/home/hero/Hero";
 import { MostRead } from "@/components/home/most-read/MostRead";
+import { Regions } from "@/components/home/regions/Regions";
 import { AdRow } from "@/components/layout/AdRow";
 import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
@@ -28,6 +29,12 @@ export default async function HomePage({
   const featured = [home.featured.bangladesh, home.featured.geopolitics].filter(
     (section) => section !== null,
   );
+  // P-3b follows an ad row when P-5, or a section with an ad row and no P-3 after it,
+  // comes before it. After P-3 alone, P-3's space-section is above it.
+  const regionsAfterAdRow =
+    home.mostRead !== null ||
+    (!home.grouped &&
+      (featured.length > 0 || !!home.hero || !!home.analysisOpinion));
 
   return (
     <>
@@ -113,6 +120,18 @@ export default async function HomePage({
             />
             <AdRow slot="ad-band" strings={t.ads} />
           </>
+        ) : null}
+        {/* P-3b Regions, the last section (7.1). space-module after an ad row (LAY-12);
+            space-section below it, before the footer (FL-12). No ad row of its own. */}
+        {home.regions ? (
+          <Regions
+            regions={home.regions}
+            t={t}
+            className={cn(
+              regionsAfterAdRow && "pt-(--space-module)",
+              "pb-(--space-section)",
+            )}
+          />
         ) : null}
       </main>
     </>

@@ -7,6 +7,8 @@ type SectionHeadingProps = {
   id?: string;
   as?: "h2" | "h3";
   className?: string;
+  /** Controls at the end of the row, for example the P-3b slider buttons. Never a "more" link (LAY-18). */
+  actions?: ReactNode;
   children: ReactNode;
 };
 
@@ -20,18 +22,21 @@ export function SectionHeading({
   id,
   as: Tag = "h2",
   className,
+  actions,
   children,
 }: SectionHeadingProps) {
   return (
     <div
       className={cn(
         "mb-(--space-section-title-after) border-t border-brand pt-(--space-section-rule-title)",
+        actions && "flex items-center justify-between gap-x-(--grid-column-gap)",
         className,
       )}
     >
-      <Tag id={id} className="type-section-title text-ink">
+      <Tag id={id} className="min-w-0 type-section-title text-ink">
         {children}
       </Tag>
+      {actions}
     </div>
   );
 }

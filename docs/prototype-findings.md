@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-10 (accepted)
+- Last updated: 7 October 2026, after FL-11 (accepted)
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -45,6 +45,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Open |
 | DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Workaround in code |
 | DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Workaround in code |
+| DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Workaround in code |
+| DOC-21 | FL-11 | "4 regions in view" next to "no 4-up rows" (LAY-07), and no buttons at 600–1023 with 3 or 4 regions | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -72,6 +74,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-25 | FL-09 | Spacing inside forms has no tokens | Medium | Open |
 | U-26 | FL-10 | Bangla name of the Most read section | Low | Open |
 | U-27 | FL-10 | Most read item content and row gap | Low | Open |
+| U-28 | FL-11 | Region chip and region column heading look | Low | Open |
+| U-29 | FL-11 | Slider button place, icon and disabled look | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -98,6 +102,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-24 | FL-09 | Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test | Medium | Needs confirmation |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Needs confirmation |
 | IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Needs confirmation |
+| IMP-27 | FL-11 | Regions slider: tab mode follows the CSS, scripted 250ms scroll, hash selects a tab | Low | Needs confirmation |
+| IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Needs confirmation |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -260,6 +266,26 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Problem:** The CSS draws the numeral with `li::before { content: counter(rank) }`. A pseudo-element cannot take `aria-hidden`, and browsers put generated content in the accessible name. Screen readers would hear the rank twice: once from the list position, once from the numeral.
 - **Workaround:** A marked project addition after the copied block in `src/styles/typography.css` repeats the two `content` declarations with empty alternative text: `content: counter(rank, decimal) / ""` and `counter(rank, bengali) / ""`. Browsers without this syntax drop the declaration and use the §7.1 rule. Playwright checks the computed value and the accessibility tree.
 - **Suggested solution:** Put the alternative text form in the §7.1 CSS, or change the wording to "hidden from screen readers with empty alternative text".
+
+---
+
+### DOC-20 No slider CSS in §12.3
+
+- **Found:** FL-11 · **Severity:** Medium · **Status:** Workaround in code
+- **Source:** `spacing-layout-system.md` Sections 7.2, 7.4 and 12.3.
+- **Problem:** 7.2 says P-3b shows 2 regions in view from 600 and 4 from 1024, and 7.4 says the row uses scroll snap and a button moves "column width + gap". 12.3 has no container CSS for this row, so the column width is not a token and LAY-01 cannot be met without an arbitrary value. A scroll container also clips the focus ring (COL-13) of the items at its edges, and the specs give no room for it.
+- **Workaround:** `RegionSlider.tsx` uses Tailwind arbitrary values built only from the gap token: `sm:auto-cols-[calc((100%-var(--grid-column-gap))/2)]` and `lg:auto-cols-[calc((100%-3*var(--grid-column-gap))/4)]`. The row has `sm:-m-1 sm:p-1 sm:scroll-p-1` (and the phone tablist `-mx-1 p-1`): 4px of room for the ring, while the columns stay in line with the shell. The row box reaches 4px into the page gutter; nothing visible does.
+- **Suggested solution:** Add a `.slider-row` block to §12.3 with the column width per tier, the snap rules and the focus-ring room (or an inset focus ring for items in scroll containers).
+
+---
+
+### DOC-21 "4 regions in view" next to "no 4-up rows"; buttons with 3 or 4 regions
+
+- **Found:** FL-11 · **Severity:** Low · **Status:** Open
+- **Source:** `spacing-layout-system.md` 3.3, 7.2, 7.3, LAY-07; DR-44, DR-54.
+- **Problem:** LAY-07 and 3.3 say the homepage has no 4-up row; 7.2 and DR-54 show 4 regions in view from 1024. Most read has its own exception (DR-51); the slider has none in the rule text. Also, 7.3 says "4 regions or fewer: no buttons", but at 600–1023 only 2 are in view, so with 3 or 4 regions a mouse user without a trackpad reaches the others only with the scrollbar or the keyboard.
+- **Built:** As written: 4 in view from 1024; buttons only with 5 regions or more. The native scrollbar stays visible.
+- **Suggested solution:** Add the slider to the LAY-07 exceptions. Decide whether the button rule counts regions or "more regions than in view".
 
 ---
 
@@ -479,6 +505,26 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### U-28 Region chip and region column heading look
+
+- **Found:** FL-11 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/regions/RegionSlider.tsx`
+- **Gap:** 7.1 gives the chip role (`type-ui-sm`), size (44px or more, as wide as the label) and nothing else. The heading of a region column in the slider is not in the role map.
+- **Treatment used:** Chip: 1px `border-interactive` border, `text-interactive`, `px-3`, `gap-2` between chips; selected chip filled `interactive` with `on-interactive` text. Column heading: `h3` in `type-ui-sm text-ink` with the P-3 rail top rule (U-22), `space-list-item` below; visually hidden below 600, where the chip names the panel. Stories: the P-3 story stack (U-21).
+- **Suggested solution:** Define the chip (tabs, filters) and the column heading in the component pass.
+
+---
+
+### U-29 Slider button place, icon and disabled look
+
+- **Found:** FL-11 · **Severity:** Low · **Status:** Open
+- **Files:** `RegionSlider.tsx`, `src/components/layout/SectionHeading.tsx`
+- **Gap:** 7.4 names the buttons and their behavior, not their place or look. Motion has no token (U-02); 7.4 gives 200–300ms.
+- **Treatment used:** Two 44px icon buttons (`lucide-react` chevrons, the header icon-button classes) at the end of the section heading row (LAY-18 bars only the "more" link there). At an end the button is `aria-disabled` in `ink-disabled`, so focus stays on it. 250ms ease-out scroll.
+- **Suggested solution:** Place and draw the slider controls in the component pass; add a motion token.
+
+---
+
 ## Implementation choices to confirm (IMP-)
 
 ### IMP-01 Remembered English choice redirects only at `/`
@@ -568,6 +614,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Choice:** Category and region pages do not exist (DR-01). Links go to `#category-<id>`, `#regions`, `#region-<id>` and `#newsletter`. FL-06 to FL-11 must give the sections these ids. A drawer link closes the drawer and moves the focus to its target when the target exists; otherwise focus returns to the menu button.
 - **FL-08:** `#category-bangladesh` and `#category-geopolitics` now exist. The header test that used a stand-in target uses the real section. The other categories get ids in FL-09.
 - **FL-09:** `#category-security`, `#category-history`, `#category-economy`, `#category-technology` and `#newsletter` now exist. Only `#regions` and `#region-<id>` (FL-11) are left.
+- **FL-11:** `#regions` and every `#region-<id>` now exist. On phones a region link also selects its tab. Every anchor has a target.
 
 ### IMP-15 Search field is `type="text"`, not `type="search"`
 
@@ -649,6 +696,22 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### IMP-27 Regions slider behavior
+
+- **Found:** FL-11 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** One markup for both modes. The tab mode is on while the tablist is displayed (the CSS `sm:hidden`), so the script has no breakpoint of its own; below 600 the panels are `tabpanel`s, from 600 named `group`s (no extra landmarks). The server HTML has the tab roles until hydration. The buttons scroll with a 250ms script animation and switch scroll snap off while the row moves, because `scroll-behavior: smooth` has no set duration; with reduced motion the row moves at once. Arrow keys wrap, Home and End work, selection follows focus. A `#region-<id>` link (nav, drawer) selects that tab on phones. The native scrollbar shows on the row and the tablist.
+- **Suggested solution:** Confirm. Hide the scrollbar only if the buttons cover every case (DOC-21).
+
+---
+
+### IMP-28 Shared `StoryStack`; `actions` slot on `SectionHeading`
+
+- **Found:** FL-11 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** The P-3 category story list moved to `src/components/story/StoryStack.tsx` with a `titleAs` prop (h4 under a region h3); `CategoryBlock` and P-3b use it, with the same markup as before. `SectionHeading` has an optional `actions` slot for controls at the end of the row.
+- **Suggested solution:** Confirm.
+
+---
+
 ## Kit issues (KIT-)
 
 ### KIT-01 `visual-qa` agent switches theme with `data-theme`
@@ -690,3 +753,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-08 | DOC-17, U-18 to U-20, IMP-23 added. IMP-14 updated (category anchors now have targets) |
 | 2026-10-07 | FL-09 | DOC-18, U-21 to U-25, IMP-24 to IMP-26 added. IMP-14 updated (the four P-3 category anchors and `#newsletter` now have targets) |
 | 2026-10-07 | FL-10 | DOC-19, U-26, U-27 added. DOC-04 has a workaround (the §7.1 block is in `typography.css`) |
+| 2026-10-07 | FL-11 | DOC-20, DOC-21, U-28, U-29, IMP-27, IMP-28 added. IMP-14 updated (all anchors have targets) |

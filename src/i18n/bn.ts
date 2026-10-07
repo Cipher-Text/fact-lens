@@ -47,6 +47,12 @@ export const bn = {
   mostRead: {
     title: "সর্বাধিক পঠিত",
   },
+  // P-3b slider buttons (spacing-layout-system.md 7.4). Not under regions: the nav
+  // lists every key of regions as a region.
+  regionSlider: {
+    previous: "আগের অঞ্চল",
+    next: "পরের অঞ্চল",
+  },
   story: {
     // {minutes} is already in Bangla digits.
     readingTime: "পড়তে {minutes} মিনিট",
