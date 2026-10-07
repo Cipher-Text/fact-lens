@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-06 (accepted)
+- Last updated: 7 October 2026, after FL-07 (accepted)
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -41,9 +41,10 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-13 | FL-06 | "Cut corner on top-story images" has no matching rule | Low | Open |
 | DOC-14 | FL-06 | Headline links: `ink` or `interactive` | Low | Open |
 | DOC-15 | FL-06 | The 64px lead overlap has no token | Low | Workaround in code |
+| DOC-16 | FL-07 | LAY-12 section-to-ad space on a section with its own background | Low | Workaround in code |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
-| U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Check in FL-07 |
+| U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
 | U-04 | FL-02 | Theme switch and language switch look | Medium | Open |
 | U-05 | FL-02 | No minimum touch target size | Medium | Open |
 | U-06 | FL-03 | Section heading rule thickness | Low | Open |
@@ -55,6 +56,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-12 | FL-06 | Lead text panel inset and padding | Low | Open |
 | U-13 | FL-06 | Card without image beside a card with image | Medium | Open |
 | U-14 | FL-06 | Bangla Breaking label and label padding | Low | Open |
+| U-15 | FL-07 | Analysis item layout (image-led list) | Low | Open |
+| U-16 | FL-07 | Opinion chip padding and quote icon | Low | Open |
+| U-17 | FL-07 | Padding inside the বিশ্লেষণ ও মতামত background | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -72,9 +76,11 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-15 | FL-05 | Search field is `type="text"`, not `type="search"` | Low | Needs confirmation |
 | IMP-16 | FL-05 | Nav row hides the items that do not fit after hydration | Low | Needs confirmation |
 | IMP-17 | FL-05 | On phones the drawer focuses the search field first | Low | Needs confirmation |
-| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Needs confirmation |
+| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Needs confirmation (FL-07 adds `/analysis` and `/opinion`) |
 | IMP-19 | FL-06 | Hero metadata shows the clock time only, 24-hour | Low | Needs confirmation |
 | IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Needs confirmation |
+| IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Needs confirmation |
+| IMP-22 | FL-07 | Shared `MoreLink` and elevated link classes | Low | Needs confirmation |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -203,6 +209,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Workaround:** `md:-mt-16` from the Tailwind spacing scale (64px) in `LeadStory.tsx`.
 - **Suggested solution:** Add `--space-lead-overlap: 4rem` to 12.2.
 
+### DOC-16 LAY-12 section-to-ad space on a section with its own background
+
+- **Found:** FL-07 · **Severity:** Low · **Status:** Workaround in code
+- **Source:** `spacing-layout-system.md` LAY-12, Section 5.1 and Section 7.4 (P-4)
+- **Problem:** LAY-12 puts the space between a section and its ad row on the section. For P-4 the section has its own `surface-elevated` background inside the shell. If the space is padding, it is inside the color and the ad row touches the colored block; the spec does not say which.
+- **Workaround:** `space-module` as margin outside the background, above (after the hero ad row) and below (before its own ad row), set by the page in `src/app/[lang]/page.tsx`. The padding inside the background is a separate gap (U-17).
+- **Suggested solution:** State in 7.4 that P-4 keeps `space-module` outside its background, and give the inner padding (U-17).
+
 ---
 
 ## Design-system gaps (U-)
@@ -223,9 +237,10 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-03 বিশ্লেষণ ও মতামত section background
 
-- **Found:** FL-01 · **Severity:** Low · **Status:** Check in FL-07
+- **Found:** FL-01 · **Severity:** Low · **Status:** Built in FL-07; tajmin checks the look
 - **Gap:** `DR-76` sets `surface-elevated`, which is pure white in light mode. It can look like a hole on the warm `background`.
-- **Suggested solution:** Look at it in FL-07 in both themes. If it looks wrong, propose `surface` or `surface-alt` to the design owner.
+- **FL-07 result:** Built as `DR-76` says. Measured: light `rgb(255,255,255)` on the page `rgb(255,249,237)`, next to ad rows `rgb(246,238,223)`; dark `rgb(48,50,57)` on `rgb(24,25,30)`. The three surfaces are distinct in both themes, as 7.4 asks. In light mode the white panel reads as a lifted block, not a hole, with the `space-module` padding (U-17).
+- **Suggested solution:** tajmin and the design owner confirm the look. If it looks wrong, propose `surface` or `surface-alt` (but `surface-alt` is the ad-row color, which 7.4 rules out).
 
 ### U-04 Theme switch and language switch look
 
@@ -303,6 +318,30 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Files:** `src/i18n/bn.ts` (`story.breaking`), `src/components/story/StoryEyebrow.tsx`
 - **Treatment used:** COL-11 names the English word "Breaking" only. The Bangla page shows "সদ্যপ্রাপ্ত" (no English word, T-27) on `bg-live` with `text-on-live`, padding `px-1`.
 - **Suggested solution:** Editorial team confirms the Bangla word (for example "সদ্যপ্রাপ্ত" or "ব্রেকিং"). Component pass sets the label padding.
+
+### U-15 Analysis item layout (image-led list)
+
+- **Found:** FL-07 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/analysis-opinion/AnalysisList.tsx`
+- **Gap:** 7.2 calls the analysis column an "image-led list" but gives no item layout, image size or ratio.
+- **Treatment used:** Every item has the 16:9 image at the start, one third of the column wide, and the text beside it (`space-story-media-text` between them) at every width. Text: category eyebrow, `type-story-title-sm`, the summary if there is one, then time and reading time. A story with no image has the text only, at full column width. Items are separated by a `border` rule with `space-list-item` on each side.
+- **Suggested solution:** Decide in the component pass: thumbnail beside the text (as built), a first item with a large image and smaller items below, or image above the text on phones.
+
+### U-16 Opinion chip padding and quote icon
+
+- **Found:** FL-07 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/analysis-opinion/OpinionList.tsx`
+- **Gap:** Typography 7.1 gives the chip role and colors (`type-eyebrow` on `accent-subtle`, `text-ink`) and says the quote mark is a decorative SVG, but not the chip padding, the chip-to-list space, or the icon size, color and position.
+- **Treatment used:** Chip `px-1` (as the Breaking label, U-14), `space-list-item` below it. Quote icon: `lucide-react` `Quote`, 24px (`size-6`), `text-ink-muted`, `aria-hidden`, at the start of each item with `space-story-media-text` to the text. Author in weight 600, then the time with a CSS dot separator.
+- **Suggested solution:** Set the chip and icon in the component pass (with U-02 icons).
+
+### U-17 Padding inside the বিশ্লেষণ ও মতামত background
+
+- **Found:** FL-07 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/analysis-opinion/AnalysisOpinion.tsx`
+- **Gap:** 7.4 sets the `surface-elevated` background inside the shell but no inner padding, so the text would touch the edge of the color.
+- **Treatment used:** `space-module` on every side (24 / 32 / 40). The section heading rule and the columns start inside this padding, so their start edge is inset from the other sections' start edge.
+- **Suggested solution:** Add a token such as `--space-panel` to 5.1, or confirm `space-module`.
 
 ---
 
@@ -429,6 +468,18 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Choice:** The page has a visually hidden `h1` ("ফ্যাক্ট লেন্স: প্রথম পাতা"), and the hero section is named by a hidden `h2` ("প্রধান খবর" / "Top stories"). The lead, the top stories and Latest are `h3`. The logo stays a link, not a heading.
 - **Suggested solution:** Confirm the outline and the wording, or make the logo the `h1` on the homepage.
 
+### IMP-21 P-4 heading outline
+
+- **Found:** FL-07 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** The section heading "বিশ্লেষণ ও মতামত" is an `h2`. Each column is a `section` with an `h3`: the analysis heading ("বিশ্লেষণ") is visually hidden, because that column has no chip (DR-77); the opinion chip is the opinion `h3`. Story titles in both columns are `h4`.
+- **Suggested solution:** Confirm, or make the chip a plain label and give both columns hidden headings.
+
+### IMP-22 Shared `MoreLink` and elevated link classes
+
+- **Found:** FL-07 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** The "আরও দেখুন" link is now one component, `src/components/story/MoreLink.tsx`, used by Latest and both P-4 columns. `links.ts` has `headlineLinkElevated` and `textLinkElevated`, with the focus ring offset in `surface-elevated` (COL-13, DOC-07), as `header/classes.ts` already does. The analysis and opinion "more" links go to `/analysis` and `/opinion`, which are 404 until those pages exist (IMP-18).
+- **Suggested solution:** Confirm. Later sections reuse `MoreLink`.
+
 ---
 
 ## Kit issues (KIT-)
@@ -468,3 +519,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-04 | U-07, IMP-10, IMP-11, IMP-12 added. U-01 updated |
 | 2026-10-07 | FL-05 | DOC-10 to DOC-12, U-08 to U-10, IMP-13 to IMP-17 added. KIT-03 updated |
 | 2026-10-07 | FL-06 | DOC-13 to DOC-15, U-11 to U-14, IMP-18 to IMP-20 added. IMP-11 updated |
+| 2026-10-07 | FL-07 | DOC-16, U-15 to U-17, IMP-21, IMP-22 added. IMP-18 and U-03 updated |

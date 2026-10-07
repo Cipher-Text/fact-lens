@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 import { SectionHeading } from "@/components/layout/SectionHeading";
-import { headlineLink, storyHref, textLink } from "@/components/story/links";
+import { headlineLink, storyHref } from "@/components/story/links";
+import { MoreLink } from "@/components/story/MoreLink";
 import { BreakingLabel } from "@/components/story/StoryEyebrow";
 import { StoryMeta } from "@/components/story/StoryMeta";
 import type { Lang, Story } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
-import { fill } from "@/lib/format";
 
 type LatestListProps = {
   lang: Lang;
@@ -52,17 +52,11 @@ export function LatestList({ lang, stories, strings }: LatestListProps) {
           </li>
         ))}
       </ul>
-      <p className="mt-(--space-more-link) type-ui-sm">
-        <Link
-          href={localizedPath(lang, "/latest")}
-          aria-label={fill(strings.common.moreAbout, {
-            section: strings.hero.latest,
-          })}
-          className={textLink}
-        >
-          {strings.common.more}
-        </Link>
-      </p>
+      <MoreLink
+        href={localizedPath(lang, "/latest")}
+        section={strings.hero.latest}
+        strings={strings.common}
+      />
     </section>
   );
 }

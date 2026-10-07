@@ -6,7 +6,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-07 বিশ্লেষণ ও মতামত
+- Ticket: FL-08 Featured categories
 - Status: To do
 - Next action: tajmin types `/ticket`
 
@@ -20,6 +20,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-04 Mock content | 52 bilingual stories in `src/content/`, read through `getHomepage(lang, { variant })` with full and sparse versions; category and region labels in the string tables; placeholder SVGs in `public/mock/`; ESLint rule keeps components on `@/content` (DR-01). U-07, IMP-10 to IMP-12 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-05 Header | Top ad above a sticky top bar (`1fr auto 1fr`); nav row from 1280 that hides items that do not fit; drawer and search dialog as native modal dialogs with keyboard focus handling; one-button theme toggle. DOC-10 to DOC-12, U-08 to U-10, IMP-13 to IMP-17 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-06 Hero | `Hero` with `LeadStory` (64px panel overlap from 768, inset end for the cut corner), two `StoryCard` top stories on a subgrid peer row, `LatestList` rail (2 columns at 600–1023); ad-band after the hero; `?content=sparse`; `formatTime` and `fill` helpers; Playwright at 12 widths. DOC-13 to DOC-15, U-11 to U-14, IMP-18 to IMP-20 in `docs/prototype-findings.md` |
+| 2026-10-07 | FL-07 বিশ্লেষণ ও মতামত | `AnalysisOpinion` in the shell on `surface-elevated` (margin outside the background), `AnalysisList` (image beside text) and `OpinionList` (মতামত chip as the column heading, quote icon, author and time), 2 equal columns from 768, one column spans when the other is empty; shared `MoreLink`; elevated link classes for the focus ring offset; Playwright at 13 widths. DOC-16, U-15 to U-17, IMP-21, IMP-22 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -43,6 +44,8 @@ Ideas that are outside the current ticket.
 - FL-06: Story links go to `/story/<slug>` and the Latest "আরও দেখুন" link to `/latest`. Both are 404 until those pages exist (IMP-18).
 - FL-06: `?content=sparse` on the homepage shows the sparse cases. Remove it or keep it behind a dev check in FL-13 (IMP-11).
 - FL-06: The hero `next/image` calls have no `sizes`. The mock SVGs are not optimized, so it has no effect now. Add `sizes` when real photos arrive.
+- FL-07: The analysis thumbnails have no `sizes` either (same as FL-06). Add it with real photos.
+- FL-07: `/analysis` and `/opinion` (the P-4 "more" links) are 404 until those pages exist (IMP-22).
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
 ## Unresolved design-system items
@@ -51,7 +54,7 @@ Ideas that are outside the current ticket.
 | --- | --- | --- | --- |
 | U-01 | English category labels (`src/i18n/en.ts` `categories`) | Working labels from the `mock-content` skill (`IA-06`) | Open |
 | U-02 | Card variants, radius, icons, motion | Neutral treatment (`AGENTS.md` Section 8) | Open |
-| U-03 | বিশ্লেষণ ও মতামত section background | `surface-elevated` (`DR-76`). Check the look in the prototype | Check |
+| U-03 | বিশ্লেষণ ও মতামত section background | `surface-elevated` (`DR-76`), built in FL-07. tajmin checks the look | Check |
 | U-04 | Theme switch and language switch look (`src/components/header/`) | Neutral bordered button group and text link; Tailwind spacing scale for padding | Open |
 | U-05 | Minimum touch target size (no spec value; switches are about 33px) | None yet. Proposed `--target-min` 44px | Open |
 | U-06 | Section heading rule thickness (`src/components/layout/SectionHeading.tsx`) | 1px `border-brand` top border | Open |
@@ -63,6 +66,9 @@ Ideas that are outside the current ticket.
 | U-12 | Lead text panel inset and padding (`src/components/home/hero/LeadStory.tsx`) | Inset 64px from the end (`md:me-16`), padding `space-story-media-text` | Open |
 | U-13 | Card without image beside a card with image (`src/components/story/StoryCard.tsx`) | Subgrid keeps the rows aligned (LAY-08): a blank band above the text and a stretched title row | Open |
 | U-14 | Bangla Breaking label and label padding (`src/i18n/bn.ts`, `StoryEyebrow.tsx`) | "সদ্যপ্রাপ্ত" on `bg-live`, `px-1` | Open |
+| U-15 | Analysis item layout (`src/components/home/analysis-opinion/AnalysisList.tsx`) | 16:9 image at one third of the column, text beside it, at every width | Open |
+| U-16 | Opinion chip padding and quote icon (`OpinionList.tsx`) | Chip `px-1`, `space-list-item` below; `lucide-react` `Quote` 24px `text-ink-muted` | Open |
+| U-17 | Padding inside the P-4 background (`AnalysisOpinion.tsx`) | `space-module` on every side | Open |
 
 ## Spec issues (DOC-)
 
@@ -85,3 +91,4 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 | DOC-13: "The cut corner on top-story images comes from the text block" — 7.4 gives no overlap for top stories, only for the lead. The cut corner is built on the lead only (panel inset from the end) | Open |
 | 2026-10-07 FL-06 | `color-system.md` COL-05 and 2 | DOC-14: COL-05 says links use `interactive`; headlines use `ink`. A headline link fits both. Built as `ink` with interactive hover and press (U-11) | Open |
 | 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 and 12.2 | DOC-15: The 64px lead overlap has no token. Built with the Tailwind scale (`md:-mt-16`) | Open |
+| 2026-10-07 FL-07 | `spacing-layout-system.md` LAY-12 and 7.4 | DOC-16: LAY-12 puts section-to-ad space on the section, but does not say whether it is inside or outside P-4's own background. Built as margin outside the background | Open |

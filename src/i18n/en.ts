@@ -39,6 +39,12 @@ export const en: Dictionary = {
     title: "Top stories",
     latest: "Latest",
   },
+  analysisOpinion: {
+    // The section name follows the column order: analysis, then opinion (7.4).
+    title: "Analysis and Opinion",
+    analysis: "Analysis",
+    opinion: "Opinion",
+  },
   story: {
     readingTime: "{minutes} min read",
     breaking: "Breaking",

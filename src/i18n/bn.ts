@@ -37,6 +37,12 @@ export const bn = {
     title: "প্রধান খবর",
     latest: "সর্বশেষ",
   },
+  analysisOpinion: {
+    // The section name follows the column order: analysis, then opinion (7.4).
+    title: "বিশ্লেষণ ও মতামত",
+    analysis: "বিশ্লেষণ",
+    opinion: "মতামত",
+  },
   story: {
     // {minutes} is already in Bangla digits.
     readingTime: "পড়তে {minutes} মিনিট",
