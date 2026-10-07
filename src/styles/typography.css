@@ -1,0 +1,406 @@
+/* Copied from docs/design-system/typography-system.md Section 8.2. Do not edit values here. */
+
+@theme inline {
+  --font-editorial: var(--font-editorial-active);
+  --font-ui: var(--font-ui-active);
+}
+
+:root {
+  --font-editorial-active: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-ui-active: var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  --reader-scale: 1;
+  --type-body-min: 1.0625rem;
+  --type-eyebrow-case: uppercase;
+  --type-blockquote-style: italic;
+
+  /* Line length caps (Section 5.1). Typography owns these tokens. */
+  --measure-article-title: 56rem;
+  --measure-deck: 36rem;
+
+  --type-display-size: clamp(2.75rem, 2.261rem + 2.174vw, 4rem);
+  --type-display-weight: 600;
+  --type-display-line: 1.02;
+  --type-display-tracking: -0.03em;
+  --type-page-title-size: clamp(2.125rem, 1.783rem + 1.522vw, 3rem);
+  --type-page-title-weight: 600;
+  --type-page-title-line: 1.06;
+  --type-page-title-tracking: -0.025em;
+  --type-article-title-size: clamp(2.5rem, 2.011rem + 2.174vw, 3.75rem);
+  --type-article-title-weight: 600;
+  --type-article-title-line: 1.06;
+  --type-article-title-tracking: -0.025em;
+  --type-story-lead-size: clamp(1.875rem, 1.582rem + 1.304vw, 2.625rem);
+  --type-story-lead-weight: 600;
+  --type-story-lead-line: 1.08;
+  --type-story-lead-tracking: -0.02em;
+  --type-story-title-lg-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
+  --type-story-title-lg-weight: 600;
+  --type-story-title-lg-line: 1.12;
+  --type-story-title-lg-tracking: -0.015em;
+  --type-story-title-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
+  --type-story-title-weight: 600;
+  --type-story-title-line: 1.16;
+  --type-story-title-tracking: -0.01em;
+  --type-story-title-sm-size: clamp(1.125rem, 1.076rem + 0.217vw, 1.25rem);
+  --type-story-title-sm-weight: 600;
+  --type-story-title-sm-line: 1.2;
+  --type-story-title-sm-tracking: -0.005em;
+  --type-deck-size: clamp(1.125rem, 1.027rem + 0.435vw, 1.375rem);
+  --type-deck-weight: 400;
+  --type-deck-line: 1.45;
+  --type-deck-tracking: 0;
+  --type-summary-size: 1rem;
+  --type-summary-weight: 400;
+  --type-summary-line: 1.5;
+  --type-summary-tracking: 0;
+  --type-article-body-size: clamp(1.062rem, 1.038rem + 0.109vw, 1.125rem);
+  --type-article-body-weight: 400;
+  --type-article-body-line: 1.68;
+  --type-article-body-tracking: 0;
+  --type-article-h2-size: clamp(1.75rem, 1.554rem + 0.87vw, 2.25rem);
+  --type-article-h2-weight: 600;
+  --type-article-h2-line: 1.15;
+  --type-article-h2-tracking: -0.015em;
+  --type-article-h3-size: clamp(1.375rem, 1.228rem + 0.652vw, 1.75rem);
+  --type-article-h3-weight: 600;
+  --type-article-h3-line: 1.22;
+  --type-article-h3-tracking: -0.01em;
+  --type-blockquote-size: clamp(1.125rem, 1.027rem + 0.435vw, 1.375rem);
+  --type-blockquote-weight: 400;
+  --type-blockquote-line: 1.6;
+  --type-blockquote-tracking: 0;
+  --type-pullquote-size: clamp(1.75rem, 1.554rem + 0.87vw, 2.25rem);
+  --type-pullquote-weight: 500;
+  --type-pullquote-line: 1.2;
+  --type-pullquote-tracking: -0.015em;
+  --type-section-title-size: clamp(1.25rem, 1.152rem + 0.435vw, 1.5rem);
+  --type-section-title-weight: 700;
+  --type-section-title-line: 1.2;
+  --type-section-title-tracking: -0.01em;
+  --type-eyebrow-size: 0.875rem;
+  --type-eyebrow-weight: 700;
+  --type-eyebrow-line: 1.2;
+  --type-eyebrow-tracking: 0.06em;
+  --type-metadata-size: 0.875rem;
+  --type-metadata-weight: 500;
+  --type-metadata-line: 1.4;
+  --type-metadata-tracking: 0.01em;
+  --type-caption-size: 0.875rem;
+  --type-caption-weight: 400;
+  --type-caption-line: 1.5;
+  --type-caption-tracking: 0;
+  --type-ui-size: 1rem;
+  --type-ui-weight: 500;
+  --type-ui-line: 1.4;
+  --type-ui-tracking: 0;
+  --type-ui-sm-size: 0.875rem;
+  --type-ui-sm-weight: 500;
+  --type-ui-sm-line: 1.4;
+  --type-ui-sm-tracking: 0;
+  --type-button-size: 0.875rem;
+  --type-button-weight: 600;
+  --type-button-line: 1.2;
+  --type-button-tracking: 0;
+  --type-input-size: 1rem;
+  --type-input-weight: 400;
+  --type-input-line: 1.4;
+  --type-input-tracking: 0;
+}
+
+:lang(bn) {
+  --font-editorial-active: var(--font-noto-serif-bengali), var(--font-source-serif), "Noto Serif", serif;
+  --font-ui-active: var(--font-noto-sans-bengali), var(--font-plus-jakarta), "Nirmala UI", sans-serif;
+
+  --type-body-min: 1.125rem;
+  --type-eyebrow-case: none;
+  --type-blockquote-style: normal;
+
+  --type-display-size: clamp(2.5rem, 2.109rem + 1.739vw, 3.5rem);
+  --type-display-weight: 600;
+  --type-display-line: 1.16;
+  --type-display-tracking: 0;
+  --type-page-title-size: clamp(2rem, 1.707rem + 1.304vw, 2.75rem);
+  --type-page-title-weight: 600;
+  --type-page-title-line: 1.18;
+  --type-page-title-tracking: 0;
+  --type-article-title-size: clamp(2.375rem, 1.935rem + 1.957vw, 3.5rem);
+  --type-article-title-weight: 600;
+  --type-article-title-line: 1.18;
+  --type-article-title-tracking: 0;
+  --type-story-lead-size: clamp(1.75rem, 1.457rem + 1.304vw, 2.5rem);
+  --type-story-lead-weight: 600;
+  --type-story-lead-line: 1.2;
+  --type-story-lead-tracking: 0;
+  --type-story-title-lg-size: clamp(1.625rem, 1.478rem + 0.652vw, 2rem);
+  --type-story-title-lg-weight: 600;
+  --type-story-title-lg-line: 1.22;
+  --type-story-title-lg-tracking: 0;
+  --type-story-title-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
+  --type-story-title-weight: 600;
+  --type-story-title-line: 1.26;
+  --type-story-title-tracking: 0;
+  --type-story-title-sm-size: clamp(1.125rem, 1.076rem + 0.217vw, 1.25rem);
+  --type-story-title-sm-weight: 600;
+  --type-story-title-sm-line: 1.3;
+  --type-story-title-sm-tracking: 0;
+  --type-deck-size: clamp(1.125rem, 1.052rem + 0.326vw, 1.312rem);
+  --type-deck-weight: 400;
+  --type-deck-line: 1.55;
+  --type-deck-tracking: 0;
+  --type-summary-size: 1.0625rem;
+  --type-summary-weight: 400;
+  --type-summary-line: 1.6;
+  --type-summary-tracking: 0;
+  --type-article-body-size: clamp(1.125rem, 1.101rem + 0.109vw, 1.188rem);
+  --type-article-body-weight: 400;
+  --type-article-body-line: 1.76;
+  --type-article-body-tracking: 0;
+  --type-article-h2-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
+  --type-article-h2-weight: 600;
+  --type-article-h2-line: 1.28;
+  --type-article-h2-tracking: 0;
+  --type-article-h3-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
+  --type-article-h3-weight: 600;
+  --type-article-h3-line: 1.34;
+  --type-article-h3-tracking: 0;
+  --type-blockquote-size: clamp(1.188rem, 1.114rem + 0.326vw, 1.375rem);
+  --type-blockquote-weight: 500;
+  --type-blockquote-line: 1.68;
+  --type-blockquote-tracking: 0;
+  --type-pullquote-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
+  --type-pullquote-weight: 500;
+  --type-pullquote-line: 1.32;
+  --type-pullquote-tracking: 0;
+  --type-section-title-size: clamp(1.25rem, 1.152rem + 0.435vw, 1.5rem);
+  --type-section-title-weight: 700;
+  --type-section-title-line: 1.3;
+  --type-section-title-tracking: 0;
+  --type-eyebrow-size: 0.9375rem;
+  --type-eyebrow-weight: 600;
+  --type-eyebrow-line: 1.35;
+  --type-eyebrow-tracking: 0;
+  --type-metadata-size: 0.9375rem;
+  --type-metadata-weight: 500;
+  --type-metadata-line: 1.5;
+  --type-metadata-tracking: 0;
+  --type-caption-size: 0.9375rem;
+  --type-caption-weight: 400;
+  --type-caption-line: 1.6;
+  --type-caption-tracking: 0;
+  --type-ui-size: 1rem;
+  --type-ui-weight: 500;
+  --type-ui-line: 1.5;
+  --type-ui-tracking: 0;
+  --type-ui-sm-size: 0.9375rem;
+  --type-ui-sm-weight: 500;
+  --type-ui-sm-line: 1.5;
+  --type-ui-sm-tracking: 0;
+  --type-button-size: 0.9375rem;
+  --type-button-weight: 600;
+  --type-button-line: 1.35;
+  --type-button-tracking: 0;
+  --type-input-size: 1rem;
+  --type-input-weight: 400;
+  --type-input-line: 1.5;
+  --type-input-tracking: 0;
+}
+
+[data-reader-size="lg"] { --reader-scale: 1.2; }
+[data-reader-size="xl"] { --reader-scale: 1.4; }
+
+body {
+  font-family: var(--font-ui-active);
+  font-synthesis: none;
+  font-optical-sizing: auto;
+}
+
+:lang(bn) em { font-style: normal; font-weight: 600; }
+:lang(bn) strong { font-weight: 700; }
+
+@utility type-display {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-display-size);
+  font-weight: var(--type-display-weight);
+  line-height: var(--type-display-line);
+  letter-spacing: var(--type-display-tracking);
+  text-wrap: balance;
+}
+
+@utility type-page-title {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-page-title-size);
+  font-weight: var(--type-page-title-weight);
+  line-height: var(--type-page-title-line);
+  letter-spacing: var(--type-page-title-tracking);
+  text-wrap: balance;
+}
+
+@utility type-article-title {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-article-title-size);
+  font-weight: var(--type-article-title-weight);
+  line-height: var(--type-article-title-line);
+  letter-spacing: var(--type-article-title-tracking);
+  text-wrap: balance;
+  max-inline-size: var(--measure-article-title);
+}
+
+@utility type-story-lead {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-story-lead-size);
+  font-weight: var(--type-story-lead-weight);
+  line-height: var(--type-story-lead-line);
+  letter-spacing: var(--type-story-lead-tracking);
+  text-wrap: balance;
+}
+
+@utility type-story-title-lg {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-story-title-lg-size);
+  font-weight: var(--type-story-title-lg-weight);
+  line-height: var(--type-story-title-lg-line);
+  letter-spacing: var(--type-story-title-lg-tracking);
+  text-wrap: balance;
+}
+
+@utility type-story-title {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-story-title-size);
+  font-weight: var(--type-story-title-weight);
+  line-height: var(--type-story-title-line);
+  letter-spacing: var(--type-story-title-tracking);
+}
+
+@utility type-story-title-sm {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-story-title-sm-size);
+  font-weight: var(--type-story-title-sm-weight);
+  line-height: var(--type-story-title-sm-line);
+  letter-spacing: var(--type-story-title-sm-tracking);
+}
+
+@utility type-deck {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-deck-size);
+  font-weight: var(--type-deck-weight);
+  line-height: var(--type-deck-line);
+  letter-spacing: var(--type-deck-tracking);
+  max-inline-size: var(--measure-deck);
+}
+
+@utility type-summary {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-summary-size);
+  font-weight: var(--type-summary-weight);
+  line-height: var(--type-summary-line);
+  letter-spacing: var(--type-summary-tracking);
+  max-inline-size: var(--measure-deck);
+}
+
+@utility type-article-body {
+  font-family: var(--font-editorial-active);
+  font-size: max(var(--type-body-min), calc(var(--type-article-body-size) * var(--reader-scale)));
+  font-weight: var(--type-article-body-weight);
+  line-height: var(--type-article-body-line);
+  letter-spacing: var(--type-article-body-tracking);
+}
+
+@utility type-article-h2 {
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
+  font-weight: var(--type-article-h2-weight);
+  line-height: var(--type-article-h2-line);
+  letter-spacing: var(--type-article-h2-tracking);
+}
+
+@utility type-article-h3 {
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-article-h3-size) * var(--reader-scale));
+  font-weight: var(--type-article-h3-weight);
+  line-height: var(--type-article-h3-line);
+  letter-spacing: var(--type-article-h3-tracking);
+}
+
+@utility type-blockquote {
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-blockquote-size) * var(--reader-scale));
+  font-weight: var(--type-blockquote-weight);
+  line-height: var(--type-blockquote-line);
+  letter-spacing: var(--type-blockquote-tracking);
+  font-style: var(--type-blockquote-style);
+}
+
+@utility type-pullquote {
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-pullquote-size) * var(--reader-scale));
+  font-weight: var(--type-pullquote-weight);
+  line-height: var(--type-pullquote-line);
+  letter-spacing: var(--type-pullquote-tracking);
+  text-wrap: balance;
+}
+
+@utility type-section-title {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-section-title-size);
+  font-weight: var(--type-section-title-weight);
+  line-height: var(--type-section-title-line);
+  letter-spacing: var(--type-section-title-tracking);
+}
+
+@utility type-eyebrow {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--type-eyebrow-weight);
+  line-height: var(--type-eyebrow-line);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: var(--type-eyebrow-case);
+}
+
+@utility type-metadata {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-metadata-size);
+  font-weight: var(--type-metadata-weight);
+  line-height: var(--type-metadata-line);
+  letter-spacing: var(--type-metadata-tracking);
+}
+
+@utility type-caption {
+  font-family: var(--font-ui-active);
+  font-size: calc(var(--type-caption-size) * var(--reader-scale));
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-line);
+  letter-spacing: var(--type-caption-tracking);
+}
+
+@utility type-ui {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-ui-size);
+  font-weight: var(--type-ui-weight);
+  line-height: var(--type-ui-line);
+  letter-spacing: var(--type-ui-tracking);
+}
+
+@utility type-ui-sm {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-ui-sm-size);
+  font-weight: var(--type-ui-sm-weight);
+  line-height: var(--type-ui-sm-line);
+  letter-spacing: var(--type-ui-sm-tracking);
+}
+
+@utility type-button {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-button-size);
+  font-weight: var(--type-button-weight);
+  line-height: var(--type-button-line);
+  letter-spacing: var(--type-button-tracking);
+}
+
+@utility type-input {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-input-size);
+  font-weight: var(--type-input-weight);
+  line-height: var(--type-input-line);
+  letter-spacing: var(--type-input-tracking);
+}

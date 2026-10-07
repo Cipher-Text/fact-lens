@@ -1,0 +1,124 @@
+/* Copied from docs/design-system/spacing-layout-system.md Sections 12.1 to 12.3. Do not edit values here. */
+
+@theme {
+  --breakpoint-sm: 37.5rem;  /* 600px */
+  --breakpoint-md: 48rem;    /* 768px */
+  --breakpoint-lg: 64rem;    /* 1024px */
+  --breakpoint-xl: 80rem;    /* 1280px */
+  --breakpoint-2xl: initial; /* no 2xl tier */
+}
+
+:root {
+  --measure-shell: 80rem;
+  --measure-rail: 19rem;
+  --measure-reading-en: 44rem;
+  --measure-reading-bn: 42rem;
+
+  --gutter-page: 1rem;
+  --grid-columns: 4;
+  --grid-column-gap: 1rem;
+  --grid-row-gap: var(--grid-column-gap);
+
+  --space-page-start: 1.5rem;
+  --space-section: 3rem;
+  --space-section-compact: 2rem;
+  --space-module: 1.5rem;
+  --space-section-title-after: 1.25rem;
+
+  --space-section-rule-title: 0.75rem;
+  --space-eyebrow-title: 0.25rem;
+  --space-story-media-text: 1rem;
+  --space-story-title-summary: 0.5rem;
+  --space-story-summary-meta: 0.75rem;
+  --space-story-title-meta: 0.5rem;
+  --space-media-caption: 0.5rem;
+  --space-list-item: 1rem;
+  --space-more-link: 1rem;
+
+  --ad-label: 1.5rem;
+
+  --bar-height: 3.5rem;
+  --nav-row-height: 3rem;
+  --scroll-offset: calc(var(--bar-height) + 1rem);
+  --drawer-width: min(20rem, 100% - 3rem);
+
+  --z-content: 0;
+  --z-bar: 30;
+  --z-scrim: 40;
+  --z-drawer: 50;
+}
+
+@media (min-width: 37.5rem) {
+  :root { --gutter-page: 1.5rem; }
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --grid-columns: 8;
+    --grid-column-gap: 1.25rem;
+    --space-page-start: 2rem;
+    --space-section: 4rem;
+    --space-section-compact: 2.5rem;
+    --space-module: 2rem;
+    --space-section-title-after: 1.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --grid-columns: 12;
+    --grid-column-gap: 1.5rem;
+    --space-page-start: 2.5rem;
+    --space-section: 5rem;
+    --space-section-compact: 3rem;
+    --space-module: 2.5rem;
+    --bar-height: 4rem;
+  }
+}
+
+.shell {
+  width: min(100% - 2 * var(--gutter-page), var(--measure-shell));
+  margin-inline: auto;
+}
+
+.ad-row {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  /* Height = reserved creative height + var(--ad-label). No padding. */
+}
+
+.editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-column-gap);
+  row-gap: var(--grid-row-gap);
+}
+
+.with-rail {
+  display: grid;
+  gap: var(--space-module) var(--grid-column-gap);
+}
+
+@media (min-width: 64rem) {
+  .with-rail {
+    grid-template-columns: minmax(0, 1fr) var(--measure-rail);
+  }
+}
+
+.peer-card {
+  display: grid;
+  grid-row: span var(--card-parts, 4);  /* one row per card part: media, eyebrow, title, (summary), meta */
+  grid-template-rows: subgrid;
+}
+
+html {
+  scroll-padding-top: var(--scroll-offset);
+}
+
+.top-bar {
+  block-size: var(--bar-height);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-bar);
+}

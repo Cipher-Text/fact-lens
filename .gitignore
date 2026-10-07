@@ -52,3 +52,6 @@ CLAUDE.local.md
 
 # temporary scaffold folder
 /.scaffold/
+
+# Playwright MCP snapshots and logs
+.playwright-mcp/
