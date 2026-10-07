@@ -19,6 +19,11 @@ export const en: Dictionary = {
   home: {
     placeholder: "The homepage is being built.",
     foundationsLink: "See the temporary design foundations page",
+    layoutPartsLink: "See the temporary layout parts page",
+  },
+  ads: {
+    label: "Advertisement",
+    placeholder: "Ad space",
   },
   // Temporary page for FL-02. Remove with the page in FL-13.
   foundations: {
@@ -39,5 +44,23 @@ export const en: Dictionary = {
       status: "Status",
       utility: "Utility",
     },
+  },
+  // Temporary page for FL-03. Remove with the page in FL-13.
+  layoutParts: {
+    title: "Layout parts",
+    note: "Temporary page for checking the shell, wrapper, rail, peer row and ad rows. Make the window narrow and wide.",
+    withRailTitle: "Section with a rail",
+    noRailTitle: "Section without a rail",
+    wrapper: "Wrapper: takes the width that the rail leaves.",
+    rail: "Rail: 304px wide from 1024px, beside the wrapper. Below 1024px it goes under the wrapper.",
+    wrapperFull:
+      "Wrapper: this section has no rail, so the wrapper spans the shell.",
+    cardEyebrow: "Sample",
+    cardTitleShort: "A peer row card",
+    cardTitleLong:
+      "A long sample headline: the parts of the card beside it stay on the same rows through subgrid, however long the title is",
+    cardSummary:
+      "This card has a summary. The card beside it has none, so that row stays empty there.",
+    cardMeta: "Temporary sample",
   },
 };

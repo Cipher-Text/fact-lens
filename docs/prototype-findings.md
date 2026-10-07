@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-02 (accepted)
+- Last updated: 7 October 2026, after FL-03 (accepted)
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -31,13 +31,16 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-03 | FL-02 | Theme selector: `.dark` class against `data-theme` | Medium | Workaround in code |
 | DOC-04 | FL-02 | `type-rank` role has no utility in §8.2 | Low | Open |
 | DOC-05 | FL-02 | No base rule for page background and text color | Medium | Workaround in code |
-| DOC-06 | FL-02 | Container classes are not in a cascade layer | Low | Open |
+| DOC-06 | FL-02 | Container classes are not in a cascade layer | Low | Workaround in code |
 | DOC-07 | FL-02 | COL-13 gives utilities, §2.8 gives values only | Low | Open |
+| DOC-08 | FL-03 | Ad heights and creative sizes have no tokens | Medium | Workaround in code |
+| DOC-09 | FL-03 | 336×280 phone creative is wider than a 320px screen | Medium | Workaround in code |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Check in FL-07 |
 | U-04 | FL-02 | Theme switch and language switch look | Medium | Open |
 | U-05 | FL-02 | No minimum touch target size | Medium | Open |
+| U-06 | FL-03 | Section heading rule thickness | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -45,6 +48,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-05 | FL-01 | shadcn `base-nova` preset | Medium | Needs decision before `shadcn add` |
 | IMP-06 | FL-01 | `agentRules: false` in `next.config.ts` | Low | Closed (no action) |
 | IMP-07 | FL-01 | Playwright runs Chromium only | Low | Decide in FL-13 |
+| IMP-08 | FL-03 | Which creative the ad placeholder shows | Low | Needs confirmation |
+| IMP-09 | FL-03 | Extra layout part `WithRail` | Low | Needs confirmation |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -99,7 +104,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Found:** FL-02 · **Severity:** Low · **Status:** Open
 - **Source:** `spacing-layout-system.md` Section 12.3.
 - **Problem:** `.shell`, `.ad-row`, `.editorial-grid`, `.with-rail` and `.peer-card` are plain CSS outside a layer. In Tailwind 4, unlayered CSS beats every utility, so a utility on the same element (for example `gap-*` on `.with-rail`) is ignored.
-- **Suggested solution:** Write them as `@utility shell { ... }`, or wrap them in `@layer components`. FL-03 builds on these classes, so decide before or during FL-03.
+- **Code now (FL-03):** The layout parts add only utilities for properties that these classes do not set (for example `grid-cols-1` on `.ad-row`, `gap-y-0` on `.peer-card`, padding on `.shell`). No utility is silently lost.
+- **Suggested solution:** Write them as `@utility shell { ... }`, or wrap them in `@layer components`.
 
 ### DOC-07 COL-13 gives utilities, §2.8 gives values only
 
@@ -108,6 +114,22 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Problem:** COL-13 names `focus-visible:ring-2 ring-ring ring-offset-2 ring-offset-background`. §2.8 gives only values, and there is no shared CSS. Each control must repeat about five classes. On a surface other than `background`, the offset color must change by hand ("the surface below").
 - **Code now:** Each control uses the COL-13 utilities. The FL-02 Playwright test checks the ring.
 - **Suggested solution:** Add one shared focus rule to the spec (a `focus-ring` utility, or a base `:focus-visible` rule) with an offset-color variable that a surface can set.
+
+### DOC-08 Ad heights and creative sizes have no tokens
+
+- **Found:** FL-03 · **Severity:** Medium · **Status:** Workaround in code
+- **Source:** `spacing-layout-system.md` Section 9 (table) and Section 12.2.
+- **Problem:** The reserved heights per tier (`ad-band-top` 100 / 90 / 250, `ad-band` 280 / 250 / 250, `ad-inset` 250, 90 from 1280) are only in the Section 9 table. Section 12.2 has `--ad-label` but no height or width tokens, and `LAY-01` forbids typing them in a component.
+- **Code now:** tajmin chose a project file, `src/styles/ads.css`, with `--ad-<slot>-height` and `--ad-<slot>-width` per tier, copied from the table. `globals.css` imports it as a fourth file, although `AGENTS.md` Section 5 says "the three token files". The values are px, because creatives have fixed IAB pixel sizes.
+- **Suggested solution:** Add these tokens to Section 12.2 (or a 12.4 "Ads" block). Then replace `ads.css` with the spec copy.
+
+### DOC-09 336×280 phone creative is wider than a 320px screen
+
+- **Found:** FL-03 · **Severity:** Medium · **Status:** Workaround in code
+- **Source:** `spacing-layout-system.md` Section 9 (`ad-band`, phone: 336×280) and Section 13 (test width 320). Also `.ad-row` in Section 12.3.
+- **Problem:** At 320px a 336px creative does not fit. `.ad-row` is a grid with no column template, so its auto track grows to the creative and the page scrolls sideways (measured: scroll width 336 at 320).
+- **Code now:** `AdRow` adds `grid-cols-1` (`minmax(0, 1fr)`), and the placeholder has `max-w-full`. A real 336px creative would still be cut at 320.
+- **Suggested solution:** Say in Section 9 that 336×280 is served only from 336px of viewport (300×250 below), and add `grid-template-columns: minmax(0, 1fr)` to `.ad-row` in Section 12.3.
 
 ---
 
@@ -145,6 +167,13 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Found:** FL-02 · **Severity:** Medium · **Status:** Open
 - **Gap:** No spec sets a minimum target size. The FL-02 switches are about 33px high. That passes WCAG 2.2 AA (24px) but not the 44px that most mobile guidelines use.
 - **Suggested solution:** Add a token such as `--target-min: 2.75rem` (44px) to the layout spec, and use it for header controls from FL-05.
+
+### U-06 Section heading rule thickness
+
+- **Found:** FL-03 · **Severity:** Low · **Status:** Open
+- **Gap:** Layout §5.2 has `space-section-rule-title` and color §2 says `brand` is for editorial rules, but no spec gives the rule's thickness or length.
+- **Treatment used:** `src/components/layout/SectionHeading.tsx`: a 1px `border-brand` top border across the full width of the heading row.
+- **Suggested solution:** Set the thickness (1px, 2px or 3px) and whether the rule spans the shell or only the wrapper, in the components pass.
 
 ---
 
@@ -194,6 +223,17 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Found:** FL-01 · **Severity:** Low · **Status:** Decide in FL-13
 - **Suggested solution:** Add WebKit (Safari on iPhone) in FL-13. It matters most for Bangla text shaping and `text-wrap: balance`.
 
+### IMP-08 Which creative the ad placeholder shows
+
+- **Found:** FL-03 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** Where Section 9 lists several creatives, the placeholder shows the one that fills the reserved height: `ad-band-top` 320×100 / 728×90 / 970×250; `ad-band` 336×280 / 300×250 (768) / 970×250; `ad-inset` 300×250 / 728×90 (from 1280).
+- **Note:** It is a stand-in only. Real creatives set their own size inside the reserved height.
+
+### IMP-09 Extra layout part `WithRail`
+
+- **Found:** FL-03 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** The `.with-rail` grid is its own part, `WithRail`, so that a section can put its `SectionHeading` above the wrapper and rail. For the sparse case (no rail content) a section uses `Wrapper` without `WithRail`, and the wrapper spans the shell. `PeerRow` and `PeerCard` are the peer-row grid.
+
 ---
 
 ## Kit issues (KIT-)
@@ -229,3 +269,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | Date | Ticket | Change |
 | --- | --- | --- |
 | 2026-10-07 | FL-02 | File created. FL-01 and FL-02 findings added |
+| 2026-10-07 | FL-03 | DOC-08, DOC-09, U-06, IMP-08, IMP-09 added. DOC-06 workaround noted |

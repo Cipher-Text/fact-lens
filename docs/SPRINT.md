@@ -23,7 +23,7 @@ Claude keeps this table current. Status values: To do, In progress, In review, D
 | --- | --- | --- |
 | FL-01 | Project setup | Done |
 | FL-02 | Design foundations | Done |
-| FL-03 | Layout parts | To do |
+| FL-03 | Layout parts | Done |
 | FL-04 | Mock content | To do |
 | FL-05 | Header | To do |
 | FL-06 | Hero | To do |

@@ -27,6 +27,14 @@ export default async function HomePage({ params }: PageProps<"/[lang]">) {
           {t.home.foundationsLink}
         </Link>
       </p>
+      <p className="type-ui">
+        <Link
+          href={localizedPath(lang, "/layout-parts")}
+          className="text-interactive underline underline-offset-4 hover:text-interactive-hover focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none active:text-interactive-pressed"
+        >
+          {t.home.layoutPartsLink}
+        </Link>
+      </p>
     </main>
   );
 }

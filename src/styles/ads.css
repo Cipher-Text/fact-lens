@@ -1,0 +1,51 @@
+/*
+ * Project tokens for the ad slots. NOT copied from a spec block.
+ * Values come from the table in docs/design-system/spacing-layout-system.md Section 9.
+ * Section 12.2 has no tokens for them (DOC-08). Replace this file with the spec copy
+ * when the blueprint adds the tokens.
+ *
+ * Height: the reserved creative height per tier (LAY-10). The label line is --ad-label.
+ * Width: the creative that the placeholder shows. It is the size that fills the reserved height.
+ * Creatives are fixed pixel sizes (IAB), so these values are px, not rem.
+ */
+
+:root {
+  /* Phone and 600: 320x100 */
+  --ad-band-top-height: 100px;
+  --ad-band-top-width: 320px;
+  /* Phone and 600: 336x280 */
+  --ad-band-height: 280px;
+  --ad-band-width: 336px;
+  /* Phone to 1279: 300x250 */
+  --ad-inset-height: 250px;
+  --ad-inset-width: 300px;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    /* 768: 728x90 */
+    --ad-band-top-height: 90px;
+    --ad-band-top-width: 728px;
+    /* 768: 300x250 (reserved 250) */
+    --ad-band-height: 250px;
+    --ad-band-width: 300px;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    /* From 1024: 970x250 */
+    --ad-band-top-height: 250px;
+    --ad-band-top-width: 970px;
+    --ad-band-height: 250px;
+    --ad-band-width: 970px;
+  }
+}
+
+@media (min-width: 80rem) {
+  :root {
+    /* From 1280: 728x90 */
+    --ad-inset-height: 90px;
+    --ad-inset-width: 728px;
+  }
+}
