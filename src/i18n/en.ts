@@ -25,6 +25,26 @@ export const en: Dictionary = {
     label: "Advertisement",
     placeholder: "Ad space",
   },
+  // Working labels until the IA label table exists (IA-06, U-01).
+  categories: {
+    bangladesh: "Bangladesh",
+    geopolitics: "Geopolitics and Diplomacy",
+    security: "Security and Conflict",
+    history: "History and Context",
+    economy: "Economy and Trade",
+    technology: "Technology and Strategic Power",
+  },
+  // Entries under Regions. Working labels until the IA table exists (U-01).
+  regions: {
+    title: "Regions",
+    china: "China",
+    india: "India",
+    myanmar: "Myanmar",
+    "middle-east": "Middle East",
+    "southeast-asia": "Southeast Asia",
+    europe: "Europe",
+    africa: "Africa",
+  },
   // Temporary page for FL-02. Remove with the page in FL-13.
   foundations: {
     title: "Design foundations",

@@ -6,7 +6,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-04 Mock content
+- Ticket: FL-05 Header
 - Status: To do
 - Next action: tajmin types `/ticket`
 
@@ -17,6 +17,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-01 Project setup | Next.js 16.3.8, Tailwind 4, Vitest, Playwright with axe, shadcn init (base-nova, no components). `agentRules: false` keeps `AGENTS.md` unchanged. Private repo `tajmin/fact-lens-web` |
 | 2026-10-07 | FL-02 Design foundations | Token CSS copied from the three specs; `next/font` with four families; `[lang]` routes with `src/proxy.ts` (Bangla at `/`, English at `/en`, `fl-lang` cookie); three-state theme switch set before first paint; `bn.ts`/`en.ts` string tables; temporary page `/foundations`. DOC-01 to DOC-07 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-03 Layout parts | `Shell`, `WithRail`, `Wrapper`, `Rail`, `SectionHeading`, `PeerRow`/`PeerCard`, `AdRow` with `AdPlaceholder`; ad tokens in `src/styles/ads.css` (DOC-08); temporary page `/layout-parts`; Playwright at 11 widths. DOC-08, DOC-09, U-06, IMP-08, IMP-09 in `docs/prototype-findings.md` |
+| 2026-10-07 | FL-04 Mock content | 52 bilingual stories in `src/content/`, read through `getHomepage(lang, { variant })` with full and sparse versions; category and region labels in the string tables; placeholder SVGs in `public/mock/`; ESLint rule keeps components on `@/content` (DR-01). U-07, IMP-10 to IMP-12 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -31,17 +32,22 @@ Ideas that are outside the current ticket.
 - FL-02: `ThemeSwitch` and `LanguageSwitch` are in `src/components/header/` with a neutral look. FL-05 places them in the top bar.
 - FL-03: `AdRow` cannot hide itself when its section is hidden (`LAY-13`). The page that composes the sections must drop both together.
 - FL-03: Reader size A++ is not tested on `/layout-parts`. Cover it in FL-13.
+- FL-04: From FL-06, let the homepage read `?content=sparse` and pass `{ variant: "sparse" }` to `getHomepage`, so the sparse cases can be seen and tested (IMP-11).
+- FL-04: The placeholder SVGs in `public/mock/` use one fixed neutral gray in both themes. Fine for mock images; real photos replace them.
+- FL-04: Some mock headlines name real countries with invented figures (design-reviewer note on skill rule 2). Make them more generic if the editorial team prefers.
+- FL-04: The `mock-content` skill's `Story` shape has no reading time. `readingMinutes` was added in code (IMP-10). Update the skill if wanted.
 
 ## Unresolved design-system items
 
 | ID | File and component | Treatment used | Status |
 | --- | --- | --- | --- |
-| U-01 | English category labels | Working labels from the `mock-content` skill (`IA-06`) | Open |
+| U-01 | English category labels (`src/i18n/en.ts` `categories`) | Working labels from the `mock-content` skill (`IA-06`) | Open |
 | U-02 | Card variants, radius, icons, motion | Neutral treatment (`AGENTS.md` Section 8) | Open |
 | U-03 | বিশ্লেষণ ও মতামত section background | `surface-elevated` (`DR-76`). Check the look in the prototype | Check |
 | U-04 | Theme switch and language switch look (`src/components/header/`) | Neutral bordered button group and text link; Tailwind spacing scale for padding | Open |
 | U-05 | Minimum touch target size (no spec value; switches are about 33px) | None yet. Proposed `--target-min` 44px | Open |
 | U-06 | Section heading rule thickness (`src/components/layout/SectionHeading.tsx`) | 1px `border-brand` top border | Open |
+| U-07 | Region list and labels (`src/content/homepage.ts`, `src/i18n/*.ts` `regions`) | Seven working regions; আফ্রিকা has no stories | Open |
 
 ## Spec issues (DOC-)
 

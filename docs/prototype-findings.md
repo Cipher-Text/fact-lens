@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-03 (accepted)
+- Last updated: 7 October 2026, after FL-04 (accepted)
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -41,6 +41,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-04 | FL-02 | Theme switch and language switch look | Medium | Open |
 | U-05 | FL-02 | No minimum touch target size | Medium | Open |
 | U-06 | FL-03 | Section heading rule thickness | Low | Open |
+| U-07 | FL-04 | Region list under অঞ্চল | Medium | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -50,6 +51,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-07 | FL-01 | Playwright runs Chromium only | Low | Decide in FL-13 |
 | IMP-08 | FL-03 | Which creative the ad placeholder shows | Low | Needs confirmation |
 | IMP-09 | FL-03 | Extra layout part `WithRail` | Low | Needs confirmation |
+| IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Needs confirmation |
+| IMP-11 | FL-04 | `getHomepage` applies the content rules and has a sparse variant | Low | Needs confirmation |
+| IMP-12 | FL-04 | Category and region labels are interface strings | Low | Needs confirmation |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -139,7 +143,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 - **Found:** FL-01 · **Severity:** Medium · **Status:** Open
 - **Gap:** The specs name the categories in Bangla only (`IA-06`).
-- **Treatment used:** The working labels from the `mock-content` skill.
+- **Treatment used:** The working labels from the `mock-content` skill, in `src/i18n/en.ts` under `categories` (FL-04). The region labels under `regions` are working labels too (see U-07).
 - **Suggested solution:** The editorial team approves an English label list. Add it to the decision register.
 
 ### U-02 Card variants, radius, icons, motion
@@ -174,6 +178,13 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Gap:** Layout §5.2 has `space-section-rule-title` and color §2 says `brand` is for editorial rules, but no spec gives the rule's thickness or length.
 - **Treatment used:** `src/components/layout/SectionHeading.tsx`: a 1px `border-brand` top border across the full width of the heading row.
 - **Suggested solution:** Set the thickness (1px, 2px or 3px) and whether the rule spans the shell or only the wrapper, in the components pass.
+
+### U-07 Region list under অঞ্চল
+
+- **Found:** FL-04 · **Severity:** Medium · **Status:** Open
+- **Gap:** `DR-19` puts চীন under অঞ্চল, and the `mock-content` skill asks for 6 or more regions, but no spec or decision lists the regions or their order.
+- **Treatment used:** Seven working regions in `src/content/homepage.ts` and `src/i18n/bn.ts` / `en.ts`: চীন, ভারত, মিয়ানমার, মধ্যপ্রাচ্য, দক্ষিণ-পূর্ব এশিয়া, ইউরোপ, আফ্রিকা. আফ্রিকা has no stories, so it never shows (§7.3).
+- **Suggested solution:** The editorial team approves the region list, the order and the English labels. Add them to the IA label table (`IA-06`).
 
 ---
 
@@ -234,6 +245,25 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Found:** FL-03 · **Severity:** Low · **Status:** Needs confirmation
 - **Choice:** The `.with-rail` grid is its own part, `WithRail`, so that a section can put its `SectionHeading` above the wrapper and rail. For the sparse case (no rail content) a section uses `Wrapper` without `WithRail`, and the wrapper spans the shell. `PeerRow` and `PeerCard` are the peer-row grid.
 
+### IMP-10 `readingMinutes` added to the `Story` type
+
+- **Found:** FL-04 · **Severity:** Low · **Status:** Needs confirmation
+- **Context:** `typography-system.md` §7.1 says card metadata is "time, then reading time". The `Story` shape in the `mock-content` skill has no reading-time field.
+- **Choice:** `src/content/types.ts` adds an optional `readingMinutes`. Latest items have none, so a card must show time only when it is missing. `Lang` comes from `src/i18n/config.ts` instead of a second copy.
+- **Suggested solution:** Add `readingMinutes?: number` to the skill's shape (a kit change, tajmin's call).
+
+### IMP-11 `getHomepage` applies the content rules and has a sparse variant
+
+- **Found:** FL-04 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** `getHomepage(lang)` returns the sections in page order. It removes a region with no stories, and returns `null` for a section with no content, so the page drops the section and its ad row (§7.3, `LAY-13`). `getHomepage(lang, { variant: "sparse" })` returns one sparse case per pattern: a lead with no image, one top story, a short Latest, an empty opinion column, a বাংলাদেশ section with no rail, no ভূরাজনীতি section, three grouped categories, three most-read items and three regions.
+- **Suggested solution:** From FL-06, the homepage reads a `?content=sparse` query (prototype only) and passes the variant, so tajmin and the Playwright tests can see the sparse cases. Remove the query with the temporary pages in FL-13, or keep it behind a dev check.
+
+### IMP-12 Category and region labels are interface strings
+
+- **Found:** FL-04 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** Stories carry only `category` and `region` ids. The labels are in `src/i18n/bn.ts` and `en.ts` (`categories`, `regions`), because the nav row, drawer, section headings and region chips all show them (T-27).
+- **Note:** A backend can later send labels with the content. Then the string tables keep only the fallback.
+
 ---
 
 ## Kit issues (KIT-)
@@ -270,3 +300,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | --- | --- | --- |
 | 2026-10-07 | FL-02 | File created. FL-01 and FL-02 findings added |
 | 2026-10-07 | FL-03 | DOC-08, DOC-09, U-06, IMP-08, IMP-09 added. DOC-06 workaround noted |
+| 2026-10-07 | FL-04 | U-07, IMP-10, IMP-11, IMP-12 added. U-01 updated |

@@ -23,6 +23,26 @@ export const bn = {
     label: "বিজ্ঞাপন",
     placeholder: "বিজ্ঞাপনের জায়গা",
   },
+  // Category labels (mock-content skill). চীন is a region, not a category (DR-19).
+  categories: {
+    bangladesh: "বাংলাদেশ",
+    geopolitics: "ভূরাজনীতি ও কূটনীতি",
+    security: "নিরাপত্তা ও সংঘাত",
+    history: "ইতিহাস ও প্রেক্ষাপট",
+    economy: "অর্থনীতি ও বাণিজ্য",
+    technology: "প্রযুক্তি ও কৌশলগত শক্তি",
+  },
+  // Entries under অঞ্চল. Working labels until the IA table exists (U-01).
+  regions: {
+    title: "অঞ্চল",
+    china: "চীন",
+    india: "ভারত",
+    myanmar: "মিয়ানমার",
+    "middle-east": "মধ্যপ্রাচ্য",
+    "southeast-asia": "দক্ষিণ-পূর্ব এশিয়া",
+    europe: "ইউরোপ",
+    africa: "আফ্রিকা",
+  },
   // Temporary page for FL-02. Remove with the page in FL-13.
   foundations: {
     title: "ডিজাইন ভিত্তি",

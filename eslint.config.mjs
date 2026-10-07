@@ -5,6 +5,26 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Components read content through src/content/index.ts only (DR-01).
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/content/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex:
+                "^(@/content|\\.\\.?(/\\.\\.)*/content)/(?!index$|types$).+",
+              message:
+                "Import content from @/content (getHomepage) only (DR-01).",
+            },
+          ],
+        },
+      ],
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:
