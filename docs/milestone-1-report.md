@@ -1,6 +1,6 @@
-# Fact Lens Milestone 2: Homepage Prototype Report
+# Fact Lens Milestone 1: Homepage Prototype Report
 
-8 October 2026 · Milestone 2, phase 3 · Status: **Finished, not deployed**
+8 October 2026 · Milestone 1, phase 3 · Status: **Finished, not deployed**
 
 This report closes the homepage prototype sprint. The full list of findings, with a suggested solution for each, is `docs/prototype-findings.md`. The measured results are the FL-13 tables in `docs/PROGRESS.md`. The next steps are in `docs/HANDOVER.md`.
 

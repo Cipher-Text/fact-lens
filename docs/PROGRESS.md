@@ -6,9 +6,9 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Milestone 2 homepage prototype: **finished** on 8 October 2026
+- Milestone 1 homepage prototype: **finished** on 8 October 2026
 - Ticket: none. FL-14 Preview deploy was rejected (too many open findings to deploy)
-- Next action: read `docs/HANDOVER.md`. The next milestone starts with the decisions listed there. The full report is `docs/milestone-2-report.md`
+- Next action: read `docs/HANDOVER.md`. The next milestone starts with the decisions listed there. The full report is `docs/milestone-1-report.md`
 
 ## FL-13 results
 
@@ -68,7 +68,7 @@ Sizes measured in px (bn / en).
 | 2026-10-07 | FL-11 Regions | `Regions` (P-3b): one markup for slider and tabs. From 600 a scroll-snap row (2 in view, 4 from 1024) with previous/next buttons in the heading row, 250ms scripted scroll, none with reduced motion, `aria-disabled` at each end; below 600 chip tabs with arrow keys, Home and End. No buttons with 4 regions or fewer. `#regions` and `#region-<id>` anchors (a link selects the tab on phones). Shared `StoryStack`; `SectionHeading` `actions` slot; Playwright at 14 widths. DOC-20, DOC-21, U-28, U-29, IMP-27, IMP-28 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-12 Footer | `SiteFooter` (7.1 row 15, 7.4, DR-59): full-width row with a 1px rule and the content in the shell; logo and four social icon links (inline Simple Icons CC0 marks, text names for screen readers), then About, Contact, Corrections, Privacy and Terms in the page language; `footer` keys in the string tables; Playwright at 14 widths. DOC-22, U-30, IMP-29 in `docs/prototype-findings.md` |
 | 2026-10-08 | FL-13 Final check | Temporary pages `/foundations` and `/layout-parts` removed; their site checks moved to `tests/e2e/site.spec.ts` and `tests/e2e/page.spec.ts`. Section 13 and typography §9 results table below, screenshots in `docs/fl-13/`, measurement run in `tests/final-check/` (both to leave the repository next milestone, IMP-30). No fixes picked yet. DOC-23, DOC-24, IMP-30 in `docs/prototype-findings.md` |
-| 2026-10-08 | FL-14 Preview deploy | Rejected by tajmin: with 88 findings registered, a preview link is not useful now. No deploy. Milestone closed; report in `docs/milestone-2-report.md`, handover in `docs/HANDOVER.md`. IMP-03 moves to the next milestone |
+| 2026-10-08 | FL-14 Preview deploy | Rejected by tajmin: with 88 findings registered, a preview link is not useful now. No deploy. Milestone closed; report in `docs/milestone-1-report.md`, handover in `docs/HANDOVER.md`. IMP-03 moves to the next milestone |
 
 ## Later
 

@@ -1,8 +1,8 @@
 # Fact Lens Prototype Findings
 
-The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 2 is closed; the summary is `docs/milestone-2-report.md`. Each finding has a suggested solution.
+The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 8 October 2026, Milestone 2 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -810,4 +810,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-11 | DOC-20, DOC-21, U-28, U-29, IMP-27, IMP-28 added. IMP-14 updated (all anchors have targets) |
 | 2026-10-07 | FL-12 | DOC-22, U-30, IMP-29 added |
 | 2026-10-07 | FL-13 | DOC-23, DOC-24, IMP-30 added. Results table with the Section 13 and §9 checks in `docs/PROGRESS.md` |
-| 2026-10-08 | FL-14 | FL-14 rejected; no deploy. Milestone 2 closed. IMP-03 and IMP-07 status updated. Report: `docs/milestone-2-report.md` |
+| 2026-10-08 | FL-14 | FL-14 rejected; no deploy. Milestone 1 closed. IMP-03 and IMP-07 status updated. Report: `docs/milestone-1-report.md` |

@@ -10,7 +10,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Item | Status |
 | --- | --- |
-| Current work | Homepage prototype (Milestone 2, phase 3) |
+| Current work | Homepage prototype (Milestone 1, phase 3). Milestone 2 is full development and hosting |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
 | Pages | Homepage first. Do not start article or category pages until their layout pass is complete |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |

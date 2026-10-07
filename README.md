@@ -2,7 +2,7 @@
 
 The new website frontend for **Fact Lens**, a Bangladesh-first international news publisher. The site publishes in Bangla and English.
 
-> Status: homepage prototype (Milestone 2) finished on 8 October 2026, not deployed. Mock data only. See [`docs/HANDOVER.md`](docs/HANDOVER.md).
+> Status: homepage prototype run 1 (Milestone 1, phase 3) finished on 8 October 2026, not deployed. Mock data only. See [`docs/HANDOVER.md`](docs/HANDOVER.md).
 
 ## Stack
 

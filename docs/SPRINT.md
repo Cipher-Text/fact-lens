@@ -19,7 +19,7 @@ This is a small sprint for a simple prototype: one homepage, mock data, Bangla a
 
 Claude keeps this table current. Status values: To do, In progress, In review, Done, Rejected.
 
-**Milestone 2 prototype: finished on 8 October 2026.** tajmin rejected FL-14. The report is `docs/milestone-2-report.md` and the handover note is `docs/HANDOVER.md`.
+**Milestone 1 prototype: finished on 8 October 2026.** tajmin rejected FL-14. The report is `docs/milestone-1-report.md` and the handover note is `docs/HANDOVER.md`.
 
 | Ticket | Title | Status |
 | --- | --- | --- |

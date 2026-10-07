@@ -1,14 +1,14 @@
 # Fact Lens Web: Handover Note
 
-8 October 2026 · End of Milestone 2 (homepage prototype)
+8 October 2026 · End of Milestone 1, phase 3 (homepage prototype)
 
-For the next person or agent who works in this repository. Read this first, then `docs/milestone-2-report.md`.
+For the next person or agent who works in this repository. Read this first, then `docs/milestone-1-report.md`.
 
 ## 1. State
 
 | Item | State |
 | --- | --- |
-| Milestone 2 prototype | Finished. FL-01 to FL-13 Done, FL-14 Rejected |
+| Milestone 1 prototype | Finished. FL-01 to FL-13 Done, FL-14 Rejected |
 | Deploy | None. No Vercel project exists |
 | Branch | `main`, remote `git@github.com:tajmin/fact-lens-web.git` (private) |
 | Data | Mock only (`src/content/`), `DR-01` |
@@ -37,7 +37,7 @@ pnpm test:e2e     # browser tests with axe
 | All findings, each with a suggested solution | `docs/prototype-findings.md` |
 | FL-13 results tables, later ideas, `U-` table | `docs/PROGRESS.md` |
 | Ticket board and acceptance criteria | `docs/SPRINT.md` |
-| Milestone report | `docs/milestone-2-report.md` |
+| Milestone report | `docs/milestone-1-report.md` |
 | FL-13 screenshots (about 13 MB) | `docs/fl-13/` |
 
 ## 4. Decisions needed before more code
