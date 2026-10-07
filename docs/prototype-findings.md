@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-08 (accepted)
+- Last updated: 7 October 2026, after FL-09 (accepted)
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -43,6 +43,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-15 | FL-06 | The 64px lead overlap has no token | Low | Workaround in code |
 | DOC-16 | FL-07 | LAY-12 section-to-ad space on a section with its own background | Low | Workaround in code |
 | DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Open |
+| DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Workaround in code |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -63,6 +64,11 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-18 | FL-08 | P-2 lead: image and text split from 1280px | Low | Open |
 | U-19 | FL-08 | P-2 rail at 600–1023px | Low | Open |
 | U-20 | FL-08 | Story labels inside a category section | Low | Open |
+| U-21 | FL-09 | Inside of a P-3 category block | Low | Open |
+| U-22 | FL-09 | P-3 rail module look (newsletter, poll) | Low | Open |
+| U-23 | FL-09 | Form text roles: field label, consent line, error and done messages | Low | Open |
+| U-24 | FL-09 | Poll question role and result bar look | Low | Open |
+| U-25 | FL-09 | Spacing inside forms has no tokens | Medium | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -86,6 +92,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Needs confirmation |
 | IMP-22 | FL-07 | Shared `MoreLink` and elevated link classes | Low | Needs confirmation |
 | IMP-23 | FL-08 | P-2 has no "আরও দেখুন" link | Low | Needs confirmation |
+| IMP-24 | FL-09 | Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test | Medium | Needs confirmation |
+| IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Needs confirmation |
+| IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Needs confirmation |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -229,6 +238,16 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Problem:** 7.1 maps "Lead story headline" to `type-story-lead` and "Second-level story in a lead group" to `type-story-title-lg`. The P-2 lead (বাংলাদেশ, ভূরাজনীতি) is the lead of its section, but not the page lead. Either reading fits.
 - **Workaround:** `type-story-title-lg`, so the hero lead stays the largest headline on the page. From 1280px the text column beside the image is about 440–460px wide; `type-story-lead` would be very large there.
 - **Suggested solution:** Add a row "Featured category lead" to 7.1.
+
+---
+
+### DOC-18 300×250 inset creative is wider than the 288px shell at 320
+
+- **Found:** FL-09 · **Severity:** Low · **Status:** Workaround in code
+- **Source:** `spacing-layout-system.md` Section 9 (`ad-inset` on phones: 300×250) and 13 (320 test width). Same kind as DOC-09.
+- **Problem:** At 320 the shell is 288px (320 − 2 × 16), so the 300px creative does not fit the inset at wrapper width.
+- **Workaround:** The DOC-09 `max-w-full` on the placeholder: the stand-in shrinks to 288px, with no horizontal scroll. A real fixed-size creative would overflow or be cut.
+- **Suggested solution:** Name a creative for widths below 332px (for example 300×250 only from 360, else 320×100 or none), or allow the inset to go outside the shell on phones.
 
 ---
 
@@ -382,6 +401,56 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### U-21 Inside of a P-3 category block
+
+- **Found:** FL-09 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/grouped/CategoryBlock.tsx`
+- **Gap:** 7.2 says "rows of two categories" but not what one category shows.
+- **Treatment used:** The section heading (rule and `type-section-title`, as in P-2), then a list: the first story with its 16:9 image and `type-story-title`, the other stories as compact items in `type-story-title-sm`, with the list rule between items (`space-list-item`). Time and reading time under each title. No summary, no category label (U-20), no "আরও দেখুন" link (as IMP-23).
+- **Suggested solution:** Define the category block in the component pass (U-02), with the story count per block.
+
+---
+
+### U-22 P-3 rail module look (newsletter, poll)
+
+- **Found:** FL-09 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/grouped/classes.ts`
+- **Gap:** 7.4 lists the parts of the newsletter and the poll and says they never use the ad label or ad colors, but gives no surface, border or padding.
+- **Treatment used:** No background. A 1px top rule in `border` with `space-section-rule-title` above the heading, so the module tops line up with the category heading rules beside them. The rule is the divider color, not `brand`, because the modules are not editorial sections (COL-04). Field and buttons 44px tall (U-05).
+- **Suggested solution:** Decide the module surface in the component pass (for example `surface-elevated` with padding).
+
+---
+
+### U-23 Form text roles: field label, consent line, error and done messages
+
+- **Found:** FL-09 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/grouped/NewsletterSignup.tsx`, `DailyPoll.tsx`
+- **Gap:** Typography 7.1 maps the newsletter heading, text, email field and buttons, but not the field label, the consent line, the error message or the done message. 7.1 also says "every homepage text uses a role in this table".
+- **Treatment used:** A visible field label (a placeholder alone is not a label) in `type-ui-sm` `text-ink-secondary`, as in the header search form. Consent line `type-ui-sm` `text-ink-secondary`, with an underlined `interactive` privacy link (a link in a sentence needs more than color). Error `type-ui-sm` `text-error`. Done message `type-ui` `text-success` on `success-subtle`, with the mock note in `type-ui-sm` `text-ink`.
+- **Suggested solution:** Add rows for form label, help and error text, and status message to 7.1 or 7.3.
+
+---
+
+### U-24 Poll question role and result bar look
+
+- **Found:** FL-09 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/grouped/DailyPoll.tsx`
+- **Gap:** 7.1 gives the poll heading, options and results, but not the question. 7.4 says "result bars" with no size or color.
+- **Treatment used:** The heading is "আজকের জরিপ" / "Daily poll" (`type-story-title-sm`); the question is the fieldset legend in `type-summary` `text-ink`. Each result: the option and its percent (`type-ui-sm`, tabular digits), then an 8px bar (`h-2`): track `border-soft`, fill `interactive`, width from the percent. The reader's own option is marked with "(আপনার ভোট)" in text, with no weight change (TYP-24). The total votes line is `type-ui-sm` `text-ink-muted`. No animation (motion is a gap, U-02).
+- **Suggested solution:** Add the question role and the bar size and colors to the component pass.
+
+---
+
+### U-25 Spacing inside forms has no tokens
+
+- **Found:** FL-09 · **Severity:** Medium · **Status:** Open
+- **Files:** `src/components/home/grouped/NewsletterSignup.tsx`, `DailyPoll.tsx`, `classes.ts` (and `src/components/header/classes.ts` since FL-05)
+- **Gap:** Section 5.2 has story and list spacing, but none for label to field, field to button, between radio options or the result bar height. LAY-01 says to add a token before typing a space value. The design reviewer flagged this as a strict LAY-01 break.
+- **Treatment used:** The Tailwind spacing scale, as in the header controls accepted in FL-05: `gap-2` (label, field, button), `gap-3` (radio to label, result rows), `mt-1`, `mt-2`, `mt-3`, `px-3`, `py-2`, `h-2` (bar), `size-5` (radio), `min-h-11` (44px targets, U-05). No pixel values.
+- **Suggested solution:** Add form spacing tokens (`space-field-label`, `space-field-gap`, `space-option`) and a control size token to Section 5.2.
+
+---
+
 ## Implementation choices to confirm (IMP-)
 
 ### IMP-01 Remembered English choice redirects only at `/`
@@ -470,6 +539,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Found:** FL-05 · **Severity:** Low · **Status:** Needs confirmation
 - **Choice:** Category and region pages do not exist (DR-01). Links go to `#category-<id>`, `#regions`, `#region-<id>` and `#newsletter`. FL-06 to FL-11 must give the sections these ids. A drawer link closes the drawer and moves the focus to its target when the target exists; otherwise focus returns to the menu button.
 - **FL-08:** `#category-bangladesh` and `#category-geopolitics` now exist. The header test that used a stand-in target uses the real section. The other categories get ids in FL-09.
+- **FL-09:** `#category-security`, `#category-history`, `#category-economy`, `#category-technology` and `#newsletter` now exist. Only `#regions` and `#region-<id>` (FL-11) are left.
 
 ### IMP-15 Search field is `type="text"`, not `type="search"`
 
@@ -526,6 +596,31 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### IMP-24 Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test
+
+- **Found:** FL-09 · **Severity:** Medium · **Status:** Needs confirmation
+- **Choice:** P-3 puts one `ad-inset` between each pair of rows, and no more than 3 (Section 9). Section 9 also says: on phones, skip an inset when the editorial content between two ads is shorter than 600px. That height depends on the width, the fonts and the reader size, so the server cannot know it. The prototype does not measure it at run time. Instead the Playwright test checks that the content from the ad row before P-3 to the first inset is 600px or more at 320 and 360 (it is, with two categories of three stories).
+- **Risk:** With short categories (one story without an image each), two ads can come closer than 600px on a phone.
+- **Suggested solution:** Give the inset rule a content condition the server can check (for example "skip the inset when the row above has fewer than N stories"), or measure it in the client after layout.
+
+---
+
+### IMP-25 Mock newsletter: own email check, 0.8s sending state, no email sent
+
+- **Found:** FL-09 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** The form has `noValidate` and checks the address itself (`src/lib/email.ts`: one @, no spaces, a dot in the domain), so the error is in the page language, not the browser's (T-27). A valid address shows "sending" for 0.8s, then the done message replaces the form and takes the focus. Nothing is sent (DR-01); the done message says so. The privacy link goes to `/privacy` (`/en/privacy`), a 404 page until it exists (IMP-18).
+- **Suggested solution:** Confirm the copy (heading "সকালের নিউজলেটার", text and consent line) with the editorial team, and the privacy page URL.
+
+---
+
+### IMP-26 Poll vote kept in local storage; percents by largest remainder
+
+- **Found:** FL-09 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** "One vote per browser" is the key `fl-poll:<poll id>` in local storage. If storage is blocked, the vote is kept in memory for the visit. The server renders the form; a browser with a stored vote shows the results after hydration. The reader's vote is added to the mock counts. Whole percents use the largest remainder, so they add up to 100 (538 + 1 of 1,401 shows 39%, not 38%). Voting with no option chosen shows "একটি উত্তর বেছে নিন।". A reader can clear storage and vote again; a real poll needs a server check.
+- **Suggested solution:** Confirm. Decide the server rule when a backend exists.
+
+---
+
 ## Kit issues (KIT-)
 
 ### KIT-01 `visual-qa` agent switches theme with `data-theme`
@@ -565,3 +660,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-06 | DOC-13 to DOC-15, U-11 to U-14, IMP-18 to IMP-20 added. IMP-11 updated |
 | 2026-10-07 | FL-07 | DOC-16, U-15 to U-17, IMP-21, IMP-22 added. IMP-18 and U-03 updated |
 | 2026-10-07 | FL-08 | DOC-17, U-18 to U-20, IMP-23 added. IMP-14 updated (category anchors now have targets) |
+| 2026-10-07 | FL-09 | DOC-18, U-21 to U-25, IMP-24 to IMP-26 added. IMP-14 updated (the four P-3 category anchors and `#newsletter` now have targets) |

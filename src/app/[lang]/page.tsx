@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { AnalysisOpinion } from "@/components/home/analysis-opinion/AnalysisOpinion";
 import { FeaturedCategory } from "@/components/home/featured/FeaturedCategory";
+import { GroupedCategories } from "@/components/home/grouped/GroupedCategories";
 import { Hero } from "@/components/home/hero/Hero";
 import { AdRow } from "@/components/layout/AdRow";
 import { getHomepage } from "@/content";
@@ -80,6 +81,21 @@ export default async function HomePage({
             <AdRow slot="ad-band" strings={t.ads} />
           </Fragment>
         ))}
+        {/* P-3: no ad row of its own; its ad-inset slots are inside it. P-5 Most read
+            follows without an ad row between (7.1), so space-section is below it. */}
+        {home.grouped ? (
+          <GroupedCategories
+            lang={lang}
+            categories={home.grouped.categories}
+            poll={home.grouped.poll}
+            t={t}
+            className={cn(
+              (featured.length > 0 || home.hero || home.analysisOpinion) &&
+                "pt-(--space-module)",
+              "pb-(--space-section)",
+            )}
+          />
+        ) : null}
       </main>
     </>
   );

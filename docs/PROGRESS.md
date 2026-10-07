@@ -6,7 +6,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-09 Grouped categories
+- Ticket: FL-10 Most read
 - Status: To do
 - Next action: tajmin types `/ticket`
 
@@ -22,6 +22,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-06 Hero | `Hero` with `LeadStory` (64px panel overlap from 768, inset end for the cut corner), two `StoryCard` top stories on a subgrid peer row, `LatestList` rail (2 columns at 600–1023); ad-band after the hero; `?content=sparse`; `formatTime` and `fill` helpers; Playwright at 12 widths. DOC-13 to DOC-15, U-11 to U-14, IMP-18 to IMP-20 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-07 বিশ্লেষণ ও মতামত | `AnalysisOpinion` in the shell on `surface-elevated` (margin outside the background), `AnalysisList` (image beside text) and `OpinionList` (মতামত chip as the column heading, quote icon, author and time), 2 equal columns from 768, one column spans when the other is empty; shared `MoreLink`; elevated link classes for the focus ring offset; Playwright at 13 widths. DOC-16, U-15 to U-17, IMP-21, IMP-22 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-08 Featured categories | `FeaturedCategory` for বাংলাদেশ and ভূরাজনীতি: `FeaturedLead` (text under the image to 1279, beside it from 1280, DR-55) and `FeaturedRail` (one image story and two stories; 2 columns at 600–1023); wrapper spans the shell with no rail stories; ad-band after each; `category-<id>` anchors; Playwright at 14 widths. DOC-17, U-18 to U-20, IMP-23 in `docs/prototype-findings.md` |
+| 2026-10-07 | FL-09 Grouped categories | `GroupedCategories` (P-3): rows of two `CategoryBlock`s (one on phones) with an `ad-inset` between rows at wrapper width (3 or fewer); rail with `NewsletterSignup` (error, sending, done; mock) and `DailyPoll` (one vote per browser in local storage, result bars, largest-remainder percents); `#category-<id>` and `#newsletter` anchors; Playwright at 14 widths. DOC-18, U-21 to U-25, IMP-24 to IMP-26 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -48,6 +49,9 @@ Ideas that are outside the current ticket.
 - FL-07: The analysis thumbnails have no `sizes` either (same as FL-06). Add it with real photos.
 - FL-07: `/analysis` and `/opinion` (the P-4 "more" links) are 404 until those pages exist (IMP-22).
 - FL-08: P-2 has no "আরও দেখুন" link to its category page, because 7.2 lists none (IMP-23).
+- FL-09: `/privacy` (newsletter consent line) is 404 until the page exists. FL-12 links to it too (IMP-25).
+- FL-09: The phone 600px-between-ads rule is checked by a test, not at run time (IMP-24). Recheck with real, shorter categories.
+- FL-09: P-3 has `space-section` below it for P-5 (FL-10). Until FL-10 it is the end of the page.
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
 ## Unresolved design-system items
@@ -74,6 +78,11 @@ Ideas that are outside the current ticket.
 | U-18 | P-2 lead split from 1280 (`src/components/home/featured/FeaturedLead.tsx`) | Two equal columns, text top-aligned beside the image | Open |
 | U-19 | P-2 rail at 600–1023 (`FeaturedRail.tsx`) | Two columns: image story left over both rows, two stories right | Open |
 | U-20 | Story labels in a category section (`FeaturedLead.tsx`, `FeaturedRail.tsx`) | No category label (the heading names it); breaking label kept; rail in `type-story-title-sm` | Open |
+| U-21 | Inside of a P-3 category block (`src/components/home/grouped/CategoryBlock.tsx`) | Heading, one image story in `type-story-title`, then compact stories in `type-story-title-sm` with list rules | Open |
+| U-22 | P-3 rail module look (`grouped/classes.ts`) | No background; 1px `border` top rule with `space-section-rule-title`, aligned with the category rules | Open |
+| U-23 | Form text roles (`NewsletterSignup.tsx`, `DailyPoll.tsx`) | Visible label and consent line `type-ui-sm` `ink-secondary`; error `text-error`; done `text-success` on `success-subtle` | Open |
+| U-24 | Poll question and result bars (`DailyPoll.tsx`) | Question `type-summary`; 8px bar, `border-soft` track, `interactive` fill; own vote named in text | Open |
+| U-25 | Spacing inside forms (`grouped/*`, `header/classes.ts`) | Tailwind spacing scale (`gap-2`, `min-h-11` …), as in FL-05; no form tokens in 5.2 | Open |
 
 ## Spec issues (DOC-)
 
@@ -97,4 +106,5 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-06 | `color-system.md` COL-05 and 2 | DOC-14: COL-05 says links use `interactive`; headlines use `ink`. A headline link fits both. Built as `ink` with interactive hover and press (U-11) | Open |
 | 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 and 12.2 | DOC-15: The 64px lead overlap has no token. Built with the Tailwind scale (`md:-mt-16`) | Open |
 | 2026-10-07 FL-07 | `spacing-layout-system.md` LAY-12 and 7.4 | DOC-16: LAY-12 puts section-to-ad space on the section, but does not say whether it is inside or outside P-4's own background. Built as margin outside the background | Open |
+| 2026-10-07 FL-09 | `spacing-layout-system.md` 9 and 13 | DOC-18: The 300×250 `ad-inset` creative is wider than the 288px shell at 320. Workaround: the DOC-09 `max-w-full` on the placeholder | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |

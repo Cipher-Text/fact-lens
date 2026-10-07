@@ -35,3 +35,11 @@ export function fill(
     key in values ? String(values[key]) : match,
   );
 }
+
+/** A whole percent in the page language: "38%" or "৩৮%". `value` is 0 to 100. */
+export function formatPercent(value: number, lang: Lang): string {
+  return new Intl.NumberFormat(locales[lang], {
+    style: "percent",
+    maximumFractionDigits: 0,
+  }).format(value / 100);
+}

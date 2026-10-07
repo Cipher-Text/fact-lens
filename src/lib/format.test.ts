@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { fill, formatDate, formatNumber, formatTime } from "./format";
+import {
+  fill,
+  formatDate,
+  formatNumber,
+  formatPercent,
+  formatTime,
+} from "./format";
 
 describe("formatting for the page language (TYP-17)", () => {
   it("uses Bangla digits on Bangla pages", () => {
@@ -27,5 +33,13 @@ describe("fill", () => {
   it("replaces known placeholders and keeps unknown ones", () => {
     expect(fill("{minutes} min read", { minutes: "6" })).toBe("6 min read");
     expect(fill("{a} and {b}", { a: 1 })).toBe("1 and {b}");
+  });
+});
+
+describe("formatPercent", () => {
+  it("uses the page language digits (TYP-17)", () => {
+    expect(formatPercent(38, "bn")).toBe("৩৮%");
+    expect(formatPercent(38, "en")).toBe("38%");
+    expect(formatPercent(100, "bn")).toBe("১০০%");
   });
 });

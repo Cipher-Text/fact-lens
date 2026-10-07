@@ -53,6 +53,29 @@ export const bn = {
     // Accessible name of a "more" link: the visible text, then the section name.
     moreAbout: "আরও দেখুন: {section}",
   },
+  // P-3 rail. Mock only (DR-01): no email is sent and the poll keeps no server count.
+  newsletter: {
+    title: "সকালের নিউজলেটার",
+    text: "প্রতিদিন সকালে দিনের প্রধান খবর ও বিশ্লেষণ, সরাসরি আপনার ইনবক্সে।",
+    emailLabel: "ইমেইল ঠিকানা",
+    submit: "সাবস্ক্রাইব করুন",
+    sending: "পাঠানো হচ্ছে…",
+    invalidEmail: "সঠিক ইমেইল ঠিকানা লিখুন।",
+    done: "ধন্যবাদ, আপনি সাবস্ক্রাইব করেছেন।",
+    mockNote: "এই প্রোটোটাইপ কোনো ইমেইল পাঠায় না।",
+    // The consent line: before, the privacy link, after (keeps the word order per language).
+    consentBefore: "সাবস্ক্রাইব করলে আপনি আমাদের ",
+    privacy: "গোপনীয়তা নীতি",
+    consentAfter: " মেনে নিচ্ছেন।",
+  },
+  poll: {
+    title: "আজকের জরিপ",
+    vote: "ভোট দিন",
+    chooseOption: "একটি উত্তর বেছে নিন।",
+    voted: "ধন্যবাদ, আপনার ভোট নেওয়া হয়েছে।",
+    yourVote: "(আপনার ভোট)",
+    total: "মোট {count}টি ভোট",
+  },
   ads: {
     label: "বিজ্ঞাপন",
     placeholder: "বিজ্ঞাপনের জায়গা",
