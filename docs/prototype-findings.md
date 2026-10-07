@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-05 (accepted)
+- Last updated: 7 October 2026, after FL-06 (accepted)
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -38,6 +38,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-10 | FL-05 | Logo "in the center at every width" does not hold at 320 and 360 | Medium | Open |
 | DOC-11 | FL-05 | `shadow` color has no Tailwind mapping, so COL-15 cannot be applied | Low | Open |
 | DOC-12 | FL-05 | `--z-scrim` and `--z-drawer` are not needed with a native modal dialog | Low | Open |
+| DOC-13 | FL-06 | "Cut corner on top-story images" has no matching rule | Low | Open |
+| DOC-14 | FL-06 | Headline links: `ink` or `interactive` | Low | Open |
+| DOC-15 | FL-06 | The 64px lead overlap has no token | Low | Workaround in code |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Check in FL-07 |
@@ -48,6 +51,10 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-08 | FL-05 | Logo asset and its role | Medium | Open |
 | U-09 | FL-05 | Theme control in the bar: one cycling icon button | Medium | Open |
 | U-10 | FL-05 | Drawer and search dialog look | Low | Open |
+| U-11 | FL-06 | Headline link color | Low | Open |
+| U-12 | FL-06 | Lead text panel inset and padding | Low | Open |
+| U-13 | FL-06 | Card without image beside a card with image | Medium | Open |
+| U-14 | FL-06 | Bangla Breaking label and label padding | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -58,13 +65,16 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-08 | FL-03 | Which creative the ad placeholder shows | Low | Needs confirmation |
 | IMP-09 | FL-03 | Extra layout part `WithRail` | Low | Needs confirmation |
 | IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Needs confirmation |
-| IMP-11 | FL-04 | `getHomepage` applies the content rules and has a sparse variant | Low | Needs confirmation |
+| IMP-11 | FL-04 | `getHomepage` applies the content rules and has a sparse variant | Low | Needs confirmation (`?content=sparse` added in FL-06) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Needs confirmation |
 | IMP-13 | FL-05 | Drawer and search use native `<dialog>`, not shadcn | Medium | Needs confirmation |
 | IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Needs confirmation |
 | IMP-15 | FL-05 | Search field is `type="text"`, not `type="search"` | Low | Needs confirmation |
 | IMP-16 | FL-05 | Nav row hides the items that do not fit after hydration | Low | Needs confirmation |
 | IMP-17 | FL-05 | On phones the drawer focuses the search field first | Low | Needs confirmation |
+| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Needs confirmation |
+| IMP-19 | FL-06 | Hero metadata shows the clock time only, 24-hour | Low | Needs confirmation |
+| IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Needs confirmation |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -169,6 +179,30 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Problem:** The drawer and the search dialog use `<dialog>` with `showModal()` (IMP-13). The browser puts them in the top layer, above every `z-index`, with its own `::backdrop` for the scrim. The two layer tokens are not used.
 - **Suggested solution:** Say in Section 10 that modal surfaces use the top layer, and keep `--z-scrim` and `--z-drawer` only for a non-modal fallback, or remove them.
 
+### DOC-13 "Cut corner on top-story images" has no matching rule
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Open
+- **Source:** `spacing-layout-system.md` Section 7.4, P-1 lead panel
+- **Problem:** The paragraph ends: "The cut corner on top-story images comes from the text block, not from a clip on the image." The same paragraph gives an overlap only for the lead. No rule says how a top-story text block covers its image.
+- **Workaround:** The lead panel is inset 64px from the end, so the image shows beside it at the bottom: that is the cut corner. Top-story cards have the image, then the text, with no overlap.
+- **Suggested solution:** Say whether "top-story" means the lead story. If top-story cards need a cut corner too, give the overlap and the inset.
+
+### DOC-14 Headline links: `ink` or `interactive`
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Open
+- **Source:** `color-system.md` COL-05, COL-06 and Section 2 (`ink` for headlines)
+- **Problem:** COL-05 says links use `interactive`. Headlines are `ink`. A linked headline fits both rules.
+- **Workaround:** Headline links are `text-ink`, with `interactive-hover` and `interactive-pressed` on hover and press (COL-06), no underline. See U-11.
+- **Suggested solution:** Add one line to COL-05: "Story headlines that link stay `ink` and use the interactive hover and press colors."
+
+### DOC-15 The 64px lead overlap has no token
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Workaround in code
+- **Source:** `spacing-layout-system.md` Section 7.4 and Section 12.2
+- **Problem:** 7.4 sets a 64px overlap, but 12.2 has no token for it (LAY-01).
+- **Workaround:** `md:-mt-16` from the Tailwind spacing scale (64px) in `LeadStory.tsx`.
+- **Suggested solution:** Add `--space-lead-overlap: 4rem` to 12.2.
+
 ---
 
 ## Design-system gaps (U-)
@@ -241,6 +275,34 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Files:** `src/components/header/Drawer.tsx`, `SearchDialog.tsx`, `SearchForm.tsx`, `classes.ts`
 - **Treatment used:** `surface-elevated` panels on the `overlay` scrim, no shadow (DOC-11), no radius. The drawer is `--drawer-width` from the left, with a 200ms slide (none with reduced motion). The search dialog is shell width, just below the bar height. Item rows are 44px. Region sub-items are indented 16px. In light mode `surface-elevated` is white against the cream page; visual QA noted the contrast between the two.
 - **Suggested solution:** Include the drawer, search dialog and bar controls in the component pass (with U-02 and U-04).
+
+### U-11 Headline link color
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/story/links.ts`
+- **Treatment used:** `text-ink`; hover `interactive-hover`, press `interactive-pressed`; no underline; focus ring with the `background` offset. See DOC-14.
+- **Suggested solution:** Decide in the component pass with the card variants (U-02).
+
+### U-12 Lead text panel inset and padding
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/hero/LeadStory.tsx`
+- **Treatment used:** From 768px the panel is `surface`, inset 64px from the end (`md:me-16`), with `space-story-media-text` (16px) padding on all sides. Its start edge lines up with the image. Below 768px the text is under the image with no panel color.
+- **Suggested solution:** Give the inset and the padding in 7.4, or as tokens.
+
+### U-13 Card without image beside a card with image
+
+- **Found:** FL-06 · **Severity:** Medium · **Status:** Open
+- **Files:** `src/components/story/StoryCard.tsx`, `src/components/home/hero/Hero.tsx`
+- **Treatment used:** Section 8 and LAY-08: a missing part leaves its subgrid row empty. In the full mock content the second top story has no image. Its text starts level with the first card's text, so a blank band sits above it. The long Bangla headline of the first card also makes the shared title row tall, so a gap opens between the short headline and its summary. Visual QA noted this at 768.
+- **Suggested solution:** One of: (a) require an image for both top stories; (b) a card variant without image, used for both cards when one has no image (LAY-08 allows one variant per row); (c) accept the gap. Decide in the component pass.
+
+### U-14 Bangla Breaking label and label padding
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Open
+- **Files:** `src/i18n/bn.ts` (`story.breaking`), `src/components/story/StoryEyebrow.tsx`
+- **Treatment used:** COL-11 names the English word "Breaking" only. The Bangla page shows "সদ্যপ্রাপ্ত" (no English word, T-27) on `bg-live` with `text-on-live`, padding `px-1`.
+- **Suggested solution:** Editorial team confirms the Bangla word (for example "সদ্যপ্রাপ্ত" or "ব্রেকিং"). Component pass sets the label padding.
 
 ---
 
@@ -349,6 +411,24 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Choice:** Section 6 says focus moves to the drawer's first item, and DR-21 makes search the first item on phones. So on a phone the keyboard opens with the drawer. From 768px focus goes to the first nav link.
 - **Suggested solution:** If the keyboard is unwanted, focus the close button or the first link on phones; this changes the Section 6 wording.
 
+### IMP-18 Story and Latest links lead to 404 pages
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** Story headlines link to `/story/<slug>` (`/en/story/<slug>` in English) and the Latest "আরও দেখুন" link to `/latest`. These pages do not exist yet (AGENTS.md Section 1), so they show the 404 page. Real URLs keep the keyboard order and link semantics right.
+- **Suggested solution:** Set the article URL pattern in the article layout pass.
+
+### IMP-19 Hero metadata shows the clock time only, 24-hour
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** `formatTime` shows "০৯:১৫" or "09:15" in Dhaka time, with `<time datetime>` and tabular digits. A 12-hour clock would show "AM" and "PM" in Latin letters on Bangla pages (T-27). No date and no relative time ("২০ মিনিট আগে"), because the mock stories are all from one day and a relative time changes with the server clock.
+- **Suggested solution:** Editorial team picks clock, date or relative time per section.
+
+### IMP-20 Hidden page heading and hero heading
+
+- **Found:** FL-06 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** The page has a visually hidden `h1` ("ফ্যাক্ট লেন্স: প্রথম পাতা"), and the hero section is named by a hidden `h2` ("প্রধান খবর" / "Top stories"). The lead, the top stories and Latest are `h3`. The logo stays a link, not a heading.
+- **Suggested solution:** Confirm the outline and the wording, or make the logo the `h1` on the homepage.
+
 ---
 
 ## Kit issues (KIT-)
@@ -387,3 +467,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-03 | DOC-08, DOC-09, U-06, IMP-08, IMP-09 added. DOC-06 workaround noted |
 | 2026-10-07 | FL-04 | U-07, IMP-10, IMP-11, IMP-12 added. U-01 updated |
 | 2026-10-07 | FL-05 | DOC-10 to DOC-12, U-08 to U-10, IMP-13 to IMP-17 added. KIT-03 updated |
+| 2026-10-07 | FL-06 | DOC-13 to DOC-15, U-11 to U-14, IMP-18 to IMP-20 added. IMP-11 updated |

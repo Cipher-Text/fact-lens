@@ -29,9 +29,23 @@ export const bn = {
     subscribe: "সাবস্ক্রাইব",
   },
   home: {
-    placeholder: "হোমপেজ তৈরি হচ্ছে।",
-    foundationsLink: "ডিজাইন ভিত্তির অস্থায়ী পাতা দেখুন",
-    layoutPartsLink: "লেআউট অংশের অস্থায়ী পাতা দেখুন",
+    // Visually hidden: the page heading for screen readers.
+    title: "ফ্যাক্ট লেন্স: প্রথম পাতা",
+  },
+  hero: {
+    // Visually hidden name of the P-1 section.
+    title: "প্রধান খবর",
+    latest: "সর্বশেষ",
+  },
+  story: {
+    // {minutes} is already in Bangla digits.
+    readingTime: "পড়তে {minutes} মিনিট",
+    breaking: "সদ্যপ্রাপ্ত",
+  },
+  common: {
+    more: "আরও দেখুন",
+    // Accessible name of a "more" link: the visible text, then the section name.
+    moreAbout: "আরও দেখুন: {section}",
   },
   ads: {
     label: "বিজ্ঞাপন",

@@ -6,7 +6,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-06 Hero
+- Ticket: FL-07 বিশ্লেষণ ও মতামত
 - Status: To do
 - Next action: tajmin types `/ticket`
 
@@ -19,6 +19,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-03 Layout parts | `Shell`, `WithRail`, `Wrapper`, `Rail`, `SectionHeading`, `PeerRow`/`PeerCard`, `AdRow` with `AdPlaceholder`; ad tokens in `src/styles/ads.css` (DOC-08); temporary page `/layout-parts`; Playwright at 11 widths. DOC-08, DOC-09, U-06, IMP-08, IMP-09 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-04 Mock content | 52 bilingual stories in `src/content/`, read through `getHomepage(lang, { variant })` with full and sparse versions; category and region labels in the string tables; placeholder SVGs in `public/mock/`; ESLint rule keeps components on `@/content` (DR-01). U-07, IMP-10 to IMP-12 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-05 Header | Top ad above a sticky top bar (`1fr auto 1fr`); nav row from 1280 that hides items that do not fit; drawer and search dialog as native modal dialogs with keyboard focus handling; one-button theme toggle. DOC-10 to DOC-12, U-08 to U-10, IMP-13 to IMP-17 in `docs/prototype-findings.md` |
+| 2026-10-07 | FL-06 Hero | `Hero` with `LeadStory` (64px panel overlap from 768, inset end for the cut corner), two `StoryCard` top stories on a subgrid peer row, `LatestList` rail (2 columns at 600–1023); ad-band after the hero; `?content=sparse`; `formatTime` and `fill` helpers; Playwright at 12 widths. DOC-13 to DOC-15, U-11 to U-14, IMP-18 to IMP-20 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -33,14 +34,16 @@ Ideas that are outside the current ticket.
 - FL-02: `ThemeSwitch` and `LanguageSwitch` are in `src/components/header/` with a neutral look. FL-05 places them in the top bar.
 - FL-03: `AdRow` cannot hide itself when its section is hidden (`LAY-13`). The page that composes the sections must drop both together.
 - FL-03: Reader size A++ is not tested on `/layout-parts`. Cover it in FL-13.
-- FL-04: From FL-06, let the homepage read `?content=sparse` and pass `{ variant: "sparse" }` to `getHomepage`, so the sparse cases can be seen and tested (IMP-11).
 - FL-04: The placeholder SVGs in `public/mock/` use one fixed neutral gray in both themes. Fine for mock images; real photos replace them.
 - FL-04: Some mock headlines name real countries with invented figures (design-reviewer note on skill rule 2). Make them more generic if the editorial team prefers.
 - FL-04: The `mock-content` skill's `Story` shape has no reading time. `readingMinutes` was added in code (IMP-10). Update the skill if wanted.
 - FL-05: Give the homepage sections the anchor ids that the nav, drawer and Subscribe links use: `category-<id>` (FL-08, FL-09), `regions` and `region-<id>` (FL-11), `newsletter` (FL-09). IMP-14.
-- FL-05: Remove `min-h-dvh` from the placeholder `main` in `src/app/[lang]/page.tsx` in FL-06 (it only lets the page scroll to test the bar).
 - FL-05: The scroll lock (`overflow-hidden` on `html` while a dialog is open) can shift the page by the scrollbar width on systems with classic scrollbars. Add `scrollbar-gutter: stable` if it shows.
 - FL-05: Check the Bangla nav row at 1280 again when the real IA labels arrive (IMP-16).
+- FL-06: Story links go to `/story/<slug>` and the Latest "আরও দেখুন" link to `/latest`. Both are 404 until those pages exist (IMP-18).
+- FL-06: `?content=sparse` on the homepage shows the sparse cases. Remove it or keep it behind a dev check in FL-13 (IMP-11).
+- FL-06: The hero `next/image` calls have no `sizes`. The mock SVGs are not optimized, so it has no effect now. Add `sizes` when real photos arrive.
+- FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
 ## Unresolved design-system items
 
@@ -56,6 +59,10 @@ Ideas that are outside the current ticket.
 | U-08 | Logo (`src/components/header/SiteHeader.tsx`) | Site name as text, `type-section-title`, `text-brand`; 2.37:1 in dark (logo exempt) | Open |
 | U-09 | Theme control in the bar (`src/components/header/ThemeToggle.tsx`) | One icon button that cycles system, light, dark | Open |
 | U-10 | Drawer and search dialog look (`Drawer.tsx`, `SearchDialog.tsx`) | `surface-elevated` on the `overlay` scrim, no shadow, no radius | Open |
+| U-11 | Headline link color (`src/components/story/links.ts`) | `text-ink`, `interactive-hover` and `interactive-pressed` on hover and press, no underline (DOC-14) | Open |
+| U-12 | Lead text panel inset and padding (`src/components/home/hero/LeadStory.tsx`) | Inset 64px from the end (`md:me-16`), padding `space-story-media-text` | Open |
+| U-13 | Card without image beside a card with image (`src/components/story/StoryCard.tsx`) | Subgrid keeps the rows aligned (LAY-08): a blank band above the text and a stretched title row | Open |
+| U-14 | Bangla Breaking label and label padding (`src/i18n/bn.ts`, `StoryEyebrow.tsx`) | "সদ্যপ্রাপ্ত" on `bg-live`, `px-1` | Open |
 
 ## Spec issues (DOC-)
 
@@ -75,3 +82,6 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-05 | `spacing-layout-system.md` 6 | DOC-10: "Logo in the center at every width" does not hold at 320 and 360: the right side (full language name per DR-78, theme button) is wider than the menu button. Logo is off by 30px at 320 and 10px at 360, centered from about 400 | Open |
 | 2026-10-07 FL-05 | `color-system.md` 5, COL-15 | DOC-11: `--shadow` has no `--color-shadow` or shadow-size token, so COL-15 needs a raw Tailwind shadow. Drawer and search dialog have no shadow | Open |
 | 2026-10-07 FL-05 | `spacing-layout-system.md` 10 | DOC-12: With native modal dialogs (top layer), `--z-scrim` and `--z-drawer` are not used | Open |
+| 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 | DOC-13: "The cut corner on top-story images comes from the text block" — 7.4 gives no overlap for top stories, only for the lead. The cut corner is built on the lead only (panel inset from the end) | Open |
+| 2026-10-07 FL-06 | `color-system.md` COL-05 and 2 | DOC-14: COL-05 says links use `interactive`; headlines use `ink`. A headline link fits both. Built as `ink` with interactive hover and press (U-11) | Open |
+| 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 and 12.2 | DOC-15: The 64px lead overlap has no token. Built with the Tailwind scale (`md:-mt-16`) | Open |

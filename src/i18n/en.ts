@@ -31,9 +31,22 @@ export const en: Dictionary = {
     subscribe: "Subscribe",
   },
   home: {
-    placeholder: "The homepage is being built.",
-    foundationsLink: "See the temporary design foundations page",
-    layoutPartsLink: "See the temporary layout parts page",
+    // Visually hidden: the page heading for screen readers.
+    title: "Fact Lens: front page",
+  },
+  hero: {
+    // Visually hidden name of the P-1 section.
+    title: "Top stories",
+    latest: "Latest",
+  },
+  story: {
+    readingTime: "{minutes} min read",
+    breaking: "Breaking",
+  },
+  common: {
+    more: "See more",
+    // Accessible name of a "more" link: the visible text, then the section name.
+    moreAbout: "See more: {section}",
   },
   ads: {
     label: "Advertisement",

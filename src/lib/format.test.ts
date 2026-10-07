@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatDate, formatNumber } from "./format";
+import { fill, formatDate, formatNumber, formatTime } from "./format";
 
 describe("formatting for the page language (TYP-17)", () => {
   it("uses Bangla digits on Bangla pages", () => {
@@ -13,5 +13,19 @@ describe("formatting for the page language (TYP-17)", () => {
     const date = new Date("2026-10-06T23:30:00Z");
     expect(formatDate(date, "bn")).toBe("৭ অক্টোবর, ২০২৬");
     expect(formatDate(date, "en")).toBe("7 October 2026");
+  });
+
+  it("formats clock time in 24 hours, in Dhaka time", () => {
+    const date = new Date("2026-10-07T09:15:00+06:00");
+    expect(formatTime(date, "bn")).toBe("০৯:১৫");
+    expect(formatTime(date, "en")).toBe("09:15");
+    expect(formatTime(new Date("2026-10-07T08:05:00Z"), "en")).toBe("14:05");
+  });
+});
+
+describe("fill", () => {
+  it("replaces known placeholders and keeps unknown ones", () => {
+    expect(fill("{minutes} min read", { minutes: "6" })).toBe("6 min read");
+    expect(fill("{a} and {b}", { a: 1 })).toBe("1 and {b}");
   });
 });
