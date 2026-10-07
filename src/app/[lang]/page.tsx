@@ -6,6 +6,7 @@ import { AnalysisOpinion } from "@/components/home/analysis-opinion/AnalysisOpin
 import { FeaturedCategory } from "@/components/home/featured/FeaturedCategory";
 import { GroupedCategories } from "@/components/home/grouped/GroupedCategories";
 import { Hero } from "@/components/home/hero/Hero";
+import { MostRead } from "@/components/home/most-read/MostRead";
 import { AdRow } from "@/components/layout/AdRow";
 import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
@@ -95,6 +96,23 @@ export default async function HomePage({
               "pb-(--space-section)",
             )}
           />
+        ) : null}
+        {/* P-5 Most read, then its ad row (DR-68). After P-3, the space above is P-3's
+            space-section; after an ad row, space-module (LAY-12). */}
+        {home.mostRead ? (
+          <>
+            <MostRead
+              stories={home.mostRead}
+              t={t}
+              className={cn(
+                !home.grouped &&
+                  (featured.length > 0 || home.hero || home.analysisOpinion) &&
+                  "pt-(--space-module)",
+                "pb-(--space-module)",
+              )}
+            />
+            <AdRow slot="ad-band" strings={t.ads} />
+          </>
         ) : null}
       </main>
     </>

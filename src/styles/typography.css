@@ -404,3 +404,18 @@ body {
   line-height: var(--type-input-line);
   letter-spacing: var(--type-input-tracking);
 }
+
+/* Most read numerals (type-rank). Copied from typography-system.md 7.1: the role has
+   no utility in 8.2 (DOC-04). */
+.rank-list { list-style: none; counter-reset: rank; }
+.rank-list > li { counter-increment: rank; display: grid; grid-template-columns: 3.125rem minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
+.rank-list > li::before { content: counter(rank, decimal); font: 600 2.5rem/1 var(--font-editorial-active); color: var(--interactive); font-variant-numeric: tabular-nums; }
+.rank-list:lang(bn) > li::before { content: counter(rank, bengali); }
+@media (min-width: 64rem) { .rank-list > li { grid-template-columns: 3.75rem minmax(0, 1fr); column-gap: 1rem; } .rank-list > li::before { font-size: 3rem; } }
+
+/* Project addition (DOC-19): 7.1 says the numeral is aria-hidden, but generated content
+   cannot take that attribute. The empty alternative text keeps it out of the
+   accessibility tree; the list order gives the rank. Browsers without the syntax keep
+   the rules above. */
+.rank-list > li::before { content: counter(rank, decimal) / ""; }
+.rank-list:lang(bn) > li::before { content: counter(rank, bengali) / ""; }

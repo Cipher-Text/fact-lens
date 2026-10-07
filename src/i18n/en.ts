@@ -45,6 +45,10 @@ export const en: Dictionary = {
     analysis: "Analysis",
     opinion: "Opinion",
   },
+  // P-5 Most read (spacing-layout-system.md 7.2).
+  mostRead: {
+    title: "Most read",
+  },
   story: {
     readingTime: "{minutes} min read",
     breaking: "Breaking",

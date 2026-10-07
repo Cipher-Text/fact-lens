@@ -43,6 +43,10 @@ export const bn = {
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
   },
+  // P-5. Working label: the specs name the section in English only (U-26).
+  mostRead: {
+    title: "সর্বাধিক পঠিত",
+  },
   story: {
     // {minutes} is already in Bangla digits.
     readingTime: "পড়তে {minutes} মিনিট",

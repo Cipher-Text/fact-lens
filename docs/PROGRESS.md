@@ -6,7 +6,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-10 Most read
+- Ticket: FL-11 Regions
 - Status: To do
 - Next action: tajmin types `/ticket`
 
@@ -23,6 +23,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-07 বিশ্লেষণ ও মতামত | `AnalysisOpinion` in the shell on `surface-elevated` (margin outside the background), `AnalysisList` (image beside text) and `OpinionList` (মতামত chip as the column heading, quote icon, author and time), 2 equal columns from 768, one column spans when the other is empty; shared `MoreLink`; elevated link classes for the focus ring offset; Playwright at 13 widths. DOC-16, U-15 to U-17, IMP-21, IMP-22 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-08 Featured categories | `FeaturedCategory` for বাংলাদেশ and ভূরাজনীতি: `FeaturedLead` (text under the image to 1279, beside it from 1280, DR-55) and `FeaturedRail` (one image story and two stories; 2 columns at 600–1023); wrapper spans the shell with no rail stories; ad-band after each; `category-<id>` anchors; Playwright at 14 widths. DOC-17, U-18 to U-20, IMP-23 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-09 Grouped categories | `GroupedCategories` (P-3): rows of two `CategoryBlock`s (one on phones) with an `ad-inset` between rows at wrapper width (3 or fewer); rail with `NewsletterSignup` (error, sending, done; mock) and `DailyPoll` (one vote per browser in local storage, result bars, largest-remainder percents); `#category-<id>` and `#newsletter` anchors; Playwright at 14 widths. DOC-18, U-21 to U-25, IMP-24 to IMP-26 in `docs/prototype-findings.md` |
+| 2026-10-07 | FL-10 Most read | `MostRead` (P-5): `<ol class="rank-list">` with the 7.1 `type-rank` CSS copied to `typography.css` (DOC-04), 1 / 2 from 600 / 4 from 1024 with item 5 alone on row 2 (DR-51), Bangla digits by the `bengali` counter, numeral hidden from screen readers with empty alt text (DOC-19); title-only items; ad-band after; Playwright at 14 widths. DOC-19, U-26, U-27 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -52,6 +53,7 @@ Ideas that are outside the current ticket.
 - FL-09: `/privacy` (newsletter consent line) is 404 until the page exists. FL-12 links to it too (IMP-25).
 - FL-09: The phone 600px-between-ads rule is checked by a test, not at run time (IMP-24). Recheck with real, shorter categories.
 - FL-09: P-3 has `space-section` below it for P-5 (FL-10). Until FL-10 it is the end of the page.
+- FL-10: Safari VoiceOver drops list semantics from `list-style: none` lists (the `.rank-list` CSS). Check P-5 with VoiceOver in FL-13; add `role="list"` if needed.
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
 ## Unresolved design-system items
@@ -83,6 +85,8 @@ Ideas that are outside the current ticket.
 | U-23 | Form text roles (`NewsletterSignup.tsx`, `DailyPoll.tsx`) | Visible label and consent line `type-ui-sm` `ink-secondary`; error `text-error`; done `text-success` on `success-subtle` | Open |
 | U-24 | Poll question and result bars (`DailyPoll.tsx`) | Question `type-summary`; 8px bar, `border-soft` track, `interactive` fill; own vote named in text | Open |
 | U-25 | Spacing inside forms (`grouped/*`, `header/classes.ts`) | Tailwind spacing scale (`gap-2`, `min-h-11` …), as in FL-05; no form tokens in 5.2 | Open |
+| U-26 | Bangla name of P-5 (`src/i18n/bn.ts` `mostRead.title`) | Working label "সর্বাধিক পঠিত" | Open |
+| U-27 | Most read item (`src/components/home/most-read/MostRead.tsx`) | Title only in `type-story-title-sm`; `space-module` between rows; no list rules | Open |
 
 ## Spec issues (DOC-)
 
@@ -93,7 +97,7 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-02 | `typography-system.md` 8.2 | DOC-01: English role values are set on `:root` only. Custom properties inherit, so a `lang="en"` block inside a Bangla page keeps the Bangla fonts, sizes, line heights and case (measured: English lead 38.96px Noto Serif Bengali instead of 40.96px Source Serif 4). This breaks `TYP-03`. Suggested fix: change the selector `:root` to `:root, :lang(en)` (both blocks). Not changed here | Open |
 | 2026-10-07 FL-02 | `color-system.md` 5 | DOC-02: The CSS block starts with `@import "tailwindcss"`, but the file is meant to be imported next to Tailwind. Copied without that line | Open |
 | 2026-10-07 FL-02 | `color-system.md` 5 and `spacing-layout-system.md` 6 | DOC-03: Colors switch on the `.dark` class; layout §6 says "set `data-theme` before the first paint", and the `visual-qa` agent sets `data-theme="dark"` by hand, which changes nothing. Neither spec has CSS for "system". The theme script sets both the class and `data-theme`, and resolves "system" with `matchMedia` | Open |
-| 2026-10-07 FL-02 | `typography-system.md` 3 and 8.2 | DOC-04: The role table has 23 roles, but 8.2 has 22 utilities: no `type-rank`. Its CSS is the `.rank-list` block in 7.1. Use that in FL-10 | Open |
+| 2026-10-07 FL-02 | `typography-system.md` 3 and 8.2 | DOC-04: The role table has 23 roles, but 8.2 has 22 utilities: no `type-rank`. Its CSS is the `.rank-list` block in 7.1. FL-10 copied it to `typography.css` | Workaround in code |
 | 2026-10-07 FL-02 | `color-system.md` 5 | DOC-05: No base rule sets the page background and text color, so the canvas stays white in dark mode. The layout sets `bg-background text-ink` on `<body>` | Open |
 | 2026-10-07 FL-02 | `spacing-layout-system.md` 12.3 | DOC-06: `.shell`, `.with-rail` and the other container classes are not in a cascade layer, so they win over every Tailwind utility on the same element. Works, but `@utility` or `@layer components` would be safer | Open |
 | 2026-10-07 FL-02 | `color-system.md` COL-13 and 2.8 | DOC-07: COL-13 names ring utilities, 2.8 gives values only; no shared focus CSS, offset color set by hand per surface | Open |
@@ -107,4 +111,5 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 and 12.2 | DOC-15: The 64px lead overlap has no token. Built with the Tailwind scale (`md:-mt-16`) | Open |
 | 2026-10-07 FL-07 | `spacing-layout-system.md` LAY-12 and 7.4 | DOC-16: LAY-12 puts section-to-ad space on the section, but does not say whether it is inside or outside P-4's own background. Built as margin outside the background | Open |
 | 2026-10-07 FL-09 | `spacing-layout-system.md` 9 and 13 | DOC-18: The 300×250 `ad-inset` creative is wider than the 288px shell at 320. Workaround: the DOC-09 `max-w-full` on the placeholder | Open |
+| 2026-10-07 FL-10 | `typography-system.md` 7.1 | DOC-19: The numeral must be `aria-hidden`, but the 7.1 CSS draws it as `::before` generated content, which cannot take the attribute and is read by screen readers. Workaround: a project rule repeats `content` with empty alt text (`counter(rank) / ""`) | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |

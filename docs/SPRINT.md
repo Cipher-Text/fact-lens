@@ -30,7 +30,7 @@ Claude keeps this table current. Status values: To do, In progress, In review, D
 | FL-07 | বিশ্লেষণ ও মতামত | Done |
 | FL-08 | Featured categories | Done |
 | FL-09 | Grouped categories | Done |
-| FL-10 | Most read | To do |
+| FL-10 | Most read | Done |
 | FL-11 | Regions | To do |
 | FL-12 | Footer | To do |
 | FL-13 | Final check | To do |

@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-09 (accepted)
+- Last updated: 7 October 2026, after FL-10 (accepted)
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -29,7 +29,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-01 | FL-02 | English block inside a Bangla page keeps Bangla type | High | Open |
 | DOC-02 | FL-02 | Color CSS block imports Tailwind a second time | Low | Workaround in code |
 | DOC-03 | FL-02 | Theme selector: `.dark` class against `data-theme` | Medium | Workaround in code |
-| DOC-04 | FL-02 | `type-rank` role has no utility in §8.2 | Low | Open |
+| DOC-04 | FL-02 | `type-rank` role has no utility in §8.2 | Low | Workaround in code |
 | DOC-05 | FL-02 | No base rule for page background and text color | Medium | Workaround in code |
 | DOC-06 | FL-02 | Container classes are not in a cascade layer | Low | Workaround in code |
 | DOC-07 | FL-02 | COL-13 gives utilities, §2.8 gives values only | Low | Open |
@@ -44,6 +44,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-16 | FL-07 | LAY-12 section-to-ad space on a section with its own background | Low | Workaround in code |
 | DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Open |
 | DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Workaround in code |
+| DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Workaround in code |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -69,6 +70,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-23 | FL-09 | Form text roles: field label, consent line, error and done messages | Low | Open |
 | U-24 | FL-09 | Poll question role and result bar look | Low | Open |
 | U-25 | FL-09 | Spacing inside forms has no tokens | Medium | Open |
+| U-26 | FL-10 | Bangla name of the Most read section | Low | Open |
+| U-27 | FL-10 | Most read item content and row gap | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -135,6 +138,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Source:** `typography-system.md` Sections 3, 7.1 and 8.2.
 - **Problem:** The role table lists 23 roles. Section 8.2 has 22 utilities and no `type-rank`. The rank CSS is the `.rank-list` block in Section 7.1.
 - **Suggested solution:** Say in §8.2 that `type-rank` is the `.rank-list` block in §7.1, or move that block into §8.2. FL-10 uses the §7.1 block.
+- **Workaround (FL-10):** The §7.1 block is copied unchanged to the end of `src/styles/typography.css`. It is outside a cascade layer, like the container classes (DOC-06).
 
 ### DOC-05 No base rule for page background and text color
 
@@ -248,6 +252,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Problem:** At 320 the shell is 288px (320 − 2 × 16), so the 300px creative does not fit the inset at wrapper width.
 - **Workaround:** The DOC-09 `max-w-full` on the placeholder: the stand-in shrinks to 288px, with no horizontal scroll. A real fixed-size creative would overflow or be cut.
 - **Suggested solution:** Name a creative for widths below 332px (for example 300×250 only from 360, else 320×100 or none), or allow the inset to go outside the shell on phones.
+
+### DOC-19 Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content
+
+- **Found:** FL-10 · **Severity:** Medium · **Status:** Workaround in code
+- **Source:** `typography-system.md` Section 7.1 ("The numeral is `aria-hidden`" and the `.rank-list` CSS).
+- **Problem:** The CSS draws the numeral with `li::before { content: counter(rank) }`. A pseudo-element cannot take `aria-hidden`, and browsers put generated content in the accessible name. Screen readers would hear the rank twice: once from the list position, once from the numeral.
+- **Workaround:** A marked project addition after the copied block in `src/styles/typography.css` repeats the two `content` declarations with empty alternative text: `content: counter(rank, decimal) / ""` and `counter(rank, bengali) / ""`. Browsers without this syntax drop the declaration and use the §7.1 rule. Playwright checks the computed value and the accessibility tree.
+- **Suggested solution:** Put the alternative text form in the §7.1 CSS, or change the wording to "hidden from screen readers with empty alternative text".
 
 ---
 
@@ -448,6 +460,22 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Gap:** Section 5.2 has story and list spacing, but none for label to field, field to button, between radio options or the result bar height. LAY-01 says to add a token before typing a space value. The design reviewer flagged this as a strict LAY-01 break.
 - **Treatment used:** The Tailwind spacing scale, as in the header controls accepted in FL-05: `gap-2` (label, field, button), `gap-3` (radio to label, result rows), `mt-1`, `mt-2`, `mt-3`, `px-3`, `py-2`, `h-2` (bar), `size-5` (radio), `min-h-11` (44px targets, U-05). No pixel values.
 - **Suggested solution:** Add form spacing tokens (`space-field-label`, `space-field-gap`, `space-option`) and a control size token to Section 5.2.
+
+### U-26 Bangla name of the Most read section
+
+- **Found:** FL-10 · **Severity:** Low · **Status:** Open
+- **Files:** `src/i18n/bn.ts` (`mostRead.title`)
+- **Gap:** The specs and the decision register name P-5 in English only ("Most read"). The Bangla page needs a Bangla heading (T-27).
+- **Treatment used:** "সর্বাধিক পঠিত" as a working label. English: "Most read".
+- **Suggested solution:** The editorial team picks the Bangla name (for example "সর্বাধিক পঠিত" or "সবচেয়ে বেশি পড়া").
+
+### U-27 Most read item content and row gap
+
+- **Found:** FL-10 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/most-read/MostRead.tsx`
+- **Gap:** §7.1 sets the numeral and says the title starts beside it. It does not say what else an item shows (time, category, image) or the space between the two rows. There is no list rule between items.
+- **Treatment used:** Title only, in `type-story-title-sm` (compact list role). Row gap `space-module`; column gap `grid-column-gap`. No rules between items. The numeral top aligns with the title top through `align-items: start` and line height 1; visual QA measured the numeral glyph 2 to 4px lower than the first title line (the title line height is above 1).
+- **Suggested solution:** Name the item parts and the row gap in the component pass.
 
 ---
 
@@ -661,3 +689,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-07 | DOC-16, U-15 to U-17, IMP-21, IMP-22 added. IMP-18 and U-03 updated |
 | 2026-10-07 | FL-08 | DOC-17, U-18 to U-20, IMP-23 added. IMP-14 updated (category anchors now have targets) |
 | 2026-10-07 | FL-09 | DOC-18, U-21 to U-25, IMP-24 to IMP-26 added. IMP-14 updated (the four P-3 category anchors and `#newsletter` now have targets) |
+| 2026-10-07 | FL-10 | DOC-19, U-26, U-27 added. DOC-04 has a workaround (the §7.1 block is in `typography.css`) |
