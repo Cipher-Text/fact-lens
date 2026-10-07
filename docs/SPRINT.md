@@ -33,7 +33,7 @@ Claude keeps this table current. Status values: To do, In progress, In review, D
 | FL-10 | Most read | Done |
 | FL-11 | Regions | Done |
 | FL-12 | Footer | Done |
-| FL-13 | Final check | To do |
+| FL-13 | Final check | Done |
 | FL-14 | Preview deploy (optional) | To do |
 
 ## Every ticket is done when

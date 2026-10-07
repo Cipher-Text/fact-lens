@@ -1,0 +1,167 @@
+import { expect, test } from "@playwright/test";
+
+// FL-02 site checks, moved from the temporary foundations page to the homepage in
+// FL-13: language URLs and cookie (DR-17), theme before first paint, fonts
+// (typography-system.md Section 8.1).
+
+test.describe("language URLs (DR-17)", () => {
+  test("Bangla is at the root and English under /en", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+    await page.goto("/en");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  });
+
+  test("/bn redirects to the root URL", async ({ page }) => {
+    await page.goto("/bn");
+    expect(new URL(page.url()).pathname).toBe("/");
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+  });
+
+  test("no redirect by browser language", async ({ browser }) => {
+    const context = await browser.newContext({
+      locale: "en-US",
+      extraHTTPHeaders: { "Accept-Language": "en-US,en;q=0.9" },
+    });
+    const page = await context.newPage();
+    await page.goto("/");
+    expect(new URL(page.url()).pathname).toBe("/");
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+    await context.close();
+  });
+
+  test("an unknown ?lang value sets no cookie", async ({ page, context }) => {
+    await page.goto("/?lang=fr");
+    expect(new URL(page.url()).pathname).toBe("/");
+    expect(new URL(page.url()).search).toBe("");
+    const cookie = (await context.cookies()).find((c) => c.name === "fl-lang");
+    expect(cookie).toBeUndefined();
+  });
+
+  test("the language switch keeps the choice in a cookie", async ({
+    page,
+    context,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/");
+    const toEnglish = page.locator("header").getByRole("link", {
+      name: "English",
+      exact: true,
+    });
+    await expect(toEnglish).toHaveAttribute("lang", "en");
+    await toEnglish.click();
+    await expect(page).toHaveURL(/\/en$/);
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+
+    const cookie = (await context.cookies()).find((c) => c.name === "fl-lang");
+    expect(cookie?.value).toBe("en");
+
+    // The remembered choice opens the English front page.
+    await page.goto("/");
+    expect(new URL(page.url()).pathname).toBe("/en");
+
+    // Choosing Bangla again stores bn and opens the Bangla page.
+    await page
+      .locator("header")
+      .getByRole("link", { name: "বাংলা", exact: true })
+      .click();
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+    expect(new URL(page.url()).pathname).toBe("/");
+    await page.goto("/");
+    expect(new URL(page.url()).pathname).toBe("/");
+  });
+});
+
+test.describe("theme", () => {
+  test("starts at system and follows the system theme", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.goto("/en");
+    const html = page.locator("html");
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(html).toHaveClass(/\bdark\b/);
+    await expect(page.locator("header [data-theme-toggle]")).toHaveAttribute(
+      "data-theme-toggle",
+      "system",
+    );
+
+    await page.emulateMedia({ colorScheme: "light" });
+    await expect(html).toHaveAttribute("data-theme", "light");
+  });
+
+  test("a stored choice overrides the system and survives a reload", async ({
+    page,
+  }) => {
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.goto("/en");
+    const html = page.locator("html");
+    const toggle = page.locator("header [data-theme-toggle]");
+    // system → light → dark
+    await expect(async () => {
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("data-theme-toggle", "light", {
+        timeout: 500,
+      });
+    }).toPass();
+    await toggle.click();
+    await expect(html).toHaveAttribute("data-theme", "dark");
+
+    await page.reload();
+    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(toggle).toHaveAttribute("data-theme-toggle", "dark");
+    const background = await page.evaluate(
+      () => getComputedStyle(document.body).backgroundColor,
+    );
+    expect(background).toBe("rgb(24, 25, 30)");
+  });
+
+  test("the stored theme is set before the first paint", async ({ page }) => {
+    // Record the theme when <body> first appears, before anything paints.
+    await page.addInitScript(() => {
+      localStorage.setItem("fl-theme", "dark");
+      new MutationObserver((_, observer) => {
+        if (!document.body) return;
+        (window as unknown as { themeAtBody: string }).themeAtBody =
+          document.documentElement.className.includes("dark")
+            ? "dark"
+            : "light";
+        observer.disconnect();
+      }).observe(document, { childList: true, subtree: true });
+    });
+    await page.emulateMedia({ colorScheme: "light" });
+    await page.goto("/");
+    const atBody = await page.evaluate(
+      () => (window as unknown as { themeAtBody?: string }).themeAtBody,
+    );
+    expect(atBody).toBe("dark");
+  });
+});
+
+test.describe("fonts (typography-system.md Section 8.1)", () => {
+  for (const p of [
+    { path: "/", serif: /^"?Noto Serif Bengali/, sans: /^"?Noto Sans Bengali/ },
+    { path: "/en", serif: /^"?Source Serif 4/, sans: /^"?Plus Jakarta Sans/ },
+  ]) {
+    test(`${p.path} uses its own serif and sans`, async ({ page }) => {
+      await page.goto(p.path);
+      const fonts = await page.evaluate(async () => {
+        await document.fonts.ready;
+        const family = (selector: string) =>
+          getComputedStyle(document.querySelector(selector)!).fontFamily;
+        return {
+          serif: family("main .type-story-title"),
+          sans: family("main .type-metadata"),
+          loaded: [
+            ...new Set(
+              [...document.fonts]
+                .filter((f) => f.status === "loaded")
+                .map((f) => f.family.replace(/"/g, "")),
+            ),
+          ],
+        };
+      });
+      expect(fonts.serif).toMatch(p.serif);
+      expect(fonts.sans).toMatch(p.sans);
+      expect(fonts.loaded.length).toBeGreaterThanOrEqual(2);
+    });
+  }
+});

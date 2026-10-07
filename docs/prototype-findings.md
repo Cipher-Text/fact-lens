@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updates it at the end of each ticket (FL-01 to FL-14). Each finding has a suggested solution.
 
-- Last updated: 7 October 2026, after FL-11 (accepted)
+- Last updated: 7 October 2026, after FL-13 (accepted). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -48,6 +48,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Workaround in code |
 | DOC-21 | FL-11 | "4 regions in view" next to "no 4-up rows" (LAY-07), and no buttons at 600–1023 with 3 or 4 regions | Low | Open |
 | DOC-22 | FL-12 | Footer: 7.1 calls it an "ad container"; DR-59 and 7.4 list different links | Low | Open |
+| DOC-23 | FL-13 | 1366×768 first screen: the 264px hero estimate leaves out the section space; no headline in view | Medium | Open |
+| DOC-24 | FL-13 | Headline roles have no `overflow-wrap`; one long compound word scrolls the page | Medium | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -107,6 +109,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-27 | FL-11 | Regions slider: tab mode follows the CSS, scripted 250ms scroll, hash selects a tab | Low | Needs confirmation |
 | IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Needs confirmation |
 | IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Needs confirmation |
+| IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Open |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -299,6 +302,20 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Problem:** 7.1 gives the footer container as "Ad container (full-width row) with content in the shell". Section 2 defines the ad container as one ad slot, so the name is confusing; the meaning is a full-width row. DR-59 lists Contact, Corrections and Privacy; 7.4 adds About and Terms.
 - **Workaround:** Built per 7.4 (higher authority): a full-width `<footer>` row with the content in `Shell`, and all five links.
 - **Suggested solution:** Say "Full-width row" in 7.1 row 15, and add About and Terms to DR-59.
+
+### DOC-23 First screen at 1366×768 shows no headline
+
+- **Found:** FL-13 · **Severity:** Medium · **Status:** Open
+- **Spec:** `spacing-layout-system.md` Section 13 (first screen)
+- **Problem:** Section 13 says top ad 274 + bar 64 + nav row 48 leave about 264px for the hero in a 650px viewport. It leaves out `space-section` above the hero (40px), so the hero starts at 426 and 224px shows. That is the top of the lead image only: no headline is in the first screen, in Bangla or English (`docs/fl-13/first-screen-*.jpg`).
+- **Suggested solution:** Decide whether a headline must be in the first screen. If yes: a lower top-ad reservation from 1024, a shorter lead image ratio, or the lead text above the image at that size.
+
+### DOC-24 Headline roles have no line-break rule for long words
+
+- **Found:** FL-13 · **Severity:** Medium · **Status:** Open
+- **Spec:** `typography-system.md` Section 8.2
+- **Problem:** No role sets `overflow-wrap`. A headline with one long Bangla compound word (40 letters in the test) is wider than its column and scrolls the page at every width. Mock headlines with normal words fit.
+- **Suggested solution:** Add `overflow-wrap: break-word` to the story title and section title roles (TYP-20: change the token, not the component).
 
 ---
 
@@ -741,6 +758,12 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Choice:** About, Contact, Corrections, Privacy and Terms go to `/about` … `/terms` (with `/en` on English pages); these pages do not exist yet, so they are 404 (as IMP-18, IMP-25). The Fact Lens social accounts are not known, so the social links go to each network's front page and open in the same tab.
 - **Suggested solution:** Give the real account URLs; build the site pages after the article pass.
 
+
+### IMP-30 FL-13 screenshots and measurement run are in the repository
+
+- **Found:** FL-13 · **Severity:** Low · **Status:** Open
+- **Choice:** tajmin decided on 2026-10-08 to keep the 33 screenshots in `docs/fl-13/` (about 13 MB) and the measurement run in `tests/final-check/` (records only, not part of `pnpm test:e2e`) in the repository for now.
+- **Suggested solution:** Remove both from the repository in the next milestone. Keep the screenshots outside git (a release asset or shared drive) if they are still needed.
 ---
 
 ## Kit issues (KIT-)
@@ -786,3 +809,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-10 | DOC-19, U-26, U-27 added. DOC-04 has a workaround (the §7.1 block is in `typography.css`) |
 | 2026-10-07 | FL-11 | DOC-20, DOC-21, U-28, U-29, IMP-27, IMP-28 added. IMP-14 updated (all anchors have targets) |
 | 2026-10-07 | FL-12 | DOC-22, U-30, IMP-29 added |
+| 2026-10-07 | FL-13 | DOC-23, DOC-24, IMP-30 added. Results table with the Section 13 and §9 checks in `docs/PROGRESS.md` |

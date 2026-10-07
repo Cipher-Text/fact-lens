@@ -50,12 +50,12 @@ describe("language paths (DR-17)", () => {
   it("puts Bangla at the root and English under /en", () => {
     expect(localizedPath("bn")).toBe("/");
     expect(localizedPath("en")).toBe("/en");
-    expect(localizedPath("bn", "/foundations")).toBe("/foundations");
-    expect(localizedPath("en", "/foundations")).toBe("/en/foundations");
+    expect(localizedPath("bn", "/latest")).toBe("/latest");
+    expect(localizedPath("en", "/latest")).toBe("/en/latest");
   });
 
   it("swaps the language of a prefixed path", () => {
-    expect(localizedPath("bn", "/en/foundations")).toBe("/foundations");
+    expect(localizedPath("bn", "/en/latest")).toBe("/latest");
     expect(localizedPath("en", "/en")).toBe("/en");
     expect(stripLang("/bn")).toBe("/");
     expect(stripLang("/english")).toBe("/english");

@@ -14,7 +14,7 @@ type Props = { strings: Dictionary["theme"] };
 
 /**
  * One icon button for the top bar. Each press moves to the next state: system, light,
- * dark (spacing-layout-system.md Section 6). The three-button ThemeSwitch does not fit
+ * dark (spacing-layout-system.md Section 6). A group of three buttons does not fit
  * the phone bar beside the logo. The name gives the current state in the page language.
  * Neutral treatment (U-04).
  */

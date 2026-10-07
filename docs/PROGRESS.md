@@ -6,9 +6,50 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-13 Final check
+- Ticket: FL-14 Preview deploy (optional)
 - Status: To do
-- Next action: tajmin types `/ticket`
+- Next action: tajmin types `/ticket`, or picks fixes from the FL-13 results table below
+
+## FL-13 results
+
+Measured on 7 October 2026 in Chromium. Screenshots in `docs/fl-13/`. Measurement run: `pnpm exec playwright test --config tests/final-check/playwright.config.ts` (records only, not part of `pnpm test:e2e`). Result values: Pass, Fail, Note, N/A (no article page yet).
+
+### Spacing and layout (`spacing-layout-system.md` Section 13) and `/verify`
+
+| # | Case | Result | What was measured | Possible fix (pick by number) | Screenshots |
+| --- | --- | --- | --- | --- | --- |
+| 1 | `pnpm check` | Pass | Lint, typecheck, 136 unit tests, build; no warnings | — | — |
+| 2 | `pnpm test:e2e` | Pass | 400 tests after the temporary pages left (489 before), axe has no serious or critical violations | — | — |
+| 3 | 11 widths × bn/en × light/dark, at reader size 1 and A++ | Pass | 44 page loads: no horizontal scroll, no clipped text, no text outside the viewport | — | `full-*-*.jpg` |
+| 4 | A++ on the homepage | Note | A++ changes no homepage size: only article roles scale (TYP-15) | — | — |
+| 5 | First screen 1366×768 (650px viewport) | Fail | Top ad 274 + bar 64 + nav 48 = 386; hero starts at 426 (40px section space). Hero in view: 224px (spec estimate 264), the top of the lead image only. No headline in the first screen, bn or en | (a) Report as DOC-23: the 264 estimate leaves out the section space, and the 274px top ad leaves no headline in view; ask the blueprint for a decision. (b) No code change until then | `first-screen-*-1366x650.jpg` |
+| 6 | Bangla nav row at 1280 | Pass | 7 of 7 items, one row, 48px high, also at 1366 and 1920 | — | `nav-row-bn-1280.png` |
+| 7 | Two top-story cards at 1024 and 1280 | Note | Rows line up (subgrid). bn 1024: left title 8 lines at 30px in a 312px card. The right card has no image, so a blank band of about 240px is above its text (U-13) | (a) Show a card without an image as text only, with no blank band (needs a U-13 decision). (b) Leave as is | `top-cards-*.png`, `hero-*-1024.png` |
+| 8 | Long Bangla headlines | Pass / Fail | Mock: longest 198 characters, 5 to 6 lines, fits. Stress test with all headlines 3× longer in normal words: fits at 320, 600, 1024, 1280. One 40-letter compound word: horizontal scroll at every width (no `overflow-wrap`) | Add `overflow-wrap: break-word` to the headline roles. It is a token-file change (TYP-20), so it needs a DOC- issue first | `long-headlines-bn-*.jpg` |
+| 9 | Stories with no image | Note | 26 of 44 story items have no image; no clipping. Blank band in the top cards (#7). In Regions, a column with no image starts its headline level with the images in the other columns (visual-qa) | As #7 (a) | `full-bn-light-1366.jpg` |
+| 10 | Sparse sections (`?content=sparse`) | Pass | bn/en at 360, 768, 1280: no faults, no two ad rows next to each other; P-3 keeps the empty half row (7.3) | — | `sparse-*.jpg` |
+| 11 | 200% text size (browser font-size setting) | Fail | Horizontal scroll at 320/360 (top-bar language link, P-4 items, P-5), 600 en (P-5), 768 (top-bar Subscribe), 1024 (P-5). Fine at 1280. Page zoom 200% equals half the width, so row 3 covers it: Pass | (a) Let the P-5 grid and the P-4 image row stack when the text is large (`minmax(min-content, …)` or a container query). (b) Let the top bar wrap. (c) Accept: WCAG 1.4.4 allows scroll at 200% text | — |
+| 12 | Text spacing (WCAG 1.4.12) | Pass | Line height 1.5, letters 0.12em, words 0.16em, paragraphs 2em: no scroll or clipping at 320 to 1280 | — | — |
+| 13 | Keyboard focus, sticky, interface language (visual-qa) | Pass | 70 Tab stops at 1280: every stop has the ring; only the top bar sticks; no wrong-language text | — | — |
+| 14 | Dark theme (visual-qa) | Note | Logo about 2:1 on the dark bar (U-08, logo exempt). Gray mock images look bright in dark | (a) Logo color for dark mode, with U-08. (b) Darker placeholder in dark mode | `full-*-dark-*.jpg` |
+| 15 | Regions slider at 1280 (visual-qa) | Note | Native scrollbar shows under the row; the next column shows at the edge | Decide IMP-27 (hide the scrollbar or keep it) | — |
+| 16 | Remove the temporary pages from FL-02 and FL-03 | Pass | Removed `/foundations`, `/layout-parts`, their specs, `ThemeSwitch.tsx` and the `foundations`/`layoutParts` string keys. Their site checks moved to `tests/e2e/site.spec.ts` (language, cookie, theme, fonts) and `tests/e2e/page.spec.ts` (every ad row at 11 widths, brand rule). Build has one route, `/[lang]` | — | — |
+
+### Typography prototype checks (`typography-system.md` Section 9)
+
+Sizes measured in px (bn / en).
+
+| # | Item | Result | What was measured | Possible fix |
+| --- | --- | --- | --- | --- |
+| T1 | Hero: lead dominant at 1024; Bangla rail titles fit at 304 | Partial | Lead title 36.7 / 38.7 against top-card titles 30.3 / 31.8 (about 1.2 times). The 648px lead image carries the hierarchy; the titles compete. Rail 304px: no title overflows | (a) Top cards use `type-story-title` (24.9) instead of `type-story-title-lg`. (b) Leave as is |
+| T2 | Article title | N/A | No article page | — |
+| T3 | Article headings at A++ | N/A | No article page | — |
+| T4 | Bangla article body | N/A | No article page | — |
+| T5 | Bangla small text (eyebrow, metadata, caption) | Pass (tajmin confirms by eye) | Eyebrow, metadata and `type-ui-sm` are 15px Noto Sans Bengali; English 14px | — |
+| T6 | Source Serif 4 size | tajmin judges | English 1280: lead 42, top cards 34, titles 26, small titles 20, summary 16. No body text on the homepage | — |
+| T7 | Rail titles in the 304px rail | Pass | bn `type-story-title-sm` 19.4–20, `type-summary` 17; 2 to 3 lines; no overflow | — |
+| T8 | Reader sizes A+ / A++ | N/A on the homepage | Only article roles scale; the homepage layout does not change at A++ (row 3) | — |
+| T9 | Colors | Note | No color values changed. See row 14 | — |
 
 ## Done
 
@@ -26,6 +67,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-10 Most read | `MostRead` (P-5): `<ol class="rank-list">` with the 7.1 `type-rank` CSS copied to `typography.css` (DOC-04), 1 / 2 from 600 / 4 from 1024 with item 5 alone on row 2 (DR-51), Bangla digits by the `bengali` counter, numeral hidden from screen readers with empty alt text (DOC-19); title-only items; ad-band after; Playwright at 14 widths. DOC-19, U-26, U-27 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-11 Regions | `Regions` (P-3b): one markup for slider and tabs. From 600 a scroll-snap row (2 in view, 4 from 1024) with previous/next buttons in the heading row, 250ms scripted scroll, none with reduced motion, `aria-disabled` at each end; below 600 chip tabs with arrow keys, Home and End. No buttons with 4 regions or fewer. `#regions` and `#region-<id>` anchors (a link selects the tab on phones). Shared `StoryStack`; `SectionHeading` `actions` slot; Playwright at 14 widths. DOC-20, DOC-21, U-28, U-29, IMP-27, IMP-28 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-12 Footer | `SiteFooter` (7.1 row 15, 7.4, DR-59): full-width row with a 1px rule and the content in the shell; logo and four social icon links (inline Simple Icons CC0 marks, text names for screen readers), then About, Contact, Corrections, Privacy and Terms in the page language; `footer` keys in the string tables; Playwright at 14 widths. DOC-22, U-30, IMP-29 in `docs/prototype-findings.md` |
+| 2026-10-08 | FL-13 Final check | Temporary pages `/foundations` and `/layout-parts` removed; their site checks moved to `tests/e2e/site.spec.ts` and `tests/e2e/page.spec.ts`. Section 13 and typography §9 results table below, screenshots in `docs/fl-13/`, measurement run in `tests/final-check/` (both to leave the repository next milestone, IMP-30). No fixes picked yet. DOC-23, DOC-24, IMP-30 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -33,7 +75,7 @@ Ideas that are outside the current ticket.
 
 - FL-01: `shadcn init` used the default `base-nova` preset (Base UI primitives, `lucide-react` icons, `tw-animate-css`). Icons and motion are design-system gaps (U-02). Check this choice before the first `shadcn add`.
 - FL-01: `next.config.ts` sets `agentRules: false`. Without it, `next dev` writes a Next.js block into `AGENTS.md` when it detects an AI agent. The block says to read the bundled docs in `node_modules/next/dist/docs/`; the `next-devtools` MCP server points to the same docs.
-- FL-01: Only the Playwright `chromium` project runs. Add WebKit and Firefox in FL-13 if wanted.
+- FL-01: Only the Playwright `chromium` project runs. Add WebKit and Firefox in FL-13 if wanted. FL-13: still Chromium only; not added.
 - FL-02: `globals.css` no longer imports `tw-animate-css` and `shadcn/tailwind.css` (the rule says Tailwind and the three token files only). The base-nova shadcn components need them for their `data-*` variants and animation. Decide before the first `shadcn add`. The packages stay installed.
 - FL-02: The proxy redirects `/` to `/en` only when the `fl-lang` cookie is `en`. Other unprefixed URLs stay Bangla, so shared links open as sent. Check this choice with the editorial team.
 - FL-02: Before deploy (FL-14), check that the CDN does not cache the cookie-based redirect at `/`.
@@ -59,6 +101,7 @@ Ideas that are outside the current ticket.
 - FL-11: The region columns have no "আরও দেখুন" link to a region page (7.4 lists none). Add it with the region pages (DR-19).
 - FL-11: Decide whether the slider scrollbar stays visible (IMP-27, DOC-21).
 - FL-12: The footer site pages (`/about`, `/contact`, `/corrections`, `/privacy`, `/terms`) are 404, and the social links go to each network's front page until the Fact Lens accounts are known (IMP-29).
+- FL-13: The screenshots in `docs/fl-13/` (33 files, about 13 MB) and the measurement run in `tests/final-check/` are in the repository for now (tajmin, 2026-10-08). Remove both from the repository in the next milestone (IMP-30).
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
 ## Unresolved design-system items
@@ -123,4 +166,6 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-11 | `spacing-layout-system.md` 7.2, 7.4 and 12.3 | DOC-20: No slider CSS: the column width (2 / 4 in view) is not a token, and a scroll container clips focus rings at its edges. Workaround: arbitrary `auto-cols-[calc(...)]` from `--grid-column-gap` only; 4px `-m-1 p-1 scroll-p-1` ring room | Workaround in code |
 | 2026-10-07 FL-11 | `spacing-layout-system.md` 3.3, 7.2, 7.3, LAY-07 | DOC-21: "4 regions in view" from 1024 against "no 4-up rows"; and "4 regions or fewer: no buttons" while only 2 are in view at 600–1023. Built as written | Open |
 | 2026-10-07 FL-12 | `spacing-layout-system.md` 7.1, 7.4; DR-59 | DOC-22: 7.1 row 15 calls the footer row an "ad container" (Section 2: one ad slot); DR-59 lists Contact, Corrections and Privacy, 7.4 adds About and Terms. Built per 7.4 | Open |
+| 2026-10-07 FL-13 | `spacing-layout-system.md` 13 | DOC-23: The 1366×768 first-screen estimate (264px for the hero) leaves out `space-section`; 224px shows and no headline is in view | Open |
+| 2026-10-07 FL-13 | `typography-system.md` 8.2 | DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |

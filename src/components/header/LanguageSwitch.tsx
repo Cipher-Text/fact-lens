@@ -8,7 +8,7 @@ import {
 
 type Props = {
   lang: Lang;
-  /** The current page path without the language prefix, for example "/foundations". */
+  /** The current page path without the language prefix, for example "/latest". */
   path?: string;
 };
 

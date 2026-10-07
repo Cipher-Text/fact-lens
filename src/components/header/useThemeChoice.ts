@@ -24,7 +24,7 @@ function subscribe(onChange: () => void) {
 // The server does not know the stored choice, so it renders "system".
 const getServerChoice = (): ThemeChoice => "system";
 
-/** The reader's stored theme choice. Shared by ThemeSwitch and ThemeToggle. */
+/** The reader's stored theme choice, for ThemeToggle. */
 export function useThemeChoice(): ThemeChoice {
   return useSyncExternalStore(subscribe, readThemeChoice, getServerChoice);
 }
