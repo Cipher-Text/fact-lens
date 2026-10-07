@@ -47,6 +47,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Workaround in code |
 | DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Workaround in code |
 | DOC-21 | FL-11 | "4 regions in view" next to "no 4-up rows" (LAY-07), and no buttons at 600–1023 with 3 or 4 regions | Low | Open |
+| DOC-22 | FL-12 | Footer: 7.1 calls it an "ad container"; DR-59 and 7.4 list different links | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -76,6 +77,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-27 | FL-10 | Most read item content and row gap | Low | Open |
 | U-28 | FL-11 | Region chip and region column heading look | Low | Open |
 | U-29 | FL-11 | Slider button place, icon and disabled look | Low | Open |
+| U-30 | FL-12 | Minimum footer look and social icons | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check in FL-14 |
@@ -104,6 +106,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Needs confirmation |
 | IMP-27 | FL-11 | Regions slider: tab mode follows the CSS, scripted 250ms scroll, hash selects a tab | Low | Needs confirmation |
 | IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Needs confirmation |
+| IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Needs confirmation |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -286,6 +289,16 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Problem:** LAY-07 and 3.3 say the homepage has no 4-up row; 7.2 and DR-54 show 4 regions in view from 1024. Most read has its own exception (DR-51); the slider has none in the rule text. Also, 7.3 says "4 regions or fewer: no buttons", but at 600–1023 only 2 are in view, so with 3 or 4 regions a mouse user without a trackpad reaches the others only with the scrollbar or the keyboard.
 - **Built:** As written: 4 in view from 1024; buttons only with 5 regions or more. The native scrollbar stays visible.
 - **Suggested solution:** Add the slider to the LAY-07 exceptions. Decide whether the button rule counts regions or "more regions than in view".
+
+---
+
+### DOC-22 Footer container name and link list
+
+- **Found:** FL-12 · **Severity:** Low · **Status:** Open
+- **Spec:** `spacing-layout-system.md` 7.1 row 15 and 7.4; decision register DR-59
+- **Problem:** 7.1 gives the footer container as "Ad container (full-width row) with content in the shell". Section 2 defines the ad container as one ad slot, so the name is confusing; the meaning is a full-width row. DR-59 lists Contact, Corrections and Privacy; 7.4 adds About and Terms.
+- **Workaround:** Built per 7.4 (higher authority): a full-width `<footer>` row with the content in `Shell`, and all five links.
+- **Suggested solution:** Say "Full-width row" in 7.1 row 15, and add About and Terms to DR-59.
 
 ---
 
@@ -525,6 +538,16 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### U-30 Minimum footer look and social icons
+
+- **Found:** FL-12 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/footer/SiteFooter.tsx`, `src/components/footer/SocialIcon.tsx`, `src/i18n/*.ts` `footer`
+- **Gap:** 7.4 gives the footer content only. No background, rule, padding, text roles, icon set, network list or labels. Icons are a gap (U-02), and `lucide-react` 1.x has no brand icons.
+- **Treatment used:** Page background with a 1px `border` rule across the full width; `space-module` above and below inside the shell; row 1 the text logo (U-08) and the social links, row 2 the five site links, both rows wrap. Site links `type-ui-sm` in `text-interactive` (like "আরও দেখুন"), 44px tall. Social links: 44px icon buttons (header classes) with Simple Icons 16.34.0 brand marks (CC0) inline in `currentColor`, for Facebook, YouTube, X and Instagram (tajmin's choice of inline icons). The text name is the `aria-label`; the list is named "সামাজিক মাধ্যমে ফ্যাক্ট লেন্স" / "Fact Lens on social media". Working Bangla labels: আমাদের সম্পর্কে, যোগাযোগ, সংশোধনী, গোপনীয়তা নীতি, ব্যবহারের শর্তাবলি.
+- **Suggested solution:** Design the footer (tajmin, DR-59); confirm the networks, the icon source and the Bangla labels with the editorial team.
+
+---
+
 ## Implementation choices to confirm (IMP-)
 
 ### IMP-01 Remembered English choice redirects only at `/`
@@ -712,6 +735,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### IMP-29 Footer link targets
+
+- **Found:** FL-12 · **Severity:** Low · **Status:** Needs confirmation
+- **Choice:** About, Contact, Corrections, Privacy and Terms go to `/about` … `/terms` (with `/en` on English pages); these pages do not exist yet, so they are 404 (as IMP-18, IMP-25). The Fact Lens social accounts are not known, so the social links go to each network's front page and open in the same tab.
+- **Suggested solution:** Give the real account URLs; build the site pages after the article pass.
+
+---
+
 ## Kit issues (KIT-)
 
 ### KIT-01 `visual-qa` agent switches theme with `data-theme`
@@ -754,3 +785,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-09 | DOC-18, U-21 to U-25, IMP-24 to IMP-26 added. IMP-14 updated (the four P-3 category anchors and `#newsletter` now have targets) |
 | 2026-10-07 | FL-10 | DOC-19, U-26, U-27 added. DOC-04 has a workaround (the §7.1 block is in `typography.css`) |
 | 2026-10-07 | FL-11 | DOC-20, DOC-21, U-28, U-29, IMP-27, IMP-28 added. IMP-14 updated (all anchors have targets) |
+| 2026-10-07 | FL-12 | DOC-22, U-30, IMP-29 added |

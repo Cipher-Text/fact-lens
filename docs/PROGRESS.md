@@ -6,7 +6,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 ## Now
 
-- Ticket: FL-12 Footer
+- Ticket: FL-13 Final check
 - Status: To do
 - Next action: tajmin types `/ticket`
 
@@ -25,6 +25,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 | 2026-10-07 | FL-09 Grouped categories | `GroupedCategories` (P-3): rows of two `CategoryBlock`s (one on phones) with an `ad-inset` between rows at wrapper width (3 or fewer); rail with `NewsletterSignup` (error, sending, done; mock) and `DailyPoll` (one vote per browser in local storage, result bars, largest-remainder percents); `#category-<id>` and `#newsletter` anchors; Playwright at 14 widths. DOC-18, U-21 to U-25, IMP-24 to IMP-26 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-10 Most read | `MostRead` (P-5): `<ol class="rank-list">` with the 7.1 `type-rank` CSS copied to `typography.css` (DOC-04), 1 / 2 from 600 / 4 from 1024 with item 5 alone on row 2 (DR-51), Bangla digits by the `bengali` counter, numeral hidden from screen readers with empty alt text (DOC-19); title-only items; ad-band after; Playwright at 14 widths. DOC-19, U-26, U-27 in `docs/prototype-findings.md` |
 | 2026-10-07 | FL-11 Regions | `Regions` (P-3b): one markup for slider and tabs. From 600 a scroll-snap row (2 in view, 4 from 1024) with previous/next buttons in the heading row, 250ms scripted scroll, none with reduced motion, `aria-disabled` at each end; below 600 chip tabs with arrow keys, Home and End. No buttons with 4 regions or fewer. `#regions` and `#region-<id>` anchors (a link selects the tab on phones). Shared `StoryStack`; `SectionHeading` `actions` slot; Playwright at 14 widths. DOC-20, DOC-21, U-28, U-29, IMP-27, IMP-28 in `docs/prototype-findings.md` |
+| 2026-10-07 | FL-12 Footer | `SiteFooter` (7.1 row 15, 7.4, DR-59): full-width row with a 1px rule and the content in the shell; logo and four social icon links (inline Simple Icons CC0 marks, text names for screen readers), then About, Contact, Corrections, Privacy and Terms in the page language; `footer` keys in the string tables; Playwright at 14 widths. DOC-22, U-30, IMP-29 in `docs/prototype-findings.md` |
 
 ## Later
 
@@ -57,6 +58,7 @@ Ideas that are outside the current ticket.
 - FL-10: Safari VoiceOver drops list semantics from `list-style: none` lists (the `.rank-list` CSS). Check P-5 with VoiceOver in FL-13; add `role="list"` if needed.
 - FL-11: The region columns have no "আরও দেখুন" link to a region page (7.4 lists none). Add it with the region pages (DR-19).
 - FL-11: Decide whether the slider scrollbar stays visible (IMP-27, DOC-21).
+- FL-12: The footer site pages (`/about`, `/contact`, `/corrections`, `/privacy`, `/terms`) are 404, and the social links go to each network's front page until the Fact Lens accounts are known (IMP-29).
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
 ## Unresolved design-system items
@@ -92,6 +94,7 @@ Ideas that are outside the current ticket.
 | U-27 | Most read item (`src/components/home/most-read/MostRead.tsx`) | Title only in `type-story-title-sm`; `space-module` between rows; no list rules | Open |
 | U-28 | Region chip and column heading (`src/components/home/regions/RegionSlider.tsx`) | Chip: `border-interactive` border, `text-interactive`, filled `interactive` when selected, `px-3`; column heading `type-ui-sm` with the U-22 top rule, visually hidden below 600 | Open |
 | U-29 | Slider buttons (`RegionSlider.tsx`, `SectionHeading.tsx` `actions`) | 44px chevron icon buttons at the end of the heading row; `aria-disabled` in `ink-disabled` at each end; 250ms ease-out | Open |
+| U-30 | Minimum footer (`src/components/footer/SiteFooter.tsx`, `SocialIcon.tsx`) | Page background, full-width 1px `border` rule, `space-module` padding; links `type-ui-sm` `text-interactive` 44px; inline Simple Icons (CC0) brand marks in 44px icon buttons for Facebook, YouTube, X, Instagram; working Bangla labels | Open |
 
 ## Spec issues (DOC-)
 
@@ -119,4 +122,5 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-10 | `typography-system.md` 7.1 | DOC-19: The numeral must be `aria-hidden`, but the 7.1 CSS draws it as `::before` generated content, which cannot take the attribute and is read by screen readers. Workaround: a project rule repeats `content` with empty alt text (`counter(rank) / ""`) | Open |
 | 2026-10-07 FL-11 | `spacing-layout-system.md` 7.2, 7.4 and 12.3 | DOC-20: No slider CSS: the column width (2 / 4 in view) is not a token, and a scroll container clips focus rings at its edges. Workaround: arbitrary `auto-cols-[calc(...)]` from `--grid-column-gap` only; 4px `-m-1 p-1 scroll-p-1` ring room | Workaround in code |
 | 2026-10-07 FL-11 | `spacing-layout-system.md` 3.3, 7.2, 7.3, LAY-07 | DOC-21: "4 regions in view" from 1024 against "no 4-up rows"; and "4 regions or fewer: no buttons" while only 2 are in view at 600–1023. Built as written | Open |
+| 2026-10-07 FL-12 | `spacing-layout-system.md` 7.1, 7.4; DR-59 | DOC-22: 7.1 row 15 calls the footer row an "ad container" (Section 2: one ad slot); DR-59 lists Contact, Corrections and Privacy, 7.4 adds About and Terms. Built per 7.4 | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |

@@ -90,6 +90,22 @@ export const bn = {
     label: "বিজ্ঞাপন",
     placeholder: "বিজ্ঞাপনের জায়গা",
   },
+  // The minimum footer (spacing-layout-system.md 7.4, DR-59). Working labels (U-30).
+  footer: {
+    label: "ফুটার",
+    siteNav: "সাইটের তথ্য",
+    social: "সামাজিক মাধ্যমে ফ্যাক্ট লেন্স",
+    about: "আমাদের সম্পর্কে",
+    contact: "যোগাযোগ",
+    corrections: "সংশোধনী",
+    privacy: "গোপনীয়তা নীতি",
+    terms: "ব্যবহারের শর্তাবলি",
+    // The text name of each icon link, for screen readers.
+    facebook: "ফেসবুক",
+    youtube: "ইউটিউব",
+    x: "এক্স",
+    instagram: "ইনস্টাগ্রাম",
+  },
   // Category labels (mock-content skill). চীন is a region, not a category (DR-19).
   categories: {
     bangladesh: "বাংলাদেশ",

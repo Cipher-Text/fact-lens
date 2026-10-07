@@ -91,6 +91,22 @@ export const en: Dictionary = {
     label: "Advertisement",
     placeholder: "Ad space",
   },
+  // The minimum footer (spacing-layout-system.md 7.4, DR-59). Working labels (U-30).
+  footer: {
+    label: "Footer",
+    siteNav: "About the site",
+    social: "Fact Lens on social media",
+    about: "About",
+    contact: "Contact",
+    corrections: "Corrections",
+    privacy: "Privacy",
+    terms: "Terms",
+    // The text name of each icon link, for screen readers.
+    facebook: "Facebook",
+    youtube: "YouTube",
+    x: "X",
+    instagram: "Instagram",
+  },
   // Working labels until the IA label table exists (IA-06, U-01).
   categories: {
     bangladesh: "Bangladesh",

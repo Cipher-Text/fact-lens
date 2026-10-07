@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
 
+import { SiteFooter } from "@/components/footer/SiteFooter";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { AnalysisOpinion } from "@/components/home/analysis-opinion/AnalysisOpinion";
 import { FeaturedCategory } from "@/components/home/featured/FeaturedCategory";
@@ -134,6 +135,9 @@ export default async function HomePage({
           />
         ) : null}
       </main>
+      {/* Row 15: the minimum footer, a full-width row with its content in the shell
+          (7.1, 7.4, DR-59). */}
+      <SiteFooter lang={lang} />
     </>
   );
 }
