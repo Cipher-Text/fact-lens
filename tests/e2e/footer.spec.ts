@@ -215,7 +215,13 @@ for (const p of PAGES) {
           if (!el?.closest("[data-footer]")) return null;
           return {
             name: el.getAttribute("href") ?? el.tagName,
-            ring: getComputedStyle(el).boxShadow,
+            // The base outline (COL-13), or the old ring on controls that are not rebuilt yet.
+            ring: (() => {
+              const s = getComputedStyle(el);
+              return s.outlineStyle === "solid" && s.outlineWidth === "2px"
+                ? "outline"
+                : s.boxShadow;
+            })(),
           };
         });
         if (info) {

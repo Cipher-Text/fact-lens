@@ -2,9 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { listItem } from "@/components/home/analysis-opinion/classes";
-import { BreakingLabel } from "@/components/story/StoryEyebrow";
+import { Chip } from "@/components/story/Chip";
 import { headlineLink, storyHref } from "@/components/story/links";
-import { StoryMeta } from "@/components/story/StoryMeta";
+import { MetaLine, storyMetaItems } from "@/components/story/MetaLine";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
@@ -46,7 +46,7 @@ export function StoryStack({
               ) : null}
               {story.breaking ? (
                 <p className="mb-(--space-eyebrow-title) type-eyebrow">
-                  <BreakingLabel text={strings.breaking} />
+                  <Chip variant="live">{strings.breaking}</Chip>
                 </p>
               ) : null}
               <Title
@@ -58,9 +58,8 @@ export function StoryStack({
                   {story.title}
                 </Link>
               </Title>
-              <StoryMeta
-                story={story}
-                strings={strings}
+              <MetaLine
+                items={storyMetaItems(story, strings)}
                 className="mt-(--space-story-title-meta)"
               />
             </article>

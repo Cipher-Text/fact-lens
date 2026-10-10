@@ -7,8 +7,8 @@ import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 import { headlineLink, storyHref } from "./links";
-import { StoryEyebrow } from "./StoryEyebrow";
-import { StoryMeta } from "./StoryMeta";
+import { Eyebrow } from "./Eyebrow";
+import { MetaLine, storyMetaItems } from "./MetaLine";
 
 type StoryCardProps = {
   story: Story;
@@ -44,7 +44,7 @@ export function StoryCard({
           className="row-start-1 mb-(--space-story-media-text) aspect-video w-full bg-surface-alt object-cover"
         />
       ) : null}
-      <StoryEyebrow
+      <Eyebrow
         story={story}
         strings={strings}
         className="row-start-2 mb-(--space-eyebrow-title)"
@@ -65,9 +65,8 @@ export function StoryCard({
           {story.summary}
         </p>
       ) : null}
-      <StoryMeta
-        story={story}
-        strings={strings.story}
+      <MetaLine
+        items={storyMetaItems(story, strings.story)}
         className="row-start-5"
       />
     </PeerCard>

@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-03 is Done
-- Next action: R2-04 Small parts, after tajmin types `/ticket`
+- Ticket: none. R2-04 is Done
+- Next action: R2-05 Page chrome, after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -74,6 +74,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-01 Clean up from run 1 | `docs/fl-13/` and `tests/final-check/` removed; `?content=sparse` only in development; WebKit project in Playwright (header tests pass). IMP-07, IMP-11, IMP-30 done |
 | 2026-10-11 | R2-02 Foundations CSS | `colors.css`, `typography.css`, `layout.css` are the spec blocks; `ads.css` deleted; §12.4 base rules in `globals.css`, `AGENTS.md` §5 updated (KIT-05). Components still on removed tokens are listed under Later. IMP-31, IMP-32 decided |
 | 2026-10-11 | R2-03 Mock content | `getAd(slot, lang)` with one mock booking per ad slot and six gray SVG creatives; tests for poll, ads, story ids (also sparse) and no newsletter content. Newsletter code stays until R2-11 (IMP-33). IMP-34 |
+| 2026-10-11 | R2-04 Small parts | `components.css` imported; `Divider`, `SectionHeading`, `MoreLink`, `Eyebrow`, `MetaLine`, `Chip`, `Button`, `IconButton` built from their sheets and callers moved; headline links use the base focus outline. 106 e2e tests stay red from before (R2-05, R2-06, R2-11, R2-12). DOC-25, DOC-26, IMP-35 to IMP-38 |
 
 ## Later
 
@@ -112,6 +113,9 @@ Ideas that are outside the current ticket.
 
 - R2-02 decisions (tajmin, 11 October 2026): §12.4 base rules added to `globals.css` (KIT-05, done). Import `components.css` in R2-04 (IMP-32). Import `shadcn/tailwind.css` with the first shadcn primitive, likely R2-05 (IMP-31)
 - R2-02: components that still use removed tokens: `--ad-band-*`/`--ad-inset-*` sizes in `AdRow.tsx` (R2-06); `--space-eyebrow-title` and `--space-story-summary-meta` in the story, hero, analysis, featured and grouped files (R2-07 to R2-11); `.top-bar` in `SiteHeader.tsx` (R2-05).
+- R2-04: 106 chromium e2e tests were red before this ticket and stay red: ad rows (R2-06), `header` (R2-05), `grouped` (R2-11), `most-read` (R2-12). R2-04 adds no failure (IMP-38). Each of those tickets must turn its tests green. At the end, tighten the five keyboard tests that accept the old ring to the base outline only.
+- R2-04: parts not yet moved to the new ones: header buttons and links (`header/classes.ts`: `iconButton`, `filledButton`, `navLink`, `focusRing`) go to `IconButton`/`Button` in R2-05; the poll and the newsletter form (`grouped/classes.ts`) in R2-11; footer links in R2-14; the P-4 and P-3 `listItem` class becomes `dividerItem` in R2-09 and R2-11.
+- R2-04: the bn Breaking word "সদ্যপ্রাপ্ত" against ব্রেকিং in the sheet (IMP-36). Eyebrow links go to `/category/<id>`, a 404 page (IMP-35).
 
 ## Unresolved design-system items
 
@@ -122,7 +126,7 @@ Ideas that are outside the current ticket.
 | U-03 | বিশ্লেষণ ও মতামত section background | `surface-elevated` (`DR-76`), built in FL-07. tajmin checks the look | Check |
 | U-04 | Theme switch and language switch look (`src/components/header/`) | Neutral bordered button group and text link; Tailwind spacing scale for padding | Open |
 | U-05 | Minimum touch target size (no spec value; switches are about 33px) | None yet. Proposed `--target-min` 44px | Open |
-| U-06 | Section heading rule thickness (`src/components/layout/SectionHeading.tsx`) | 1px `border-brand` top border | Open |
+| U-06 | Section heading rule thickness (`src/components/layout/SectionHeading.tsx`) | C-13 and C-22 give it: `Divider` with a 1px border rule and the brand bar | Fixed in R2-04 |
 | U-07 | Region list and labels (`src/content/homepage.ts`, `src/i18n/*.ts` `regions`) | Seven working regions; আফ্রিকা has no stories | Open |
 | U-08 | Logo (`src/components/header/SiteHeader.tsx`) | Site name as text, `type-section-title`, `text-brand`; 2.37:1 in dark (logo exempt) | Open |
 | U-09 | Theme control in the bar (`src/components/header/ThemeToggle.tsx`) | One icon button that cycles system, light, dark | Open |
@@ -176,5 +180,7 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-11 | `spacing-layout-system.md` 3.3, 7.2, 7.3, LAY-07 | DOC-21: "4 regions in view" from 1024 against "no 4-up rows"; and "4 regions or fewer: no buttons" while only 2 are in view at 600–1023. Built as written | Open |
 | 2026-10-07 FL-12 | `spacing-layout-system.md` 7.1, 7.4; DR-59 | DOC-22: 7.1 row 15 calls the footer row an "ad container" (Section 2: one ad slot); DR-59 lists Contact, Corrections and Privacy, 7.4 adds About and Terms. Built per 7.4 | Open |
 | 2026-10-07 FL-13 | `spacing-layout-system.md` 13 | DOC-23: The 1366×768 first-screen estimate (264px for the hero) leaves out `space-section`; 224px shows and no headline is in view | Open |
+| 2026-10-11 R2-04 | `component-system.md` 6 | DOC-25: the CSS block leaves out the six button and icon tokens that the table lists. `components.css` has them typed from the table | Workaround in code |
+| 2026-10-11 R2-04 | `component-system.md` C-11, `typography-system.md` 7.1 | DOC-26: Chip label says "type-eyebrow 15px 600"; the English role is 14px 700 uppercase | Open |
 | 2026-10-07 FL-13 | `typography-system.md` 8.2 | DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |

@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { headlineLinkElevated, storyHref } from "@/components/story/links";
+import { headlineLink, storyHref } from "@/components/story/links";
 import { MoreLink } from "@/components/story/MoreLink";
-import { StoryEyebrow } from "@/components/story/StoryEyebrow";
-import { StoryMeta } from "@/components/story/StoryMeta";
+import { Eyebrow } from "@/components/story/Eyebrow";
+import { MetaLine, storyMetaItems } from "@/components/story/MetaLine";
 import type { Lang, Story } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
 
@@ -45,16 +45,13 @@ export function AnalysisList({ lang, stories, strings }: AnalysisListProps) {
                 />
               ) : null}
               <div className="min-w-0 flex-1">
-                <StoryEyebrow
+                <Eyebrow
                   story={story}
                   strings={strings}
                   className="mb-(--space-eyebrow-title)"
                 />
                 <h4 className="type-story-title-sm">
-                  <Link
-                    href={storyHref(story)}
-                    className={headlineLinkElevated}
-                  >
+                  <Link href={storyHref(story)} className={headlineLink}>
                     {story.title}
                   </Link>
                 </h4>
@@ -63,9 +60,8 @@ export function AnalysisList({ lang, stories, strings }: AnalysisListProps) {
                     {story.summary}
                   </p>
                 ) : null}
-                <StoryMeta
-                  story={story}
-                  strings={strings.story}
+                <MetaLine
+                  items={storyMetaItems(story, strings.story)}
                   className={
                     story.summary
                       ? "mt-(--space-story-summary-meta)"
@@ -81,7 +77,6 @@ export function AnalysisList({ lang, stories, strings }: AnalysisListProps) {
         href={localizedPath(lang, "/analysis")}
         section={strings.analysisOpinion.analysis}
         strings={strings.common}
-        elevated
       />
     </section>
   );

@@ -2,6 +2,7 @@
 @import "../styles/colors.css";
 @import "../styles/layout.css";
 @import "../styles/typography.css";
+@import "../styles/components.css";
 
 @layer base {
   /* Pointer on enabled buttons (Tailwind 4 uses the browser default) (DR-235) */

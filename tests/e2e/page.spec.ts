@@ -73,25 +73,28 @@ for (const path of ["/", "/en"]) {
   }
 }
 
-test("section headings have the brand rule above them (COL-04)", async ({
+test("section headings have the divider above them: border rule, brand bar, 12px to the title (C-13, C-22, COL-04)", async ({
   page,
 }) => {
   await page.emulateMedia({ colorScheme: "light" });
   await page.goto("/en");
-  const row = page
-    .locator('[data-section="most-read"] .type-section-title')
-    .locator("..");
-  const style = await row.evaluate((el) => {
-    const s = getComputedStyle(el);
-    return {
-      width: s.borderTopWidth,
-      style: s.borderTopStyle,
-      color: s.borderTopColor,
-      pad: s.paddingTop,
-    };
+  const heading = page.locator(
+    '[data-section="most-read"] .type-section-title',
+  );
+  const divider = page.locator('[data-section="most-read"] [data-divider]');
+  const style = await divider.evaluate((el) => {
+    const [rule, bar] = [...el.children].map((child) => {
+      const s = getComputedStyle(child);
+      return { height: s.height, background: s.backgroundColor };
+    });
+    return { rule, bar };
   });
-  expect(style.width).toBe("1px");
-  expect(style.style).toBe("solid");
-  expect(style.color).toBe("rgb(153, 51, 20)"); // brand, light theme
-  expect(style.pad).toBe("12px"); // space-section-rule-title
+  expect(style.rule.height).toBe("1px");
+  expect(style.rule.background).toBe("rgb(221, 210, 196)"); // border, light theme
+  expect(style.bar.background).toBe("rgb(153, 51, 20)"); // brand, light theme
+  const gap =
+    (await heading.boundingBox())!.y -
+    (await divider.boundingBox())!.y -
+    (await divider.boundingBox())!.height;
+  expect(Math.round(gap)).toBe(12); // space-section-rule-title
 });

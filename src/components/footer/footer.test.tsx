@@ -52,7 +52,7 @@ describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
         );
         for (const link of links) {
           expect(link.className).toContain("text-interactive"); // COL-05
-          expect(link.className).toContain("focus-visible:ring-2"); // COL-13
+          expect(link.className).not.toMatch(/\bring/); // COL-13: the base outline, no ring classes
         }
       });
 

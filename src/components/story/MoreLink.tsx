@@ -1,41 +1,33 @@
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import type { Dictionary } from "@/i18n";
 import { fill } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-import { textLink, textLinkElevated } from "./links";
-
 type MoreLinkProps = {
   href: string;
   /** The name of the section, column or rail, for screen readers. */
   section: string;
   strings: Dictionary["common"];
-  /** The link sits on surface-elevated: the focus ring offset takes that color (COL-13). */
-  elevated?: boolean;
   className?: string;
 };
 
 /**
- * The "আরও দেখুন" link below the last item of its block, aligned to the start, with
- * space-more-link above it (LAY-18). The visible text stays the same; the accessible name
- * adds the section name (typography-system.md 7.1).
+ * C-10 MoreLink: one "আরও দেখুন" per section, at the end of the section and its end edge
+ * (CPT-14, CPT-15). type-ui-sm 600 in interactive color, a 16px chevron 4px after the label,
+ * a 44px tap height, no underline. The accessible name adds the section name.
  */
-export function MoreLink({
-  href,
-  section,
-  strings,
-  elevated = false,
-  className,
-}: MoreLinkProps) {
+export function MoreLink({ href, section, strings, className }: MoreLinkProps) {
   return (
-    <p className={cn("mt-(--space-more-link) type-ui-sm", className)}>
+    <p className={cn("mt-(--space-more-link) text-end", className)}>
       <Link
         href={href}
         aria-label={fill(strings.moreAbout, { section })}
-        className={elevated ? textLinkElevated : textLink}
+        className="inline-flex min-h-11 items-center gap-x-1 type-ui-sm font-semibold text-interactive hover:text-interactive-hover active:text-interactive-pressed"
       >
         {strings.more}
+        <ChevronRight aria-hidden="true" className="size-4" />
       </Link>
     </p>
   );

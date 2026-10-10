@@ -3,8 +3,8 @@ import Link from "next/link";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { headlineLink, storyHref } from "@/components/story/links";
 import { MoreLink } from "@/components/story/MoreLink";
-import { BreakingLabel } from "@/components/story/StoryEyebrow";
-import { StoryMeta } from "@/components/story/StoryMeta";
+import { Chip } from "@/components/story/Chip";
+import { MetaLine, storyMetaItems } from "@/components/story/MetaLine";
 import type { Lang, Story } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
 
@@ -35,7 +35,7 @@ export function LatestList({ lang, stories, strings }: LatestListProps) {
           <li key={story.id} className={item}>
             {story.breaking ? (
               <p className="mb-(--space-eyebrow-title) type-eyebrow">
-                <BreakingLabel text={strings.story.breaking} />
+                <Chip variant="live">{strings.story.breaking}</Chip>
               </p>
             ) : null}
             <p className="type-story-title-sm">
@@ -43,10 +43,10 @@ export function LatestList({ lang, stories, strings }: LatestListProps) {
                 {story.title}
               </Link>
             </p>
-            <StoryMeta
-              story={story}
-              strings={strings.story}
-              readingTime={false}
+            <MetaLine
+              items={storyMetaItems(story, strings.story, {
+                readingTime: false,
+              })}
               className="mt-(--space-story-title-meta)"
             />
           </li>

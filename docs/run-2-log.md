@@ -19,3 +19,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 | R2-01 Clean up from run 1 | 2026-10-11 | 2026-10-11 | Done | 0 | none | 1402a47 | WebKit added; sparse URL dev only |
 | R2-02 Foundations CSS | 2026-10-11 | 2026-10-11 | Done | 0 | none new; KIT-05, IMP-31, IMP-32 decided | 12a1aef | Components on removed tokens fixed in R2-05 to R2-11 |
 | R2-03 Mock content | 2026-10-11 | 2026-10-11 | Done | 0 | none new; IMP-33, IMP-34 added | fd30aed | Newsletter code removed in R2-11 |
+| R2-04 Small parts | 2026-10-11 | 2026-10-11 | Done | 1 | DOC-25, DOC-26; IMP-35 to IMP-38 | pending | 106 e2e tests red from before; fixed in R2-05, R2-06, R2-11, R2-12 |

@@ -2,21 +2,23 @@ import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
 
+import { Divider } from "./Divider";
+
 type SectionHeadingProps = {
   /** Use this id in aria-labelledby on the section. */
   id?: string;
+  /** One h2 per section; h3 for a group heading inside a section. */
   as?: "h2" | "h3";
   className?: string;
-  /** Controls at the end of the row, for example the P-3b slider buttons. Never a "more" link (LAY-18). */
+  /** Controls at the end edge, for example the slider buttons (C-15). Never a "more" link (CPT-14). */
   actions?: ReactNode;
   children: ReactNode;
 };
 
 /**
- * The section heading row: an editorial rule, space-section-rule-title, the heading,
- * then space-section-title-after to the first content. The "আরও দেখুন" link never goes
- * in this row (LAY-18). Rule color: brand for editorial rules (COL-04).
- * The rule thickness is not in the specs (UNRESOLVED_DESIGN_SYSTEM U-06): 1px border.
+ * C-13 SectionHeading: Divider.section, space-section-rule-title, the title as plain text
+ * (never a link, CPT-13), then space-section-title-after to the first content. With
+ * actions the row is at least 44px high, the title centered on the actions.
  */
 export function SectionHeading({
   id,
@@ -25,18 +27,24 @@ export function SectionHeading({
   actions,
   children,
 }: SectionHeadingProps) {
+  const title = (
+    <Tag id={id} className="min-w-0 type-section-title text-ink">
+      {children}
+    </Tag>
+  );
   return (
-    <div
-      className={cn(
-        "mb-(--space-section-title-after) border-t border-brand pt-(--space-section-rule-title)",
-        actions && "flex items-center justify-between gap-x-(--grid-column-gap)",
-        className,
-      )}
-    >
-      <Tag id={id} className="min-w-0 type-section-title text-ink">
-        {children}
-      </Tag>
-      {actions}
+    <div className={cn("mb-(--space-section-title-after)", className)}>
+      <Divider />
+      <div className="mt-(--space-section-rule-title)">
+        {actions ? (
+          <div className="flex min-h-11 items-center justify-between gap-x-(--grid-column-gap)">
+            {title}
+            {actions}
+          </div>
+        ) : (
+          title
+        )}
+      </div>
     </div>
   );
 }

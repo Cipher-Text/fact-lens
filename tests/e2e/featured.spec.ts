@@ -231,7 +231,13 @@ for (const p of PAGES) {
           if (!el?.closest(sel)) return null;
           return {
             href: el.getAttribute("href") ?? "",
-            ring: getComputedStyle(el).boxShadow,
+            // The base outline (COL-13), or the old ring on controls that are not rebuilt yet.
+            ring: (() => {
+              const s = getComputedStyle(el);
+              return s.outlineStyle === "solid" && s.outlineWidth === "2px"
+                ? "outline"
+                : s.boxShadow;
+            })(),
           };
         }, selector);
         if (info) {

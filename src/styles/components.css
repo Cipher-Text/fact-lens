@@ -1,0 +1,53 @@
+/* Component tokens: component-system.md Section 6. Imported after layout.css. */
+:root {
+  --bar-brand: 0.375rem;
+  --bar-section-width: 3rem;
+  --bar-section-height: 0.375rem;
+  --space-lead-inset-start: 0;
+  --space-lead-inset-end: 2rem;
+  --space-lead-panel: 1rem;
+  --space-lead-overlap: 2rem;
+  --space-lead-eyebrow-title: 0.5rem;
+  --space-lead-summary-meta: 1rem;
+  --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
+  --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
+  --color-bar: var(--brand);
+  --color-meta: var(--ink-muted);
+
+  /* Buttons (Section 6 table, DR-208) */
+  --button-height: 3rem;
+  --button-padding: 1.25rem;
+  --icon-button-size: 2.75rem;
+  --icon-button-size-bar: 2rem;
+  --icon-size: 1.25rem;
+  --button-icon-gap: 0.5rem;
+}
+
+.dark {
+  --color-bar: var(--interactive);
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --bar-section-width: 4rem;
+    --bar-section-height: 0.5rem;
+  }
+}
+
+/* LeadStory root: container-type: inline-size */
+@container (width >= 600px) {
+  .lead-story {
+    --bar-brand: 0.5rem;
+    --space-lead-inset-start: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-lead-inset-end: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-lead-panel: 1.5rem;
+    --space-lead-overlap: clamp(4rem, 10cqi, 6rem);
+  }
+}
+
+@container (width >= 880px) {
+  .lead-story {
+    --bar-brand: 0.625rem;
+    --space-lead-panel: 2rem;
+  }
+}

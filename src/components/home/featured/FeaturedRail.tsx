@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { BreakingLabel } from "@/components/story/StoryEyebrow";
+import { Chip } from "@/components/story/Chip";
 import { headlineLink, storyHref } from "@/components/story/links";
-import { StoryMeta } from "@/components/story/StoryMeta";
+import { MetaLine, storyMetaItems } from "@/components/story/MetaLine";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
@@ -54,7 +54,7 @@ export function FeaturedRail({ stories, strings }: FeaturedRailProps) {
               ) : null}
               {story.breaking ? (
                 <p className="mb-(--space-eyebrow-title) type-eyebrow">
-                  <BreakingLabel text={strings.story.breaking} />
+                  <Chip variant="live">{strings.story.breaking}</Chip>
                 </p>
               ) : null}
               <h3 className="type-story-title-sm">
@@ -62,9 +62,8 @@ export function FeaturedRail({ stories, strings }: FeaturedRailProps) {
                   {story.title}
                 </Link>
               </h3>
-              <StoryMeta
-                story={story}
-                strings={strings.story}
+              <MetaLine
+                items={storyMetaItems(story, strings.story)}
                 className="mt-(--space-story-title-meta)"
               />
             </article>

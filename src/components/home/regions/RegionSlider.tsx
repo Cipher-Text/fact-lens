@@ -10,9 +10,10 @@ import {
   type ReactNode,
 } from "react";
 
-import { focusRing, iconButton } from "@/components/header/classes";
 import { railModule } from "@/components/home/grouped/classes";
 import { SectionHeading } from "@/components/layout/SectionHeading";
+import { Chip } from "@/components/story/Chip";
+import { IconButton } from "@/components/story/IconButton";
 import type { Dictionary } from "@/i18n";
 import {
   easeOut,
@@ -43,13 +44,6 @@ const MIN_REGIONS_FOR_BUTTONS = 5;
 
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-// Disabled at the end of the row: aria-disabled keeps the focus on the button (COL-13).
-const sliderButton = `${iconButton} aria-disabled:cursor-not-allowed aria-disabled:text-ink-disabled aria-disabled:hover:bg-transparent`;
-
-// A chip is as wide as its label and 44px tall or more (typography-system.md 7.1, TYP-09).
-// Neutral look (UNRESOLVED_DESIGN_SYSTEM U-28).
-const chip = `inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border border-border-interactive px-3 type-ui-sm text-interactive hover:bg-accent-subtle hover:text-interactive-hover aria-selected:border-interactive aria-selected:bg-interactive aria-selected:text-on-interactive ${focusRing}`;
 
 /**
  * P-3b Regions (spacing-layout-system.md 7.2 to 7.4, DR-54).
@@ -185,28 +179,22 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
 
   const buttons = showButtons ? (
     <div className="hidden shrink-0 gap-2 sm:flex">
-      <button
-        type="button"
-        className={sliderButton}
-        aria-label={strings.previous}
+      <IconButton
+        icon={ChevronLeft}
+        label={strings.previous}
         aria-controls="regions-row"
         aria-disabled={edges.atStart || undefined}
         onClick={() => !edges.atStart && move(-1)}
         data-region-previous
-      >
-        <ChevronLeft aria-hidden="true" className="size-6" />
-      </button>
-      <button
-        type="button"
-        className={sliderButton}
-        aria-label={strings.next}
+      />
+      <IconButton
+        icon={ChevronRight}
+        label={strings.next}
         aria-controls="regions-row"
         aria-disabled={edges.atEnd || undefined}
         onClick={() => !edges.atEnd && move(1)}
         data-region-next
-      >
-        <ChevronRight aria-hidden="true" className="size-6" />
-      </button>
+      />
     </div>
   ) : null;
 
@@ -225,23 +213,22 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
         className="-mx-1 mb-(--space-section-title-after) flex gap-2 overflow-x-auto p-1 sm:hidden"
       >
         {regions.map((region, index) => (
-          <button
+          <Chip
+            variant="filter"
             key={region.id}
             ref={(node) => {
               tabRefs.current[index] = node;
             }}
-            type="button"
             role="tab"
             id={`region-${region.id}-tab`}
             aria-selected={index === selected}
             aria-controls={`region-${region.id}`}
             tabIndex={index === selected ? 0 : -1}
             onClick={() => select(index)}
-            className={chip}
             data-region-tab={region.id}
           >
             {region.label}
-          </button>
+          </Chip>
         ))}
       </div>
       {/* From 600: the slider row. Column width = (row − gaps) / regions in view, from

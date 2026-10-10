@@ -1,7 +1,9 @@
 import { Quote } from "lucide-react";
 import Link from "next/link";
 
-import { headlineLinkElevated, storyHref } from "@/components/story/links";
+import { Chip } from "@/components/story/Chip";
+import { headlineLink, storyHref } from "@/components/story/links";
+import { MetaLine } from "@/components/story/MetaLine";
 import { MoreLink } from "@/components/story/MoreLink";
 import type { Lang, Story } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
@@ -30,9 +32,7 @@ export function OpinionList({ lang, stories, strings }: OpinionListProps) {
         id="opinion-title"
         className="mb-(--space-list-item) type-eyebrow text-ink"
       >
-        <span data-chip className="inline-block bg-accent-subtle px-1">
-          {strings.analysisOpinion.opinion}
-        </span>
+        <Chip variant="label">{strings.analysisOpinion.opinion}</Chip>
       </h3>
       <ul>
         {stories.map((story) => (
@@ -45,29 +45,21 @@ export function OpinionList({ lang, stories, strings }: OpinionListProps) {
               />
               <div className="min-w-0 flex-1">
                 <h4 className="type-story-title-sm">
-                  <Link
-                    href={storyHref(story)}
-                    className={headlineLinkElevated}
-                  >
+                  <Link href={storyHref(story)} className={headlineLink}>
                     {story.title}
                   </Link>
                 </h4>
-                {/* Author, then time. The separator is drawn with CSS (typography 7.1). */}
-                <p className="mt-(--space-story-title-meta) flex flex-wrap items-center gap-x-2 type-metadata text-ink-muted tabular-nums">
-                  {story.author ? (
-                    <span className="font-semibold">{story.author.name}</span>
-                  ) : null}
-                  <time
-                    dateTime={story.publishedAt}
-                    className={
-                      story.author
-                        ? "flex items-center gap-x-2 before:size-1 before:rounded-full before:bg-current"
-                        : undefined
-                    }
-                  >
-                    {formatTime(new Date(story.publishedAt), story.lang)}
-                  </time>
-                </p>
+                <MetaLine
+                  items={[
+                    ...(story.author
+                      ? [<span key="author">{story.author.name}</span>]
+                      : []),
+                    <time key="time" dateTime={story.publishedAt}>
+                      {formatTime(new Date(story.publishedAt), story.lang)}
+                    </time>,
+                  ]}
+                  className="mt-(--space-story-title-meta)"
+                />
               </div>
             </article>
           </li>
@@ -77,7 +69,6 @@ export function OpinionList({ lang, stories, strings }: OpinionListProps) {
         href={localizedPath(lang, "/opinion")}
         section={strings.analysisOpinion.opinion}
         strings={strings.common}
-        elevated
       />
     </section>
   );

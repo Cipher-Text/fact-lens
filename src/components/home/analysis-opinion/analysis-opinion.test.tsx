@@ -42,7 +42,7 @@ describe("AnalysisOpinion (P-4)", () => {
     expect(chips).toHaveLength(1);
     const chip = chips[0] as HTMLElement;
     expect(chip).toHaveTextContent("মতামত");
-    expect(chip).toHaveClass("bg-accent-subtle");
+    expect(chip).toHaveClass("bg-(--color-bar)", "text-on-interactive");
     expect(chip.closest("[data-column]")).toHaveAttribute(
       "data-column",
       "opinion",
@@ -87,14 +87,11 @@ describe("AnalysisOpinion (P-4)", () => {
       expect(icon).toHaveAttribute("aria-hidden", "true");
   });
 
-  it("uses the surface-elevated focus ring offset on its links (COL-13)", () => {
+  it("gives the আরও দেখুন links the base focus outline, not ring classes (COL-13)", () => {
     const { container } = renderSection("bn", full);
-    for (const link of container.querySelectorAll("a")) {
-      expect(link.className).toContain(
-        "focus-visible:ring-offset-surface-elevated",
-      );
-      expect(link.className).not.toContain("ring-offset-background");
-    }
+    const links = container.querySelectorAll("a[aria-label]");
+    expect(links).toHaveLength(2);
+    for (const link of links) expect(link.className).not.toMatch(/\bring/);
   });
 
   it("lets the remaining column span the shell when one is empty (7.3)", () => {

@@ -423,7 +423,13 @@ for (const p of PAGES) {
           const rowBox = el.closest(sel)!.getBoundingClientRect();
           return {
             name: el.getAttribute("href") ?? el.tagName,
-            ring: getComputedStyle(el).boxShadow,
+            // The base outline (COL-13), or the old ring on controls that are not rebuilt yet.
+            ring: (() => {
+              const s = getComputedStyle(el);
+              return s.outlineStyle === "solid" && s.outlineWidth === "2px"
+                ? "outline"
+                : s.boxShadow;
+            })(),
             // The focused link scrolls into the row's view.
             inView: r.left >= rowBox.left - 1 && r.right <= rowBox.right + 1,
           };

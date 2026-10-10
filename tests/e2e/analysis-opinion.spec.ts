@@ -98,12 +98,15 @@ for (const p of PAGES) {
           expect(Math.round(o.width)).toBe(Math.round(a.width));
         }
 
-        // Each "more" link sits below the last item of its column, at the start (LAY-18).
+        // Each "more" link sits below the last item of its column, at the end edge (CPT-14, CPT-15).
         for (const column of [analysis, opinion]) {
           const last = await box(column.locator("li").last());
           const more = await box(column.locator("ul + p a"));
           expect(more.y).toBeGreaterThan(last.y + last.height);
-          expect(Math.round(more.x)).toBe(Math.round((await box(column)).x));
+          const columnBox = await box(column);
+          expect(
+            Math.abs(more.x + more.width - (columnBox.x + columnBox.width)),
+          ).toBeLessThanOrEqual(1);
         }
 
         // No text is clipped (LAY-17, TYP-09).
@@ -229,8 +232,9 @@ for (const p of PAGES) {
       await page.goto(p.path);
       const links = page.locator(`${SECTION} a`);
       const count = await links.count();
-      // Four analysis and four opinion stories, and two more links.
-      expect(count).toBe(10);
+      // Four analysis and four opinion stories, the four analysis category links (Eyebrow,
+      // C-08), and two more links.
+      expect(count).toBe(14);
 
       const seen: string[] = [];
       await page.locator("body").focus();
@@ -241,11 +245,11 @@ for (const p of PAGES) {
           if (!el?.closest(selector)) return null;
           return {
             href: el.getAttribute("href") ?? "",
-            ring: getComputedStyle(el).boxShadow,
+            outline: `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}`,
           };
         }, SECTION);
         if (info) {
-          expect(info.ring).not.toBe("none"); // COL-13
+          expect(info.outline).toBe("solid 2px"); // COL-13, base rule
           seen.push(info.href);
         }
       }

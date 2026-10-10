@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { headlineLink, storyHref } from "@/components/story/links";
-import { StoryEyebrow } from "@/components/story/StoryEyebrow";
-import { StoryMeta } from "@/components/story/StoryMeta";
+import { Eyebrow } from "@/components/story/Eyebrow";
+import { MetaLine, storyMetaItems } from "@/components/story/MetaLine";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
@@ -41,7 +41,7 @@ export function LeadStory({ story, strings }: LeadStoryProps) {
             "pt-(--space-story-media-text) md:relative md:me-16 md:-mt-16 md:bg-surface md:p-(--space-story-media-text)",
         )}
       >
-        <StoryEyebrow
+        <Eyebrow
           story={story}
           strings={strings}
           className="mb-(--space-eyebrow-title)"
@@ -56,9 +56,8 @@ export function LeadStory({ story, strings }: LeadStoryProps) {
             {story.summary}
           </p>
         ) : null}
-        <StoryMeta
-          story={story}
-          strings={strings.story}
+        <MetaLine
+          items={storyMetaItems(story, strings.story)}
           className={
             story.summary
               ? "mt-(--space-story-summary-meta)"

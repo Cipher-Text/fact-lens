@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -50,12 +50,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-22 | FL-12 | Footer: 7.1 calls it an "ad container"; DR-59 and 7.4 list different links | Low | Open |
 | DOC-23 | FL-13 | 1366×768 first screen: the 264px hero estimate leaves out the section space; no headline in view | Medium | Open |
 | DOC-24 | FL-13 | Headline roles have no `overflow-wrap`; one long compound word scrolls the page | Medium | Open |
+| DOC-25 | R2-04 | The §6 CSS block of `component-system.md` leaves out the button and icon tokens that its table lists | Low | Workaround in code |
+| DOC-26 | R2-04 | The Chip label sheet gives "15px 600", the `type-eyebrow` role is 14px 700 uppercase in English | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
 | U-04 | FL-02 | Theme switch and language switch look | Medium | Open |
 | U-05 | FL-02 | No minimum touch target size | Medium | Open |
-| U-06 | FL-03 | Section heading rule thickness | Low | Open |
+| U-06 | FL-03 | Section heading rule thickness | Low | Fixed in R2-04 (C-13 and C-22 give it) |
 | U-07 | FL-04 | Region list under অঞ্চল | Medium | Open |
 | U-08 | FL-05 | Logo asset and its role | Medium | Open |
 | U-09 | FL-05 | Theme control in the bar: one cycling icon button | Medium | Open |
@@ -111,9 +113,13 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Needs confirmation |
 | IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Open |
 | IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Decided: add it with the first shadcn primitive |
-| IMP-32 | R2-02 | `components.css` is not imported in `globals.css` | Low | Decided: import in R2-04 |
+| IMP-32 | R2-02 | `components.css` is not imported in `globals.css` | Low | Done in R2-04 |
 | IMP-33 | R2-03 | Newsletter strings and components stay until R2-11, because R2-03 only touches `src/content/` | Low | Open: remove in R2-11 |
 | IMP-34 | R2-03 | Mock ad creatives are plain gray SVG files with no text, one per size | Low | Open |
+| IMP-35 | R2-04 | The Eyebrow is now a link to `/category/<id>`, which is a 404 page | Low | Open |
+| IMP-36 | R2-04 | The Bangla Breaking label is "সদ্যপ্রাপ্ত"; the Chip sheet says the working label is ব্রেকিং | Low | Open: needs tajmin's yes |
+| IMP-37 | R2-04 | Item divider is a class, not a component; the section divider is a component | Low | Open |
+| IMP-38 | R2-04 | 106 e2e tests were red on the branch before R2-04; five keyboard tests accept the old ring or the base outline for now | Medium | Open |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -322,6 +328,22 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Problem:** No role sets `overflow-wrap`. A headline with one long Bangla compound word (40 letters in the test) is wider than its column and scrolls the page at every width. Mock headlines with normal words fit.
 - **Suggested solution:** Add `overflow-wrap: break-word` to the story title and section title roles (TYP-20: change the token, not the component).
 
+
+### DOC-25 The §6 CSS block leaves out the button and icon tokens
+
+- **Found:** R2-04 · **Severity:** Low · **Status:** Workaround in code
+- **Spec:** `component-system.md` Section 6 (table and CSS block)
+- **Problem:** The table lists `--button-height`, `--button-padding`, `--icon-button-size`, `--icon-button-size-bar`, `--icon-size` and `--button-icon-gap`, but the copy-ready CSS block has none of them. "Copy token CSS from the specs" has nothing to copy for these six.
+- **Workaround:** `src/styles/components.css` is the spec block unchanged, plus the six tokens typed from the table values (3rem, 1.25rem, 2.75rem, 2rem, 1.25rem, 0.5rem) in their own group.
+- **Suggested solution:** Add the six tokens to the CSS block in Section 6.
+
+### DOC-26 Chip label size does not match the eyebrow role
+
+- **Found:** R2-04 · **Severity:** Low · **Status:** Open
+- **Spec:** `component-system.md` C-11 (label, live) and `typography-system.md` 7.1
+- **Problem:** The sheet says "type-eyebrow 15px 600". In English `type-eyebrow` is 14px, 700, uppercase, 0.06em (Bangla is 15px 600). The label and live chips use the role (TYP-18), so English shows 14px bold capitals.
+- **Suggested solution:** Say "type-eyebrow" only, or give both languages in the sheet.
+
 ---
 
 ## Design-system gaps (U-)
@@ -362,7 +384,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-06 Section heading rule thickness
 
-- **Found:** FL-03 · **Severity:** Low · **Status:** Open
+- **Found:** FL-03 · **Severity:** Low · **Status:** Fixed in R2-04 (C-13 and C-22 give a 1px border rule and a brand bar; `SectionHeading` uses `Divider`)
 - **Gap:** Layout §5.2 has `space-section-rule-title` and color §2 says `brand` is for editorial rules, but no spec gives the rule's thickness or length.
 - **Treatment used:** `src/components/layout/SectionHeading.tsx`: a 1px `border-brand` top border across the full width of the heading row.
 - **Suggested solution:** Set the thickness (1px, 2px or 3px) and whether the rule spans the shell or only the wrapper, in the components pass.
@@ -793,6 +815,31 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Choice:** `public/mock/ad-<width>x<height>.svg` for 320x100, 336x280, 300x250, 300x600, 728x90 and 970x250. Gray fill and a border, no text, no advertiser mark. `src/content/ads.ts` has one fictional booking per slot (`getAd(slot, lang)`) with the sizes of §9. The 320x50, 970x90 and 300x250-for-band-under-336 variants have no separate file: 300x250 serves both.
 - **Suggested solution:** Replace with the advertiser images in Phase 1 (§9.2).
 
+### IMP-35 The Eyebrow is a link to a page that does not exist
+
+- **Found:** R2-04 · **Severity:** Low · **Status:** Open
+- **Choice:** C-08 says the Eyebrow is a link to the category page. `categoryHref(lang, category)` in `src/components/story/links.ts` gives `/category/<id>` (`/en/category/<id>`), which is a 404 page until category pages exist, like the story links (IMP-18). Run 1 showed plain text for this reason. The hero and the analysis column now have 3 and 4 more links; the two keyboard tests count them.
+- **Suggested solution:** Keep. The category pages come with their layout pass (agent contract §3).
+
+### IMP-36 Bangla Breaking label
+
+- **Found:** R2-04 · **Severity:** Low · **Status:** Open (flag: needs tajmin's yes)
+- **Choice:** `src/i18n/bn.ts` has "সদ্যপ্রাপ্ত" (FL-06, U-14). The C-11 sheet says the working label is ব্রেকিং (CNT-11). The string is unchanged: this ticket is about look, not wording. The chip now follows the sheet (square, `px-2 py-0.5`, `type-eyebrow`, `bg-live`, `text-on-live`).
+- **Suggested solution:** Change the string to ব্রেকিং if the sheet is the decision, with the tests that name the old word.
+
+### IMP-37 Item divider is a class
+
+- **Found:** R2-04 · **Severity:** Low · **Status:** Open
+- **Choice:** C-22 says lists keep ul/li semantics and no hr sits between items. `dividerItem` (in `Divider.tsx`) is a class for the `li`: 1px `border` rule, `space-list-item` on each side, none above the first row. It is the old `listItem` class, which the P-4 files still use; the later tickets switch to `dividerItem`. `Divider` the component is the section variant only. The column variant is postponed (DR-104). The sheet status is Draft.
+- **Suggested solution:** Confirm when the sheet leaves Draft.
+
+### IMP-38 Red e2e tests on the branch, and the focus check
+
+- **Found:** R2-04 · **Severity:** Medium · **Status:** Open
+- **State:** Before R2-04, 106 Playwright tests (chromium) failed on `prototype-run-2`: the ad rows at 11 widths in both languages (22; R2-06), `grouped` (28; R2-11), `most-read` (28; R2-12) and `header` (28; R2-05). The cause is the tokens that R2-02 removed (`--ad-*` sizes, `--space-eyebrow-title` and others). R2-04 adds no failure and fixes none. `pnpm test:e2e` is green again only after those tickets.
+- **Focus check:** The headline links and text links in `links.ts` lost their `ring-*` classes (COL-13 says the base outline only, and `ring-*` compiles to a shadow). The `hero` and `analysis-opinion` keyboard tests now check for the 2px solid outline. The `featured`, `grouped`, `footer`, `regions` and `most-read` keyboard tests accept the outline or the old ring, because the header classes, the footer, the poll and the newsletter form still use the old ring until R2-05, R2-11 and R2-14.
+- **Suggested solution:** Tighten those five tests to the outline only when the last old ring is gone (`grep focusRing src`).
+
 ---
 
 ## Kit issues (KIT-)
@@ -849,3 +896,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-01 | IMP-30 done (`docs/fl-13/`, `tests/final-check/` removed). IMP-11 done (`?content=sparse` only when `NODE_ENV !== 'production'`). IMP-07 done (WebKit project in Playwright) |
 | 2026-10-11 | R2-02 | No new finding. The three token files are now the spec blocks. The current specs address DOC-01 (`:lang(en)`), DOC-02 (no second Tailwind import), DOC-04 (`--type-rank-*` tokens), DOC-06 (`@utility` containers), DOC-08 (ad tokens in §12.2, `ads.css` deleted), DOC-11 (shadows removed) and DOC-12 (`--z-bar`, `--z-overlay`). Statuses are confirmed when the components use the new CSS (R2-04 and later). IMP-31, IMP-32 and KIT-05 added and decided (§12.4 block added to `globals.css`, `AGENTS.md` §5 updated; `components.css` import in R2-04; `shadcn/tailwind.css` with the first shadcn primitive) |
 | 2026-10-11 | R2-03 | IMP-33 and IMP-34 added. Mock ads (`ads.ts`, `getAd`, six SVG creatives) and tests for the poll, the ads, story ids in both languages (also sparse) and no newsletter content. The poll and the long-headline, no-image and sparse cases from run 1 were already right and are unchanged |
+| 2026-10-11 | R2-04 | DOC-25, DOC-26, IMP-35 to IMP-38 added. U-06 fixed. `components.css` imported (IMP-32 done). Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton built from their sheets. U-14, U-28 and U-29 stay open until the header, regions and analysis tickets: the chip and slider buttons now follow the sheets, but the Bangla Breaking word (IMP-36) and the region column heading are not decided |

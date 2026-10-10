@@ -212,8 +212,9 @@ for (const p of PAGES) {
       await page.goto(p.path);
       const links = page.locator('[data-section="hero"] a');
       const count = await links.count();
-      // Lead, two top stories, six Latest items, the more link.
-      expect(count).toBe(10);
+      // Lead, two top stories and their three category links (Eyebrow, C-08), six Latest
+      // items, the more link.
+      expect(count).toBe(13);
 
       // Tab from the last control before the hero.
       const seen: string[] = [];
@@ -225,11 +226,11 @@ for (const p of PAGES) {
           if (!el?.closest('[data-section="hero"]')) return null;
           return {
             href: el.getAttribute("href") ?? "",
-            ring: getComputedStyle(el).boxShadow,
+            outline: `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}`,
           };
         });
         if (info) {
-          expect(info.ring).not.toBe("none"); // COL-13
+          expect(info.outline).toBe("solid 2px"); // COL-13, base rule
           seen.push(info.href);
         }
       }
