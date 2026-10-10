@@ -8,18 +8,16 @@ This is a small sprint for a simple prototype: one homepage, mock data, Bangla a
 - Claude asks tajmin before a command that needs permission.
 - At the end of a ticket, Claude stops and gives tajmin the test steps.
 - tajmin tests the ticket. tajmin replies with problems, or types `/accept`.
-- Claude starts the next ticket only after `/accept` and a new `/ticket`.
+- Claude starts the next ticket only after `/accept` and a new `/ticket`. tajmin runs `/clear` between tickets.
 
 | Command | Who | Does |
 | --- | --- | --- |
 | `/ticket` | tajmin | Claude starts the next ticket that is "To do" |
-| `/accept` | tajmin | Claude marks the ticket "Done", commits and pushes |
+| `/accept` | tajmin | Claude marks the ticket "Done", commits and pushes the current branch |
 
-## Board
+## Run 1 board (record)
 
-Claude keeps this table current. Status values: To do, In progress, In review, Done, Rejected.
-
-**Milestone 1 prototype: finished on 8 October 2026.** tajmin rejected FL-14. The report is `docs/milestone-1-report.md` and the handover note is `docs/HANDOVER.md`.
+Prototype run 1 finished on 8 October 2026. tajmin rejected FL-14. The report is `docs/milestone-1-report.md` and the handover note is `docs/HANDOVER.md`.
 
 | Ticket | Title | Status |
 | --- | --- | --- |
@@ -38,324 +36,216 @@ Claude keeps this table current. Status values: To do, In progress, In review, D
 | FL-13 | Final check | Done |
 | FL-14 | Preview deploy (optional) | Rejected |
 
-## Every ticket is done when
+## Run 2
+
+Run 2 builds the homepage again from the component sheets in `docs/design-system/component-system.md` and the current specs. It uses the run 1 code: change a file in place, or write it again when its sheet is very different. Mock data only.
+
+### Branch
+
+- All run 2 work happens on the branch `prototype-run-2`, made from `main` in R2-00.
+- `/accept` commits each ticket on `prototype-run-2` and pushes that branch. Do not commit to `main` or push to `main` during run 2.
+- `main` changes only in R2-21, when the pull request merges.
+
+### Log
+
+- `docs/run-2-log.md` has one row per ticket: dates, result, rounds of fixes, spec findings and commit.
+- `/accept` adds the row in the same commit as the ticket. A rejected ticket also gets a row.
+
+### Rules for every ticket
+
+- Read `AGENTS.md`, `docs/design-system/agent-contract.md` Sections 5 to 9, and only the spec sections that the ticket names. The specs are the only source.
+- If no rule answers a question, or the only fix is a workaround, or two rules disagree: report `UNRESOLVED_DESIGN_SYSTEM` with the rule IDs and ask tajmin. Do not choose a value.
+- Test each section in Bangla (`/`) and English (`/en`), light and dark, at the widths in `spacing-layout-system.md` §13. Run axe and a keyboard pass.
+- The "Done" lines of a ticket are its acceptance criteria. For every ticket also: `pnpm check` passes, the section tests pass, and `design-reviewer` says `Verdict: pass`.
+
+### Run 2 board
+
+Status values: To do, In progress, In review, Done, Rejected. A ticket starts only when its "Needs" tickets are Done.
+
+| Ticket | Title | Needs | Status |
+| --- | --- | --- | --- |
+| R2-00 | Start the run 2 branch | – | To do |
+| R2-01 | Clean up from run 1 | R2-00 | To do |
+| R2-02 | Foundations CSS | R2-00 | To do |
+| R2-03 | Mock content | R2-02 | To do |
+| R2-04 | Small parts | R2-02 | To do |
+| R2-05 | Page chrome | R2-04 | To do |
+| R2-06 | Ad slots and page frame | R2-03 | To do |
+| R2-07 | Story units | R2-04 | To do |
+| R2-08 | Hero (P-1) | R2-07 | To do |
+| R2-09 | Analysis and opinion (P-4) | R2-07 | To do |
+| R2-10 | Featured categories (P-2) | R2-07 | To do |
+| R2-11 | Grouped categories and rail (P-3) | R2-06, R2-07 | To do |
+| R2-12 | Most read (P-5) | R2-07 | To do |
+| R2-13 | Regions (P-3b) | R2-07 | To do |
+| R2-14 | Footer | R2-04 | To do |
+| R2-15 | 200% text size | R2-08 to R2-14 | To do |
+| R2-16 | Spacing check | R2-15 | To do |
+| R2-17 | Final check | R2-16 | To do |
+| R2-18 | Branch preview | R2-17 | To do |
+| R2-19 | Pull request | R2-18 | To do |
+| R2-20 | Code review | R2-19 | To do |
+| R2-21 | Merge into main | R2-20 | To do |
 
-1. The acceptance criteria of the ticket are true.
-2. `pnpm check` passes (from FL-01 on), and `pnpm test:e2e` passes (from FL-02 on).
-3. The `design-reviewer` subagent reports no blockers.
-4. `docs/PROGRESS.md` is current.
+## Run 2 tickets
 
----
+### R2-00 Start the run 2 branch
 
-## FL-01 Project setup
+- Goal: run 2 starts from a clean `main` that has the final sync, on its own branch.
+- Check: `git status` is clean on `main`, and `main` is level with `origin/main`. The spec headers show `color-system.md` v2.7, `typography-system.md` v2.8, `spacing-layout-system.md` v2.11, `component-system.md` v1.2, `agent-contract.md` v2.4. There is no `.claude-sync.patch` and no `.claude/rules/.probe`. If one check fails, stop and tell tajmin.
+- Do: `git switch -c prototype-run-2`, then `git push -u origin prototype-run-2` (asks tajmin). Change `.claude/skills/accept/SKILL.md` step 5: push the current branch (`git push`), and stop if the current branch is `main`. Add step 3b to the accept skill: add the ticket's row to `docs/run-2-log.md`. Set "Now" in `docs/PROGRESS.md` to run 2.
+- Done: `git branch --show-current` prints `prototype-run-2`; the branch is on GitHub; the accept skill no longer pushes to `main` and adds the log row; R2-00 is the first row in `docs/run-2-log.md`.
 
-**Goal:** an empty Next.js 16 project with the kit, tests and a GitHub repository, so that the next tickets can build on it.
+### R2-01 Clean up from run 1
 
-**Acceptance criteria**
+- Goal: remove run 1 leftovers so tests and the repo stay small.
+- Read: `docs/HANDOVER.md` §5 only.
+- Touch: `playwright.config.ts`, the `?content=sparse` code in `src/`, `docs/fl-13/`, `tests/final-check/`.
+- Do: delete `docs/fl-13/` and `tests/final-check/` if they still exist (tajmin approves the delete). Keep `?content=sparse` only in development (`NODE_ENV !== 'production'`). Add a WebKit project to Playwright for Bangla shaping on Safari.
+- Done: the sparse URL shows full content in `pnpm build && pnpm start`; `pnpm test:e2e --project=webkit -g header` runs.
 
-- Node.js is 20.9 or later and pnpm works. If not, Claude stops and tells tajmin the one command to run.
-- Next.js 16 with TypeScript strict, Tailwind CSS 4, ESLint, App Router and `src/`. The kit files are unchanged.
-- The scripts in `AGENTS.md` Section 4 exist: `dev`, `lint`, `typecheck`, `test`, `test:e2e`, `build`, `check`.
-- Prettier, Vitest, Playwright with axe and shadcn/ui (init only) are set up.
-- `.gitignore` has `.claude/settings.local.json`, `CLAUDE.local.md`, `test-results/` and `playwright-report/`.
-- A private GitHub repository `fact-lens-web` exists with an SSH remote, and the first commit is pushed to `main`.
+### R2-02 Foundations CSS
 
-**tajmin tests:** opens the repository on GitHub, and opens `http://localhost:3000` to see the Next.js start page.
+- Goal: the token CSS is the spec CSS.
+- Read: `color-system.md` §5; `typography-system.md` §8; `spacing-layout-system.md` §12.
+- Touch: `src/styles/colors.css`, `typography.css`, `layout.css`; delete `src/styles/ads.css` and its import.
+- Do: replace each file with its spec block, unchanged. Do not change components in this ticket.
+- Done: no token in `src/` is undefined (`pnpm build` has no CSS warnings); a list of components that use a removed token goes in the report for the later tickets.
 
-<details><summary>Original prompt</summary>
+### R2-03 Mock content
 
-```text
-Set up the project in this folder. The folder already has the Claude Code kit (AGENTS.md, CLAUDE.md, .claude/, docs/). Do not change those files.
-- Check node -v (20.9 or later) and pnpm -v.
-- Run git init if needed.
-- Scaffold Next.js 16 with create-next-app into a temporary folder (.scaffold) with TypeScript, Tailwind, ESLint, App Router, src/ and pnpm, then move its files here without overwriting the kit files, merge .gitignore, and delete .scaffold.
-- Add the package.json scripts from AGENTS.md Section 4, Prettier with the Tailwind plugin, Vitest with Testing Library and jsdom, Playwright with @axe-core/playwright and one smoke test for /, shadcn/ui init for Tailwind 4 (no components yet), TypeScript strict.
-- Add .claude/settings.local.json, CLAUDE.local.md, test-results/ and playwright-report/ to .gitignore.
-- Create a private GitHub repository named fact-lens-web with gh, using the SSH remote (git@github.com:...), commit and push main.
-Tell me each package you add and why. Use the next-devtools MCP server for Next.js 16 questions.
-```
+- Goal: the content set that run 2 needs.
+- Read: `component-system.md` C-26 DailyPoll, C-16 AdSlot; `spacing-layout-system.md` §7.3, §9.
+- Touch: `src/content/`.
+- Do: remove newsletter content. Add a poll (question, 2 to 4 answers) per language. Add the mock ad for each slot: `ad-top`, the bands, `ad-inset`, `ad-rail`. Keep the long-headline, no-image and sparse cases.
+- Done: types compile; a Vitest test checks that each language has the same story IDs.
 
-</details>
+### R2-04 Small parts
 
-## FL-02 Design foundations
+- Goal: the shared parts match their sheets.
+- Read: `component-system.md` §4 (CPT, N rules), §6, and the sheets C-22 Divider, C-13 SectionHeading, C-10 MoreLink, C-08 Eyebrow, C-09 MetaLine, C-11 Chip, C-12 Button.
+- Touch: the matching files in `src/components/`. Use the names in `component-system.md` §3.
+- Do: no rounded corners, no card borders, no shadows. Links have no underline. MoreLink sits at the end edge. Button: one 48px size, 20px icons.
+- Done: a Vitest or Playwright test per part for its states (hover, focus, disabled where the sheet has one).
 
-**Goal:** the Fact Lens colors, fonts, themes and the two languages work, before any section is built.
+### R2-05 Page chrome
 
-**Acceptance criteria**
+- Goal: the header and its overlays match the sheets.
+- Read: `spacing-layout-system.md` §6; `component-system.md` C-17 TopBar, C-18 NavBar, C-19 Drawer, C-20 SearchDialog.
+- Touch: `src/components/header/`.
+- Do: the same top bar at every width; menu left, logo center; on phones the theme switch and En at the right and search first in the Drawer; from 768 the search dialog. Only the top bar is sticky. The nav row shows from 1280 and shows only the items that fit. Logo: keep the text placeholder.
+- Done: keyboard test: focus moves into the Drawer and the dialog and comes back; Escape closes them. The Bangla nav row at 1280 does not overflow.
 
-- `src/styles/colors.css`, `typography.css` and `layout.css` are copies of the CSS in the three specs. `globals.css` only imports Tailwind and these files.
-- The fonts load with `next/font` (`typography-system.md` Section 8).
-- Bangla is at `/`, English at `/en`. The language choice is kept in a cookie. There is no redirect by browser language (`DR-17`).
-- The theme switch has system, light and dark, with no flash on load.
-- `src/i18n/bn.ts` and `en.ts` exist with the same keys.
-- A temporary page shows every type role and color token in both languages.
+### R2-06 Ad slots and page frame
 
-**tajmin tests:** opens the temporary page in Bangla and English, light and dark, and compares it with the color and typography visual pages.
+- Goal: every ad slot has its reserved space.
+- Read: `spacing-layout-system.md` §7.1, §9, LAY-09 to LAY-13, LAY-19; `component-system.md` C-16 AdSlot.
+- Touch: `src/components/ads/`, the homepage file in `src/app/`.
+- Do: the page order in §7.1. The top ad above the header. Full-width bands after each category section and after Most read. `ad-inset` 300x250 below 1280, 728x90 from 1280. No sticky ads.
+- Done: a Playwright test checks the reserved height of each slot at 360, 1024 and 1280, with the ad and without it.
 
-<details><summary>Original prompt</summary>
+### R2-07 Story units
 
-```text
-Do the foundations.
-- Copy the token CSS from color-system.md Section 5, typography-system.md Section 8 and spacing-layout-system.md Section 12 into src/styles/colors.css, typography.css and layout.css. Copy, do not retype. globals.css imports only Tailwind and these files.
-- Load the fonts with next/font as typography-system.md Section 8 says.
-- Routes: src/app/[lang]/ with bn and en. Bangla at /, English at /en, the choice kept in a cookie, no browser-language redirect (DR-17). Use the Next.js 16 proxy.
-- Theme switch logic: system, light, dark, set before the first paint (spacing-layout-system.md Section 6).
-- String tables src/i18n/bn.ts and en.ts.
-- A temporary page that shows every type role and color token in both languages, so I can check them.
-List any CSS block in the specs that does not work as written.
-```
+- Goal: the story cards and lists match their sheets.
+- Read: `component-system.md` C-01 LeadStory, C-02 OverlapCard, C-03 StoryList, C-24 StoryCard, C-25 StoryListItem; `typography-system.md` §7.1.
+- Touch: `src/components/story/`.
+- Do: rebuild LeadStory from its sheet. Do not cut a title (CPT-08). Use the missing-image look from the sheet.
+- Done: tests with the long-headline and no-image content at 360, 1024 and 1280.
 
-</details>
+### R2-08 Hero (P-1)
 
-## FL-03 Layout parts
+- Read: `spacing-layout-system.md` §7.2, §7.4 (P-1); `typography-system.md` §7.1 (hero rows).
+- Touch: `src/components/home/` hero files and the hero test.
+- Do: the two top stories use the story title role from typography §7.1.
+- Done: hero tests pass; screenshot at 1024 and 1280 in both languages.
 
-**Goal:** the shared layout parts that every section uses.
+### R2-09 Analysis and opinion (P-4)
 
-**Acceptance criteria**
+- Read: `component-system.md` P-4 AnalysisSection, C-06 OpinionList; `spacing-layout-system.md` §7.4 (P-4).
+- Touch: the analysis section files.
+- Done: tests at the §13 widths; the section background stays inside the shell.
 
-- `Shell`, `Wrapper`, `Rail`, `AdRow`, `SectionHeading` and the peer-row grid exist in `src/components/layout/`.
-- At 1920 wide, the shell is 1280. From 1024, the rail is 304 wide and beside the wrapper. Below 1024, it is under the wrapper.
-- `AdRow` takes `ad-band-top`, `ad-band` or `ad-inset`, reserves the height per width, shows the label line and a placeholder, and has no padding or margin.
-- Playwright tests check these widths: 360, 768, 1024, 1280, 1440, 1920.
+### R2-10 Featured categories (P-2)
 
-**tajmin tests:** opens the temporary layout page and makes the browser window narrow and wide.
+- Read: `component-system.md` P-2 FeaturedCategorySection; `spacing-layout-system.md` §7.2, LAY-05.
+- Touch: the featured section files.
+- Do: build both rows (বাংলাদেশ, ভূরাজনীতি) from one component.
+- Done: tests at the §13 widths, with full and sparse content.
 
-<details><summary>Original prompt</summary>
+### R2-11 Grouped categories and rail (P-3)
 
-```text
-Build the layout parts Shell, Wrapper, Rail, AdRow, SectionHeading and the peer-row grid (spacing-layout-system.md Sections 2 to 5, 8 and 9). AdRow takes a slot name (ad-band-top, ad-band, ad-inset), reserves the height for each tier and shows the label line and a placeholder creative. Add a temporary layout test page and Playwright tests for the shell width and the rail at 360, 768, 1024, 1280, 1440 and 1920.
-```
+- Read: `component-system.md` C-23 CategoryBlock, C-26 DailyPoll; `spacing-layout-system.md` §7.2, §7.4 (P-3 rail), §9 (ad-rail).
+- Touch: the grouped section files, a new DailyPoll component.
+- Do: the rail holds DailyPoll, then `ad-rail` below it from 1280 only (300x600 or 300x250, reserve 600). Do not build NewsletterSignup.
+- Done: tests: the rail ad is absent below 1280; its reserved height is 600 from 1280; the poll works with the keyboard.
 
-</details>
+### R2-12 Most read (P-5)
 
-## FL-04 Mock content
+- Read: `component-system.md` C-07 RankedList; `spacing-layout-system.md` §7.2 (P-5 cards per row).
+- Touch: the Most read files.
+- Done: items per row at 360, 600, 1024 and 1280 match §7.2.
 
-**Goal:** realistic sample news for every homepage section, in both languages.
+### R2-13 Regions (P-3b)
 
-**Acceptance criteria**
+- Read: `component-system.md` C-15 RegionSlider; `spacing-layout-system.md` §7.4 (P-3b).
+- Touch: the regions files.
+- Do: a slider from 600, tabs below 600 (§7.4).
+- Done: the slider and the tabs work with the keyboard and with touch; no sideways page scroll at 320.
 
-- The data follows the `mock-content` skill: types in `src/content/types.ts`, read through `getHomepage(lang)`.
-- Every section in `spacing-layout-system.md` Section 7.1 has enough stories.
-- The data has long Bangla headlines, stories with no image, and a region with no stories.
-- No fact-check content (`DR-18`). চীন is a region, not a category (`DR-19`).
-- Placeholder images are local SVG files in `public/mock/`.
+### R2-14 Footer
 
-**tajmin tests:** reads some Bangla and English headlines in the data files.
+- Read: `component-system.md` C-21 Footer.
+- Touch: `src/components/footer/`.
+- Do: build the sheet as it is. The footer gets a design extension after run 2, so do not add to it.
+- Done: footer tests in both languages.
 
-<details><summary>Original prompt</summary>
+### R2-15 200% text size
 
-```text
-Make mock content for the whole homepage in Bangla and English. Follow the mock-content skill. Include the hard cases: long Bangla headlines, stories with no image, sparse variants, a region with no stories. Add placeholder SVG images in public/mock/.
-```
+- Goal: no row scrolls sideways at 200% browser text size.
+- Read: `spacing-layout-system.md` §13 (last case); `component-system.md` P-4, C-07, C-17; agent contract §9.
+- Do: test the homepage at 200% text size at 320, 768 and 1024. Most read and the analysis rows stack, the top bar can wrap. Keep the fix small. The specs give no trigger for the analysis-row stack: do not choose one. Report what makes it stack now as `UNRESOLVED_DESIGN_SYSTEM`.
+- Done: a Playwright test at 200% text size checks `scrollWidth` at each width; the report lists the open trigger question.
 
-</details>
+### R2-16 Spacing check (visual-qa only, no code)
 
-## FL-05 Header
+- Goal: help tajmin judge if the gutter, column gap and section space are too tight.
+- Do: full-page screenshots at 1024, 1280 and 1920 with the current tokens, then with one step up (gutter 24 to 32, column gap 24 to 32, space-module 40 to 48) set in a local CSS override that is not committed.
+- Done: the screenshot pairs are in `test-results/spacing/`. tajmin decides. A token change needs tajmin's yes and a spec change first.
 
-**Goal:** the top ad, top bar, nav row, drawer and search.
+### R2-17 Final check
 
-**Acceptance criteria**
+- Goal: run the run 1 final check (FL-13) again on run 2.
+- Read: `spacing-layout-system.md` §13; `agent-contract.md` §10.
+- Do: every §13 width and content case, both languages, both themes, axe, keyboard, the first screen at 1366x768.
+- Done: a table of results in `docs/PROGRESS.md`, with each problem as a ticket fix or an `UNRESOLVED_DESIGN_SYSTEM` item.
 
-- The top ad is above the header. The top bar sticks when the top ad scrolls away (`LAY-15`).
-- Phones: menu left, logo center, theme and language right. Search is in the drawer.
-- From 768: menu and search left, logo center, language, theme and Subscribe right. Search opens a dialog.
-- The nav row shows from 1280 only, with the items that fit. No ফ্যাক্টচেক, no চীন.
-- The drawer and the search dialog work with the keyboard: focus moves in, Escape closes, focus returns.
+### R2-18 Branch preview
 
-**tajmin tests:** at a phone width and at full width, opens the menu and search with the mouse and with the keyboard (Tab, Enter, Escape), then scrolls down.
+- Goal: a preview URL of the branch for tajmin, before the pull request. Needs tajmin's go before any deploy command.
+- Do: deploy `prototype-run-2` as a preview, not production. Test `/` with and without the language cookie; send `Cache-Control: private, no-store` on the redirect if needed. Links to pages that do not exist yet stay 404, or go to one "coming later" page, as tajmin chooses.
+- Done: the preview URL works in both languages; tajmin opens it. If tajmin skips the preview, set this ticket to Rejected and go on.
 
-<details><summary>Original prompt</summary>
+### R2-19 Pull request
 
-```text
-Build the header: top ad, top bar, nav row, drawer and search dialog (spacing-layout-system.md Sections 6 and 9).
-```
+- Goal: one pull request from `prototype-run-2` into `main`.
+- Do: `git fetch origin main`. If `main` moved, merge `origin/main` into the branch, fix conflicts, and run the checks again. Run `pnpm check` and the full `pnpm test:e2e`. Push. Then `gh pr create --base main --head prototype-run-2 --title "Prototype run 2: homepage"` (asks tajmin).
+- PR body: what changed per ticket (one line each), the open `UNRESOLVED_DESIGN_SYSTEM` items, the R2-17 result table link, the preview URL, and test steps.
+- Done: the PR URL is in `docs/PROGRESS.md`; all checks pass on the branch.
 
-</details>
+### R2-20 Code review
 
-## FL-06 Hero
+- Goal: Claude on GitHub reviews the whole pull request once, before the merge. It needs the Claude GitHub app on the repo (`/install-github-app` in Claude Code, once).
+- Review goals:
+  1. Specs: the code follows the rule IDs (COL, TYP, LAY, CPT, N). No raw values, rounded corners, card borders or shadows.
+  2. Readers: both languages work, the keyboard reaches every control, and no row scrolls sideways.
+  3. Bugs: no logic errors, broken imports or links, or dead code left from run 1.
+  4. Tests: no test is skipped or weakened, and each section has its tests.
+- Guideline: comment only with a rule ID or a clear bug. Mark each comment blocker, fix or note. No style opinions. Do not push code. A spec gap is a note marked `UNRESOLVED_DESIGN_SYSTEM` for tajmin.
+- Do: tajmin comments on the PR: `@claude review this PR with the R2-20 goals and guideline in docs/SPRINT.md.`
+- Done: inline comments plus one summary comment with the count per severity. tajmin can add own comments. The review does not lead to code fixes: run 2 tests the specs, so each finding goes to `docs/prototype-findings.md` as a spec gap, a spec conflict or a code issue, for the blueprint to resolve.
 
-**Goal:** the first section: lead story, two top stories and the Latest rail (P-1).
+### R2-21 Merge into main
 
-**Acceptance criteria**
-
-- From 1024: wrapper with the lead and two top stories, Latest in the 304 rail beside it.
-- 600 to 1023: lead full width, Latest in 2 columns below. Phone: all stacked.
-- From 768 the lead text panel overlaps the bottom of the image (`spacing-layout-system.md` Section 7.4).
-- Two top-story cards only (`DR-44`). The sparse cases of Section 7.3 work.
-- An ad row follows the hero.
-
-**tajmin tests:** looks at the hero at phone, tablet and full width, in Bangla and English.
-
-<details><summary>Original prompt</summary>
-
-```text
-Build P-1 Hero with the Latest rail (spacing-layout-system.md Sections 7.2 to 7.4).
-```
-
-</details>
-
-## FL-07 বিশ্লেষণ ও মতামত
-
-**Goal:** the analysis and opinion section (P-4).
-
-**Acceptance criteria**
-
-- Shell width, `surface-elevated` background inside the shell (`DR-76`).
-- Two equal columns from 768: analysis left, opinion right. Stacked below 768.
-- Only the opinion column has the plain মতামত chip. Each column has আরও দেখুন below its last item (`LAY-18`).
-- If one column is empty, the other spans the shell.
-
-**tajmin tests:** looks at the section at phone and full width, and checks the background color.
-
-<details><summary>Original prompt</summary>
-
-```text
-Build P-4 বিশ্লেষণ ও মতামত (spacing-layout-system.md Sections 7.2 to 7.4).
-```
-
-</details>
-
-## FL-08 Featured categories
-
-**Goal:** the বাংলাদেশ and ভূরাজনীতি sections (P-2).
-
-**Acceptance criteria**
-
-- Wrapper with the lead image and text, rail with one image story and two stories.
-- Text under the image up to 1279, beside the image from 1280.
-- With no rail stories, the wrapper spans the shell.
-- An ad row follows each section.
-
-**tajmin tests:** looks at both sections at 1024 and full width.
-
-<details><summary>Original prompt</summary>
-
-```text
-Build P-2 Featured category for বাংলাদেশ and ভূরাজনীতি (spacing-layout-system.md Sections 7.2 to 7.4).
-```
-
-</details>
-
-## FL-09 Grouped categories
-
-**Goal:** the remaining categories in rows of two, with the newsletter and daily poll rail (P-3).
-
-**Acceptance criteria**
-
-- Two categories per row from 600, one on phones. An odd last category keeps its size.
-- An `ad-inset` between rows, at wrapper width. Three insets or fewer.
-- Rail: newsletter (with error, sending and done states) and a daily poll (one vote per browser, then result bars). Mock data only.
-
-**tajmin tests:** submits the newsletter form with a bad and a good email, and votes in the poll.
-
-<details><summary>Original prompt</summary>
-
-```text
-Build P-3 Grouped categories with the ad-inset, newsletter and daily poll (spacing-layout-system.md Sections 7.2 to 7.4 and 9).
-```
-
-</details>
-
-## FL-10 Most read
-
-**Goal:** the top 5 stories as a numbered list (P-5).
-
-**Acceptance criteria**
-
-- 4 per row from 1024 with item 5 on row 2. 2 per row from 600. 1 per row on phones (`DR-51`).
-- Bangla pages show Bangla digits.
-- An ad row follows the section.
-
-**tajmin tests:** looks at the list at phone, tablet and full width.
-
-<details><summary>Original prompt</summary>
-
-```text
-Build P-5 Most read (spacing-layout-system.md Section 7.2, DR-51).
-```
-
-</details>
-
-## FL-11 Regions
-
-**Goal:** the regions section as a slider, and as tabs on phones (P-3b).
-
-**Acceptance criteria**
-
-- From 600: a scroll-snap row with previous and next buttons that move one region and are disabled at each end. Swipe works. No autoplay.
-- Below 600: tabs with arrow-key support. One region shows.
-- A region with no stories is not shown. With 4 regions or fewer there are no buttons.
-- No animation with reduced motion.
-
-**tajmin tests:** uses the buttons, swipes on a phone, and uses the arrow keys on the tabs.
-
-<details><summary>Original prompt</summary>
-
-```text
-Build P-3b Regions (spacing-layout-system.md Section 7.4).
-```
-
-</details>
-
-## FL-12 Footer
-
-**Goal:** the minimum footer.
-
-**Acceptance criteria**
-
-- Full-width row with the logo and social links. Each social link has a name for screen readers.
-- Links to About, Contact, Corrections, Privacy and Terms, in the page language.
-
-**tajmin tests:** checks the footer in Bangla and English.
-
-<details><summary>Original prompt</summary>
-
-```text
-Build the minimum footer (spacing-layout-system.md Section 7.4).
-```
-
-</details>
-
-## FL-13 Final check
-
-**Goal:** the whole homepage works at every width, in both languages and both themes.
-
-**Acceptance criteria**
-
-- Remove the temporary pages from FL-02 and FL-03.
-- `/verify` passes, and the `visual-qa` subagent reports no problems, or each problem is listed.
-- The widths and cases in `spacing-layout-system.md` Section 13 are tested, including the 1366×768 first screen.
-- The checks in `typography-system.md` Section 9 have a result.
-- One results table is in `docs/PROGRESS.md`. Claude fixes only what tajmin picks from the table.
-
-**tajmin tests:** reads the table and picks the fixes.
-
-<details><summary>Original prompt</summary>
-
-```text
-Run /verify. Then test every case in spacing-layout-system.md Section 13 (all widths, the 1366×768 first screen, long Bangla headlines, no-image stories, sparse sections) and the prototype checks in typography-system.md Section 9. Give me one table with the results and screenshots. Do not fix anything until I pick the fixes.
-```
-
-</details>
-
-## FL-14 Preview deploy (optional)
-
-> **Rejected on 8 October 2026 (tajmin).** The prototype has too many open findings (`docs/prototype-findings.md`) for a preview link to be useful. No Vercel project was made and nothing was deployed. Do this ticket again in the next milestone, after the fixes.
-
-**Goal:** a preview link that tajmin can share.
-
-**Acceptance criteria**
-
-- The README is current and `git status` is clean.
-- The repository is connected to Vercel and a preview deploy shows `/` in Bangla and `/en` in English.
-- Claude asks before every command that deploys.
-
-**tajmin tests:** opens the preview link on a phone.
-
-<details><summary>Original prompt</summary>
-
-```text
-Check that git status is clean and the README is current. Then connect the GitHub repository to Vercel for a preview deploy. Ask me before each command that deploys.
-```
-
-</details>
+- Goal: run 2 is in `main`. Needs tajmin's explicit go.
+- Do: `gh pr merge --merge --delete-branch` (a merge commit keeps one commit per ticket). Then `git switch main`, `git pull origin main`, and `pnpm check` on `main`. Set "Now" in `docs/PROGRESS.md` to "run 2 finished" and set the run 2 board to Done, in one commit on a short branch with its own PR, or as tajmin says.
+- Done: the PR shows Merged; `main` builds and its tests pass; the branch `prototype-run-2` is deleted.

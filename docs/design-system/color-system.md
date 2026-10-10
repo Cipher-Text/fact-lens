@@ -1,12 +1,14 @@
 # Fact Lens Color System
 
-Version 2.1 · 6 October 2026 · Approved for the first prototype
+Version 2.7 · 10 October 2026 · Approved for prototype run 2
 
 The values are not final. Some colors can change after a few prototype rounds. Run the contrast tests in Section 3 again after each change.
 
 This document is the single source for Fact Lens colors. It is for designers, developers and AI agents. Other documents link to the token table in Section 2. They do not copy values.
 
 The system has two themes: **Light** (warm ivory) and **Dark** (graphite). The two themes must look like one publication.
+
+Light is the default on every device. Dark applies only when the reader turns it on with the theme switch. The site keeps that choice. The site does not follow the system color setting (DR-201).
 
 All text pairs in this document meet WCAG 2.2 AA on every surface. Section 3 gives the results.
 
@@ -23,7 +25,7 @@ All text pairs in this document meet WCAG 2.2 AA on every surface. Section 3 giv
 ## 1. How to use this document
 
 - Find a color in the **token table** (Section 2). Each token has one name and one value per theme.
-- Follow the **rules** (Section 4). Each rule has a stable ID, for example `COL-03`. Use the ID in reviews, prompts and the decision register.
+- Follow the **rules** (Section 4). Each rule has a stable ID, for example `COL-03`. Use the ID in reviews, prompts and commit messages.
 - Copy the **CSS** in Section 5 into the app. Do not type values by hand.
 
 The color model has three layers:
@@ -38,7 +40,7 @@ Components use utilities only.
 
 ## 2. Token table
 
-"Utility" is the Tailwind color name. Use it with any prefix: `bg-`, `text-`, `border-`, `ring-`, `fill-`.
+"Utility" is the Tailwind color name. Use it with any prefix: `bg-`, `text-`, `border-`, `outline-`, `fill-`. Section 5 removes the Tailwind default palette, so only these names exist.
 
 ### 2.1 Surfaces
 
@@ -55,7 +57,7 @@ Components use utilities only.
 | --- | --- | --- | --- | --- |
 | `ink` | `ink`, `foreground` | `#1F1A17` | `#F5F5F5` | Headlines, strong text |
 | `ink-secondary` | `ink-secondary` | `#342F2C` | `#D0D0D0` | Body text |
-| `ink-muted` | `ink-muted`, `muted-foreground` | `#4F4B48` | `#A3A3A3` | Metadata, captions, labels |
+| `ink-muted` | `ink-muted`, `muted-foreground` | `#6E6862` | `#A3A3A3` | Metadata, captions, labels, the ad label (DR-100) |
 | `ink-disabled` | `ink-disabled` | `#9A928A` | `#5E666C` | Disabled controls only |
 
 ### 2.3 Brand and interactive
@@ -81,7 +83,7 @@ Components use utilities only.
 | --- | --- | --- | --- | --- |
 | `border` | `border` | `#DDD2C4` | `#3A3D44` | Dividers, card edges |
 | `border-soft` | `border-soft` | `#EAE1D6` | `#2D3036` | Low-priority separators |
-| `border-interactive` | `border-interactive`, `input` | `#857A70` | `#767E89` | Inputs, selects, checkboxes |
+| `border-interactive` | `border-interactive`, `input` | `#7D7369` | `#767E89` | Inputs, selects, checkboxes |
 
 ### 2.6 Status
 
@@ -110,7 +112,6 @@ The utility name is the same as the token name, for example `text-success` and `
 | --- | --- | --- | --- |
 | `selection` | `#EDCEC4` | `#5A2A1C` | Selected text background |
 | `overlay` | `rgb(31 26 23 / 0.48)` | `rgb(0 0 0 / 0.64)` | Behind dialogs and the menu drawer (scrim) |
-| `shadow` | `rgb(31 26 23 / 0.12)` | `rgb(0 0 0 / 0.45)` | Elevated surfaces only |
 | `skeleton` | `#EAE1D6` | `#2D3036` | Loading placeholders |
 
 ### 2.8 Focus ring
@@ -120,7 +121,17 @@ The utility name is the same as the token name, for example `text-success` and `
 | Color | `interactive` |
 | Width | 2px |
 | Offset | 2px |
-| Offset color | The surface below the control |
+| Style | `outline`, from the base rule (`COL-13`) |
+
+### 2.9 Component colors
+
+No component has its own color tokens. Components use the tokens in Sections 2.1 to 2.8.
+
+NewsletterSignup (DR-229; paused for prototype run 2, built in a later phase, DR-239): panel `accent-soft`; heading `ink`; text line `ink-secondary`; arrow button and privacy link `interactive`, with the UI link and button states; email field `background` with `border-interactive`. The field text is `ink` and the placeholder is `ink-muted`.
+
+Theme controls (DR-211, DR-237): phone ThemeButton icon `interactive` in light, `ink` in dark. ThemeToggle from 768px: track `interactive` in light, `ink` in dark; thumb `background`; icon `interactive` in light, `ink` in dark. Neither control has a hover or pressed color; both show the focus outline only.
+
+Form error (DR-230): the field gets a 2px `error` border. The message is `ink` with a 20px `error` icon (`COL-09`).
 
 ## 3. Contrast results
 
@@ -130,7 +141,7 @@ Method: WCAG 2.2 contrast ratio. Each text token was tested on `background`, `su
 | --- | --- | --- |
 | `ink` | 14.21 | 11.74 |
 | `ink-secondary` | 10.90 | 8.30 |
-| `ink-muted` | 7.12 | 5.07 |
+| `ink-muted` | 4.53 | 5.07 |
 | `interactive` | 6.10 | 4.81 |
 | `interactive-hover` | 7.72 | 6.52 |
 | `interactive-pressed` | 9.31 | 8.38 |
@@ -138,13 +149,26 @@ Method: WCAG 2.2 contrast ratio. Each text token was tested on `background`, `su
 | `warning` | 4.80 | 5.20 |
 | `error` | 5.39 | 4.76 |
 | `info` | 5.64 | 5.06 |
-| `border-interactive` (3:1) | 3.63 | 3.12 |
+| `border-interactive` (3:1) | 3.82 | 3.12 |
 | Focus ring (3:1) | 6.42 | 4.81 |
 | `on-interactive` on all button states | 7.06 | 6.59 |
 | `on-destructive` on `destructive` | 6.23 | 6.53 |
 | `on-live` on `live` | 6.23 | 5.71 |
 
 The hardest surface is `accent-subtle` in Light and `surface-elevated` in Dark.
+
+Component pairs on `accent-soft` (NewsletterSignup panel, Section 2.9):
+
+| Pair | Light | Dark |
+| --- | --- | --- |
+| `ink` on `accent-soft` | 11.68 | 13.74 |
+| `ink-secondary` on `accent-soft` | 8.95 | 9.72 |
+| `interactive` on `accent-soft` (link, button fill) | 5.01 | 5.63 |
+| `interactive-hover` on `accent-soft` | 6.35 | 7.63 |
+| `error` icon on `accent-soft` (3:1) | 4.43 | 5.57 |
+| `border-interactive` on `accent-soft` (3:1) | 3.14 | 3.65 |
+
+Light `border-interactive` is `#7D7369` so that the newsletter email field border passes 3:1 on `accent-soft` (DR-238). The field background (`background`) is 4.42:1 against the border.
 
 Not tested: `ink-disabled` (WCAG does not apply to disabled controls) and the logo (WCAG does not apply to logos). `brand` on `#18191E` is 2.37:1, so `COL-04` limits its use.
 
@@ -168,13 +192,22 @@ Use `brand` for the logo, brand mark and editorial rules. Do not use it for link
 
 Reason: `brand` is 2.37:1 on the dark background.
 
-### COL-05 Use `interactive` for all controls
+### COL-05 Use `interactive` for controls and UI links
 
-Use `interactive` (shadcn `primary`) for links, buttons, active navigation and focus.
+Use `interactive` (shadcn `primary`) for buttons, UI links, active navigation and focus. A UI link goes to a part of the interface, for example আরও দেখুন, a category label (eyebrow), the privacy link or a search term. Navigation and footer links keep the text color of their component at rest.
 
-### COL-06 Change color on hover and press
+Do not use `interactive` for news links. A news link goes to a news item, for example a story title. It keeps the text color of its role (`ink` for titles).
 
-Use `interactive-hover` and `interactive-pressed`. Hover changes the color only; the underline in article text stays (COL-07). Links outside article text have no underline.
+### COL-06 Show link states with color only
+
+Links have no underline. Hover and press change the color only (DR-199).
+
+| Link | Rest | Hover | Pressed |
+| --- | --- | --- | --- |
+| News link (story title, other link to a news item) | Role color, `ink` for titles | `ink-muted`. A news link that is `ink-muted` at rest goes to `ink` | No own color: the hover color stays |
+| UI link | `interactive`, or the component text color in navigation and the footer | `interactive-hover` | `interactive-pressed` |
+
+Buttons use `interactive-hover` and `interactive-pressed` too. Social icon links (Drawer, Footer) are UI links: the icon changes color, with no wash (DR-220). The TopBar language link and the theme controls have no hover and no pressed color; they show the focus ring only (DR-211, DR-219). Links inside article text: see `COL-07`. Every link shows the focus ring (`COL-13`).
 
 ### COL-07 Make links in body text visible without color
 
@@ -206,9 +239,9 @@ Reason: dark `live` is 4.16:1 on `surface-elevated`.
 
 Give inputs, selects and checkboxes `border-interactive`. Use `border` for dividers only.
 
-### COL-13 Show a focus ring on every focusable element
+### COL-13 Show a focus outline on every focusable element
 
-Use `focus-visible:ring-2 ring-ring ring-offset-2 ring-offset-background`. Set the offset color to the surface below.
+The base rule in Section 5 gives every focusable element a 2px `ring` outline with a 2px offset on `:focus-visible` (DR-225). Do not add focus classes. Do not use `ring-*` utilities: they compile to a shadow (`COL-15`).
 
 ### COL-14 Use `on-destructive` on delete buttons
 
@@ -216,17 +249,23 @@ Use `bg-destructive text-on-destructive`. Do not use white text.
 
 Reason: dark `destructive` is light, so it needs dark text.
 
-### COL-15 Use shadows on elevated surfaces only
+### COL-15 Do not use shadows
 
-Use `shadow` with `surface-elevated`. Do not add shadows to cards on the page.
+Do not give any element a shadow. Show a raised surface with `surface-elevated`. Dialogs and the menu drawer also have the `overlay` scrim behind them (DR-202).
+
+### COL-16 Set the page colors on body
+
+The page uses `background` and the text color `ink`. The base rule in Section 5 sets them on `body` (DR-232). The default border color is `border`; a class names any other border color (`COL-12`).
+
+### COL-17 Show a selected item with `interactive` and a word
+
+Give a selected item an `interactive` cue and a word (`COL-09`). Do not use `accent-soft` as the only cue. Example: the own poll vote keeps its filled `interactive` marker and the label আপনার ভোট (DR-221).
 
 ## 5. Implementation
 
-Put this CSS in `app/globals.css`. It sets the tokens for both themes and exposes them to Tailwind 4 and shadcn/ui.
+Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and exposes them to Tailwind 4 and shadcn/ui. The block has no `@import "tailwindcss"`: `app/globals.css` imports Tailwind once, then imports this file (DR-200). `app/globals.css` also imports `shadcn/tailwind.css`. Do not install or import `tw-animate-css` (DR-236).
 
 ```css
-@import "tailwindcss";
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -238,7 +277,7 @@ Put this CSS in `app/globals.css`. It sets the tokens for both themes and expose
   /* Ink */
   --ink: #1f1a17;
   --ink-secondary: #342f2c;
-  --ink-muted: #4f4b48;
+  --ink-muted: #6e6862;
   --ink-disabled: #9a928a;
   /* Brand and interactive */
   --brand: #993314;
@@ -252,7 +291,7 @@ Put this CSS in `app/globals.css`. It sets the tokens for both themes and expose
   /* Borders */
   --border: #ddd2c4;
   --border-soft: #eae1d6;
-  --border-interactive: #857a70;
+  --border-interactive: #7d7369;
   /* Status */
   --success: #1d7248;
   --success-subtle: #e8f1ed;
@@ -269,8 +308,8 @@ Put this CSS in `app/globals.css`. It sets the tokens for both themes and expose
   /* Utility */
   --selection: #edcec4;
   --overlay: rgb(31 26 23 / 0.48);
-  --shadow: rgb(31 26 23 / 0.12);
   --skeleton: #eae1d6;
+  /* Component colors */
 }
 
 .dark {
@@ -306,8 +345,12 @@ Put this CSS in `app/globals.css`. It sets the tokens for both themes and expose
   --on-live: #18191e;
   --selection: #5a2a1c;
   --overlay: rgb(0 0 0 / 0.64);
-  --shadow: rgb(0 0 0 / 0.45);
   --skeleton: #2d3036;
+}
+
+@theme {
+  /* Remove the Tailwind default palette: only Fact Lens colors exist (DR-235) */
+  --color-*: initial;
 }
 
 @theme inline {
@@ -366,6 +409,26 @@ Put this CSS in `app/globals.css`. It sets the tokens for both themes and expose
 ::selection {
   background: var(--selection);
 }
+
+@layer base {
+  /* COL-16, DR-232 */
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-ink);
+  }
+  /* COL-13, DR-225 */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+  /* COL-08, DR-235 */
+  ::placeholder {
+    color: var(--color-ink-muted);
+  }
+}
 ```
 
 Examples:
@@ -376,6 +439,16 @@ Examples:
   <h3 className="text-ink">Border talks resume in Dhaka</h3>
   <p className="text-ink-muted">5 min read</p>
 </article>
+
+// UI link (COL-05, COL-06)
+<a className="text-interactive hover:text-interactive-hover active:text-interactive-pressed">
+  আরও দেখুন
+</a>
+
+// News link: story title (COL-06)
+<a className="text-ink hover:text-ink-muted">
+  Border talks resume in Dhaka
+</a>
 
 // Link in body text (COL-06, COL-07)
 <a className="text-interactive underline underline-offset-[0.2em] hover:text-interactive-hover active:text-interactive-pressed">
@@ -402,6 +475,12 @@ Examples:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.7 | 2026-10-10 | NewsletterSignup colors apply after prototype run 2 (DR-239). `border-interactive` `#7D7369` stays for every field (DR-238). |
+| 2.6 | 2026-10-10 | Light `border-interactive` is `#7D7369` (was `#857A70`): 3.14:1 on the `accent-soft` newsletter panel, 3.82:1 or more on the other surfaces (DR-238). |
+| 2.5 | 2026-10-10 | Newsletter panel `accent-soft` with existing tokens; `newsletter-*` tokens removed (DR-229). Focus is a base-layer outline (`COL-13`, DR-225). New rule `COL-16` page colors (DR-232). Default palette removed; base layer for border, body, focus and placeholder (DR-235). Phone ThemeButton icon `interactive` (DR-237). Form error colors (DR-230). |
+| 2.4 | 2026-10-10 | Theme controls use existing tokens; `toggle-*` tokens removed; no hover or pressed on theme controls and the language link (DR-211, DR-219). Social icon links change color like UI links (DR-220). New rule `COL-17` selected state (DR-221). |
+| 2.3 | 2026-10-09 | Link states: news links and UI links, no underline outside article text (COL-05, COL-06, DR-199). Light is the default theme; no system theme (DR-201). No shadows; the `shadow` token is removed (COL-15, DR-202). The Section 5 block has no Tailwind import (DR-200). |
+| 2.2 | 2026-10-09 | `ink-muted` light is `#6E6862` for all muted text (DR-100). Component colors for ThemeToggle and NewsletterSignup (Section 2.9, DR-132, DR-133, DR-169, DR-179). |
 | 2.1 | 2026-10-06 | Links in article text are underlined, in the paragraph weight; weight 600 is not used (DR-25). |
 | 2.0.1 | 2026-10-06 | Wording only: success examples do not use "Verified" (Fact Lens has no fact-checking product). `overlay` names the menu drawer, which opens at all widths. |
 | 2.0 | 2026-10-04 | Contrast tested on every surface; dark ink, interactive states, status and input border values set for AA. Status tints, `live`, `selection`, `overlay`, `shadow`, `skeleton` and the four missing light values added. One status name per role in both themes. Ink tokens named `ink-*`, because `text-primary` and `text-secondary` clash with shadcn `primary` and `secondary`. `brand-dark` removed (same value as `interactive-hover`). Rewritten in ASD-STE100 style with rule IDs. |

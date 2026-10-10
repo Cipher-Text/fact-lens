@@ -1,6 +1,6 @@
 ---
 name: mock-content
-description: Data shape and rules for Fact Lens mock news content in Bangla and English (stories, categories, regions, most read, poll). Use when creating or changing files in src/content/ or placeholder images.
+description: Data shape and rules for Fact Lens mock news content in Bangla and English (stories, categories, regions, most read, poll, mock ads). Use when creating or changing files in src/content/ or placeholder images.
 user-invocable: false
 ---
 
@@ -61,7 +61,9 @@ Regions are under অঞ্চল (Regions). চীন (China) is a region, not 
 1. No "Fact Check", ফ্যাক্টচেক, verdicts or ratings (`DR-18`).
 2. Write fictional but realistic news about international and bilateral topics. Do not use real people's quotes. Do not write content that could pass as real reporting about a real event.
 3. Bangla stories are in Bangla. English stories are in English. Use the same ids for a story and its translation, with a different `lang`.
-4. Include the test cases of `spacing-layout-system.md` Section 13: very long Bangla headlines (more than 120 characters), stories with no image, and one sparse variant of each pattern (Section 7.3).
-5. Give the homepage enough stories for every section in Section 7.1. The hero has a lead and two top stories (`DR-44`). Most read has 5 items (`DR-51`).
+4. Include the test cases of `spacing-layout-system.md` Section 13: very long Bangla headlines (more than 120 characters), stories with no image, and one sparse variant of each pattern (Section 7.3). Put stories with no image only where the component sheet allows it. Every hero story has an image (`DR-91`).
+5. Give each section the item counts of its sheet in `component-system.md` Section 7, for every section in `spacing-layout-system.md` Section 7.1. The poll has 2 to 4 options.
 6. Placeholder images are local SVG files in `public/mock/`. Use a neutral fill and the image ratio only. No stock photos and no remote images.
 7. Dates are recent and in ISO format. Format them in the component with `Intl` and the page language.
+8. No newsletter content in prototype run 2 (`DR-239`).
+9. Mock ads: one neutral placeholder creative per `AdSlot` variant (`top`, `band`, `inset`, `rail`), at the sizes in `component-system.md` C-16. The `rail` creative is 300×600 or 300×250 (`DR-241`). No ad network and no remote images.

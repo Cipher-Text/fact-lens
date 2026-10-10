@@ -8,7 +8,8 @@ The text above comes from `AGENTS.md`. It is the source for every agent. This pa
 
 1. Read `docs/PROGRESS.md` and the board in `docs/SPRINT.md`. They tell you which ticket is current.
 2. Read `docs/design-system/agent-contract.md` Sections 1 to 4 before the first code change.
-3. Read only the spec sections that the ticket needs. Do not read all three specs at once.
+3. Read only the spec sections that the ticket needs. Do not read all four specs at once.
+4. Before you build a component, read its sheet in `docs/design-system/component-system.md` Section 7 and the names in Section 3.
 
 ### The sprint is turn-based
 
@@ -43,7 +44,7 @@ The `mock-content` skill loads by itself when you create or change mock data.
 
 The hooks in `.claude/settings.json` run by themselves:
 
-- A file in `docs/` or a `.env` file cannot be edited. If a hook blocks you, do not try another way. Report it.
+- A file in `docs/design-system/`, a `.env` file or `pnpm-lock.yaml` cannot be edited. If a hook blocks you, do not try another way. Report it.
 - After each edit in `src/`, a check looks for raw values (hex, `text-[...]`, pixel values, `dark:`, `2xl:`, `vw`, `order-`). If it reports a problem, fix it before you continue.
 - Prettier formats each edited file when Prettier is installed.
 

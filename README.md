@@ -19,15 +19,15 @@ pnpm test:e2e     # browser tests with accessibility checks
 
 ## Design system
 
-The design system was written before the code, as a blueprint. Each rule has a stable ID (`COL-`, `TYP-`, `LAY-`) and each decision has an ID (`DR-`). Commits and reviews cite these IDs.
+The design system was written before the code, as a blueprint. Each rule has a stable ID (`COL-`, `TYP-`, `LAY-`, `CPT-`, `N-`) and each decision has an ID (`DR-`). Commits and reviews cite these IDs.
 
 | Document | Holds |
 | --- | --- |
-| [Color](docs/design-system/color-system.md) | Light and dark tokens, contrast results, rules `COL-01` to `COL-15` |
-| [Typography](docs/design-system/typography-system.md) | Bangla and English roles, fonts, reader sizes, rules `TYP-01` to `TYP-24` |
-| [Spacing and layout](docs/design-system/spacing-layout-system.md) | Breakpoints, shell, rail, homepage patterns, ads, rules `LAY-01` to `LAY-18` |
-| [Agent contract](docs/design-system/agent-contract.md) | Index of all rule IDs and the build order |
-| [Decision register](docs/decisions/fact-lens-decision-register.html) | Approved decisions `DR-01` and up |
+| [Color](docs/design-system/color-system.md) | Light and dark tokens, contrast results, rules `COL-01` to `COL-17` |
+| [Typography](docs/design-system/typography-system.md) | Bangla and English roles, fonts, reader sizes, rules `TYP-01` to `TYP-25` |
+| [Spacing and layout](docs/design-system/spacing-layout-system.md) | Breakpoints, shell, rail, homepage patterns, ads, rules `LAY-01` to `LAY-21` |
+| [Components](docs/design-system/component-system.md) | Homepage component sheets, names, rules `CPT-01` to `CPT-16` and `N-01` to `N-05` |
+| [Agent contract](docs/design-system/agent-contract.md) | Index of all rule IDs, the project decisions that a build needs, and the build order |
 
 The docs are written in ASD-STE100 Simplified Technical English, so that people and AI agents read them the same way.
 

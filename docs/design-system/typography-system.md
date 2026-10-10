@@ -1,12 +1,12 @@
 # Fact Lens Typography System
 
-Version 2.3.1 · 7 October 2026 · Approved for the first prototype
+Version 2.8 · 10 October 2026 · Approved for prototype run 2
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
 Fact Lens publishes in Bangla and English. Each language has its own fonts and metrics, but both languages use the same role names.
 
-The values are approved for the first prototype. Section 9 lists what to check in the prototype. Some values can change after that check.
+The values are approved for prototype run 2. Section 9 lists what to check in the prototype. Some values can change after that check.
 
 ## Contents
 
@@ -25,7 +25,7 @@ The values are approved for the first prototype. Section 9 lists what to check i
 ## 1. How to use this document
 
 - Find the role for a text element in the **role table** (Section 3). Each role has one name and one set of values per language.
-- Follow the **rules** (Section 6). Each rule has a stable ID, for example `TYP-04`. Use the ID in reviews, prompts and the decision register.
+- Follow the **rules** (Section 6). Each rule has a stable ID, for example `TYP-04`. Use the ID in reviews, prompts and commit messages.
 - Copy the **CSS** in Section 8 into the app. Do not type values by hand.
 
 The typography model has three layers:
@@ -68,16 +68,16 @@ The `lang` attribute selects the stack. Each Bangla stack includes the English f
 
 | Weight | Use |
 | --- | --- |
-| 400 | Article body, deck, summary, caption, input values, links in article text (paragraph weight) |
-| 500 | Interface text, metadata, pull quotes, Bangla blockquotes |
-| 600 | Headlines, titles, buttons, Bangla `<em>` |
-| 700 | Section titles, English eyebrow, `<strong>` |
+| 400 | Article body, deck, caption, metadata, input values, links in article text (paragraph weight) |
+| 500 | Interface text, story summaries, pull quotes, Bangla blockquotes |
+| 600 | Headlines, titles, section headings, buttons, Bangla `<em>` |
+| 700 | English eyebrow, Most read numerals, `<strong>` |
 
 Load italic for Source Serif 4 only. Bangla fonts have no italic.
 
 ## 3. Role table
 
-There are 23 roles. Fluid sizes grow from a 360px viewport to a 1280px viewport, then stop. The page shell also stops at 1280px. Section 8.2 gives the `clamp()` values.
+There are 24 roles. Fluid sizes grow from a 360px viewport to a 1280px viewport, then stop. The page shell also stops at 1280px. Section 8.2 gives the `clamp()` values.
 
 Tracking for Bangla is 0 in every role.
 
@@ -87,30 +87,31 @@ Tracking for Bangla is 0 in every role.
 | `type-page-title` | Serif | 34–48px | 600 | 1.06 | -0.025em | 32–44px | 600 | 1.18 | Section and category page titles |
 | `type-article-title` | Serif | 40–60px | 600 | 1.06 | -0.025em | 38–56px | 600 | 1.18 | The article headline (h1) |
 | `type-story-lead` | Serif | 30–42px | 600 | 1.08 | -0.02em | 28–40px | 600 | 1.2 | Lead story on the homepage |
-| `type-story-title-lg` | Serif | 26–34px | 600 | 1.12 | -0.015em | 26–32px | 600 | 1.22 | Second-level story in a lead group |
+| `type-story-title-lg` | Serif | 26–34px | 600 | 1.12 | -0.015em | 26–32px | 600 | 1.22 | Second-level story in a lead group (not on the homepage) |
 | `type-story-title` | Serif | 22–26px | 600 | 1.16 | -0.01em | 22–26px | 600 | 1.26 | Standard story card |
 | `type-story-title-sm` | Serif | 18–20px | 600 | 1.2 | -0.005em | 18–20px | 600 | 1.3 | Compact cards and lists |
 | `type-deck` | Serif | 18–22px | 400 | 1.45 | 0 | 18–21px | 400 | 1.55 | Standfirst under the article title |
-| `type-summary` | Serif | 16px | 400 | 1.5 | 0 | 17px | 400 | 1.6 | Short summary on story cards |
+| `type-summary` | Serif | 16px | 500 | 1.5 | 0 | 17px | 500 | 1.6 | Short summary on story cards and the lead story (DR-97) |
 | `type-article-body` | Serif | 17–18px | 400 | 1.68 | 0 | 18–19px | 400 | 1.76 | Article paragraphs and lists |
 | `type-article-h2` | Serif | 28–36px | 600 | 1.15 | -0.015em | 26–34px | 600 | 1.28 | Subheading in the article |
 | `type-article-h3` | Serif | 22–28px | 600 | 1.22 | -0.01em | 22–26px | 600 | 1.34 | Minor subheading in the article |
 | `type-blockquote` | Serif | 18–22px | 400 | 1.6 | 0 | 19–22px | 500 | 1.68 | Quoted text in the article |
 | `type-pullquote` | Serif | 28–36px | 500 | 1.2 | -0.015em | 26–34px | 500 | 1.32 | Pulled quote in the article |
-| `type-section-title` | Sans | 20–24px | 700 | 1.2 | -0.01em | 20–24px | 700 | 1.3 | Homepage section heading |
+| `type-section-title` | Serif | 22px | 600 | 1.25 | -0.01em | 22px | 600 | 1.3 | Homepage section heading (`SectionHeading`, DR-163) |
 | `type-eyebrow` | Sans | 14px | 700 | 1.2 | 0.06em | 15px | 600 | 1.35 | Category and label above a headline |
-| `type-metadata` | Sans | 14px | 500 | 1.4 | 0.01em | 15px | 500 | 1.5 | Byline, date, reading time |
+| `type-metadata` | Sans | 14px | 400 | 1.4 | 0.01em | 15px | 400 | 1.5 | Byline, date, reading time. One size per language on the page (DR-96, DR-101) |
 | `type-caption` | Sans | 14px | 400 | 1.5 | 0 | 15px | 400 | 1.6 | Image and figure captions |
 | `type-ui` | Sans | 16px | 500 | 1.4 | 0 | 16px | 500 | 1.5 | Standard interface text |
 | `type-ui-sm` | Sans | 14px | 500 | 1.4 | 0 | 15px | 500 | 1.5 | Navigation, tabs, menus, tooltips |
-| `type-button` | Sans | 14px | 600 | 1.2 | 0 | 15px | 600 | 1.35 | Buttons |
+| `type-button` | Sans | 14px | 600 | 1.2 | 0 | 15px | 600 | 1.35 | Button labels (`Button`, C-12). Same size at every width (DR-208) |
 | `type-input` | Sans | 16px | 400 | 1.4 | 0 | 16px | 400 | 1.5 | Form input values |
-| `type-rank` | Serif | 40px; 48px from 1024 | 600 | 1 | 0 | 40px; 48px from 1024 | 600 | 1 | Most read rank numeral (Section 7.1) |
+| `type-rank` | Serif | 44px; 56px from 1024 | 700 | 1 | 0 | Sans: 44px; 56px from 1024 | 700 | 1 | Most read rank numeral. Use through `rank-list` only, no element class (§8.2, DR-217) |
 
 Notes:
 
-- `type-eyebrow` is uppercase in English. Bangla has no case.
+- In English, `type-eyebrow` is uppercase on `Eyebrow` and `Chip` only. Other uses add `normal-case` (DR-216). Bangla has no case.
 - `type-blockquote` is italic in English. In Bangla it uses weight 500.
+- `type-rank` uses Noto Sans Bengali in Bangla (already loaded for the interface) and Source Serif 4 in English (DR-147).
 
 ## 4. Reader sizes
 
@@ -197,7 +198,7 @@ Reason: Bangla vowel signs go above and below the line. English line heights mak
 
 ### TYP-06 Use weights 400 to 700 only
 
-Use the weight in the role table. Do not use 800 or 900.
+Use the weight in the role table. Do not use 100 to 300, 800 or 900. Section 8.2 removes those weights from Tailwind (DR-235).
 
 ### TYP-07 Do not make fake styles
 
@@ -209,7 +210,7 @@ Do not change the width axis to make text fit. Change the layout.
 
 ### TYP-09 Do not make text smaller to make it fit
 
-If a headline is too long, change the layout or use a line clamp. Clamp compact cards to 2 or 3 lines and standard cards to 3 lines. Do not clamp article titles or article text.
+If a headline is too long, change the layout. Do not clamp titles: long titles wrap (`CPT-08`, DR-237).
 
 ### TYP-10 Let the browser set the optical size
 
@@ -278,33 +279,50 @@ Use `rem`. Make sure text does not clip or overlap at 200% zoom or with larger u
 
 Do not show meaning with weight, italic, size or color alone. Add a word, an icon or a structure.
 
+### TYP-25 Break a word only when it does not fit
+
+Set `overflow-wrap: break-word` on `body`. A word breaks only when it alone is wider than its line (DR-217, T-35). Do not use `word-break: break-all` or `hyphens: auto`.
+
 ## 7. Role mapping
 
 ### 7.1 Homepage
 
+The component names are in `component-system.md` Section 3.
+
 | Element | Role |
 | --- | --- |
-| Lead story headline | `type-story-lead` |
-| Second-level story in a lead group | `type-story-title-lg` |
-| Standard story card | `type-story-title` |
-| Compact card or list | `type-story-title-sm` |
+| Lead story headline (`LeadStory`) | `type-story-lead` |
+| Top story in the hero (`OverlapCard`) | `type-story-title` (T-37) |
+| Feature story of a section or a `CategoryBlock` | `type-story-title` (DR-152) |
+| `StoryCard` size `sm`, `StoryListItem`, every region panel story (DR-254) | `type-story-title-sm` |
 | Card summary | `type-summary` |
-| Section heading | `type-section-title` |
-| Category label | `type-eyebrow` |
-| Time, author | `type-metadata` |
+| Section heading (`SectionHeading`) | `type-section-title` |
+| Region name in a region panel | `type-story-title-sm` |
+| Category label (`Eyebrow`) | `type-eyebrow` |
+| Time, author (`MetaLine`) | `type-metadata` |
 | Most read numeral | `type-rank` |
+| Most read title | `type-story-title-sm` |
 | Opinion title | `type-story-title-sm` |
 | Opinion author and time | `type-metadata`, author in 600 |
-| Region chip | `type-ui-sm` |
-| "আরও দেখুন" link | `type-ui-sm` in `text-interactive` |
-| Opinion column chip | `type-eyebrow` on `accent-subtle`, `text-ink`. Not a link. The analysis column has no chip |
-| Ad label | `type-eyebrow` in `text-ink-muted` |
-| Newsletter and poll heading | `type-story-title-sm` |
-| Newsletter text | `type-summary` |
+| Opinion chip মতামত (`Chip` label) | `type-eyebrow` on `brand` (dark: `interactive`), `text-on-interactive`. Not a link. The analysis column has no chip |
+| Region chip (`Chip` filter) | `type-ui-sm` |
+| "আরও দেখুন" link (`MoreLink`) | `type-ui-sm` at weight 600, `text-interactive` (DR-216) |
+| Ad label | `type-eyebrow` at weight 600, `normal-case`, `text-ink-muted` (DR-216) |
+| Poll heading; newsletter heading after prototype run 2 (DR-239) | `type-section-title` (DR-215) |
+| Newsletter text line (after prototype run 2, DR-239) | `type-ui` |
 | Email field | `type-input` |
-| Newsletter and vote buttons | `type-button` |
+| Vote button ভোট দিন (`Button` primary) | `type-button` |
+| Poll question (`legend`) | `type-story-title-sm` |
 | Poll options | `type-ui` |
-| Poll results | `type-ui-sm`, tabular digits in the page language |
+| Poll results, own-vote tag, vote total | `type-ui-sm`, tabular digits in the page language |
+| Privacy link (after prototype run 2, DR-239) | `type-ui-sm` at weight 600 (DR-216) |
+| Form error and done messages | `type-ui-sm` |
+| Top bar language link | `type-ui-sm` at weight 600 |
+| Search clear button মুছুন (`Button` text) | `type-button` |
+| Trending label ট্রেন্ডিং | `type-ui-sm` at weight 600, `text-ink-muted` |
+| Trending terms | `type-ui-sm` at weight 600, `text-interactive`, no underline (`COL-06`, DR-216) |
+| Footer links | `type-ui-sm` at weight 600 (DR-216) |
+| Footer copyright | `type-metadata` |
 
 Every homepage text uses a role in this table. Phones use the low end of each fluid role, so the hierarchy is the same at every width.
 
@@ -312,31 +330,26 @@ Every homepage text uses a role in this table. Phones use the low end of each fl
 
 | Width | Items per row | Numeral size | Numeral column | Gap to title |
 | --- | --- | --- | --- | --- |
-| Phone | 1 | 40px | 50px | 12px |
-| 600–1023 | 2 | 40px | 50px | 12px |
-| From 1024 | 4 | 48px | 60px | 16px |
+| Phone | 1 | 44px | 0.75em (33px) | 12px |
+| 600–1023 | 2 | 44px | 0.75em (33px) | 12px |
+| 1024–1279 | 3 | 56px | 0.75em (42px) | 12px |
+| From 1280 | 4 | 56px | 0.75em (42px) | 12px |
 
 - The list is an `<ol>`. A CSS counter draws the numeral: `bengali` on Bangla pages, `decimal` on English pages. No leading zero.
 - The numeral column has a fixed width, so every title starts at the same position.
-- The top of the numeral aligns with the top of the title's first line.
+- The top of the numeral glyph aligns with the top of the title's first line (DR-144). A small negative margin moves the glyph up: -0.125em in Bangla, -0.1em in English.
 - Color: `text-interactive` (light 7.06:1, dark 6.59:1 on `background`). Do not use `brand`: it is 2.37:1 on the dark background (`COL-04`).
-- The numeral is `aria-hidden`; the list order gives the rank to screen readers.
+- The numeral is hidden from screen readers: the `content` value has empty alternative text (`/ ""`). The list order gives the rank.
 
-```css
-.rank-list { list-style: none; counter-reset: rank; }
-.rank-list > li { counter-increment: rank; display: grid; grid-template-columns: 3.125rem minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
-.rank-list > li::before { content: counter(rank, decimal); font: 600 2.5rem/1 var(--font-editorial-active); color: var(--interactive); font-variant-numeric: tabular-nums; }
-.rank-list:lang(bn) > li::before { content: counter(rank, bengali); }
-@media (min-width: 64rem) { .rank-list > li { grid-template-columns: 3.75rem minmax(0, 1fr); column-gap: 1rem; } .rank-list > li::before { font-size: 3rem; } }
-```
+The CSS is `@utility rank-list` in §8.2. Put the class on the `<ol>`: `<ol class="rank-list">` (DR-217).
 
 **Other homepage rules.**
 
 - The opinion quote mark is a decorative SVG icon with `aria-hidden="true"`. It is not a text glyph.
-- Metadata order on every card: time, then reading time. Draw the separator with CSS, not a character. Put the time in `<time datetime>` and format it per `TYP-17`.
+- Metadata order on every card: time, then reading time. Draw the separator with CSS as a 4px square, not a character (`CPT-10`). Put the time in `<time datetime>` and format it per `TYP-17`.
 - Each "আরও দেখুন" link has the section name for screen readers, for example "আরও দেখুন: বাংলাদেশ". The visible text stays the same.
-- Interface text is in the page language. Take every interface string from one string file per language (`bn.json`, `en.json`). A Bangla page has no English interface words.
-- The language switch shows the other language in its own script ("English" on Bangla pages, "বাংলা" on English pages), with a matching `lang` attribute.
+- Interface text is in the page language. Take every interface string from one string file per language (`src/i18n/bn.ts`, `src/i18n/en.ts`). A Bangla page has no English interface words.
+- The language switch shows the other language in its own script, with a matching `lang` attribute. Bangla pages: "En" on phones (under 768px), "English" from 768px. English pages: "বাংলা" at every width (DR-174).
 - Every icon-only button (menu, theme, slider) has an accessible name in the page language.
 - Region chips are as wide as their label. Do not truncate or shrink them (`TYP-09`). They are 44px tall or more.
 
@@ -424,23 +437,42 @@ Load only the families above. Do not load fonts from a CSS `@import` or another 
 Put this in `src/styles/typography.css`. Import it after `colors.css` and `layout.css`. It defines the line length caps (Section 5.1). It works with Tailwind 4.
 
 ```css
+/* Remove the Tailwind default font families, text sizes and weights (TYP-01, TYP-06, DR-235).
+   Only the Fact Lens roles and the weights 400 to 700 exist. */
+@theme {
+  --font-*: initial;
+  --text-*: initial;
+  --font-weight-*: initial;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --default-font-family: var(--font-ui-active);
+}
+
 @theme inline {
   --font-editorial: var(--font-editorial-active);
   --font-ui: var(--font-ui-active);
 }
 
 :root {
-  --font-editorial-active: var(--font-source-serif), Georgia, "Times New Roman", serif;
-  --font-ui-active: var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-
   --reader-scale: 1;
-  --type-body-min: 1.0625rem;
-  --type-eyebrow-case: uppercase;
-  --type-blockquote-style: italic;
 
   /* Line length caps (Section 5.1). Typography owns these tokens. */
   --measure-article-title: 56rem;
   --measure-deck: 36rem;
+}
+
+/* English values. :lang(en) gives an English block on a Bangla page English type (TYP-03, DR-203).
+   Language-free tokens stay on :root only: a :lang(en) copy of --reader-scale would reset the reader size. */
+:root,
+:lang(en) {
+  --font-editorial-active: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-ui-active: var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  --type-body-min: 1.0625rem;
+  --type-eyebrow-case: uppercase;
+  --type-blockquote-style: italic;
 
   --type-display-size: clamp(2.75rem, 2.261rem + 2.174vw, 4rem);
   --type-display-weight: 600;
@@ -475,7 +507,7 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-deck-line: 1.45;
   --type-deck-tracking: 0;
   --type-summary-size: 1rem;
-  --type-summary-weight: 400;
+  --type-summary-weight: 500;
   --type-summary-line: 1.5;
   --type-summary-tracking: 0;
   --type-article-body-size: clamp(1.062rem, 1.038rem + 0.109vw, 1.125rem);
@@ -498,16 +530,16 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-pullquote-weight: 500;
   --type-pullquote-line: 1.2;
   --type-pullquote-tracking: -0.015em;
-  --type-section-title-size: clamp(1.25rem, 1.152rem + 0.435vw, 1.5rem);
-  --type-section-title-weight: 700;
-  --type-section-title-line: 1.2;
+  --type-section-title-size: 1.375rem;
+  --type-section-title-weight: 600;
+  --type-section-title-line: 1.25;
   --type-section-title-tracking: -0.01em;
   --type-eyebrow-size: 0.875rem;
   --type-eyebrow-weight: 700;
   --type-eyebrow-line: 1.2;
   --type-eyebrow-tracking: 0.06em;
   --type-metadata-size: 0.875rem;
-  --type-metadata-weight: 500;
+  --type-metadata-weight: 400;
   --type-metadata-line: 1.4;
   --type-metadata-tracking: 0.01em;
   --type-caption-size: 0.875rem;
@@ -526,6 +558,11 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-button-weight: 600;
   --type-button-line: 1.2;
   --type-button-tracking: 0;
+  --type-rank-family: var(--font-editorial-active);
+  --type-rank-size: 2.75rem;
+  --type-rank-weight: 700;
+  --type-rank-line: 1;
+  --type-rank-nudge: -0.1em;
   --type-input-size: 1rem;
   --type-input-weight: 400;
   --type-input-line: 1.4;
@@ -573,7 +610,7 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-deck-line: 1.55;
   --type-deck-tracking: 0;
   --type-summary-size: 1.0625rem;
-  --type-summary-weight: 400;
+  --type-summary-weight: 500;
   --type-summary-line: 1.6;
   --type-summary-tracking: 0;
   --type-article-body-size: clamp(1.125rem, 1.101rem + 0.109vw, 1.188rem);
@@ -596,8 +633,8 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-pullquote-weight: 500;
   --type-pullquote-line: 1.32;
   --type-pullquote-tracking: 0;
-  --type-section-title-size: clamp(1.25rem, 1.152rem + 0.435vw, 1.5rem);
-  --type-section-title-weight: 700;
+  --type-section-title-size: 1.375rem;
+  --type-section-title-weight: 600;
   --type-section-title-line: 1.3;
   --type-section-title-tracking: 0;
   --type-eyebrow-size: 0.9375rem;
@@ -605,7 +642,7 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-eyebrow-line: 1.35;
   --type-eyebrow-tracking: 0;
   --type-metadata-size: 0.9375rem;
-  --type-metadata-weight: 500;
+  --type-metadata-weight: 400;
   --type-metadata-line: 1.5;
   --type-metadata-tracking: 0;
   --type-caption-size: 0.9375rem;
@@ -624,6 +661,8 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-button-weight: 600;
   --type-button-line: 1.35;
   --type-button-tracking: 0;
+  --type-rank-family: var(--font-ui-active);
+  --type-rank-nudge: -0.125em;
   --type-input-size: 1rem;
   --type-input-weight: 400;
   --type-input-line: 1.5;
@@ -636,7 +675,13 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
 body {
   font-family: var(--font-ui-active);
   font-synthesis: none;
+  overflow-wrap: break-word; /* TYP-25 */
   font-optical-sizing: auto;
+}
+
+@media (min-width: 64rem) {
+  :root,
+  :lang(en) { --type-rank-size: 3.5rem; }
 }
 
 :lang(bn) em { font-style: normal; font-weight: 600; }
@@ -765,7 +810,7 @@ body {
 }
 
 @utility type-section-title {
-  font-family: var(--font-ui-active);
+  font-family: var(--font-editorial-active);
   font-size: var(--type-section-title-size);
   font-weight: var(--type-section-title-weight);
   line-height: var(--type-section-title-line);
@@ -828,6 +873,23 @@ body {
   line-height: var(--type-input-line);
   letter-spacing: var(--type-input-tracking);
 }
+
+@utility rank-list {
+  list-style: none;
+  counter-reset: rank;
+  & > li { counter-increment: rank; display: grid; grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
+  & > li::before {
+    content: counter(rank, decimal) / "";
+    font-family: var(--type-rank-family);
+    font-size: var(--type-rank-size);
+    font-weight: var(--type-rank-weight);
+    line-height: var(--type-rank-line);
+    margin-block-start: var(--type-rank-nudge);
+    color: var(--interactive);
+    font-variant-numeric: tabular-nums;
+  }
+  &:lang(bn) > li::before { content: counter(rank, bengali) / ""; }
+}
 ```
 
 Put `data-reader-size` on the article element, not on `<html>`. Then only the article text scales.
@@ -870,6 +932,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 | Bangla small text | Eyebrow, metadata and caption are easy to see | 15px |
 | Source Serif 4 | Source Serif 4 has a larger x-height than Newsreader, so text looks larger at the same size. Check body 18px and the headline sizes. | Role table |
 | Rail titles | Bangla rail titles and summaries in the 304px rail | `type-story-title-sm` 18–20px, `type-summary` |
+| Hero titles | The two top stories use `type-story-title`, so the lead title leads at 1024px (T-37, DR-85) | `type-story-title` 22–26px |
 | Reader sizes | A+ and A++ are clearly different and the layout does not break | 1, 1.2, 1.4 |
 | Colors | Some colors can change after prototype rounds. See `color-system.md` Section 6. | `color-system.md` v2.1 |
 
@@ -885,6 +948,11 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.8 | 2026-10-10 | Newsletter rows apply after prototype run 2: NewsletterSignup is paused for run 2 (DR-239). |
+| 2.7 | 2026-10-10 | `TYP-09` has no line clamp; long titles wrap (DR-237). Section 8.2 removes the Tailwind default fonts, text sizes and weights outside 400 to 700, and sets the default font to the UI stack (DR-235). |
+| 2.6 | 2026-10-10 | `type-module-title` removed (DR-196); newsletter and poll headings use `type-section-title` (DR-215). UI links use `type-ui-sm` 600, Drawer rows `type-ui` 600; English uppercase only on Eyebrow and Chip (DR-216). Rank CSS is `@utility rank-list` in §8.2; new rule `TYP-25` (DR-217). |
+| 2.5 | 2026-10-09 | English role values apply on `:root` and `:lang(en)`, so an English block on a Bangla page gets English type; `--reader-scale` and the measures stay on `:root` only (DR-203). |
+| 2.4 | 2026-10-09 | Homepage roles follow the component pass: `type-summary` 500 (DR-97), `type-metadata` 400 (DR-96), `type-section-title` serif 22px 600 (DR-163), new role `type-module-title` (DR-131, DR-139), `type-button` 14px English, 15px Bangla (C-12, DR-208), `type-rank` 700, 44px and 56px, Bangla in Noto Sans Bengali (DR-146, DR-147), Most read 3 per row at 1024–1279 (DR-145), hero top stories `type-story-title` (DR-85). Role map names the components. |
 | 2.3.1 | 2026-10-07 | Weight table and usage example follow DR-25: links in article text keep the paragraph weight and have an underline. |
 | 2.3 | 2026-10-06 | Links in article text are underlined, in the paragraph weight (DR-25). |
 | 2.2 | 2026-10-06 | New role `type-rank` with fixed sizes per width. Homepage role map covers every homepage text (T-23 to T-31). Opinion chip is a plain label. Interface text in the page language. |

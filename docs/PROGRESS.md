@@ -8,7 +8,7 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: **finished** on 8 October 2026
 - Ticket: none. FL-14 Preview deploy was rejected (too many open findings to deploy)
-- Next action: read `docs/HANDOVER.md`. The next milestone starts with the decisions listed there. The full report is `docs/milestone-1-report.md`
+- Next action: prototype run 2. Its tickets go in `docs/SPRINT.md`. Run 2 builds the components in `docs/design-system/component-system.md` with the specs in `docs/design-system/`. Do not start before tajmin types `/ticket`
 
 ## FL-13 results
 

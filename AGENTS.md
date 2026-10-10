@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.1 · 7 October 2026 · For the homepage prototype
+Version 1.3 · 10 October 2026 · For homepage prototype run 2
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -10,7 +10,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Item | Status |
 | --- | --- |
-| Current work | Homepage prototype (Milestone 1, phase 3). Milestone 2 is full development and hosting |
+| Current work | Homepage prototype run 2 (Milestone 1). It builds the approved components. Milestone 2 is full development and hosting |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
 | Pages | Homepage first. Do not start article or category pages until their layout pass is complete |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |
@@ -19,15 +19,16 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `docs/design-system/color-system.md`, `typography-system.md`, `spacing-layout-system.md` | Values, rules and copy-ready CSS |
-| 2 | `docs/decisions/fact-lens-decision-register.html` | Approved decisions, `DR-01` and up |
-| 3 | `docs/design-system/agent-contract.md` | Index of rule IDs, links, build order, check list |
-| 4 | This file | How to work in this repository |
-| 5 | Existing code | Only where items 1 to 4 have no decision |
+| 1 | `docs/design-system/color-system.md`, `typography-system.md`, `spacing-layout-system.md`, `component-system.md` | Values, rules, component sheets and copy-ready CSS |
+| 2 | `docs/design-system/agent-contract.md` | Index of rule IDs, project decisions (Section 7), links, build order, check list |
+| 3 | This file | How to work in this repository |
+| 4 | Existing code | Only where items 1 to 3 have no decision |
 
 If two sources do not agree, follow the higher source. Do not make a compromise. Stop and report the difference.
 
-Paths in the design-system documents that start with `decisions/`, `audit/` or `source/` are in `docs/`. For example, `audit/fact-lens-ad-system-proposal.html` is `docs/audit/fact-lens-ad-system-proposal.html`. The documents also name `tools/agent-contract/gen_contract.py`. That tool is in the blueprint project, not in this repository. Do not look for it.
+The project decision register is not in this repository. Each decision that a build needs is in a spec or in `agent-contract.md` Section 7. A `DR-` ID in the docs is a reference only.
+
+The design-system documents also name files and tools of the blueprint project, for example `components/fact-lens-component-register.html` and `tools/agent-contract/gen_contract.py`. They are not in this repository. Do not look for them. The names are in `component-system.md` Section 3.
 
 ## 3. Stack
 
@@ -42,7 +43,7 @@ Approved in `DR-15`. Do not add a framework, a CSS library or a state library wi
 | Package manager | pnpm. Do not use npm or yarn |
 | Unit tests | Vitest and Testing Library |
 | Browser tests | Playwright with `@axe-core/playwright` |
-| Component gallery | Storybook, from phase 4. Not in the first prototype |
+| Component gallery | Storybook, later. Not in the prototype runs (`DR-88`) |
 | Hosting | Vercel (Milestone 2) |
 
 ## 4. Commands
@@ -71,10 +72,16 @@ src/
       page.tsx             Homepage
   components/
     ui/                    shadcn/ui primitives (generated, then cleaned)
-    layout/                Shell, Wrapper, Rail, AdRow, SectionHeading
-    header/                TopBar, NavRow, Drawer, SearchDialog
-    home/                  One folder per pattern: hero, featured, grouped, regions, analysis-opinion, most-read
-    story/                 Story card variants, list items
+    layout/                Shell, Wrapper, Rail, SectionHeading, Divider
+    header/                TopBar, NavBar, Drawer, SearchDialog, ThemeToggle, ThemeButton
+    home/                  One folder per section, with the parts that only that section uses:
+                           hero (HeroSection), analysis (AnalysisSection, OpinionList),
+                           featured (FeaturedCategorySection), grouped (GroupedCategoriesSection,
+                           CategoryBlock, DailyPoll), most-read (MostReadSection,
+                           RankedList), regions (RegionsSection, RegionSlider)
+    story/                 Shared parts: LeadStory, OverlapCard, StoryCard, StoryListItem, StoryList,
+                           Eyebrow, MetaLine, MoreLink, Chip, Button, IconButton
+    footer/                Footer
     ads/                   AdSlot and its placeholder creative
   content/                 Mock data, typed (see the mock-content skill)
   i18n/                    String tables: bn.ts and en.ts
@@ -83,9 +90,10 @@ src/
     colors.css             From color-system.md Section 5
     typography.css         From typography-system.md Section 8
     layout.css             From spacing-layout-system.md Section 12
+    components.css         From component-system.md Section 6
 tests/
   e2e/                     Playwright tests
-docs/                      Specs and decisions. Read only (Section 10)
+docs/                      Specs and the sprint. Specs are read only (Section 10)
 public/mock/               Placeholder images for mock stories
 ```
 
@@ -103,12 +111,16 @@ The rule IDs link to the full text through `docs/design-system/agent-contract.md
 8. Use the breakpoints phone, `sm` 600, `md` 768, `lg` 1024 and `xl` 1280 only. There is no `2xl` (`LAY-06`).
 9. Keep content inside its container. Do not use `vw` or breakout tricks (`LAY-02`).
 10. Keep the source order equal to the reading order. Do not use CSS `order` (`LAY-14`).
-11. Homepage card rows have 1 card (phone) or 2 cards (from 600px). No 3-up or 4-up rows (`LAY-07`, `DR-44`). Most read is a numbered list of 4 + 1 (`DR-51`).
+11. Homepage card rows have 1 card (phone) or 2 cards (from 600px). No 3-up or 4-up rows (`LAY-07`, `DR-44`). Most read is a numbered list: 4 per row from 1280px, 3 at 1024–1279px (`DR-51`, `DR-145`). The regions slider shows 4 panels from 1280px (`DR-140`).
 12. Ad rows are full width with no padding, margin or gutter. Reserve their height. No ad is sticky (`LAY-09` to `LAY-13`).
 13. Only the top bar is sticky (`LAY-15`).
 14. Every focusable element shows the focus ring (`COL-13`). Every control works with a keyboard.
 15. Bangla pages show Bangla interface text only. English pages show English only (`T-27`; `typography-system.md` Section 7.1).
 16. Do not add "Fact Check", ফ্যাক্টচেক or a verdict feature anywhere (`DR-18`). চীন is a region under অঞ্চল, not a navigation item (`DR-19`).
+17. Build each component from its sheet in `component-system.md` Section 7. Use the approved names for components, parts and sections (`N-05`).
+18. Do not round corners and do not put a border around a card. The ThemeToggle switch is the one exception (`CPT-05`, `CPT-06`).
+19. When a sheet gives a value that has no token, add a component token in `src/styles/components.css` and use it (`CPT-07`).
+20. Do not add a subscribe button to the header or the drawer (`DR-188`).
 
 Before you do one of the things in `agent-contract.md` Section 8 ("If you are about to"), stop and read the rules it names.
 
@@ -122,7 +134,7 @@ Before you do one of the things in `agent-contract.md` Section 8 ("If you are ab
 
 ## 8. Gaps in the design system
 
-The system does not yet define card variants, radius, elevation (except `COL-15`), icons, motion or the full footer.
+The system does not yet define elevation (except `COL-15`), article and category page components, the full footer (the footer is provisional, `DR-193`) or the item and column dividers (`Divider` is a draft). `component-system.md` Section 8 lists the open items and what to do now.
 
 For a gap:
 
@@ -130,13 +142,23 @@ For a gap:
 2. Do not call it a Fact Lens standard.
 3. Add it to `docs/PROGRESS.md` under "Unresolved" as `UNRESOLVED_DESIGN_SYSTEM`, with the file and the component.
 
+### Flag before you decide
+
+Solve every task from the design-system rules (`COL`, `TYP`, `LAY`, `CPT`, `N`). Stop, raise a flag to tajmin and do not decide yourself when:
+
+1. No rule answers the question.
+2. Your fix is a workaround that does not belong to the design system.
+3. Your fix needs a new rule that contradicts an existing rule.
+
+A flag gives: what is wrong, what you did, the rule IDs, your proposal and an example. Put it in your summary. A choice is approved only when tajmin says so explicitly. "Next" or "go on" starts work; it does not approve a choice (`agent-contract.md` Section 9).
+
 ## 9. How to work
 
 The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple prototype, not a full website.
 
 1. **One ticket at a time.** Do the ticket that the user starts. Do not start the next ticket until the user accepts the current one.
 2. **Plan, build, test, verify.** Show a short plan, build, add tests, then run every check in Section 11.
-3. **Build from the shared parts.** Use `Shell`, `Wrapper`, `Rail` and `AdRow`. Do not repeat layout utilities in page code.
+3. **Build from the shared parts.** Use `Shell`, `Wrapper`, `Rail`, `AdSlot`, `SectionHeading` and the shared story units (`StoryCard`, `StoryListItem`, `StoryList`). Do not repeat layout utilities in page code.
 4. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
 5. **Hand over.** List each acceptance criterion as met or not met, and give the user test steps. Then stop.
 6. **Record progress.** Keep the board in `docs/SPRINT.md` and `docs/PROGRESS.md` current.
@@ -144,7 +166,7 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple 
 
 ## 10. What you must not change
 
-- Do not edit `docs/design-system/`, `docs/decisions/`, `docs/audit/` or `docs/source/`. These files come from the blueprint project. If a spec is wrong or missing a value, stop and report it as a `DOC-` issue in your summary.
+- Do not edit `docs/design-system/`. These files come from the blueprint project. If a spec is wrong or missing a value, stop and report it as a `DOC-` issue in your summary.
 - Do not edit `.env` files or read secrets.
 - Do not push to the remote or deploy unless the user asks.
 - Do not add a dependency without saying why in your summary.
@@ -156,9 +178,10 @@ A task is done when all of these are true:
 1. `pnpm check` passes with no new warnings.
 2. `pnpm test:e2e` passes, including the axe check, with no serious or critical violations.
 3. The section matches its row in `spacing-layout-system.md` Section 7.2 at every tier, and the sparse cases in Section 7.3.
-4. The validation widths and content cases in `spacing-layout-system.md` Section 13 show no clipped text and no horizontal scroll.
-5. Bangla and English, light and dark, keyboard focus and 200% zoom work.
-6. `docs/SPRINT.md` and `docs/PROGRESS.md` are current.
+4. Each component passes the checks in its sheet (`component-system.md` Section 7).
+5. The validation widths and content cases in `spacing-layout-system.md` Section 13 show no clipped text and no horizontal scroll.
+6. Bangla and English, light and dark, keyboard focus and 200% zoom work.
+7. `docs/SPRINT.md` and `docs/PROGRESS.md` are current.
 
 ## 12. Summary format
 
@@ -169,3 +192,4 @@ End each task with:
 - Failures that remain
 - `UNRESOLVED_DESIGN_SYSTEM` items
 - `DOC-` issues (the spec is wrong, unclear or does not agree with itself)
+- Flags (Section 8): choices that need tajmin's approval

@@ -33,7 +33,7 @@ pnpm test:e2e     # browser tests with axe
 | What | Where |
 | --- | --- |
 | Rules for agents and people | `AGENTS.md`, `CLAUDE.md`, `.claude/` |
-| Specs and decisions (read only) | `docs/design-system/`, `docs/decisions/` |
+| Specs and build decisions (read only) | `docs/design-system/` (decisions: `agent-contract.md` Section 7) |
 | All findings, each with a suggested solution | `docs/prototype-findings.md` |
 | FL-13 results tables, later ideas, `U-` table | `docs/PROGRESS.md` |
 | Ticket board and acceptance criteria | `docs/SPRINT.md` |
