@@ -15,4 +15,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 
 | Ticket | Started | Ended | Result | Rounds | Spec findings | Commit | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| R2-00 Start the run 2 branch | 2026-10-11 | 2026-10-11 | Done | 0 | none | pending | Commit hash step (4b) added to accept skill |
+| R2-00 Start the run 2 branch | 2026-10-11 | 2026-10-11 | Done | 0 | none | be6fb90 | Commit hash step (4b) added to accept skill |
