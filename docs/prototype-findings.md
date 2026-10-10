@@ -811,3 +811,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-12 | DOC-22, U-30, IMP-29 added |
 | 2026-10-07 | FL-13 | DOC-23, DOC-24, IMP-30 added. Results table with the Section 13 and §9 checks in `docs/PROGRESS.md` |
 | 2026-10-08 | FL-14 | FL-14 rejected; no deploy. Milestone 1 closed. IMP-03 and IMP-07 status updated. Report: `docs/milestone-1-report.md` |
+| 2026-10-11 | R2-01 | IMP-30 done (`docs/fl-13/`, `tests/final-check/` removed). IMP-11 done (`?content=sparse` only when `NODE_ENV !== 'production'`). IMP-07 done (WebKit project in Playwright) |

@@ -15,7 +15,7 @@ import { getDictionary, isLang } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 // Homepage. Page order: spacing-layout-system.md Section 7.1.
-// ?content=sparse shows the sparse cases of Section 7.3 (IMP-11).
+// ?content=sparse shows the sparse cases of Section 7.3, in development only (IMP-11).
 export default async function HomePage({
   params,
   searchParams,
@@ -25,7 +25,10 @@ export default async function HomePage({
   const { content } = await searchParams;
   const t = getDictionary(lang);
   const home = getHomepage(lang, {
-    variant: content === "sparse" ? "sparse" : "full",
+    variant:
+      process.env.NODE_ENV !== "production" && content === "sparse"
+        ? "sparse"
+        : "full",
   });
   const featured = [home.featured.bangladesh, home.featured.geopolitics].filter(
     (section) => section !== null,

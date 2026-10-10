@@ -8,12 +8,12 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-00 is Done
-- Next action: R2-01 Clean up from run 1, after tajmin types `/ticket`
+- Ticket: none. R2-01 is Done
+- Next action: R2-02 Foundations CSS, after tajmin types `/ticket`
 
 ## FL-13 results
 
-Measured on 7 October 2026 in Chromium. Screenshots in `docs/fl-13/`. Measurement run: `pnpm exec playwright test --config tests/final-check/playwright.config.ts` (records only, not part of `pnpm test:e2e`). Result values: Pass, Fail, Note, N/A (no article page yet).
+Measured on 7 October 2026 in Chromium. Screenshots in `docs/fl-13/` (removed in R2-01; see git history). Measurement run: `pnpm exec playwright test --config tests/final-check/playwright.config.ts` (records only, not part of `pnpm test:e2e`). Result values: Pass, Fail, Note, N/A (no article page yet).
 
 ### Spacing and layout (`spacing-layout-system.md` Section 13) and `/verify`
 
@@ -71,6 +71,7 @@ Sizes measured in px (bn / en).
 | 2026-10-08 | FL-13 Final check | Temporary pages `/foundations` and `/layout-parts` removed; their site checks moved to `tests/e2e/site.spec.ts` and `tests/e2e/page.spec.ts`. Section 13 and typography §9 results table below, screenshots in `docs/fl-13/`, measurement run in `tests/final-check/` (both to leave the repository next milestone, IMP-30). No fixes picked yet. DOC-23, DOC-24, IMP-30 in `docs/prototype-findings.md` |
 | 2026-10-08 | FL-14 Preview deploy | Rejected by tajmin: with 88 findings registered, a preview link is not useful now. No deploy. Milestone closed; report in `docs/milestone-1-report.md`, handover in `docs/HANDOVER.md`. IMP-03 moves to the next milestone |
 | 2026-10-11 | R2-00 Start the run 2 branch | Branch `prototype-run-2` made from `main` (a200b56) and pushed. Accept skill pushes the current branch, stops on `main`, adds the run 2 log row (3b) and the hash commit (4b) |
+| 2026-10-11 | R2-01 Clean up from run 1 | `docs/fl-13/` and `tests/final-check/` removed; `?content=sparse` only in development; WebKit project in Playwright (header tests pass). IMP-07, IMP-11, IMP-30 done |
 
 ## Later
 
@@ -104,7 +105,7 @@ Ideas that are outside the current ticket.
 - FL-11: The region columns have no "আরও দেখুন" link to a region page (7.4 lists none). Add it with the region pages (DR-19).
 - FL-11: Decide whether the slider scrollbar stays visible (IMP-27, DOC-21).
 - FL-12: The footer site pages (`/about`, `/contact`, `/corrections`, `/privacy`, `/terms`) are 404, and the social links go to each network's front page until the Fact Lens accounts are known (IMP-29).
-- FL-13: The screenshots in `docs/fl-13/` (33 files, about 13 MB) and the measurement run in `tests/final-check/` are in the repository for now (tajmin, 2026-10-08). Remove both from the repository in the next milestone (IMP-30).
+- FL-13 (done in R2-01, both removed): The screenshots in `docs/fl-13/` (33 files, about 13 MB) and the measurement run in `tests/final-check/` are in the repository for now (tajmin, 2026-10-08). Remove both from the repository in the next milestone (IMP-30).
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
 ## Unresolved design-system items
