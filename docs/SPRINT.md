@@ -64,7 +64,7 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 
 | Ticket | Title | Needs | Status |
 | --- | --- | --- | --- |
-| R2-00 | Start the run 2 branch | – | To do |
+| R2-00 | Start the run 2 branch | – | Done |
 | R2-01 | Clean up from run 1 | R2-00 | To do |
 | R2-02 | Foundations CSS | R2-00 | To do |
 | R2-03 | Mock content | R2-02 | To do |
