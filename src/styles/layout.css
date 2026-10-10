@@ -1,6 +1,20 @@
-/* Copied from docs/design-system/spacing-layout-system.md Sections 12.1 to 12.3. Do not edit values here. */
-
 @theme {
+  /* No rounded corners, no shadows (DR-202). These classes then give no CSS. */
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+
+  /* Container sizes (CPT-04): @medium: from 600px, @wide: from 880px */
+  --container-*: initial;
+  --container-medium: 37.5rem;
+  --container-wide: 55rem;
+
+  /* Motion (DR-227): color changes 200ms; slides 450ms with ease-slide (duration-450 ease-slide) */
+  --default-transition-duration: 200ms;
+  --ease-slide: cubic-bezier(0.22, 1, 0.36, 1);
+
   --breakpoint-sm: 37.5rem;  /* 600px */
   --breakpoint-md: 48rem;    /* 768px */
   --breakpoint-lg: 64rem;    /* 1024px */
@@ -23,19 +37,25 @@
   --space-section: 3rem;
   --space-section-compact: 2rem;
   --space-module: 1.5rem;
+  --space-rail-modules: 3rem;
   --space-section-title-after: 1.25rem;
 
   --space-section-rule-title: 0.75rem;
-  --space-eyebrow-title: 0.25rem;
   --space-story-media-text: 1rem;
   --space-story-title-summary: 0.5rem;
-  --space-story-summary-meta: 0.75rem;
   --space-story-title-meta: 0.5rem;
   --space-media-caption: 0.5rem;
   --space-list-item: 1rem;
   --space-more-link: 1rem;
 
   --ad-label: 1.5rem;
+
+  /* Ad sizes in px (LAY-19, Section 9). Height = reserved creative height. */
+  --ad-top-w: 320px;
+  --ad-top-h: 100px;
+  --ad-band-h: 280px;
+  --ad-inset-w: 300px;
+  --ad-inset-h: 250px;
 
   --bar-height: 3.5rem;
   --nav-row-height: 3rem;
@@ -44,8 +64,7 @@
 
   --z-content: 0;
   --z-bar: 30;
-  --z-scrim: 40;
-  --z-drawer: 50;
+  --z-overlay: 50;
 }
 
 @media (min-width: 37.5rem) {
@@ -61,6 +80,9 @@
     --space-section-compact: 2.5rem;
     --space-module: 2rem;
     --space-section-title-after: 1.5rem;
+    --ad-top-w: 728px;
+    --ad-top-h: 90px;
+    --ad-band-h: 250px;
   }
 }
 
@@ -72,53 +94,90 @@
     --space-section: 5rem;
     --space-section-compact: 3rem;
     --space-module: 2.5rem;
+    --space-rail-modules: 4rem;
     --bar-height: 4rem;
+    --ad-top-w: 970px;
+    --ad-top-h: 250px;
   }
 }
 
-.shell {
+@media (min-width: 80rem) {
+  :root {
+    --ad-inset-w: 728px;
+    --ad-inset-h: 90px;
+    --ad-rail-w: 300px;
+    --ad-rail-h: 600px;
+  }
+}
+
+/* Spacing tokens as Tailwind spacing names: p-module, py-section (DR-235).
+   The media queries above still change the values. */
+@theme inline {
+  --spacing-page-start: var(--space-page-start);
+  --spacing-section: var(--space-section);
+  --spacing-section-compact: var(--space-section-compact);
+  --spacing-module: var(--space-module);
+  --spacing-rail-modules: var(--space-rail-modules);
+  --spacing-section-title-after: var(--space-section-title-after);
+  --spacing-section-rule-title: var(--space-section-rule-title);
+  --spacing-story-media-text: var(--space-story-media-text);
+  --spacing-story-title-summary: var(--space-story-title-summary);
+  --spacing-story-title-meta: var(--space-story-title-meta);
+  --spacing-media-caption: var(--space-media-caption);
+  --spacing-list-item: var(--space-list-item);
+  --spacing-more-link: var(--space-more-link);
+}
+
+@utility shell {
   width: min(100% - 2 * var(--gutter-page), var(--measure-shell));
   margin-inline: auto;
 }
 
-.ad-row {
+@utility ad-row {
   width: 100%;
   display: grid;
   justify-items: center;
   /* Height = reserved creative height + var(--ad-label). No padding. */
 }
 
-.editorial-grid {
+@utility ad-inset {
+  display: grid;
+  justify-items: center;
+  /* Under 332px: full screen width, like an ad band (DR-207). */
+  @media (width < 20.75rem) {
+    margin-inline: calc(-1 * var(--gutter-page));
+  }
+}
+
+@utility editorial-grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
   column-gap: var(--grid-column-gap);
   row-gap: var(--grid-row-gap);
 }
 
-.with-rail {
+@utility with-rail {
   display: grid;
   gap: var(--space-module) var(--grid-column-gap);
-}
-
-@media (min-width: 64rem) {
-  .with-rail {
+  @media (width >= 64rem) {
     grid-template-columns: minmax(0, 1fr) var(--measure-rail);
   }
 }
 
-.peer-card {
+@utility peer-card {
   display: grid;
   grid-row: span var(--card-parts, 4);  /* one row per card part: media, eyebrow, title, (summary), meta */
   grid-template-rows: subgrid;
 }
 
-html {
-  scroll-padding-top: var(--scroll-offset);
+/* LAY-20: 40 / 32 in a container under 600px, 48 / 40 from 600px (DR-224) */
+@utility panel-inset {
+  padding: --spacing(10) --spacing(8);
+  @container (width >= 37.5rem) {
+    padding: --spacing(12) --spacing(10);
+  }
 }
 
-.top-bar {
-  block-size: var(--bar-height);
-  position: sticky;
-  top: 0;
-  z-index: var(--z-bar);
+html {
+  scroll-padding-top: var(--scroll-offset);
 }

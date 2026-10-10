@@ -66,7 +66,7 @@ The repository must have these `package.json` scripts. If a script is missing, a
 src/
   proxy.ts                 Next.js 16 proxy: rewrites paths without /en to bn
   app/
-    globals.css            Imports the three token files. Nothing else
+    globals.css            Imports the three token files, then the base rules of spacing-layout-system.md §12.4
     [lang]/                bn and en. See Section 7
       layout.tsx           Sets <html lang>, fonts and the theme script
       page.tsx             Homepage

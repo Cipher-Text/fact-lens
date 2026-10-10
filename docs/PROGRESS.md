@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-01 is Done
-- Next action: R2-02 Foundations CSS, after tajmin types `/ticket`
+- Ticket: none. R2-02 is Done
+- Next action: R2-03 Mock content, after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -107,6 +107,9 @@ Ideas that are outside the current ticket.
 - FL-12: The footer site pages (`/about`, `/contact`, `/corrections`, `/privacy`, `/terms`) are 404, and the social links go to each network's front page until the Fact Lens accounts are known (IMP-29).
 - FL-13 (done in R2-01, both removed): The screenshots in `docs/fl-13/` (33 files, about 13 MB) and the measurement run in `tests/final-check/` are in the repository for now (tajmin, 2026-10-08). Remove both from the repository in the next milestone (IMP-30).
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
+
+- R2-02 decisions (tajmin, 11 October 2026): §12.4 base rules added to `globals.css` (KIT-05, done). Import `components.css` in R2-04 (IMP-32). Import `shadcn/tailwind.css` with the first shadcn primitive, likely R2-05 (IMP-31)
+- R2-02: components that still use removed tokens: `--ad-band-*`/`--ad-inset-*` sizes in `AdRow.tsx` (R2-06); `--space-eyebrow-title` and `--space-story-summary-meta` in the story, hero, analysis, featured and grouped files (R2-07 to R2-11); `.top-bar` in `SiteHeader.tsx` (R2-05).
 
 ## Unresolved design-system items
 

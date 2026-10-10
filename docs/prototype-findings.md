@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -110,10 +110,13 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Needs confirmation |
 | IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Needs confirmation |
 | IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Open |
+| IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Decided: add it with the first shadcn primitive |
+| IMP-32 | R2-02 | `components.css` is not imported in `globals.css` | Low | Decided: import in R2-04 |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
 | KIT-04 | FL-02 | Playwright MCP output folder not ignored | Low | Fixed |
+| KIT-05 | R2-02 | `AGENTS.md` §5 says `globals.css` holds only the imports; `spacing-layout-system.md` §12.4 puts base rules there | Medium | Fixed |
 
 ---
 
@@ -764,6 +767,18 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Found:** FL-13 · **Severity:** Low · **Status:** Open
 - **Choice:** tajmin decided on 2026-10-08 to keep the 33 screenshots in `docs/fl-13/` (about 13 MB) and the measurement run in `tests/final-check/` (records only, not part of `pnpm test:e2e`) in the repository for now.
 - **Suggested solution:** Remove both from the repository in the next milestone. Keep the screenshots outside git (a release asset or shared drive) if they are still needed.
+### IMP-31 `shadcn/tailwind.css` is not imported
+
+- **Found:** R2-02 · **Severity:** Low · **Status:** Decided (tajmin, 11 October 2026): leave it out; add it in the ticket that adds the first shadcn primitive (likely R2-05). Report to the blueprint that the spec states the import without a condition
+- **Choice:** `color-system.md` §5 says `app/globals.css` also imports `shadcn/tailwind.css`. `globals.css` has only Tailwind and the three token files (FL-02 removed it, because `AGENTS.md` §5 says "Nothing else"). R2-02 left it that way. The base-nova shadcn components need it for their `data-*` variants.
+- **Suggested solution:** Ask tajmin. If shadcn components are used in run 2, add the import after `tailwindcss`. Otherwise keep it out and update the spec note.
+
+### IMP-32 `components.css` is not imported
+
+- **Found:** R2-02 · **Severity:** Low · **Status:** Decided (tajmin, 11 October 2026): import it in R2-04
+- **Choice:** `src/styles/components.css` (from `component-system.md` §6) is not imported in `globals.css`. R2-02 did not touch it.
+- **Suggested solution:** Import it in R2-04 (Small parts), where the component tokens are first needed.
+
 ---
 
 ## Kit issues (KIT-)
@@ -792,6 +807,12 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Found:** FL-02 · **Severity:** Low · **Status:** Fixed
 - **Fix:** `.gitignore` now has `.playwright-mcp/`.
 
+### KIT-05 `globals.css` content: `AGENTS.md` and the spec disagree
+
+- **Found:** R2-02 · **Severity:** Medium · **Status:** Fixed (tajmin, 11 October 2026): the §12.4 block is in `globals.css`; `AGENTS.md` §5 updated
+- **Problem:** `AGENTS.md` §5 says `globals.css` "imports the three token files. Nothing else". `spacing-layout-system.md` §12.4 says to put the base rules (pointer cursor on enabled buttons, square line ends on `svg.lucide`, reduced motion, DR-227) in `app/globals.css`. The spec ranks higher (`AGENTS.md` §2). R2-02 added neither and flagged it.
+- **Suggested solution:** Ask tajmin. Either add the §12.4 block to `globals.css` and change `AGENTS.md` §5 to "imports and the §12.4 base rules", or move the block into a CSS file and tell the blueprint. Reduced motion (DR-227) is missing until then.
+
 ---
 
 ## Change log
@@ -812,3 +833,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-07 | FL-13 | DOC-23, DOC-24, IMP-30 added. Results table with the Section 13 and §9 checks in `docs/PROGRESS.md` |
 | 2026-10-08 | FL-14 | FL-14 rejected; no deploy. Milestone 1 closed. IMP-03 and IMP-07 status updated. Report: `docs/milestone-1-report.md` |
 | 2026-10-11 | R2-01 | IMP-30 done (`docs/fl-13/`, `tests/final-check/` removed). IMP-11 done (`?content=sparse` only when `NODE_ENV !== 'production'`). IMP-07 done (WebKit project in Playwright) |
+| 2026-10-11 | R2-02 | No new finding. The three token files are now the spec blocks. The current specs address DOC-01 (`:lang(en)`), DOC-02 (no second Tailwind import), DOC-04 (`--type-rank-*` tokens), DOC-06 (`@utility` containers), DOC-08 (ad tokens in §12.2, `ads.css` deleted), DOC-11 (shadows removed) and DOC-12 (`--z-bar`, `--z-overlay`). Statuses are confirmed when the components use the new CSS (R2-04 and later). IMP-31, IMP-32 and KIT-05 added and decided (§12.4 block added to `globals.css`, `AGENTS.md` §5 updated; `components.css` import in R2-04; `shadcn/tailwind.css` with the first shadcn primitive) |

@@ -1,6 +1,3 @@
-/* Copied from docs/design-system/color-system.md Section 5. Do not edit values here.
-   The spec block starts with @import "tailwindcss"; globals.css imports Tailwind once, so that line is left out. */
-
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -12,7 +9,7 @@
   /* Ink */
   --ink: #1f1a17;
   --ink-secondary: #342f2c;
-  --ink-muted: #4f4b48;
+  --ink-muted: #6e6862;
   --ink-disabled: #9a928a;
   /* Brand and interactive */
   --brand: #993314;
@@ -26,7 +23,7 @@
   /* Borders */
   --border: #ddd2c4;
   --border-soft: #eae1d6;
-  --border-interactive: #857a70;
+  --border-interactive: #7d7369;
   /* Status */
   --success: #1d7248;
   --success-subtle: #e8f1ed;
@@ -43,8 +40,8 @@
   /* Utility */
   --selection: #edcec4;
   --overlay: rgb(31 26 23 / 0.48);
-  --shadow: rgb(31 26 23 / 0.12);
   --skeleton: #eae1d6;
+  /* Component colors */
 }
 
 .dark {
@@ -80,8 +77,12 @@
   --on-live: #18191e;
   --selection: #5a2a1c;
   --overlay: rgb(0 0 0 / 0.64);
-  --shadow: rgb(0 0 0 / 0.45);
   --skeleton: #2d3036;
+}
+
+@theme {
+  /* Remove the Tailwind default palette: only Fact Lens colors exist (DR-235) */
+  --color-*: initial;
 }
 
 @theme inline {
@@ -139,4 +140,24 @@
 
 ::selection {
   background: var(--selection);
+}
+
+@layer base {
+  /* COL-16, DR-232 */
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-ink);
+  }
+  /* COL-13, DR-225 */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+  /* COL-08, DR-235 */
+  ::placeholder {
+    color: var(--color-ink-muted);
+  }
 }
