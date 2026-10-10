@@ -17,3 +17,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | R2-00 Start the run 2 branch | 2026-10-11 | 2026-10-11 | Done | 0 | none | be6fb90 | Commit hash step (4b) added to accept skill |
 | R2-01 Clean up from run 1 | 2026-10-11 | 2026-10-11 | Done | 0 | none | 1402a47 | WebKit added; sparse URL dev only |
+| R2-02 Foundations CSS | 2026-10-11 | 2026-10-11 | Done | 0 | none new; KIT-05, IMP-31, IMP-32 decided | 12a1aef | Components on removed tokens fixed in R2-05 to R2-11 |

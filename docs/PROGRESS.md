@@ -72,6 +72,7 @@ Sizes measured in px (bn / en).
 | 2026-10-08 | FL-14 Preview deploy | Rejected by tajmin: with 88 findings registered, a preview link is not useful now. No deploy. Milestone closed; report in `docs/milestone-1-report.md`, handover in `docs/HANDOVER.md`. IMP-03 moves to the next milestone |
 | 2026-10-11 | R2-00 Start the run 2 branch | Branch `prototype-run-2` made from `main` (a200b56) and pushed. Accept skill pushes the current branch, stops on `main`, adds the run 2 log row (3b) and the hash commit (4b) |
 | 2026-10-11 | R2-01 Clean up from run 1 | `docs/fl-13/` and `tests/final-check/` removed; `?content=sparse` only in development; WebKit project in Playwright (header tests pass). IMP-07, IMP-11, IMP-30 done |
+| 2026-10-11 | R2-02 Foundations CSS | `colors.css`, `typography.css`, `layout.css` are the spec blocks; `ads.css` deleted; §12.4 base rules in `globals.css`, `AGENTS.md` §5 updated (KIT-05). Components still on removed tokens are listed under Later. IMP-31, IMP-32 decided |
 
 ## Later
 
