@@ -1,9 +1,12 @@
 // The only way components read content (DR-01). A backend can replace the
 // data behind these functions later without changes to components.
+import { ads } from "./ads";
 import { homepagePlans } from "./homepage";
 import { dailyPoll } from "./poll";
 import { authors, imageFiles, stories, type StoryDef } from "./stories";
 import type {
+  Ad,
+  AdSlotId,
   FeaturedSection,
   Homepage,
   HomepageVariant,
@@ -76,6 +79,26 @@ export function getPoll(lang: Lang): Poll {
         votes: dailyPoll.votes[id],
       }),
     ),
+  };
+}
+
+/** The mock booking for one ad slot, in the page language. */
+export function getAd(slot: AdSlotId, lang: Lang): Ad {
+  const def = ads.find((ad) => ad.slot === slot);
+  if (!def) throw new Error(`No mock ad for slot: ${slot}`);
+  const advertiser = def.advertiser[lang];
+  return {
+    slot,
+    advertiser,
+    alt: advertiser,
+    link: def.link,
+    startsOn: def.startsOn,
+    endsOn: def.endsOn,
+    creatives: def.creatives.map(({ size, width, height }) => ({
+      src: `/mock/ad-${size}.svg`,
+      width,
+      height,
+    })),
   };
 }
 

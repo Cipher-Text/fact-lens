@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-02 is Done
-- Next action: R2-03 Mock content, after tajmin types `/ticket`
+- Ticket: R2-03 Mock content (In progress)
+- Next action: finish R2-03, hand over to tajmin for testing
 
 ## FL-13 results
 
@@ -73,6 +73,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-00 Start the run 2 branch | Branch `prototype-run-2` made from `main` (a200b56) and pushed. Accept skill pushes the current branch, stops on `main`, adds the run 2 log row (3b) and the hash commit (4b) |
 | 2026-10-11 | R2-01 Clean up from run 1 | `docs/fl-13/` and `tests/final-check/` removed; `?content=sparse` only in development; WebKit project in Playwright (header tests pass). IMP-07, IMP-11, IMP-30 done |
 | 2026-10-11 | R2-02 Foundations CSS | `colors.css`, `typography.css`, `layout.css` are the spec blocks; `ads.css` deleted; §12.4 base rules in `globals.css`, `AGENTS.md` §5 updated (KIT-05). Components still on removed tokens are listed under Later. IMP-31, IMP-32 decided |
+| 2026-10-11 | R2-03 Mock content | `getAd(slot, lang)` with one mock booking per ad slot and six gray SVG creatives; tests for poll, ads, story ids (also sparse) and no newsletter content. Newsletter code stays until R2-11 (IMP-33). IMP-34 |
 
 ## Later
 

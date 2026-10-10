@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -112,6 +112,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Open |
 | IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Decided: add it with the first shadcn primitive |
 | IMP-32 | R2-02 | `components.css` is not imported in `globals.css` | Low | Decided: import in R2-04 |
+| IMP-33 | R2-03 | Newsletter strings and components stay until R2-11, because R2-03 only touches `src/content/` | Low | Open: remove in R2-11 |
+| IMP-34 | R2-03 | Mock ad creatives are plain gray SVG files with no text, one per size | Low | Open |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -779,6 +781,18 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Choice:** `src/styles/components.css` (from `component-system.md` §6) is not imported in `globals.css`. R2-02 did not touch it.
 - **Suggested solution:** Import it in R2-04 (Small parts), where the component tokens are first needed.
 
+### IMP-33 Newsletter code stays until R2-11
+
+- **Found:** R2-03 · **Severity:** Low · **Status:** Open
+- **Choice:** `src/content/` has no newsletter content (a test checks this, DR-239). The newsletter strings in `src/i18n/` and the code in `NewsletterSignup.tsx`, `GroupedCategories.tsx`, `SiteHeader.tsx`, `Drawer.tsx` and `src/lib/email.ts` are outside the R2-03 files, and removing them now would break the build.
+- **Suggested solution:** Remove them in R2-11 (the sprint says do not build NewsletterSignup) and in R2-05 for the header and Drawer.
+
+### IMP-34 Mock ad creatives
+
+- **Found:** R2-03 · **Severity:** Low · **Status:** Open
+- **Choice:** `public/mock/ad-<width>x<height>.svg` for 320x100, 336x280, 300x250, 300x600, 728x90 and 970x250. Gray fill and a border, no text, no advertiser mark. `src/content/ads.ts` has one fictional booking per slot (`getAd(slot, lang)`) with the sizes of §9. The 320x50, 970x90 and 300x250-for-band-under-336 variants have no separate file: 300x250 serves both.
+- **Suggested solution:** Replace with the advertiser images in Phase 1 (§9.2).
+
 ---
 
 ## Kit issues (KIT-)
@@ -834,3 +848,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-08 | FL-14 | FL-14 rejected; no deploy. Milestone 1 closed. IMP-03 and IMP-07 status updated. Report: `docs/milestone-1-report.md` |
 | 2026-10-11 | R2-01 | IMP-30 done (`docs/fl-13/`, `tests/final-check/` removed). IMP-11 done (`?content=sparse` only when `NODE_ENV !== 'production'`). IMP-07 done (WebKit project in Playwright) |
 | 2026-10-11 | R2-02 | No new finding. The three token files are now the spec blocks. The current specs address DOC-01 (`:lang(en)`), DOC-02 (no second Tailwind import), DOC-04 (`--type-rank-*` tokens), DOC-06 (`@utility` containers), DOC-08 (ad tokens in §12.2, `ads.css` deleted), DOC-11 (shadows removed) and DOC-12 (`--z-bar`, `--z-overlay`). Statuses are confirmed when the components use the new CSS (R2-04 and later). IMP-31, IMP-32 and KIT-05 added and decided (§12.4 block added to `globals.css`, `AGENTS.md` §5 updated; `components.css` import in R2-04; `shadcn/tailwind.css` with the first shadcn primitive) |
+| 2026-10-11 | R2-03 | IMP-33 and IMP-34 added. Mock ads (`ads.ts`, `getAd`, six SVG creatives) and tests for the poll, the ads, story ids in both languages (also sparse) and no newsletter content. The poll and the long-headline, no-image and sparse cases from run 1 were already right and are unchanged |
