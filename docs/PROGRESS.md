@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: R2-16 Spacing check (In review)
-- Next action: tajmin compares the screenshot pairs in `test-results/spacing/` and decides; then `/accept`
+- Ticket: none. R2-16 is Done
+- Next action: R2-17 Final check, after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -86,6 +86,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-13 Regions (P-3b) | `RegionSlider` rebuilt from C-15: `region-row` utility (2 / 3 / 4 regions in view at 600 / 1024 / 1280, scrollbar hidden), buttons by CSS while more regions exist than are in view (DR-140), 450ms slide with the `--ease-slide` curve, panel = region name, 3:2 image story and two text stories, one MoreLink to `/regions` at the section end; `StoryStack` deleted. Tests at 14 widths in both languages, a touch swipe and tap. Flags open: U-36, IMP-51. IMP-52 |
 | 2026-10-11 | R2-14 Footer | `SiteFooter` rebuilt from C-21: `surface-elevated` band with `panel-inset`, centered logo, five ink social icons, `ink-secondary` links (wrap on phones), copyright line (`formatYear`); `header/classes.ts` trimmed to `uiLink`. Footer tests at 14 widths in both languages, hover/press states, axe in both themes. Flag open: DOC-33. U-30 fixed |
 | 2026-10-11 | R2-15 200% text size | `text-size.spec.ts` sets the real browser font size (32px) and checks `scrollWidth` at 320, 768, 1024 in both languages. Only fault: the top bar at 320; now `min-h-(--bar-height)` with wrap. Most read stacks by the rem breakpoints; the P-4 compact rows never stack (U-37, open flag). DOC-34 flag |
+| 2026-10-11 | R2-16 Spacing check | No code change. 12 full-page screenshots (bn/en, 1024, 1280, 1920) of the current tokens and a runtime step-up (gutter 32, column gap 32, space-module 48) in `test-results/spacing/` (not committed). No token change; that needs tajmin's yes and a spec change first |
 
 ## Later
 
