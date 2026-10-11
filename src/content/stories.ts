@@ -325,6 +325,16 @@ export const stories: StoryDef[] = [
     bn: { title: "ইতিহাসের পাঠ্যবইয়ে আঞ্চলিক দৃষ্টিভঙ্গি জরুরি" },
     en: { title: "History textbooks need a regional view" },
   },
+  {
+    id: "opinion-energy-transition-labour",
+    format: "opinion",
+    category: "economy",
+    publishedAt: at("10-06 09:00"),
+    readingMinutes: 5,
+    author: "tanvir-ahmed",
+    bn: { title: "জ্বালানি রূপান্তরে শ্রমিকের জায়গা কোথায়" },
+    en: { title: "Where do workers stand in the energy transition?" },
+  },
 
   // Featured: বাংলাদেশ
   {

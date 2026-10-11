@@ -1,15 +1,13 @@
-import { Quote } from "lucide-react";
 import Link from "next/link";
 
 import { Chip } from "@/components/story/Chip";
 import { headlineLink, storyHref } from "@/components/story/links";
-import { MetaLine } from "@/components/story/MetaLine";
 import { MoreLink } from "@/components/story/MoreLink";
 import type { Lang, Story } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
 import { formatTime } from "@/lib/format";
 
-import { listItem } from "./classes";
+import { QuoteMark } from "./QuoteMark";
 
 type OpinionListProps = {
   lang: Lang;
@@ -18,48 +16,43 @@ type OpinionListProps = {
 };
 
 /**
- * The opinion column of P-4: a quote list (spacing-layout-system.md 7.2). Only this column
- * has the label chip: plain, not a link, type-eyebrow on accent-subtle in ink (DR-77,
- * typography-system.md 7.1). The chip is the column heading. Each item has a decorative
- * quote icon (aria-hidden), the title, then the author in 600 and the time.
- * Chip padding, chip-to-list space and the icon size and color are not in the specs
+ * C-06 OpinionList, the opinion column of P-4: the মতামত chip (a label, not a link), then
+ * the opinion pieces as quote rows. Each row is a quote mark, then the title (h3, one link),
+ * the author on its own line (600, ink-secondary, plain text) and the time on its own line
+ * (400, ink-muted). No image and no rule; 24px between rows. The gap after the quote mark is
+ * 12 / 16 / 20px at phone / 600 / 1024 (LAY-21). The chip-to-list space is not in the sheet
  * (UNRESOLVED_DESIGN_SYSTEM U-16).
  */
 export function OpinionList({ lang, stories, strings }: OpinionListProps) {
   return (
-    <section aria-labelledby="opinion-title" data-column="opinion">
-      <h3
-        id="opinion-title"
-        className="mb-(--space-list-item) type-eyebrow text-ink"
-      >
+    <div data-column="opinion">
+      <p className="mb-(--space-list-item)">
         <Chip variant="label">{strings.analysisOpinion.opinion}</Chip>
-      </h3>
-      <ul>
+      </p>
+      <ul className="flex flex-col gap-y-6">
         {stories.map((story) => (
-          <li key={story.id} className={listItem}>
-            <article className="flex items-start gap-x-(--space-story-media-text)">
-              <Quote
-                aria-hidden="true"
-                data-quote-icon
-                className="size-6 shrink-0 text-ink-muted"
-              />
+          <li key={story.id}>
+            <article className="flex items-start gap-x-3 sm:gap-x-4 lg:gap-x-5">
+              <QuoteMark />
               <div className="min-w-0 flex-1">
-                <h4 className="type-story-title-sm">
+                <h3 className="type-story-title-sm">
                   <Link href={storyHref(story)} className={headlineLink}>
                     {story.title}
                   </Link>
-                </h4>
-                <MetaLine
-                  items={[
-                    ...(story.author
-                      ? [<span key="author">{story.author.name}</span>]
-                      : []),
-                    <time key="time" dateTime={story.publishedAt}>
-                      {formatTime(new Date(story.publishedAt), story.lang)}
-                    </time>,
-                  ]}
-                  className="mt-(--space-story-title-meta)"
-                />
+                </h3>
+                {story.author ? (
+                  <p
+                    data-author
+                    className="mt-(--space-story-title-meta) type-metadata font-semibold text-ink-secondary"
+                  >
+                    {story.author.name}
+                  </p>
+                ) : null}
+                <p data-time className="type-metadata text-ink-muted">
+                  <time dateTime={story.publishedAt}>
+                    {formatTime(new Date(story.publishedAt), story.lang)}
+                  </time>
+                </p>
               </div>
             </article>
           </li>
@@ -70,6 +63,6 @@ export function OpinionList({ lang, stories, strings }: OpinionListProps) {
         section={strings.analysisOpinion.opinion}
         strings={strings.common}
       />
-    </section>
+    </div>
   );
 }

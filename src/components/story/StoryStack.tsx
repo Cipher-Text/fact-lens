@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { listItem } from "@/components/home/analysis-opinion/classes";
+import { dividerItem } from "@/components/layout/Divider";
 import { Chip } from "@/components/story/Chip";
 import { headlineLink, storyHref } from "@/components/story/links";
 import { MetaLine, storyMetaItems } from "@/components/story/MetaLine";
@@ -33,7 +33,7 @@ export function StoryStack({
       {stories.map((story, index) => {
         const image = index === 0 ? story.image : undefined;
         return (
-          <li key={story.id} className={listItem}>
+          <li key={story.id} className={dividerItem}>
             <article>
               {image ? (
                 <Image

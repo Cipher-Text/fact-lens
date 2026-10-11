@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-09 (P-4 analysis and opinion rebuilt on the story units). Earlier: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -70,9 +70,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-12 | FL-06 | Lead text panel inset and padding | Low | Open |
 | U-13 | FL-06 | Card without image beside a card with image | Medium | Open |
 | U-14 | FL-06 | Bangla Breaking label and label padding | Low | Open |
-| U-15 | FL-07 | Analysis item layout (image-led list) | Low | Open |
-| U-16 | FL-07 | Opinion chip padding and quote icon | Low | Open |
-| U-17 | FL-07 | Padding inside the বিশ্লেষণ ও মতামত background | Low | Open |
+| U-15 | FL-07 | Analysis item layout (image-led list) | Low | Fixed in R2-09 |
+| U-16 | FL-07 | Opinion chip padding and quote icon | Low | Partly fixed in R2-09 (chip-to-list space still open) |
+| U-17 | FL-07 | Padding inside the বিশ্লেষণ ও মতামত background | Low | Fixed in R2-09 |
 | U-18 | FL-08 | P-2 lead: image and text split from 1280px | Low | Open |
 | U-19 | FL-08 | P-2 rail at 600–1023px | Low | Open |
 | U-20 | FL-08 | Story labels inside a category section | Low | Open |
@@ -89,6 +89,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Open |
 | U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Open |
 | U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Decided by tajmin (11 October 2026): an image or the placeholder. Fixed in LeadStory, OverlapCard, StoryCard; P-2, P-3b and P-4 files follow in R2-09, R2-10, R2-13 |
+| U-34 | R2-09 | P-4 analysis stories: the P-4 sheet says rules between stories wait on the item divider (DR-104), but C-03 says StoryList rules and the other lists draw them | Low | Open (flag) |
+| U-35 | R2-09 | C-06 quote mark: the sheet gives sizes and color, no drawing | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check before the first deploy (FL-14 rejected) |
@@ -109,7 +111,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Needs confirmation (FL-07 adds `/analysis` and `/opinion`) |
 | IMP-19 | FL-06 | Hero metadata shows the clock time only, 24-hour | Low | Needs confirmation |
 | IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Needs confirmation |
-| IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Needs confirmation |
+| IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Fixed in R2-09 (the sheets give h3 titles and a chip label) |
 | IMP-22 | FL-07 | Shared `MoreLink` and elevated link classes | Low | Needs confirmation |
 | IMP-23 | FL-08 | P-2 has no "আরও দেখুন" link | Low | Needs confirmation |
 | IMP-24 | FL-09 | Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test | Medium | Needs confirmation |
@@ -137,6 +139,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-46 | R2-06 | The `rail` variant is built and tested alone; it goes into the P-3 rail in R2-11. 28 chromium e2e tests stay red from before (`most-read`, R2-12) | Low | Open |
 | IMP-47 | R2-07 | The story units are wired into the hero (needed to keep it building); two hero tests and the hero e2e layout checks were changed to the sheets. A development-only test page `/dev/story-units` carries the unit tests | Medium | Open |
 | IMP-48 | R2-07 | `StoryCard` `layout` has four values (`stack`, `row`, `row-from-md`, `row-until-lg`) and `OverlapCard` has a `surface` prop, so a section can set the page-breakpoint switch and the P-4 background; the sheets say "the section sets it" but give no prop | Low | Open: flag for tajmin |
+| IMP-49 | R2-09 | Mock content changed to the sheet counts: 3 analysis stories (1 feature, 2 compact) and 5 opinion pieces; the `listItem` class file is gone | Low | Open |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -496,7 +499,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-15 Analysis item layout (image-led list)
 
-- **Found:** FL-07 · **Severity:** Low · **Status:** Open
+- **Found:** FL-07 · **Severity:** Low · **Status:** Fixed in R2-09 (P-4 sheet: OverlapCard, then compact StoryCard rows 2 : 1; the treatment below is the old one)
 - **Files:** `src/components/home/analysis-opinion/AnalysisList.tsx`
 - **Gap:** 7.2 calls the analysis column an "image-led list" but gives no item layout, image size or ratio.
 - **Treatment used:** Every item has the 16:9 image at the start, one third of the column wide, and the text beside it (`space-story-media-text` between them) at every width. Text: category eyebrow, `type-story-title-sm`, the summary if there is one, then time and reading time. A story with no image has the text only, at full column width. Items are separated by a `border` rule with `space-list-item` on each side.
@@ -504,7 +507,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-16 Opinion chip padding and quote icon
 
-- **Found:** FL-07 · **Severity:** Low · **Status:** Open
+- **Found:** FL-07 · **Severity:** Low · **Status:** Partly fixed in R2-09 (C-06 gives chip padding 2px 8px, the quote mark sizes and color; the chip-to-list space is still not in the sheet: `space-list-item` is used)
 - **Files:** `src/components/home/analysis-opinion/OpinionList.tsx`
 - **Gap:** Typography 7.1 gives the chip role and colors (`type-eyebrow` on `accent-subtle`, `text-ink`) and says the quote mark is a decorative SVG, but not the chip padding, the chip-to-list space, or the icon size, color and position.
 - **Treatment used:** Chip `px-1` (as the Breaking label, U-14), `space-list-item` below it. Quote icon: `lucide-react` `Quote`, 24px (`size-6`), `text-ink-muted`, `aria-hidden`, at the start of each item with `space-story-media-text` to the text. Author in weight 600, then the time with a CSS dot separator.
@@ -512,7 +515,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-17 Padding inside the বিশ্লেষণ ও মতামত background
 
-- **Found:** FL-07 · **Severity:** Low · **Status:** Open
+- **Found:** FL-07 · **Severity:** Low · **Status:** Fixed in R2-09 (`panel-inset`, LAY-20, DR-224)
 - **Files:** `src/components/home/analysis-opinion/AnalysisOpinion.tsx`
 - **Gap:** 7.4 sets the `surface-elevated` background inside the shell but no inner padding, so the text would touch the edge of the color.
 - **Treatment used:** `space-module` on every side (24 / 32 / 40). The section heading rule and the columns start inside this padding, so their start edge is inset from the other sections' start edge.
@@ -661,9 +664,27 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Gap:** C-01, C-02 and C-24 say "image required" (DR-91), but the mock set keeps some no-image stories on purpose (R2-03), and no sheet draws a story without an image.
 - **Decision (tajmin, 11 October 2026):** the image must be there, or the card uses a placeholder image. A hero top story must have a real image: the full mock hero uses the new story `border-crossing-digital-pass` in the second slot.
 - **Treatment now:** `StoryImage` shows `/mock/landscape-16x9.svg` (`data-placeholder`, empty alt text, link `aria-hidden`) for a story with no image. `LeadStory`, `OverlapCard` and `StoryCard` then have the same overlap, inset, notch and row layout as with a real image. Tests: unit and e2e for each of the three units.
-- **Still to do:** `StoryStack` (P-3b and P-2 rail), `FeaturedRail` and `AnalysisList` draw their own image and skip it when missing. R2-09, R2-10 and R2-13 move them onto `StoryCard`/`OverlapCard`, which brings the placeholder with it.
+- **Still to do:** `StoryStack` (P-3b and P-2 rail) and `FeaturedRail` draw their own image and skip it when missing. R2-10 and R2-13 move them onto `StoryCard`, which brings the placeholder with it. `AnalysisList` moved in R2-09: all three analysis stories now show an image, the no-image mock story (`bay-security-calculation`) shows the placeholder.
 - **Open question for the sheets:** the placeholder is a mock file. The real placeholder (brand mark, color, ratio per card) is for the blueprint to define.
 - **Rules:** DR-91, CPT-08, LAY-17.
+
+### U-34 Rules between the analysis stories
+
+- **Found:** R2-09 · **Severity:** Low · **Status:** Open (flag)
+- **Files:** `src/components/home/analysis-opinion/AnalysisList.tsx`
+- **Gap:** The P-4 sheet says "Rules between stories wait on the item divider (DR-104)". C-03 says StoryList rows have a 1px rule and names P-4 as a user, and C-22 says lists use the item rule as their sheets give it. The P-4 compact rows are `StoryCard`s, not `StoryListItem`s, and the feature `OverlapCard` is not in a StoryList.
+- **Treatment used:** One `ul` with three rows (feature, compact, compact); `dividerItem` (1px `border` rule, `space-list-item` each side) between rows, none after the last.
+- **Suggested solution:** Say in the P-4 sheet whether the three rows have rules. If not, drop `dividerItem` and give the rows `space-module` between them.
+- **Rules:** DR-104, CPT-06.
+
+### U-35 Quote mark drawing
+
+- **Found:** R2-09 · **Severity:** Low · **Status:** Open
+- **Files:** `src/components/home/analysis-opinion/QuoteMark.tsx`
+- **Gap:** C-06 says "Drawn SVG, two filled marks" with width 44 / 36 / 28 and gives no drawing or ratio (44 x 36, 36 x 29 and 28 x 23 imply about 1.22).
+- **Treatment used:** A 44 x 36 viewBox with two block marks drawn by hand, `fill: currentColor` in `--color-bar` (brand in light, interactive in dark), `h-auto` with `w-7 sm:w-9 lg:w-11`. It replaces the run 1 Lucide `Quote` icon.
+- **Suggested solution:** Supply the SVG path in the sheet or the blueprint assets.
+- **Rules:** CPT-07.
 
 ---
 
@@ -795,7 +816,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### IMP-21 P-4 heading outline
 
-- **Found:** FL-07 · **Severity:** Low · **Status:** Needs confirmation
+- **Found:** FL-07 · **Severity:** Low · **Status:** Fixed in R2-09 (the P-4 and C-06 sheets: every story title is an h3, the chip is a label in a paragraph, the analysis column has no heading)
 - **Choice:** The section heading "বিশ্লেষণ ও মতামত" is an `h2`. Each column is a `section` with an `h3`: the analysis heading ("বিশ্লেষণ") is visually hidden, because that column has no chip (DR-77); the opinion chip is the opinion `h3`. Story titles in both columns are `h4`.
 - **Suggested solution:** Confirm, or make the chip a plain label and give both columns hidden headings.
 
@@ -979,6 +1000,12 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Built as:** `layout="row-from-md"` and `layout="row-until-lg"` next to `stack` and `row`; `surface="background" | "elevated"` on `OverlapCard`.
 - **Suggested solution:** Name the responsive layouts in C-24, or let the card react to its container (CPT-04).
 
+### IMP-49 Mock content and class cleanup for P-4
+
+- **Found:** R2-09 · **Severity:** Low · **Status:** Open
+- **Choice:** The sheets give 3 analysis stories (1 OverlapCard + 2 compact rows, P-4) and 5 opinion pieces (C-06). The mock plan had 4 and 4. `homepage.ts` now has 3 analysis stories (`chip-supply-map` left the plan, so the no-image story `bay-security-calculation` stays as a hard case) and 5 opinion pieces (new story `opinion-energy-transition-labour`, bn and en). The sparse variant is unchanged (2 analysis, no opinion). `analysis-opinion/classes.ts` is deleted; `StoryStack` uses `dividerItem`.
+- **Suggested solution:** Confirm the counts, or let the component show fewer or more items than the sheet.
+
 ---
 
 ## Kit issues (KIT-)
@@ -1040,3 +1067,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-06 | IMP-44 to IMP-46 added. DOC-08, DOC-09 and DOC-18 fixed by the current spec. `AdSlot` (variants top, band, inset, rail) replaces `AdRow` and `AdPlaceholder`: one `<picture>` per slot, reserved height from the `--ad-*` tokens, region named by the label; page order checked against 7.1; tests for the reserved height at 360, 1024 and 1280 with and without the creative |
 | 2026-10-11 | R2-07 | DOC-30, U-33, IMP-47, IMP-48 added. U-11 (headline link color) fixed by the sheets: ink, ink-muted on hover, no pressed color. U-12 (lead panel inset and padding), U-13 (blank band under a no-image card in the hero pair) fixed by C-01 and C-02 (tokens, no subgrid). LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem built from their sheets; tests at 360, 768, 1024 and 1280 in both languages with long-headline and no-image content |
 | 2026-10-11 | R2-08 | U-33 decided by tajmin and fixed in the three story units (placeholder image). Hero already sat on LeadStory, OverlapCard and StoryList from R2-07. Added Playwright sheet checks (C-01: bar 6/8/10px, panel padding, inset, overlap, page-color panel, dark bar; C-02: overlap and notch, h3 role; one tab stop plus eyebrow) at 360, 768, 1366 in both languages. tajmin decided the hero top stories need an image: the full mock hero has a new image story in the second slot (U-33 stays open for other no-image cards) |
+| 2026-10-11 | R2-09 | U-34, U-35, IMP-49 added. U-15, U-17 and IMP-21 fixed, U-16 partly fixed by the P-4 and C-06 sheets. AnalysisList (OverlapCard + 2 StoryCard rows), OpinionList (chip label, QuoteMark, author and time lines), AnalysisOpinion (`panel-inset` inside the shell); Playwright sheet checks at 360, 768 and 1366 in both languages |

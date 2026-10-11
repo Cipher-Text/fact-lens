@@ -45,7 +45,6 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
       analysis: [
         "small-state-balancing",
         "reserve-indicators",
-        "chip-supply-map",
         "bay-security-calculation",
       ],
       opinion: [
@@ -53,6 +52,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
         "opinion-climate-finance",
         "opinion-digital-economy-youth",
         "opinion-regional-history",
+        "opinion-energy-transition-labour",
       ],
     },
     featured: {

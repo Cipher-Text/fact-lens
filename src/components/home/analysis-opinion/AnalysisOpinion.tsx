@@ -20,8 +20,9 @@ type AnalysisOpinionProps = {
  * equal columns from 768px, analysis first (left), opinion second; stacked below 768px.
  * No rail. Both columns align to the top and end where their content ends. Sparse (7.3):
  * when one column is empty, the other spans the shell.
- * The padding inside the background is not in the specs (UNRESOLVED_DESIGN_SYSTEM U-17):
- * space-module on every side.
+ * The background has the panel inset (LAY-20, DR-224): the section is the container, the
+ * inner div carries `panel-inset`. Space before and after the section is margin outside the
+ * background, set by the page (LAY-12, DR-205).
  */
 export function AnalysisOpinion({
   lang,
@@ -36,24 +37,26 @@ export function AnalysisOpinion({
       as="section"
       aria-labelledby="analysis-opinion-title"
       data-section="analysis-opinion"
-      className={cn("bg-surface-elevated p-(--space-module)", className)}
+      className={cn("@container bg-surface-elevated", className)}
     >
-      <SectionHeading id="analysis-opinion-title">
-        {t.analysisOpinion.title}
-      </SectionHeading>
-      <div
-        data-columns
-        className={cn(
-          "grid grid-cols-1 items-start gap-x-(--grid-column-gap) gap-y-(--space-module)",
-          both && "md:grid-cols-2",
-        )}
-      >
-        {analysis.length > 0 ? (
-          <AnalysisList lang={lang} stories={analysis} strings={t} />
-        ) : null}
-        {opinion.length > 0 ? (
-          <OpinionList lang={lang} stories={opinion} strings={t} />
-        ) : null}
+      <div className="panel-inset">
+        <SectionHeading id="analysis-opinion-title">
+          {t.analysisOpinion.title}
+        </SectionHeading>
+        <div
+          data-columns
+          className={cn(
+            "grid grid-cols-1 items-start gap-x-(--grid-column-gap) gap-y-(--space-module)",
+            both && "md:grid-cols-2",
+          )}
+        >
+          {analysis.length > 0 ? (
+            <AnalysisList lang={lang} stories={analysis} strings={t} />
+          ) : null}
+          {opinion.length > 0 ? (
+            <OpinionList lang={lang} stories={opinion} strings={t} />
+          ) : null}
+        </div>
       </div>
     </Shell>
   );

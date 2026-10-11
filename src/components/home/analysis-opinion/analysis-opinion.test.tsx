@@ -48,7 +48,8 @@ describe("AnalysisOpinion (P-4)", () => {
       "opinion",
     );
     expect(chip.closest("a")).toBeNull();
-    expect(chip.parentElement).toHaveClass("type-eyebrow", "text-ink");
+    // The chip is a label in a paragraph, not a heading: the story titles are the h3s (C-06).
+    expect(chip.parentElement?.tagName).toBe("P");
   });
 
   it("puts a আরও দেখুন link below the last item of each column (LAY-18)", () => {
@@ -70,21 +71,68 @@ describe("AnalysisOpinion (P-4)", () => {
     }
   });
 
-  it("lists every story, analysis with images and opinion with a hidden quote icon", () => {
+  it("gives the background the panel inset inside the shell (LAY-20, DR-224)", () => {
+    const { container } = renderSection("bn", full);
+    const section = container.firstElementChild as HTMLElement;
+    expect(section).toHaveClass("@container");
+    const inset = section.querySelector(".panel-inset");
+    expect(inset?.parentElement).toBe(section);
+    expect(section.className).not.toMatch(/\bp[xy]?-/);
+  });
+
+  it("builds the analysis column from one OverlapCard and compact StoryCard rows (P-4)", () => {
     const { container } = renderSection(
       "en",
       getHomepage("en").analysisOpinion!,
     );
     const analysis = container.querySelector('[data-column="analysis"]')!;
-    const opinion = container.querySelector('[data-column="opinion"]')!;
-    expect(analysis.querySelectorAll("li")).toHaveLength(4);
-    expect(opinion.querySelectorAll("li")).toHaveLength(4);
-    // One mock analysis story has no image (FL-04 hard cases).
+    expect(analysis.querySelectorAll("li")).toHaveLength(3);
+    const feature = analysis.querySelectorAll("[data-overlap-card]");
+    expect(feature).toHaveLength(1);
+    expect(feature[0].querySelector("[data-overlap-body]")).toHaveClass(
+      "bg-surface-elevated",
+    );
+    const rows = analysis.querySelectorAll("[data-story-card]");
+    expect(rows).toHaveLength(2);
+    for (const row of rows) {
+      expect(row).toHaveAttribute("data-layout", "row");
+      expect(row.querySelector(".type-summary")).toBeNull();
+    }
+    // Every story has an image: the mock story with none shows the placeholder (U-33).
     expect(analysis.querySelectorAll("img")).toHaveLength(3);
-    const icons = opinion.querySelectorAll("[data-quote-icon]");
-    expect(icons).toHaveLength(4);
-    for (const icon of icons)
-      expect(icon).toHaveAttribute("aria-hidden", "true");
+    // Every title is an h3 with one link; the column has no heading of its own.
+    expect(analysis.querySelectorAll("h3")).toHaveLength(3);
+    expect(analysis.querySelectorAll("h3 a")).toHaveLength(3);
+    expect(analysis.querySelector("h4")).toBeNull();
+  });
+
+  it("builds the opinion column from quote rows with the author and time on own lines (C-06)", () => {
+    const { container } = renderSection(
+      "en",
+      getHomepage("en").analysisOpinion!,
+    );
+    const opinion = container.querySelector('[data-column="opinion"]')!;
+    const items = opinion.querySelectorAll("li");
+    expect(items).toHaveLength(5);
+    expect(opinion.querySelector("ul")).toHaveClass("gap-y-6");
+    for (const item of items) {
+      const mark = item.querySelector("[data-quote-mark]")!;
+      expect(mark).toHaveAttribute("aria-hidden", "true");
+      expect(mark).toHaveClass("w-7", "sm:w-9", "lg:w-11");
+      expect(item.querySelector("article")).toHaveClass(
+        "gap-x-3",
+        "sm:gap-x-4",
+        "lg:gap-x-5",
+      );
+      expect(item.querySelectorAll("h3 a")).toHaveLength(1);
+      expect(item.querySelector("img")).toBeNull();
+      expect(item.querySelector("[data-author]")).toHaveClass(
+        "font-semibold",
+        "text-ink-secondary",
+      );
+      expect(item.querySelector("[data-author] a")).toBeNull();
+      expect(item.querySelector("[data-time]")).toHaveClass("text-ink-muted");
+    }
   });
 
   it("gives the আরও দেখুন links the base focus outline, not ring classes (COL-13)", () => {
