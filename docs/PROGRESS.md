@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-15 is Done
-- Next action: R2-16 Spacing check, after tajmin types `/ticket`
+- Ticket: R2-16 Spacing check (In review)
+- Next action: tajmin compares the screenshot pairs in `test-results/spacing/` and decides; then `/accept`
 
 ## FL-13 results
 
