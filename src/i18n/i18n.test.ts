@@ -36,6 +36,9 @@ describe("string tables", () => {
   it("the language switch names the other language in that language (DR-78)", () => {
     expect(bn.language.other).toBe("English");
     expect(en.language.other).toBe("বাংলা");
+    // Phones show the short name (spacing-layout-system.md Section 6).
+    expect(bn.language.otherShort).toBe("En");
+    expect(en.language.otherShort).toBe("বাংলা");
   });
 });
 

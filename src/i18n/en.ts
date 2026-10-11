@@ -9,12 +9,11 @@ export const en: Dictionary = {
   language: {
     // The switch names the other language in that language (DR-78).
     other: "বাংলা",
+    otherShort: "বাংলা",
   },
   theme: {
-    label: "Theme",
-    optionSystem: "System",
-    optionLight: "Light",
-    optionDark: "Dark",
+    // The name of the switch; it is on when the theme is dark (DR-167).
+    dark: "Dark theme",
   },
   header: {
     menu: "Menu",
@@ -24,11 +23,16 @@ export const en: Dictionary = {
     home: "Fact Lens, front page",
     search: "Search",
     searchField: "What are you looking for?",
+    searchPlaceholder: "Search",
     searchSubmit: "Search",
+    clear: "Clear",
+    trending: "Trending",
     closeSearch: "Close search",
     // Mock search (DR-01): the prototype has no results page.
     searchUnavailable: "This prototype does not show search results.",
-    subscribe: "Subscribe",
+    navHome: "Home",
+    // The name of the caret button that opens the sub-items of a drawer row.
+    expand: "sub-sections",
   },
   home: {
     // Visually hidden: the page heading for screen readers.
@@ -44,6 +48,7 @@ export const en: Dictionary = {
     title: "Analysis and Opinion",
     analysis: "Analysis",
     opinion: "Opinion",
+    opEd: "Op-ed",
   },
   // P-5 Most read (spacing-layout-system.md 7.2).
   mostRead: {
@@ -64,21 +69,7 @@ export const en: Dictionary = {
     // Accessible name of a "more" link: the visible text, then the section name.
     moreAbout: "See more: {section}",
   },
-  // P-3 rail. Mock only (DR-01): no email is sent and the poll keeps no server count.
-  newsletter: {
-    title: "Morning newsletter",
-    text: "The day's main news and analysis in your inbox every morning.",
-    emailLabel: "Email address",
-    submit: "Subscribe",
-    sending: "Sending…",
-    invalidEmail: "Enter a valid email address.",
-    done: "Thank you, you are subscribed.",
-    mockNote: "This prototype does not send email.",
-    // The consent line: before, the privacy link, after (keeps the word order per language).
-    consentBefore: "By subscribing you agree to our ",
-    privacy: "privacy policy",
-    consentAfter: ".",
-  },
+  // P-3 rail. Mock only (DR-01): the poll keeps no server count.
   poll: {
     title: "Daily poll",
     vote: "Vote",
@@ -89,7 +80,6 @@ export const en: Dictionary = {
   },
   ads: {
     label: "Advertisement",
-    placeholder: "Ad space",
   },
   // The minimum footer (spacing-layout-system.md 7.4, DR-59). Working labels (U-30).
   footer: {
@@ -101,11 +91,13 @@ export const en: Dictionary = {
     corrections: "Corrections",
     privacy: "Privacy",
     terms: "Terms",
+    copyright: "© {year} {name}. All rights reserved.",
     // The text name of each icon link, for screen readers.
     facebook: "Facebook",
     youtube: "YouTube",
     x: "X",
     instagram: "Instagram",
+    linkedin: "LinkedIn",
   },
   // Working labels until the IA label table exists (IA-06, U-01).
   categories: {

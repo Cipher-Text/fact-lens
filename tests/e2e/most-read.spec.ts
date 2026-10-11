@@ -1,8 +1,9 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { setTheme } from "./theme";
 
-// FL-10: P-5 Most read (spacing-layout-system.md 7.1 to 7.3, 8, 9, 13; DR-51, DR-68;
-// typography-system.md 7.1 type-rank; LAY-03, LAY-07, LAY-12, LAY-13, LAY-14, LAY-17,
+// R2-12: P-5 Most read, C-07 RankedList (component-system.md; spacing-layout-system.md
+// 7.1 to 7.3, 8, 9, 13; DR-51, DR-68, DR-144, DR-145; typography-system.md 7.1 type-rank; LAY-03, LAY-07, LAY-12, LAY-13, LAY-14, LAY-17,
 // TYP-17, COL-04, COL-13).
 
 const PAGES = [
@@ -51,21 +52,24 @@ for (const p of PAGES) {
 
         const gutter = width < 600 ? 16 : 24;
         const shell = Math.min(width - 2 * gutter, 1280);
-        const columnGap = width >= 1024 ? 24 : width >= 768 ? 20 : 16;
+        // C-07: 24px column gap at every width; row gap 20px on phones, 24px from 600.
+        const columnGap = 24;
+        const rowGap = width >= 600 ? 24 : 20;
         const space = width >= 1024 ? 40 : width >= 768 ? 32 : 24;
 
         const s = mostRead(page);
         const sectionBox = await box(s);
         expect(Math.round(sectionBox.width)).toBe(shell); // LAY-03
 
-        // 4 per row from 1024 with item 5 alone on row 2; 2 per row from 600;
-        // 1 per row on phones (DR-51, Section 8).
+        // 4 per row from 1280 (item 5 on row 2), 3 at 1024-1279 (items 4 and 5 on
+        // row 2), 2 per row from 600, 1 per row on phones (DR-51, DR-145, 7.2).
         const items = s.locator("[data-most-read-item]");
         await expect(items).toHaveCount(5);
         const b = await Promise.all(
           [0, 1, 2, 3, 4].map((i) => box(items.nth(i))),
         );
-        const perRow = width >= 1024 ? 4 : width >= 600 ? 2 : 1;
+        const perRow =
+          width >= 1280 ? 4 : width >= 1024 ? 3 : width >= 600 ? 2 : 1;
         for (let i = 0; i < 5; i++) {
           const column = i % perRow;
           const first = b[i - column];
@@ -74,6 +78,13 @@ for (const p of PAGES) {
           if (i >= perRow) {
             expect(Math.round(b[i].x)).toBe(Math.round(b[i - perRow].x));
             expect(b[i].y).toBeGreaterThan(b[i - perRow].y);
+          }
+          if (i === perRow) {
+            // Row gap between the first two rows is measured from the tallest item.
+            const rowBottom = Math.max(
+              ...b.slice(0, perRow).map((r) => r.y + r.height),
+            );
+            expect(Math.round(b[i].y - rowBottom)).toBe(rowGap);
           }
           if (column > 0) {
             const prev = b[i - 1];
@@ -84,8 +95,8 @@ for (const p of PAGES) {
         // Item 5 keeps its column width; the rest of row 2 stays empty.
         expect(Math.abs(b[4].width - b[0].width)).toBeLessThanOrEqual(1);
 
-        // type-rank (typography-system.md 7.1): numeral 40px in a 50px column with
-        // a 12px gap; 48px, 60px and 16px from 1024. The numeral uses
+        // type-rank (typography-system.md 7.1): numeral 44px in a 33px column with a
+        // 12px gap; 56px in a 42px column from 1024. The numeral uses
         // text-interactive, not brand (COL-04), and the page-language counter.
         const rank = await items.first().evaluate((li) => {
           const before = getComputedStyle(li, "::before");
@@ -105,10 +116,11 @@ for (const p of PAGES) {
           };
         });
         const big = width >= 1024;
-        expect(rank.columns.split(" ")[0]).toBe(big ? "60px" : "50px");
-        expect(rank.gap).toBe(big ? "16px" : "12px");
-        expect(rank.size).toBe(big ? "48px" : "40px");
-        expect(rank.weight).toBe("600");
+        // The column is 0.75em of the numeral: 33px and 42px.
+        expect(rank.columns.split(" ")[0]).toBe(big ? "42px" : "33px");
+        expect(rank.gap).toBe("12px");
+        expect(rank.size).toBe(big ? "56px" : "44px");
+        expect(rank.weight).toBe("700");
         expect(rank.color).toBe(rank.interactive);
         // Bengali digits on Bangla pages; decimal (the default, which Chrome omits
         // from the computed value) on English pages. The empty alternative text hides
@@ -126,7 +138,7 @@ for (const p of PAGES) {
           ),
         );
         expect(new Set(offsets.map(Math.round)).size).toBe(1);
-        expect(Math.round(offsets[0])).toBe(big ? 76 : 62);
+        expect(Math.round(offsets[0])).toBe(big ? 54 : 45); // column + 12px gap
 
         // After P-3 with no ad row between: P-3 keeps space-section, P-5 none above.
         // Then space-module and the ad-band (LAY-12, DR-68).
@@ -179,12 +191,56 @@ for (const p of PAGES) {
 
     for (const theme of ["light", "dark"] as const) {
       test(`axe in ${theme} theme`, async ({ page }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         await expect(mostRead(page)).toBeVisible();
         await expectNoBlockingAxe(page);
       });
     }
+
+    test("sheet checks: numeral nudge, no radius, border or rule, link colors (C-07)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.path);
+      const s = mostRead(page);
+      const first = s.locator("[data-most-read-item]").first();
+      const info = await first.evaluate((li) => {
+        const before = getComputedStyle(li, "::before");
+        const size = parseFloat(before.fontSize);
+        const link = li.querySelector("a")!;
+        const probe = (v: string) => {
+          const el = document.createElement("span");
+          el.style.color = `var(${v})`;
+          li.append(el);
+          const c = getComputedStyle(el).color;
+          el.remove();
+          return c;
+        };
+        const nodes = [li, li.querySelector("h3")!, link];
+        return {
+          // Glyph top on the first title line (DR-144): the nudge in em.
+          nudge: parseFloat(before.marginBlockStart) / size,
+          linkColor: getComputedStyle(link).color,
+          ink: probe("--ink"),
+          decorated: nodes.some(
+            (n) =>
+              getComputedStyle(n).textDecorationLine !== "none" ||
+              getComputedStyle(n).borderTopWidth !== "0px" ||
+              getComputedStyle(n).borderBottomWidth !== "0px" ||
+              getComputedStyle(n).borderRadius !== "0px" ||
+              getComputedStyle(n).boxShadow !== "none",
+          ),
+        };
+      });
+      expect(info.nudge).toBeCloseTo(p.bengali ? -0.125 : -0.1, 2);
+      expect(info.linkColor).toBe(info.ink);
+      expect(info.decorated).toBe(false);
+      const list = s.locator("ol");
+      expect(
+        await list.evaluate((el) => getComputedStyle(el).listStyleType),
+      ).toBe("none");
+    });
 
     test("heading, list semantics and language", async ({ page }) => {
       await page.goto(p.path);
@@ -231,7 +287,13 @@ for (const p of PAGES) {
           if (!el?.closest(sel)) return null;
           return {
             name: el.getAttribute("href") ?? el.tagName,
-            ring: getComputedStyle(el).boxShadow,
+            // The base outline (COL-13), or the old ring on controls that are not rebuilt yet.
+            ring: (() => {
+              const s = getComputedStyle(el);
+              return s.outlineStyle === "solid" && s.outlineWidth === "2px"
+                ? "outline"
+                : s.boxShadow;
+            })(),
           };
         }, selector);
         if (info) {

@@ -1,13 +1,12 @@
-import { act, render, screen, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import { getHomepage, getPoll } from "@/content";
 import { getDictionary } from "@/i18n";
 
 import { DailyPoll } from "./DailyPoll";
 import { GroupedCategories, MAX_INSETS } from "./GroupedCategories";
-import { MOCK_SEND_MS, NewsletterSignup } from "./NewsletterSignup";
 import { pollStorageKey } from "./usePollVote";
 
 function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
@@ -57,8 +56,9 @@ describe("GroupedCategories (P-3)", () => {
         (el) => el.getAttribute("data-ad-slot") ?? "row",
       ),
     ).toEqual(["row", "ad-inset", "row"]);
+    // The only ad in the rail is ad-rail (checked below); no inset there.
     expect(
-      container.querySelector("[data-grouped-rail] [data-ad-slot]"),
+      container.querySelector('[data-grouped-rail] [data-ad-slot="ad-inset"]'),
     ).toBeNull();
     expect(MAX_INSETS).toBe(3);
   });
@@ -72,88 +72,57 @@ describe("GroupedCategories (P-3)", () => {
     renderSection("bn");
     const section = screen.getByRole("region", { name: "অর্থনীতি ও বাণিজ্য" });
     expect(section).toHaveAttribute("id", "category-economy");
+    // The feature story is a StoryCard (title, summary, 3:2 image); then a list of 2 (C-23).
+    const feature = section.querySelector("[data-story-card]")!;
+    expect(
+      within(feature as HTMLElement).getByRole("heading", { level: 3 }),
+    ).toHaveClass("type-story-title");
+    expect(feature.querySelector("img")).not.toBeNull();
+    expect(feature.className).not.toMatch(/rounded|border/);
     const items = within(section).getAllByRole("listitem");
-    expect(items).toHaveLength(3);
-    expect(items.map((li) => li.querySelectorAll("img").length)).toEqual([
-      1, 0, 0,
-    ]);
-    expect(within(items[0]).getByRole("heading", { level: 3 })).toHaveClass(
-      "type-story-title",
-    );
-    expect(within(items[1]).getByRole("heading", { level: 3 })).toHaveClass(
-      "type-story-title-sm",
-    );
+    expect(items).toHaveLength(2);
+    for (const li of items) {
+      expect(within(li).getByRole("heading", { level: 3 })).toHaveClass(
+        "type-story-title-sm",
+      );
+    }
+    // The block heading is plain text, not a link (DR-122).
+    expect(
+      within(section).getByRole("heading", { level: 2 }).querySelector("a"),
+    ).toBeNull();
   });
 
-  it("has the newsletter, then the poll, in the rail with no ad colors (7.4)", () => {
+  it("has the poll, then the rail ad, in the rail; no newsletter, no ad colors in the poll (DR-239, 7.4)", () => {
     const { container } = renderSection("en");
     const rail = container.querySelector("[data-grouped-rail]")!;
     expect(
-      [...rail.children].map((el) =>
-        el.hasAttribute("data-newsletter") ? "newsletter" : "poll",
-      ),
-    ).toEqual(["newsletter", "poll"]);
-    expect(rail.innerHTML).not.toContain("surface-alt");
-    expect(rail.querySelector("#newsletter")).not.toBeNull();
+      [...rail.children].map((el) => el.getAttribute("data-ad-slot") ?? "poll"),
+    ).toEqual(["poll", "ad-rail"]);
+    // The rail ad is in the HTML at every width and hidden under 1280 (9.1, DR-244).
+    expect(rail.querySelector('[data-ad-slot="ad-rail"]')).toHaveClass(
+      "hidden",
+      "xl:grid",
+    );
+    expect(rail.querySelector("[data-poll]")!.innerHTML).not.toMatch(
+      /(^|[\s"])bg-surface-alt/,
+    );
+    expect(container.querySelector("#newsletter")).toBeNull();
+    expect(container.textContent).not.toMatch(/newsletter/i);
+  });
+
+  it("ends each block with a MoreLink to the category page (DR-110)", () => {
+    renderSection("en");
+    const section = screen.getByRole("region", { name: "Economy and Trade" });
+    expect(
+      within(section).getByRole("link", {
+        name: "See more: Economy and Trade",
+      }),
+    ).toHaveAttribute("href", "/en/category/economy");
   });
 
   it("uses the page language for every interface string (T-27)", () => {
     const { container } = renderSection("en");
     expect(container.textContent).not.toMatch(/[ঀ-৿]/);
-  });
-});
-
-describe("NewsletterSignup", () => {
-  afterEach(() => vi.useRealTimers());
-
-  it("shows an error for a bad email, in the page language", async () => {
-    const user = userEvent.setup();
-    render(
-      <NewsletterSignup lang="bn" strings={getDictionary("bn").newsletter} />,
-    );
-    const field = screen.getByLabelText("ইমেইল ঠিকানা");
-    await user.type(field, "reader@");
-    await user.click(screen.getByRole("button", { name: "সাবস্ক্রাইব করুন" }));
-    expect(field).toHaveAttribute("aria-invalid", "true");
-    expect(field).toHaveAccessibleDescription("সঠিক ইমেইল ঠিকানা লিখুন।");
-    expect(field).toHaveFocus();
-    // Editing the field clears the error.
-    await user.type(field, "x");
-    expect(field).not.toHaveAttribute("aria-invalid");
-  });
-
-  it("goes from sending to done for a good email", async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    const strings = getDictionary("en").newsletter;
-    const { container } = render(
-      <NewsletterSignup lang="en" strings={strings} />,
-    );
-    await user.type(
-      screen.getByLabelText("Email address"),
-      "reader@example.com",
-    );
-    await user.click(screen.getByRole("button", { name: "Subscribe" }));
-    const section = container.querySelector("[data-newsletter]")!;
-    expect(section).toHaveAttribute("data-status", "sending");
-    expect(screen.getByRole("button", { name: "Sending…" })).toHaveAttribute(
-      "aria-disabled",
-      "true",
-    );
-    await act(() => vi.advanceTimersByTimeAsync(MOCK_SEND_MS));
-    expect(section).toHaveAttribute("data-status", "done");
-    expect(screen.queryByRole("textbox")).toBeNull();
-    expect(screen.getByRole("status")).toHaveTextContent(strings.done);
-    expect(screen.getByRole("status")).toHaveFocus();
-  });
-
-  it("links the consent line to the privacy page in the page language", () => {
-    render(
-      <NewsletterSignup lang="en" strings={getDictionary("en").newsletter} />,
-    );
-    expect(
-      screen.getByRole("link", { name: "privacy policy" }),
-    ).toHaveAttribute("href", "/en/privacy");
   });
 });
 

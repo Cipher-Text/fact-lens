@@ -9,13 +9,13 @@ import { GroupedCategories } from "@/components/home/grouped/GroupedCategories";
 import { Hero } from "@/components/home/hero/Hero";
 import { MostRead } from "@/components/home/most-read/MostRead";
 import { Regions } from "@/components/home/regions/Regions";
-import { AdRow } from "@/components/layout/AdRow";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 // Homepage. Page order: spacing-layout-system.md Section 7.1.
-// ?content=sparse shows the sparse cases of Section 7.3 (IMP-11).
+// ?content=sparse shows the sparse cases of Section 7.3, in development only (IMP-11).
 export default async function HomePage({
   params,
   searchParams,
@@ -25,7 +25,10 @@ export default async function HomePage({
   const { content } = await searchParams;
   const t = getDictionary(lang);
   const home = getHomepage(lang, {
-    variant: content === "sparse" ? "sparse" : "full",
+    variant:
+      process.env.NODE_ENV !== "production" && content === "sparse"
+        ? "sparse"
+        : "full",
   });
   const featured = [home.featured.bangladesh, home.featured.geopolitics].filter(
     (section) => section !== null,
@@ -39,7 +42,7 @@ export default async function HomePage({
 
   return (
     <>
-      <AdRow slot="ad-band-top" strings={t.ads} />
+      <AdSlot variant="top" lang={lang} strings={t.ads} />
       <SiteHeader lang={lang} />
       <main id="main" className="pt-(--space-page-start)">
         <h1 className="sr-only">{t.home.title}</h1>
@@ -47,13 +50,8 @@ export default async function HomePage({
             before the ad row belongs to the section (LAY-12). */}
         {home.hero ? (
           <>
-            <Hero
-              lang={lang}
-              hero={home.hero}
-              t={t}
-              className="pb-(--space-module)"
-            />
-            <AdRow slot="ad-band" strings={t.ads} />
+            <Hero hero={home.hero} t={t} className="pb-(--space-module)" />
+            <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
         {home.analysisOpinion ? (
@@ -70,13 +68,14 @@ export default async function HomePage({
                 "mb-(--space-module)",
               )}
             />
-            <AdRow slot="ad-band" strings={t.ads} />
+            <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
         {/* P-2 for বাংলাদেশ, then ভূরাজনীতি, each with its ad row (DR-68). */}
         {featured.map((section, index) => (
           <Fragment key={section.category}>
             <FeaturedCategory
+              lang={lang}
               section={section}
               t={t}
               className={cn(
@@ -87,7 +86,7 @@ export default async function HomePage({
                 "pb-(--space-module)",
               )}
             />
-            <AdRow slot="ad-band" strings={t.ads} />
+            <AdSlot variant="band" lang={lang} strings={t.ads} />
           </Fragment>
         ))}
         {/* P-3: no ad row of its own; its ad-inset slots are inside it. P-5 Most read
@@ -119,13 +118,14 @@ export default async function HomePage({
                 "pb-(--space-module)",
               )}
             />
-            <AdRow slot="ad-band" strings={t.ads} />
+            <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
         {/* P-3b Regions, the last section (7.1). space-module after an ad row (LAY-12);
             space-section below it, before the footer (FL-12). No ad row of its own. */}
         {home.regions ? (
           <Regions
+            lang={lang}
             regions={home.regions}
             t={t}
             className={cn(

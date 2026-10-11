@@ -71,12 +71,3 @@ export function useModalDialog(
 
   return { dialogRef, triggerRef, open, close, closeForLink, onDialogClick };
 }
-
-/** The first focusable element in `root` that is shown at the current width. */
-export function firstVisible(
-  root: ParentNode,
-  selector: string,
-): HTMLElement | null {
-  const items = root.querySelectorAll<HTMLElement>(selector);
-  return Array.from(items).find((el) => el.getClientRects().length > 0) ?? null;
-}

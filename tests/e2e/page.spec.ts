@@ -1,4 +1,5 @@
 import { expect, test, type Locator } from "@playwright/test";
+import { setTheme } from "./theme";
 
 // Whole-page ad-row and heading checks, moved from the temporary layout-parts page
 // to the homepage in FL-13 (spacing-layout-system.md Section 9; LAY-09 to LAY-11;
@@ -8,9 +9,9 @@ const WIDTHS = [320, 360, 600, 768, 834, 1024, 1180, 1280, 1366, 1440, 1920];
 
 // Reserved creative heights (Section 9). The label line (--ad-label) adds 24px.
 function reserved(slot: string, width: number) {
-  if (slot === "ad-band-top")
-    return width < 768 ? 100 : width < 1024 ? 90 : 250;
+  if (slot === "ad-top") return width < 768 ? 100 : width < 1024 ? 90 : 250;
   if (slot === "ad-band") return width < 768 ? 280 : 250;
+  if (slot === "ad-rail") return 600; // from 1280 only
   return width < 1280 ? 250 : 90; // ad-inset
 }
 const AD_LABEL = 24;
@@ -35,12 +36,17 @@ for (const path of ["/", "/en"]) {
       for (let i = 0; i < count; i++) {
         const row = rows.nth(i);
         const slot = (await row.getAttribute("data-ad-slot"))!;
+        if (slot === "ad-rail" && width < 1280) {
+          // In the HTML at every width, hidden under 1280 (9.1, DR-244, DR-245).
+          await expect(row).toBeHidden();
+          continue;
+        }
         const rowBox = await box(row);
 
         expect(Math.round(rowBox.height), `${slot} #${i}`).toBe(
           reserved(slot, width) + AD_LABEL,
         );
-        if (slot !== "ad-inset") {
+        if (slot === "ad-top" || slot === "ad-band") {
           // Band rows are full width.
           expect(Math.round(rowBox.x)).toBe(0);
           expect(Math.round(rowBox.width)).toBe(width);
@@ -62,36 +68,47 @@ for (const path of ["/", "/en"]) {
             position: s.position,
           };
         });
-        expect(style.spacing).toEqual(Array(8).fill("0px"));
+        // ad-inset is full screen width under 332px, so its side margins are the
+        // negative page gutter there (DR-207).
+        if (slot === "ad-inset" && width < 332) {
+          expect(Math.round(rowBox.x)).toBe(0);
+          expect(Math.round(rowBox.width)).toBe(width);
+          expect(style.spacing.slice(0, 4)).toEqual(Array(4).fill("0px"));
+        } else {
+          expect(style.spacing).toEqual(Array(8).fill("0px"));
+        }
         expect(style.position).toBe("static");
 
         // The placeholder creative stays inside the row.
-        const creative = await box(row.locator("> div > div"));
+        const creative = await box(row.locator("img"));
         expect(creative.width).toBeLessThanOrEqual(rowBox.width);
       }
     });
   }
 }
 
-test("section headings have the brand rule above them (COL-04)", async ({
+test("section headings have the divider above them: border rule, brand bar, 12px to the title (C-13, C-22, COL-04)", async ({
   page,
 }) => {
-  await page.emulateMedia({ colorScheme: "light" });
+  await setTheme(page, "light");
   await page.goto("/en");
-  const row = page
-    .locator('[data-section="most-read"] .type-section-title')
-    .locator("..");
-  const style = await row.evaluate((el) => {
-    const s = getComputedStyle(el);
-    return {
-      width: s.borderTopWidth,
-      style: s.borderTopStyle,
-      color: s.borderTopColor,
-      pad: s.paddingTop,
-    };
+  const heading = page.locator(
+    '[data-section="most-read"] .type-section-title',
+  );
+  const divider = page.locator('[data-section="most-read"] [data-divider]');
+  const style = await divider.evaluate((el) => {
+    const [rule, bar] = [...el.children].map((child) => {
+      const s = getComputedStyle(child);
+      return { height: s.height, background: s.backgroundColor };
+    });
+    return { rule, bar };
   });
-  expect(style.width).toBe("1px");
-  expect(style.style).toBe("solid");
-  expect(style.color).toBe("rgb(153, 51, 20)"); // brand, light theme
-  expect(style.pad).toBe("12px"); // space-section-rule-title
+  expect(style.rule.height).toBe("1px");
+  expect(style.rule.background).toBe("rgb(221, 210, 196)"); // border, light theme
+  expect(style.bar.background).toBe("rgb(153, 51, 20)"); // brand, light theme
+  const gap =
+    (await heading.boundingBox())!.y -
+    (await divider.boundingBox())!.y -
+    (await divider.boundingBox())!.height;
+  expect(Math.round(gap)).toBe(12); // space-section-rule-title
 });

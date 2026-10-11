@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 600" width="300" height="600" aria-hidden="true">
+  <!-- Mock ad creative, 300 x 600. Neutral fill and the creative size only. -->
+  <rect width="300" height="600" fill="#b4b4b4"/>
+  <rect x="2" y="2" width="296" height="596" fill="none" stroke="#9a9a9a" stroke-width="4"/>
+</svg>

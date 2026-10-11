@@ -10,13 +10,14 @@ import {
   type ReactNode,
 } from "react";
 
-import { focusRing, iconButton } from "@/components/header/classes";
-import { railModule } from "@/components/home/grouped/classes";
 import { SectionHeading } from "@/components/layout/SectionHeading";
+import { Chip } from "@/components/story/Chip";
+import { IconButton } from "@/components/story/IconButton";
 import type { Dictionary } from "@/i18n";
 import {
-  easeOut,
+  cubicBezier,
   nextTabIndex,
+  parseCubicBezier,
   sliderEdges,
   sliderTarget,
   type SliderEdges,
@@ -26,7 +27,7 @@ import { cn } from "@/lib/utils";
 export type RegionPanel = {
   id: string;
   label: string;
-  /** The region's stories, rendered on the server. */
+  /** RegionSlider.panel body (image story and two stories), rendered on the server. */
   content: ReactNode;
 };
 
@@ -36,27 +37,37 @@ type RegionSliderProps = {
   strings: Dictionary["regionSlider"];
 };
 
-// 7.4: 200–300ms. Motion has no token yet (UNRESOLVED_DESIGN_SYSTEM U-02).
-const SCROLL_MS = 250;
-// 7.3 and 7.4: with 4 regions or fewer there are no buttons.
-const MIN_REGIONS_FOR_BUTTONS = 5;
+// duration-450 (DR-227, DR-151). The curve is the --ease-slide token, read at run time.
+const SLIDE_MS = 450;
+
+// Buttons show when more regions exist than are in view: 2 from 600px, 3 from 1024px and
+// 4 from 1280px (DR-140, DR-141). CSS decides, so the server markup has no layout shift.
+function buttonsVisibility(count: number) {
+  return cn(
+    "hidden shrink-0 gap-2 sm:flex",
+    count <= 2 && "sm:max-lg:hidden",
+    count <= 3 && "lg:max-xl:hidden",
+    count <= 4 && "xl:hidden",
+  );
+}
+
+function slideEasing() {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(
+    "--ease-slide",
+  );
+  const curve = parseCubicBezier(value);
+  return curve ? cubicBezier(...curve) : (t: number) => t;
+}
 
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-// Disabled at the end of the row: aria-disabled keeps the focus on the button (COL-13).
-const sliderButton = `${iconButton} aria-disabled:cursor-not-allowed aria-disabled:text-ink-disabled aria-disabled:hover:bg-transparent`;
-
-// A chip is as wide as its label and 44px tall or more (typography-system.md 7.1, TYP-09).
-// Neutral look (UNRESOLVED_DESIGN_SYSTEM U-28).
-const chip = `inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border border-border-interactive px-3 type-ui-sm text-interactive hover:bg-accent-subtle hover:text-interactive-hover aria-selected:border-interactive aria-selected:bg-interactive aria-selected:text-on-interactive ${focusRing}`;
-
 /**
- * P-3b Regions (spacing-layout-system.md 7.2 to 7.4, DR-54).
- * From 600px: one row of region columns in a scroll-snap container, 2 in view, 4 from
- * 1024px. The previous and next buttons move one column (width + gap) in 250ms, or at
- * once with reduced motion, and are disabled at each end. No loop, no autoplay. Swipe is
- * native scrolling. All regions are in the HTML, so the keyboard reaches every link.
+ * C-15 RegionSlider (P-3b, spacing-layout-system.md 7.2 to 7.4).
+ * From 600px: one row of region columns in a scroll-snap container (`region-row`), 2 in
+ * view, 3 from 1024px, 4 from 1280px. The previous and next buttons move one column
+ * (width + gap) in 450ms with ease-slide, or at once with reduced motion, and are disabled
+ * at each end. No loop, no autoplay. Swipe is native scrolling; the scrollbar is hidden. All regions are in the HTML, so the keyboard reaches every link.
  * Below 600px: region chips as tabs (tablist, arrow keys, aria-selected). One panel shows.
  * The tab mode follows the CSS: it is on while the tablist is displayed, so the JS has no
  * breakpoint of its own.
@@ -74,7 +85,6 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
   const rowRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const animation = useRef<{ frame: number; target: number } | null>(null);
-  const showButtons = regions.length >= MIN_REGIONS_FOR_BUTTONS;
 
   const updateEdges = useCallback(() => {
     const row = rowRef.current;
@@ -148,13 +158,14 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
       row.scrollLeft = target;
       return;
     }
+    const ease = slideEasing();
     // Snap would pull each frame back to a column, so it is off while the row moves.
     row.style.scrollSnapType = "none";
     const start = row.scrollLeft;
     const startTime = performance.now();
     const frame = (now: number) => {
-      const t = Math.min((now - startTime) / SCROLL_MS, 1);
-      row.scrollLeft = start + (target - start) * easeOut(t);
+      const t = Math.min((now - startTime) / SLIDE_MS, 1);
+      row.scrollLeft = start + (target - start) * ease(t);
       if (t < 1) {
         animation.current = { frame: requestAnimationFrame(frame), target };
       } else {
@@ -163,6 +174,14 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
       }
     };
     animation.current = { frame: requestAnimationFrame(frame), target };
+  };
+
+  // A touch, drag or wheel on the row stops the scripted slide, so a swipe is not fought.
+  const stopSlide = () => {
+    if (!animation.current) return;
+    cancelAnimationFrame(animation.current.frame);
+    animation.current = null;
+    if (rowRef.current) rowRef.current.style.scrollSnapType = "";
   };
 
   const select = (index: number) => {
@@ -183,32 +202,26 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
     select(index);
   };
 
-  const buttons = showButtons ? (
-    <div className="hidden shrink-0 gap-2 sm:flex">
-      <button
-        type="button"
-        className={sliderButton}
-        aria-label={strings.previous}
+  const buttons = (
+    <div className={buttonsVisibility(regions.length)}>
+      <IconButton
+        icon={ChevronLeft}
+        label={strings.previous}
         aria-controls="regions-row"
         aria-disabled={edges.atStart || undefined}
         onClick={() => !edges.atStart && move(-1)}
         data-region-previous
-      >
-        <ChevronLeft aria-hidden="true" className="size-6" />
-      </button>
-      <button
-        type="button"
-        className={sliderButton}
-        aria-label={strings.next}
+      />
+      <IconButton
+        icon={ChevronRight}
+        label={strings.next}
         aria-controls="regions-row"
         aria-disabled={edges.atEnd || undefined}
         onClick={() => !edges.atEnd && move(1)}
         data-region-next
-      >
-        <ChevronRight aria-hidden="true" className="size-6" />
-      </button>
+      />
     </div>
-  ) : null;
+  );
 
   return (
     <div ref={rootRef}>
@@ -222,37 +235,36 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
         role="tablist"
         aria-labelledby="regions-title"
         onKeyDown={onTabKeyDown}
-        className="-mx-1 mb-(--space-section-title-after) flex gap-2 overflow-x-auto p-1 sm:hidden"
+        className="-mx-1 mb-(--space-section-title-after) no-scrollbar flex gap-2 overflow-x-auto p-1 sm:hidden"
       >
         {regions.map((region, index) => (
-          <button
+          <Chip
+            variant="filter"
             key={region.id}
             ref={(node) => {
               tabRefs.current[index] = node;
             }}
-            type="button"
             role="tab"
             id={`region-${region.id}-tab`}
             aria-selected={index === selected}
             aria-controls={`region-${region.id}`}
             tabIndex={index === selected ? 0 : -1}
             onClick={() => select(index)}
-            className={chip}
             data-region-tab={region.id}
           >
             {region.label}
-          </button>
+          </Chip>
         ))}
       </div>
-      {/* From 600: the slider row. Column width = (row − gaps) / regions in view, from
-          the column gap token; 12.3 has no slider CSS (DOC-20). -m-1 with p-1 and
-          scroll-p-1 leave room for the focus ring, and the columns stay in line with
-          the shell. Below 600 only the selected panel shows. */}
+      {/* From 600: the slider row (`region-row`, components.css). Below 600 only the
+          selected panel shows. */}
       <div
         ref={rowRef}
         id="regions-row"
         onScroll={updateEdges}
-        className="grid auto-cols-fr grid-flow-col gap-x-(--grid-column-gap) sm:-m-1 sm:snap-x sm:snap-mandatory sm:scroll-p-1 sm:auto-cols-[calc((100%-var(--grid-column-gap))/2)] sm:overflow-x-auto sm:p-1 lg:auto-cols-[calc((100%-3*var(--grid-column-gap))/4)]"
+        onPointerDown={stopSlide}
+        onWheel={stopSlide}
+        className="region-row"
         data-region-row
       >
         {regions.map((region, index) => (
@@ -270,13 +282,10 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
             data-region={region.id}
           >
             {/* The chip names the panel on phones, so the heading is for screen
-                readers there. Same role as the chip (type-ui-sm), U-28. */}
+                readers there. */}
             <h3
               id={`region-${region.id}-title`}
-              className={cn(
-                railModule,
-                "mb-(--space-list-item) type-ui-sm text-ink max-sm:sr-only",
-              )}
+              className="mb-(--space-story-media-text) type-story-title-sm text-ink max-sm:sr-only"
             >
               {region.label}
             </h3>

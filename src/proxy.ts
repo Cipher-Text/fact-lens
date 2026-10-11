@@ -49,7 +49,10 @@ export function proxy(request: NextRequest) {
   if (pathname === "/" && request.cookies.get(LANG_COOKIE)?.value === "en") {
     const url = request.nextUrl.clone();
     url.pathname = localizedPath("en", "/");
-    return NextResponse.redirect(url);
+    const response = NextResponse.redirect(url);
+    // The answer depends on the cookie, so no shared cache may keep it.
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
   }
 
   const url = request.nextUrl.clone();

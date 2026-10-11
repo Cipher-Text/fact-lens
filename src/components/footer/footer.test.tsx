@@ -14,9 +14,10 @@ const CASES = [
       "যোগাযোগ",
       "সংশোধনী",
       "গোপনীয়তা নীতি",
-      "ব্যবহারের শর্তাবলি",
+      "শর্তাবলি",
     ],
-    networks: ["ফেসবুক", "ইউটিউব", "এক্স", "ইনস্টাগ্রাম"],
+    copyright: /^© [০-৯]{4} ফ্যাক্ট লেন্স/,
+    networks: ["ফেসবুক", "ইউটিউব", "এক্স", "ইনস্টাগ্রাম", "লিংকডইন"],
   },
   {
     lang: "en",
@@ -24,7 +25,8 @@ const CASES = [
     siteNav: "About the site",
     social: "Fact Lens on social media",
     pages: ["About", "Contact", "Corrections", "Privacy", "Terms"],
-    networks: ["Facebook", "YouTube", "X", "Instagram"],
+    copyright: /^© 20\d\d Fact Lens\. All rights reserved\.$/,
+    networks: ["Facebook", "YouTube", "X", "Instagram", "LinkedIn"],
   },
 ] as const;
 
@@ -51,9 +53,29 @@ describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
           PATHS.map((p) => `${c.prefix}/${p}`),
         );
         for (const link of links) {
-          expect(link.className).toContain("text-interactive"); // COL-05
-          expect(link.className).toContain("focus-visible:ring-2"); // COL-13
+          expect(link.className).toContain("text-ink-secondary"); // C-21 Footer.links
+          expect(link.className).toContain("hover:text-interactive-hover");
+          expect(link.className).toContain("active:text-interactive-pressed");
+          expect(link.className).not.toMatch(/underline/); // COL-06
+          expect(link.className).not.toMatch(/\bring/); // COL-13: the base outline, no ring classes
         }
+      });
+
+      it("is a surface-elevated band with the panel inset, not surface-alt (C-21, LAY-20)", () => {
+        render(<SiteFooter lang={c.lang} />);
+        const footer = screen.getByRole("contentinfo");
+        expect(footer.className).toContain("bg-surface-elevated");
+        expect(footer.className).not.toContain("surface-alt");
+        expect(footer.querySelector(".panel-inset")).not.toBeNull();
+      });
+
+      it("shows the copyright line in metadata size and ink-muted", () => {
+        render(<SiteFooter lang={c.lang} />);
+        const line = screen
+          .getByRole("contentinfo")
+          .querySelector("p.type-metadata");
+        expect(line?.className).toContain("text-ink-muted");
+        expect(line?.textContent).toMatch(c.copyright);
       });
 
       it("gives each social link a text name for screen readers and hides the icon", () => {
@@ -69,6 +91,7 @@ describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
           const svg = link.querySelector("svg");
           expect(svg).toHaveAttribute("aria-hidden", "true");
           expect(svg).toHaveAttribute("fill", "currentColor");
+          expect(link.className).toContain("text-ink"); // ink icons (C-21 Footer.social)
         }
       });
     });

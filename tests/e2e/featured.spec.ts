@@ -1,14 +1,17 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { setTheme } from "./theme";
 
-// FL-08: P-2 Featured category for বাংলাদেশ and ভূরাজনীতি (spacing-layout-system.md
-// 7.1 to 7.3, 13; DR-49, DR-55, DR-68, LAY-03, LAY-05, LAY-12, LAY-13).
+// R2-10: P-2 FeaturedCategorySection for বাংলাদেশ and ভূরাজনীতি (component-system.md P-2,
+// C-24, C-03; spacing-layout-system.md 7.1 to 7.3, 13; DR-118, DR-119, DR-121, DR-122,
+// DR-123, LAY-03, LAY-05, LAY-12, LAY-13).
 
 const PAGES = [
   {
     path: "/",
     lang: "bn",
     titles: { bangladesh: "বাংলাদেশ", geopolitics: "ভূরাজনীতি ও কূটনীতি" },
+    more: (title: string) => `আরও দেখুন: ${title}`,
   },
   {
     path: "/en",
@@ -17,6 +20,7 @@ const PAGES = [
       bangladesh: "Bangladesh",
       geopolitics: "Geopolitics and Diplomacy",
     },
+    more: (title: string) => `See more: ${title}`,
   },
 ] as const;
 
@@ -81,10 +85,9 @@ for (const p of PAGES) {
           const s = section(page, category);
           const wrapper = s.locator("[data-featured-wrapper]");
           const rail = s.locator("[data-featured-rail]");
-          const lead = s.locator("[data-featured-lead]");
-          const image = lead.locator("img");
-          const text = lead.locator("[data-featured-text]");
-          const items = rail.locator("li");
+          const feature = wrapper.locator("[data-story-card]");
+          const featureImage = feature.locator("[data-story-media] img");
+          const featureText = feature.locator("> div").first();
 
           // Shell width (LAY-03).
           const sectionBox = await box(s);
@@ -104,31 +107,83 @@ for (const p of PAGES) {
             expect(r.y).toBeGreaterThan(w.y + w.height);
           }
 
-          // Text under the image to 1279, beside it from 1280 (DR-55).
-          const i = await box(image);
-          const t = await box(text);
-          if (width >= 1280) {
-            expect(t.x).toBeGreaterThan(i.x + i.width);
-            expect(Math.round(t.y)).toBe(Math.round(i.y));
-          } else {
-            expect(t.y).toBeGreaterThanOrEqual(i.y + i.height);
+          // Feature story: one column under 768, image first, 16px to the text (P-2).
+          // From 768 the text is at the start and the image at the end, top aligned, with
+          // the image 50% (768 to 1023, DR-119) or 60% (from 1024, DR-118) of the free
+          // width, between 420 and 557px.
+          const i = await box(featureImage);
+          const t = await box(featureText);
+          expect(Math.round((i.width / i.height) * 100)).toBe(150); // 3:2
+          if (width < 768) {
+            expect(Math.round(i.width)).toBe(Math.round(w.width));
+            expect(Math.round(t.y)).toBe(Math.round(i.y + i.height + 16));
             expect(Math.round(t.x)).toBe(Math.round(i.x));
+          } else {
+            const share = width >= 1024 ? 0.6 : 0.5;
+            const expected = Math.min(
+              557,
+              Math.max(420, (w.width - 24) * share),
+            );
+            expect(Math.abs(i.width - expected)).toBeLessThanOrEqual(1);
+            expect(Math.round(t.y)).toBe(Math.round(i.y));
+            expect(Math.round(i.x + i.width)).toBe(Math.round(w.x + w.width));
+            expect(Math.round(i.x - (t.x + t.width))).toBe(24);
           }
 
-          // Rail: one image story, then two stories. Two columns at 600–1023.
-          await expect(items).toHaveCount(3);
-          await expect(items.nth(0).locator("img")).toHaveCount(1);
-          const first = await box(items.nth(0));
-          const second = await box(items.nth(1));
-          const third = await box(items.nth(2));
-          if (width >= 600 && width < 1024) {
-            expect(second.x).toBeGreaterThan(first.x + first.width);
-            expect(Math.round(second.y)).toBe(Math.round(first.y));
-            expect(third.y).toBeGreaterThan(second.y + second.height);
-          } else {
-            expect(second.y).toBeGreaterThan(first.y + first.height);
-            expect(third.y).toBeGreaterThan(second.y + second.height);
+          // The image link is as tall as its image, so the focus ring fits (COL-13).
+          for (const media of [
+            featureImage.locator("xpath=.."),
+            rail.locator("[data-story-media]"),
+          ]) {
+            const link = await box(media);
+            const img = await box(media.locator("img"));
+            expect(Math.abs(link.height - img.height)).toBeLessThanOrEqual(1);
           }
+
+          // Rail: one image story, then two text rows with a rule between (C-24, C-03).
+          const card = rail.locator("[data-story-card]");
+          const cardImage = card.locator("[data-story-media] img");
+          const cardText = card.locator("> div").first();
+          const rows = rail.locator("[data-story-list] > li");
+          await expect(rows).toHaveCount(2);
+          await expect(rows.locator("img")).toHaveCount(0);
+          const ci = await box(cardImage);
+          const ct = await box(cardText);
+          expect(Math.round((ci.width / ci.height) * 100)).toBe(178); // 16:9
+          if (width >= 1024) {
+            // In the 304px rail: image on top, 16px, text below.
+            expect(Math.round(ci.width)).toBe(304);
+            expect(Math.round(ct.y)).toBe(Math.round(ci.y + ci.height + 16));
+          } else {
+            // Row 2 : 1, 16px gap, text at the start, image at the end (DR-121).
+            const imageWidth = (r.width - 16) / 3;
+            expect(Math.abs(ci.width - imageWidth)).toBeLessThanOrEqual(1);
+            expect(Math.round(ct.y)).toBe(Math.round(ci.y));
+            expect(Math.round(ci.x + ci.width)).toBe(Math.round(r.x + r.width));
+            expect(Math.round(ci.x - (ct.x + ct.width))).toBe(16);
+          }
+          const cardBox = await box(card);
+          const firstRow = await box(rows.nth(0));
+          const secondRow = await box(rows.nth(1));
+          expect(firstRow.y).toBeGreaterThan(cardBox.y + cardBox.height);
+          expect(secondRow.y).toBeGreaterThan(firstRow.y + firstRow.height);
+
+          // One আরও দেখুন link below the wrapper and the rail, at the end edge (DR-123).
+          const more = s.getByRole("link", {
+            name: p.more(p.titles[category]),
+          });
+          await expect(more).toHaveCount(1);
+          await expect(more).toHaveAttribute(
+            "href",
+            `${p.lang === "bn" ? "" : "/en"}/category/${category}`,
+          );
+          const m = await box(more);
+          expect(m.y).toBeGreaterThan(
+            Math.max(w.y + w.height, r.y + r.height) - 1,
+          );
+          expect(
+            Math.abs(m.x + m.width - (sectionBox.x + sectionBox.width)),
+          ).toBeLessThanOrEqual(1);
 
           // No text is clipped and no word runs out of its box (LAY-17, TYP-09).
           const overflowing = await s.evaluate((el) =>
@@ -164,7 +219,7 @@ for (const p of PAGES) {
 
     for (const theme of ["light", "dark"] as const) {
       test(`axe in ${theme} theme`, async ({ page }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         await expectNoBlockingAxe(page);
       });
@@ -217,10 +272,11 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
       const selector = '[data-section="featured"]';
-      const links = page.locator(`${selector} a`);
+      // The image links have tabindex -1: one tab stop per story (C-24).
+      const links = page.locator(`${selector} a:not([tabindex="-1"])`);
       const count = await links.count();
-      // Per section: the lead and three rail stories.
-      expect(count).toBe(8);
+      // Per section: the feature story, three rail stories and the MoreLink.
+      expect(count).toBe(10);
 
       const seen: string[] = [];
       await page.locator("body").focus();
@@ -231,7 +287,13 @@ for (const p of PAGES) {
           if (!el?.closest(sel)) return null;
           return {
             href: el.getAttribute("href") ?? "",
-            ring: getComputedStyle(el).boxShadow,
+            // The base outline (COL-13), or the old ring on controls that are not rebuilt yet.
+            ring: (() => {
+              const s = getComputedStyle(el);
+              return s.outlineStyle === "solid" && s.outlineWidth === "2px"
+                ? "outline"
+                : s.boxShadow;
+            })(),
           };
         }, selector);
         if (info) {

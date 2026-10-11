@@ -1,4 +1,15 @@
-/* Copied from docs/design-system/typography-system.md Section 8.2. Do not edit values here. */
+/* Remove the Tailwind default font families, text sizes and weights (TYP-01, TYP-06, DR-235).
+   Only the Fact Lens roles and the weights 400 to 700 exist. */
+@theme {
+  --font-*: initial;
+  --text-*: initial;
+  --font-weight-*: initial;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --default-font-family: var(--font-ui-active);
+}
 
 @theme inline {
   --font-editorial: var(--font-editorial-active);
@@ -6,17 +17,23 @@
 }
 
 :root {
-  --font-editorial-active: var(--font-source-serif), Georgia, "Times New Roman", serif;
-  --font-ui-active: var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-
   --reader-scale: 1;
-  --type-body-min: 1.0625rem;
-  --type-eyebrow-case: uppercase;
-  --type-blockquote-style: italic;
 
   /* Line length caps (Section 5.1). Typography owns these tokens. */
   --measure-article-title: 56rem;
   --measure-deck: 36rem;
+}
+
+/* English values. :lang(en) gives an English block on a Bangla page English type (TYP-03, DR-203).
+   Language-free tokens stay on :root only: a :lang(en) copy of --reader-scale would reset the reader size. */
+:root,
+:lang(en) {
+  --font-editorial-active: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-ui-active: var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+
+  --type-body-min: 1.0625rem;
+  --type-eyebrow-case: uppercase;
+  --type-blockquote-style: italic;
 
   --type-display-size: clamp(2.75rem, 2.261rem + 2.174vw, 4rem);
   --type-display-weight: 600;
@@ -51,7 +68,7 @@
   --type-deck-line: 1.45;
   --type-deck-tracking: 0;
   --type-summary-size: 1rem;
-  --type-summary-weight: 400;
+  --type-summary-weight: 500;
   --type-summary-line: 1.5;
   --type-summary-tracking: 0;
   --type-article-body-size: clamp(1.062rem, 1.038rem + 0.109vw, 1.125rem);
@@ -74,16 +91,16 @@
   --type-pullquote-weight: 500;
   --type-pullquote-line: 1.2;
   --type-pullquote-tracking: -0.015em;
-  --type-section-title-size: clamp(1.25rem, 1.152rem + 0.435vw, 1.5rem);
-  --type-section-title-weight: 700;
-  --type-section-title-line: 1.2;
+  --type-section-title-size: 1.375rem;
+  --type-section-title-weight: 600;
+  --type-section-title-line: 1.25;
   --type-section-title-tracking: -0.01em;
   --type-eyebrow-size: 0.875rem;
   --type-eyebrow-weight: 700;
   --type-eyebrow-line: 1.2;
   --type-eyebrow-tracking: 0.06em;
   --type-metadata-size: 0.875rem;
-  --type-metadata-weight: 500;
+  --type-metadata-weight: 400;
   --type-metadata-line: 1.4;
   --type-metadata-tracking: 0.01em;
   --type-caption-size: 0.875rem;
@@ -102,6 +119,11 @@
   --type-button-weight: 600;
   --type-button-line: 1.2;
   --type-button-tracking: 0;
+  --type-rank-family: var(--font-editorial-active);
+  --type-rank-size: 2.75rem;
+  --type-rank-weight: 700;
+  --type-rank-line: 1;
+  --type-rank-nudge: -0.1em;
   --type-input-size: 1rem;
   --type-input-weight: 400;
   --type-input-line: 1.4;
@@ -149,7 +171,7 @@
   --type-deck-line: 1.55;
   --type-deck-tracking: 0;
   --type-summary-size: 1.0625rem;
-  --type-summary-weight: 400;
+  --type-summary-weight: 500;
   --type-summary-line: 1.6;
   --type-summary-tracking: 0;
   --type-article-body-size: clamp(1.125rem, 1.101rem + 0.109vw, 1.188rem);
@@ -172,8 +194,8 @@
   --type-pullquote-weight: 500;
   --type-pullquote-line: 1.32;
   --type-pullquote-tracking: 0;
-  --type-section-title-size: clamp(1.25rem, 1.152rem + 0.435vw, 1.5rem);
-  --type-section-title-weight: 700;
+  --type-section-title-size: 1.375rem;
+  --type-section-title-weight: 600;
   --type-section-title-line: 1.3;
   --type-section-title-tracking: 0;
   --type-eyebrow-size: 0.9375rem;
@@ -181,7 +203,7 @@
   --type-eyebrow-line: 1.35;
   --type-eyebrow-tracking: 0;
   --type-metadata-size: 0.9375rem;
-  --type-metadata-weight: 500;
+  --type-metadata-weight: 400;
   --type-metadata-line: 1.5;
   --type-metadata-tracking: 0;
   --type-caption-size: 0.9375rem;
@@ -200,6 +222,8 @@
   --type-button-weight: 600;
   --type-button-line: 1.35;
   --type-button-tracking: 0;
+  --type-rank-family: var(--font-ui-active);
+  --type-rank-nudge: -0.125em;
   --type-input-size: 1rem;
   --type-input-weight: 400;
   --type-input-line: 1.5;
@@ -212,7 +236,13 @@
 body {
   font-family: var(--font-ui-active);
   font-synthesis: none;
+  overflow-wrap: break-word; /* TYP-25 */
   font-optical-sizing: auto;
+}
+
+@media (min-width: 64rem) {
+  :root,
+  :lang(en) { --type-rank-size: 3.5rem; }
 }
 
 :lang(bn) em { font-style: normal; font-weight: 600; }
@@ -341,7 +371,7 @@ body {
 }
 
 @utility type-section-title {
-  font-family: var(--font-ui-active);
+  font-family: var(--font-editorial-active);
   font-size: var(--type-section-title-size);
   font-weight: var(--type-section-title-weight);
   line-height: var(--type-section-title-line);
@@ -405,17 +435,19 @@ body {
   letter-spacing: var(--type-input-tracking);
 }
 
-/* Most read numerals (type-rank). Copied from typography-system.md 7.1: the role has
-   no utility in 8.2 (DOC-04). */
-.rank-list { list-style: none; counter-reset: rank; }
-.rank-list > li { counter-increment: rank; display: grid; grid-template-columns: 3.125rem minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
-.rank-list > li::before { content: counter(rank, decimal); font: 600 2.5rem/1 var(--font-editorial-active); color: var(--interactive); font-variant-numeric: tabular-nums; }
-.rank-list:lang(bn) > li::before { content: counter(rank, bengali); }
-@media (min-width: 64rem) { .rank-list > li { grid-template-columns: 3.75rem minmax(0, 1fr); column-gap: 1rem; } .rank-list > li::before { font-size: 3rem; } }
-
-/* Project addition (DOC-19): 7.1 says the numeral is aria-hidden, but generated content
-   cannot take that attribute. The empty alternative text keeps it out of the
-   accessibility tree; the list order gives the rank. Browsers without the syntax keep
-   the rules above. */
-.rank-list > li::before { content: counter(rank, decimal) / ""; }
-.rank-list:lang(bn) > li::before { content: counter(rank, bengali) / ""; }
+@utility rank-list {
+  list-style: none;
+  counter-reset: rank;
+  & > li { counter-increment: rank; display: grid; grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
+  & > li::before {
+    content: counter(rank, decimal) / "";
+    font-family: var(--type-rank-family);
+    font-size: var(--type-rank-size);
+    font-weight: var(--type-rank-weight);
+    line-height: var(--type-rank-line);
+    margin-block-start: var(--type-rank-nudge);
+    color: var(--interactive);
+    font-variant-numeric: tabular-nums;
+  }
+  &:lang(bn) > li::before { content: counter(rank, bengali) / ""; }
+}

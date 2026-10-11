@@ -24,7 +24,9 @@ beforeAll(() => {
 
 function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
   const regions = getHomepage(lang, { variant }).regions!;
-  const view = render(<Regions regions={regions} t={getDictionary(lang)} />);
+  const view = render(
+    <Regions lang={lang} regions={regions} t={getDictionary(lang)} />,
+  );
   return { ...view, regions };
 }
 
@@ -90,28 +92,57 @@ describe("Regions (P-3b)", () => {
     expect(previous.parentElement!.className).toContain("sm:flex");
   });
 
-  it("has no buttons with 4 regions or fewer (7.3)", () => {
+  it("shows the buttons only while more regions exist than are in view (7.3, DR-140)", () => {
     const { regions } = renderSection("en", "sparse");
     expect(regions.length).toBeLessThanOrEqual(4);
-    expect(
-      screen.queryByRole("button", { name: "Previous region" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Next region" }),
-    ).not.toBeInTheDocument();
+    const buttons = screen.getByRole("button", {
+      name: "Previous region",
+    }).parentElement!;
+    // 2 regions are in view at 600 to 1023 and 3 from 1024. With 3 regions the
+    // buttons show only at 600 to 1023; with 4 they also show at 1024 to 1279.
+    expect(buttons.className).toContain("xl:hidden");
+    expect(buttons.className).toContain("lg:max-xl:hidden");
+    expect(buttons.className).not.toContain("sm:max-lg:hidden");
   });
 
-  it("shows 2 regions in view from 600 and 4 from 1024, and no other count", () => {
+  it("keeps the buttons at every width with 5 or more regions", () => {
+    const { regions } = renderSection("en");
+    expect(regions.length).toBeGreaterThan(4);
+    const buttons = screen.getByRole("button", {
+      name: "Previous region",
+    }).parentElement!;
+    expect(buttons.className).not.toContain(":hidden");
+  });
+
+  it("uses the region-row class for 2, 3 and 4 regions in view", () => {
     const { container } = renderSection("en");
     const row = container.querySelector("[data-region-row]")!;
-    expect(row.className).toContain(
-      "sm:auto-cols-[calc((100%-var(--grid-column-gap))/2)]",
-    );
-    expect(row.className).toContain(
-      "lg:auto-cols-[calc((100%-3*var(--grid-column-gap))/4)]",
-    );
-    expect(row.className).toContain("sm:snap-x");
-    expect(row.className).not.toMatch(/(md|xl|2xl):auto-cols/);
+    expect(row).toHaveClass("region-row");
+  });
+
+  it("builds each panel from an image story and two text stories", () => {
+    const { container } = renderSection("en");
+    for (const panel of container.querySelectorAll("[data-region]")) {
+      expect(panel.querySelectorAll("[data-story-card]")).toHaveLength(1);
+      expect(
+        panel.querySelectorAll("[data-story-list-item]").length,
+      ).toBeLessThanOrEqual(2);
+      // No "more" link per column (7.4).
+      expect(panel.querySelector('a[href*="/regions"]')).toBeNull();
+    }
+  });
+
+  it("has one 'See more' link at the section end, to the regions page (DR-142)", () => {
+    const { container } = renderSection("en");
+    const links = within(
+      container.querySelector('[data-section="regions"]') as HTMLElement,
+    ).getAllByRole("link", { name: /See more/ });
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveAttribute("href", "/en/regions");
+    renderSection("bn");
+    expect(
+      screen.getByRole("link", { name: /আরও দেখুন: অঞ্চল/ }),
+    ).toHaveAttribute("href", "/regions");
   });
 
   it("selects the region in the URL hash (nav and drawer links)", () => {

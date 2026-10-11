@@ -30,8 +30,8 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
   full: {
     hero: {
       lead: "river-data-framework",
-      // Two top-story cards (DR-44). The second has no image.
-      top: ["deep-sea-port-trial-ship", "joint-border-patrol-rules"],
+      // Two top-story cards (DR-44). Each has an image (DR-91).
+      top: ["deep-sea-port-trial-ship", "border-crossing-digital-pass"],
       latest: [
         "exports-september",
         "foreign-secretary-kathmandu",
@@ -45,7 +45,6 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
       analysis: [
         "small-state-balancing",
         "reserve-indicators",
-        "chip-supply-map",
         "bay-security-calculation",
       ],
       opinion: [
@@ -53,6 +52,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
         "opinion-climate-finance",
         "opinion-digital-economy-youth",
         "opinion-regional-history",
+        "opinion-energy-transition-labour",
       ],
     },
     featured: {
@@ -165,7 +165,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
       "coastal-embankment-project",
       "reserve-indicators",
     ],
-    // 4 regions or fewer after the empty one is removed: no slider buttons.
+    // 3 regions after the empty one is removed: all fit in view from 1024px, so no buttons there.
     regions: ["china", "india", "middle-east", "africa"],
   },
 };

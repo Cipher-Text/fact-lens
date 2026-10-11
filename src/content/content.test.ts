@@ -7,7 +7,9 @@ import { bn } from "@/i18n/bn";
 import { en } from "@/i18n/en";
 
 import { homepagePlans } from "./homepage";
+import { ads } from "./ads";
 import {
+  getAd,
   getHomepage,
   getPoll,
   getStory,
@@ -269,6 +271,114 @@ describe("getHomepage sparse (spacing-layout-system.md 7.3)", () => {
     expect(homepagePlans.sparse.regions).toContain("africa");
     expect(home.regions!.length).toBeLessThanOrEqual(4);
     expect(home.regions!.map((r) => r.region)).not.toContain("africa");
+  });
+});
+
+describe("same story ids in both languages (R2-03)", () => {
+  const ids = (h: Homepage) => allStories(h).map((s) => s.id);
+
+  it("has the same ids in the sparse homepage", () => {
+    expect(ids(getHomepage("bn", { variant: "sparse" }))).toEqual(
+      ids(getHomepage("en", { variant: "sparse" })),
+    );
+  });
+
+  it("has a title in both languages for every story", () => {
+    for (const def of stories) {
+      expect(def.bn.title.trim(), def.id).toBeTruthy();
+      expect(def.en.title.trim(), def.id).toBeTruthy();
+    }
+  });
+
+  it("keeps the same image and slug in both languages", () => {
+    for (const def of stories) {
+      const bnStory = getStory(def.id, "bn");
+      const enStory = getStory(def.id, "en");
+      expect(bnStory.slug).toBe(enStory.slug);
+      expect(bnStory.image?.src).toBe(enStory.image?.src);
+    }
+  });
+});
+
+describe("poll", () => {
+  for (const lang of langs) {
+    it(`has a question and 2 to 4 answers in ${lang}`, () => {
+      const poll = getPoll(lang);
+      expect(poll.lang).toBe(lang);
+      expect(poll.question.trim()).toBeTruthy();
+      expect(poll.options.length).toBeGreaterThanOrEqual(2);
+      expect(poll.options.length).toBeLessThanOrEqual(4);
+      for (const o of poll.options) {
+        expect(o.label.trim()).toBeTruthy();
+        if (lang === "bn") expect(o.label).toMatch(BENGALI);
+        else expect(o.label).not.toMatch(BENGALI);
+      }
+    });
+  }
+
+  it("has the same answer ids in both languages", () => {
+    expect(getPoll("bn").options.map((o) => o.id)).toEqual(
+      getPoll("en").options.map((o) => o.id),
+    );
+  });
+});
+
+describe("mock ads (spacing-layout-system.md 9, C-16)", () => {
+  const slots = ["ad-top", "ad-band", "ad-inset", "ad-rail"] as const;
+  // Sizes each slot serves, from the table in 9.
+  const allowed: Record<(typeof slots)[number], string[]> = {
+    "ad-top": ["320x100", "320x50", "728x90", "970x250", "970x90"],
+    "ad-band": ["336x280", "300x250", "728x90", "970x250", "970x90"],
+    "ad-inset": ["300x250", "728x90"],
+    "ad-rail": ["300x600", "300x250"],
+  };
+
+  it("has exactly one booking for each slot", () => {
+    expect(ads.map((a) => a.slot).sort()).toEqual([...slots].sort());
+  });
+
+  for (const lang of langs) {
+    for (const slot of slots) {
+      it(`serves only allowed local creatives for ${slot} in ${lang}`, () => {
+        const ad = getAd(slot, lang);
+        expect(ad.advertiser.trim()).toBeTruthy();
+        expect(ad.alt).toContain(ad.advertiser);
+        expect(ad.creatives.length).toBeGreaterThan(0);
+        for (const c of ad.creatives) {
+          expect(allowed[slot]).toContain(`${c.width}x${c.height}`);
+          expect(c.src).toMatch(/^\/mock\/ad-\d+x\d+\.svg$/);
+          const file = join(process.cwd(), "public", c.src);
+          expect(existsSync(file), c.src).toBe(true);
+          const [, w, h] =
+            /viewBox="0 0 (\d+) (\d+)"/.exec(readFileSync(file, "utf8")) ??
+            [];
+          expect([Number(w), Number(h)]).toEqual([c.width, c.height]);
+        }
+      });
+    }
+  }
+
+  it("has a rail creative of 300x600 or 300x250 (DR-241)", () => {
+    const sizes = getAd("ad-rail", "en").creatives.map(
+      (c) => `${c.width}x${c.height}`,
+    );
+    expect(sizes).toEqual(expect.arrayContaining(["300x600"]));
+  });
+
+  it("uses no remote image or link scheme other than https", () => {
+    for (const ad of ads) expect(ad.link).toMatch(/^https:\/\//);
+  });
+
+  it("throws for a slot with no booking", () => {
+    // @ts-expect-error not a slot
+    expect(() => getAd("ad-inline", "bn")).toThrow(/No mock ad/);
+  });
+});
+
+describe("no newsletter content (DR-239)", () => {
+  it("has none in the content files", () => {
+    const text = JSON.stringify([stories, ads, getPoll("bn"), getPoll("en")]);
+    expect(text).not.toMatch(/newsletter|নিউজলেটার/i);
   });
 });
 

@@ -64,27 +64,27 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 
 | Ticket | Title | Needs | Status |
 | --- | --- | --- | --- |
-| R2-00 | Start the run 2 branch | – | To do |
-| R2-01 | Clean up from run 1 | R2-00 | To do |
-| R2-02 | Foundations CSS | R2-00 | To do |
-| R2-03 | Mock content | R2-02 | To do |
-| R2-04 | Small parts | R2-02 | To do |
-| R2-05 | Page chrome | R2-04 | To do |
-| R2-06 | Ad slots and page frame | R2-03 | To do |
-| R2-07 | Story units | R2-04 | To do |
-| R2-08 | Hero (P-1) | R2-07 | To do |
-| R2-09 | Analysis and opinion (P-4) | R2-07 | To do |
-| R2-10 | Featured categories (P-2) | R2-07 | To do |
-| R2-11 | Grouped categories and rail (P-3) | R2-06, R2-07 | To do |
-| R2-12 | Most read (P-5) | R2-07 | To do |
-| R2-13 | Regions (P-3b) | R2-07 | To do |
-| R2-14 | Footer | R2-04 | To do |
-| R2-15 | 200% text size | R2-08 to R2-14 | To do |
-| R2-16 | Spacing check | R2-15 | To do |
-| R2-17 | Final check | R2-16 | To do |
-| R2-18 | Branch preview | R2-17 | To do |
-| R2-19 | Pull request | R2-18 | To do |
-| R2-20 | Code review | R2-19 | To do |
+| R2-00 | Start the run 2 branch | – | Done |
+| R2-01 | Clean up from run 1 | R2-00 | Done |
+| R2-02 | Foundations CSS | R2-00 | Done |
+| R2-03 | Mock content | R2-02 | Done |
+| R2-04 | Small parts | R2-02 | Done |
+| R2-05 | Page chrome | R2-04 | Done |
+| R2-06 | Ad slots and page frame | R2-03 | Done |
+| R2-07 | Story units | R2-04 | Done |
+| R2-08 | Hero (P-1) | R2-07 | Done |
+| R2-09 | Analysis and opinion (P-4) | R2-07 | Done |
+| R2-10 | Featured categories (P-2) | R2-07 | Done |
+| R2-11 | Grouped categories and rail (P-3) | R2-06, R2-07 | Done |
+| R2-12 | Most read (P-5) | R2-07 | Done |
+| R2-13 | Regions (P-3b) | R2-07 | Done |
+| R2-14 | Footer | R2-04 | Done |
+| R2-15 | 200% text size | R2-08 to R2-14 | Done |
+| R2-16 | Spacing check | R2-15 | Done |
+| R2-17 | Final check | R2-16 | Done |
+| R2-18 | Branch preview | R2-17 | Done |
+| R2-19 | Pull request | R2-18 | Done |
+| R2-20 | Code review | R2-19 | Done |
 | R2-21 | Merge into main | R2-20 | To do |
 
 ## Run 2 tickets

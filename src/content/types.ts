@@ -110,3 +110,23 @@ export interface Homepage {
 }
 
 export type HomepageVariant = "full" | "sparse";
+
+/** The four ad slots (spacing-layout-system.md 9). `ad-inline` is for article pages, later. */
+export type AdSlotId = "ad-top" | "ad-band" | "ad-inset" | "ad-rail";
+
+export interface AdCreative {
+  src: string; // /mock/ad-<width>x<height>.svg
+  width: number;
+  height: number;
+}
+
+/** One mock booking for a slot, in the page language. */
+export interface Ad {
+  slot: AdSlotId;
+  advertiser: string; // names the advertiser in the alt text (9.2)
+  alt: string;
+  link: string;
+  startsOn: string;
+  endsOn: string;
+  creatives: AdCreative[];
+}

@@ -7,12 +7,12 @@ export const bn = {
   language: {
     // The switch names the other language in that language (DR-78).
     other: "English",
+    // The phone top bar has less room (spacing-layout-system.md Section 6).
+    otherShort: "En",
   },
   theme: {
-    label: "থিম",
-    optionSystem: "সিস্টেম",
-    optionLight: "লাইট",
-    optionDark: "ডার্ক",
+    // The name of the switch; it is on when the theme is dark (DR-167).
+    dark: "ডার্ক থিম",
   },
   header: {
     menu: "মেনু",
@@ -22,11 +22,16 @@ export const bn = {
     home: "ফ্যাক্ট লেন্স, প্রথম পাতা",
     search: "অনুসন্ধান",
     searchField: "কী খুঁজছেন?",
+    searchPlaceholder: "খুঁজুন",
     searchSubmit: "খুঁজুন",
+    clear: "মুছুন",
+    trending: "ট্রেন্ডিং",
     closeSearch: "অনুসন্ধান বন্ধ করুন",
     // Mock search (DR-01): the prototype has no results page.
     searchUnavailable: "এই প্রোটোটাইপে অনুসন্ধানের ফল দেখানো হয় না।",
-    subscribe: "সাবস্ক্রাইব",
+    navHome: "হোম",
+    // The name of the caret button that opens the sub-items of a drawer row.
+    expand: "উপবিভাগ",
   },
   home: {
     // Visually hidden: the page heading for screen readers.
@@ -42,6 +47,7 @@ export const bn = {
     title: "বিশ্লেষণ ও মতামত",
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
+    opEd: "অপ-এড",
   },
   // P-5. Working label: the specs name the section in English only (U-26).
   mostRead: {
@@ -63,21 +69,7 @@ export const bn = {
     // Accessible name of a "more" link: the visible text, then the section name.
     moreAbout: "আরও দেখুন: {section}",
   },
-  // P-3 rail. Mock only (DR-01): no email is sent and the poll keeps no server count.
-  newsletter: {
-    title: "সকালের নিউজলেটার",
-    text: "প্রতিদিন সকালে দিনের প্রধান খবর ও বিশ্লেষণ, সরাসরি আপনার ইনবক্সে।",
-    emailLabel: "ইমেইল ঠিকানা",
-    submit: "সাবস্ক্রাইব করুন",
-    sending: "পাঠানো হচ্ছে…",
-    invalidEmail: "সঠিক ইমেইল ঠিকানা লিখুন।",
-    done: "ধন্যবাদ, আপনি সাবস্ক্রাইব করেছেন।",
-    mockNote: "এই প্রোটোটাইপ কোনো ইমেইল পাঠায় না।",
-    // The consent line: before, the privacy link, after (keeps the word order per language).
-    consentBefore: "সাবস্ক্রাইব করলে আপনি আমাদের ",
-    privacy: "গোপনীয়তা নীতি",
-    consentAfter: " মেনে নিচ্ছেন।",
-  },
+  // P-3 rail. Mock only (DR-01): the poll keeps no server count.
   poll: {
     title: "আজকের জরিপ",
     vote: "ভোট দিন",
@@ -88,7 +80,6 @@ export const bn = {
   },
   ads: {
     label: "বিজ্ঞাপন",
-    placeholder: "বিজ্ঞাপনের জায়গা",
   },
   // The minimum footer (spacing-layout-system.md 7.4, DR-59). Working labels (U-30).
   footer: {
@@ -99,12 +90,14 @@ export const bn = {
     contact: "যোগাযোগ",
     corrections: "সংশোধনী",
     privacy: "গোপনীয়তা নীতি",
-    terms: "ব্যবহারের শর্তাবলি",
+    terms: "শর্তাবলি",
+    copyright: "© {year} {name}। সর্বস্বত্ব সংরক্ষিত।",
     // The text name of each icon link, for screen readers.
     facebook: "ফেসবুক",
     youtube: "ইউটিউব",
     x: "এক্স",
     instagram: "ইনস্টাগ্রাম",
+    linkedin: "লিংকডইন",
   },
   // Category labels (mock-content skill). চীন is a region, not a category (DR-19).
   categories: {

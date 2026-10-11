@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { setTheme } from "./theme";
 
 // FL-07: P-4 বিশ্লেষণ ও মতামত (spacing-layout-system.md 7.2 to 7.4, 13;
 // DR-52, DR-76, DR-77, LAY-03, LAY-12, LAY-13, LAY-18).
@@ -98,12 +99,15 @@ for (const p of PAGES) {
           expect(Math.round(o.width)).toBe(Math.round(a.width));
         }
 
-        // Each "more" link sits below the last item of its column, at the start (LAY-18).
+        // Each "more" link sits below the last item of its column, at the end edge (CPT-14, CPT-15).
         for (const column of [analysis, opinion]) {
           const last = await box(column.locator("li").last());
           const more = await box(column.locator("ul + p a"));
           expect(more.y).toBeGreaterThan(last.y + last.height);
-          expect(Math.round(more.x)).toBe(Math.round((await box(column)).x));
+          const columnBox = await box(column);
+          expect(
+            Math.abs(more.x + more.width - (columnBox.x + columnBox.width)),
+          ).toBeLessThanOrEqual(1);
         }
 
         // No text is clipped (LAY-17, TYP-09).
@@ -158,7 +162,7 @@ for (const p of PAGES) {
       test(`surface-elevated background in ${theme} theme (DR-76)`, async ({
         page,
       }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         const section = page.locator(SECTION);
         const background = await section.evaluate(
@@ -171,7 +175,7 @@ for (const p of PAGES) {
       });
 
       test(`axe in ${theme} theme`, async ({ page }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         await expectNoBlockingAxe(page);
       });
@@ -227,10 +231,12 @@ for (const p of PAGES) {
     }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
-      const links = page.locator(`${SECTION} a`);
+      // The image links have tabindex -1 (one tab stop per story, C-02, C-24).
+      const links = page.locator(`${SECTION} a:not([tabindex="-1"])`);
       const count = await links.count();
-      // Four analysis and four opinion stories, and two more links.
-      expect(count).toBe(10);
+      // Three analysis titles with their category links (Eyebrow, C-08), five opinion
+      // titles, and two more links.
+      expect(count).toBe(13);
 
       const seen: string[] = [];
       await page.locator("body").focus();
@@ -241,11 +247,11 @@ for (const p of PAGES) {
           if (!el?.closest(selector)) return null;
           return {
             href: el.getAttribute("href") ?? "",
-            ring: getComputedStyle(el).boxShadow,
+            outline: `${getComputedStyle(el).outlineStyle} ${getComputedStyle(el).outlineWidth}`,
           };
         }, SECTION);
         if (info) {
-          expect(info.ring).not.toBe("none"); // COL-13
+          expect(info.outline).toBe("solid 2px"); // COL-13, base rule
           seen.push(info.href);
         }
       }
@@ -253,6 +259,141 @@ for (const p of PAGES) {
     });
   });
 }
+
+test.describe("sheet checks (P-4, C-02, C-06, C-24)", () => {
+  for (const p of PAGES) {
+    for (const width of [360, 768, 1366]) {
+      test(`${p.path} at ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        const section = page.locator(SECTION);
+
+        // Panel inset by the section width as container: 40 / 32 under 600, 48 / 40 from 600 (LAY-20, DR-224).
+        const sectionBox = await box(section);
+        const [block, inline] = sectionBox.width < 600 ? [40, 32] : [48, 40];
+        const padding = await section.locator(".panel-inset").evaluate((el) => {
+          const s = getComputedStyle(el);
+          return [s.paddingTop, s.paddingBottom, s.paddingLeft, s.paddingRight];
+        });
+        expect(padding).toEqual(
+          [block, block, inline, inline].map((v) => `${v}px`),
+        );
+
+        // No radius and no card border anywhere in the section (CPT-05, CPT-06).
+        const decorated = await section.evaluate((el) =>
+          [el, ...el.querySelectorAll("*")]
+            .filter((n) => {
+              const s = getComputedStyle(n);
+              return (
+                !n.closest("svg") &&
+                (s.borderTopLeftRadius !== "0px" ||
+                  (n.tagName !== "LI" && s.borderTopWidth !== "0px"))
+              );
+            })
+            .map((n) => n.tagName),
+        );
+        expect(decorated).toEqual([]);
+
+        // Analysis: one OverlapCard, then two compact rows.
+        const analysis = section.locator('[data-column="analysis"]');
+        await expect(analysis.locator("[data-overlap-card]")).toHaveCount(1);
+        await expect(analysis.locator("[data-story-card]")).toHaveCount(2);
+        const card = analysis.locator("[data-overlap-card]");
+        const media = await box(card.locator("[data-story-media] img"));
+        const body = await box(card.locator("[data-overlap-body]"));
+        const cardBox = await box(card);
+        // The text block covers the image bottom by 10% of the card width (40 to 64px)
+        // from the start edge and stops the same short of the end edge.
+        const inset = Math.min(Math.max(cardBox.width * 0.1, 40), 64);
+        expect(Math.round(media.y + media.height - body.y)).toBe(
+          Math.round(inset),
+        );
+        expect(Math.round(body.x - cardBox.x)).toBe(0);
+        expect(Math.round(media.x + media.width - (body.x + body.width))).toBe(
+          Math.round(inset),
+        );
+        expect(
+          await card
+            .locator("[data-overlap-body]")
+            .evaluate((el) => getComputedStyle(el).backgroundColor),
+        ).toBe(await tokenColor(page, "--surface-elevated"));
+
+        // Compact rows: text at the start, 16:9 image at the end, text : image = 2 : 1, 16px gap.
+        for (const row of await analysis.locator("[data-story-card]").all()) {
+          const rowBox = await box(row);
+          const img = await box(row.locator("[data-story-media] img"));
+          const text = await box(row.locator("h3"));
+          expect(Math.round((img.width / img.height) * 100)).toBe(178);
+          expect(img.x).toBeGreaterThan(text.x);
+          expect(Math.round(img.x + img.width)).toBe(
+            Math.round(rowBox.x + rowBox.width),
+          );
+          expect(Math.round(((rowBox.width - 16) * 1) / 3)).toBe(
+            Math.round(img.width),
+          );
+          await expect(row.locator(".type-summary")).toHaveCount(0);
+        }
+
+        // Every story title is an h3 with one link (P-4, C-06).
+        await expect(section.locator("h3")).toHaveCount(8);
+        await expect(section.locator("h3 a")).toHaveCount(8);
+
+        // Opinion: the quote mark width and gap by width, 24px between rows, no rule.
+        const opinion = section.locator('[data-column="opinion"]');
+        const [markWidth, gap] =
+          width < 600 ? [28, 12] : width < 1024 ? [36, 16] : [44, 20];
+        const items = await opinion.locator("li").all();
+        expect(items).toHaveLength(5);
+        for (const item of items) {
+          const mark = await box(item.locator("[data-quote-mark]"));
+          expect(Math.round(mark.width)).toBe(markWidth);
+          expect(Math.round(mark.height)).toBe(
+            Math.round((markWidth * 36) / 44),
+          );
+          const title = await box(item.locator("h3"));
+          expect(Math.round(title.x - (mark.x + mark.width))).toBe(gap);
+          expect(
+            Math.round(title.y - (await box(item.locator("article"))).y),
+          ).toBe(0);
+          // Author and time on own lines, below the title, 600 and 400 (C-06).
+          const author = item.locator("[data-author]");
+          const time = item.locator("[data-time]");
+          expect(
+            await author.evaluate((el) => getComputedStyle(el).fontWeight),
+          ).toBe("600");
+          expect(
+            await time.evaluate((el) => getComputedStyle(el).fontWeight),
+          ).toBe("400");
+          expect((await box(author)).y).toBeGreaterThanOrEqual(
+            title.y + title.height,
+          );
+          expect((await box(time)).y).toBeGreaterThanOrEqual(
+            (await box(author)).y + (await box(author)).height - 1,
+          );
+          expect(
+            await item.evaluate((el) => getComputedStyle(el).borderTopWidth),
+          ).toBe("0px");
+        }
+        for (let i = 1; i < items.length; i++) {
+          const prev = await box(items[i - 1]);
+          const cur = await box(items[i]);
+          expect(Math.round(cur.y - (prev.y + prev.height))).toBe(24);
+        }
+
+        // The chip: brand fill in light, on-interactive text, 2px 8px, a label and not a link.
+        const chip = opinion.locator("[data-chip]");
+        const chipPadding = await chip.evaluate((el) => {
+          const s = getComputedStyle(el);
+          return [s.paddingTop, s.paddingRight, s.paddingBottom, s.paddingLeft];
+        });
+        expect(chipPadding).toEqual(["2px", "8px", "2px", "8px"]);
+        expect(
+          await chip.evaluate((el) => getComputedStyle(el).backgroundColor),
+        ).toBe(await tokenColor(page, "--brand"));
+      });
+    }
+  }
+});
 
 test("page order: hero, ad, analysis and opinion, ad (7.1)", async ({
   page,

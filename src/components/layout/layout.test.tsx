@@ -1,10 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { bn } from "@/i18n/bn";
-import { en } from "@/i18n/en";
-
-import { AdRow, type AdSlot } from "./AdRow";
 import { PeerCard, PeerRow } from "./PeerRow";
 import { Rail } from "./Rail";
 import { SectionHeading } from "./SectionHeading";
@@ -74,31 +70,5 @@ describe("PeerRow and PeerCard", () => {
     expect(card.tagName).toBe("LI");
     expect(card).toHaveClass("peer-card");
     expect(card.style.getPropertyValue("--card-parts")).toBe("5");
-  });
-});
-
-describe("AdRow", () => {
-  const slots: AdSlot[] = ["ad-band-top", "ad-band", "ad-inset"];
-
-  for (const slot of slots) {
-    it(`${slot} reserves its height token and has no spacing (LAY-09, LAY-10)`, () => {
-      const { container } = render(<AdRow slot={slot} strings={en.ads} />);
-      const row = container.firstElementChild as HTMLElement;
-      expect(row).toHaveAttribute("data-ad-slot", slot);
-      expect(row).toHaveClass("ad-row", "bg-surface-alt");
-      expect(row.className).not.toMatch(/\b-?[pm][xytblrse]?-/);
-      expect(row.innerHTML).toContain(`h-(--${slot}-height)`);
-      expect(row.innerHTML).toContain(`w-(--${slot}-width)`);
-      expect(row.className).not.toMatch(/\b(sticky|fixed)\b/);
-    });
-  }
-
-  it("shows the label in the page language (T-27)", () => {
-    render(<AdRow slot="ad-band" strings={bn.ads} />);
-    expect(screen.getByText("বিজ্ঞাপন")).toHaveClass(
-      "type-eyebrow",
-      "text-ink-muted",
-    );
-    expect(screen.queryByText("Advertisement")).toBeNull();
   });
 });
