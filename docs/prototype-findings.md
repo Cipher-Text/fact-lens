@@ -58,6 +58,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Workaround in code |
 | DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Open |
 | DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Open (flag) |
+| DOC-34 | R2-15 | C-17 and §12.3 give the top bar `h-(--bar-height)` (a fixed height); the C-17 checks and DR-81 say the bar can wrap to two lines at 200% text size | Low | Open (flag) |
 | DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
@@ -95,6 +96,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-34 | R2-09 | P-4 analysis stories: the P-4 sheet says rules between stories wait on the item divider (DR-104), but C-03 says StoryList rules and the other lists draw them | Low | Open (flag) |
 | U-35 | R2-09 | C-06 quote mark: the sheet gives sizes and color, no drawing | Low | Open |
 | U-36 | R2-13 | C-15 panel: "3:2 image, 3 stories". The sheet does not say if the image belongs to the first story. Built as an image story (StoryCard 3:2) plus two text stories = 3 stories | Low | Open (flag) |
+| U-37 | R2-15 | At 200% text size nothing sets the P-4 compact rows to stack: no trigger exists (DR-81, A11Y-18). Most read stacks because the rem breakpoints move with the browser text size | Medium | Open (flag) |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check before the first deploy (FL-14 rejected) |
@@ -414,6 +416,16 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Also:** C-21 says the links "wrap to 2 centered lines" on phones. At 320 (256px of content, 24px gaps) they wrap to 3 lines in Bangla (2 + 2 + 1) and in English; at 360 they wrap to 2. Not changed: the sheet fixes the 24px gap and text may not shrink (TYP-09). Fixing DOC-33 (no side inset) would give 288px at 320.
 - **Built as:** The band carries `panel-inset`. The content is `mx-auto w-full max-w-(--measure-shell)` inside it: centered, never wider than the shell, and not narrowed by the gutter a second time. The content is therefore narrower than the page shell by 16px (phone) to 16px (tablet) per side. Not called a Fact Lens standard. The test checks these values.
 - **Suggested solution:** Say in C-21 whether the panel inset replaces the gutter (as built) or the vertical values only are used, or give the footer a `panel-inset` variant without side values.
+
+---
+
+### DOC-34 Top bar: fixed height against wrapping at 200% text size
+
+- **Found:** R2-15 · **Severity:** Low · **Status:** Open (flag for tajmin)
+- **Source:** `component-system.md` C-17 (Checks: "At 200% browser text size the bar can wrap to two lines; it never scrolls sideways (DR-81)"), `spacing-layout-system.md` 12.3 ("`TopBar` sets `sticky top-0 z-(--z-bar) h-(--bar-height)`", DR-234), LAY-17 (no fixed height on text containers).
+- **Problem:** With `h-(--bar-height)` the bar cannot grow, so it cannot wrap. Measured at 320 with a 200% browser text size (root 32px): the language link and the theme button end at 412px (Bangla 447px) in a 320px page, and the page scrolls sideways.
+- **Built as:** `min-h-(--bar-height)` instead of `h-(--bar-height)`, with `flex-wrap` on the row of three groups. At 100% the bar is still 56px (64px from 1024). At 200% and 320 the bar is 153px high in two lines: menu and logo, then language and theme at the end; the logo is no longer centered on the page (it is on its line). A 153px sticky bar takes a large part of a small screen; the spec does not say if the bar should stay sticky then. Not called a Fact Lens standard. Also `--scroll-offset` (`--bar-height` + 16px) is smaller than a two-line bar, so an anchor can stop under it.
+- **Suggested solution:** Change the C-17 and 12.3 class list to `min-h-(--bar-height)` and say what the wrapped bar looks like (logo centered or not, sticky or not).
 
 ---
 
@@ -1069,6 +1081,19 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### U-37 What makes the P-4 rows stack at 200% text size
+
+- **Found:** R2-15 · **Severity:** Medium · **Status:** Open: flag for tajmin (`UNRESOLVED_DESIGN_SYSTEM`)
+- **Source:** `component-system.md` P-4 ("At 200% browser text size the rows stack: image on top, text below, no sideways scroll", DR-81), C-03, C-07; `agent-contract.md` Section 9 (A11Y-18: do not choose a trigger).
+- **Measured (Chromium with the browser font size at 32px, `tests/e2e/text-size.spec.ts`, `/en`):**
+  - Most read: 1 per row at 320, 768 and 1024. It stacks because the breakpoints are in `rem`: `sm` is 1200px and `lg` is 2048px at a 32px root, so a 1024px window uses the phone tier. This is the trigger now. No code was added for it.
+  - P-4 compact rows: they do **not** stack at any width. `StoryCard` `layout="row"` with the `third` split is `minmax(0, 2fr) minmax(0, 1fr)` with a 16px gap at every width (C-24). At 320 the section is `panel-inset` (40px, 2.5rem = 80px at 200%) on each side, so a row is about 96px wide: text column 64px, image 32px. Nothing scrolls sideways, but a 32px image and a 64px text column are not usable. At 768 the text is 363px and at 1024 533px, side by side.
+  - Top bar: wraps now (DOC-34).
+- **Not chosen:** a trigger for the stack. Options for tajmin: (a) a container query on the row (stack when the row is narrower than a width in `rem`); (b) a media query on `min-resolution` or `prefers-reduced-data` style does not exist for font size, so only (a) or (c) below; (c) a minimum text column width (`minmax(min-content, 2fr)`) so the grid wraps by content; (d) accept the narrow row (WCAG 1.4.4 asks for no loss of content, not for a layout).
+- **Suggested solution:** (a): `@container` with the existing container sizes (`@medium` from 600px), as the other C-24 layouts do, and give the stack an explicit rule in C-24 and P-4. The panel inset in `rem` at 200% also needs a decision (it takes 160 of 320px).
+
+---
+
 ---
 
 ## Kit issues (KIT-)
@@ -1136,3 +1161,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-12 | DOC-32 added. U-27 fixed by C-07. `MostRead` rebuilt from the sheet: 1 / 2 / 3 / 4 per row (3 at 1024–1279, DR-145), 24px column gap, 20 / 24px row gap, no rules. Playwright checks: items per row and gaps at 14 widths, numeral size, column and gap, nudge (DR-144), no radius or border, link color; both languages. WebKit: 40 pre-existing failures, not new (most-read layout at 1280 and above, keyboard tab stops) |
 | 2026-10-11 | R2-13 | U-36, IMP-51, IMP-52 added. DOC-21, U-28, U-29 fixed and IMP-27 decided by the C-15 sheet. `RegionSlider` rebuilt: 2 / 3 / 4 regions in view (`region-row`), buttons while more regions exist than are in view, 450ms `--ease-slide`, hidden scrollbar; panel = name, 3:2 image story, two text stories; one MoreLink to `/regions`. `StoryStack` deleted. Playwright checks at 14 widths in both languages, a touch swipe and tap |
 | 2026-10-11 | R2-14 | DOC-33 added. U-30 fixed by C-21. `SiteFooter` rebuilt: full-width `surface-elevated` band with `panel-inset`, everything centered (logo, five ink social icons with interactive-hover / pressed states, site links in `ink-secondary` `type-ui-sm` 600 that wrap on phones, copyright in metadata size and `ink-muted`); `formatYear` and a `copyright` string; Bangla "শর্তাবলি" as the sheet (was ব্যবহারের শর্তাবলি); `focusRing`, `iconButton` and `filledButton` removed from `header/classes.ts` (no caller left). Playwright and Vitest checks at 14 widths in both languages. IMP-29 unchanged (404 site pages, social links to front pages) |
+| 2026-10-11 | R2-15 | DOC-34 and U-37 added. New test `tests/e2e/text-size.spec.ts` sets the real browser font size (Chromium `--blink-settings=defaultFontSize=32`): setting `html { font-size: 200% }` would leave the rem breakpoints at 16px. Nothing scrolls sideways at 320, 768, 1024 in both languages. The only fault was the top bar at 320: fixed height; now `min-h` with wrap. Most read stacks because of the rem breakpoints; the P-4 rows never stack |
