@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-12 (P-5 most read: RankedList from C-07). Earlier: 11 October 2026, R2-11 (P-3 grouped categories: CategoryBlock, DailyPoll, rail ad; newsletter code removed). Earlier: 11 October 2026, R2-10 (P-2 featured categories). Earlier: 11 October 2026, R2-09 (P-4 analysis and opinion rebuilt on the story units). Earlier: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-14 (Footer rebuilt from C-21). Earlier: 11 October 2026, R2-12 (P-5 most read: RankedList from C-07). Earlier: 11 October 2026, R2-11 (P-3 grouped categories: CategoryBlock, DailyPoll, rail ad; newsletter code removed). Earlier: 11 October 2026, R2-10 (P-2 featured categories). Earlier: 11 October 2026, R2-09 (P-4 analysis and opinion rebuilt on the story units). Earlier: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -57,6 +57,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Open |
 | DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Workaround in code |
 | DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Open |
+| DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Open (flag) |
 | DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
@@ -87,7 +88,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-27 | FL-10 | Most read item content and row gap | Low | Fixed in R2-12 |
 | U-28 | FL-11 | Region chip and region column heading look | Low | Fixed in R2-13 (C-15: outline chips; panel heading `type-story-title-sm`, no top rule) |
 | U-29 | FL-11 | Slider button place, icon and disabled look | Low | Fixed in R2-13 (C-15: 44px IconButtons, disabled look) |
-| U-30 | FL-12 | Minimum footer look and social icons | Low | Open |
+| U-30 | FL-12 | Minimum footer look and social icons | Low | Fixed in R2-14 (C-21) |
 | U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Open |
 | U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Open |
 | U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Decided by tajmin (11 October 2026): an image or the placeholder. Fixed in LeadStory, OverlapCard, StoryCard; P-2, P-3b and P-4 files follow in R2-09, R2-10, R2-13 |
@@ -405,6 +406,17 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### DOC-33 Footer: panel inset against the shell
+
+- **Found:** R2-14 · **Severity:** Low · **Status:** Open (flag for tajmin)
+- **Source:** `component-system.md` C-21 (`Footer.panel`: "full width, panel-inset (LAY-20): 40 / 32px under 600px, 48 / 40px from 600px, contents in the shell, centered"), `spacing-layout-system.md` 5.3 and 4 (`shell`).
+- **Problem:** `panel-inset` pads the band by 32px (40px) at the sides. The `shell` utility then takes 100% minus 2 × the page gutter of the padded box. At 320 that is 320 − 64 − 32 = 224px for five 44px icons (220px plus gaps), so the icons would not fit on one line and the shell would be narrower than the page shell at every width.
+- **Also:** C-21 says the links "wrap to 2 centered lines" on phones. At 320 (256px of content, 24px gaps) they wrap to 3 lines in Bangla (2 + 2 + 1) and in English; at 360 they wrap to 2. Not changed: the sheet fixes the 24px gap and text may not shrink (TYP-09). Fixing DOC-33 (no side inset) would give 288px at 320.
+- **Built as:** The band carries `panel-inset`. The content is `mx-auto w-full max-w-(--measure-shell)` inside it: centered, never wider than the shell, and not narrowed by the gutter a second time. The content is therefore narrower than the page shell by 16px (phone) to 16px (tablet) per side. Not called a Fact Lens standard. The test checks these values.
+- **Suggested solution:** Say in C-21 whether the panel inset replaces the gutter (as built) or the vertical values only are used, or give the footer a `panel-inset` variant without side values.
+
+---
+
 ### DOC-31 DailyPoll: row layout trigger, legend and column split
 
 - **Found:** R2-11 · **Severity:** Low · **Status:** Open
@@ -658,7 +670,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-30 Minimum footer look and social icons
 
-- **Found:** FL-12 · **Severity:** Low · **Status:** Open
+- **Found:** FL-12 · **Severity:** Low · **Status:** Fixed in R2-14 (C-21 gives the look; DOC-33 is open)
 - **Files:** `src/components/footer/SiteFooter.tsx`, `src/components/footer/SocialIcon.tsx`, `src/i18n/*.ts` `footer`
 - **Gap:** 7.4 gives the footer content only. No background, rule, padding, text roles, icon set, network list or labels. Icons are a gap (U-02), and `lucide-react` 1.x has no brand icons.
 - **Treatment used:** Page background with a 1px `border` rule across the full width; `space-module` above and below inside the shell; row 1 the text logo (U-08) and the social links, row 2 the five site links, both rows wrap. Site links `type-ui-sm` in `text-interactive` (like "আরও দেখুন"), 44px tall. Social links: 44px icon buttons (header classes) with Simple Icons 16.34.0 brand marks (CC0) inline in `currentColor`, for Facebook, YouTube, X and Instagram (tajmin's choice of inline icons). The text name is the `aria-label`; the list is named "সামাজিক মাধ্যমে ফ্যাক্ট লেন্স" / "Fact Lens on social media". Working Bangla labels: আমাদের সম্পর্কে, যোগাযোগ, সংশোধনী, গোপনীয়তা নীতি, ব্যবহারের শর্তাবলি.
@@ -1123,3 +1135,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-11 | DOC-31, IMP-50 added. U-21, U-22, U-23, U-25 fixed and U-24 partly fixed by C-23 and C-26. IMP-33 and IMP-46 done. CategoryBlock rebuilt (StoryCard + StoryList + pinned MoreLink); DailyPoll rebuilt (surface-elevated panel, `poll-layout`, square markers, filled result rows, Button); the rail holds the poll and the `ad-rail` slot from 1280; newsletter code, strings, `lib/email.ts` and `grouped/classes.ts` removed; Playwright sheet checks at 14 widths and the poll at 6 widths in both languages |
 | 2026-10-11 | R2-12 | DOC-32 added. U-27 fixed by C-07. `MostRead` rebuilt from the sheet: 1 / 2 / 3 / 4 per row (3 at 1024–1279, DR-145), 24px column gap, 20 / 24px row gap, no rules. Playwright checks: items per row and gaps at 14 widths, numeral size, column and gap, nudge (DR-144), no radius or border, link color; both languages. WebKit: 40 pre-existing failures, not new (most-read layout at 1280 and above, keyboard tab stops) |
 | 2026-10-11 | R2-13 | U-36, IMP-51, IMP-52 added. DOC-21, U-28, U-29 fixed and IMP-27 decided by the C-15 sheet. `RegionSlider` rebuilt: 2 / 3 / 4 regions in view (`region-row`), buttons while more regions exist than are in view, 450ms `--ease-slide`, hidden scrollbar; panel = name, 3:2 image story, two text stories; one MoreLink to `/regions`. `StoryStack` deleted. Playwright checks at 14 widths in both languages, a touch swipe and tap |
+| 2026-10-11 | R2-14 | DOC-33 added. U-30 fixed by C-21. `SiteFooter` rebuilt: full-width `surface-elevated` band with `panel-inset`, everything centered (logo, five ink social icons with interactive-hover / pressed states, site links in `ink-secondary` `type-ui-sm` 600 that wrap on phones, copyright in metadata size and `ink-muted`); `formatYear` and a `copyright` string; Bangla "শর্তাবলি" as the sheet (was ব্যবহারের শর্তাবলি); `focusRing`, `iconButton` and `filledButton` removed from `header/classes.ts` (no caller left). Playwright and Vitest checks at 14 widths in both languages. IMP-29 unchanged (404 site pages, social links to front pages) |

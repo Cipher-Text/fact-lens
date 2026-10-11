@@ -90,7 +90,8 @@ export const bn = {
     contact: "যোগাযোগ",
     corrections: "সংশোধনী",
     privacy: "গোপনীয়তা নীতি",
-    terms: "ব্যবহারের শর্তাবলি",
+    terms: "শর্তাবলি",
+    copyright: "© {year} {name}। সর্বস্বত্ব সংরক্ষিত।",
     // The text name of each icon link, for screen readers.
     facebook: "ফেসবুক",
     youtube: "ইউটিউব",

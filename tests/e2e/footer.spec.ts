@@ -2,8 +2,8 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { setTheme } from "./theme";
 
-// FL-12: the minimum footer (spacing-layout-system.md 7.1 row 15, 7.4, 13; DR-59;
-// LAY-02, LAY-03, LAY-14, LAY-16, LAY-17, COL-04, COL-05, COL-13, T-27).
+// R2-14: the Footer (component-system.md C-21; spacing-layout-system.md 7.1 row 15, 13;
+// DR-59, DR-224; LAY-02, LAY-14, LAY-17, LAY-20, COL-04, COL-05, COL-06, COL-13, T-27).
 
 const PAGES = [
   {
@@ -15,7 +15,7 @@ const PAGES = [
       "যোগাযোগ",
       "সংশোধনী",
       "গোপনীয়তা নীতি",
-      "ব্যবহারের শর্তাবলি",
+      "শর্তাবলি",
     ],
     networks: ["ফেসবুক", "ইউটিউব", "এক্স", "ইনস্টাগ্রাম"],
     other: /[A-Za-z]/,
@@ -71,10 +71,6 @@ for (const p of PAGES) {
         );
         expect(scroll).toBeLessThanOrEqual(width);
 
-        const gutter = width < 600 ? 16 : 24;
-        const shell = Math.min(width - 2 * gutter, 1280);
-        const space = width >= 1024 ? 40 : width >= 768 ? 32 : 24;
-
         // A full-width row (7.1 row 15) after main, the last element of the page.
         const f = footer(page);
         const rowBox = await box(f);
@@ -84,19 +80,53 @@ for (const p of PAGES) {
           page.locator("main").locator("xpath=following-sibling::*[1]"),
         ).toHaveAttribute("data-footer");
 
-        // The content is in the shell, centered, with space-module above and below.
-        const inner = f.locator(".shell");
-        const innerBox = await box(inner);
-        expect(Math.round(innerBox.width)).toBe(shell);
-        expect(Math.round(innerBox.x)).toBe(Math.round((width - shell) / 2));
-        const padding = await inner.evaluate((el) => [
-          getComputedStyle(el).paddingTop,
-          getComputedStyle(el).paddingBottom,
+        // Panel inset (LAY-20, DR-224): 40 / 32 under 600px, 48 / 40 from 600px.
+        const inset = width < 600 ? [40, 32] : [48, 40];
+        const inner = f.locator(".panel-inset");
+        const padding = await inner.evaluate((el) => {
+          const s = getComputedStyle(el);
+          return [s.paddingTop, s.paddingBottom, s.paddingLeft, s.paddingRight];
+        });
+        expect(padding).toEqual([
+          `${inset[0]}px`,
+          `${inset[0]}px`,
+          `${inset[1]}px`,
+          `${inset[1]}px`,
         ]);
-        expect(padding).toEqual([`${space}px`, `${space}px`]);
 
-        // Every part stays inside the shell (LAY-02), and every target is 44px or
-        // more (U-05).
+        // The band is surface-elevated, not surface-alt (C-21 checks).
+        const colors = await f.evaluate((el) => {
+          const probe = (v: string) => {
+            const n = document.createElement("span");
+            n.style.backgroundColor = `var(${v})`;
+            el.append(n);
+            const c = getComputedStyle(n).backgroundColor;
+            n.remove();
+            return c;
+          };
+          return {
+            band: getComputedStyle(el).backgroundColor,
+            elevated: probe("--surface-elevated"),
+          };
+        });
+        expect(colors.band).toBe(colors.elevated);
+
+        // The content is centered and inside the shell width (LAY-02, LAY-03).
+        const contentWidth = Math.min(width - 2 * inset[1], 1280);
+        const left = (width - contentWidth) / 2;
+        const innerBox = { x: left, width: contentWidth };
+        const stack = await box(inner.locator("> div"));
+        expect(Math.round(stack.width)).toBe(contentWidth);
+        expect(Math.round(stack.x)).toBe(Math.round(left));
+        for (const centered of await f.locator("[data-logo], ul, p").all()) {
+          const b = await box(centered);
+          expect(Math.abs(b.x + b.width / 2 - width / 2)).toBeLessThanOrEqual(
+            1,
+          );
+        }
+
+        // Every part stays inside the content (LAY-02), and every target is 44px
+        // or more (U-05).
         const parts = f.locator("a");
         await expect(parts).toHaveCount(11);
         for (const b of await Promise.all(
@@ -166,7 +196,7 @@ for (const p of PAGES) {
       expect(text).not.toMatch(p.other);
     });
 
-    test("colors: brand logo, interactive links and icons (COL-04, COL-05)", async ({
+    test("colors: brand logo, ink icons, ink-secondary links (COL-04, COL-05)", async ({
       page,
     }) => {
       await page.goto(p.path);
@@ -183,13 +213,64 @@ for (const p of PAGES) {
           [...el.querySelectorAll(sel)].map((n) => getComputedStyle(n).color);
         return {
           brand: probe("--brand"),
-          interactive: probe("--interactive"),
+          ink: probe("--ink"),
+          secondary: probe("--ink-secondary"),
+          muted: probe("--ink-muted"),
           logo: color("[data-logo]"),
-          links: [...color("nav a"), ...color("[data-social]")],
+          icons: color("[data-social]"),
+          links: color("nav a"),
+          copyright: color("p"),
         };
       });
       expect(colors.logo).toEqual([colors.brand]);
-      expect(new Set(colors.links)).toEqual(new Set([colors.interactive]));
+      expect(new Set(colors.icons)).toEqual(new Set([colors.ink]));
+      expect(new Set(colors.links)).toEqual(new Set([colors.secondary]));
+      expect(colors.copyright).toEqual([colors.muted]);
+    });
+
+    test("hover and press states of links and icons, no underline (C-21, DR-220)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.path);
+      const f = footer(page);
+      const read = (loc: Locator) =>
+        loc.evaluate((el) => {
+          const s = getComputedStyle(el);
+          return { color: s.color, line: s.textDecorationLine };
+        });
+      const probe = (name: string) =>
+        f.evaluate((el, v) => {
+          const s = document.createElement("span");
+          s.style.color = `var(${v})`;
+          el.append(s);
+          const c = getComputedStyle(s).color;
+          s.remove();
+          return c;
+        }, name);
+      const hover = await probe("--interactive-hover");
+      const pressed = await probe("--interactive-pressed");
+      for (const target of [
+        f.locator("nav a").first(),
+        f.locator("[data-social]").first(),
+      ]) {
+        await target.hover();
+        expect((await read(target)).color).toBe(hover);
+        expect((await read(target)).line).toBe("none");
+        await page.mouse.down();
+        expect((await read(target)).color).toBe(pressed);
+        await page.mouse.up();
+      }
+    });
+
+    test("copyright line in the page language and digits", async ({ page }) => {
+      await page.goto(p.path);
+      const line = footer(page).locator("p");
+      await expect(line).toHaveText(
+        p.lang === "bn"
+          ? /^© [০-৯]{4} ফ্যাক্ট লেন্স।/
+          : /^© 20\d\d Fact Lens\./,
+      );
     });
 
     for (const theme of ["light", "dark"] as const) {
@@ -216,17 +297,17 @@ for (const p of PAGES) {
           if (!el?.closest("[data-footer]")) return null;
           return {
             name: el.getAttribute("href") ?? el.tagName,
-            // The base outline (COL-13), or the old ring on controls that are not rebuilt yet.
+            // The base outline (COL-13).
             ring: (() => {
               const s = getComputedStyle(el);
               return s.outlineStyle === "solid" && s.outlineWidth === "2px"
                 ? "outline"
-                : s.boxShadow;
+                : "none";
             })(),
           };
         });
         if (info) {
-          expect(info.ring, info.name).not.toBe("none"); // COL-13
+          expect(info.ring, info.name).toBe("outline"); // COL-13
           seen.push(info.name);
         }
       }
@@ -253,9 +334,9 @@ for (const p of PAGES) {
       });
       const f = footer(page);
       const fBox = await box(f);
-      expect(
-        await f.evaluate((el) => el.scrollWidth <= el.clientWidth),
-      ).toBe(true);
+      expect(await f.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(
+        true,
+      );
       for (const a of await f.locator("a").all()) {
         const b = await box(a);
         expect(b.x).toBeGreaterThanOrEqual(-0.5);

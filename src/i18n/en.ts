@@ -91,6 +91,7 @@ export const en: Dictionary = {
     corrections: "Corrections",
     privacy: "Privacy",
     terms: "Terms",
+    copyright: "© {year} {name}. All rights reserved.",
     // The text name of each icon link, for screen readers.
     facebook: "Facebook",
     youtube: "YouTube",

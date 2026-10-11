@@ -9,6 +9,13 @@ export function formatNumber(value: number, lang: Lang): string {
   return new Intl.NumberFormat(locales[lang]).format(value);
 }
 
+/** A year without a thousands separator: "2026" or "২০২৬". */
+export function formatYear(year: number, lang: Lang): string {
+  return new Intl.NumberFormat(locales[lang], { useGrouping: false }).format(
+    year,
+  );
+}
+
 export function formatDate(date: Date, lang: Lang): string {
   return new Intl.DateTimeFormat(locales[lang], {
     dateStyle: "long",

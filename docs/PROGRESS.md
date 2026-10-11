@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-13 is Done
-- Next action: R2-14 Footer, after tajmin types `/ticket`
+- Ticket: none. R2-14 is Done
+- Next action: R2-15 200% text size, after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -84,6 +84,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-11 Grouped categories and rail (P-3) | `CategoryBlock` rebuilt from C-23 (feature `StoryCard` 3:2 with summary, rule, `StoryList` of 2, MoreLink pinned to the block bottom); `DailyPoll` rebuilt from C-26 (`surface-elevated` panel with `panel-inset`, `poll-layout` row from a 600px container, square markers, `Button`, filled result rows); rail = poll, then `ad-rail` from 1280. Newsletter code, strings, `lib/email.ts` and `grouped/classes.ts` removed. Sheet-check e2e at 14 widths (blocks, rail, rail ad) and 6 widths (poll) in both languages. Flag open: IMP-50. DOC-31 |
 | 2026-10-11 | R2-12 Most read (P-5) | `MostRead` rebuilt from C-07: `rank-list` ol, 1 / 2 / 3 / 4 per row (3 at 1024–1279, DR-145), gaps `gap-x-6 gap-y-5 sm:gap-y-6`. Items per row, gaps, numeral and sheet checks at 14 widths in both languages. All chromium e2e now green (544). WebKit has 40 failures from before (most-read layout from 1280, Safari link tab stops). DOC-32. U-27 fixed |
 | 2026-10-11 | R2-13 Regions (P-3b) | `RegionSlider` rebuilt from C-15: `region-row` utility (2 / 3 / 4 regions in view at 600 / 1024 / 1280, scrollbar hidden), buttons by CSS while more regions exist than are in view (DR-140), 450ms slide with the `--ease-slide` curve, panel = region name, 3:2 image story and two text stories, one MoreLink to `/regions` at the section end; `StoryStack` deleted. Tests at 14 widths in both languages, a touch swipe and tap. Flags open: U-36, IMP-51. IMP-52 |
+| 2026-10-11 | R2-14 Footer | `SiteFooter` rebuilt from C-21: `surface-elevated` band with `panel-inset`, centered logo, five ink social icons, `ink-secondary` links (wrap on phones), copyright line (`formatYear`); `header/classes.ts` trimmed to `uiLink`. Footer tests at 14 widths in both languages, hover/press states, axe in both themes. Flag open: DOC-33. U-30 fixed |
 
 ## Later
 
@@ -132,7 +133,7 @@ Ideas that are outside the current ticket.
 - R2-06: `AdSlot` replaces `AdRow`/`AdPlaceholder`; the `rail` variant goes into the P-3 rail in R2-11 (hidden under 1280). 28 chromium e2e tests are red from before: `most-read` (R2-12). IMP-44 to IMP-46, DOC-29.
 
 - R2-11: `RegionSlider.tsx` has the old column top rule inline (`railModule`, moved from the deleted `grouped/classes.ts`); R2-13 rebuilds it. `header/classes.ts` (`focusRing`, `iconButton`, `filledButton`) now has the footer (R2-14) as its only caller besides the regions slider; remove it with the last caller.
-- R2-11 (done in R2-13): `StoryStack` deleted. `header/classes.ts` (`focusRing`, `iconButton`, `filledButton`) now has the footer (R2-14) as its only caller; remove it there.
+- R2-11 (done in R2-13): `StoryStack` deleted. `header/classes.ts` (`focusRing`, `iconButton`, `filledButton`) removed in R2-14.
 - R2-13: the MoreLink goes to `/regions`, a 404 until the regions page exists (IMP-52). Flags for tajmin: U-36 (panel composition), IMP-51 (scroll-based slide). WebKit: 5 regions tests fail from before (phone tabs arrow keys, hash link, keyboard).
 - R2-11: 28 chromium e2e tests are red from before: `most-read` (R2-12). IMP-50 (native radios with a drawn square marker, shadcn RadioGroup) is a flag for tajmin.
 
@@ -174,7 +175,7 @@ Ideas that are outside the current ticket.
 | U-34 | Analysis stories list (`AnalysisList.tsx`) | Item rules between the 3 stories; the P-4 sheet says rules wait on DR-104, C-03 has them | Open (flag) |
 | U-35 | Quote mark (`QuoteMark.tsx`) | Hand-drawn 44 x 36 SVG; sheet gives sizes only | Open |
 | U-36 | Region panel (`Regions.tsx`) | C-15 says "3:2 image, 3 stories": built as an image story (3:2) plus two text stories | Open (flag) |
-| U-30 | Minimum footer (`src/components/footer/SiteFooter.tsx`, `SocialIcon.tsx`) | Page background, full-width 1px `border` rule, `space-module` padding; links `type-ui-sm` `text-interactive` 44px; inline Simple Icons (CC0) brand marks in 44px icon buttons for Facebook, YouTube, X, Instagram; working Bangla labels | Open |
+| U-30 | Minimum footer (`src/components/footer/SiteFooter.tsx`, `SocialIcon.tsx`) | Built from C-21: `surface-elevated` band with `panel-inset`, centered stack, ink Simple Icons (CC0) marks, `ink-secondary` links, copyright line | Fixed in R2-14 |
 
 ## Spec issues (DOC-)
 
@@ -211,5 +212,6 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-11 R2-06 | `component-system.md` C-16; `spacing-layout-system.md` 12.2 | DOC-29: rail box "304" against `--ad-rail-w` 300px | Open |
 | 2026-10-11 R2-11 | `component-system.md` C-26; `spacing-layout-system.md` 7.4 | DOC-31: poll row layout trigger (viewport 600 or container 600), `legend` against the start column, no column split token. `components.css` has `poll-layout` | Workaround in code |
 | 2026-10-11 R2-12 | `component-system.md` C-07; `spacing-layout-system.md` 3.1 | DOC-32: Most read gaps (24px columns, 20 / 24px rows) against the tier gaps (16 / 20px, row = column). Built as the sheet | Open |
+| 2026-10-11 R2-14 | `component-system.md` C-21; `spacing-layout-system.md` 4, 5.3 | DOC-33: panel inset at the sides plus the shell gutter leaves 224px at 320. Built with the band inset and a centered content box of at most the shell width | Open (flag) |
 | 2026-10-07 FL-13 | `typography-system.md` 8.2 | DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |
