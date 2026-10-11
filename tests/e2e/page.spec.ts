@@ -9,8 +9,7 @@ const WIDTHS = [320, 360, 600, 768, 834, 1024, 1180, 1280, 1366, 1440, 1920];
 
 // Reserved creative heights (Section 9). The label line (--ad-label) adds 24px.
 function reserved(slot: string, width: number) {
-  if (slot === "ad-band-top")
-    return width < 768 ? 100 : width < 1024 ? 90 : 250;
+  if (slot === "ad-top") return width < 768 ? 100 : width < 1024 ? 90 : 250;
   if (slot === "ad-band") return width < 768 ? 280 : 250;
   return width < 1280 ? 250 : 90; // ad-inset
 }
@@ -41,7 +40,7 @@ for (const path of ["/", "/en"]) {
         expect(Math.round(rowBox.height), `${slot} #${i}`).toBe(
           reserved(slot, width) + AD_LABEL,
         );
-        if (slot !== "ad-inset") {
+        if (slot === "ad-top" || slot === "ad-band") {
           // Band rows are full width.
           expect(Math.round(rowBox.x)).toBe(0);
           expect(Math.round(rowBox.width)).toBe(width);
@@ -63,11 +62,19 @@ for (const path of ["/", "/en"]) {
             position: s.position,
           };
         });
-        expect(style.spacing).toEqual(Array(8).fill("0px"));
+        // ad-inset is full screen width under 332px, so its side margins are the
+        // negative page gutter there (DR-207).
+        if (slot === "ad-inset" && width < 332) {
+          expect(Math.round(rowBox.x)).toBe(0);
+          expect(Math.round(rowBox.width)).toBe(width);
+          expect(style.spacing.slice(0, 4)).toEqual(Array(4).fill("0px"));
+        } else {
+          expect(style.spacing).toEqual(Array(8).fill("0px"));
+        }
         expect(style.position).toBe("static");
 
         // The placeholder creative stays inside the row.
-        const creative = await box(row.locator("> div > div"));
+        const creative = await box(row.locator("img"));
         expect(creative.width).toBeLessThanOrEqual(rowBox.width);
       }
     });

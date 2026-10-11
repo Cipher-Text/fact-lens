@@ -94,7 +94,6 @@ export const en: Dictionary = {
   },
   ads: {
     label: "Advertisement",
-    placeholder: "Ad space",
   },
   // The minimum footer (spacing-layout-system.md 7.4, DR-59). Working labels (U-30).
   footer: {

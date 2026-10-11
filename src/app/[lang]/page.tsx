@@ -9,7 +9,7 @@ import { GroupedCategories } from "@/components/home/grouped/GroupedCategories";
 import { Hero } from "@/components/home/hero/Hero";
 import { MostRead } from "@/components/home/most-read/MostRead";
 import { Regions } from "@/components/home/regions/Regions";
-import { AdRow } from "@/components/layout/AdRow";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
 import { cn } from "@/lib/utils";
@@ -42,7 +42,7 @@ export default async function HomePage({
 
   return (
     <>
-      <AdRow slot="ad-band-top" strings={t.ads} />
+      <AdSlot variant="top" lang={lang} strings={t.ads} />
       <SiteHeader lang={lang} />
       <main id="main" className="pt-(--space-page-start)">
         <h1 className="sr-only">{t.home.title}</h1>
@@ -56,7 +56,7 @@ export default async function HomePage({
               t={t}
               className="pb-(--space-module)"
             />
-            <AdRow slot="ad-band" strings={t.ads} />
+            <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
         {home.analysisOpinion ? (
@@ -73,7 +73,7 @@ export default async function HomePage({
                 "mb-(--space-module)",
               )}
             />
-            <AdRow slot="ad-band" strings={t.ads} />
+            <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
         {/* P-2 for বাংলাদেশ, then ভূরাজনীতি, each with its ad row (DR-68). */}
@@ -90,7 +90,7 @@ export default async function HomePage({
                 "pb-(--space-module)",
               )}
             />
-            <AdRow slot="ad-band" strings={t.ads} />
+            <AdSlot variant="band" lang={lang} strings={t.ads} />
           </Fragment>
         ))}
         {/* P-3: no ad row of its own; its ad-inset slots are inside it. P-5 Most read
@@ -122,7 +122,7 @@ export default async function HomePage({
                 "pb-(--space-module)",
               )}
             />
-            <AdRow slot="ad-band" strings={t.ads} />
+            <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
         {/* P-3b Regions, the last section (7.1). space-module after an ad row (LAY-12);

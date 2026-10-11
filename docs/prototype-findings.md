@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -33,8 +33,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-05 | FL-02 | No base rule for page background and text color | Medium | Workaround in code |
 | DOC-06 | FL-02 | Container classes are not in a cascade layer | Low | Workaround in code |
 | DOC-07 | FL-02 | COL-13 gives utilities, §2.8 gives values only | Low | Open |
-| DOC-08 | FL-03 | Ad heights and creative sizes have no tokens | Medium | Workaround in code |
-| DOC-09 | FL-03 | 336×280 phone creative is wider than a 320px screen | Medium | Workaround in code |
+| DOC-08 | FL-03 | Ad heights and creative sizes have no tokens | Medium | Fixed: spec 12.2 has the `--ad-*` tokens (R2-02, R2-06) |
+| DOC-09 | FL-03 | 336×280 phone creative is wider than a 320px screen | Medium | Fixed: spec serves it from 336px only (DR-206); R2-06 builds it |
 | DOC-10 | FL-05 | Logo "in the center at every width" does not hold at 320 and 360 | Medium | Fixed in R2-05 |
 | DOC-11 | FL-05 | `shadow` color has no Tailwind mapping, so COL-15 cannot be applied | Low | Open |
 | DOC-12 | FL-05 | `--z-scrim` and `--z-drawer` are not needed with a native modal dialog | Low | Open |
@@ -43,7 +43,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-15 | FL-06 | The 64px lead overlap has no token | Low | Workaround in code |
 | DOC-16 | FL-07 | LAY-12 section-to-ad space on a section with its own background | Low | Workaround in code |
 | DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Open |
-| DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Workaround in code |
+| DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Fixed: spec makes the inset full screen width under 332px (DR-207); R2-06 builds it |
 | DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Workaround in code |
 | DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Workaround in code |
 | DOC-21 | FL-11 | "4 regions in view" next to "no 4-up rows" (LAY-07), and no buttons at 600–1023 with 3 or 4 regions | Low | Open |
@@ -54,6 +54,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-26 | R2-04 | The Chip label sheet gives "15px 600", the `type-eyebrow` role is 14px 700 uppercase in English | Low | Open |
 | DOC-27 | R2-05 | C-12 and C-17 give the switch corners and the top bar padding in px, §6 has no tokens, and §2.9 says no component has color tokens | Low | Workaround in code |
 | DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Open |
+| DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -129,6 +130,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Open: needs tajmin's decision (flag) |
 | IMP-42 | R2-05 | Trending terms are mock buttons that run the mock search; Op-ed and the Analysis anchors | Low | Open |
 | IMP-43 | R2-05 | LinkedIn mark from Simple Icons 13.21.0, the last release that has it; the Drawer lists 5 links, the Footer still 4 | Low | Open |
+| IMP-44 | R2-06 | At 768–1023 the band shows the 728×90 creative inside the 250 reserve, so 160px of the band is empty | Low | Open |
+| IMP-45 | R2-06 | `AdSlot` reads its mock booking itself and always renders; the Phase 1 rule "no booking, no `ad-top` row" (DR-250) has no code path yet | Low | Open |
+| IMP-46 | R2-06 | The `rail` variant is built and tested alone; it goes into the P-3 rail in R2-11. 28 chromium e2e tests stay red from before (`most-read`, R2-12) | Low | Open |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -371,6 +375,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 ---
 
 ## Design-system gaps (U-)
+
+### DOC-29 Rail ad box: 304 or 300
+
+- **Found:** R2-06 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-16 (`AdSlot.creative`, rail) and `spacing-layout-system.md` 12.2 (`--ad-rail-w: 300px`).
+- **Problem:** The sheet says "box = rail width 304 ... w-(--ad-rail-w)". The token is 300px; the rail is 304px.
+- **Built as:** The row fills the 304px rail (surface-alt); the 300×600 creative box (`w-(--ad-rail-w)`) is centered in it.
+- **Suggested solution:** Say "row = rail width 304, creative box 300".
 
 ### U-01 English category labels
 
@@ -912,6 +924,24 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Choice:** C-19 and C-21 list five social links with LinkedIn last. Simple Icons removed LinkedIn after 13.21.0, so the mark comes from that release (CC0-1.0) and the rest from 16.34.0. `socialLinks.ts` has the five links; the Drawer shows all five. The Footer uses the same list now, so it shows five links too (its tests changed to 5; reviewer blocker).
 - **Suggested solution:** Confirm the icon source if the brand mark must be the current one.
 
+### IMP-44 Band at 768–1023
+
+- **Found:** R2-06 · **Severity:** Low · **Status:** Open
+- **Choice:** Section 9 allows 728×90 or 300×250 for `ad-band` at 768–1023 and reserves 250. Built with 728×90 (the size Section 9.2 asks advertisers for at 768), centered in the 250 box, so the row has about 80px of surface-alt above and below the creative. Reserve and label are as the spec says (LAY-10).
+- **Suggested solution:** Serve the 300×250 at 768–1023 so the creative fills the reserve, or reserve 90 at that tier. Needs a spec decision.
+
+### IMP-45 No booking, no top ad
+
+- **Found:** R2-06 · **Severity:** Low · **Status:** Open
+- **Choice:** C-16 and Section 9.1 say Phase 1 leaves `ad-top` out when no campaign is booked (DR-250). Every mock slot has a booking, and `getAd` throws for a slot with none, so `AdSlot` always renders. The reserved-height test also runs with the creative blocked, to show that an unfilled row does not shrink or shift the page.
+- **Suggested solution:** Add a booking check (dates against today) to `src/content/` when the ad data is real; until then keep as is.
+
+### IMP-46 Rail variant and red tests
+
+- **Found:** R2-06 · **Severity:** Low · **Status:** Open
+- **State:** `AdSlot variant="rail"` (300×600 from the mock, `hidden xl:grid`, 624px with the label) is covered by a unit test only, because the P-3 rail is rebuilt in R2-11 (DR-239). After R2-06, 28 chromium e2e tests are red from before: `most-read` (R2-12). The 22 ad-row tests and the `grouped` 320px inset test (now DR-207) are green. WebKit runs the header tests only (R2-01); its `grouped` tests were already red.
+- **Suggested solution:** None. R2-11 and R2-12 turn them green.
+
 ---
 
 ## Kit issues (KIT-)
@@ -970,3 +1000,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-03 | IMP-33 and IMP-34 added. Mock ads (`ads.ts`, `getAd`, six SVG creatives) and tests for the poll, the ads, story ids in both languages (also sparse) and no newsletter content. The poll and the long-headline, no-image and sparse cases from run 1 were already right and are unchanged |
 | 2026-10-11 | R2-04 | DOC-25, DOC-26, IMP-35 to IMP-38 added. U-06 fixed. `components.css` imported (IMP-32 done). Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton built from their sheets. U-14, U-28 and U-29 stay open until the header, regions and analysis tickets: the chip and slider buttons now follow the sheets, but the Bangla Breaking word (IMP-36) and the region column heading are not decided |
 | 2026-10-11 | R2-05 | DOC-27, DOC-28, U-31, U-32, IMP-39 to IMP-43 added. DOC-10 (logo centered: tested at 13 widths), U-04, U-09, U-10 and IMP-17 fixed by the sheets. TopBar, NavBar, Drawer, SearchDialog, ThemeButton, ThemeToggle, SearchForm rebuilt; no subscribe button (DR-188); two-state theme (DR-201) |
+| 2026-10-11 | R2-06 | IMP-44 to IMP-46 added. DOC-08, DOC-09 and DOC-18 fixed by the current spec. `AdSlot` (variants top, band, inset, rail) replaces `AdRow` and `AdPlaceholder`: one `<picture>` per slot, reserved height from the `--ad-*` tokens, region named by the label; page order checked against 7.1; tests for the reserved height at 360, 1024 and 1280 with and without the creative |

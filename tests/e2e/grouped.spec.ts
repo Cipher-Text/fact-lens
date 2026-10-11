@@ -149,7 +149,10 @@ for (const p of PAGES) {
         const insets = s.locator('[data-ad-slot="ad-inset"]');
         await expect(insets).toHaveCount(1);
         const inset = await box(insets.first());
-        expect(Math.round(inset.width)).toBe(Math.round(w.width));
+        // Wrapper width; full screen width under 332px (DR-207).
+        expect(Math.round(inset.width)).toBe(
+          width < 332 ? width : Math.round(w.width),
+        );
         expect(Math.round(inset.height)).toBe(width >= 1280 ? 114 : 274);
         const row1 = await box(rows.nth(0));
         const row2 = await box(rows.nth(1));
@@ -400,9 +403,7 @@ test("page order: ভূরাজনীতি, ad, P-3 (7.1)", async ({ page }) 
 });
 
 // The header has no Subscribe link any more (DR-188), so only the category link is left.
-test("a category nav link reaches P-3 (IMP-14)", async ({
-  page,
-}) => {
+test("a category nav link reaches P-3 (IMP-14)", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   await page.locator('nav a[href="#category-economy"]:visible').first().click();

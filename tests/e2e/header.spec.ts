@@ -77,7 +77,7 @@ for (const p of PAGES) {
         await page.setViewportSize({ width, height: 800 });
         await page.goto(p.path);
 
-        const top = page.locator('[data-ad-slot="ad-band-top"]');
+        const top = page.locator('[data-ad-slot="ad-top"]');
         const bar = page.locator("[data-top-bar]");
         const navRow = page.locator("[data-nav-row]");
         const menu = page.getByRole("button", { name: p.menu, exact: true });
@@ -232,7 +232,7 @@ for (const p of PAGES) {
       const bar = page.locator("[data-top-bar]");
       await page.evaluate(() => window.scrollTo(0, 600));
       await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
-      const top = await box(page.locator('[data-ad-slot="ad-band-top"]'));
+      const top = await box(page.locator('[data-ad-slot="ad-top"]'));
       expect(top.y + top.height).toBeLessThanOrEqual(0);
       const nav = await box(page.locator("[data-nav-row]"));
       expect(nav.y + nav.height).toBeLessThan(64);

@@ -94,7 +94,6 @@ export const bn = {
   },
   ads: {
     label: "বিজ্ঞাপন",
-    placeholder: "বিজ্ঞাপনের জায়গা",
   },
   // The minimum footer (spacing-layout-system.md 7.4, DR-59). Working labels (U-30).
   footer: {

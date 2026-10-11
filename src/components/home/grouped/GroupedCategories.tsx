@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 
-import { AdRow } from "@/components/layout/AdRow";
+import { AdSlot } from "@/components/ads/AdSlot";
 import { Rail } from "@/components/layout/Rail";
 import { Shell } from "@/components/layout/Shell";
 import { WithRail } from "@/components/layout/WithRail";
@@ -53,7 +53,7 @@ export function GroupedCategories({
           {rows.map((row, index) => (
             <Fragment key={row[0].category}>
               {index > 0 && index <= MAX_INSETS ? (
-                <AdRow slot="ad-inset" strings={t.ads} />
+                <AdSlot variant="inset" lang={lang} strings={t.ads} />
               ) : null}
               <div
                 data-grouped-row
