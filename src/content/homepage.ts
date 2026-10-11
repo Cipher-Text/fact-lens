@@ -165,7 +165,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
       "coastal-embankment-project",
       "reserve-indicators",
     ],
-    // 4 regions or fewer after the empty one is removed: no slider buttons.
+    // 3 regions after the empty one is removed: all fit in view from 1024px, so no buttons there.
     regions: ["china", "india", "middle-east", "africa"],
   },
 };

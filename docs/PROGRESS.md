@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-12 is Done
-- Next action: R2-13 Regions (P-3b), after tajmin types `/ticket`
+- Ticket: none. R2-13 is Done
+- Next action: R2-14 Footer, after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -83,6 +83,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-10 Featured categories (P-2) | `FeaturedCategory` rebuilt from the P-2 sheet: the feature story is a `StoryCard` (`row-from-md`, 3:2, `feature` split, no eyebrow, summary); the rail is one `StoryCard` (`row-until-lg`, 16:9) and a `StoryList` of 2 with the rule below the image story; one `MoreLink` to `/category/<id>` at the section end. `FeaturedLead` and `FeaturedRail` deleted. Sheet-check e2e at 14 widths in both languages. No new flags. U-18 to U-20, DOC-17, IMP-23 fixed |
 | 2026-10-11 | R2-11 Grouped categories and rail (P-3) | `CategoryBlock` rebuilt from C-23 (feature `StoryCard` 3:2 with summary, rule, `StoryList` of 2, MoreLink pinned to the block bottom); `DailyPoll` rebuilt from C-26 (`surface-elevated` panel with `panel-inset`, `poll-layout` row from a 600px container, square markers, `Button`, filled result rows); rail = poll, then `ad-rail` from 1280. Newsletter code, strings, `lib/email.ts` and `grouped/classes.ts` removed. Sheet-check e2e at 14 widths (blocks, rail, rail ad) and 6 widths (poll) in both languages. Flag open: IMP-50. DOC-31 |
 | 2026-10-11 | R2-12 Most read (P-5) | `MostRead` rebuilt from C-07: `rank-list` ol, 1 / 2 / 3 / 4 per row (3 at 1024–1279, DR-145), gaps `gap-x-6 gap-y-5 sm:gap-y-6`. Items per row, gaps, numeral and sheet checks at 14 widths in both languages. All chromium e2e now green (544). WebKit has 40 failures from before (most-read layout from 1280, Safari link tab stops). DOC-32. U-27 fixed |
+| 2026-10-11 | R2-13 Regions (P-3b) | `RegionSlider` rebuilt from C-15: `region-row` utility (2 / 3 / 4 regions in view at 600 / 1024 / 1280, scrollbar hidden), buttons by CSS while more regions exist than are in view (DR-140), 450ms slide with the `--ease-slide` curve, panel = region name, 3:2 image story and two text stories, one MoreLink to `/regions` at the section end; `StoryStack` deleted. Tests at 14 widths in both languages, a touch swipe and tap. Flags open: U-36, IMP-51. IMP-52 |
 
 ## Later
 
@@ -131,7 +132,8 @@ Ideas that are outside the current ticket.
 - R2-06: `AdSlot` replaces `AdRow`/`AdPlaceholder`; the `rail` variant goes into the P-3 rail in R2-11 (hidden under 1280). 28 chromium e2e tests are red from before: `most-read` (R2-12). IMP-44 to IMP-46, DOC-29.
 
 - R2-11: `RegionSlider.tsx` has the old column top rule inline (`railModule`, moved from the deleted `grouped/classes.ts`); R2-13 rebuilds it. `header/classes.ts` (`focusRing`, `iconButton`, `filledButton`) now has the footer (R2-14) as its only caller besides the regions slider; remove it with the last caller.
-- R2-11: `StoryStack` is no longer used by P-3; the regions (R2-13) are its last caller. Delete it there.
+- R2-11 (done in R2-13): `StoryStack` deleted. `header/classes.ts` (`focusRing`, `iconButton`, `filledButton`) now has the footer (R2-14) as its only caller; remove it there.
+- R2-13: the MoreLink goes to `/regions`, a 404 until the regions page exists (IMP-52). Flags for tajmin: U-36 (panel composition), IMP-51 (scroll-based slide). WebKit: 5 regions tests fail from before (phone tabs arrow keys, hash link, keyboard).
 - R2-11: 28 chromium e2e tests are red from before: `most-read` (R2-12). IMP-50 (native radios with a drawn square marker, shadcn RadioGroup) is a flag for tajmin.
 
 ## Unresolved design-system items
@@ -165,12 +167,13 @@ Ideas that are outside the current ticket.
 | U-25 | Spacing inside forms (`grouped/*`, `header/classes.ts`) | Poll values from C-26 on the 4px scale (`mt-4`, `mt-6`, `gap-1`, LAY-21) | Fixed in R2-11 |
 | U-26 | Bangla name of P-5 (`src/i18n/bn.ts` `mostRead.title`) | Working label "সর্বাধিক পঠিত" | Open |
 | U-27 | Most read item (`src/components/home/most-read/MostRead.tsx`) | Built from C-07: numeral + title, row gap 20 / 24px, no rules | Fixed in R2-12 |
-| U-28 | Region chip and column heading (`src/components/home/regions/RegionSlider.tsx`) | Chip: `border-interactive` border, `text-interactive`, filled `interactive` when selected, `px-3`; column heading `type-ui-sm` with the U-22 top rule, visually hidden below 600 | Open |
-| U-29 | Slider buttons (`RegionSlider.tsx`, `SectionHeading.tsx` `actions`) | 44px chevron icon buttons at the end of the heading row; `aria-disabled` in `ink-disabled` at each end; 250ms ease-out | Open |
+| U-28 | Region chip and column heading (`src/components/home/regions/RegionSlider.tsx`) | Chip: `border-interactive` border, `text-interactive`, filled `interactive` when selected, `px-3`; column heading `type-ui-sm` with the U-22 top rule, visually hidden below 600 | Fixed in R2-13 |
+| U-29 | Slider buttons (`RegionSlider.tsx`, `SectionHeading.tsx` `actions`) | 44px chevron icon buttons at the end of the heading row; `aria-disabled` in `ink-disabled` at each end; 250ms ease-out | Fixed in R2-13 |
 | U-31 | Logo size and weight (`SiteHeader.tsx`, `Drawer.tsx`, `SiteFooter.tsx`) | C-17 gives serif 700, 20/22/24px; there is no type role (TYP-01). Kept `type-section-title` | Open |
 | U-32 | ThemeButton moon (`ThemeButton.tsx`) | C-12 says "redrawn larger"; no drawing. Lucide moon, 1px up | Open |
 | U-34 | Analysis stories list (`AnalysisList.tsx`) | Item rules between the 3 stories; the P-4 sheet says rules wait on DR-104, C-03 has them | Open (flag) |
 | U-35 | Quote mark (`QuoteMark.tsx`) | Hand-drawn 44 x 36 SVG; sheet gives sizes only | Open |
+| U-36 | Region panel (`Regions.tsx`) | C-15 says "3:2 image, 3 stories": built as an image story (3:2) plus two text stories | Open (flag) |
 | U-30 | Minimum footer (`src/components/footer/SiteFooter.tsx`, `SocialIcon.tsx`) | Page background, full-width 1px `border` rule, `space-module` padding; links `type-ui-sm` `text-interactive` 44px; inline Simple Icons (CC0) brand marks in 44px icon buttons for Facebook, YouTube, X, Instagram; working Bangla labels | Open |
 
 ## Spec issues (DOC-)

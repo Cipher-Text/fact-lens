@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { easeOut, nextTabIndex, sliderEdges, sliderTarget } from "./slider";
+import {
+  cubicBezier,
+  nextTabIndex,
+  parseCubicBezier,
+  sliderEdges,
+  sliderTarget,
+} from "./slider";
 
 describe("sliderEdges", () => {
   it("is at the start at 0 and at the end at the last position", () => {
@@ -64,10 +70,38 @@ describe("nextTabIndex", () => {
   });
 });
 
-describe("easeOut", () => {
-  it("starts at 0 and ends at 1", () => {
-    expect(easeOut(0)).toBe(0);
-    expect(easeOut(1)).toBe(1);
-    expect(easeOut(0.5)).toBeGreaterThan(0.5);
+describe("cubicBezier", () => {
+  const ease = cubicBezier(0.22, 1, 0.36, 1);
+
+  it("starts at 0, ends at 1 and runs fast at first (ease-slide)", () => {
+    expect(ease(0)).toBe(0);
+    expect(ease(1)).toBe(1);
+    expect(ease(0.25)).toBeGreaterThan(0.6);
+  });
+
+  it("only goes forward", () => {
+    let last = 0;
+    for (let t = 0.05; t <= 1; t += 0.05) {
+      const value = ease(t);
+      expect(value).toBeGreaterThanOrEqual(last);
+      last = value;
+    }
+  });
+
+  it("is a straight line for a linear curve", () => {
+    expect(cubicBezier(0, 0, 1, 1)(0.5)).toBeCloseTo(0.5, 3);
+  });
+});
+
+describe("parseCubicBezier", () => {
+  it("reads the four numbers of a CSS value", () => {
+    expect(parseCubicBezier(" cubic-bezier(0.22, 1, 0.36, 1)")).toEqual([
+      0.22, 1, 0.36, 1,
+    ]);
+  });
+
+  it("returns null for anything else", () => {
+    expect(parseCubicBezier("ease-out")).toBeNull();
+    expect(parseCubicBezier("cubic-bezier(1, 2, 3)")).toBeNull();
   });
 });

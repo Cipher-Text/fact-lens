@@ -55,7 +55,43 @@ export function nextTabIndex(
   }
 }
 
-/** Ease-out cubic for the 250ms button scroll. */
-export function easeOut(t: number): number {
-  return 1 - Math.pow(1 - t, 3);
+/**
+ * The easing of a slide: a CSS cubic-bezier(x1, y1, x2, y2) as a function of time (0 to 1).
+ * Newton's method with a bisection fallback, the same curve the browser draws.
+ */
+export function cubicBezier(
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+): (t: number) => number {
+  const axis = (a: number, b: number, s: number) =>
+    3 * a * s * (1 - s) ** 2 + 3 * b * s ** 2 * (1 - s) + s ** 3;
+  return (x) => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    let low = 0;
+    let high = 1;
+    let s = x;
+    for (let i = 0; i < 30; i++) {
+      const value = axis(x1, x2, s);
+      if (Math.abs(value - x) < 1e-5) break;
+      if (value < x) low = s;
+      else high = s;
+      s = (low + high) / 2;
+    }
+    return axis(y1, y2, s);
+  };
+}
+
+/** Reads the four numbers of `cubic-bezier(...)` from a CSS value, or null. */
+export function parseCubicBezier(
+  value: string,
+): [number, number, number, number] | null {
+  const match = /cubic-bezier\(([^)]+)\)/.exec(value);
+  if (!match) return null;
+  const numbers = match[1].split(",").map((part) => Number(part.trim()));
+  return numbers.length === 4 && numbers.every(Number.isFinite)
+    ? (numbers as [number, number, number, number])
+    : null;
 }

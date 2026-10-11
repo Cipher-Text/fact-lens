@@ -125,6 +125,7 @@ export default async function HomePage({
             space-section below it, before the footer (FL-12). No ad row of its own. */}
         {home.regions ? (
           <Regions
+            lang={lang}
             regions={home.regions}
             t={t}
             className={cn(

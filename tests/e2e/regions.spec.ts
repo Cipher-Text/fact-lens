@@ -30,6 +30,9 @@ const WIDTHS = [
 // Full content: 6 regions with stories (আফ্রিকা has none and is not shown).
 const REGION_COUNT = 6;
 
+// Regions in view (C-15, DR-140, DR-141).
+const inViewAt = (width: number) => (width >= 1280 ? 4 : width >= 1024 ? 3 : 2);
+
 const regions = (page: Page) => page.locator('[data-section="regions"]');
 const row = (page: Page) => page.locator("[data-region-row]");
 
@@ -60,6 +63,12 @@ async function waitForSlider(page: Page) {
 
 const scrollLeft = (page: Page) =>
   row(page).evaluate((el) => Math.round(el.scrollLeft));
+
+// A column is a fraction of a pixel wide at 1024 (3 in view): allow one pixel.
+const expectScroll = (page: Page, target: number) =>
+  expect
+    .poll(async () => Math.abs((await scrollLeft(page)) - target))
+    .toBeLessThanOrEqual(1);
 
 for (const p of PAGES) {
   test.describe(`regions ${p.path}`, () => {
@@ -97,6 +106,10 @@ for (const p of PAGES) {
           const panel = s.getByRole("tabpanel");
           await expect(panel).toHaveCount(1);
           expect(Math.round((await box(panel)).width)).toBe(shell);
+          // The tab strip scrolls without a scrollbar.
+          expect(
+            await tablist.evaluate((el) => getComputedStyle(el).scrollbarWidth),
+          ).toBe("none");
           // A chip is as wide as its label and 44px tall or more (TYP-09).
           const chips = await s.getByRole("tab").evaluateAll((tabs) =>
             tabs.map((t) => ({
@@ -110,13 +123,13 @@ for (const p of PAGES) {
             expect(chip.clipped).toBe(false);
           }
         } else {
-          // Slider: 2 regions in view, 4 from 1024 (7.2), at the column gap.
+          // Slider: 2 regions in view, 3 from 1024, 4 from 1280 (C-15), at the column gap.
           await expect(tablist).toBeHidden();
           await expect(s.getByRole("tabpanel")).toHaveCount(0);
           // Each column is a named group, not one more landmark.
           await expect(s.getByRole("group")).toHaveCount(REGION_COUNT);
           await expect(s.getByRole("region")).toHaveCount(0);
-          const inView = width >= 1024 ? 4 : 2;
+          const inView = inViewAt(width);
           const b = await Promise.all([0, 1, 2].map((i) => box(panels.nth(i))));
           const column = (shell - (inView - 1) * columnGap) / inView;
           expect(Math.abs(b[0].width - column)).toBeLessThanOrEqual(1);
@@ -129,10 +142,13 @@ for (const p of PAGES) {
           await expect(previous).toBeVisible();
           await expect(previous).toHaveAttribute("aria-disabled", "true");
           await expect(next).not.toHaveAttribute("aria-disabled");
-          const snap = await row(page).evaluate(
-            (el) => getComputedStyle(el).scrollSnapType,
-          );
-          expect(snap).toContain("x");
+          const style = await row(page).evaluate((el) => ({
+            snap: getComputedStyle(el).scrollSnapType,
+            scrollbar: getComputedStyle(el).scrollbarWidth,
+          }));
+          expect(style.snap).toContain("x");
+          // The scrollbar is hidden (C-15).
+          expect(style.scrollbar).toBe("none");
         }
 
         // After the Most read ad row: space-module above (LAY-12). Last section.
@@ -178,12 +194,12 @@ for (const p of PAGES) {
           box(panels.nth(1)),
         ]);
         const step = Math.round(b.x - a.x);
-        const inView = width >= 1024 ? 4 : 2;
+        const inView = inViewAt(width);
         const moves = REGION_COUNT - inView;
 
         for (let i = 1; i <= moves; i++) {
           await next.click();
-          await expect.poll(() => scrollLeft(page)).toBe(i * step);
+          await expectScroll(page, i * step);
         }
         // At the end: next is disabled, a press does nothing. No loop.
         await expect(next).toHaveAttribute("aria-disabled", "true");
@@ -191,13 +207,15 @@ for (const p of PAGES) {
         // Playwright does not click an aria-disabled button, so send the event.
         await next.dispatchEvent("click");
         await page.waitForTimeout(400);
-        expect(await scrollLeft(page)).toBe(moves * step);
+        expect(
+          Math.abs((await scrollLeft(page)) - moves * step),
+        ).toBeLessThanOrEqual(1);
 
         // Keyboard on the buttons; focus stays on the disabled button (COL-13).
         await previous.focus();
         for (let i = moves - 1; i >= 0; i--) {
           await page.keyboard.press("Enter");
-          await expect.poll(() => scrollLeft(page)).toBe(i * step);
+          await expectScroll(page, i * step);
         }
         await expect(previous).toHaveAttribute("aria-disabled", "true");
         await expect(previous).toBeFocused();
@@ -237,6 +255,73 @@ for (const p of PAGES) {
         .toBe(0);
     });
 
+    test("touch: a swipe moves the row and snaps to a column; a tap selects a tab", async ({
+      browser,
+      browserName,
+    }) => {
+      test.skip(
+        browserName !== "chromium",
+        "The swipe uses a Chromium CDP gesture",
+      );
+      const context = await browser.newContext({
+        hasTouch: true,
+        isMobile: true,
+        viewport: { width: 768, height: 900 },
+      });
+      const page = await context.newPage();
+      await page.goto(p.path);
+      await waitForSlider(page);
+      const s = regions(page);
+      await s.scrollIntoViewIfNeeded();
+      const panels = s.locator("[data-region]");
+      const [a, b] = await Promise.all([
+        box(panels.nth(0)),
+        box(panels.nth(1)),
+      ]);
+      const step = b.x - a.x;
+      const rowBox = await box(row(page));
+      // A touch swipe to the start side (a real finger drag, through the browser).
+      const client = await context.newCDPSession(page);
+      await client.send("Input.synthesizeScrollGesture", {
+        x: rowBox.x + rowBox.width / 2,
+        y: rowBox.y + 100,
+        xDistance: -step,
+        yDistance: 0,
+        gestureSourceType: "touch",
+      });
+      await expect.poll(() => scrollLeft(page)).toBeGreaterThan(step / 2);
+      await expect
+        .poll(async () => {
+          const left = await scrollLeft(page);
+          return Math.abs(left / step - Math.round(left / step)) < 0.02;
+        })
+        .toBe(true);
+      await expect(
+        s.getByRole("button", { name: p.previous }),
+      ).not.toHaveAttribute("aria-disabled");
+      // No sideways page scroll.
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBeLessThanOrEqual(768);
+
+      // Phone: a tap on a chip selects its region.
+      await page.setViewportSize({ width: 320, height: 800 });
+      await expect(s.getByRole("tab").first()).toBeVisible();
+      await s.getByRole("tab").nth(2).tap();
+      await expect(s.getByRole("tab").nth(2)).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      await expect(s.getByRole("tabpanel")).toHaveAttribute(
+        "id",
+        (await s.getByRole("tab").nth(2).getAttribute("aria-controls"))!,
+      );
+      expect(
+        await page.evaluate(() => document.documentElement.scrollWidth),
+      ).toBeLessThanOrEqual(320);
+      await context.close();
+    });
+
     test("reduced motion: a button press moves at once", async ({ page }) => {
       await page.emulateMedia({ reducedMotion: "reduce" });
       await page.setViewportSize({ width: 1366, height: 900 });
@@ -255,7 +340,7 @@ for (const p of PAGES) {
       expect(after).toBeGreaterThan(0);
     });
 
-    test("with motion: a button press animates for about 250ms", async ({
+    test("with motion: a button press animates for about 450ms", async ({
       page,
     }) => {
       await page.emulateMedia({ reducedMotion: "no-preference" });
@@ -282,8 +367,9 @@ for (const p of PAGES) {
       });
       expect(result.sameTask).toBe(0);
       expect(result.moved).toBeGreaterThan(0);
-      expect(result.duration).toBeGreaterThan(150);
-      expect(result.duration).toBeLessThan(400);
+      // 450ms with ease-slide: the last frames barely move, so the last change is earlier.
+      expect(result.duration).toBeGreaterThan(250);
+      expect(result.duration).toBeLessThan(700);
     });
 
     test("phone tabs: arrow keys, Home and End select a region", async ({
@@ -344,8 +430,10 @@ for (const p of PAGES) {
       await expect(panel).toBeInViewport();
     });
 
-    for (const width of [360, 600, 1024]) {
-      test(`sparse content at ${width}: no buttons, empty region hidden (7.3)`, async ({
+    // Sparse: 3 regions after the empty one is removed (7.3). 2 are in view at 600 to 1023,
+    // so the buttons show there; 3 are in view from 1024, so they do not (DR-140).
+    for (const width of [360, 600, 1024, 1280]) {
+      test(`sparse content at ${width}: buttons only while regions are out of view (7.3)`, async ({
         page,
       }) => {
         await page.setViewportSize({ width, height: 900 });
@@ -356,16 +444,59 @@ for (const p of PAGES) {
           .evaluateAll((els) => els.map((e) => e.getAttribute("data-region")));
         expect(ids.length).toBeLessThanOrEqual(4);
         expect(ids).not.toContain("africa");
-        await expect(s.getByRole("button", { name: p.previous })).toHaveCount(
-          0,
-        );
-        await expect(s.getByRole("button", { name: p.next })).toHaveCount(0);
+        const buttons = [
+          s.getByRole("button", { name: p.previous }),
+          s.getByRole("button", { name: p.next }),
+        ];
+        for (const button of buttons) {
+          if (width >= 600 && width < 1024) await expect(button).toBeVisible();
+          else await expect(button).toBeHidden();
+        }
         const scroll = await page.evaluate(
           () => document.documentElement.scrollWidth,
         );
         expect(scroll).toBeLessThanOrEqual(width);
       });
     }
+
+    test("each panel: region name, a 3:2 image story and two text stories; one section link", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1366, height: 900 });
+      await page.goto(p.path);
+      const s = regions(page);
+      const panels = s.locator("[data-region]");
+      for (let i = 0; i < REGION_COUNT; i++) {
+        const panel = panels.nth(i);
+        await expect(panel.locator("h3")).toHaveCount(1);
+        await expect(panel.locator("[data-story-card]")).toHaveCount(1);
+        const image = await box(panel.locator("[data-story-media] img"));
+        expect(Math.abs(image.width / image.height - 1.5)).toBeLessThan(0.02);
+        expect(
+          await panel.locator("[data-story-list-item]").count(),
+        ).toBeLessThanOrEqual(2);
+        // Rules between the stories, none above the first or around the card (CPT-06).
+        const rules = await panel
+          .locator(":scope > ul > li")
+          .evaluateAll((items) =>
+            items.map((li) => getComputedStyle(li).borderTopWidth),
+          );
+        expect(rules[0]).toBe("0px");
+        for (const rule of rules.slice(1)) expect(rule).toBe("1px");
+      }
+      // One "more" link at the section end, at the end edge, to the regions page.
+      const more = s.getByRole("link", { name: /^(আরও দেখুন|See more)/ });
+      await expect(more).toHaveCount(1);
+      await expect(more).toHaveAttribute(
+        "href",
+        p.lang === "bn" ? "/regions" : "/en/regions",
+      );
+      const [m, sb] = await Promise.all([box(more), box(s)]);
+      expect(Math.round(m.x + m.width)).toBe(Math.round(sb.x + sb.width));
+      expect(m.y).toBeGreaterThan(
+        (await box(panels.nth(0))).y + (await box(panels.nth(0))).height - 1,
+      );
+    });
 
     for (const theme of ["light", "dark"] as const) {
       for (const width of [360, 1280]) {
@@ -412,7 +543,8 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
       const selector = "[data-region-row]";
-      const total = await row(page).locator("a").count();
+      // The image links are not tab stops (tabindex -1): the title link is the one stop.
+      const total = await row(page).locator('a:not([tabindex="-1"])').count();
       const seen = new Set<string>();
       await page.getByRole("button", { name: p.next }).focus();
       for (let i = 0; i < 80 && seen.size < total; i++) {

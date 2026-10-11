@@ -45,8 +45,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Fixed in R2-10 |
 | DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Fixed: spec makes the inset full screen width under 332px (DR-207); R2-06 builds it |
 | DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Workaround in code |
-| DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Workaround in code |
-| DOC-21 | FL-11 | "4 regions in view" next to "no 4-up rows" (LAY-07), and no buttons at 600–1023 with 3 or 4 regions | Low | Open |
+| DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Workaround in code (`region-row` utility in `components.css`, R2-13) |
+| DOC-21 | FL-11 | "4 regions in view" next to "no 4-up rows" (LAY-07), and no buttons at 600–1023 with 3 or 4 regions | Low | Fixed by the C-15 sheet in R2-13 (slider is the exception to LAY-07; 2, 3, 4 in view; buttons while more regions exist than are in view) |
 | DOC-22 | FL-12 | Footer: 7.1 calls it an "ad container"; DR-59 and 7.4 list different links | Low | Open |
 | DOC-23 | FL-13 | 1366×768 first screen: the 264px hero estimate leaves out the section space; no headline in view | Medium | Open |
 | DOC-24 | FL-13 | Headline roles have no `overflow-wrap`; one long compound word scrolls the page | Medium | Open |
@@ -85,14 +85,15 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-25 | FL-09 | Spacing inside forms has no tokens | Medium | Fixed in R2-11 for the poll (C-26 gives the values, LAY-21) |
 | U-26 | FL-10 | Bangla name of the Most read section | Low | Open |
 | U-27 | FL-10 | Most read item content and row gap | Low | Fixed in R2-12 |
-| U-28 | FL-11 | Region chip and region column heading look | Low | Open |
-| U-29 | FL-11 | Slider button place, icon and disabled look | Low | Open |
+| U-28 | FL-11 | Region chip and region column heading look | Low | Fixed in R2-13 (C-15: outline chips; panel heading `type-story-title-sm`, no top rule) |
+| U-29 | FL-11 | Slider button place, icon and disabled look | Low | Fixed in R2-13 (C-15: 44px IconButtons, disabled look) |
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Open |
 | U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Open |
 | U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Open |
 | U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Decided by tajmin (11 October 2026): an image or the placeholder. Fixed in LeadStory, OverlapCard, StoryCard; P-2, P-3b and P-4 files follow in R2-09, R2-10, R2-13 |
 | U-34 | R2-09 | P-4 analysis stories: the P-4 sheet says rules between stories wait on the item divider (DR-104), but C-03 says StoryList rules and the other lists draw them | Low | Open (flag) |
 | U-35 | R2-09 | C-06 quote mark: the sheet gives sizes and color, no drawing | Low | Open |
+| U-36 | R2-13 | C-15 panel: "3:2 image, 3 stories". The sheet does not say if the image belongs to the first story. Built as an image story (StoryCard 3:2) plus two text stories = 3 stories | Low | Open (flag) |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check before the first deploy (FL-14 rejected) |
@@ -119,7 +120,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-24 | FL-09 | Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test | Medium | Needs confirmation |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Needs confirmation |
 | IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Needs confirmation |
-| IMP-27 | FL-11 | Regions slider: tab mode follows the CSS, scripted 250ms scroll, hash selects a tab | Low | Needs confirmation |
+| IMP-27 | FL-11 | Regions slider: tab mode follows the CSS, scripted 250ms scroll, hash selects a tab | Low | Decided by C-15 in R2-13: scrollbar hidden; scripted slide is 450ms with `--ease-slide`; see IMP-51 |
 | IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Needs confirmation |
 | IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Needs confirmation |
 | IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Open |
@@ -143,6 +144,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-48 | R2-07 | `StoryCard` `layout` has four values (`stack`, `row`, `row-from-md`, `row-until-lg`) and `OverlapCard` has a `surface` prop, so a section can set the page-breakpoint switch and the P-4 background; the sheets say "the section sets it" but give no prop | Low | Open: flag for tajmin |
 | IMP-49 | R2-09 | Mock content changed to the sheet counts: 3 analysis stories (1 feature, 2 compact) and 5 opinion pieces; the `listItem` class file is gone | Low | Open |
 | IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Open: flag for tajmin |
+| IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Open: flag for tajmin |
+| IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Open |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -1039,6 +1042,23 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### IMP-51 Slider moves by scroll position, not by transform
+
+- **Found:** R2-13 · **Severity:** Medium · **Status:** Open: flag for tajmin
+- **Choice:** C-15 and 7.4 say a press moves the row with a `transform` (450ms, `--ease-slide`) and that swipe works. A transformed track has no native swipe, so a swipe would need pointer-drag code. Built a scroll-snap row (`region-row` in `components.css`) and animated `scrollLeft` for 450ms with the `--ease-slide` curve, read from the token at run time (`parseCubicBezier`, `cubicBezier` in `lib/slider.ts`). The duration 450 is typed once in the component (there is no JS token). Reduced motion: no animation. Scrollbar hidden.
+- **Why:** Native swipe, snap and keyboard focus scrolling come with the scroll container. The look (450ms, the same curve) is the one in the sheet.
+- **Suggested solution:** Confirm the scroll-based slide, or ask for a transform track with drag code (more code, no native snap).
+
+### U-36 Region panel composition
+
+- **Found:** R2-13 · **Severity:** Low · **Status:** Open: flag for tajmin
+- **Choice:** The C-15 panel says "region name h3, 3:2 image, 3 stories (title + meta), rules between". Built as: name, then an image story (a `StoryCard` stack, 3:2, `type-story-title-sm`, no summary, no eyebrow), then two `StoryListItem` rows. That is 3 stories, and the image belongs to the first. A region with fewer stories shows what it has.
+- **Suggested solution:** Confirm, or say that the image stands alone above 3 text stories (4 stories in the mock data would then be needed per region).
+
+---
+
+---
+
 ## Kit issues (KIT-)
 
 ### KIT-01 `visual-qa` agent switches theme with `data-theme`
@@ -1102,3 +1122,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-10 | No new items. DOC-17, U-18, U-19, U-20 and IMP-23 fixed by the P-2 sheet: the feature story is a StoryCard (`row-from-md`, 3:2, `feature` split, `type-story-title`, no eyebrow); the rail is one StoryCard (`row-until-lg`, 16:9, third split) and a StoryList of 2; one MoreLink to `/category/<id>` at the section end. `FeaturedLead` and `FeaturedRail` deleted. Playwright sheet checks (feature image 420 to 557px at 50% and 60%, rail row 2 : 1 then stack, MoreLink at the end edge) at 14 widths in both languages |
 | 2026-10-11 | R2-11 | DOC-31, IMP-50 added. U-21, U-22, U-23, U-25 fixed and U-24 partly fixed by C-23 and C-26. IMP-33 and IMP-46 done. CategoryBlock rebuilt (StoryCard + StoryList + pinned MoreLink); DailyPoll rebuilt (surface-elevated panel, `poll-layout`, square markers, filled result rows, Button); the rail holds the poll and the `ad-rail` slot from 1280; newsletter code, strings, `lib/email.ts` and `grouped/classes.ts` removed; Playwright sheet checks at 14 widths and the poll at 6 widths in both languages |
 | 2026-10-11 | R2-12 | DOC-32 added. U-27 fixed by C-07. `MostRead` rebuilt from the sheet: 1 / 2 / 3 / 4 per row (3 at 1024–1279, DR-145), 24px column gap, 20 / 24px row gap, no rules. Playwright checks: items per row and gaps at 14 widths, numeral size, column and gap, nudge (DR-144), no radius or border, link color; both languages. WebKit: 40 pre-existing failures, not new (most-read layout at 1280 and above, keyboard tab stops) |
+| 2026-10-11 | R2-13 | U-36, IMP-51, IMP-52 added. DOC-21, U-28, U-29 fixed and IMP-27 decided by the C-15 sheet. `RegionSlider` rebuilt: 2 / 3 / 4 regions in view (`region-row`), buttons while more regions exist than are in view, 450ms `--ease-slide`, hidden scrollbar; panel = name, 3:2 image story, two text stories; one MoreLink to `/regions`. `StoryStack` deleted. Playwright checks at 14 widths in both languages, a touch swipe and tap |

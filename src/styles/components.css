@@ -119,3 +119,46 @@
     row-gap: 0;
   }
 }
+
+/* RegionSlider row (C-15, P-3b): one column per region in a scroll-snap row. Columns in view:
+   1 under 600px (tabs, one panel shows), 2 from 600px, 3 from 1024px, 4 from 1280px (DR-140,
+   DR-141). Column width = (row - gaps) / in view, from the column gap token. The scrollbar is
+   hidden; swipe and the buttons move the row. p-1 / -m-1 on the row leave room for the focus
+   ring inside the scroll box (DOC-20). */
+@utility region-row {
+  --region-in-view: 1;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc(
+    (100% - (var(--region-in-view) - 1) * var(--grid-column-gap)) /
+      var(--region-in-view)
+  );
+  column-gap: var(--grid-column-gap);
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  @media (width >= 37.5rem) {
+    --region-in-view: 2;
+    margin: --spacing(-1);
+    padding: --spacing(1);
+    scroll-padding: --spacing(1);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  @media (width >= 64rem) {
+    --region-in-view: 3;
+  }
+  @media (width >= 80rem) {
+    --region-in-view: 4;
+  }
+}
+
+/* A row that scrolls by touch or keyboard focus and shows no scrollbar: the region tabs on
+   phones (C-15). */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
