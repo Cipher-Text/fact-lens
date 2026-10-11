@@ -84,8 +84,8 @@ function layoutClasses(layout: StoryCardLayout, split: "third" | "feature") {
  * C-24 StoryCard: one story with an image and text. Every image story that is not a
  * LeadStory or an OverlapCard. One grid with a body and a media part; the body is first in
  * the markup and the grid moves the image. No radius, no card border; the list around the
- * card draws the rules. Titles wrap and are never cut (CPT-08). A story with no image gets the
- * body in one column (UNRESOLVED_DESIGN_SYSTEM U-33: the sheet requires an image).
+ * card draws the rules. Titles wrap and are never cut (CPT-08). A story with no image shows
+ * the placeholder image (StoryImage, U-33).
  */
 export function StoryCard({
   story,
@@ -101,15 +101,14 @@ export function StoryCard({
   className,
 }: StoryCardProps) {
   const classes = layoutClasses(layout, split);
-  const hasImage = Boolean(story.image);
   const showSummary = summary && Boolean(story.summary);
   return (
     <article
       data-story-card
       data-layout={layout}
-      className={cn("grid", hasImage ? classes.root : "grid-cols-1", className)}
+      className={cn("grid", classes.root, className)}
     >
-      <div className={cn("min-w-0", hasImage && classes.body)}>
+      <div className={cn("min-w-0", classes.body)}>
         {eyebrow ? (
           <Eyebrow
             story={story}

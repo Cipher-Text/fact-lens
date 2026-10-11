@@ -72,7 +72,7 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 | R2-05 | Page chrome | R2-04 | Done |
 | R2-06 | Ad slots and page frame | R2-03 | Done |
 | R2-07 | Story units | R2-04 | Done |
-| R2-08 | Hero (P-1) | R2-07 | To do |
+| R2-08 | Hero (P-1) | R2-07 | Done |
 | R2-09 | Analysis and opinion (P-4) | R2-07 | To do |
 | R2-10 | Featured categories (P-2) | R2-07 | To do |
 | R2-11 | Grouped categories and rail (P-3) | R2-06, R2-07 | To do |

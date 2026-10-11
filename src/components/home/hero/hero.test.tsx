@@ -57,13 +57,19 @@ describe("Hero (P-1)", () => {
     expect(row).not.toHaveClass("sm:grid-cols-2");
   });
 
-  it("gives a lead with no image no overlap (7.4)", () => {
+  it("shows the placeholder image for a lead with no image, and the overlap stays (7.4, U-33)", () => {
     const { container } = renderHero("bn", sparse);
     expect(sparse.lead.image).toBeUndefined();
-    expect(container.querySelector("[data-lead] img")).toBeNull();
+    expect(container.querySelector("[data-lead] img")).toHaveAttribute(
+      "alt",
+      "",
+    );
     expect(
-      container.querySelector("[data-lead-panel]")!.className,
-    ).not.toContain("-mt-");
+      container.querySelector("[data-lead] [data-placeholder]"),
+    ).not.toBeNull();
+    expect(container.querySelector("[data-lead-panel]")!.className).toContain(
+      "-mt-(--space-lead-overlap)",
+    );
   });
 
   it("overlaps the lead image by the C-01 tokens, on the page color, and grows down (LAY-17)", () => {

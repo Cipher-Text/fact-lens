@@ -30,8 +30,8 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
   full: {
     hero: {
       lead: "river-data-framework",
-      // Two top-story cards (DR-44). The second has no image.
-      top: ["deep-sea-port-trial-ship", "joint-border-patrol-rules"],
+      // Two top-story cards (DR-44). Each has an image (DR-91).
+      top: ["deep-sea-port-trial-ship", "border-crossing-digital-pass"],
       latest: [
         "exports-september",
         "foreign-secretary-kathmandu",

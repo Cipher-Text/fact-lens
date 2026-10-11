@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -88,7 +88,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Open |
 | U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Open |
 | U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Open |
-| U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Open: flag for tajmin |
+| U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Decided by tajmin (11 October 2026): an image or the placeholder. Fixed in LeadStory, OverlapCard, StoryCard; P-2, P-3b and P-4 files follow in R2-09, R2-10, R2-13 |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check before the first deploy (FL-14 rejected) |
@@ -656,12 +656,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-33 Story with no image
 
-- **Found:** R2-07 · **Severity:** Medium · **Status:** Open (flag)
+- **Found:** R2-07 · **Severity:** Medium · **Status:** Decided by tajmin (11 October 2026); fixed in the three story units
 - **Files:** `LeadStory.tsx`, `OverlapCard.tsx`, `StoryCard.tsx`, `StoryImage.tsx`
-- **Gap:** The R2-07 ticket says "use the missing-image look from the sheet". No sheet has one: C-01, C-02 and C-24 say "image required". The mock set keeps no-image stories on purpose (R2-03): the second hero top story, the sparse lead, and the long no-image headlines.
-- **Treatment used:** The image part is left out. LeadStory and OverlapCard show their text block with no overlap, no inset and no notch; the lead keeps its bar. StoryCard shows its text in one column. No gray box, no blank band.
-- **Rules:** CPT-08, LAY-17. The blank band of U-13 is gone because the hero pair no longer uses subgrid (DR-99).
-- **Suggested solution:** Either every story that reaches these cards has an image (the mock set drops the cases), or the sheets add a no-image variant for each card.
+- **Gap:** C-01, C-02 and C-24 say "image required" (DR-91), but the mock set keeps some no-image stories on purpose (R2-03), and no sheet draws a story without an image.
+- **Decision (tajmin, 11 October 2026):** the image must be there, or the card uses a placeholder image. A hero top story must have a real image: the full mock hero uses the new story `border-crossing-digital-pass` in the second slot.
+- **Treatment now:** `StoryImage` shows `/mock/landscape-16x9.svg` (`data-placeholder`, empty alt text, link `aria-hidden`) for a story with no image. `LeadStory`, `OverlapCard` and `StoryCard` then have the same overlap, inset, notch and row layout as with a real image. Tests: unit and e2e for each of the three units.
+- **Still to do:** `StoryStack` (P-3b and P-2 rail), `FeaturedRail` and `AnalysisList` draw their own image and skip it when missing. R2-09, R2-10 and R2-13 move them onto `StoryCard`/`OverlapCard`, which brings the placeholder with it.
+- **Open question for the sheets:** the placeholder is a mock file. The real placeholder (brand mark, color, ratio per card) is for the blueprint to define.
+- **Rules:** DR-91, CPT-08, LAY-17.
 
 ---
 
@@ -1037,3 +1039,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-05 | DOC-27, DOC-28, U-31, U-32, IMP-39 to IMP-43 added. DOC-10 (logo centered: tested at 13 widths), U-04, U-09, U-10 and IMP-17 fixed by the sheets. TopBar, NavBar, Drawer, SearchDialog, ThemeButton, ThemeToggle, SearchForm rebuilt; no subscribe button (DR-188); two-state theme (DR-201) |
 | 2026-10-11 | R2-06 | IMP-44 to IMP-46 added. DOC-08, DOC-09 and DOC-18 fixed by the current spec. `AdSlot` (variants top, band, inset, rail) replaces `AdRow` and `AdPlaceholder`: one `<picture>` per slot, reserved height from the `--ad-*` tokens, region named by the label; page order checked against 7.1; tests for the reserved height at 360, 1024 and 1280 with and without the creative |
 | 2026-10-11 | R2-07 | DOC-30, U-33, IMP-47, IMP-48 added. U-11 (headline link color) fixed by the sheets: ink, ink-muted on hover, no pressed color. U-12 (lead panel inset and padding), U-13 (blank band under a no-image card in the hero pair) fixed by C-01 and C-02 (tokens, no subgrid). LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem built from their sheets; tests at 360, 768, 1024 and 1280 in both languages with long-headline and no-image content |
+| 2026-10-11 | R2-08 | U-33 decided by tajmin and fixed in the three story units (placeholder image). Hero already sat on LeadStory, OverlapCard and StoryList from R2-07. Added Playwright sheet checks (C-01: bar 6/8/10px, panel padding, inset, overlap, page-color panel, dark bar; C-02: overlap and notch, h3 role; one tab stop plus eyebrow) at 360, 768, 1366 in both languages. tajmin decided the hero top stories need an image: the full mock hero has a new image story in the second slot (U-33 stays open for other no-image cards) |

@@ -39,14 +39,18 @@ describe("LeadStory (C-01)", () => {
     expect(container.innerHTML).not.toMatch(/line-clamp|truncate|\bh-\d/);
   });
 
-  it("gives a story with no image no overlap and no inset", () => {
+  it("shows the placeholder image for a story with no image, with the same overlap and inset (U-33)", () => {
     const { container } = render(
       <LeadStory story={longNoImage} strings={bn} />,
     );
-    expect(container.querySelector("img")).toBeNull();
-    expect(
-      container.querySelector("[data-lead-panel]")!.className,
-    ).not.toContain("-mt-");
+    expect(container.querySelector("[data-placeholder] img")).toHaveAttribute(
+      "alt",
+      "",
+    );
+    expect(container.querySelector("[data-lead-panel]")).toHaveClass(
+      "-mt-(--space-lead-overlap)",
+      "me-(--space-lead-inset-end)",
+    );
   });
 });
 
@@ -75,14 +79,18 @@ describe("OverlapCard (C-02)", () => {
     );
   });
 
-  it("gives a story with no image no overlap and no notch", () => {
+  it("shows the placeholder image for a story with no image, with the same overlap and notch (U-33)", () => {
     const { container } = render(
       <OverlapCard story={longNoImage} strings={bn} />,
     );
-    expect(container.querySelector("img")).toBeNull();
-    expect(
-      container.querySelector("[data-overlap-body]")!.className,
-    ).not.toMatch(/-mt-|notch/);
+    expect(container.querySelector("[data-placeholder] img")).toHaveAttribute(
+      "alt",
+      "",
+    );
+    expect(container.querySelector("[data-overlap-body]")).toHaveClass(
+      "-mt-(--space-card-overlap)",
+      "me-(--space-card-notch)",
+    );
   });
 });
 
@@ -147,14 +155,17 @@ describe("StoryCard (C-24)", () => {
     expect(container.querySelector(".type-summary")).toBeNull();
   });
 
-  it("shows a story with no image as one text column, whole title", () => {
+  it("shows the placeholder image for a story with no image, in the row layout, whole title (U-33)", () => {
     const { container } = render(
       <StoryCard story={longNoImage} strings={bn} layout="row" />,
     );
-    expect(container.querySelector("img")).toBeNull();
-    expect(container.querySelector("[data-story-card]")).toHaveClass(
-      "grid-cols-1",
+    expect(container.querySelector("[data-placeholder] img")).toHaveAttribute(
+      "alt",
+      "",
     );
+    expect(
+      container.querySelector("[data-story-card]")!.children[1],
+    ).toHaveAttribute("data-story-media");
     expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent(
       longNoImage.title,
     );

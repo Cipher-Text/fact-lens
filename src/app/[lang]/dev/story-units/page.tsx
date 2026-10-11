@@ -85,7 +85,7 @@ export default async function StoryUnitsPage({
               />
             </div>
             <div data-case="no-image">
-              <StoryCard story={longNoImage} strings={t} />
+              <StoryCard story={longNoImage} strings={t} layout="row" />
             </div>
           </Wrapper>
           <Rail>

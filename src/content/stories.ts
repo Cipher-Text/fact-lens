@@ -115,6 +115,29 @@ export const stories: StoryDef[] = [
     },
   },
 
+  {
+    id: "border-crossing-digital-pass",
+    format: "news",
+    category: "security",
+    publishedAt: at("10-07 07:50"),
+    readingMinutes: 4,
+    image: "photo",
+    bn: {
+      title:
+        "স্থলবন্দরে যাত্রীদের জন্য ডিজিটাল পাস চালু, অপেক্ষার সময় কমার আশা",
+      summary:
+        "প্রথম পর্যায়ে তিনটি স্থলবন্দরে নতুন ব্যবস্থায় যাত্রীদের কাগজপত্র যাচাই হবে অনলাইনে।",
+      imageAlt: "স্থলবন্দরের চেকপোস্টে সারিতে দাঁড়ানো যাত্রীরা",
+    },
+    en: {
+      title:
+        "Digital pass launched for land port travelers, with shorter waits expected",
+      summary:
+        "In the first phase, travelers' documents at three land ports will be checked online.",
+      imageAlt: "Travelers queuing at a land port checkpoint",
+    },
+  },
+
   // Latest
   {
     id: "exports-september",

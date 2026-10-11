@@ -25,8 +25,7 @@ type OverlapCardProps = {
  * --space-card-notch short of the end edge, so the corner of the image shows. The card is
  * the container, so cqi means the card width (CPT-04, CPT-09). Each card flows on its own, with
  * no shared rows (DR-99). The body grows down (LAY-17); the title is never cut (CPT-08). A story with
- * no image gets the text block with no overlap and no notch (UNRESOLVED_DESIGN_SYSTEM U-33:
- * the sheet requires an image).
+ * no image shows the placeholder image (StoryImage, U-33).
  */
 export function OverlapCard({
   story,
@@ -43,9 +42,7 @@ export function OverlapCard({
         className={cn(
           "relative ps-0 pe-4",
           surface === "elevated" ? "bg-surface-elevated" : "bg-background",
-          story.image
-            ? "me-(--space-card-notch) -mt-(--space-card-overlap) pt-4"
-            : "pt-(--space-story-media-text)",
+          "me-(--space-card-notch) -mt-(--space-card-overlap) pt-4",
         )}
       >
         <Eyebrow

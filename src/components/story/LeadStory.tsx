@@ -21,8 +21,7 @@ type LeadStoryProps = {
  * --space-lead-inset each side, with the brand bar on top. The wrapper is the container
  * (CPT-04): the tokens in components.css change at 600 and 880px of the card width. Text sits
  * on the panel, never on the photo. The panel grows down (LAY-17); the title is never cut
- * (CPT-08). A story with no image gets the panel with no overlap and no inset
- * (UNRESOLVED_DESIGN_SYSTEM U-33: the sheet requires an image).
+ * (CPT-08). A story with no image shows the placeholder image (StoryImage, U-33).
  */
 export function LeadStory({ story, strings, className }: LeadStoryProps) {
   return (
@@ -32,9 +31,7 @@ export function LeadStory({ story, strings, className }: LeadStoryProps) {
         <div
           data-lead-panel
           className={cn(
-            "relative bg-background",
-            story.image &&
-              "ms-(--space-lead-inset-start) me-(--space-lead-inset-end) -mt-(--space-lead-overlap)",
+            "relative ms-(--space-lead-inset-start) me-(--space-lead-inset-end) -mt-(--space-lead-overlap) bg-background",
           )}
         >
           <div

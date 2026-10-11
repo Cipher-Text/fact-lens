@@ -162,6 +162,114 @@ for (const p of PAGES) {
       });
     }
 
+    // C-01 and C-02 checks: bar thickness, panel inset and padding, top-card overlap and notch.
+    for (const [width, bar, inset, padding] of [
+      [360, 6, 0, 16],
+      [768, 8, 32, 24],
+      [1366, 10, 40, 32],
+    ] as const) {
+      test(`sheet checks at ${width}`, async ({ page }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        const hero = page.locator('[data-section="hero"]');
+        const lead = hero.locator("[data-lead]");
+        const imageBox = await box(lead.locator("img"));
+        const panelBox = await box(lead.locator("[data-lead-panel]"));
+
+        // C-01: no radius or border; the bar and the padding are fixed per size.
+        const barStyle = await lead
+          .locator("[data-lead-bar]")
+          .evaluate((el) => ({
+            height: getComputedStyle(el).height,
+            radius: getComputedStyle(el).borderRadius,
+          }));
+        expect(barStyle).toEqual({ height: `${bar}px`, radius: "0px" });
+        const panelStyle = await lead
+          .locator("[data-lead-panel]")
+          .evaluate((el) => {
+            const body = el.lastElementChild!;
+            const s = getComputedStyle(body);
+            return {
+              top: s.paddingTop,
+              start: s.paddingLeft,
+              end: s.paddingRight,
+              border: getComputedStyle(el).borderTopWidth,
+              radius: getComputedStyle(el).borderRadius,
+              bg: getComputedStyle(el).backgroundColor,
+              page: getComputedStyle(document.body).backgroundColor,
+            };
+          });
+        expect(panelStyle.border).toBe("0px");
+        expect(panelStyle.radius).toBe("0px");
+        expect(panelStyle.bg).toBe(panelStyle.page);
+        expect(panelStyle.top).toBe(`${padding}px`);
+        expect(panelStyle.end).toBe(`${padding}px`);
+        expect(panelStyle.start).toBe(width < 600 ? "0px" : `${padding}px`);
+
+        // The panel space to the image edge: 32px of image at the end on phones, equal
+        // on both sides from 600 (32px at 768, 40px at 1366).
+        const startGap = panelBox.x - imageBox.x;
+        const endGap =
+          imageBox.x + imageBox.width - (panelBox.x + panelBox.width);
+        if (width < 600) {
+          expect(Math.round(startGap)).toBe(0);
+          expect(Math.round(endGap)).toBe(32);
+        } else {
+          expect(Math.round(startGap)).toBe(inset);
+          expect(Math.round(endGap)).toBe(inset);
+        }
+
+        // C-02: the body covers the image by 10% of the card (40 to 64px) and leaves the
+        // same notch at the end side; the title is an h3 in the story title role.
+        const cards = hero.locator("[data-top-stories] article");
+        // Every hero story has an image (DR-91), so both cards get the geometry check.
+        for (let i = 0; i < 2; i++) {
+          const card = cards.nth(i);
+          const title = card.getByRole("heading", { level: 3 });
+          await expect(title).toHaveClass(/type-story-title/);
+          await expect(card.locator("img")).toHaveCount(1);
+          const cardImage = await box(card.locator("img"));
+          const body = await box(card.locator("[data-overlap-body]"));
+          const unit = Math.min(64, Math.max(40, cardImage.width * 0.1));
+          expect(cardImage.y + cardImage.height - body.y).toBeCloseTo(unit, 0);
+          expect(
+            cardImage.x + cardImage.width - (body.x + body.width),
+          ).toBeCloseTo(unit, 0);
+          expect(Math.round(body.x)).toBe(Math.round(cardImage.x));
+        }
+        await expect(lead.getByRole("heading", { level: 2 })).toHaveClass(
+          /type-story-lead/,
+        );
+        // One tab stop for the story and one for the eyebrow (C-01).
+        await expect(lead.locator("a:not([tabindex='-1'])")).toHaveCount(2);
+      });
+    }
+
+    test("lead bar and panel colors in the dark theme (C-01)", async ({
+      page,
+    }) => {
+      await setTheme(page, "dark");
+      await page.goto(p.path);
+      const lead = page.locator('[data-section="hero"] [data-lead]');
+      const colors = await lead.evaluate((el) => {
+        const probe = document.createElement("span");
+        probe.style.color = "var(--interactive)";
+        document.body.append(probe);
+        const interactive = getComputedStyle(probe).color;
+        probe.remove();
+        return {
+          bar: getComputedStyle(el.querySelector("[data-lead-bar]")!)
+            .backgroundColor,
+          panel: getComputedStyle(el.querySelector("[data-lead-panel]")!)
+            .backgroundColor,
+          page: getComputedStyle(document.body).backgroundColor,
+          interactive,
+        };
+      });
+      expect(colors.bar).toBe(colors.interactive);
+      expect(colors.panel).toBe(colors.page);
+    });
+
     test("sparse content (7.3)", async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(`${p.path}?content=sparse`);
@@ -176,8 +284,13 @@ for (const p of PAGES) {
       );
       // Latest shows the items that exist.
       await expect(hero.locator("[data-hero-rail] li")).toHaveCount(2);
-      // A lead with no image has no overlap.
-      await expect(hero.locator("[data-lead] img")).toHaveCount(0);
+      // A lead with no image shows the placeholder, with the same overlap (U-33).
+      await expect(
+        hero.locator("[data-lead] [data-placeholder] img"),
+      ).toHaveCount(1);
+      const leadImage = await box(hero.locator("[data-lead] img"));
+      const leadPanel = await box(hero.locator("[data-lead-panel]"));
+      expect(leadImage.y + leadImage.height - leadPanel.y).toBeGreaterThan(0);
       const scroll = await page.evaluate(
         () => document.documentElement.scrollWidth,
       );
