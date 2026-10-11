@@ -27,13 +27,22 @@ describe("MostRead (P-5)", () => {
     );
   });
 
-  it("uses 1, 2 and 4 columns, and no other count (DR-51, LAY-06)", () => {
+  it("uses 1, 2, 3 and 4 columns, and no other count (DR-51, DR-145, LAY-06)", () => {
     renderSection("en");
     const list = screen.getByRole("list");
     expect(list.className).toMatch(/(^| )grid-cols-1( |$)/);
     expect(list.className).toContain("sm:grid-cols-2");
-    expect(list.className).toContain("lg:grid-cols-4");
-    expect(list.className).not.toMatch(/(md|xl|2xl):grid-cols/);
+    expect(list.className).toContain("lg:grid-cols-3");
+    expect(list.className).toContain("xl:grid-cols-4");
+    expect(list.className).not.toMatch(/(md|2xl):grid-cols/);
+  });
+
+  it("uses the sheet gaps: 24px columns, 20px rows on phones, 24px from 600 (C-07, LAY-21)", () => {
+    renderSection("en");
+    const list = screen.getByRole("list");
+    for (const name of ["gap-x-6", "gap-y-5", "sm:gap-y-6"]) {
+      expect(list).toHaveClass(name);
+    }
   });
 
   it("links each title to its story in the page language", () => {

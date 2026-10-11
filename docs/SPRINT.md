@@ -76,7 +76,7 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 | R2-09 | Analysis and opinion (P-4) | R2-07 | Done |
 | R2-10 | Featured categories (P-2) | R2-07 | Done |
 | R2-11 | Grouped categories and rail (P-3) | R2-06, R2-07 | Done |
-| R2-12 | Most read (P-5) | R2-07 | To do |
+| R2-12 | Most read (P-5) | R2-07 | Done |
 | R2-13 | Regions (P-3b) | R2-07 | To do |
 | R2-14 | Footer | R2-04 | To do |
 | R2-15 | 200% text size | R2-08 to R2-14 | To do |

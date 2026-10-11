@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-11 (P-3 grouped categories: CategoryBlock, DailyPoll, rail ad; newsletter code removed). Earlier: 11 October 2026, R2-10 (P-2 featured categories). Earlier: 11 October 2026, R2-09 (P-4 analysis and opinion rebuilt on the story units). Earlier: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-12 (P-5 most read: RankedList from C-07). Earlier: 11 October 2026, R2-11 (P-3 grouped categories: CategoryBlock, DailyPoll, rail ad; newsletter code removed). Earlier: 11 October 2026, R2-10 (P-2 featured categories). Earlier: 11 October 2026, R2-09 (P-4 analysis and opinion rebuilt on the story units). Earlier: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -56,6 +56,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Open |
 | DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Open |
 | DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Workaround in code |
+| DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Open |
 | DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
@@ -83,7 +84,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-24 | FL-09 | Poll question role and result bar look | Low | Partly fixed in R2-11: the question role is in 7.1; the result fill color is still open |
 | U-25 | FL-09 | Spacing inside forms has no tokens | Medium | Fixed in R2-11 for the poll (C-26 gives the values, LAY-21) |
 | U-26 | FL-10 | Bangla name of the Most read section | Low | Open |
-| U-27 | FL-10 | Most read item content and row gap | Low | Open |
+| U-27 | FL-10 | Most read item content and row gap | Low | Fixed in R2-12 |
 | U-28 | FL-11 | Region chip and region column heading look | Low | Open |
 | U-29 | FL-11 | Slider button place, icon and disabled look | Low | Open |
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Open |
@@ -391,6 +392,16 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### DOC-32 Most read gaps against the tier gaps
+
+- **Found:** R2-12 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-07 (List: "24px column gap; row gap 24px, 20px on phones"), `spacing-layout-system.md` 3.1 and the line below the table ("the row gap is always equal to the column gap").
+- **Problem:** Both specs are at the same level. The sheet fixes the column gap at 24px at every width; 3.1 gives 16px below 768 and 20px at 768 to 1023. The sheet also gives a row gap (20px on phones) that differs from the column gap.
+- **Built as:** The sheet: `gap-x-6 gap-y-5 sm:gap-y-6` (scale classes, LAY-21). The test checks these values. Not called a Fact Lens standard.
+- **Suggested solution:** Say in 3.1 that Most read is an exception, or change the sheet to the tier gap tokens.
+
+---
+
 ### DOC-31 DailyPoll: row layout trigger, legend and column split
 
 - **Found:** R2-11 · **Severity:** Low · **Status:** Open
@@ -614,7 +625,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-27 Most read item content and row gap
 
-- **Found:** FL-10 · **Severity:** Low · **Status:** Open
+- **Found:** FL-10 · **Severity:** Low · **Status:** Fixed in R2-12 (C-07 names the item parts: numeral and title, no rules, row gap 20 / 24px)
 - **Files:** `src/components/home/most-read/MostRead.tsx`
 - **Gap:** §7.1 sets the numeral and says the title starts beside it. It does not say what else an item shows (time, category, image) or the space between the two rows. There is no list rule between items.
 - **Treatment used:** Title only, in `type-story-title-sm` (compact list role). Row gap `space-module`; column gap `grid-column-gap`. No rules between items. The numeral top aligns with the title top through `align-items: start` and line height 1; visual QA measured the numeral glyph 2 to 4px lower than the first title line (the title line height is above 1).
@@ -1090,3 +1101,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-09 | U-34, U-35, IMP-49 added. U-15, U-17 and IMP-21 fixed, U-16 partly fixed by the P-4 and C-06 sheets. AnalysisList (OverlapCard + 2 StoryCard rows), OpinionList (chip label, QuoteMark, author and time lines), AnalysisOpinion (`panel-inset` inside the shell); Playwright sheet checks at 360, 768 and 1366 in both languages |
 | 2026-10-11 | R2-10 | No new items. DOC-17, U-18, U-19, U-20 and IMP-23 fixed by the P-2 sheet: the feature story is a StoryCard (`row-from-md`, 3:2, `feature` split, `type-story-title`, no eyebrow); the rail is one StoryCard (`row-until-lg`, 16:9, third split) and a StoryList of 2; one MoreLink to `/category/<id>` at the section end. `FeaturedLead` and `FeaturedRail` deleted. Playwright sheet checks (feature image 420 to 557px at 50% and 60%, rail row 2 : 1 then stack, MoreLink at the end edge) at 14 widths in both languages |
 | 2026-10-11 | R2-11 | DOC-31, IMP-50 added. U-21, U-22, U-23, U-25 fixed and U-24 partly fixed by C-23 and C-26. IMP-33 and IMP-46 done. CategoryBlock rebuilt (StoryCard + StoryList + pinned MoreLink); DailyPoll rebuilt (surface-elevated panel, `poll-layout`, square markers, filled result rows, Button); the rail holds the poll and the `ad-rail` slot from 1280; newsletter code, strings, `lib/email.ts` and `grouped/classes.ts` removed; Playwright sheet checks at 14 widths and the poll at 6 widths in both languages |
+| 2026-10-11 | R2-12 | DOC-32 added. U-27 fixed by C-07. `MostRead` rebuilt from the sheet: 1 / 2 / 3 / 4 per row (3 at 1024–1279, DR-145), 24px column gap, 20 / 24px row gap, no rules. Playwright checks: items per row and gaps at 14 widths, numeral size, column and gap, nudge (DR-144), no radius or border, link color; both languages. WebKit: 40 pre-existing failures, not new (most-read layout at 1280 and above, keyboard tab stops) |

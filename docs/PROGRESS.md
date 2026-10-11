@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-11 is Done
-- Next action: R2-12 Most read (P-5), after tajmin types `/ticket`
+- Ticket: none. R2-12 is Done
+- Next action: R2-13 Regions (P-3b), after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -82,6 +82,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-09 Analysis and opinion (P-4) | `AnalysisOpinion` is the shell section with `panel-inset` inside (the section is the container); `AnalysisList` = OverlapCard (elevated) + 2 compact StoryCard rows (2 : 1) in one list with item rules; `OpinionList` = chip label, drawn `QuoteMark` (28/36/44), title h3, author and time on own lines, 24px between rows. Mock set now 3 analysis and 5 opinion stories. Sheet-check e2e at 360, 768, 1366 in both languages. Flags open: U-34, U-35, IMP-49 |
 | 2026-10-11 | R2-10 Featured categories (P-2) | `FeaturedCategory` rebuilt from the P-2 sheet: the feature story is a `StoryCard` (`row-from-md`, 3:2, `feature` split, no eyebrow, summary); the rail is one `StoryCard` (`row-until-lg`, 16:9) and a `StoryList` of 2 with the rule below the image story; one `MoreLink` to `/category/<id>` at the section end. `FeaturedLead` and `FeaturedRail` deleted. Sheet-check e2e at 14 widths in both languages. No new flags. U-18 to U-20, DOC-17, IMP-23 fixed |
 | 2026-10-11 | R2-11 Grouped categories and rail (P-3) | `CategoryBlock` rebuilt from C-23 (feature `StoryCard` 3:2 with summary, rule, `StoryList` of 2, MoreLink pinned to the block bottom); `DailyPoll` rebuilt from C-26 (`surface-elevated` panel with `panel-inset`, `poll-layout` row from a 600px container, square markers, `Button`, filled result rows); rail = poll, then `ad-rail` from 1280. Newsletter code, strings, `lib/email.ts` and `grouped/classes.ts` removed. Sheet-check e2e at 14 widths (blocks, rail, rail ad) and 6 widths (poll) in both languages. Flag open: IMP-50. DOC-31 |
+| 2026-10-11 | R2-12 Most read (P-5) | `MostRead` rebuilt from C-07: `rank-list` ol, 1 / 2 / 3 / 4 per row (3 at 1024–1279, DR-145), gaps `gap-x-6 gap-y-5 sm:gap-y-6`. Items per row, gaps, numeral and sheet checks at 14 widths in both languages. All chromium e2e now green (544). WebKit has 40 failures from before (most-read layout from 1280, Safari link tab stops). DOC-32. U-27 fixed |
 
 ## Later
 
@@ -163,7 +164,7 @@ Ideas that are outside the current ticket.
 | U-24 | Poll question and result bars (`DailyPoll.tsx`) | Question `type-story-title-sm` (7.1). Result rows fill with `accent-soft`; own marker `interactive`, others `border-interactive`; own vote named in text. The fill color is not in C-26 | Open (fill color) |
 | U-25 | Spacing inside forms (`grouped/*`, `header/classes.ts`) | Poll values from C-26 on the 4px scale (`mt-4`, `mt-6`, `gap-1`, LAY-21) | Fixed in R2-11 |
 | U-26 | Bangla name of P-5 (`src/i18n/bn.ts` `mostRead.title`) | Working label "সর্বাধিক পঠিত" | Open |
-| U-27 | Most read item (`src/components/home/most-read/MostRead.tsx`) | Title only in `type-story-title-sm`; `space-module` between rows; no list rules | Open |
+| U-27 | Most read item (`src/components/home/most-read/MostRead.tsx`) | Built from C-07: numeral + title, row gap 20 / 24px, no rules | Fixed in R2-12 |
 | U-28 | Region chip and column heading (`src/components/home/regions/RegionSlider.tsx`) | Chip: `border-interactive` border, `text-interactive`, filled `interactive` when selected, `px-3`; column heading `type-ui-sm` with the U-22 top rule, visually hidden below 600 | Open |
 | U-29 | Slider buttons (`RegionSlider.tsx`, `SectionHeading.tsx` `actions`) | 44px chevron icon buttons at the end of the heading row; `aria-disabled` in `ink-disabled` at each end; 250ms ease-out | Open |
 | U-31 | Logo size and weight (`SiteHeader.tsx`, `Drawer.tsx`, `SiteFooter.tsx`) | C-17 gives serif 700, 20/22/24px; there is no type role (TYP-01). Kept `type-section-title` | Open |
@@ -206,5 +207,6 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-11 R2-05 | `component-system.md` C-18, C-19 | DOC-28: 48px row with or without its 1px rule; where the Drawer row rule sits above children | Open |
 | 2026-10-11 R2-06 | `component-system.md` C-16; `spacing-layout-system.md` 12.2 | DOC-29: rail box "304" against `--ad-rail-w` 300px | Open |
 | 2026-10-11 R2-11 | `component-system.md` C-26; `spacing-layout-system.md` 7.4 | DOC-31: poll row layout trigger (viewport 600 or container 600), `legend` against the start column, no column split token. `components.css` has `poll-layout` | Workaround in code |
+| 2026-10-11 R2-12 | `component-system.md` C-07; `spacing-layout-system.md` 3.1 | DOC-32: Most read gaps (24px columns, 20 / 24px rows) against the tier gaps (16 / 20px, row = column). Built as the sheet | Open |
 | 2026-10-07 FL-13 | `typography-system.md` 8.2 | DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |
