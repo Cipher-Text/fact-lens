@@ -69,21 +69,7 @@ export const en: Dictionary = {
     // Accessible name of a "more" link: the visible text, then the section name.
     moreAbout: "See more: {section}",
   },
-  // P-3 rail. Mock only (DR-01): no email is sent and the poll keeps no server count.
-  newsletter: {
-    title: "Morning newsletter",
-    text: "The day's main news and analysis in your inbox every morning.",
-    emailLabel: "Email address",
-    submit: "Subscribe",
-    sending: "Sending…",
-    invalidEmail: "Enter a valid email address.",
-    done: "Thank you, you are subscribed.",
-    mockNote: "This prototype does not send email.",
-    // The consent line: before, the privacy link, after (keeps the word order per language).
-    consentBefore: "By subscribing you agree to our ",
-    privacy: "privacy policy",
-    consentAfter: ".",
-  },
+  // P-3 rail. Mock only (DR-01): the poll keeps no server count.
   poll: {
     title: "Daily poll",
     vote: "Vote",

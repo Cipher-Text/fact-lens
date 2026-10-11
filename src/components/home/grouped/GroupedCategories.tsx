@@ -10,7 +10,6 @@ import type { Dictionary } from "@/i18n";
 
 import { CategoryBlock } from "./CategoryBlock";
 import { DailyPoll } from "./DailyPoll";
-import { NewsletterSignup } from "./NewsletterSignup";
 
 /** The homepage has 3 ad-inset slots or fewer (spacing-layout-system.md Section 9). */
 export const MAX_INSETS = 3;
@@ -33,10 +32,10 @@ function pairs<T>(items: T[]): T[][] {
  * P-3 Grouped categories (spacing-layout-system.md 7.2 to 7.4 and 9). The wrapper has
  * rows of two categories (one per row on phones, LAY-07) with an ad-inset between rows,
  * at wrapper width; rows after the third inset have none. An odd last category keeps
- * its size and the other half of its row stays empty (7.3). The rail has the newsletter,
- * then the daily poll, with space-module between them; below 1024px it is under the
- * wrapper (LAY-05). The source order is the phone reading order: A, B, ad, C, D,
- * newsletter, poll (LAY-14).
+ * its size and the other half of its row stays empty (7.3). The rail has the daily poll
+ * (DR-239) and, from 1280px, the ad-rail space-module below it (DR-240, DR-242); below
+ * 1024px the rail is under the wrapper (LAY-05). The source order is the phone reading
+ * order: A, B, ad, C, D, poll (LAY-14).
  */
 export function GroupedCategories({
   lang,
@@ -57,13 +56,14 @@ export function GroupedCategories({
               ) : null}
               <div
                 data-grouped-row
-                className="grid grid-cols-1 items-start gap-x-(--grid-column-gap) gap-y-(--space-module) sm:grid-cols-2"
+                className="grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-(--space-module) sm:grid-cols-2"
               >
                 {row.map((block) => (
                   <CategoryBlock
                     key={block.category}
+                    lang={lang}
                     block={block}
-                    strings={t}
+                    t={t}
                   />
                 ))}
               </div>
@@ -74,8 +74,8 @@ export function GroupedCategories({
           data-grouped-rail
           className="flex flex-col gap-y-(--space-module)"
         >
-          <NewsletterSignup lang={lang} strings={t.newsletter} />
           <DailyPoll poll={poll} strings={t.poll} />
+          <AdSlot variant="rail" lang={lang} strings={t.ads} />
         </Rail>
       </WithRail>
     </Shell>

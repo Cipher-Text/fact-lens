@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-09 (P-4 analysis and opinion rebuilt on the story units). Earlier: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-11 (P-3 grouped categories: CategoryBlock, DailyPoll, rail ad; newsletter code removed). Earlier: 11 October 2026, R2-10 (P-2 featured categories). Earlier: 11 October 2026, R2-09 (P-4 analysis and opinion rebuilt on the story units). Earlier: 11 October 2026, R2-08 (Hero P-1: sheet checks). Earlier: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -56,6 +56,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Open |
 | DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Open |
 | DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Workaround in code |
+| DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -76,11 +77,11 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-18 | FL-08 | P-2 lead: image and text split from 1280px | Low | Fixed in R2-10 |
 | U-19 | FL-08 | P-2 rail at 600–1023px | Low | Fixed in R2-10 |
 | U-20 | FL-08 | Story labels inside a category section | Low | Fixed in R2-10 |
-| U-21 | FL-09 | Inside of a P-3 category block | Low | Open |
-| U-22 | FL-09 | P-3 rail module look (newsletter, poll) | Low | Open |
-| U-23 | FL-09 | Form text roles: field label, consent line, error and done messages | Low | Open |
-| U-24 | FL-09 | Poll question role and result bar look | Low | Open |
-| U-25 | FL-09 | Spacing inside forms has no tokens | Medium | Open |
+| U-21 | FL-09 | Inside of a P-3 category block | Low | Fixed in R2-11 |
+| U-22 | FL-09 | P-3 rail module look (newsletter, poll) | Low | Fixed in R2-11 |
+| U-23 | FL-09 | Form text roles: field label, consent line, error and done messages | Low | Fixed in R2-11 (the poll has them in 7.1; the newsletter is gone) |
+| U-24 | FL-09 | Poll question role and result bar look | Low | Partly fixed in R2-11: the question role is in 7.1; the result fill color is still open |
+| U-25 | FL-09 | Spacing inside forms has no tokens | Medium | Fixed in R2-11 for the poll (C-26 gives the values, LAY-21) |
 | U-26 | FL-10 | Bangla name of the Most read section | Low | Open |
 | U-27 | FL-10 | Most read item content and row gap | Low | Open |
 | U-28 | FL-11 | Region chip and region column heading look | Low | Open |
@@ -123,7 +124,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Open |
 | IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Decided: add it with the first shadcn primitive |
 | IMP-32 | R2-02 | `components.css` is not imported in `globals.css` | Low | Done in R2-04 |
-| IMP-33 | R2-03 | Newsletter strings and components stay until R2-11, because R2-03 only touches `src/content/` | Low | Open: remove in R2-11 |
+| IMP-33 | R2-03 | Newsletter strings and components stay until R2-11, because R2-03 only touches `src/content/` | Low | Done in R2-11 |
 | IMP-34 | R2-03 | Mock ad creatives are plain gray SVG files with no text, one per size | Low | Open |
 | IMP-35 | R2-04 | The Eyebrow is now a link to `/category/<id>`, which is a 404 page | Low | Open |
 | IMP-36 | R2-04 | The Bangla Breaking label is "সদ্যপ্রাপ্ত"; the Chip sheet says the working label is ব্রেকিং | Low | Open: needs tajmin's yes |
@@ -136,10 +137,11 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-43 | R2-05 | LinkedIn mark from Simple Icons 13.21.0, the last release that has it; the Drawer lists 5 links, the Footer still 4 | Low | Open |
 | IMP-44 | R2-06 | At 768–1023 the band shows the 728×90 creative inside the 250 reserve, so 160px of the band is empty | Low | Open |
 | IMP-45 | R2-06 | `AdSlot` reads its mock booking itself and always renders; the Phase 1 rule "no booking, no `ad-top` row" (DR-250) has no code path yet | Low | Open |
-| IMP-46 | R2-06 | The `rail` variant is built and tested alone; it goes into the P-3 rail in R2-11. 28 chromium e2e tests stay red from before (`most-read`, R2-12) | Low | Open |
+| IMP-46 | R2-06 | The `rail` variant is built and tested alone; it goes into the P-3 rail in R2-11. 28 chromium e2e tests stay red from before (`most-read`, R2-12) | Low | Done in R2-11 |
 | IMP-47 | R2-07 | The story units are wired into the hero (needed to keep it building); two hero tests and the hero e2e layout checks were changed to the sheets. A development-only test page `/dev/story-units` carries the unit tests | Medium | Open |
 | IMP-48 | R2-07 | `StoryCard` `layout` has four values (`stack`, `row`, `row-from-md`, `row-until-lg`) and `OverlapCard` has a `surface` prop, so a section can set the page-breakpoint switch and the P-4 background; the sheets say "the section sets it" but give no prop | Low | Open: flag for tajmin |
 | IMP-49 | R2-09 | Mock content changed to the sheet counts: 3 analysis stories (1 feature, 2 compact) and 5 opinion pieces; the `listItem` class file is gone | Low | Open |
+| IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Open: flag for tajmin |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -389,6 +391,21 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### DOC-31 DailyPoll: row layout trigger, legend and column split
+
+- **Found:** R2-11 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-26 (`DailyPoll.panel`, `.question`, layout table), `spacing-layout-system.md` 7.4 (P-3 rail: daily poll), LAY-20.
+- **Problem:**
+  1. The layout table says "Under 1024: full row, question left, options and button right", but the panel inset says "40 / 32px in a container under 600px, 48 / 40px from 600px". The container is the shell (viewport minus two gutters), so at viewports 600–647 the container is under 600px. Two readings of "row" disagree there.
+  2. C-26 makes the question the fieldset `legend`. A `legend` cannot be placed in a grid column apart from its fieldset, so "question left, options right" needs the question outside the fieldset.
+  3. The row layout gives no column split (50 : 50?), gap or token (CPT-07).
+- **Built as:** The `DailyPoll` section is the container. The row layout starts when the container is 600px or wider (viewport 648 and up, until the rail takes it at 1024), the same trigger as the panel inset. Heading and question in the start column, fieldset (named by `aria-labelledby` on the visible question) and button in the end column, two equal columns with `--grid-column-gap`. `components.css` has `@utility poll-layout`.
+- **Suggested solution:** Say "from a container of 600px" in the layout table, say how the question is named when it is not a `legend`, and give the column split.
+
+---
+
+---
+
 ## Design-system gaps (U-)
 
 ### DOC-29 Rail ad box: 304 or 300
@@ -549,51 +566,43 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-21 Inside of a P-3 category block
 
-- **Found:** FL-09 · **Severity:** Low · **Status:** Open
+- **Found:** FL-09 · **Severity:** Low · **Status:** Fixed in R2-11
 - **Files:** `src/components/home/grouped/CategoryBlock.tsx`
-- **Gap:** 7.2 says "rows of two categories" but not what one category shows.
-- **Treatment used:** The section heading (rule and `type-section-title`, as in P-2), then a list: the first story with its 16:9 image and `type-story-title`, the other stories as compact items in `type-story-title-sm`, with the list rule between items (`space-list-item`). Time and reading time under each title. No summary, no category label (U-20), no "আরও দেখুন" link (as IMP-23).
-- **Suggested solution:** Define the category block in the component pass (U-02), with the story count per block.
+- **Fixed by:** `component-system.md` C-23: heading (plain text), the feature story as a `StoryCard` (3:2 image, `type-story-title`, summary, meta, no eyebrow) with a rule below, a `StoryList` of 2, and a MoreLink to the category page pinned to the block bottom.
 
 ---
 
 ### U-22 P-3 rail module look (newsletter, poll)
 
-- **Found:** FL-09 · **Severity:** Low · **Status:** Open
-- **Files:** `src/components/home/grouped/classes.ts`
-- **Gap:** 7.4 lists the parts of the newsletter and the poll and says they never use the ad label or ad colors, but gives no surface, border or padding.
-- **Treatment used:** No background. A 1px top rule in `border` with `space-section-rule-title` above the heading, so the module tops line up with the category heading rules beside them. The rule is the divider color, not `brand`, because the modules are not editorial sections (COL-04). Field and buttons 44px tall (U-05).
-- **Suggested solution:** Decide the module surface in the component pass (for example `surface-elevated` with padding).
+- **Found:** FL-09 · **Severity:** Low · **Status:** Fixed in R2-11
+- **Files:** `src/components/home/grouped/DailyPoll.tsx`
+- **Fixed by:** `component-system.md` C-26: `surface-elevated` panel with the panel inset (LAY-20). The top rule and `classes.ts` are gone.
 
 ---
 
 ### U-23 Form text roles: field label, consent line, error and done messages
 
-- **Found:** FL-09 · **Severity:** Low · **Status:** Open
-- **Files:** `src/components/home/grouped/NewsletterSignup.tsx`, `DailyPoll.tsx`
-- **Gap:** Typography 7.1 maps the newsletter heading, text, email field and buttons, but not the field label, the consent line, the error message or the done message. 7.1 also says "every homepage text uses a role in this table".
-- **Treatment used:** A visible field label (a placeholder alone is not a label) in `type-ui-sm` `text-ink-secondary`, as in the header search form. Consent line `type-ui-sm` `text-ink-secondary`, with an underlined `interactive` privacy link (a link in a sentence needs more than color). Error `type-ui-sm` `text-error`. Done message `type-ui` `text-success` on `success-subtle`, with the mock note in `type-ui-sm` `text-ink`.
-- **Suggested solution:** Add rows for form label, help and error text, and status message to 7.1 or 7.3.
+- **Found:** FL-09 · **Severity:** Low · **Status:** Fixed in R2-11
+- **Files:** `src/components/home/grouped/DailyPoll.tsx`
+- **Fixed by:** `typography-system.md` 7.1 now maps the poll question (`type-story-title-sm`), options (`type-ui`), results and own-vote tag (`type-ui-sm`) and form errors (`type-ui-sm`). The newsletter form and its done message are removed (DR-239).
 
 ---
 
 ### U-24 Poll question role and result bar look
 
-- **Found:** FL-09 · **Severity:** Low · **Status:** Open
+- **Found:** FL-09 · **Severity:** Low · **Status:** Partly fixed in R2-11
 - **Files:** `src/components/home/grouped/DailyPoll.tsx`
-- **Gap:** 7.1 gives the poll heading, options and results, but not the question. 7.4 says "result bars" with no size or color.
-- **Treatment used:** The heading is "আজকের জরিপ" / "Daily poll" (`type-story-title-sm`); the question is the fieldset legend in `type-summary` `text-ink`. Each result: the option and its percent (`type-ui-sm`, tabular digits), then an 8px bar (`h-2`): track `border-soft`, fill `interactive`, width from the percent. The reader's own option is marked with "(আপনার ভোট)" in text, with no weight change (TYP-24). The total votes line is `type-ui-sm` `text-ink-muted`. No animation (motion is a gap, U-02).
-- **Suggested solution:** Add the question role and the bar size and colors to the component pass.
+- **Fixed:** the question role (`type-story-title-sm`), the rows and the markers (C-26).
+- **Still open:** C-26 says "rows fill to the percent" but names no fill color. Built with `bg-accent-soft` behind the row text (light and dark), an own-vote marker filled `interactive`, the other markers `border-interactive`.
+- **Suggested solution:** Name the fill token in C-26.
 
 ---
 
 ### U-25 Spacing inside forms has no tokens
 
-- **Found:** FL-09 · **Severity:** Medium · **Status:** Open
-- **Files:** `src/components/home/grouped/NewsletterSignup.tsx`, `DailyPoll.tsx`, `classes.ts` (and `src/components/header/classes.ts` since FL-05)
-- **Gap:** Section 5.2 has story and list spacing, but none for label to field, field to button, between radio options or the result bar height. LAY-01 says to add a token before typing a space value. The design reviewer flagged this as a strict LAY-01 break.
-- **Treatment used:** The Tailwind spacing scale, as in the header controls accepted in FL-05: `gap-2` (label, field, button), `gap-3` (radio to label, result rows), `mt-1`, `mt-2`, `mt-3`, `px-3`, `py-2`, `h-2` (bar), `size-5` (radio), `min-h-11` (44px targets, U-05). No pixel values.
-- **Suggested solution:** Add form spacing tokens (`space-field-label`, `space-field-gap`, `space-option`) and a control size token to Section 5.2.
+- **Found:** FL-09 · **Severity:** Medium · **Status:** Fixed in R2-11 for the poll
+- **Files:** `src/components/home/grouped/DailyPoll.tsx`
+- **Fixed by:** C-26 gives the values (16px heading to question, 24px to options, 4px between options, 24px to the button). They are one-component values on the 4px scale (`mt-4`, `mt-6`, `gap-1`, LAY-21). The email form is removed.
 
 ### U-26 Bangla name of the Most read section
 
@@ -901,7 +910,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### IMP-33 Newsletter code stays until R2-11
 
-- **Found:** R2-03 · **Severity:** Low · **Status:** Open
+- **Found:** R2-03 · **Severity:** Low · **Status:** Done in R2-11 (`NewsletterSignup`, `lib/email.ts`, the strings and the tests are removed)
 - **Choice:** `src/content/` has no newsletter content (a test checks this, DR-239). The newsletter strings in `src/i18n/` and the code in `NewsletterSignup.tsx`, `GroupedCategories.tsx`, `SiteHeader.tsx`, `Drawer.tsx` and `src/lib/email.ts` are outside the R2-03 files, and removing them now would break the build.
 - **Suggested solution:** Remove them in R2-11 (the sprint says do not build NewsletterSignup) and in R2-05 for the header and Drawer.
 
@@ -982,7 +991,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### IMP-46 Rail variant and red tests
 
-- **Found:** R2-06 · **Severity:** Low · **Status:** Open
+- **Found:** R2-06 · **Severity:** Low · **Status:** Done in R2-11 (the rail ad is in the P-3 rail and the ad and page specs cover it; the 28 `most-read` tests wait for R2-12)
 - **State:** `AdSlot variant="rail"` (300×600 from the mock, `hidden xl:grid`, 624px with the label) is covered by a unit test only, because the P-3 rail is rebuilt in R2-11 (DR-239). After R2-06, 28 chromium e2e tests are red from before: `most-read` (R2-12). The 22 ad-row tests and the `grouped` 320px inset test (now DR-207) are green. WebKit runs the header tests only (R2-01); its `grouped` tests were already red.
 - **Suggested solution:** None. R2-11 and R2-12 turn them green.
 
@@ -1005,6 +1014,17 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Found:** R2-09 · **Severity:** Low · **Status:** Open
 - **Choice:** The sheets give 3 analysis stories (1 OverlapCard + 2 compact rows, P-4) and 5 opinion pieces (C-06). The mock plan had 4 and 4. `homepage.ts` now has 3 analysis stories (`chip-supply-map` left the plan, so the no-image story `bay-security-calculation` stays as a hard case) and 5 opinion pieces (new story `opinion-energy-transition-labour`, bn and en). The sparse variant is unchanged (2 analysis, no opinion). `analysis-opinion/classes.ts` is deleted; `StoryStack` uses `dividerItem`.
 - **Suggested solution:** Confirm the counts, or let the component show fewer or more items than the sheet.
+
+---
+
+### IMP-50 DailyPoll controls and fill
+
+- **Found:** R2-11 · **Severity:** Medium · **Status:** Open: flag for tajmin
+- **Choice:** C-26 names a shadcn RadioGroup (CPT-16) and a `legend`. Built with native radio inputs (visually hidden, so the keyboard and screen readers use them) and a drawn square marker with the base focus outline (DR-138 forbids round dots; a native radio is round). The fieldset is named by `aria-labelledby` on the visible question (see DOC-31). Result rows fill with `bg-accent-soft` (U-24).
+- **Why:** The project already keeps native controls for dialogs (IMP-39). The shadcn RadioGroup and a restyle to a square marker would add a dependency and the `tw-animate-css` import (IMP-31).
+- **Suggested solution:** Confirm native controls with a drawn marker, or approve the shadcn RadioGroup and its CSS import. Confirm the fill token.
+
+---
 
 ---
 
@@ -1069,3 +1089,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-08 | U-33 decided by tajmin and fixed in the three story units (placeholder image). Hero already sat on LeadStory, OverlapCard and StoryList from R2-07. Added Playwright sheet checks (C-01: bar 6/8/10px, panel padding, inset, overlap, page-color panel, dark bar; C-02: overlap and notch, h3 role; one tab stop plus eyebrow) at 360, 768, 1366 in both languages. tajmin decided the hero top stories need an image: the full mock hero has a new image story in the second slot (U-33 stays open for other no-image cards) |
 | 2026-10-11 | R2-09 | U-34, U-35, IMP-49 added. U-15, U-17 and IMP-21 fixed, U-16 partly fixed by the P-4 and C-06 sheets. AnalysisList (OverlapCard + 2 StoryCard rows), OpinionList (chip label, QuoteMark, author and time lines), AnalysisOpinion (`panel-inset` inside the shell); Playwright sheet checks at 360, 768 and 1366 in both languages |
 | 2026-10-11 | R2-10 | No new items. DOC-17, U-18, U-19, U-20 and IMP-23 fixed by the P-2 sheet: the feature story is a StoryCard (`row-from-md`, 3:2, `feature` split, `type-story-title`, no eyebrow); the rail is one StoryCard (`row-until-lg`, 16:9, third split) and a StoryList of 2; one MoreLink to `/category/<id>` at the section end. `FeaturedLead` and `FeaturedRail` deleted. Playwright sheet checks (feature image 420 to 557px at 50% and 60%, rail row 2 : 1 then stack, MoreLink at the end edge) at 14 widths in both languages |
+| 2026-10-11 | R2-11 | DOC-31, IMP-50 added. U-21, U-22, U-23, U-25 fixed and U-24 partly fixed by C-23 and C-26. IMP-33 and IMP-46 done. CategoryBlock rebuilt (StoryCard + StoryList + pinned MoreLink); DailyPoll rebuilt (surface-elevated panel, `poll-layout`, square markers, filled result rows, Button); the rail holds the poll and the `ad-rail` slot from 1280; newsletter code, strings, `lib/email.ts` and `grouped/classes.ts` removed; Playwright sheet checks at 14 widths and the poll at 6 widths in both languages |

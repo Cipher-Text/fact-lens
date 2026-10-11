@@ -470,10 +470,14 @@ export const stories: StoryDef[] = [
     image: "photo",
     bn: {
       title: "সাইবার হামলা মোকাবিলায় জাতীয় সাড়াদান কেন্দ্রের পরিধি বাড়ছে",
+      summary:
+        "কেন্দ্রটি এখন সরকারি ব্যাংক ও বন্দরের নেটওয়ার্কও নজরে রাখবে। আগামী মাস থেকে চব্বিশ ঘণ্টার একটি হটলাইন চালু হবে।",
       imageAlt: "অন্ধকার ঘরে কয়েকটি কম্পিউটার পর্দা",
     },
     en: {
       title: "National cyber response centre expands its remit",
+      summary:
+        "The centre will also watch the networks of state banks and ports. A round-the-clock hotline starts next month.",
       imageAlt: "Several computer screens in a dark room",
     },
   },
@@ -513,10 +517,14 @@ export const stories: StoryDef[] = [
     image: "classic",
     bn: {
       title: "পুরান ঢাকার এক বাড়িতে মিলল উনিশ শতকের বাণিজ্যের খাতা",
+      summary:
+        "খাতাগুলোতে নদীপথে পাট ও মসলার লেনদেনের হিসাব আছে। গবেষকেরা সেগুলো সংরক্ষণ ও ডিজিটাল করার পরিকল্পনা করছেন।",
       imageAlt: "টেবিলে খুলে রাখা পুরোনো হাতে লেখা খাতা",
     },
     en: {
       title: "Nineteenth-century trade ledgers found in an Old Dhaka house",
+      summary:
+        "The books record river trade in jute and spices. Researchers plan to conserve and digitise them.",
       imageAlt: "An old handwritten ledger open on a table",
     },
   },
@@ -553,11 +561,15 @@ export const stories: StoryDef[] = [
     image: "photo",
     bn: {
       title: "পোশাক খাতে নতুন বাজার খুঁজতে লাতিন আমেরিকায় বাণিজ্য মিশন",
+      summary:
+        "ব্যবসায়ীরা প্রথমবার ব্রাজিল ও চিলির ক্রেতাদের সঙ্গে সরাসরি বৈঠক করবেন। লক্ষ্য ইউরোপ ও যুক্তরাষ্ট্রের বাইরে রপ্তানি বাড়ানো।",
       imageAlt: "পোশাক কারখানায় সেলাই মেশিনের সারি",
     },
     en: {
       title:
         "Garment sector sends trade mission to Latin America to find new markets",
+      summary:
+        "Exporters will meet buyers in Brazil and Chile directly for the first time. The aim is to grow sales beyond Europe and the United States.",
       imageAlt: "Rows of sewing machines in a garment factory",
     },
   },
@@ -592,10 +604,14 @@ export const stories: StoryDef[] = [
     image: "classic",
     bn: {
       title: "দেশে তৈরি প্রথম কৃষি ড্রোন পরীক্ষায় সফল",
+      summary:
+        "ড্রোনটি এক ঘণ্টায় পাঁচ একর জমিতে সার ছিটাতে পারে। পরের ধাপে কৃষকদের হাতে ভাড়ায় দেওয়ার পরীক্ষা হবে।",
       imageAlt: "ধানক্ষেতের ওপর উড়ন্ত একটি ড্রোন",
     },
     en: {
       title: "First locally built farm drone passes its tests",
+      summary:
+        "The drone can spray five acres of fertiliser in an hour. The next step is a trial of renting it to farmers.",
       imageAlt: "A drone flying over a rice field",
     },
   },

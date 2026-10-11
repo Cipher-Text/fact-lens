@@ -10,7 +10,6 @@ import {
   type ReactNode,
 } from "react";
 
-import { railModule } from "@/components/home/grouped/classes";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { Chip } from "@/components/story/Chip";
 import { IconButton } from "@/components/story/IconButton";
@@ -23,6 +22,10 @@ import {
   type SliderEdges,
 } from "@/lib/slider";
 import { cn } from "@/lib/utils";
+
+// Column top rule in the divider color (U-28). Moved here from the P-3 classes file in R2-11;
+// R2-13 rebuilds this slider.
+const railModule = "border-t border-border pt-(--space-section-rule-title)";
 
 export type RegionPanel = {
   id: string;

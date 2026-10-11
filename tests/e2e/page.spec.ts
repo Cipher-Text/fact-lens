@@ -11,6 +11,7 @@ const WIDTHS = [320, 360, 600, 768, 834, 1024, 1180, 1280, 1366, 1440, 1920];
 function reserved(slot: string, width: number) {
   if (slot === "ad-top") return width < 768 ? 100 : width < 1024 ? 90 : 250;
   if (slot === "ad-band") return width < 768 ? 280 : 250;
+  if (slot === "ad-rail") return 600; // from 1280 only
   return width < 1280 ? 250 : 90; // ad-inset
 }
 const AD_LABEL = 24;
@@ -35,6 +36,11 @@ for (const path of ["/", "/en"]) {
       for (let i = 0; i < count; i++) {
         const row = rows.nth(i);
         const slot = (await row.getAttribute("data-ad-slot"))!;
+        if (slot === "ad-rail" && width < 1280) {
+          // In the HTML at every width, hidden under 1280 (9.1, DR-244, DR-245).
+          await expect(row).toBeHidden();
+          continue;
+        }
         const rowBox = await box(row);
 
         expect(Math.round(rowBox.height), `${slot} #${i}`).toBe(

@@ -24,6 +24,8 @@ function expected(slot: string, width: number) {
       return width < 1280
         ? { reserve: 250, file: "300x250" }
         : { reserve: 90, file: "728x90" };
+    case "ad-rail": // the P-3 rail, from 1280 only (DR-245)
+      return { reserve: 600, file: "300x600" };
     default:
       throw new Error(slot);
   }

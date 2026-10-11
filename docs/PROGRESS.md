@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-10 is Done
-- Next action: R2-11 Grouped categories and rail (P-3), after tajmin types `/ticket`
+- Ticket: none. R2-11 is Done
+- Next action: R2-12 Most read (P-5), after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -81,6 +81,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-08 Hero (P-1) | Hero already used the C-01, C-02 and C-03 units from R2-07 (top stories in `type-story-title`); the only code change is the U-33 placeholder in `StoryImage` and the three units. Added sheet-check e2e tests (bar, panel inset and padding, overlap, notch, dark bar, tab stops) at 360, 768 and 1366 in both languages. Mock fix (tajmin): the second top story now has an image (new story `border-crossing-digital-pass`); every hero top card is checked for overlap and notch. U-33 decided (tajmin): a story with no image shows a placeholder image in LeadStory, OverlapCard and StoryCard (`StoryImage`); the other image code (`StoryStack`, `FeaturedRail`, `AnalysisList`) follows in R2-09, R2-10 and R2-13 |
 | 2026-10-11 | R2-09 Analysis and opinion (P-4) | `AnalysisOpinion` is the shell section with `panel-inset` inside (the section is the container); `AnalysisList` = OverlapCard (elevated) + 2 compact StoryCard rows (2 : 1) in one list with item rules; `OpinionList` = chip label, drawn `QuoteMark` (28/36/44), title h3, author and time on own lines, 24px between rows. Mock set now 3 analysis and 5 opinion stories. Sheet-check e2e at 360, 768, 1366 in both languages. Flags open: U-34, U-35, IMP-49 |
 | 2026-10-11 | R2-10 Featured categories (P-2) | `FeaturedCategory` rebuilt from the P-2 sheet: the feature story is a `StoryCard` (`row-from-md`, 3:2, `feature` split, no eyebrow, summary); the rail is one `StoryCard` (`row-until-lg`, 16:9) and a `StoryList` of 2 with the rule below the image story; one `MoreLink` to `/category/<id>` at the section end. `FeaturedLead` and `FeaturedRail` deleted. Sheet-check e2e at 14 widths in both languages. No new flags. U-18 to U-20, DOC-17, IMP-23 fixed |
+| 2026-10-11 | R2-11 Grouped categories and rail (P-3) | `CategoryBlock` rebuilt from C-23 (feature `StoryCard` 3:2 with summary, rule, `StoryList` of 2, MoreLink pinned to the block bottom); `DailyPoll` rebuilt from C-26 (`surface-elevated` panel with `panel-inset`, `poll-layout` row from a 600px container, square markers, `Button`, filled result rows); rail = poll, then `ad-rail` from 1280. Newsletter code, strings, `lib/email.ts` and `grouped/classes.ts` removed. Sheet-check e2e at 14 widths (blocks, rail, rail ad) and 6 widths (poll) in both languages. Flag open: IMP-50. DOC-31 |
 
 ## Later
 
@@ -128,6 +129,10 @@ Ideas that are outside the current ticket.
 - R2-05: `grouped.spec.ts` lost its Subscribe-link step (DR-188). `#newsletter` stays in the rail until R2-11 removes the newsletter.
 - R2-06: `AdSlot` replaces `AdRow`/`AdPlaceholder`; the `rail` variant goes into the P-3 rail in R2-11 (hidden under 1280). 28 chromium e2e tests are red from before: `most-read` (R2-12). IMP-44 to IMP-46, DOC-29.
 
+- R2-11: `RegionSlider.tsx` has the old column top rule inline (`railModule`, moved from the deleted `grouped/classes.ts`); R2-13 rebuilds it. `header/classes.ts` (`focusRing`, `iconButton`, `filledButton`) now has the footer (R2-14) as its only caller besides the regions slider; remove it with the last caller.
+- R2-11: `StoryStack` is no longer used by P-3; the regions (R2-13) are its last caller. Delete it there.
+- R2-11: 28 chromium e2e tests are red from before: `most-read` (R2-12). IMP-50 (native radios with a drawn square marker, shadcn RadioGroup) is a flag for tajmin.
+
 ## Unresolved design-system items
 
 | ID | File and component | Treatment used | Status |
@@ -152,11 +157,11 @@ Ideas that are outside the current ticket.
 | U-18 | P-2 lead split from 1280 (`src/components/home/featured/FeaturedLead.tsx`) | Two equal columns, text top-aligned beside the image | Fixed in R2-10 |
 | U-19 | P-2 rail at 600–1023 (`FeaturedRail.tsx`) | Two columns: image story left over both rows, two stories right | Fixed in R2-10 |
 | U-20 | Story labels in a category section (`FeaturedLead.tsx`, `FeaturedRail.tsx`) | No category label (the heading names it); breaking label kept; rail in `type-story-title-sm` | Fixed in R2-10 |
-| U-21 | Inside of a P-3 category block (`src/components/home/grouped/CategoryBlock.tsx`) | Heading, one image story in `type-story-title`, then compact stories in `type-story-title-sm` with list rules | Open |
-| U-22 | P-3 rail module look (`grouped/classes.ts`) | No background; 1px `border` top rule with `space-section-rule-title`, aligned with the category rules | Open |
-| U-23 | Form text roles (`NewsletterSignup.tsx`, `DailyPoll.tsx`) | Visible label and consent line `type-ui-sm` `ink-secondary`; error `text-error`; done `text-success` on `success-subtle` | Open |
-| U-24 | Poll question and result bars (`DailyPoll.tsx`) | Question `type-summary`; 8px bar, `border-soft` track, `interactive` fill; own vote named in text | Open |
-| U-25 | Spacing inside forms (`grouped/*`, `header/classes.ts`) | Tailwind spacing scale (`gap-2`, `min-h-11` …), as in FL-05; no form tokens in 5.2 | Open |
+| U-21 | Inside of a P-3 category block (`src/components/home/grouped/CategoryBlock.tsx`) | Built from C-23: feature `StoryCard` (3:2, summary), rule, `StoryList` of 2, pinned MoreLink | Fixed in R2-11 |
+| U-22 | P-3 rail module look (`grouped/classes.ts`) | Built from C-26: `surface-elevated` panel with the panel inset; no top rule | Fixed in R2-11 |
+| U-23 | Form text roles (`NewsletterSignup.tsx`, `DailyPoll.tsx`) | The poll uses the 7.1 roles (question, options, results, error); the newsletter is removed | Fixed in R2-11 |
+| U-24 | Poll question and result bars (`DailyPoll.tsx`) | Question `type-story-title-sm` (7.1). Result rows fill with `accent-soft`; own marker `interactive`, others `border-interactive`; own vote named in text. The fill color is not in C-26 | Open (fill color) |
+| U-25 | Spacing inside forms (`grouped/*`, `header/classes.ts`) | Poll values from C-26 on the 4px scale (`mt-4`, `mt-6`, `gap-1`, LAY-21) | Fixed in R2-11 |
 | U-26 | Bangla name of P-5 (`src/i18n/bn.ts` `mostRead.title`) | Working label "সর্বাধিক পঠিত" | Open |
 | U-27 | Most read item (`src/components/home/most-read/MostRead.tsx`) | Title only in `type-story-title-sm`; `space-module` between rows; no list rules | Open |
 | U-28 | Region chip and column heading (`src/components/home/regions/RegionSlider.tsx`) | Chip: `border-interactive` border, `text-interactive`, filled `interactive` when selected, `px-3`; column heading `type-ui-sm` with the U-22 top rule, visually hidden below 600 | Open |
@@ -200,5 +205,6 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-11 R2-05 | `component-system.md` C-12, C-17, §6; `color-system.md` 2.9 | DOC-27: switch radii, top bar padding and the theme control color switch have no token. `components.css` has four | Workaround in code |
 | 2026-10-11 R2-05 | `component-system.md` C-18, C-19 | DOC-28: 48px row with or without its 1px rule; where the Drawer row rule sits above children | Open |
 | 2026-10-11 R2-06 | `component-system.md` C-16; `spacing-layout-system.md` 12.2 | DOC-29: rail box "304" against `--ad-rail-w` 300px | Open |
+| 2026-10-11 R2-11 | `component-system.md` C-26; `spacing-layout-system.md` 7.4 | DOC-31: poll row layout trigger (viewport 600 or container 600), `legend` against the start column, no column split token. `components.css` has `poll-layout` | Workaround in code |
 | 2026-10-07 FL-13 | `typography-system.md` 8.2 | DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |
