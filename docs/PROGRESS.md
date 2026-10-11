@@ -8,8 +8,33 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-16 is Done
-- Next action: R2-17 Final check, after tajmin types `/ticket`
+- Ticket: none. R2-17 is Done
+- Next action: R2-18 Branch preview, after tajmin types `/ticket` (needs tajmin's go before any deploy)
+
+## R2-17 results
+
+Measured on 11 October 2026 in Chromium (dev server). A temporary measurement spec ran and was deleted; no code changed. Values: Pass, Note, Fail.
+
+| # | Case | Result | What was measured | Fix |
+| --- | --- | --- | --- | --- |
+| 1 | `pnpm check` | Pass | Lint, typecheck, 212 unit tests, build; no warnings | – |
+| 2 | `pnpm test:e2e --project=chromium` | Pass | 560 tests, axe included | – |
+| 3 | 11 widths × bn/en × light/dark × reader size base and `xl` (88 loads) | Pass | No horizontal scroll, no element outside the viewport, no clipped text. visual-qa: same at all 11 widths, 0 faults | – |
+| 4 | Long Bangla headlines (every headline 3× longer, 6 widths, bn/en) | Pass | No horizontal scroll at 320 to 1920 (normal words; DOC-24 compound-word case unchanged) | – |
+| 5 | Stories with no image | Pass | Placeholder image in LeadStory, OverlapCard, StoryCard (U-33); e2e green | – |
+| 6 | Sparse sections (`?content=sparse`, 6 widths, bn/en) | Pass | No scroll. No two ad rows stacked; at 1280+ the `ad-rail` sits beside `ad-inset`, not above it | – |
+| 7 | Two top-story cards at 1024 and 1280 | Pass | hero e2e: rows, overlap and notch checked in both languages | – |
+| 8 | First screen 1366×768 (650px viewport) | Note | Top ad 274 + bar + nav; hero starts at 426. 224px of hero shows (spec says about 264): image top only, no headline. Matches DR-257 | DOC-23 stays open: the 264 estimate leaves out `space-section` |
+| 9 | Bangla nav row at 1280 | Pass | 9 of 9 items, one row, no overflow; same at 1366 and 1920 | – |
+| 10 | English nav row | Note | 8 of 9 items at 1280, 1366 and 1920 (the shell width limits it); the 9th is in the Drawer (DR-255). Row height 49 with the rule | DOC-28 |
+| 11 | 200% browser text size | Pass | `text-size.spec.ts` at 320, 768, 1024, both languages | U-37 and DOC-34 stay open flags |
+| 12 | axe, light, bn/en at 360, 768, 1280 | Note | No serious or critical. One moderate: `landmark-unique` (the ad regions share one label) | DOC-35 (new) |
+| 13 | axe, dark, bn/en at 360, 768, 1280 | Note | Serious `color-contrast` on 2 nodes, both the text logo in `brand` (2.37:1 in the top bar, 1.72:1 in the footer). A logo is exempt from WCAG 1.4.3; the logo is a text placeholder. The e2e axe tests pass | U-08, U-31 |
+| 14 | Keyboard, 360 / 768 / 1280, both languages and themes | Pass | 85 / 97 / 106–107 tab stops; every app stop shows the focus ring. The only stop with no ring is the Next.js dev-tools portal (dev only) | – |
+| 15 | Sticky and fixed | Pass | Only the top bar is sticky (visual-qa, AdSlot test) | – |
+| 16 | Interface language | Pass | No English text on bn pages, no Bangla on en pages | – |
+| 17 | design-reviewer on `src/` | Pass | No blockers. `Verdict: pass`. U-24 fill color noted | – |
+| 18 | WebKit | Not run | Chromium only for this ticket. Known WebKit failures from R2-12 and R2-13 stay | – |
 
 ## FL-13 results
 
@@ -87,6 +112,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-14 Footer | `SiteFooter` rebuilt from C-21: `surface-elevated` band with `panel-inset`, centered logo, five ink social icons, `ink-secondary` links (wrap on phones), copyright line (`formatYear`); `header/classes.ts` trimmed to `uiLink`. Footer tests at 14 widths in both languages, hover/press states, axe in both themes. Flag open: DOC-33. U-30 fixed |
 | 2026-10-11 | R2-15 200% text size | `text-size.spec.ts` sets the real browser font size (32px) and checks `scrollWidth` at 320, 768, 1024 in both languages. Only fault: the top bar at 320; now `min-h-(--bar-height)` with wrap. Most read stacks by the rem breakpoints; the P-4 compact rows never stack (U-37, open flag). DOC-34 flag |
 | 2026-10-11 | R2-16 Spacing check | No code change. 12 full-page screenshots (bn/en, 1024, 1280, 1920) of the current tokens and a runtime step-up (gutter 32, column gap 32, space-module 48) in `test-results/spacing/` (not committed). No token change; that needs tajmin's yes and a spec change first |
+| 2026-10-11 | R2-17 Final check | No code change. Results table "R2-17 results" above: 11 widths, both languages and themes, content cases, axe, keyboard, first screen 1366×768. 560 chromium e2e green, design-reviewer pass, visual-qa 0 faults. DOC-35 added (ad region labels); dark logo contrast stays U-08; DOC-23 unchanged |
 
 ## Later
 
@@ -217,5 +243,6 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-11 R2-12 | `component-system.md` C-07; `spacing-layout-system.md` 3.1 | DOC-32: Most read gaps (24px columns, 20 / 24px rows) against the tier gaps (16 / 20px, row = column). Built as the sheet | Open |
 | 2026-10-11 R2-14 | `component-system.md` C-21; `spacing-layout-system.md` 4, 5.3 | DOC-33: panel inset at the sides plus the shell gutter leaves 224px at 320. Built with the band inset and a centered content box of at most the shell width | Open (flag) |
 | 2026-10-11 R2-15 | `component-system.md` C-17; `spacing-layout-system.md` 12.3 | DOC-34: top bar `h-(--bar-height)` cannot wrap at 200% text size. Built `min-h-(--bar-height)` with `flex-wrap` | Open (flag) |
+| 2026-10-11 R2-17 | `spacing-layout-system.md` 9; AdSlot | DOC-35: every ad region has the same label (বিজ্ঞাপন / Advertisement), so axe reports `landmark-unique` (moderate) | Open (flag) |
 | 2026-10-07 FL-13 | `typography-system.md` 8.2 | DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |

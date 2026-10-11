@@ -81,7 +81,7 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 | R2-14 | Footer | R2-04 | Done |
 | R2-15 | 200% text size | R2-08 to R2-14 | Done |
 | R2-16 | Spacing check | R2-15 | Done |
-| R2-17 | Final check | R2-16 | To do |
+| R2-17 | Final check | R2-16 | Done |
 | R2-18 | Branch preview | R2-17 | To do |
 | R2-19 | Pull request | R2-18 | To do |
 | R2-20 | Code review | R2-19 | To do |
