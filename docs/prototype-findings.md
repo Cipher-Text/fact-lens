@@ -42,7 +42,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-14 | FL-06 | Headline links: `ink` or `interactive` | Low | Open |
 | DOC-15 | FL-06 | The 64px lead overlap has no token | Low | Workaround in code |
 | DOC-16 | FL-07 | LAY-12 section-to-ad space on a section with its own background | Low | Workaround in code |
-| DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Open |
+| DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Fixed in R2-10 |
 | DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Fixed: spec makes the inset full screen width under 332px (DR-207); R2-06 builds it |
 | DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Workaround in code |
 | DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Workaround in code |
@@ -73,9 +73,9 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-15 | FL-07 | Analysis item layout (image-led list) | Low | Fixed in R2-09 |
 | U-16 | FL-07 | Opinion chip padding and quote icon | Low | Partly fixed in R2-09 (chip-to-list space still open) |
 | U-17 | FL-07 | Padding inside the বিশ্লেষণ ও মতামত background | Low | Fixed in R2-09 |
-| U-18 | FL-08 | P-2 lead: image and text split from 1280px | Low | Open |
-| U-19 | FL-08 | P-2 rail at 600–1023px | Low | Open |
-| U-20 | FL-08 | Story labels inside a category section | Low | Open |
+| U-18 | FL-08 | P-2 lead: image and text split from 1280px | Low | Fixed in R2-10 |
+| U-19 | FL-08 | P-2 rail at 600–1023px | Low | Fixed in R2-10 |
+| U-20 | FL-08 | Story labels inside a category section | Low | Fixed in R2-10 |
 | U-21 | FL-09 | Inside of a P-3 category block | Low | Open |
 | U-22 | FL-09 | P-3 rail module look (newsletter, poll) | Low | Open |
 | U-23 | FL-09 | Form text roles: field label, consent line, error and done messages | Low | Open |
@@ -113,7 +113,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Needs confirmation |
 | IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Fixed in R2-09 (the sheets give h3 titles and a chip label) |
 | IMP-22 | FL-07 | Shared `MoreLink` and elevated link classes | Low | Needs confirmation |
-| IMP-23 | FL-08 | P-2 has no "আরও দেখুন" link | Low | Needs confirmation |
+| IMP-23 | FL-08 | P-2 has no "আরও দেখুন" link | Low | Fixed in R2-10 |
 | IMP-24 | FL-09 | Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test | Medium | Needs confirmation |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Needs confirmation |
 | IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Needs confirmation |
@@ -280,7 +280,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### DOC-17 Typography 7.1 has no role for the lead of a category section
 
-- **Found:** FL-08 · **Severity:** Low · **Status:** Open
+- **Found:** FL-08 · **Severity:** Low · **Status:** Fixed in R2-10
 - **Source:** `typography-system.md` Section 7.1
 - **Problem:** 7.1 maps "Lead story headline" to `type-story-lead` and "Second-level story in a lead group" to `type-story-title-lg`. The P-2 lead (বাংলাদেশ, ভূরাজনীতি) is the lead of its section, but not the page lead. Either reading fits.
 - **Workaround:** `type-story-title-lg`, so the hero lead stays the largest headline on the page. From 1280px the text column beside the image is about 440–460px wide; `type-story-lead` would be very large there.
@@ -523,7 +523,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-18 P-2 lead: image and text split from 1280px
 
-- **Found:** FL-08 · **Severity:** Low · **Status:** Open
+- **Found:** FL-08 · **Severity:** Low · **Status:** Fixed in R2-10
 - **Files:** `src/components/home/featured/FeaturedLead.tsx`
 - **Gap:** 7.2 and DR-55 put the text beside the image from 1280px, but give no split.
 - **Treatment used:** Two equal columns with `grid-column-gap`, text aligned to the top of the image. Below 1280px the text is under the image with `space-story-media-text`. A lead with no image is text only.
@@ -531,7 +531,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-19 P-2 rail at 600–1023px
 
-- **Found:** FL-08 · **Severity:** Low · **Status:** Open
+- **Found:** FL-08 · **Severity:** Low · **Status:** Fixed in R2-10
 - **Files:** `src/components/home/featured/FeaturedRail.tsx`
 - **Gap:** 7.2 says only "Rail below the wrapper". In one column the rail image would be as wide as the shell (up to 976px), larger than the lead.
 - **Treatment used:** Two columns, like the hero Latest list: the image story on the left over both rows, the two stories on the right with a rule between them. Source order unchanged (LAY-14). One column on phones and in the 304px rail.
@@ -539,7 +539,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### U-20 Story labels inside a category section
 
-- **Found:** FL-08 · **Severity:** Low · **Status:** Open
+- **Found:** FL-08 · **Severity:** Low · **Status:** Fixed in R2-10
 - **Files:** `FeaturedLead.tsx`, `FeaturedRail.tsx`
 - **Gap:** 7.1 gives the category label role, but not whether a story inside its own category section shows it.
 - **Treatment used:** No category label in P-2: the section heading names the category. A breaking story keeps the filled label (COL-11). Rail stories use `type-story-title-sm` (compact card or list) with no summary.
@@ -828,7 +828,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### IMP-23 P-2 has no "আরও দেখুন" link
 
-- **Found:** FL-08 · **Severity:** Low · **Status:** Needs confirmation
+- **Found:** FL-08 · **Severity:** Low · **Status:** Fixed in R2-10
 - **Choice:** 7.2 lists the P-2 content (lead, one image story, two stories) with no "more" link, so none is built. A link to the category page would sit below the last rail story (LAY-18) and lead to a 404 page until category pages exist (IMP-18).
 - **Suggested solution:** Decide whether category sections link to their category page.
 
@@ -1068,3 +1068,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-07 | DOC-30, U-33, IMP-47, IMP-48 added. U-11 (headline link color) fixed by the sheets: ink, ink-muted on hover, no pressed color. U-12 (lead panel inset and padding), U-13 (blank band under a no-image card in the hero pair) fixed by C-01 and C-02 (tokens, no subgrid). LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem built from their sheets; tests at 360, 768, 1024 and 1280 in both languages with long-headline and no-image content |
 | 2026-10-11 | R2-08 | U-33 decided by tajmin and fixed in the three story units (placeholder image). Hero already sat on LeadStory, OverlapCard and StoryList from R2-07. Added Playwright sheet checks (C-01: bar 6/8/10px, panel padding, inset, overlap, page-color panel, dark bar; C-02: overlap and notch, h3 role; one tab stop plus eyebrow) at 360, 768, 1366 in both languages. tajmin decided the hero top stories need an image: the full mock hero has a new image story in the second slot (U-33 stays open for other no-image cards) |
 | 2026-10-11 | R2-09 | U-34, U-35, IMP-49 added. U-15, U-17 and IMP-21 fixed, U-16 partly fixed by the P-4 and C-06 sheets. AnalysisList (OverlapCard + 2 StoryCard rows), OpinionList (chip label, QuoteMark, author and time lines), AnalysisOpinion (`panel-inset` inside the shell); Playwright sheet checks at 360, 768 and 1366 in both languages |
+| 2026-10-11 | R2-10 | No new items. DOC-17, U-18, U-19, U-20 and IMP-23 fixed by the P-2 sheet: the feature story is a StoryCard (`row-from-md`, 3:2, `feature` split, `type-story-title`, no eyebrow); the rail is one StoryCard (`row-until-lg`, 16:9, third split) and a StoryList of 2; one MoreLink to `/category/<id>` at the section end. `FeaturedLead` and `FeaturedRail` deleted. Playwright sheet checks (feature image 420 to 557px at 50% and 60%, rail row 2 : 1 then stack, MoreLink at the end edge) at 14 widths in both languages |

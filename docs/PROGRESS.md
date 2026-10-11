@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-09 is Done
-- Next action: R2-10 Featured categories (P-2), after tajmin types `/ticket`
+- Ticket: none. R2-10 is Done
+- Next action: R2-11 Grouped categories and rail (P-3), after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -80,6 +80,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-07 Story units | `LeadStory`, `OverlapCard`, `StoryCard` (4 layouts, 2 splits), `StoryList`, `StoryListItem`, `StoryImage` in `components/story/`, from C-01, C-02, C-03, C-24, C-25; news links hover ink-muted; Hero and LatestList moved onto them; dev-only test page `/dev/story-units`. Flags open: U-33, IMP-48. DOC-30, IMP-47 |
 | 2026-10-11 | R2-08 Hero (P-1) | Hero already used the C-01, C-02 and C-03 units from R2-07 (top stories in `type-story-title`); the only code change is the U-33 placeholder in `StoryImage` and the three units. Added sheet-check e2e tests (bar, panel inset and padding, overlap, notch, dark bar, tab stops) at 360, 768 and 1366 in both languages. Mock fix (tajmin): the second top story now has an image (new story `border-crossing-digital-pass`); every hero top card is checked for overlap and notch. U-33 decided (tajmin): a story with no image shows a placeholder image in LeadStory, OverlapCard and StoryCard (`StoryImage`); the other image code (`StoryStack`, `FeaturedRail`, `AnalysisList`) follows in R2-09, R2-10 and R2-13 |
 | 2026-10-11 | R2-09 Analysis and opinion (P-4) | `AnalysisOpinion` is the shell section with `panel-inset` inside (the section is the container); `AnalysisList` = OverlapCard (elevated) + 2 compact StoryCard rows (2 : 1) in one list with item rules; `OpinionList` = chip label, drawn `QuoteMark` (28/36/44), title h3, author and time on own lines, 24px between rows. Mock set now 3 analysis and 5 opinion stories. Sheet-check e2e at 360, 768, 1366 in both languages. Flags open: U-34, U-35, IMP-49 |
+| 2026-10-11 | R2-10 Featured categories (P-2) | `FeaturedCategory` rebuilt from the P-2 sheet: the feature story is a `StoryCard` (`row-from-md`, 3:2, `feature` split, no eyebrow, summary); the rail is one `StoryCard` (`row-until-lg`, 16:9) and a `StoryList` of 2 with the rule below the image story; one `MoreLink` to `/category/<id>` at the section end. `FeaturedLead` and `FeaturedRail` deleted. Sheet-check e2e at 14 widths in both languages. No new flags. U-18 to U-20, DOC-17, IMP-23 fixed |
 
 ## Later
 
@@ -105,7 +106,7 @@ Ideas that are outside the current ticket.
 - FL-06: The hero `next/image` calls have no `sizes`. The mock SVGs are not optimized, so it has no effect now. Add `sizes` when real photos arrive.
 - FL-07: The analysis thumbnails have no `sizes` either (same as FL-06). Add it with real photos.
 - FL-07: `/analysis` and `/opinion` (the P-4 "more" links) are 404 until those pages exist (IMP-22).
-- FL-08: P-2 has no "আরও দেখুন" link to its category page, because 7.2 lists none (IMP-23).
+- FL-08 (done in R2-10): P-2 now has one "আরও দেখুন" link to `/category/<id>`, a 404 page until the category pages exist (IMP-23, IMP-35).
 - FL-09: `/privacy` (newsletter consent line) is 404 until the page exists. FL-12 links to it too (IMP-25).
 - FL-09: The phone 600px-between-ads rule is checked by a test, not at run time (IMP-24). Recheck with real, shorter categories.
 - FL-09: P-3 has `space-section` below it for P-5 (FL-10). Until FL-10 it is the end of the page.
@@ -148,9 +149,9 @@ Ideas that are outside the current ticket.
 | U-15 | Analysis item layout (`src/components/home/analysis-opinion/AnalysisList.tsx`) | 16:9 image at one third of the column, text beside it, at every width | Fixed in R2-09 |
 | U-16 | Opinion chip padding and quote icon (`OpinionList.tsx`) | Chip `px-1`, `space-list-item` below; `lucide-react` `Quote` 24px `text-ink-muted` | Partly fixed in R2-09 (chip-to-list space) |
 | U-17 | Padding inside the P-4 background (`AnalysisOpinion.tsx`) | `space-module` on every side | Fixed in R2-09 |
-| U-18 | P-2 lead split from 1280 (`src/components/home/featured/FeaturedLead.tsx`) | Two equal columns, text top-aligned beside the image | Open |
-| U-19 | P-2 rail at 600–1023 (`FeaturedRail.tsx`) | Two columns: image story left over both rows, two stories right | Open |
-| U-20 | Story labels in a category section (`FeaturedLead.tsx`, `FeaturedRail.tsx`) | No category label (the heading names it); breaking label kept; rail in `type-story-title-sm` | Open |
+| U-18 | P-2 lead split from 1280 (`src/components/home/featured/FeaturedLead.tsx`) | Two equal columns, text top-aligned beside the image | Fixed in R2-10 |
+| U-19 | P-2 rail at 600–1023 (`FeaturedRail.tsx`) | Two columns: image story left over both rows, two stories right | Fixed in R2-10 |
+| U-20 | Story labels in a category section (`FeaturedLead.tsx`, `FeaturedRail.tsx`) | No category label (the heading names it); breaking label kept; rail in `type-story-title-sm` | Fixed in R2-10 |
 | U-21 | Inside of a P-3 category block (`src/components/home/grouped/CategoryBlock.tsx`) | Heading, one image story in `type-story-title`, then compact stories in `type-story-title-sm` with list rules | Open |
 | U-22 | P-3 rail module look (`grouped/classes.ts`) | No background; 1px `border` top rule with `space-section-rule-title`, aligned with the category rules | Open |
 | U-23 | Form text roles (`NewsletterSignup.tsx`, `DailyPoll.tsx`) | Visible label and consent line `type-ui-sm` `ink-secondary`; error `text-error`; done `text-success` on `success-subtle` | Open |

@@ -140,7 +140,7 @@ export function StoryCard({
       <StoryImage
         story={story}
         eager={eager}
-        className={classes.media}
+        className={cn("self-start", classes.media)}
         imageClassName={ratioClass[ratio]}
       />
     </article>

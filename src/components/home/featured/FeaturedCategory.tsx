@@ -3,36 +3,49 @@ import { SectionHeading } from "@/components/layout/SectionHeading";
 import { Shell } from "@/components/layout/Shell";
 import { WithRail } from "@/components/layout/WithRail";
 import { Wrapper } from "@/components/layout/Wrapper";
-import type { FeaturedSection } from "@/content";
-import type { Dictionary } from "@/i18n";
-
-import { FeaturedLead } from "./FeaturedLead";
-import { FeaturedRail } from "./FeaturedRail";
+import { MoreLink } from "@/components/story/MoreLink";
+import { StoryCard } from "@/components/story/StoryCard";
+import { StoryList } from "@/components/story/StoryList";
+import type { FeaturedSection, Lang } from "@/content";
+import { localizedPath, type Dictionary } from "@/i18n";
 
 type FeaturedCategoryProps = {
+  lang: Lang;
   section: FeaturedSection;
   t: Dictionary;
   className?: string;
 };
 
 /**
- * P-2 Featured category (spacing-layout-system.md 7.2 and 7.3, DR-49, DR-55). The same
- * wrapper + rail layout as the hero: the lead in the wrapper, one image story and two
- * stories in the 304px rail from 1024px; below 1024px the rail is under the wrapper
- * (LAY-05). Sparse (7.3): with no rail stories the wrapper spans the shell.
- * The section id is the anchor of the category links in the nav and drawer (IMP-14).
+ * P-2 FeaturedCategorySection (component-system.md P-2; spacing-layout-system.md 7.2, 7.3).
+ * Wrapper: the feature story, a StoryCard that is one column under 768px (image first) and
+ * text beside the image from 768px. Rail: one image story and two text rows. From 1024px the
+ * rail is 304px beside the wrapper; below, it is under the wrapper (LAY-05). The rail image
+ * story is a row (text 2 : 1 image) until 1024px and a stack in the 304px rail. No rail
+ * stories: the wrapper spans the shell. One MoreLink at the section end (DR-110, DR-123).
+ * The heading is plain text (DR-122). The section id is the anchor of the nav links (IMP-14).
  */
 export function FeaturedCategory({
+  lang,
   section,
   t,
   className,
 }: FeaturedCategoryProps) {
   const { category, lead, rail } = section;
   const titleId = `category-${category}-title`;
+  const [imageStory, ...textStories] = rail;
 
   const wrapper = (
     <Wrapper data-featured-wrapper>
-      <FeaturedLead story={lead} strings={t} />
+      <StoryCard
+        story={lead}
+        strings={t}
+        layout="row-from-md"
+        ratio="3:2"
+        size="md"
+        split="feature"
+        eyebrow={false}
+      />
     </Wrapper>
   );
 
@@ -46,16 +59,47 @@ export function FeaturedCategory({
       className={className}
     >
       <SectionHeading id={titleId}>{t.categories[category]}</SectionHeading>
-      {rail.length > 0 ? (
+      {imageStory ? (
         <WithRail>
           {wrapper}
           <Rail data-featured-rail>
-            <FeaturedRail stories={rail} strings={t} />
+            {/* The rule below the image story is the card's border; the list then
+                starts with space-list-item (C-24, C-03). */}
+            <div
+              className={
+                textStories.length > 0
+                  ? "border-b border-border pb-(--space-list-item)"
+                  : undefined
+              }
+            >
+              <StoryCard
+                story={imageStory}
+                strings={t}
+                layout="row-until-lg"
+                ratio="16:9"
+                size="sm"
+                split="third"
+                eyebrow={false}
+                summary={false}
+              />
+            </div>
+            {textStories.length > 0 ? (
+              <StoryList
+                stories={textStories}
+                strings={t}
+                className="pt-(--space-list-item)"
+              />
+            ) : null}
           </Rail>
         </WithRail>
       ) : (
         wrapper
       )}
+      <MoreLink
+        href={localizedPath(lang, `/category/${category}`)}
+        section={t.categories[category]}
+        strings={t.common}
+      />
     </Shell>
   );
 }

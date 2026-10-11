@@ -75,6 +75,7 @@ export default async function HomePage({
         {featured.map((section, index) => (
           <Fragment key={section.category}>
             <FeaturedCategory
+              lang={lang}
               section={section}
               t={t}
               className={cn(
