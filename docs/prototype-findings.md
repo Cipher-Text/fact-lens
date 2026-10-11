@@ -100,7 +100,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-37 | R2-15 | At 200% text size nothing sets the P-4 compact rows to stack: no trigger exists (DR-81, A11Y-18). Most read stacks because the rem breakpoints move with the browser text size | Medium | Open (flag) |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
-| IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check before the first deploy (FL-14 rejected) |
+| IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Done in R2-18 |
 | IMP-04 | FL-02 | Theme choice kept in local storage, not a cookie | Low | Closed (no action) |
 | IMP-05 | FL-01 | shadcn `base-nova` preset | Medium | Needs decision before `shadcn add` |
 | IMP-06 | FL-01 | `agentRules: false` in `next.config.ts` | Low | Closed (no action) |
@@ -756,7 +756,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ### IMP-03 Cookie redirect and CDN caching
 
-- **Found:** FL-02 · **Severity:** Medium · **Status:** Check before the first deploy (FL-14 rejected)
+- **Found:** FL-02 · **Severity:** Medium · **Status:** Done in R2-18
+- **Result (R2-18):** On the Vercel preview, `/` with `fl-lang=en` answered 307 to `/en` with `cache-control: public, max-age=0, must-revalidate`; `/` and `/en` without the cookie answered 200 with `private, no-cache, no-store`. The cookie redirect now sends `Cache-Control: private, no-store` (`src/proxy.ts`, test in `site.spec.ts`).
 - **Risk:** If a CDN caches the response for `/`, readers can get another reader's language.
 - **Suggested solution:** In the first preview deploy, test `/` with and without the `fl-lang` cookie. If needed, send `Cache-Control: private, no-store` on the redirect.
 
@@ -1164,3 +1165,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-14 | DOC-33 added. U-30 fixed by C-21. `SiteFooter` rebuilt: full-width `surface-elevated` band with `panel-inset`, everything centered (logo, five ink social icons with interactive-hover / pressed states, site links in `ink-secondary` `type-ui-sm` 600 that wrap on phones, copyright in metadata size and `ink-muted`); `formatYear` and a `copyright` string; Bangla "শর্তাবলি" as the sheet (was ব্যবহারের শর্তাবলি); `focusRing`, `iconButton` and `filledButton` removed from `header/classes.ts` (no caller left). Playwright and Vitest checks at 14 widths in both languages. IMP-29 unchanged (404 site pages, social links to front pages) |
 | 2026-10-11 | R2-15 | DOC-34 and U-37 added. New test `tests/e2e/text-size.spec.ts` sets the real browser font size (Chromium `--blink-settings=defaultFontSize=32`): setting `html { font-size: 200% }` would leave the rem breakpoints at 16px. Nothing scrolls sideways at 320, 768, 1024 in both languages. The only fault was the top bar at 320: fixed height; now `min-h` with wrap. Most read stacks because of the rem breakpoints; the P-4 rows never stack |
 | 2026-10-11 | R2-17 | DOC-35 added. No code change. Final check results are in `docs/PROGRESS.md` (R2-17 results). Dark-theme axe flags the text logo (U-08, exempt); DOC-23 (first screen 224px against 264) unchanged |
+| 2026-10-11 | R2-18 | IMP-03 done: the preview showed `public, max-age=0` on the cookie redirect; it now sends `private, no-store`. Dead links (`/story/…`, `/category/…`) stay 404 on the preview (tajmin's choice pending; IMP-18, IMP-35) |

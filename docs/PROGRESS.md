@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-17 is Done
-- Next action: R2-18 Branch preview, after tajmin types `/ticket` (needs tajmin's go before any deploy)
+- Ticket: none. R2-18 is Done
+- Next action: R2-19 Pull request, after tajmin types `/ticket` (`gh pr create` asks tajmin)
 
 ## R2-17 results
 
@@ -113,6 +113,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-15 200% text size | `text-size.spec.ts` sets the real browser font size (32px) and checks `scrollWidth` at 320, 768, 1024 in both languages. Only fault: the top bar at 320; now `min-h-(--bar-height)` with wrap. Most read stacks by the rem breakpoints; the P-4 compact rows never stack (U-37, open flag). DOC-34 flag |
 | 2026-10-11 | R2-16 Spacing check | No code change. 12 full-page screenshots (bn/en, 1024, 1280, 1920) of the current tokens and a runtime step-up (gutter 32, column gap 32, space-module 48) in `test-results/spacing/` (not committed). No token change; that needs tajmin's yes and a spec change first |
 | 2026-10-11 | R2-17 Final check | No code change. Results table "R2-17 results" above: 11 widths, both languages and themes, content cases, axe, keyboard, first screen 1366×768. 560 chromium e2e green, design-reviewer pass, visual-qa 0 faults. DOC-35 added (ad region labels); dark logo contrast stays U-08; DOC-23 unchanged |
+| 2026-10-11 | R2-18 Branch preview | Vercel Git integration (tajmin imported the repo; no deploy command run by Claude). Preview `https://fact-lens-web-git-prototype-run-2-tajmins-projects.vercel.app/`: `/` and `/en` answer 200; `/` with `fl-lang=en` redirects to `/en`. The redirect now sends `Cache-Control: private, no-store` (IMP-03 done), with a test in `site.spec.ts`. Dead links stay 404. The fix reaches the preview with the push at `/accept` |
 
 ## Later
 

@@ -38,6 +38,23 @@ test.describe("language URLs (DR-17)", () => {
     expect(cookie).toBeUndefined();
   });
 
+  test("the cookie redirect at / is private and not stored (R2-18)", async ({
+    request,
+  }) => {
+    const redirected = await request.get("/", {
+      headers: { Cookie: "fl-lang=en" },
+      maxRedirects: 0,
+    });
+    expect(redirected.status()).toBe(307);
+    expect(new URL(redirected.headers()["location"], "http://x").pathname).toBe(
+      "/en",
+    );
+    expect(redirected.headers()["cache-control"]).toBe("private, no-store");
+
+    const plain = await request.get("/", { maxRedirects: 0 });
+    expect(plain.status()).toBe(200);
+  });
+
   test("the language switch keeps the choice in a cookie", async ({
     page,
     context,
