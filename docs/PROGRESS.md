@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-18 is Done
-- Next action: R2-19 Pull request, after tajmin types `/ticket` (`gh pr create` asks tajmin)
+- Ticket: none. R2-19 is Done. PR: https://github.com/tajmin/fact-lens-web/pull/1
+- Next action: R2-20 Code review, after tajmin types `/ticket` (needs the Claude GitHub app; tajmin comments `@claude review this PR with the R2-20 goals and guideline in docs/SPRINT.md.` on the PR)
 
 ## R2-17 results
 
@@ -114,6 +114,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-16 Spacing check | No code change. 12 full-page screenshots (bn/en, 1024, 1280, 1920) of the current tokens and a runtime step-up (gutter 32, column gap 32, space-module 48) in `test-results/spacing/` (not committed). No token change; that needs tajmin's yes and a spec change first |
 | 2026-10-11 | R2-17 Final check | No code change. Results table "R2-17 results" above: 11 widths, both languages and themes, content cases, axe, keyboard, first screen 1366×768. 560 chromium e2e green, design-reviewer pass, visual-qa 0 faults. DOC-35 added (ad region labels); dark logo contrast stays U-08; DOC-23 unchanged |
 | 2026-10-11 | R2-18 Branch preview | Vercel Git integration (tajmin imported the repo; no deploy command run by Claude). Preview `https://fact-lens-web-git-prototype-run-2-tajmins-projects.vercel.app/`: `/` and `/en` answer 200; `/` with `fl-lang=en` redirects to `/en`. The redirect now sends `Cache-Control: private, no-store` (IMP-03 done), with a test in `site.spec.ts`. Dead links stay 404. The fix reaches the preview with the push at `/accept` |
+| 2026-10-11 | R2-19 Pull request | PR #1 `prototype-run-2` into `main` (`main` had not moved). `pnpm check` green; chromium e2e 561 green; WebKit 40 failures (35 in the first run) listed with importance in `docs/webkit-failures.md`, none skipped or weakened. No new finding |
 
 ## Later
 
