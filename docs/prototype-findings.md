@@ -150,6 +150,11 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Open: flag for tajmin |
 | IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Open: flag for tajmin |
 | IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Open |
+| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Open: check by hand in Safari |
+| IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Open: check by eye in Safari |
+| IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Open |
+| IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Open |
+| IMP-57 | R2-20 | Nav and Drawer links are plain `<a>` (full page load) with no comment, unlike `LanguageSwitch` | Low | Open |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -1098,6 +1103,45 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 
 ---
 
+### IMP-53 Poll radio cannot be set in WebKit
+
+- **Found:** R2-20 (Claude review of PR #1) · **Severity:** Medium · **Status:** Open: check by hand in Safari
+- **Problem:** `DailyPoll.tsx` hides the native radio with `sr-only` and draws a square marker next to it (IMP-50). In WebKit, Playwright reports "Clicking the checkbox did not change its state" (group B in `docs/webkit-failures.md`, 8 tests). It may be a Playwright and WebKit issue. If it is real, Safari readers cannot vote (Readers goal).
+- **Suggested solution:** Vote by hand in Safari with mouse and keyboard. If it fails, make the label or the drawn marker the click target, or take the shadcn RadioGroup (IMP-50). If it works, change the test, not the page.
+
+### IMP-54 P-4 section gap collapses in WebKit (English, 1280 and wider)
+
+- **Found:** R2-20 (Claude review of PR #1) · **Severity:** Medium · **Status:** Open: check by eye in Safari
+- **Problem:** `analysis-opinion.spec.ts:68` measures -8 where 40 (`space-section`, LAY-12) is expected, in 3 WebKit tests. The other group A rows are small height differences that look like font metrics. A gap of -8 could mean overlapping content.
+- **Suggested solution:** Open `/en` in Safari at 1280 and wider and look at the space around P-4. If it overlaps, fix the section space. If not, the test measures the wrong box in WebKit.
+
+### IMP-55 RegionSlider starts in tab mode on the server
+
+- **Found:** R2-20 (Claude review of PR #1) · **Severity:** Low · **Status:** Open
+- **Problem:** `RegionSlider.tsx:78` starts `tabMode` as `true`, so the server markup gives the panels `role="tabpanel"` at every width, also on desktop where the tablist is hidden. The role corrects itself after hydration. Without JavaScript, a screen reader meets tabpanels with no visible tabs.
+- **Suggested solution:** Start from `false` and set `true` in the effect. Check the phone layout does not flash.
+
+### IMP-56 NavBar reads the top bar height once
+
+- **Found:** R2-20 (Claude review of PR #1) · **Severity:** Low · **Status:** Open
+- **Problem:** `NavBar.tsx:55-56` reads `[data-top-bar]` `offsetHeight` once at mount for the `IntersectionObserver` `rootMargin`. R2-15 lets the top bar wrap at large text sizes (DOC-34), so the height can change and the stuck rule (DR-173) could switch at the wrong scroll position. Not tested at 200% text.
+- **Suggested solution:** Observe the bar with a `ResizeObserver` and rebuild the observer, then add a check to `text-size.spec.ts`.
+
+### IMP-57 Nav and Drawer links reload the page
+
+- **Found:** R2-20 (Claude review of PR #1) · **Severity:** Low · **Status:** Open
+- **Problem:** `Drawer.tsx:201,229` and `NavBar.tsx:85` use plain `<a href>`, so each link loads a full page. `LanguageSwitch` has a comment that explains this choice (language cookie). The nav and Drawer have none.
+- **Suggested solution:** Confirm this is intended and add a comment, or use `next/link` for same-language links.
+
+### R2-20 review summary (not a finding)
+
+- Claude's review of PR #1 (comment 13:22 UTC, 11 October 2026): 0 blockers, 2 fix (IMP-53, IMP-54), 5 note (IMP-55 to IMP-57, plus two below). It posted one summary comment and no inline comments.
+- The `Drawer` use of a native `<dialog>` against the shadcn Sheet and Collapsible (CPT-16) is IMP-39, already a flag for tajmin. `DailyPoll` `bg-accent-soft` is U-24 and `Divider` is a draft (C-22): both already logged.
+- Two `test.skip` calls (`regions.spec.ts:262` and `text-size.spec.ts:10`) skip outside Chromium and say why. No `.only`, `.fixme` or `xit`. No test is weakened.
+- Goals 1 to 3 (specs, bugs, readers): no finding. Limits: shallow checkout, no `tsc` or `eslint`, no browser, not every component read in full.
+
+---
+
 ## Kit issues (KIT-)
 
 ### KIT-01 `visual-qa` agent switches theme with `data-theme`
@@ -1167,3 +1211,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-17 | DOC-35 added. No code change. Final check results are in `docs/PROGRESS.md` (R2-17 results). Dark-theme axe flags the text logo (U-08, exempt); DOC-23 (first screen 224px against 264) unchanged |
 | 2026-10-11 | R2-18 | IMP-03 done: the preview showed `public, max-age=0` on the cookie redirect; it now sends `private, no-store`. Dead links (`/story/…`, `/category/…`) stay 404 on the preview (tajmin's choice pending; IMP-18, IMP-35) |
 | 2026-10-11 | R2-19 | No new finding. Pull request #1 (`prototype-run-2` into `main`); `main` had not moved. Chromium e2e 561 green; WebKit 35 failures, all known from R2-12 and R2-13. |
+| 2026-10-11 | R2-20 | IMP-53 to IMP-57 added from the Claude review of PR #1 (0 blockers, 2 fix, 5 note). IMP-39, U-24 and C-22 draft were already logged. No code changed |

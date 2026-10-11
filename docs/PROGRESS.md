@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-19 is Done. PR: https://github.com/tajmin/fact-lens-web/pull/1
-- Next action: R2-20 Code review, after tajmin types `/ticket` (needs the Claude GitHub app; tajmin comments `@claude review this PR with the R2-20 goals and guideline in docs/SPRINT.md.` on the PR)
+- Ticket: none. R2-20 is Done. PR: https://github.com/tajmin/fact-lens-web/pull/1
+- Next action: R2-21 Merge into main, after tajmin types `/ticket` and gives an explicit go. The workflow PR #2 is already merged
 
 ## R2-17 results
 
@@ -115,6 +115,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-17 Final check | No code change. Results table "R2-17 results" above: 11 widths, both languages and themes, content cases, axe, keyboard, first screen 1366×768. 560 chromium e2e green, design-reviewer pass, visual-qa 0 faults. DOC-35 added (ad region labels); dark logo contrast stays U-08; DOC-23 unchanged |
 | 2026-10-11 | R2-18 Branch preview | Vercel Git integration (tajmin imported the repo; no deploy command run by Claude). Preview `https://fact-lens-web-git-prototype-run-2-tajmins-projects.vercel.app/`: `/` and `/en` answer 200; `/` with `fl-lang=en` redirects to `/en`. The redirect now sends `Cache-Control: private, no-store` (IMP-03 done), with a test in `site.spec.ts`. Dead links stay 404. The fix reaches the preview with the push at `/accept` |
 | 2026-10-11 | R2-19 Pull request | PR #1 `prototype-run-2` into `main` (`main` had not moved). `pnpm check` green; chromium e2e 561 green; WebKit 40 failures (35 in the first run) listed with importance in `docs/webkit-failures.md`, none skipped or weakened. No new finding |
+| 2026-10-11 | R2-20 Code review | Claude GitHub app installed (workflow PR #2 merged into `main`). Claude reviewed PR #1: 0 blockers, 2 fix, 5 note; one summary comment, no inline comments. Findings IMP-53 to IMP-57 in `docs/prototype-findings.md`; no code changed |
 
 ## Later
 
