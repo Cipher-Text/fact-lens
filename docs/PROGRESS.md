@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-06 is Done
-- Next action: R2-07 Story units, after tajmin types `/ticket`
+- Ticket: none. R2-07 is Done
+- Next action: R2-08 Hero (P-1), after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -77,6 +77,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-04 Small parts | `components.css` imported; `Divider`, `SectionHeading`, `MoreLink`, `Eyebrow`, `MetaLine`, `Chip`, `Button`, `IconButton` built from their sheets and callers moved; headline links use the base focus outline. 106 e2e tests stay red from before (R2-05, R2-06, R2-11, R2-12). DOC-25, DOC-26, IMP-35 to IMP-38 |
 | 2026-10-11 | R2-05 Page chrome | `TopBar`, `NavBar`, `Drawer`, `SearchDialog`, `ThemeButton`, `ThemeToggle`, `SearchForm` built from C-12 and C-17 to C-20; two-state theme (DR-201); no subscribe button (DR-188); footer and Drawer share 5 social links. Header e2e green; 78 e2e tests stay red from before (R2-06, R2-11, R2-12). Flags open: IMP-39, IMP-40, IMP-41. DOC-27, DOC-28, U-31, U-32, IMP-39 to IMP-43 |
 | 2026-10-11 | R2-06 Ad slots and page frame | `AdSlot` (top, band, inset, rail) replaces `AdRow` and `AdPlaceholder`: one `<picture>` per slot, reserved height from the `--ad-*` tokens, region named by the label; the rail variant goes into the P-3 rail in R2-11. Reserved-height tests with and without the creative. 28 chromium e2e tests stay red (`most-read`, R2-12). DOC-29, IMP-44 to IMP-46 |
+| 2026-10-11 | R2-07 Story units | `LeadStory`, `OverlapCard`, `StoryCard` (4 layouts, 2 splits), `StoryList`, `StoryListItem`, `StoryImage` in `components/story/`, from C-01, C-02, C-03, C-24, C-25; news links hover ink-muted; Hero and LatestList moved onto them; dev-only test page `/dev/story-units`. Flags open: U-33, IMP-48. DOC-30, IMP-47 |
 
 ## Later
 

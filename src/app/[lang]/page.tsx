@@ -50,12 +50,7 @@ export default async function HomePage({
             before the ad row belongs to the section (LAY-12). */}
         {home.hero ? (
           <>
-            <Hero
-              lang={lang}
-              hero={home.hero}
-              t={t}
-              className="pb-(--space-module)"
-            />
+            <Hero hero={home.hero} t={t} className="pb-(--space-module)" />
             <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}

@@ -3,16 +3,15 @@ import { Rail } from "@/components/layout/Rail";
 import { Shell } from "@/components/layout/Shell";
 import { WithRail } from "@/components/layout/WithRail";
 import { Wrapper } from "@/components/layout/Wrapper";
-import { StoryCard } from "@/components/story/StoryCard";
-import type { HeroSection, Lang } from "@/content";
+import { LeadStory } from "@/components/story/LeadStory";
+import { OverlapCard } from "@/components/story/OverlapCard";
+import type { HeroSection } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 import { LatestList } from "./LatestList";
-import { LeadStory } from "./LeadStory";
 
 type HeroProps = {
-  lang: Lang;
   hero: HeroSection;
   t: Dictionary;
   className?: string;
@@ -24,7 +23,7 @@ type HeroProps = {
  * the wrapper; below, it goes under it (LAY-05). Sparse (7.3): one top story spans the
  * wrapper; with no Latest items the wrapper spans the shell.
  */
-export function Hero({ lang, hero, t, className }: HeroProps) {
+export function Hero({ hero, t, className }: HeroProps) {
   // Two top-story cards at most (DR-44).
   const top = hero.top.slice(0, 2);
 
@@ -34,16 +33,10 @@ export function Hero({ lang, hero, t, className }: HeroProps) {
       {top.length > 0 ? (
         <PeerRow
           data-top-stories
-          className={cn(top.length === 1 && "sm:grid-cols-1")}
+          className={cn("items-start", top.length === 1 && "sm:grid-cols-1")}
         >
           {top.map((story) => (
-            <StoryCard
-              key={story.id}
-              story={story}
-              strings={t}
-              titleClass="type-story-title-lg"
-              eager
-            />
+            <OverlapCard key={story.id} story={story} strings={t} eager />
           ))}
         </PeerRow>
       ) : null}
@@ -64,7 +57,7 @@ export function Hero({ lang, hero, t, className }: HeroProps) {
         <WithRail>
           {wrapper}
           <Rail data-hero-rail>
-            <LatestList lang={lang} stories={hero.latest} strings={t} />
+            <LatestList stories={hero.latest.slice(0, 5)} strings={t} />
           </Rail>
         </WithRail>
       ) : (

@@ -22,3 +22,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 | R2-04 Small parts | 2026-10-11 | 2026-10-11 | Done | 1 | DOC-25, DOC-26; IMP-35 to IMP-38 | c6594e9 | 106 e2e tests red from before; fixed in R2-05, R2-06, R2-11, R2-12 |
 | R2-05 Page chrome | 2026-10-11 | 2026-10-11 | Done | 1 | DOC-27, DOC-28; U-31, U-32; IMP-39 to IMP-43 | 14d8235 | Flags IMP-39, IMP-40, IMP-41 stay open for tajmin's review after the tickets; 78 e2e tests red from before (R2-06, R2-11, R2-12) |
 | R2-06 Ad slots and page frame | 2026-10-11 | 2026-10-11 | Done | 1 | DOC-29; IMP-44 to IMP-46 | a0fe5d9 | 28 e2e tests red from before (`most-read`, R2-12) |
+| R2-07 Story units | 2026-10-11 | 2026-10-11 | Done | 1 | DOC-30; U-33; IMP-47, IMP-48 | pending | Flags U-33 and IMP-48 stay open for tajmin's review after the tickets; 28 e2e tests red from before (`most-read`, R2-12) |

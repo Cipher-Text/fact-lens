@@ -7,7 +7,7 @@ import { getDictionary } from "@/i18n";
 import { Hero } from "./Hero";
 
 function renderHero(lang: "bn" | "en", hero: HeroSection) {
-  return render(<Hero lang={lang} hero={hero} t={getDictionary(lang)} />);
+  return render(<Hero hero={hero} t={getDictionary(lang)} />);
 }
 
 const full = getHomepage("bn").hero!;
@@ -25,7 +25,7 @@ describe("Hero (P-1)", () => {
       container.querySelectorAll("[data-top-stories] article"),
     ).toHaveLength(2);
     expect(
-      screen.getByRole("heading", { level: 3, name: "সর্বশেষ" }),
+      screen.getByRole("heading", { level: 2, name: "সর্বশেষ" }),
     ).toBeInTheDocument();
   });
 
@@ -42,11 +42,11 @@ describe("Hero (P-1)", () => {
 
   it("uses the role mapping of typography-system.md 7.1", () => {
     const { container } = renderHero("en", getHomepage("en").hero!);
-    expect(container.querySelector("[data-lead] h3")).toHaveClass(
+    expect(container.querySelector("[data-lead] h2")).toHaveClass(
       "type-story-lead",
     );
     for (const h of container.querySelectorAll("[data-top-stories] h3"))
-      expect(h).toHaveClass("type-story-title-lg");
+      expect(h).toHaveClass("type-story-title");
   });
 
   it("lets one top story span the wrapper (7.3)", () => {
@@ -66,12 +66,11 @@ describe("Hero (P-1)", () => {
     ).not.toContain("-mt-");
   });
 
-  it("overlaps the lead image from md only, and grows down (7.4, LAY-17)", () => {
+  it("overlaps the lead image by the C-01 tokens, on the page color, and grows down (LAY-17)", () => {
     const { container } = renderHero("bn", full);
     const panel = container.querySelector("[data-lead-panel]")!;
-    expect(panel.className).toContain("md:-mt-16");
-    expect(panel.className).toContain("md:bg-surface");
-    expect(panel.className).not.toMatch(/(^|\s)-mt-/);
+    expect(panel.className).toContain("-mt-(--space-lead-overlap)");
+    expect(panel.className).toContain("bg-background");
     expect(panel.className).not.toMatch(/\b(h|max-h)-/);
   });
 
@@ -87,17 +86,13 @@ describe("Hero (P-1)", () => {
     expect(container.querySelector("[data-hero-rail]")).toBeNull();
   });
 
-  it("puts the more link below the list, with the section name for screen readers (LAY-18)", () => {
+  it("shows five Latest items and no more link (C-03, DR-102)", () => {
     renderHero("bn", full);
     const latest = screen.getByRole("region", { name: "সর্বশেষ" });
-    const more = within(latest).getByRole("link", {
-      name: "আরও দেখুন: সর্বশেষ",
-    });
-    expect(more).toHaveTextContent(/^আরও দেখুন$/);
-    const list = within(latest).getByRole("list");
+    expect(within(latest).getAllByRole("listitem")).toHaveLength(5);
     expect(
-      list.compareDocumentPosition(more) & Node.DOCUMENT_POSITION_FOLLOWING,
-    ).toBeTruthy();
+      within(latest).queryByRole("link", { name: /আরও দেখুন/ }),
+    ).toBeNull();
   });
 
   it("shows Breaking as a filled label in the page language (COL-11, T-27)", () => {

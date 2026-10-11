@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-07 (story units: LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem). Earlier: 11 October 2026, R2-06 (ad slots and page frame: AdSlot). Earlier: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -55,6 +55,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-27 | R2-05 | C-12 and C-17 give the switch corners and the top bar padding in px, §6 has no tokens, and §2.9 says no component has color tokens | Low | Workaround in code |
 | DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Open |
 | DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Open |
+| DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Workaround in code |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
@@ -87,6 +88,7 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Open |
 | U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Open |
 | U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Open |
+| U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Open: flag for tajmin |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check before the first deploy (FL-14 rejected) |
@@ -133,6 +135,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-44 | R2-06 | At 768–1023 the band shows the 728×90 creative inside the 250 reserve, so 160px of the band is empty | Low | Open |
 | IMP-45 | R2-06 | `AdSlot` reads its mock booking itself and always renders; the Phase 1 rule "no booking, no `ad-top` row" (DR-250) has no code path yet | Low | Open |
 | IMP-46 | R2-06 | The `rail` variant is built and tested alone; it goes into the P-3 rail in R2-11. 28 chromium e2e tests stay red from before (`most-read`, R2-12) | Low | Open |
+| IMP-47 | R2-07 | The story units are wired into the hero (needed to keep it building); two hero tests and the hero e2e layout checks were changed to the sheets. A development-only test page `/dev/story-units` carries the unit tests | Medium | Open |
+| IMP-48 | R2-07 | `StoryCard` `layout` has four values (`stack`, `row`, `row-from-md`, `row-until-lg`) and `OverlapCard` has a `surface` prop, so a section can set the page-breakpoint switch and the P-4 background; the sheets say "the section sets it" but give no prop | Low | Open: flag for tajmin |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -371,6 +375,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Spec:** `component-system.md` C-18 (item `min-h-12`, Surface "1px border rule at the bottom"), C-19 (`Drawer.item`, `Drawer.accordion`); `spacing-layout-system.md` §6 (`--nav-row-height` 48px)
 - **Problem:** (1) The NavBar is 48px of items and a 1px rule. The sheet does not say if the rule is inside the 48px. Built: 48px row plus the rule, 49px in total. (2) "A 1px rule under every category row" does not say where the rule goes when the row has children. Built: under the row itself, then the child group on the page surface, so the rule is above the children.
 - **Suggested solution:** Say "48px including the rule" or "48px plus the rule" in C-18, and say in C-19 where the rule goes for a row with open children.
+
+### DOC-30 Values with no token: lead panel start, feature split
+
+- **Found:** R2-07 · **Severity:** Low · **Status:** Workaround in code
+- **Source:** `component-system.md` C-01 (panel padding "16px top and end, 0 at the start" narrow, 24 and 32px medium and wide), C-24 and P-2 (the image column `clamp(26.25rem, calc((100% - 24px) * 0.5 | 0.6), 34.8125rem)`), §6.
+- **Problem:** §6 has `--space-lead-panel` but not its start side, and no tokens for the feature split numbers. The §6 container rule sets the lead tokens on `.lead-story`, which must sit inside the container, so the container is a wrapper and not the card itself.
+- **Built as:** `components.css` adds `--space-lead-panel-start` (0, then `var(--space-lead-panel)` from 600px of card width) and `--story-feature-media-min`, `-max` and `-share` (0.5, 0.6 from 1024), with `@utility story-split-third` and `story-split-feature`. LeadStory has a `@container` wrapper around the `.lead-story` article.
+- **Suggested solution:** Add the tokens to §6 and say that the container is the parent of `.lead-story`.
 
 ---
 
@@ -641,6 +653,15 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Gap:** C-12 PhoneBarButtons says the moon is "redrawn larger, about 1px above the box center". There is no drawing, and icons are Lucide shapes (BRD-03).
 - **Treatment used:** The Lucide moon at 20px, moved 1px up. The sun is unchanged.
 - **Suggested solution:** Supply the redrawn moon as an SVG, or accept the Lucide moon.
+
+### U-33 Story with no image
+
+- **Found:** R2-07 · **Severity:** Medium · **Status:** Open (flag)
+- **Files:** `LeadStory.tsx`, `OverlapCard.tsx`, `StoryCard.tsx`, `StoryImage.tsx`
+- **Gap:** The R2-07 ticket says "use the missing-image look from the sheet". No sheet has one: C-01, C-02 and C-24 say "image required". The mock set keeps no-image stories on purpose (R2-03): the second hero top story, the sparse lead, and the long no-image headlines.
+- **Treatment used:** The image part is left out. LeadStory and OverlapCard show their text block with no overlap, no inset and no notch; the lead keeps its bar. StoryCard shows its text in one column. No gray box, no blank band.
+- **Rules:** CPT-08, LAY-17. The blank band of U-13 is gone because the hero pair no longer uses subgrid (DR-99).
+- **Suggested solution:** Either every story that reaches these cards has an image (the mock set drops the cases), or the sheets add a no-image variant for each card.
 
 ---
 
@@ -942,6 +963,20 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **State:** `AdSlot variant="rail"` (300×600 from the mock, `hidden xl:grid`, 624px with the label) is covered by a unit test only, because the P-3 rail is rebuilt in R2-11 (DR-239). After R2-06, 28 chromium e2e tests are red from before: `most-read` (R2-12). The 22 ad-row tests and the `grouped` 320px inset test (now DR-207) are green. WebKit runs the header tests only (R2-01); its `grouped` tests were already red.
 - **Suggested solution:** None. R2-11 and R2-12 turn them green.
 
+### IMP-47 Hero wiring and the development test page
+
+- **Found:** R2-07 · **Severity:** Medium · **Status:** Open
+- **State:** `Hero` imports `LeadStory` and `OverlapCard` from `components/story/` and `LatestList` uses `StoryList`, so the page keeps building. The lead title is an h2 (C-01) next to the hidden section h2. Changed in `hero.test.tsx` (h2, `type-story-title`, token overlap) and `hero.spec.ts` (lead overlap 32 under 600 and 10% from 600; Latest in two columns, column-first, from 768 to 1023; no shared meta row; tab stops exclude the aria-hidden image links). The pair uses `items-start`, no subgrid. R2-08 checks the hero against its own rows.
+- **Test page:** `src/app/[lang]/dev/story-units/page.tsx` answers 404 in production. The Playwright tests need it because the homepage uses only some of the units.
+- **Suggested solution:** Keep the page until Storybook (DR-88) replaces it.
+
+### IMP-48 `StoryCard` layout values and `OverlapCard` surface
+
+- **Found:** R2-07 · **Severity:** Low · **Status:** Open (flag)
+- **Problem:** C-24 lists `layout: stack | row` and says the section sets it at the page breakpoints. P-2 needs stack under 768 and row from 768 (feature story), and row under 1024 and stack from 1024 (rail image story). C-02 has no variants, but the text block must take the color of its section (page or surface-elevated).
+- **Built as:** `layout="row-from-md"` and `layout="row-until-lg"` next to `stack` and `row`; `surface="background" | "elevated"` on `OverlapCard`.
+- **Suggested solution:** Name the responsive layouts in C-24, or let the card react to its container (CPT-04).
+
 ---
 
 ## Kit issues (KIT-)
@@ -1001,3 +1036,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-04 | DOC-25, DOC-26, IMP-35 to IMP-38 added. U-06 fixed. `components.css` imported (IMP-32 done). Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton built from their sheets. U-14, U-28 and U-29 stay open until the header, regions and analysis tickets: the chip and slider buttons now follow the sheets, but the Bangla Breaking word (IMP-36) and the region column heading are not decided |
 | 2026-10-11 | R2-05 | DOC-27, DOC-28, U-31, U-32, IMP-39 to IMP-43 added. DOC-10 (logo centered: tested at 13 widths), U-04, U-09, U-10 and IMP-17 fixed by the sheets. TopBar, NavBar, Drawer, SearchDialog, ThemeButton, ThemeToggle, SearchForm rebuilt; no subscribe button (DR-188); two-state theme (DR-201) |
 | 2026-10-11 | R2-06 | IMP-44 to IMP-46 added. DOC-08, DOC-09 and DOC-18 fixed by the current spec. `AdSlot` (variants top, band, inset, rail) replaces `AdRow` and `AdPlaceholder`: one `<picture>` per slot, reserved height from the `--ad-*` tokens, region named by the label; page order checked against 7.1; tests for the reserved height at 360, 1024 and 1280 with and without the creative |
+| 2026-10-11 | R2-07 | DOC-30, U-33, IMP-47, IMP-48 added. U-11 (headline link color) fixed by the sheets: ink, ink-muted on hover, no pressed color. U-12 (lead panel inset and padding), U-13 (blank band under a no-image card in the hero pair) fixed by C-01 and C-02 (tokens, no subgrid). LeadStory, OverlapCard, StoryCard, StoryList, StoryListItem built from their sheets; tests at 360, 768, 1024 and 1280 in both languages with long-headline and no-image content |

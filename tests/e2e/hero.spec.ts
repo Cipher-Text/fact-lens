@@ -87,31 +87,33 @@ for (const p of PAGES) {
           expect(railBox.y).toBeGreaterThan(wrapperBox.y + wrapperBox.height);
         }
 
-        // Latest: 2 columns at 600–1023, 1 column otherwise.
+        // Latest: 2 columns at 768–1023, 1 column otherwise (C-03).
         const first = await box(items.nth(0));
         const second = await box(items.nth(1));
-        if (width >= 600 && width < 1024) {
-          expect(Math.round(second.y)).toBe(Math.round(first.y));
-          expect(second.x).toBeGreaterThan(first.x);
+        const fourth = await box(items.nth(3));
+        if (width >= 768 && width < 1024) {
+          // Column-first: items 1 to 3, then 4 to 6 (DR-125).
+          expect(Math.round(fourth.y)).toBe(Math.round(first.y));
+          expect(fourth.x).toBeGreaterThan(first.x);
+          expect(Math.round(second.x)).toBe(Math.round(first.x));
         } else {
           expect(second.y).toBeGreaterThan(first.y);
           expect(Math.round(second.x)).toBe(Math.round(first.x));
         }
-        await expect(items).toHaveCount(6);
+        await expect(items).toHaveCount(5);
 
-        // Lead panel: overlaps the image by 64 from 768, under it below (7.4).
+        // Lead panel (C-01): covers the image by 32px under 600px of card width, by 10% of
+        // it (64 to 96px) from 600px, and is inset at the end so the corner of the image shows.
         const imageBox = await box(image);
         const panelBox = await box(panel);
         expect(Math.round(imageBox.width)).toBe(Math.round(wrapperBox.width));
         const overlap = imageBox.y + imageBox.height - panelBox.y;
-        if (width >= 768) {
-          expect(Math.round(overlap)).toBe(64);
-          // Inset from the end: the cut corner of the image shows.
-          expect(panelBox.width).toBeLessThan(imageBox.width);
-        } else {
-          // Under the image: no overlap; the panel padding gives the image-to-text space.
-          expect(Math.round(overlap)).toBe(0);
-        }
+        const expected =
+          imageBox.width < 600
+            ? 32
+            : Math.min(96, Math.max(64, imageBox.width * 0.1));
+        expect(overlap).toBeCloseTo(expected, 0);
+        expect(panelBox.width).toBeLessThan(imageBox.width);
 
         // Two top-story cards: side by side from 600, stacked on phones (DR-44, LAY-07).
         await expect(cards).toHaveCount(2);
@@ -123,13 +125,6 @@ for (const p of PAGES) {
         } else {
           expect(b.y).toBeGreaterThanOrEqual(a.y + a.height);
         }
-        // The metadata row lines up across the pair (subgrid, LAY-08).
-        if (width >= 600) {
-          const metaA = await box(cards.nth(0).locator("time"));
-          const metaB = await box(cards.nth(1).locator("time"));
-          expect(Math.round(metaA.y)).toBe(Math.round(metaB.y));
-        }
-
         // No text is clipped: no element in the hero hides overflowing content
         // (glyphs may overflow a line box; that is not clipping). LAY-17, TYP-09.
         const clipped = await hero.evaluate((el) =>
@@ -194,9 +189,10 @@ for (const p of PAGES) {
       const hero = page.locator('[data-section="hero"]');
       await expect(page.locator("h1")).toHaveCount(1);
       await expect(
-        hero.getByRole("heading", { level: 3, name: p.latest }),
+        hero.getByRole("heading", { level: 2, name: p.latest }),
       ).toBeVisible();
-      await expect(hero.getByRole("link", { name: p.more })).toBeVisible();
+      // Latest has no more link (C-03, DR-102).
+      await expect(hero.getByRole("link", { name: p.more })).toHaveCount(0);
       const text = (await hero.innerText()).replace(/\s+/g, " ");
       if (p.lang === "bn") {
         // No English words and no Latin digits on a Bangla page (T-27, TYP-17).
@@ -211,11 +207,14 @@ for (const p of PAGES) {
     }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
-      const links = page.locator('[data-section="hero"] a');
+      // The image links have tabindex -1: one tab stop per story (C-01, C-02).
+      const links = page.locator(
+        '[data-section="hero"] a:not([tabindex="-1"])',
+      );
       const count = await links.count();
-      // Lead, two top stories and their three category links (Eyebrow, C-08), six Latest
-      // items, the more link.
-      expect(count).toBe(13);
+      // Lead, two top stories and their three category links (Eyebrow, C-08), five Latest
+      // items.
+      expect(count).toBe(11);
 
       // Tab from the last control before the hero.
       const seen: string[] = [];

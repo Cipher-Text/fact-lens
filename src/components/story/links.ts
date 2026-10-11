@@ -1,17 +1,16 @@
 import type { Story } from "@/content";
 import { localizedPath } from "@/i18n";
 
-// Shared link classes for story parts. Neutral treatment (U-02, U-11).
+// Shared link classes for story parts.
 // Focus is the base outline (COL-13): no ring classes here.
 
-const headlineBase =
-  "text-ink hover:text-interactive-hover active:text-interactive-pressed";
+const headlineBase = "text-ink hover:text-ink-muted";
 const textBase =
   "text-interactive hover:text-interactive-hover active:text-interactive-pressed";
 
 /**
- * A headline link: ink text, interactive color on hover and press, no underline
- * outside article text (COL-06). The headline color is not in the specs (U-11).
+ * A news link: ink text, ink-muted on hover, no pressed color, no underline outside
+ * article text (COL-06, DR-199; the story sheets C-01, C-02, C-03, C-24, C-25).
  */
 export const headlineLink = headlineBase;
 

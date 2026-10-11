@@ -14,6 +14,18 @@
   --color-bar: var(--brand);
   --color-meta: var(--ink-muted);
 
+  /* LeadStory panel padding at the start side: 0 on narrow (text lines up with the image
+     edge), the panel padding from 600px. C-01 gives the values; Section 6 has no token
+     (CPT-07, DOC-30). */
+  --space-lead-panel-start: 0;
+
+  /* StoryCard split feature (C-24, P-2 featureStory): the image column is a share of the
+     free width, clamped. 50% from 768 to 1023, 60% from 1024 (DR-118, DR-119). Section 6 has
+     no tokens for it (DOC-30). */
+  --story-feature-media-min: 26.25rem;
+  --story-feature-media-max: 34.8125rem;
+  --story-feature-media-share: 0.5;
+
   /* Buttons (Section 6 table, DR-208) */
   --button-height: 3rem;
   --button-padding: 1.25rem;
@@ -48,6 +60,7 @@
   :root {
     --bar-section-width: 4rem;
     --bar-section-height: 0.5rem;
+    --story-feature-media-share: 0.6;
   }
 }
 
@@ -67,4 +80,28 @@
     --bar-brand: 0.625rem;
     --space-lead-panel: 2rem;
   }
+}
+
+@container (width >= 600px) {
+  .lead-story {
+    --space-lead-panel-start: var(--space-lead-panel);
+  }
+}
+
+/* StoryCard row splits (C-24). Text at the start, image at the end. Tracks use minmax(0, …)
+   so a long word does not widen a column (P-2 checks). */
+@utility story-split-third {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  column-gap: --spacing(4);
+}
+
+@utility story-split-feature {
+  grid-template-columns:
+    minmax(0, 1fr)
+    clamp(
+      var(--story-feature-media-min),
+      calc((100% - --spacing(6)) * var(--story-feature-media-share)),
+      var(--story-feature-media-max)
+    );
+  column-gap: --spacing(6);
 }
