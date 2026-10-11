@@ -8,8 +8,8 @@ The complete report of findings and gaps, with a suggested solution for each, is
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
 - Prototype run 2: started 11 October 2026 on branch `prototype-run-2` (never commit or push to `main` until R2-21)
-- Ticket: none. R2-04 is Done
-- Next action: R2-05 Page chrome, after tajmin types `/ticket`
+- Ticket: none. R2-05 is Done
+- Next action: R2-06 Ad slots and page frame, after tajmin types `/ticket`
 
 ## FL-13 results
 
@@ -75,6 +75,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-02 Foundations CSS | `colors.css`, `typography.css`, `layout.css` are the spec blocks; `ads.css` deleted; §12.4 base rules in `globals.css`, `AGENTS.md` §5 updated (KIT-05). Components still on removed tokens are listed under Later. IMP-31, IMP-32 decided |
 | 2026-10-11 | R2-03 Mock content | `getAd(slot, lang)` with one mock booking per ad slot and six gray SVG creatives; tests for poll, ads, story ids (also sparse) and no newsletter content. Newsletter code stays until R2-11 (IMP-33). IMP-34 |
 | 2026-10-11 | R2-04 Small parts | `components.css` imported; `Divider`, `SectionHeading`, `MoreLink`, `Eyebrow`, `MetaLine`, `Chip`, `Button`, `IconButton` built from their sheets and callers moved; headline links use the base focus outline. 106 e2e tests stay red from before (R2-05, R2-06, R2-11, R2-12). DOC-25, DOC-26, IMP-35 to IMP-38 |
+| 2026-10-11 | R2-05 Page chrome | `TopBar`, `NavBar`, `Drawer`, `SearchDialog`, `ThemeButton`, `ThemeToggle`, `SearchForm` built from C-12 and C-17 to C-20; two-state theme (DR-201); no subscribe button (DR-188); footer and Drawer share 5 social links. Header e2e green; 78 e2e tests stay red from before (R2-06, R2-11, R2-12). Flags open: IMP-39, IMP-40, IMP-41. DOC-27, DOC-28, U-31, U-32, IMP-39 to IMP-43 |
 
 ## Later
 
@@ -117,6 +118,10 @@ Ideas that are outside the current ticket.
 - R2-04: parts not yet moved to the new ones: header buttons and links (`header/classes.ts`: `iconButton`, `filledButton`, `navLink`, `focusRing`) go to `IconButton`/`Button` in R2-05; the poll and the newsletter form (`grouped/classes.ts`) in R2-11; footer links in R2-14; the P-4 and P-3 `listItem` class becomes `dividerItem` in R2-09 and R2-11.
 - R2-04: the bn Breaking word "সদ্যপ্রাপ্ত" against ব্রেকিং in the sheet (IMP-36). Eyebrow links go to `/category/<id>`, a 404 page (IMP-35).
 
+- R2-05: `header/classes.ts` keeps `focusRing`, `iconButton` and `filledButton` for the footer (R2-14) and the poll/newsletter (R2-11). Remove them with the last caller. The footer uses `footer/socialLinks.ts` (five links, IMP-43).
+- R2-05: Flags for tajmin: IMP-39 (native `<dialog>` instead of the shadcn Sheet, Dialog, Switch, Collapsible) and IMP-41 (nav labels against the C-18 words). The `visual-qa` agent sets the theme with `data-theme`; the theme is a two-state switch now (IMP-40, KIT-01).
+- R2-05: `grouped.spec.ts` lost its Subscribe-link step (DR-188). `#newsletter` stays in the rail until R2-11 removes the newsletter.
+
 ## Unresolved design-system items
 
 | ID | File and component | Treatment used | Status |
@@ -124,13 +129,13 @@ Ideas that are outside the current ticket.
 | U-01 | English category labels (`src/i18n/en.ts` `categories`) | Working labels from the `mock-content` skill (`IA-06`) | Open |
 | U-02 | Card variants, radius, icons, motion | Neutral treatment (`AGENTS.md` Section 8) | Open |
 | U-03 | বিশ্লেষণ ও মতামত section background | `surface-elevated` (`DR-76`), built in FL-07. tajmin checks the look | Check |
-| U-04 | Theme switch and language switch look (`src/components/header/`) | Neutral bordered button group and text link; Tailwind spacing scale for padding | Open |
+| U-04 | Theme switch and language switch look (`src/components/header/`) | ThemeToggle, ThemeButton and the language link from C-12 and C-17 | Fixed in R2-05 |
 | U-05 | Minimum touch target size (no spec value; switches are about 33px) | None yet. Proposed `--target-min` 44px | Open |
 | U-06 | Section heading rule thickness (`src/components/layout/SectionHeading.tsx`) | C-13 and C-22 give it: `Divider` with a 1px border rule and the brand bar | Fixed in R2-04 |
 | U-07 | Region list and labels (`src/content/homepage.ts`, `src/i18n/*.ts` `regions`) | Seven working regions; আফ্রিকা has no stories | Open |
 | U-08 | Logo (`src/components/header/SiteHeader.tsx`) | Site name as text, `type-section-title`, `text-brand`; 2.37:1 in dark (logo exempt) | Open |
-| U-09 | Theme control in the bar (`src/components/header/ThemeToggle.tsx`) | One icon button that cycles system, light, dark | Open |
-| U-10 | Drawer and search dialog look (`Drawer.tsx`, `SearchDialog.tsx`) | `surface-elevated` on the `overlay` scrim, no shadow, no radius | Open |
+| U-09 | Theme control in the bar (`src/components/header/ThemeToggle.tsx`) | Two states, ThemeButton on phones and ThemeToggle switch from 768 | Fixed in R2-05 |
+| U-10 | Drawer and search dialog look (`Drawer.tsx`, `SearchDialog.tsx`) | Built from C-19 and C-20 | Fixed in R2-05 |
 | U-11 | Headline link color (`src/components/story/links.ts`) | `text-ink`, `interactive-hover` and `interactive-pressed` on hover and press, no underline (DOC-14) | Open |
 | U-12 | Lead text panel inset and padding (`src/components/home/hero/LeadStory.tsx`) | Inset 64px from the end (`md:me-16`), padding `space-story-media-text` | Open |
 | U-13 | Card without image beside a card with image (`src/components/story/StoryCard.tsx`) | Subgrid keeps the rows aligned (LAY-08): a blank band above the text and a stretched title row | Open |
@@ -150,6 +155,8 @@ Ideas that are outside the current ticket.
 | U-27 | Most read item (`src/components/home/most-read/MostRead.tsx`) | Title only in `type-story-title-sm`; `space-module` between rows; no list rules | Open |
 | U-28 | Region chip and column heading (`src/components/home/regions/RegionSlider.tsx`) | Chip: `border-interactive` border, `text-interactive`, filled `interactive` when selected, `px-3`; column heading `type-ui-sm` with the U-22 top rule, visually hidden below 600 | Open |
 | U-29 | Slider buttons (`RegionSlider.tsx`, `SectionHeading.tsx` `actions`) | 44px chevron icon buttons at the end of the heading row; `aria-disabled` in `ink-disabled` at each end; 250ms ease-out | Open |
+| U-31 | Logo size and weight (`SiteHeader.tsx`, `Drawer.tsx`, `SiteFooter.tsx`) | C-17 gives serif 700, 20/22/24px; there is no type role (TYP-01). Kept `type-section-title` | Open |
+| U-32 | ThemeButton moon (`ThemeButton.tsx`) | C-12 says "redrawn larger"; no drawing. Lucide moon, 1px up | Open |
 | U-30 | Minimum footer (`src/components/footer/SiteFooter.tsx`, `SocialIcon.tsx`) | Page background, full-width 1px `border` rule, `space-module` padding; links `type-ui-sm` `text-interactive` 44px; inline Simple Icons (CC0) brand marks in 44px icon buttons for Facebook, YouTube, X, Instagram; working Bangla labels | Open |
 
 ## Spec issues (DOC-)
@@ -182,5 +189,7 @@ Report these to the blueprint project. Do not edit the specs here.
 | 2026-10-07 FL-13 | `spacing-layout-system.md` 13 | DOC-23: The 1366×768 first-screen estimate (264px for the hero) leaves out `space-section`; 224px shows and no headline is in view | Open |
 | 2026-10-11 R2-04 | `component-system.md` 6 | DOC-25: the CSS block leaves out the six button and icon tokens that the table lists. `components.css` has them typed from the table | Workaround in code |
 | 2026-10-11 R2-04 | `component-system.md` C-11, `typography-system.md` 7.1 | DOC-26: Chip label says "type-eyebrow 15px 600"; the English role is 14px 700 uppercase | Open |
+| 2026-10-11 R2-05 | `component-system.md` C-12, C-17, §6; `color-system.md` 2.9 | DOC-27: switch radii, top bar padding and the theme control color switch have no token. `components.css` has four | Workaround in code |
+| 2026-10-11 R2-05 | `component-system.md` C-18, C-19 | DOC-28: 48px row with or without its 1px rule; where the Drawer row rule sits above children | Open |
 | 2026-10-07 FL-13 | `typography-system.md` 8.2 | DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page | Open |
 | 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |

@@ -7,12 +7,12 @@ export const bn = {
   language: {
     // The switch names the other language in that language (DR-78).
     other: "English",
+    // The phone top bar has less room (spacing-layout-system.md Section 6).
+    otherShort: "En",
   },
   theme: {
-    label: "থিম",
-    optionSystem: "সিস্টেম",
-    optionLight: "লাইট",
-    optionDark: "ডার্ক",
+    // The name of the switch; it is on when the theme is dark (DR-167).
+    dark: "ডার্ক থিম",
   },
   header: {
     menu: "মেনু",
@@ -22,11 +22,16 @@ export const bn = {
     home: "ফ্যাক্ট লেন্স, প্রথম পাতা",
     search: "অনুসন্ধান",
     searchField: "কী খুঁজছেন?",
+    searchPlaceholder: "খুঁজুন",
     searchSubmit: "খুঁজুন",
+    clear: "মুছুন",
+    trending: "ট্রেন্ডিং",
     closeSearch: "অনুসন্ধান বন্ধ করুন",
     // Mock search (DR-01): the prototype has no results page.
     searchUnavailable: "এই প্রোটোটাইপে অনুসন্ধানের ফল দেখানো হয় না।",
-    subscribe: "সাবস্ক্রাইব",
+    navHome: "হোম",
+    // The name of the caret button that opens the sub-items of a drawer row.
+    expand: "উপবিভাগ",
   },
   home: {
     // Visually hidden: the page heading for screen readers.
@@ -42,6 +47,7 @@ export const bn = {
     title: "বিশ্লেষণ ও মতামত",
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
+    opEd: "অপ-এড",
   },
   // P-5. Working label: the specs name the section in English only (U-26).
   mostRead: {
@@ -105,6 +111,7 @@ export const bn = {
     youtube: "ইউটিউব",
     x: "এক্স",
     instagram: "ইনস্টাগ্রাম",
+    linkedin: "লিংকডইন",
   },
   // Category labels (mock-content skill). চীন is a region, not a category (DR-19).
   categories: {

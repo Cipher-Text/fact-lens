@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { setTheme } from "./theme";
 
 // FL-09: P-3 Grouped categories with the ad-inset, newsletter and daily poll
 // (spacing-layout-system.md 7.2 to 7.4, 9, 13; LAY-03, LAY-05, LAY-07, LAY-09,
@@ -236,7 +237,7 @@ for (const p of PAGES) {
       test(`axe in ${theme} theme, before and after the forms are used`, async ({
         page,
       }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         await expectNoBlockingAxe(page);
 
@@ -398,7 +399,8 @@ test("page order: ভূরাজনীতি, ad, P-3 (7.1)", async ({ page }) 
   await expect(main.nth(9)).toHaveAttribute("data-section", "grouped");
 });
 
-test("the Subscribe link and a category nav link reach P-3 (IMP-14)", async ({
+// The header has no Subscribe link any more (DR-188), so only the category link is left.
+test("a category nav link reaches P-3 (IMP-14)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
@@ -408,6 +410,5 @@ test("the Subscribe link and a category nav link reach P-3 (IMP-14)", async ({
   await expect(
     page.locator("#category-economy").getByRole("heading", { level: 2 }),
   ).toBeInViewport();
-  await page.locator('a[href="#newsletter"]:visible').first().click();
-  await expect(page.locator("#newsletter h2")).toBeInViewport();
+  await expect(page.locator('a[href="#newsletter"]')).toHaveCount(0);
 });

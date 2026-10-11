@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { setTheme } from "./theme";
 
 // FL-12: the minimum footer (spacing-layout-system.md 7.1 row 15, 7.4, 13; DR-59;
 // LAY-02, LAY-03, LAY-14, LAY-16, LAY-17, COL-04, COL-05, COL-13, T-27).
@@ -97,7 +98,7 @@ for (const p of PAGES) {
         // Every part stays inside the shell (LAY-02), and every target is 44px or
         // more (U-05).
         const parts = f.locator("a");
-        await expect(parts).toHaveCount(10);
+        await expect(parts).toHaveCount(11);
         for (const b of await Promise.all(
           (await parts.all()).map((a) => box(a)),
         )) {
@@ -144,7 +145,7 @@ for (const p of PAGES) {
 
       // Each social link has a text name for screen readers; the icon is hidden.
       const social = f.locator("[data-social]");
-      await expect(social).toHaveCount(4);
+      await expect(social).toHaveCount(5);
       for (const [i, name] of p.networks.entries()) {
         await expect(social.nth(i)).toHaveAccessibleName(name);
         await expect(social.nth(i).locator("svg")).toHaveAttribute(
@@ -193,7 +194,7 @@ for (const p of PAGES) {
 
     for (const theme of ["light", "dark"] as const) {
       test(`axe in ${theme} theme`, async ({ page }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         await expect(footer(page)).toBeVisible();
         await expectNoBlockingAxe(page);
@@ -208,7 +209,7 @@ for (const p of PAGES) {
       const seen: string[] = [];
       await page.locator("body").focus();
       // The footer is last, so Shift+Tab from the start of the page reaches it first.
-      for (let i = 0; i < 12 && seen.length < 10; i++) {
+      for (let i = 0; i < 13 && seen.length < 11; i++) {
         await page.keyboard.press("Shift+Tab");
         const info = await page.evaluate(() => {
           const el = document.activeElement as HTMLElement | null;
@@ -235,6 +236,7 @@ for (const p of PAGES) {
         "https://www.youtube.com/",
         "https://x.com/",
         "https://www.instagram.com/",
+        "https://www.linkedin.com/",
         ...PATHS.map((path) => `${p.prefix}/${path}`),
       ]);
     });
@@ -267,5 +269,5 @@ test("sparse content: the footer stays (7.3)", async ({ page }) => {
   await page.setViewportSize({ width: 360, height: 900 });
   await page.goto("/?content=sparse");
   await expect(footer(page)).toBeVisible();
-  await expect(footer(page).locator("a")).toHaveCount(10);
+  await expect(footer(page).locator("a")).toHaveCount(11);
 });

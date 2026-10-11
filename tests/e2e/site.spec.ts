@@ -73,36 +73,30 @@ test.describe("language URLs (DR-17)", () => {
 });
 
 test.describe("theme", () => {
-  test("starts at system and follows the system theme", async ({ page }) => {
+  test("starts light and does not follow the system theme (DR-201)", async ({
+    page,
+  }) => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/en");
     const html = page.locator("html");
-    await expect(html).toHaveAttribute("data-theme", "dark");
-    await expect(html).toHaveClass(/\bdark\b/);
-    await expect(page.locator("header [data-theme-toggle]")).toHaveAttribute(
-      "data-theme-toggle",
-      "system",
-    );
-
-    await page.emulateMedia({ colorScheme: "light" });
     await expect(html).toHaveAttribute("data-theme", "light");
+    await expect(html).not.toHaveClass(/\bdark\b/);
+    await expect(page.locator("header [data-theme-toggle]")).toHaveAttribute(
+      "aria-checked",
+      "false",
+    );
   });
 
-  test("a stored choice overrides the system and survives a reload", async ({
-    page,
-  }) => {
-    await page.emulateMedia({ colorScheme: "light" });
+  test("a stored choice survives a reload", async ({ page }) => {
     await page.goto("/en");
     const html = page.locator("html");
     const toggle = page.locator("header [data-theme-toggle]");
-    // system → light → dark
     await expect(async () => {
       await toggle.click();
-      await expect(toggle).toHaveAttribute("data-theme-toggle", "light", {
+      await expect(toggle).toHaveAttribute("aria-checked", "true", {
         timeout: 500,
       });
     }).toPass();
-    await toggle.click();
     await expect(html).toHaveAttribute("data-theme", "dark");
 
     await page.reload();
@@ -112,6 +106,10 @@ test.describe("theme", () => {
       () => getComputedStyle(document.body).backgroundColor,
     );
     expect(background).toBe("rgb(24, 25, 30)");
+
+    // A second press goes back to light, not to a system state.
+    await toggle.click();
+    await expect(html).toHaveAttribute("data-theme", "light");
   });
 
   test("the stored theme is set before the first paint", async ({ page }) => {
@@ -127,7 +125,6 @@ test.describe("theme", () => {
         observer.disconnect();
       }).observe(document, { childList: true, subtree: true });
     });
-    await page.emulateMedia({ colorScheme: "light" });
     await page.goto("/");
     const atBody = await page.evaluate(
       () => (window as unknown as { themeAtBody?: string }).themeAtBody,

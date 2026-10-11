@@ -1,74 +1,59 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   applyTheme,
   nextThemeChoice,
   readThemeChoice,
   setThemeChoice,
+  themeScript,
 } from "./theme";
 
-function mockSystemDark(dark: boolean) {
-  vi.stubGlobal(
-    "matchMedia",
-    vi.fn().mockImplementation((query: string) => ({
-      matches: dark && query === "(prefers-color-scheme: dark)",
-      media: query,
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-    })),
-  );
-}
-
+// Two states: light and dark. Light is first on every device, and the system setting is
+// not used (spacing-layout-system.md Section 6, DR-201).
 describe("theme", () => {
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.className = "";
+    delete document.documentElement.dataset.theme;
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  it("follows the system theme when the choice is system", () => {
-    mockSystemDark(true);
-    applyTheme("system");
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(document.documentElement.dataset.theme).toBe("dark");
-
-    mockSystemDark(false);
-    applyTheme("system");
+  it("starts light when nothing is stored", () => {
+    expect(readThemeChoice()).toBe("light");
+    applyTheme(null);
     expect(document.documentElement.classList.contains("dark")).toBe(false);
     expect(document.documentElement.dataset.theme).toBe("light");
   });
 
-  it("an explicit choice overrides the system theme", () => {
-    mockSystemDark(true);
-    applyTheme("light");
-    expect(document.documentElement.classList.contains("dark")).toBe(false);
-
-    mockSystemDark(false);
+  it("dark is applied only when chosen", () => {
     applyTheme("dark");
     expect(document.documentElement.classList.contains("dark")).toBe(true);
+    expect(document.documentElement.dataset.theme).toBe("dark");
+    applyTheme("light");
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
 
-  it("treats an unknown stored value as system", () => {
-    mockSystemDark(false);
+  it("treats an unknown or old stored value as light", () => {
     localStorage.setItem("fl-theme", "purple");
-    expect(readThemeChoice()).toBe("system");
-    applyTheme("purple");
-    expect(document.documentElement.dataset.themeChoice).toBe("system");
+    expect(readThemeChoice()).toBe("light");
+    localStorage.setItem("fl-theme", "system");
+    expect(readThemeChoice()).toBe("light");
+    applyTheme("system");
+    expect(document.documentElement.dataset.theme).toBe("light");
   });
 
   it("stores the choice", () => {
-    mockSystemDark(false);
     setThemeChoice("dark");
     expect(readThemeChoice()).toBe("dark");
     expect(document.documentElement.dataset.theme).toBe("dark");
   });
 
-  it("the toggle cycles system, light, dark, then system", () => {
-    expect(nextThemeChoice("system")).toBe("light");
+  it("the switch moves between light and dark", () => {
     expect(nextThemeChoice("light")).toBe("dark");
-    expect(nextThemeChoice("dark")).toBe("system");
+    expect(nextThemeChoice("dark")).toBe("light");
+  });
+
+  it("the inline script does not read the system setting", () => {
+    expect(themeScript).not.toContain("matchMedia");
+    expect(themeScript).not.toContain("prefers-color-scheme");
   });
 });

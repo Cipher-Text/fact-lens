@@ -16,7 +16,7 @@ const CASES = [
       "গোপনীয়তা নীতি",
       "ব্যবহারের শর্তাবলি",
     ],
-    networks: ["ফেসবুক", "ইউটিউব", "এক্স", "ইনস্টাগ্রাম"],
+    networks: ["ফেসবুক", "ইউটিউব", "এক্স", "ইনস্টাগ্রাম", "লিংকডইন"],
   },
   {
     lang: "en",
@@ -24,7 +24,7 @@ const CASES = [
     siteNav: "About the site",
     social: "Fact Lens on social media",
     pages: ["About", "Contact", "Corrections", "Privacy", "Terms"],
-    networks: ["Facebook", "YouTube", "X", "Instagram"],
+    networks: ["Facebook", "YouTube", "X", "Instagram", "LinkedIn"],
   },
 ] as const;
 

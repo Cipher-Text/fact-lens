@@ -4,6 +4,7 @@ import { ads } from "./ads";
 import { homepagePlans } from "./homepage";
 import { dailyPoll } from "./poll";
 import { authors, imageFiles, stories, type StoryDef } from "./stories";
+import { trendingTerms } from "./trending";
 import type {
   Ad,
   AdSlotId,
@@ -166,4 +167,9 @@ export function getHomepage(
     mostRead: nonEmpty(getStories(plan.mostRead, lang)),
     regions: nonEmpty(regions),
   };
+}
+
+/** The trending search terms for the SearchDialog, in the page language (mock). */
+export function getTrendingTerms(lang: Lang): string[] {
+  return trendingTerms[lang];
 }

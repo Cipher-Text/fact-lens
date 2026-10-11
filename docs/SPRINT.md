@@ -69,7 +69,7 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 | R2-02 | Foundations CSS | R2-00 | Done |
 | R2-03 | Mock content | R2-02 | Done |
 | R2-04 | Small parts | R2-02 | Done |
-| R2-05 | Page chrome | R2-04 | To do |
+| R2-05 | Page chrome | R2-04 | Done |
 | R2-06 | Ad slots and page frame | R2-03 | To do |
 | R2-07 | Story units | R2-04 | To do |
 | R2-08 | Hero (P-1) | R2-07 | To do |

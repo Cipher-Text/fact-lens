@@ -1,8 +1,9 @@
-// Theme switch logic: system, light, dark (spacing-layout-system.md Section 6).
+// Theme switch logic: light and dark (spacing-layout-system.md Section 6, DR-201).
+// Light is the first state on every device. The system setting is not used.
 // The colors change through the `.dark` class on <html> (color-system.md Section 5).
 // `data-theme` on <html> holds the resolved theme for tests and tools.
 
-export const themeChoices = ["system", "light", "dark"] as const;
+export const themeChoices = ["light", "dark"] as const;
 export type ThemeChoice = (typeof themeChoices)[number];
 
 export const THEME_STORAGE_KEY = "fl-theme";
@@ -13,26 +14,21 @@ export const THEME_CHANGE_EVENT = "fl-theme-change";
  * because themeScript inlines its source and runs it before the first paint.
  */
 export function applyTheme(choice: string | null) {
-  const valid = choice === "light" || choice === "dark" ? choice : "system";
-  const isDark =
-    valid === "dark" ||
-    (valid === "system" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const isDark = choice === "dark";
   const root = document.documentElement;
   root.classList.toggle("dark", isDark);
   root.dataset.theme = isDark ? "dark" : "light";
-  root.dataset.themeChoice = valid;
   root.style.colorScheme = isDark ? "dark" : "light";
 }
 
 export function readThemeChoice(): ThemeChoice {
   try {
-    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
-    if (stored === "light" || stored === "dark") return stored;
+    if (window.localStorage.getItem(THEME_STORAGE_KEY) === "dark")
+      return "dark";
   } catch {
-    // Storage can be blocked. Fall back to the system theme.
+    // Storage can be blocked. Fall back to light.
   }
-  return "system";
+  return "light";
 }
 
 export function setThemeChoice(choice: ThemeChoice) {
@@ -47,22 +43,16 @@ export function setThemeChoice(choice: ThemeChoice) {
 
 /**
  * Inline script for <head>. It runs before the body renders, so the page
- * shows the right theme on the first paint. It also follows the system theme
- * while the choice is "system".
+ * shows the right theme on the first paint.
  */
 export const themeScript = `(function () {
   var apply = ${applyTheme.toString()};
-  var read = function () {
-    try { return localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)}); } catch (e) { return null; }
-  };
-  apply(read());
-  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () {
-    apply(read());
-  });
+  var stored = null;
+  try { stored = localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)}); } catch (e) {}
+  apply(stored);
 })();`;
 
-/** The next choice for the one-button theme toggle: system, light, dark, then system again. */
+/** The other theme, for the two-state switch. */
 export function nextThemeChoice(choice: ThemeChoice): ThemeChoice {
-  const index = themeChoices.indexOf(choice);
-  return themeChoices[(index + 1) % themeChoices.length];
+  return choice === "dark" ? "light" : "dark";
 }

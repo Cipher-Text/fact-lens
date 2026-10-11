@@ -9,12 +9,11 @@ export const en: Dictionary = {
   language: {
     // The switch names the other language in that language (DR-78).
     other: "বাংলা",
+    otherShort: "বাংলা",
   },
   theme: {
-    label: "Theme",
-    optionSystem: "System",
-    optionLight: "Light",
-    optionDark: "Dark",
+    // The name of the switch; it is on when the theme is dark (DR-167).
+    dark: "Dark theme",
   },
   header: {
     menu: "Menu",
@@ -24,11 +23,16 @@ export const en: Dictionary = {
     home: "Fact Lens, front page",
     search: "Search",
     searchField: "What are you looking for?",
+    searchPlaceholder: "Search",
     searchSubmit: "Search",
+    clear: "Clear",
+    trending: "Trending",
     closeSearch: "Close search",
     // Mock search (DR-01): the prototype has no results page.
     searchUnavailable: "This prototype does not show search results.",
-    subscribe: "Subscribe",
+    navHome: "Home",
+    // The name of the caret button that opens the sub-items of a drawer row.
+    expand: "sub-sections",
   },
   home: {
     // Visually hidden: the page heading for screen readers.
@@ -44,6 +48,7 @@ export const en: Dictionary = {
     title: "Analysis and Opinion",
     analysis: "Analysis",
     opinion: "Opinion",
+    opEd: "Op-ed",
   },
   // P-5 Most read (spacing-layout-system.md 7.2).
   mostRead: {
@@ -106,6 +111,7 @@ export const en: Dictionary = {
     youtube: "YouTube",
     x: "X",
     instagram: "Instagram",
+    linkedin: "LinkedIn",
   },
   // Working labels until the IA label table exists (IA-06, U-01).
   categories: {

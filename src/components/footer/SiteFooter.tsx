@@ -5,16 +5,8 @@ import { Shell } from "@/components/layout/Shell";
 import { textLink } from "@/components/story/links";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
-import { SocialIcon, type SocialNetwork } from "./SocialIcon";
-
-// The Fact Lens accounts are not known yet. The links go to each network's front page
-// until they are (IMP-29).
-const socialLinks: { network: SocialNetwork; href: string }[] = [
-  { network: "facebook", href: "https://www.facebook.com/" },
-  { network: "youtube", href: "https://www.youtube.com/" },
-  { network: "x", href: "https://x.com/" },
-  { network: "instagram", href: "https://www.instagram.com/" },
-];
+import { SocialIcon } from "./SocialIcon";
+import { socialLinks } from "./socialLinks";
 
 // The site pages do not exist yet, so these links lead to a 404 page (IMP-29).
 const sitePages = [

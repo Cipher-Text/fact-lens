@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { setTheme } from "./theme";
 
 // FL-07: P-4 বিশ্লেষণ ও মতামত (spacing-layout-system.md 7.2 to 7.4, 13;
 // DR-52, DR-76, DR-77, LAY-03, LAY-12, LAY-13, LAY-18).
@@ -161,7 +162,7 @@ for (const p of PAGES) {
       test(`surface-elevated background in ${theme} theme (DR-76)`, async ({
         page,
       }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         const section = page.locator(SECTION);
         const background = await section.evaluate(
@@ -174,7 +175,7 @@ for (const p of PAGES) {
       });
 
       test(`axe in ${theme} theme`, async ({ page }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         await expectNoBlockingAxe(page);
       });

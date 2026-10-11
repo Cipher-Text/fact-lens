@@ -1,26 +1,39 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 
+import { Button } from "@/components/story/Button";
+import { IconButton } from "@/components/story/IconButton";
 import type { Dictionary } from "@/i18n";
-
-import { filledButton, focusRingElevated } from "./classes";
+import { cn } from "@/lib/utils";
 
 type Props = {
   strings: Dictionary["header"];
+  /** "drawer": 48px field (Drawer.search). "dialog": 56px field (SearchDialog.field). */
+  size: "drawer" | "dialog";
   /** Marks the field for the dialog that opens the form, so it can take the focus. */
   fieldProps?: Record<`data-${string}`, string>;
+  /** The trending terms under the field (SearchDialog.trending). Omit in the Drawer. */
+  trendingTerms?: string[];
 };
 
 /**
- * The search field and button, used in the drawer (phones) and the search dialog
- * (from 768px). Both sit on surface-elevated. Mock only (DR-01): a search shows a note instead of results.
- * The field is type="text": a type="search" field takes the first Escape to clear itself,
- * so Escape would not close the dialog in one press.
+ * The search field with its attached submit button, the clear button and, in the dialog,
+ * the trending row (component-system.md C-19, C-20). Mock only (DR-01): a search shows a
+ * note instead of results. The field is type="text": a type="search" field takes the
+ * first Escape to clear itself, so Escape would not close the dialog in one press
+ * (DR-246). The label is hidden; the placeholder is the visible hint.
  */
-export function SearchForm({ strings, fieldProps }: Props) {
+export function SearchForm({
+  strings,
+  size,
+  fieldProps,
+  trendingTerms,
+}: Props) {
   const fieldId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   return (
@@ -30,33 +43,85 @@ export function SearchForm({ strings, fieldProps }: Props) {
         event.preventDefault();
         setSubmitted(true);
       }}
-      className="flex flex-col gap-2"
     >
-      <label htmlFor={fieldId} className="type-ui-sm text-ink-secondary">
+      <label htmlFor={fieldId} className="sr-only">
         {strings.searchField}
       </label>
-      <div className="flex gap-2">
+      <div
+        className={cn(
+          "flex border border-border-interactive bg-background",
+          size === "dialog" ? "h-14" : "h-12",
+        )}
+      >
         <input
+          ref={inputRef}
           id={fieldId}
           type="text"
           name="q"
+          value={value}
+          placeholder={strings.searchPlaceholder}
           enterKeyHint="search"
           autoComplete="off"
-          onChange={() => setSubmitted(false)}
-          className={`min-h-11 min-w-0 flex-1 border border-border-interactive bg-background px-3 type-input text-ink ${focusRingElevated}`}
+          onChange={(event) => {
+            setValue(event.target.value);
+            setSubmitted(false);
+          }}
+          className="min-w-0 flex-1 bg-transparent px-4 type-input text-ink placeholder:text-ink-muted"
           {...fieldProps}
         />
-        <button
+        {value ? (
+          <Button
+            variant="text"
+            className="h-full"
+            onClick={() => {
+              setValue("");
+              setSubmitted(false);
+              inputRef.current?.focus();
+            }}
+          >
+            {strings.clear}
+          </Button>
+        ) : null}
+        <IconButton
           type="submit"
-          className={`${filledButton} ${focusRingElevated}`}
-        >
-          <Search aria-hidden="true" className="size-5" />
-          {strings.searchSubmit}
-        </button>
+          variant="filled"
+          size="field"
+          label={strings.searchSubmit}
+          icon={Search}
+        />
       </div>
-      <p role="status" className="type-ui-sm text-ink-secondary">
+      <p role="status" className="type-ui-sm text-ink-secondary not-empty:mt-3">
         {submitted ? strings.searchUnavailable : null}
       </p>
+      {trendingTerms?.length ? (
+        <div className="mt-6 flex flex-wrap items-center">
+          <h2 className="me-6 type-ui-sm font-semibold text-ink-muted">
+            {strings.trending}
+          </h2>
+          <ul className="flex flex-wrap items-center" data-trending>
+            {trendingTerms.map((term, index) => (
+              <li key={term} className="flex items-center">
+                {index > 0 ? (
+                  <span
+                    aria-hidden="true"
+                    className="mx-4 size-1 shrink-0 bg-(--color-meta)"
+                  />
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue(term);
+                    setSubmitted(true);
+                  }}
+                  className="inline-flex min-h-11 items-center type-ui-sm font-semibold text-interactive hover:text-interactive-hover active:text-interactive-pressed"
+                >
+                  {term}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </form>
   );
 }

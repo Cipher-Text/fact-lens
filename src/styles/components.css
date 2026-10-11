@@ -21,10 +21,27 @@
   --icon-button-size-bar: 2rem;
   --icon-size: 1.25rem;
   --button-icon-gap: 0.5rem;
+
+  /* Page chrome (component-system.md C-12, C-17; no token in Section 6, CPT-07).
+     Top bar side padding = the page gutter minus the inner space of the edge control:
+     (32 - 20) / 2 = 6px on phones, (44 - 20) / 2 = 12px from 768. */
+  --top-bar-inset: calc(var(--gutter-page) - 0.375rem);
+  /* ThemeToggle switch corners: the one place with radius (CPT-05, DR-168) */
+  --switch-radius-track: 0.375rem;
+  --switch-radius-thumb: 0.25rem;
+  /* Theme controls: interactive in light, ink in dark (color-system.md 2.9, DR-211) */
+  --color-theme-control: var(--interactive);
 }
 
 .dark {
   --color-bar: var(--interactive);
+  --color-theme-control: var(--ink);
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --top-bar-inset: calc(var(--gutter-page) - 0.75rem);
+  }
 }
 
 @media (min-width: 64rem) {

@@ -1,4 +1,5 @@
 import { expect, test, type Locator } from "@playwright/test";
+import { setTheme } from "./theme";
 
 // Whole-page ad-row and heading checks, moved from the temporary layout-parts page
 // to the homepage in FL-13 (spacing-layout-system.md Section 9; LAY-09 to LAY-11;
@@ -76,7 +77,7 @@ for (const path of ["/", "/en"]) {
 test("section headings have the divider above them: border rule, brand bar, 12px to the title (C-13, C-22, COL-04)", async ({
   page,
 }) => {
-  await page.emulateMedia({ colorScheme: "light" });
+  await setTheme(page, "light");
   await page.goto("/en");
   const heading = page.locator(
     '[data-section="most-read"] .type-section-title',

@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { setTheme } from "./theme";
 
 // FL-10: P-5 Most read (spacing-layout-system.md 7.1 to 7.3, 8, 9, 13; DR-51, DR-68;
 // typography-system.md 7.1 type-rank; LAY-03, LAY-07, LAY-12, LAY-13, LAY-14, LAY-17,
@@ -179,7 +180,7 @@ for (const p of PAGES) {
 
     for (const theme of ["light", "dark"] as const) {
       test(`axe in ${theme} theme`, async ({ page }) => {
-        await page.emulateMedia({ colorScheme: theme });
+        await setTheme(page, theme);
         await page.goto(p.path);
         await expect(mostRead(page)).toBeVisible();
         await expectNoBlockingAxe(page);

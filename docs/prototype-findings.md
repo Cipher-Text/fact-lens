@@ -2,7 +2,7 @@
 
 The complete report of the issues and gaps found while the homepage prototype is built. Claude updated it at the end of each ticket (FL-01 to FL-13). Milestone 1 is closed; the summary is `docs/milestone-1-report.md`. Each finding has a suggested solution.
 
-- Last updated: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
+- Last updated: 11 October 2026, R2-05 (page chrome: TopBar, NavBar, Drawer, SearchDialog, theme controls). Earlier: 11 October 2026, R2-04 (small parts: Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton). Earlier: 11 October 2026, R2-03 (mock content: mock ads, tests). Earlier: 11 October 2026, R2-02 (foundations CSS copied from the current specs). Earlier: 8 October 2026, Milestone 1 closed (FL-14 rejected). The FL-13 results table is in `docs/PROGRESS.md`
 - Short status lists stay in `docs/PROGRESS.md`. This file holds the full detail.
 
 ## How to read this file
@@ -28,14 +28,14 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | --- | --- | --- | --- | --- |
 | DOC-01 | FL-02 | English block inside a Bangla page keeps Bangla type | High | Open |
 | DOC-02 | FL-02 | Color CSS block imports Tailwind a second time | Low | Workaround in code |
-| DOC-03 | FL-02 | Theme selector: `.dark` class against `data-theme` | Medium | Workaround in code |
+| DOC-03 | FL-02 | Theme selector: `.dark` class against `data-theme` | Medium | Workaround in code (the two-state theme needs no "system" CSS now) |
 | DOC-04 | FL-02 | `type-rank` role has no utility in §8.2 | Low | Workaround in code |
 | DOC-05 | FL-02 | No base rule for page background and text color | Medium | Workaround in code |
 | DOC-06 | FL-02 | Container classes are not in a cascade layer | Low | Workaround in code |
 | DOC-07 | FL-02 | COL-13 gives utilities, §2.8 gives values only | Low | Open |
 | DOC-08 | FL-03 | Ad heights and creative sizes have no tokens | Medium | Workaround in code |
 | DOC-09 | FL-03 | 336×280 phone creative is wider than a 320px screen | Medium | Workaround in code |
-| DOC-10 | FL-05 | Logo "in the center at every width" does not hold at 320 and 360 | Medium | Open |
+| DOC-10 | FL-05 | Logo "in the center at every width" does not hold at 320 and 360 | Medium | Fixed in R2-05 |
 | DOC-11 | FL-05 | `shadow` color has no Tailwind mapping, so COL-15 cannot be applied | Low | Open |
 | DOC-12 | FL-05 | `--z-scrim` and `--z-drawer` are not needed with a native modal dialog | Low | Open |
 | DOC-13 | FL-06 | "Cut corner on top-story images" has no matching rule | Low | Open |
@@ -52,16 +52,18 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | DOC-24 | FL-13 | Headline roles have no `overflow-wrap`; one long compound word scrolls the page | Medium | Open |
 | DOC-25 | R2-04 | The §6 CSS block of `component-system.md` leaves out the button and icon tokens that its table lists | Low | Workaround in code |
 | DOC-26 | R2-04 | The Chip label sheet gives "15px 600", the `type-eyebrow` role is 14px 700 uppercase in English | Low | Open |
+| DOC-27 | R2-05 | C-12 and C-17 give the switch corners and the top bar padding in px, §6 has no tokens, and §2.9 says no component has color tokens | Low | Workaround in code |
+| DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Open |
 | U-01 | FL-01 | English category labels | Medium | Open |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Open |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Built in FL-07; tajmin checks the look |
-| U-04 | FL-02 | Theme switch and language switch look | Medium | Open |
+| U-04 | FL-02 | Theme switch and language switch look | Medium | Fixed in R2-05 (C-12, C-17) |
 | U-05 | FL-02 | No minimum touch target size | Medium | Open |
 | U-06 | FL-03 | Section heading rule thickness | Low | Fixed in R2-04 (C-13 and C-22 give it) |
 | U-07 | FL-04 | Region list under অঞ্চল | Medium | Open |
 | U-08 | FL-05 | Logo asset and its role | Medium | Open |
-| U-09 | FL-05 | Theme control in the bar: one cycling icon button | Medium | Open |
-| U-10 | FL-05 | Drawer and search dialog look | Low | Open |
+| U-09 | FL-05 | Theme control in the bar: one cycling icon button | Medium | Fixed in R2-05 (ThemeButton, ThemeToggle) |
+| U-10 | FL-05 | Drawer and search dialog look | Low | Fixed in R2-05 (C-19, C-20) |
 | U-11 | FL-06 | Headline link color | Low | Open |
 | U-12 | FL-06 | Lead text panel inset and padding | Low | Open |
 | U-13 | FL-06 | Card without image beside a card with image | Medium | Open |
@@ -82,6 +84,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | U-28 | FL-11 | Region chip and region column heading look | Low | Open |
 | U-29 | FL-11 | Slider button place, icon and disabled look | Low | Open |
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Open |
+| U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Open |
+| U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Open |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Needs confirmation |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Needs decision before `shadcn add` |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Check before the first deploy (FL-14 rejected) |
@@ -97,8 +101,8 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-13 | FL-05 | Drawer and search use native `<dialog>`, not shadcn | Medium | Needs confirmation |
 | IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Needs confirmation |
 | IMP-15 | FL-05 | Search field is `type="text"`, not `type="search"` | Low | Needs confirmation |
-| IMP-16 | FL-05 | Nav row hides the items that do not fit after hydration | Low | Needs confirmation |
-| IMP-17 | FL-05 | On phones the drawer focuses the search field first | Low | Needs confirmation |
+| IMP-16 | FL-05 | Nav row hides the items that do not fit after hydration | Low | Needs confirmation (now 9 items; 8 fit in English at 1280) |
+| IMP-17 | FL-05 | On phones the drawer focuses the search field first | Low | Fixed in R2-05 (focus goes to the panel, DR-249) |
 | IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Needs confirmation (FL-07 adds `/analysis` and `/opinion`) |
 | IMP-19 | FL-06 | Hero metadata shows the clock time only, 24-hour | Low | Needs confirmation |
 | IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Needs confirmation |
@@ -120,6 +124,11 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | IMP-36 | R2-04 | The Bangla Breaking label is "সদ্যপ্রাপ্ত"; the Chip sheet says the working label is ব্রেকিং | Low | Open: needs tajmin's yes |
 | IMP-37 | R2-04 | Item divider is a class, not a component; the section divider is a component | Low | Open |
 | IMP-38 | R2-04 | 106 e2e tests were red on the branch before R2-04; five keyboard tests accept the old ring or the base outline for now | Medium | Open |
+| IMP-39 | R2-05 | Drawer and SearchDialog stay on the native `<dialog>`; the sheets name the shadcn Sheet, Dialog, Switch and Collapsible (CPT-16) | Medium | Open: needs tajmin's decision (flag) |
+| IMP-40 | R2-05 | The theme has two states and does not follow the system; an old stored "system" reads as light; e2e tests set the theme in storage | Medium | Open |
+| IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Open: needs tajmin's decision (flag) |
+| IMP-42 | R2-05 | Trending terms are mock buttons that run the mock search; Op-ed and the Analysis anchors | Low | Open |
+| IMP-43 | R2-05 | LinkedIn mark from Simple Icons 13.21.0, the last release that has it; the Drawer lists 5 links, the Footer still 4 | Low | Open |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Open |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Open |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Workaround in code |
@@ -343,6 +352,21 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Spec:** `component-system.md` C-11 (label, live) and `typography-system.md` 7.1
 - **Problem:** The sheet says "type-eyebrow 15px 600". In English `type-eyebrow` is 14px, 700, uppercase, 0.06em (Bangla is 15px 600). The label and live chips use the role (TYP-18), so English shows 14px bold capitals.
 - **Suggested solution:** Say "type-eyebrow" only, or give both languages in the sheet.
+
+### DOC-27 Pixel values and a color switch with no token
+
+- **Found:** R2-05 · **Severity:** Low · **Status:** Workaround in code
+- **Spec:** `component-system.md` C-12 (ThemeToggle: radius 6px and 4px; ThemeButton and ThemeToggle colors), C-17 (Layout: padding = page gutter minus the controls inner space), §6; `color-system.md` §2.9
+- **Problem:** Three values have no token. (1) The switch corner radii, 6px and 4px, in a project where `--radius-*` is `initial` (CPT-05). (2) The top bar side padding, "the page gutter minus the controls inner space" (10px on phones at 16 gutter, 18px at 600, 12px from 768): no scale class gives it. (3) The theme control color is `interactive` in light and `ink` in dark; a component cannot write `dark:` (COL-03), and §2.9 says "no component has its own color tokens". `--color-bar` in §6 is the same kind of switch, so a token is the only way.
+- **Workaround:** `components.css` has `--top-bar-inset`, `--switch-radius-track`, `--switch-radius-thumb` and `--color-theme-control` (CPT-07, `AGENTS.md` rule 19).
+- **Suggested solution:** Add the four tokens to `component-system.md` §6, and drop the "no component color tokens" sentence in §2.9 or name this one as the exception.
+
+### DOC-28 NavBar row height with the rule; Drawer row rule next to an accordion
+
+- **Found:** R2-05 · **Severity:** Low · **Status:** Open
+- **Spec:** `component-system.md` C-18 (item `min-h-12`, Surface "1px border rule at the bottom"), C-19 (`Drawer.item`, `Drawer.accordion`); `spacing-layout-system.md` §6 (`--nav-row-height` 48px)
+- **Problem:** (1) The NavBar is 48px of items and a 1px rule. The sheet does not say if the rule is inside the 48px. Built: 48px row plus the rule, 49px in total. (2) "A 1px rule under every category row" does not say where the rule goes when the row has children. Built: under the row itself, then the child group on the page surface, so the rule is above the children.
+- **Suggested solution:** Say "48px including the rule" or "48px plus the rule" in C-18, and say in C-19 where the rule goes for a row with open children.
 
 ---
 
@@ -589,6 +613,22 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Gap:** 7.4 gives the footer content only. No background, rule, padding, text roles, icon set, network list or labels. Icons are a gap (U-02), and `lucide-react` 1.x has no brand icons.
 - **Treatment used:** Page background with a 1px `border` rule across the full width; `space-module` above and below inside the shell; row 1 the text logo (U-08) and the social links, row 2 the five site links, both rows wrap. Site links `type-ui-sm` in `text-interactive` (like "আরও দেখুন"), 44px tall. Social links: 44px icon buttons (header classes) with Simple Icons 16.34.0 brand marks (CC0) inline in `currentColor`, for Facebook, YouTube, X and Instagram (tajmin's choice of inline icons). The text name is the `aria-label`; the list is named "সামাজিক মাধ্যমে ফ্যাক্ট লেন্স" / "Fact Lens on social media". Working Bangla labels: আমাদের সম্পর্কে, যোগাযোগ, সংশোধনী, গোপনীয়তা নীতি, ব্যবহারের শর্তাবলি.
 - **Suggested solution:** Design the footer (tajmin, DR-59); confirm the networks, the icon source and the Bangla labels with the editorial team.
+
+### U-31 Logo size and weight have no type role
+
+- **Found:** R2-05 · **Severity:** Medium · **Status:** Open
+- **Files:** `src/components/header/SiteHeader.tsx`, `Drawer.tsx`, `src/components/footer/SiteFooter.tsx`
+- **Gap:** C-17 `TopBar.logo` says "serif 700, 24px (20px phones, 22px at 768)" and C-21 `Footer.logo` "the same stand-in, 24px". The typography system has no logo role (TYP-01), and raw sizes are not allowed (TYP-18). The ticket says to keep the text placeholder.
+- **Treatment used:** `type-section-title` (22px, 600) in `brand`, as in run 1. The size is the same at every width.
+- **Suggested solution:** Add a `type-logo` role (or call the stand-in a role) with the three sizes, or wait for the logo file (BRD-06) and remove the text.
+
+### U-32 ThemeButton moon glyph "redrawn larger"
+
+- **Found:** R2-05 · **Severity:** Low · **Status:** Open
+- **File:** `src/components/header/ThemeButton.tsx`
+- **Gap:** C-12 PhoneBarButtons says the moon is "redrawn larger, about 1px above the box center". There is no drawing, and icons are Lucide shapes (BRD-03).
+- **Treatment used:** The Lucide moon at 20px, moved 1px up. The sun is unchanged.
+- **Suggested solution:** Supply the redrawn moon as an SVG, or accept the Lucide moon.
 
 ---
 
@@ -840,6 +880,38 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 - **Focus check:** The headline links and text links in `links.ts` lost their `ring-*` classes (COL-13 says the base outline only, and `ring-*` compiles to a shadow). The `hero` and `analysis-opinion` keyboard tests now check for the 2px solid outline. The `featured`, `grouped`, `footer`, `regions` and `most-read` keyboard tests accept the outline or the old ring, because the header classes, the footer, the poll and the newsletter form still use the old ring until R2-05, R2-11 and R2-14.
 - **Suggested solution:** Tighten those five tests to the outline only when the last old ring is gone (`grep focusRing src`).
 
+### IMP-39 Drawer and SearchDialog stay on the native `<dialog>`
+
+- **Found:** R2-05 · **Severity:** Medium · **Status:** Open (flag: needs tajmin's decision)
+- **Choice:** C-19 says "shadcn Sheet, side left, restyled", C-20 "shadcn Dialog", C-12 "shadcn Switch", C-19 "shadcn Collapsible", and CPT-16 says to restyle a shadcn component when you add it. R2-05 keeps the native `<dialog>` with `showModal()` from run 1 (IMP-13), a native `role="switch"` button and an `aria-expanded` button with a `hidden` list. All the behaviors in the sheets are there and tested: modal and inert page, focus to the panel, Escape, backdrop press, focus return, 450ms slide, no slide with reduced motion, accordions closed on open.
+- **Why:** The shadcn components in this project are Base UI (`base-nova`) and need `shadcn/tailwind.css` and `tw-animate-css` (IMP-31), and a new dependency (`AGENTS.md` §10). The result for the reader is the same.
+- **Suggested solution:** Keep the native elements and tell the blueprint that the sheets may say "modal dialog" instead of the shadcn names; or say yes to the shadcn components and R2-05 gets a second round (adds `@base-ui/react` or the shadcn primitives, `pnpm dlx shadcn add sheet dialog switch collapsible`).
+
+### IMP-40 Two-state theme
+
+- **Found:** R2-05 · **Severity:** Medium · **Status:** Open
+- **Choice:** §6 and DR-201: light is the first state on every device, the system setting is not used, and the control has two states. `src/lib/theme.ts` now has `light` and `dark`, and the inline script no longer reads `prefers-color-scheme`. A stored `system` (from run 1) or any other value reads as light. The `data-theme-choice` attribute is gone. ThemeButton (phones) and ThemeToggle (from 768) are `role="switch"`, `aria-checked` = dark, named "ডার্ক থিম" / "Dark theme".
+- **Tests:** An e2e test cannot set the theme with `emulateMedia` any more. `tests/e2e/theme.ts` has `setTheme(page, theme)`, which writes `fl-theme` before the page loads; the eight spec files that used `emulateMedia` use it. The `visual-qa` agent also sets the theme by `data-theme` (KIT-01); it must press the switch.
+- **Suggested solution:** Confirm. If readers on a dark system should get dark, DR-201 must change first.
+
+### IMP-41 Nav labels
+
+- **Found:** R2-05 · **Severity:** Medium · **Status:** Open (flag: needs tajmin's decision)
+- **Choice:** C-18 lists the Bangla nav labels হোম, বাংলাদেশ, অঞ্চল, ভূরাজনীতি, বিশ্ব অর্থনীতি, নিরাপত্তা ও সংঘাত, প্রযুক্তি, ইতিহাস ও প্রেক্ষাপট, বিশ্লেষণ ও মতামত. The code has the working category labels from the string tables (U-01): ভূরাজনীতি ও কূটনীতি, অর্থনীতি ও বাণিজ্য, প্রযুক্তি ও কৌশলগত শক্তি. They are also the section headings on the page, so the nav uses the same words. The order is the C-18 order. The English row shows 8 of 9 items at 1280 ("Analysis and Opinion" is hidden because it does not fit; it is in the Drawer).
+- **Suggested solution:** Either change the three category labels in `bn.ts` and `en.ts` to the C-18 words (the section headings follow; tests that name the old words change), or give the nav its own short labels. Needs the IA table (IA-06).
+
+### IMP-42 Trending terms, Op-ed and anchors
+
+- **Found:** R2-05 · **Severity:** Low · **Status:** Open
+- **Choice:** The six trending terms are mock (`src/content/trending.ts`). C-20 calls them links that run a search; there is no results page (DR-01), so each is a text-link-styled button that puts the term in the field and shows the same "no results in this prototype" note. The Drawer sub-items under বিশ্লেষণ ও মতামত link to the P-4 heading ids (`#analysis-opinion-title`, `#analysis-title`, `#opinion-title`); অপ-এড has no section and leads to `/op-ed`, a 404 page (IMP-18).
+- **Suggested solution:** Keep until the search and category pages exist.
+
+### IMP-43 LinkedIn mark
+
+- **Found:** R2-05 · **Severity:** Low · **Status:** Open
+- **Choice:** C-19 and C-21 list five social links with LinkedIn last. Simple Icons removed LinkedIn after 13.21.0, so the mark comes from that release (CC0-1.0) and the rest from 16.34.0. `socialLinks.ts` has the five links; the Drawer shows all five. The Footer uses the same list now, so it shows five links too (its tests changed to 5; reviewer blocker).
+- **Suggested solution:** Confirm the icon source if the brand mark must be the current one.
+
 ---
 
 ## Kit issues (KIT-)
@@ -897,3 +969,4 @@ Status values: Open, Workaround in code, Fixed, Closed (no action).
 | 2026-10-11 | R2-02 | No new finding. The three token files are now the spec blocks. The current specs address DOC-01 (`:lang(en)`), DOC-02 (no second Tailwind import), DOC-04 (`--type-rank-*` tokens), DOC-06 (`@utility` containers), DOC-08 (ad tokens in §12.2, `ads.css` deleted), DOC-11 (shadows removed) and DOC-12 (`--z-bar`, `--z-overlay`). Statuses are confirmed when the components use the new CSS (R2-04 and later). IMP-31, IMP-32 and KIT-05 added and decided (§12.4 block added to `globals.css`, `AGENTS.md` §5 updated; `components.css` import in R2-04; `shadcn/tailwind.css` with the first shadcn primitive) |
 | 2026-10-11 | R2-03 | IMP-33 and IMP-34 added. Mock ads (`ads.ts`, `getAd`, six SVG creatives) and tests for the poll, the ads, story ids in both languages (also sparse) and no newsletter content. The poll and the long-headline, no-image and sparse cases from run 1 were already right and are unchanged |
 | 2026-10-11 | R2-04 | DOC-25, DOC-26, IMP-35 to IMP-38 added. U-06 fixed. `components.css` imported (IMP-32 done). Divider, SectionHeading, MoreLink, Eyebrow, MetaLine, Chip, Button, IconButton built from their sheets. U-14, U-28 and U-29 stay open until the header, regions and analysis tickets: the chip and slider buttons now follow the sheets, but the Bangla Breaking word (IMP-36) and the region column heading are not decided |
+| 2026-10-11 | R2-05 | DOC-27, DOC-28, U-31, U-32, IMP-39 to IMP-43 added. DOC-10 (logo centered: tested at 13 widths), U-04, U-09, U-10 and IMP-17 fixed by the sheets. TopBar, NavBar, Drawer, SearchDialog, ThemeButton, ThemeToggle, SearchForm rebuilt; no subscribe button (DR-188); two-state theme (DR-201) |
