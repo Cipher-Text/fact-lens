@@ -7,9 +7,11 @@ The complete report of findings and gaps, with a suggested solution for each, is
 ## Now
 
 - Milestone 1 homepage prototype: finished on 8 October 2026
-- Prototype run 2: finished on 11 October 2026. PR #1 merged into `main` (`8863410`); branch `prototype-run-2` deleted
+- Prototype run 2: finished on 11 October 2026. PR #1 merged into `main` (`8863410`); branch `prototype-run-2` deleted. PR #2 (Claude workflows) and PR #3 (R2-21 bookkeeping) merged too; remote `main` is at `931b0f8`
+- Audit of run 2: 12 and 13 October 2026, in `PROTOTYPE_RUN_2.md` (verified status of every finding, new findings `R2A-`). The open `R2A-` items moved into `docs/prototype-findings.md` on 13 October 2026 as DOC-36, DOC-37, U-38, IMP-58 to IMP-70 and KIT-06 to KIT-10 (map in `PROTOTYPE_RUN_2.md` §13). `docs/HANDOVER.md` rewritten for the state after run 2 on 13 October 2026
 - Ticket: none. R2-21 is Done
-- Next action: none in this sprint. Open flags and findings are in `docs/prototype-findings.md` for tajmin's review
+- Next action: none planned. The docs and tracking clean-up (`PROTOTYPE_RUN_2.md` §9 steps 1 to 4) was done on 13 October 2026; step 5 (findings update in the skills, R2A-17) is left out by tajmin's choice. Open flags and findings are in `docs/prototype-findings.md` and `PROTOTYPE_RUN_2.md` for tajmin's review
+- In the run 1 tables and lists below, a struck-through item is done; the note says where
 
 ## R2-17 results
 
@@ -48,17 +50,17 @@ Measured on 7 October 2026 in Chromium. Screenshots in `docs/fl-13/` (removed in
 | 2 | `pnpm test:e2e` | Pass | 400 tests after the temporary pages left (489 before), axe has no serious or critical violations | — | — |
 | 3 | 11 widths × bn/en × light/dark, at reader size 1 and A++ | Pass | 44 page loads: no horizontal scroll, no clipped text, no text outside the viewport | — | `full-*-*.jpg` |
 | 4 | A++ on the homepage | Note | A++ changes no homepage size: only article roles scale (TYP-15) | — | — |
-| 5 | First screen 1366×768 (650px viewport) | Fail | Top ad 274 + bar 64 + nav 48 = 386; hero starts at 426 (40px section space). Hero in view: 224px (spec estimate 264), the top of the lead image only. No headline in the first screen, bn or en | (a) Report as DOC-23: the 264 estimate leaves out the section space, and the 274px top ad leaves no headline in view; ask the blueprint for a decision. (b) No code change until then | `first-screen-*-1366x650.jpg` |
+| 5 | ~~First screen 1366×768 (650px viewport)~~ Closed: the spec now says the lead headline shows after scrolling (DR-257); R2-17 measured the same 224px and accepted it | Fail | Top ad 274 + bar 64 + nav 48 = 386; hero starts at 426 (40px section space). Hero in view: 224px (spec estimate 264), the top of the lead image only. No headline in the first screen, bn or en | (a) Report as DOC-23: the 264 estimate leaves out the section space, and the 274px top ad leaves no headline in view; ask the blueprint for a decision. (b) No code change until then | `first-screen-*-1366x650.jpg` |
 | 6 | Bangla nav row at 1280 | Pass | 7 of 7 items, one row, 48px high, also at 1366 and 1920 | — | `nav-row-bn-1280.png` |
-| 7 | Two top-story cards at 1024 and 1280 | Note | Rows line up (subgrid). bn 1024: left title 8 lines at 30px in a 312px card. The right card has no image, so a blank band of about 240px is above its text (U-13) | (a) Show a card without an image as text only, with no blank band (needs a U-13 decision). (b) Leave as is | `top-cards-*.png`, `hero-*-1024.png` |
-| 8 | Long Bangla headlines | Pass / Fail | Mock: longest 198 characters, 5 to 6 lines, fits. Stress test with all headlines 3× longer in normal words: fits at 320, 600, 1024, 1280. One 40-letter compound word: horizontal scroll at every width (no `overflow-wrap`) | Add `overflow-wrap: break-word` to the headline roles. It is a token-file change (TYP-20), so it needs a DOC- issue first | `long-headlines-bn-*.jpg` |
-| 9 | Stories with no image | Note | 26 of 44 story items have no image; no clipping. Blank band in the top cards (#7). In Regions, a column with no image starts its headline level with the images in the other columns (visual-qa) | As #7 (a) | `full-bn-light-1366.jpg` |
+| 7 | ~~Two top-story cards at 1024 and 1280~~ Done in R2-08: the second top story has an image, and a story with no image shows the placeholder (U-33, tajmin) | Note | Rows line up (subgrid). bn 1024: left title 8 lines at 30px in a 312px card. The right card has no image, so a blank band of about 240px is above its text (U-13) | (a) Show a card without an image as text only, with no blank band (needs a U-13 decision). (b) Leave as is | `top-cards-*.png`, `hero-*-1024.png` |
+| 8 | ~~Long Bangla headlines~~ Resolved by spec: `overflow-wrap: break-word` on `body` (TYP-25, DR-217), in `typography.css` since R2-02 (DOC-24). R2-17 did not re-test the compound word | Pass / Fail | Mock: longest 198 characters, 5 to 6 lines, fits. Stress test with all headlines 3× longer in normal words: fits at 320, 600, 1024, 1280. One 40-letter compound word: horizontal scroll at every width (no `overflow-wrap`) | Add `overflow-wrap: break-word` to the headline roles. It is a token-file change (TYP-20), so it needs a DOC- issue first | `long-headlines-bn-*.jpg` |
+| 9 | ~~Stories with no image~~ Done in R2-08 to R2-13: placeholder image in every story unit (U-33); R2-17 case 5 passes | Note | 26 of 44 story items have no image; no clipping. Blank band in the top cards (#7). In Regions, a column with no image starts its headline level with the images in the other columns (visual-qa) | As #7 (a) | `full-bn-light-1366.jpg` |
 | 10 | Sparse sections (`?content=sparse`) | Pass | bn/en at 360, 768, 1280: no faults, no two ad rows next to each other; P-3 keeps the empty half row (7.3) | — | `sparse-*.jpg` |
-| 11 | 200% text size (browser font-size setting) | Fail | Horizontal scroll at 320/360 (top-bar language link, P-4 items, P-5), 600 en (P-5), 768 (top-bar Subscribe), 1024 (P-5). Fine at 1280. Page zoom 200% equals half the width, so row 3 covers it: Pass | (a) Let the P-5 grid and the P-4 image row stack when the text is large (`minmax(min-content, …)` or a container query). (b) Let the top bar wrap. (c) Accept: WCAG 1.4.4 allows scroll at 200% text | — |
+| 11 | ~~200% text size (browser font-size setting)~~ Done in R2-15: `text-size.spec.ts`, top bar wraps, Most read stacks. Open flags DOC-34 and U-37 | Fail | Horizontal scroll at 320/360 (top-bar language link, P-4 items, P-5), 600 en (P-5), 768 (top-bar Subscribe), 1024 (P-5). Fine at 1280. Page zoom 200% equals half the width, so row 3 covers it: Pass | (a) Let the P-5 grid and the P-4 image row stack when the text is large (`minmax(min-content, …)` or a container query). (b) Let the top bar wrap. (c) Accept: WCAG 1.4.4 allows scroll at 200% text | — |
 | 12 | Text spacing (WCAG 1.4.12) | Pass | Line height 1.5, letters 0.12em, words 0.16em, paragraphs 2em: no scroll or clipping at 320 to 1280 | — | — |
 | 13 | Keyboard focus, sticky, interface language (visual-qa) | Pass | 70 Tab stops at 1280: every stop has the ring; only the top bar sticks; no wrong-language text | — | — |
 | 14 | Dark theme (visual-qa) | Note | Logo about 2:1 on the dark bar (U-08, logo exempt). Gray mock images look bright in dark | (a) Logo color for dark mode, with U-08. (b) Darker placeholder in dark mode | `full-*-dark-*.jpg` |
-| 15 | Regions slider at 1280 (visual-qa) | Note | Native scrollbar shows under the row; the next column shows at the edge | Decide IMP-27 (hide the scrollbar or keep it) | — |
+| 15 | ~~Regions slider at 1280 (visual-qa)~~ Done in R2-13: scrollbar hidden as C-15 says (IMP-27) | Note | Native scrollbar shows under the row; the next column shows at the edge | Decide IMP-27 (hide the scrollbar or keep it) | — |
 | 16 | Remove the temporary pages from FL-02 and FL-03 | Pass | Removed `/foundations`, `/layout-parts`, their specs, `ThemeSwitch.tsx` and the `foundations`/`layoutParts` string keys. Their site checks moved to `tests/e2e/site.spec.ts` (language, cookie, theme, fonts) and `tests/e2e/page.spec.ts` (every ad row at 11 widths, brand rule). Build has one route, `/[lang]` | — | — |
 
 ### Typography prototype checks (`typography-system.md` Section 9)
@@ -67,7 +69,7 @@ Sizes measured in px (bn / en).
 
 | # | Item | Result | What was measured | Possible fix |
 | --- | --- | --- | --- | --- |
-| T1 | Hero: lead dominant at 1024; Bangla rail titles fit at 304 | Partial | Lead title 36.7 / 38.7 against top-card titles 30.3 / 31.8 (about 1.2 times). The 648px lead image carries the hierarchy; the titles compete. Rail 304px: no title overflows | (a) Top cards use `type-story-title` (24.9) instead of `type-story-title-lg`. (b) Leave as is |
+| T1 | ~~Hero: lead dominant at 1024; Bangla rail titles fit at 304~~ Done in R2-07: the top cards (OverlapCard, C-02) use `type-story-title`, fix (a) | Partial | Lead title 36.7 / 38.7 against top-card titles 30.3 / 31.8 (about 1.2 times). The 648px lead image carries the hierarchy; the titles compete. Rail 304px: no title overflows | (a) Top cards use `type-story-title` (24.9) instead of `type-story-title-lg`. (b) Leave as is |
 | T2 | Article title | N/A | No article page | — |
 | T3 | Article headings at A++ | N/A | No article page | — |
 | T4 | Bangla article body | N/A | No article page | — |
@@ -114,7 +116,7 @@ Sizes measured in px (bn / en).
 | 2026-10-11 | R2-16 Spacing check | No code change. 12 full-page screenshots (bn/en, 1024, 1280, 1920) of the current tokens and a runtime step-up (gutter 32, column gap 32, space-module 48) in `test-results/spacing/` (not committed). No token change; that needs tajmin's yes and a spec change first |
 | 2026-10-11 | R2-17 Final check | No code change. Results table "R2-17 results" above: 11 widths, both languages and themes, content cases, axe, keyboard, first screen 1366×768. 560 chromium e2e green, design-reviewer pass, visual-qa 0 faults. DOC-35 added (ad region labels); dark logo contrast stays U-08; DOC-23 unchanged |
 | 2026-10-11 | R2-18 Branch preview | Vercel Git integration (tajmin imported the repo; no deploy command run by Claude). Preview `https://fact-lens-web-git-prototype-run-2-tajmins-projects.vercel.app/`: `/` and `/en` answer 200; `/` with `fl-lang=en` redirects to `/en`. The redirect now sends `Cache-Control: private, no-store` (IMP-03 done), with a test in `site.spec.ts`. Dead links stay 404. The fix reaches the preview with the push at `/accept` |
-| 2026-10-11 | R2-19 Pull request | PR #1 `prototype-run-2` into `main` (`main` had not moved). `pnpm check` green; chromium e2e 561 green; WebKit 40 failures (35 in the first run) listed with importance in `docs/webkit-failures.md`, none skipped or weakened. No new finding |
+| 2026-10-11 | R2-19 Pull request | PR #1 `prototype-run-2` into `main` (`main` had not moved): `https://github.com/tajmin/fact-lens-web/pull/1` (URL added 13 October 2026). `pnpm check` green; chromium e2e 561 green; WebKit 40 failures (35 in the first run) listed with importance in `docs/webkit-failures.md`, none skipped or weakened. No new finding |
 | 2026-10-11 | R2-20 Code review | Claude GitHub app installed (workflow PR #2 merged into `main`). Claude reviewed PR #1: 0 blockers, 2 fix, 5 note; one summary comment, no inline comments. Findings IMP-53 to IMP-57 in `docs/prototype-findings.md`; no code changed |
 | 2026-10-11 | R2-21 Merge into main | PR #1 merged into `main` with a merge commit (`8863410`); `prototype-run-2` deleted; `pnpm check` green on `main`. Bookkeeping went in through a short branch and PR |
 
@@ -122,50 +124,50 @@ Sizes measured in px (bn / en).
 
 Ideas that are outside the current ticket.
 
-- FL-01: `shadcn init` used the default `base-nova` preset (Base UI primitives, `lucide-react` icons, `tw-animate-css`). Icons and motion are design-system gaps (U-02). Check this choice before the first `shadcn add`.
+- FL-01: `shadcn init` used the default `base-nova` preset (Base UI primitives, `lucide-react` icons, `tw-animate-css`). Icons and motion are design-system gaps (U-02). Check this choice before the first `shadcn add`. Now: CPT-16 keeps base-nova and the specs give Lucide icons and the motion (IMP-05, U-02, resolved by spec, to confirm). `tw-animate-css` is still installed, which the color spec forbids (R2A-01). No shadcn primitive is installed.
 - FL-01: `next.config.ts` sets `agentRules: false`. Without it, `next dev` writes a Next.js block into `AGENTS.md` when it detects an AI agent. The block says to read the bundled docs in `node_modules/next/dist/docs/`; the `next-devtools` MCP server points to the same docs.
-- FL-01: Only the Playwright `chromium` project runs. Add WebKit and Firefox in FL-13 if wanted. FL-13: still Chromium only; not added.
-- FL-02: `globals.css` no longer imports `tw-animate-css` and `shadcn/tailwind.css` (the rule says Tailwind and the three token files only). The base-nova shadcn components need them for their `data-*` variants and animation. Decide before the first `shadcn add`. The packages stay installed.
+- ~~FL-01: Only the Playwright `chromium` project runs. Add WebKit and Firefox in FL-13 if wanted. FL-13: still Chromium only; not added.~~ Done in R2-01: WebKit project added (IMP-07). WebKit has 40 known failures (`docs/webkit-failures.md`), so plain `pnpm test:e2e` fails (R2A-39).
+- FL-02: `globals.css` no longer imports `tw-animate-css` and `shadcn/tailwind.css` (the rule says Tailwind and the three token files only). The base-nova shadcn components need them for their `data-*` variants and animation. Decide before the first `shadcn add`. The packages stay installed. Now: color-system §5 (DR-236) requires the `shadcn/tailwind.css` import and forbids `tw-animate-css`; the code has neither done (IMP-02, IMP-31, R2A-01, R2A-02).
 - FL-02: The proxy redirects `/` to `/en` only when the `fl-lang` cookie is `en`. Other unprefixed URLs stay Bangla, so shared links open as sent. Check this choice with the editorial team.
-- FL-02: Before the first deploy, check that the CDN does not cache the cookie-based redirect at `/` (FL-14 rejected; next milestone).
-- FL-02: `ThemeSwitch` and `LanguageSwitch` are in `src/components/header/` with a neutral look. FL-05 places them in the top bar.
-- FL-03: `AdRow` cannot hide itself when its section is hidden (`LAY-13`). The page that composes the sections must drop both together.
-- FL-03: Reader size A++ is not tested on `/layout-parts`. Cover it in FL-13.
+- ~~FL-02: Before the first deploy, check that the CDN does not cache the cookie-based redirect at `/` (FL-14 rejected; next milestone).~~ Done in R2-18: the redirect sends `Cache-Control: private, no-store` (IMP-03).
+- ~~FL-02: `ThemeSwitch` and `LanguageSwitch` are in `src/components/header/` with a neutral look. FL-05 places them in the top bar.~~ Done in FL-05; rebuilt from C-12 and C-17 in R2-05.
+- ~~FL-03: `AdRow` cannot hide itself when its section is hidden (`LAY-13`). The page that composes the sections must drop both together.~~ Done: `page.tsx` drops each section with its ad row; `AdRow` replaced by `AdSlot` in R2-06.
+- ~~FL-03: Reader size A++ is not tested on `/layout-parts`. Cover it in FL-13.~~ Done in FL-13 (row 4).
 - FL-04: The placeholder SVGs in `public/mock/` use one fixed neutral gray in both themes. Fine for mock images; real photos replace them.
 - FL-04: Some mock headlines name real countries with invented figures (design-reviewer note on skill rule 2). Make them more generic if the editorial team prefers.
-- FL-04: The `mock-content` skill's `Story` shape has no reading time. `readingMinutes` was added in code (IMP-10). Update the skill if wanted.
-- FL-05: Give the homepage sections the anchor ids that the nav, drawer and Subscribe links use: `category-<id>` (FL-08, FL-09), `regions` and `region-<id>` (FL-11), `newsletter` (FL-09). IMP-14.
+- FL-04: The `mock-content` skill's `Story` shape has no reading time. `readingMinutes` was added in code (IMP-10). Update the skill if wanted (R2A-37).
+- ~~FL-05: Give the homepage sections the anchor ids that the nav, drawer and Subscribe links use: `category-<id>` (FL-08, FL-09), `regions` and `region-<id>` (FL-11), `newsletter` (FL-09). IMP-14.~~ Done in FL-08, FL-09 and FL-11; Subscribe and `#newsletter` removed (DR-188, R2-11). New gap: the drawer links `#analysis-title` and `#opinion-title` have no target since R2-09 (R2A-40). IMP-14 still needs confirmation.
 - FL-05: The scroll lock (`overflow-hidden` on `html` while a dialog is open) can shift the page by the scrollbar width on systems with classic scrollbars. Add `scrollbar-gutter: stable` if it shows.
 - FL-05: Check the Bangla nav row at 1280 again when the real IA labels arrive (IMP-16).
 - FL-06: Story links go to `/story/<slug>` and the Latest "আরও দেখুন" link to `/latest`. Both are 404 until those pages exist (IMP-18).
-- FL-06: `?content=sparse` on the homepage shows the sparse cases. Remove it or keep it behind a dev check in FL-13 (IMP-11).
+- ~~FL-06: `?content=sparse` on the homepage shows the sparse cases. Remove it or keep it behind a dev check in FL-13 (IMP-11).~~ Done in R2-01: development only.
 - FL-06: The hero `next/image` calls have no `sizes`. The mock SVGs are not optimized, so it has no effect now. Add `sizes` when real photos arrive.
 - FL-07: The analysis thumbnails have no `sizes` either (same as FL-06). Add it with real photos.
-- FL-07: `/analysis` and `/opinion` (the P-4 "more" links) are 404 until those pages exist (IMP-22).
-- FL-08 (done in R2-10): P-2 now has one "আরও দেখুন" link to `/category/<id>`, a 404 page until the category pages exist (IMP-23, IMP-35).
-- FL-09: `/privacy` (newsletter consent line) is 404 until the page exists. FL-12 links to it too (IMP-25).
+- FL-07: `/analysis` and `/opinion` (the P-4 "more" links) are 404 until those pages exist (IMP-22; the 404s stay under IMP-18).
+- ~~FL-08 (done in R2-10): P-2 now has one "আরও দেখুন" link to `/category/<id>`, a 404 page until the category pages exist (IMP-23, IMP-35).~~ Done in R2-10. The 404 stays until the category pages exist (IMP-35).
+- ~~FL-09: `/privacy` (newsletter consent line) is 404 until the page exists. FL-12 links to it too (IMP-25).~~ Obsolete: the newsletter was removed in R2-11 (DR-239). The footer `/privacy` link stays 404 (IMP-29).
 - FL-09: The phone 600px-between-ads rule is checked by a test, not at run time (IMP-24). Recheck with real, shorter categories.
-- FL-09: P-3 has `space-section` below it for P-5 (FL-10). Until FL-10 it is the end of the page.
+- ~~FL-09: P-3 has `space-section` below it for P-5 (FL-10). Until FL-10 it is the end of the page.~~ Done in FL-10.
 - FL-10: Safari VoiceOver drops list semantics from `list-style: none` lists (the `.rank-list` CSS). Check P-5 with VoiceOver in FL-13; add `role="list"` if needed.
-- FL-11: The region columns have no "আরও দেখুন" link to a region page (7.4 lists none). Add it with the region pages (DR-19).
-- FL-11: Decide whether the slider scrollbar stays visible (IMP-27, DOC-21).
+- FL-11: The region columns have no "আরও দেখুন" link to a region page (7.4 lists none). Add it with the region pages (DR-19). R2-13 added one MoreLink to `/regions` at the section end (IMP-52).
+- ~~FL-11: Decide whether the slider scrollbar stays visible (IMP-27, DOC-21).~~ Done in R2-13: hidden, as C-15 says.
 - FL-12: The footer site pages (`/about`, `/contact`, `/corrections`, `/privacy`, `/terms`) are 404, and the social links go to each network's front page until the Fact Lens accounts are known (IMP-29).
-- FL-13 (done in R2-01, both removed): The screenshots in `docs/fl-13/` (33 files, about 13 MB) and the measurement run in `tests/final-check/` are in the repository for now (tajmin, 2026-10-08). Remove both from the repository in the next milestone (IMP-30).
+- ~~FL-13: The screenshots in `docs/fl-13/` (33 files, about 13 MB) and the measurement run in `tests/final-check/` are in the repository for now (tajmin, 2026-10-08). Remove both from the repository in the next milestone (IMP-30).~~ Done in R2-01: both removed.
 - FL-06: Playwright MCP screenshots add `caret-color` to the search field, which React reports as a hydration mismatch. It is not an app fault; ignore it in visual QA.
 
-- R2-02 decisions (tajmin, 11 October 2026): §12.4 base rules added to `globals.css` (KIT-05, done). Import `components.css` in R2-04 (IMP-32). Import `shadcn/tailwind.css` with the first shadcn primitive, likely R2-05 (IMP-31)
+- R2-02 decisions (tajmin, 11 October 2026): §12.4 base rules added to `globals.css` (KIT-05, done). Import `components.css` in R2-04 (IMP-32). Import `shadcn/tailwind.css` with the first shadcn primitive, likely R2-05 (IMP-31). Now: no primitive was added in run 2, so the import is still missing (R2A-02)
 - R2-02: components that still use removed tokens: `--ad-band-*`/`--ad-inset-*` sizes in `AdRow.tsx` (R2-06); `--space-eyebrow-title` and `--space-story-summary-meta` in the story, hero, analysis, featured and grouped files (R2-07 to R2-11); `.top-bar` in `SiteHeader.tsx` (R2-05).
 - R2-04: 106 chromium e2e tests were red before this ticket and stay red: ad rows (R2-06), `header` (R2-05), `grouped` (R2-11), `most-read` (R2-12). R2-04 adds no failure (IMP-38). Each of those tickets must turn its tests green. At the end, tighten the five keyboard tests that accept the old ring to the base outline only.
 - R2-04: parts not yet moved to the new ones: header buttons and links (`header/classes.ts`: `iconButton`, `filledButton`, `navLink`, `focusRing`) go to `IconButton`/`Button` in R2-05; the poll and the newsletter form (`grouped/classes.ts`) in R2-11; footer links in R2-14; the P-4 and P-3 `listItem` class becomes `dividerItem` in R2-09 and R2-11.
 - R2-04: the bn Breaking word "সদ্যপ্রাপ্ত" against ব্রেকিং in the sheet (IMP-36). Eyebrow links go to `/category/<id>`, a 404 page (IMP-35).
 
 - R2-05: `header/classes.ts` keeps `focusRing`, `iconButton` and `filledButton` for the footer (R2-14) and the poll/newsletter (R2-11). Remove them with the last caller. The footer uses `footer/socialLinks.ts` (five links, IMP-43).
-- R2-05: Flags for tajmin: IMP-39 (native `<dialog>` instead of the shadcn Sheet, Dialog, Switch, Collapsible) and IMP-41 (nav labels against the C-18 words). The `visual-qa` agent sets the theme with `data-theme`; the theme is a two-state switch now (IMP-40, KIT-01).
+- R2-05: Flags for tajmin: IMP-39 (native `<dialog>` instead of the shadcn Sheet, Dialog, Switch, Collapsible) and IMP-41 (nav labels against the C-18 words). The `visual-qa` agent sets the theme with `data-theme`; the theme is a two-state switch now (IMP-40, KIT-01). Now: `visual-qa` uses the theme control or the `dark` class (KIT-01 fixed).
 - R2-05: `grouped.spec.ts` lost its Subscribe-link step (DR-188). `#newsletter` stays in the rail until R2-11 removes the newsletter.
 - R2-06: `AdSlot` replaces `AdRow`/`AdPlaceholder`; the `rail` variant goes into the P-3 rail in R2-11 (hidden under 1280). 28 chromium e2e tests are red from before: `most-read` (R2-12). IMP-44 to IMP-46, DOC-29.
 
 - R2-11: `RegionSlider.tsx` has the old column top rule inline (`railModule`, moved from the deleted `grouped/classes.ts`); R2-13 rebuilds it. `header/classes.ts` (`focusRing`, `iconButton`, `filledButton`) now has the footer (R2-14) as its only caller besides the regions slider; remove it with the last caller.
-- R2-11 (done in R2-13): `StoryStack` deleted. `header/classes.ts` (`focusRing`, `iconButton`, `filledButton`) removed in R2-14.
+- R2-11 (done in R2-13): `StoryStack` deleted. `header/classes.ts` trimmed in R2-14: `focusRing`, `iconButton` and `filledButton` removed; the file stays with `uiLink` only.
 - R2-13: the MoreLink goes to `/regions`, a 404 until the regions page exists (IMP-52). Flags for tajmin: U-36 (panel composition), IMP-51 (scroll-based slide). WebKit: 5 regions tests fail from before (phone tabs arrow keys, hash link, keyboard).
 - R2-11: 28 chromium e2e tests are red from before: `most-read` (R2-12). IMP-50 (native radios with a drawn square marker, shadcn RadioGroup) is a flag for tajmin.
 
@@ -174,79 +176,86 @@ Ideas that are outside the current ticket.
 | ID | File and component | Treatment used | Status |
 | --- | --- | --- | --- |
 | U-01 | English category labels (`src/i18n/en.ts` `categories`) | Working labels from the `mock-content` skill (`IA-06`) | Open |
-| U-02 | Card variants, radius, icons, motion | Neutral treatment (`AGENTS.md` Section 8) | Open |
+| U-02 | Card variants, radius, icons, motion | Neutral treatment (`AGENTS.md` Section 8). Now: no radius or shadow (CPT-05, COL-15), Lucide icons, 450ms slide (DR-227), card variants in C-01, C-02, C-24 | Resolved by spec (to confirm by tajmin) |
 | U-03 | বিশ্লেষণ ও মতামত section background | `surface-elevated` (`DR-76`), built in FL-07. tajmin checks the look | Check |
-| U-04 | Theme switch and language switch look (`src/components/header/`) | ThemeToggle, ThemeButton and the language link from C-12 and C-17 | Fixed in R2-05 |
-| U-05 | Minimum touch target size (no spec value; switches are about 33px) | None yet. Proposed `--target-min` 44px | Open |
-| U-06 | Section heading rule thickness (`src/components/layout/SectionHeading.tsx`) | C-13 and C-22 give it: `Divider` with a 1px border rule and the brand bar | Fixed in R2-04 |
-| U-07 | Region list and labels (`src/content/homepage.ts`, `src/i18n/*.ts` `regions`) | Seven working regions; আফ্রিকা has no stories | Open |
-| U-08 | Logo (`src/components/header/SiteHeader.tsx`) | Site name as text, `type-section-title`, `text-brand`; 2.37:1 in dark (logo exempt) | Open |
-| U-09 | Theme control in the bar (`src/components/header/ThemeToggle.tsx`) | Two states, ThemeButton on phones and ThemeToggle switch from 768 | Fixed in R2-05 |
-| U-10 | Drawer and search dialog look (`Drawer.tsx`, `SearchDialog.tsx`) | Built from C-19 and C-20 | Fixed in R2-05 |
-| U-11 | Headline link color (`src/components/story/links.ts`) | `text-ink`, `interactive-hover` and `interactive-pressed` on hover and press, no underline (DOC-14) | Open |
-| U-12 | Lead text panel inset and padding (`src/components/home/hero/LeadStory.tsx`) | Inset 64px from the end (`md:me-16`), padding `space-story-media-text` | Open |
-| U-13 | Card without image beside a card with image (`src/components/story/StoryCard.tsx`) | Subgrid keeps the rows aligned (LAY-08): a blank band above the text and a stretched title row | Open |
-| U-14 | Bangla Breaking label and label padding (`src/i18n/bn.ts`, `StoryEyebrow.tsx`) | "সদ্যপ্রাপ্ত" on `bg-live`, `px-1` | Open |
-| U-15 | Analysis item layout (`src/components/home/analysis-opinion/AnalysisList.tsx`) | 16:9 image at one third of the column, text beside it, at every width | Fixed in R2-09 |
-| U-16 | Opinion chip padding and quote icon (`OpinionList.tsx`) | Chip `px-1`, `space-list-item` below; `lucide-react` `Quote` 24px `text-ink-muted` | Partly fixed in R2-09 (chip-to-list space) |
-| U-17 | Padding inside the P-4 background (`AnalysisOpinion.tsx`) | `space-module` on every side | Fixed in R2-09 |
-| U-18 | P-2 lead split from 1280 (`src/components/home/featured/FeaturedLead.tsx`) | Two equal columns, text top-aligned beside the image | Fixed in R2-10 |
-| U-19 | P-2 rail at 600–1023 (`FeaturedRail.tsx`) | Two columns: image story left over both rows, two stories right | Fixed in R2-10 |
-| U-20 | Story labels in a category section (`FeaturedLead.tsx`, `FeaturedRail.tsx`) | No category label (the heading names it); breaking label kept; rail in `type-story-title-sm` | Fixed in R2-10 |
-| U-21 | Inside of a P-3 category block (`src/components/home/grouped/CategoryBlock.tsx`) | Built from C-23: feature `StoryCard` (3:2, summary), rule, `StoryList` of 2, pinned MoreLink | Fixed in R2-11 |
-| U-22 | P-3 rail module look (`grouped/classes.ts`) | Built from C-26: `surface-elevated` panel with the panel inset; no top rule | Fixed in R2-11 |
-| U-23 | Form text roles (`NewsletterSignup.tsx`, `DailyPoll.tsx`) | The poll uses the 7.1 roles (question, options, results, error); the newsletter is removed | Fixed in R2-11 |
+| U-04 | ~~Theme switch and language switch look (`src/components/header/`)~~ | ThemeToggle, ThemeButton and the language link from C-12 and C-17 | Fixed in R2-05 |
+| U-05 | Minimum touch target size (no spec value; switches are about 33px) | Now: IconButton and controls are 44px (`--icon-button-size`, C-12); no global target token; some phone bar buttons are 32px by sheet | Resolved by spec (weak; to confirm by tajmin) |
+| U-06 | ~~Section heading rule thickness (`src/components/layout/SectionHeading.tsx`)~~ | C-13 and C-22 give it: `Divider` with a 1px border rule and the brand bar | Fixed in R2-04 |
+| U-07 | Region list and labels (`src/content/homepage.ts`, `src/i18n/*.ts` `regions`) | Seven working regions; আফ্রিকা has no stories. The spec says "working list of 6" | Open |
+| U-08 | Logo (`src/components/header/SiteHeader.tsx`) | Site name as text, `type-section-title`, `text-brand`; 2.37:1 in dark (logo exempt). C-17 allows the text stand-in until BRD-06 | Open (asset and dark version) |
+| U-09 | ~~Theme control in the bar (`src/components/header/ThemeToggle.tsx`)~~ | Two states, ThemeButton on phones and ThemeToggle switch from 768 | Fixed in R2-05 |
+| U-10 | ~~Drawer and search dialog look (`Drawer.tsx`, `SearchDialog.tsx`)~~ | Built from C-19 and C-20 | Fixed in R2-05 |
+| U-11 | ~~Headline link color (`src/components/story/links.ts`)~~ | Now: `text-ink`, hover `ink-muted` (COL-05, COL-06, DR-199) | Fixed in R2-07 (follows the sheet; not recorded in a ticket) |
+| U-12 | ~~Lead text panel inset and padding (`src/components/home/hero/LeadStory.tsx`)~~ | Now from C-01: `--space-lead-overlap` and the panel tokens in `components.css`; hero sheet-check e2e tests (R2-08) | Fixed in R2-07 (follows C-01; not recorded in a ticket) |
+| U-13 | ~~Card without image beside a card with image (`src/components/story/StoryCard.tsx`)~~ | Now: every story unit shows the image or the placeholder (`StoryImage`) | Fixed through U-33 (R2-08) |
+| U-14 | Bangla Breaking label and label padding (`src/i18n/bn.ts`, `Chip.tsx`) | "সদ্যপ্রাপ্ত" on `bg-live`; padding from C-11 | Partly fixed in R2-04 (padding by C-11); the word stays IMP-36 |
+| U-15 | ~~Analysis item layout (`src/components/home/analysis-opinion/AnalysisList.tsx`)~~ | 16:9 image at one third of the column, text beside it, at every width | Fixed in R2-09 |
+| U-16 | Opinion chip padding and quote icon (`OpinionList.tsx`) | Chip `px-1`, `space-list-item` below; drawn `QuoteMark` (28/36/44) | Partly fixed in R2-09 (chip-to-list space open) |
+| U-17 | ~~Padding inside the P-4 background (`AnalysisOpinion.tsx`)~~ | `space-module` on every side | Fixed in R2-09 |
+| U-18 | ~~P-2 lead split from 1280 (`src/components/home/featured/FeaturedLead.tsx`)~~ | Two equal columns, text top-aligned beside the image | Fixed in R2-10 |
+| U-19 | ~~P-2 rail at 600–1023 (`FeaturedRail.tsx`)~~ | Two columns: image story left over both rows, two stories right | Fixed in R2-10 |
+| U-20 | ~~Story labels in a category section (`FeaturedLead.tsx`, `FeaturedRail.tsx`)~~ | No category label (the heading names it); breaking label kept; rail in `type-story-title-sm` | Fixed in R2-10 |
+| U-21 | ~~Inside of a P-3 category block (`src/components/home/grouped/CategoryBlock.tsx`)~~ | Built from C-23: feature `StoryCard` (3:2, summary), rule, `StoryList` of 2, pinned MoreLink | Fixed in R2-11 |
+| U-22 | ~~P-3 rail module look (`grouped/classes.ts`)~~ | Built from C-26: `surface-elevated` panel with the panel inset; no top rule | Fixed in R2-11 |
+| U-23 | ~~Form text roles (`NewsletterSignup.tsx`, `DailyPoll.tsx`)~~ | The poll uses the 7.1 roles (question, options, results, error); the newsletter is removed | Fixed in R2-11 |
 | U-24 | Poll question and result bars (`DailyPoll.tsx`) | Question `type-story-title-sm` (7.1). Result rows fill with `accent-soft`; own marker `interactive`, others `border-interactive`; own vote named in text. The fill color is not in C-26 | Open (fill color) |
-| U-25 | Spacing inside forms (`grouped/*`, `header/classes.ts`) | Poll values from C-26 on the 4px scale (`mt-4`, `mt-6`, `gap-1`, LAY-21) | Fixed in R2-11 |
-| U-26 | Bangla name of P-5 (`src/i18n/bn.ts` `mostRead.title`) | Working label "সর্বাধিক পঠিত" | Open |
-| U-27 | Most read item (`src/components/home/most-read/MostRead.tsx`) | Built from C-07: numeral + title, row gap 20 / 24px, no rules | Fixed in R2-12 |
-| U-28 | Region chip and column heading (`src/components/home/regions/RegionSlider.tsx`) | Chip: `border-interactive` border, `text-interactive`, filled `interactive` when selected, `px-3`; column heading `type-ui-sm` with the U-22 top rule, visually hidden below 600 | Fixed in R2-13 |
-| U-29 | Slider buttons (`RegionSlider.tsx`, `SectionHeading.tsx` `actions`) | 44px chevron icon buttons at the end of the heading row; `aria-disabled` in `ink-disabled` at each end; 250ms ease-out | Fixed in R2-13 |
+| U-25 | ~~Spacing inside forms (`grouped/*`, `header/classes.ts`)~~ | Poll values from C-26 on the 4px scale (`mt-4`, `mt-6`, `gap-1`, LAY-21) | Fixed in R2-11 |
+| U-26 | ~~Bangla name of P-5 (`src/i18n/bn.ts` `mostRead.title`)~~ | "সর্বাধিক পঠিত", now the sheet name (component-system §3.3, C-07). The `bn.ts` comment still calls it a working label (R2A-44) | Resolved by spec |
+| U-27 | ~~Most read item (`src/components/home/most-read/MostRead.tsx`)~~ | Built from C-07: numeral + title, row gap 20 / 24px, no rules | Fixed in R2-12 |
+| U-28 | ~~Region chip and column heading (`src/components/home/regions/RegionSlider.tsx`)~~ | Chip: `border-interactive` border, `text-interactive`, filled `interactive` when selected, `px-3`; column heading `type-ui-sm` with the U-22 top rule, visually hidden below 600 | Fixed in R2-13 |
+| U-29 | ~~Slider buttons (`RegionSlider.tsx`, `SectionHeading.tsx` `actions`)~~ | 44px chevron icon buttons at the end of the heading row; `aria-disabled` in `ink-disabled` at each end; 450ms with `--ease-slide` (C-15, DR-227) | Fixed in R2-13 |
 | U-31 | Logo size and weight (`SiteHeader.tsx`, `Drawer.tsx`, `SiteFooter.tsx`) | C-17 gives serif 700, 20/22/24px; there is no type role (TYP-01). Kept `type-section-title` | Open |
 | U-32 | ThemeButton moon (`ThemeButton.tsx`) | C-12 says "redrawn larger"; no drawing. Lucide moon, 1px up | Open |
 | U-34 | Analysis stories list (`AnalysisList.tsx`) | Item rules between the 3 stories; the P-4 sheet says rules wait on DR-104, C-03 has them | Open (flag) |
 | U-35 | Quote mark (`QuoteMark.tsx`) | Hand-drawn 44 x 36 SVG; sheet gives sizes only | Open |
 | U-36 | Region panel (`Regions.tsx`) | C-15 says "3:2 image, 3 stories": built as an image story (3:2) plus two text stories | Open (flag) |
 | U-37 | P-4 compact rows at 200% text size (`AnalysisList.tsx`, `StoryCard.tsx`) | No trigger: the rows stay 2 : 1 at every width (about 64px text and 32px image at 320). Most read stacks by the rem breakpoints. No code change | Open (flag) |
-| U-30 | Minimum footer (`src/components/footer/SiteFooter.tsx`, `SocialIcon.tsx`) | Built from C-21: `surface-elevated` band with `panel-inset`, centered stack, ink Simple Icons (CC0) marks, `ink-secondary` links, copyright line | Fixed in R2-14 |
+| U-30 | ~~Minimum footer (`src/components/footer/SiteFooter.tsx`, `SocialIcon.tsx`)~~ | Built from C-21: `surface-elevated` band with `panel-inset`, centered stack, ink Simple Icons (CC0) marks, `ink-secondary` links, copyright line | Fixed in R2-14 |
+| U-33 | ~~Story with no image (`src/components/story/StoryImage.tsx`)~~ | The image or a placeholder image in LeadStory, OverlapCard and StoryCard; a hero top story must have a real image (new mock story `border-crossing-digital-pass`) | Decided by tajmin (11 October 2026), done in R2-08 |
+| U-38 | No skip link (`src/app/[lang]/page.tsx`, header) | None: `<main id="main">` has no link to it; the specs define no skip link (from the run 2 audit, R2A-41) | Open (flag) |
 
 ## Spec issues (DOC-)
 
 Report these to the blueprint project. Do not edit the specs here.
 
+"Resolved by spec" means a newer spec version answers the issue (verified in the audit, `PROTOTYPE_RUN_2.md` §3.1). A struck-through problem is done.
+
 | Found | Spec and section | Problem | Status |
 | --- | --- | --- | --- |
-| 2026-10-07 FL-02 | `typography-system.md` 8.2 | DOC-01: English role values are set on `:root` only. Custom properties inherit, so a `lang="en"` block inside a Bangla page keeps the Bangla fonts, sizes, line heights and case (measured: English lead 38.96px Noto Serif Bengali instead of 40.96px Source Serif 4). This breaks `TYP-03`. Suggested fix: change the selector `:root` to `:root, :lang(en)` (both blocks). Not changed here | Open |
-| 2026-10-07 FL-02 | `color-system.md` 5 | DOC-02: The CSS block starts with `@import "tailwindcss"`, but the file is meant to be imported next to Tailwind. Copied without that line | Open |
-| 2026-10-07 FL-02 | `color-system.md` 5 and `spacing-layout-system.md` 6 | DOC-03: Colors switch on the `.dark` class; layout §6 says "set `data-theme` before the first paint", and the `visual-qa` agent sets `data-theme="dark"` by hand, which changes nothing. Neither spec has CSS for "system". The theme script sets both the class and `data-theme`, and resolves "system" with `matchMedia` | Open |
-| 2026-10-07 FL-02 | `typography-system.md` 3 and 8.2 | DOC-04: The role table has 23 roles, but 8.2 has 22 utilities: no `type-rank`. Its CSS is the `.rank-list` block in 7.1. FL-10 copied it to `typography.css` | Workaround in code |
-| 2026-10-07 FL-02 | `color-system.md` 5 | DOC-05: No base rule sets the page background and text color, so the canvas stays white in dark mode. The layout sets `bg-background text-ink` on `<body>` | Open |
-| 2026-10-07 FL-02 | `spacing-layout-system.md` 12.3 | DOC-06: `.shell`, `.with-rail` and the other container classes are not in a cascade layer, so they win over every Tailwind utility on the same element. Works, but `@utility` or `@layer components` would be safer | Open |
-| 2026-10-07 FL-02 | `color-system.md` COL-13 and 2.8 | DOC-07: COL-13 names ring utilities, 2.8 gives values only; no shared focus CSS, offset color set by hand per surface | Open |
-| 2026-10-07 FL-03 | `spacing-layout-system.md` 9 and 12.2 | DOC-08: Reserved ad heights and creative sizes are only in the Section 9 table; 12.2 has no tokens. Workaround: project file `src/styles/ads.css` (tajmin's choice), imported as a fourth file in `globals.css` | Open |
-| 2026-10-07 FL-03 | `spacing-layout-system.md` 9, 12.3 and 13 | DOC-09: The 336×280 phone creative is wider than the 320 test width, and `.ad-row` has no column template, so the page scrolls sideways. Workaround: `grid-cols-1` on `AdRow`, `max-w-full` on the placeholder | Open |
-| 2026-10-07 FL-05 | `spacing-layout-system.md` 6 | DOC-10: "Logo in the center at every width" does not hold at 320 and 360: the right side (full language name per DR-78, theme button) is wider than the menu button. Logo is off by 30px at 320 and 10px at 360, centered from about 400 | Open |
-| 2026-10-07 FL-05 | `color-system.md` 5, COL-15 | DOC-11: `--shadow` has no `--color-shadow` or shadow-size token, so COL-15 needs a raw Tailwind shadow. Drawer and search dialog have no shadow | Open |
-| 2026-10-07 FL-05 | `spacing-layout-system.md` 10 | DOC-12: With native modal dialogs (top layer), `--z-scrim` and `--z-drawer` are not used | Open |
-| 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 | DOC-13: "The cut corner on top-story images comes from the text block" — 7.4 gives no overlap for top stories, only for the lead. The cut corner is built on the lead only (panel inset from the end) | Open |
-| 2026-10-07 FL-06 | `color-system.md` COL-05 and 2 | DOC-14: COL-05 says links use `interactive`; headlines use `ink`. A headline link fits both. Built as `ink` with interactive hover and press (U-11) | Open |
-| 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 and 12.2 | DOC-15: The 64px lead overlap has no token. Built with the Tailwind scale (`md:-mt-16`) | Open |
-| 2026-10-07 FL-07 | `spacing-layout-system.md` LAY-12 and 7.4 | DOC-16: LAY-12 puts section-to-ad space on the section, but does not say whether it is inside or outside P-4's own background. Built as margin outside the background | Open |
-| 2026-10-07 FL-09 | `spacing-layout-system.md` 9 and 13 | DOC-18: The 300×250 `ad-inset` creative is wider than the 288px shell at 320. Workaround: the DOC-09 `max-w-full` on the placeholder | Open |
-| 2026-10-07 FL-10 | `typography-system.md` 7.1 | DOC-19: The numeral must be `aria-hidden`, but the 7.1 CSS draws it as `::before` generated content, which cannot take the attribute and is read by screen readers. Workaround: a project rule repeats `content` with empty alt text (`counter(rank) / ""`) | Open |
-| 2026-10-07 FL-11 | `spacing-layout-system.md` 7.2, 7.4 and 12.3 | DOC-20: No slider CSS: the column width (2 / 4 in view) is not a token, and a scroll container clips focus rings at its edges. Workaround: arbitrary `auto-cols-[calc(...)]` from `--grid-column-gap` only; 4px `-m-1 p-1 scroll-p-1` ring room | Workaround in code |
-| 2026-10-07 FL-11 | `spacing-layout-system.md` 3.3, 7.2, 7.3, LAY-07 | DOC-21: "4 regions in view" from 1024 against "no 4-up rows"; and "4 regions or fewer: no buttons" while only 2 are in view at 600–1023. Built as written | Open |
-| 2026-10-07 FL-12 | `spacing-layout-system.md` 7.1, 7.4; DR-59 | DOC-22: 7.1 row 15 calls the footer row an "ad container" (Section 2: one ad slot); DR-59 lists Contact, Corrections and Privacy, 7.4 adds About and Terms. Built per 7.4 | Open |
-| 2026-10-07 FL-13 | `spacing-layout-system.md` 13 | DOC-23: The 1366×768 first-screen estimate (264px for the hero) leaves out `space-section`; 224px shows and no headline is in view | Open |
+| 2026-10-07 FL-02 | `typography-system.md` 8.2 | ~~DOC-01: English role values are set on `:root` only. Custom properties inherit, so a `lang="en"` block inside a Bangla page keeps the Bangla fonts, sizes, line heights and case (measured: English lead 38.96px Noto Serif Bengali instead of 40.96px Source Serif 4). This breaks `TYP-03`. Suggested fix: change the selector `:root` to `:root, :lang(en)` (both blocks). Not changed here~~ | Resolved by spec: typography v2.5 (DR-203) uses `:root, :lang(en)`; in `typography.css` since R2-02 |
+| 2026-10-07 FL-02 | `color-system.md` 5 | ~~DOC-02: The CSS block starts with `@import "tailwindcss"`, but the file is meant to be imported next to Tailwind. Copied without that line~~ | Resolved by spec: color v2.3 (DR-200), no Tailwind import in the block |
+| 2026-10-07 FL-02 | `color-system.md` 5 and `spacing-layout-system.md` 6 | ~~DOC-03: Colors switch on the `.dark` class; layout §6 says "set `data-theme` before the first paint", and the `visual-qa` agent sets `data-theme="dark"` by hand, which changes nothing. Neither spec has CSS for "system". The theme script sets both the class and `data-theme`, and resolves "system" with `matchMedia`~~ | Resolved by spec: color v2.3 (DR-201), two states, no system theme; built in R2-05 (`src/lib/theme.ts`) |
+| 2026-10-07 FL-02 | `typography-system.md` 3 and 8.2 | ~~DOC-04: The role table has 23 roles, but 8.2 has 22 utilities: no `type-rank`. Its CSS is the `.rank-list` block in 7.1. FL-10 copied it to `typography.css`~~ | Resolved by spec: typography v2.6 (DR-217), `@utility rank-list` |
+| 2026-10-07 FL-02 | `color-system.md` 5 | ~~DOC-05: No base rule sets the page background and text color, so the canvas stays white in dark mode. The layout sets `bg-background text-ink` on `<body>`~~ | Resolved by spec: color v2.5 (COL-16, DR-232) |
+| 2026-10-07 FL-02 | `spacing-layout-system.md` 12.3 | ~~DOC-06: `.shell`, `.with-rail` and the other container classes are not in a cascade layer, so they win over every Tailwind utility on the same element. Works, but `@utility` or `@layer components` would be safer~~ | Resolved by spec: layout v2.5 (DR-204), `@utility` |
+| 2026-10-07 FL-02 | `color-system.md` COL-13 and 2.8 | ~~DOC-07: COL-13 names ring utilities, 2.8 gives values only; no shared focus CSS, offset color set by hand per surface~~ | Resolved by spec: color v2.5 (COL-13, DR-225), base-layer outline |
+| 2026-10-07 FL-03 | `spacing-layout-system.md` 9 and 12.2 | ~~DOC-08: Reserved ad heights and creative sizes are only in the Section 9 table; 12.2 has no tokens. Workaround: project file `src/styles/ads.css` (tajmin's choice), imported as a fourth file in `globals.css`~~ | Resolved by spec (§12.2, LAY-19) and fixed in R2-02 and R2-06; `ads.css` deleted |
+| 2026-10-07 FL-03 | `spacing-layout-system.md` 9, 12.3 and 13 | ~~DOC-09: The 336×280 phone creative is wider than the 320 test width, and `.ad-row` has no column template, so the page scrolls sideways. Workaround: `grid-cols-1` on `AdRow`, `max-w-full` on the placeholder~~ | Resolved by spec (DR-206) and fixed in R2-06 (`AdSlot` tiers) |
+| 2026-10-07 FL-05 | `spacing-layout-system.md` 6 | ~~DOC-10: "Logo in the center at every width" does not hold at 320 and 360: the right side (full language name per DR-78, theme button) is wider than the menu button. Logo is off by 30px at 320 and 10px at 360, centered from about 400~~ | Resolved by spec (typography §7.1, DR-174: short "En" on phones) and fixed in R2-05. Centering at 320 and 360 not re-measured |
+| 2026-10-07 FL-05 | `color-system.md` 5, COL-15 | ~~DOC-11: `--shadow` has no `--color-shadow` or shadow-size token, so COL-15 needs a raw Tailwind shadow. Drawer and search dialog have no shadow~~ | Obsolete by spec: color v2.3 (COL-15, DR-202), no shadows, token removed |
+| 2026-10-07 FL-05 | `spacing-layout-system.md` 10 | ~~DOC-12: With native modal dialogs (top layer), `--z-scrim` and `--z-drawer` are not used~~ | Obsolete by spec: layout v2.7 (DR-228), one `--z-overlay`. The native `<dialog>` itself stays a flag (IMP-39) |
+| 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 | ~~DOC-13: "The cut corner on top-story images comes from the text block" — 7.4 gives no overlap for top stories, only for the lead. The cut corner is built on the lead only (panel inset from the end)~~ | Resolved by spec: top stories are OverlapCards (DR-105, DR-109); built in R2-07 |
+| 2026-10-07 FL-06 | `color-system.md` COL-05 and 2 | ~~DOC-14: COL-05 says links use `interactive`; headlines use `ink`. A headline link fits both. Built as `ink` with interactive hover and press (U-11)~~ | Resolved by spec: color v2.3 (COL-05, COL-06, DR-199); `ink` with `ink-muted` hover since R2-07 |
+| 2026-10-07 FL-06 | `spacing-layout-system.md` 7.4 and 12.2 | ~~DOC-15: The 64px lead overlap has no token. Built with the Tailwind scale (`md:-mt-16`)~~ | Resolved by spec: `--space-lead-overlap` (component-system §6); `md:-mt-16` gone |
+| 2026-10-07 FL-07 | `spacing-layout-system.md` LAY-12 and 7.4 | ~~DOC-16: LAY-12 puts section-to-ad space on the section, but does not say whether it is inside or outside P-4's own background. Built as margin outside the background~~ | Resolved by spec: layout v2.5 (DR-205) |
+| 2026-10-07 FL-08 | `typography-system.md` 7.1 | ~~DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg`~~ | Fixed in R2-10: the P-2 sheet sets the sizes |
+| 2026-10-07 FL-09 | `spacing-layout-system.md` 9 and 13 | ~~DOC-18: The 300×250 `ad-inset` creative is wider than the 288px shell at 320. Workaround: the DOC-09 `max-w-full` on the placeholder~~ | Resolved by spec (DR-207) and fixed in R2-06 |
+| 2026-10-07 FL-10 | `typography-system.md` 7.1 | ~~DOC-19: The numeral must be `aria-hidden`, but the 7.1 CSS draws it as `::before` generated content, which cannot take the attribute and is read by screen readers. Workaround: a project rule repeats `content` with empty alt text (`counter(rank) / ""`)~~ | Resolved by spec: typography §7.1 and §8.2 `rank-list` with `counter() / ""` |
+| 2026-10-07 FL-11 | `spacing-layout-system.md` 7.2, 7.4 and 12.3 | DOC-20: No slider CSS: the column width (2 / 4 in view) is not a token, and a scroll container clips focus rings at its edges. Now: the workaround is the project utility `region-row` in `components.css` (R2-13); the old `auto-cols-[calc(...)]` is gone | Workaround in code |
+| 2026-10-07 FL-11 | `spacing-layout-system.md` 3.3, 7.2, 7.3, LAY-07 | ~~DOC-21: "4 regions in view" from 1024 against "no 4-up rows"; and "4 regions or fewer: no buttons" while only 2 are in view at 600–1023. Built as written~~ | Resolved by spec (LAY-07 allows 4 panels from 1280, C-15) and fixed in R2-13 |
+| 2026-10-07 FL-12 | `spacing-layout-system.md` 7.1, 7.4; DR-59 | ~~DOC-22: 7.1 row 15 calls the footer row an "ad container" (Section 2: one ad slot); DR-59 lists Contact, Corrections and Privacy, 7.4 adds About and Terms. Built per 7.4~~ | Resolved by spec: §7.1 row 15 "Full-width row"; five links in §7.4 and C-21 |
+| 2026-10-07 FL-13 | `spacing-layout-system.md` 13 | ~~DOC-23: The 1366×768 first-screen estimate (264px for the hero) leaves out `space-section`; 224px shows and no headline is in view~~ | Resolved by spec (accepted trade-off): §13 (DR-257) says the lead headline shows after scrolling; R2-17 measured 224px |
+| 2026-10-07 FL-13 | `typography-system.md` 8.2 | ~~DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page~~ | Resolved by spec: typography v2.7 (TYP-25, DR-217), `overflow-wrap: break-word` on `body` |
 | 2026-10-11 R2-04 | `component-system.md` 6 | DOC-25: the CSS block leaves out the six button and icon tokens that the table lists. `components.css` has them typed from the table | Workaround in code |
 | 2026-10-11 R2-04 | `component-system.md` C-11, `typography-system.md` 7.1 | DOC-26: Chip label says "type-eyebrow 15px 600"; the English role is 14px 700 uppercase | Open |
 | 2026-10-11 R2-05 | `component-system.md` C-12, C-17, §6; `color-system.md` 2.9 | DOC-27: switch radii, top bar padding and the theme control color switch have no token. `components.css` has four | Workaround in code |
 | 2026-10-11 R2-05 | `component-system.md` C-18, C-19 | DOC-28: 48px row with or without its 1px rule; where the Drawer row rule sits above children | Open |
 | 2026-10-11 R2-06 | `component-system.md` C-16; `spacing-layout-system.md` 12.2 | DOC-29: rail box "304" against `--ad-rail-w` 300px | Open |
+| 2026-10-11 R2-07 | `component-system.md` C-01, C-24, P-2, §6 | DOC-30: no token for the LeadStory panel start padding (0 narrow) or the P-2 feature split image column (share, min, max). `components.css` adds `--space-lead-panel-start` and `--story-feature-media-*` | Workaround in code |
 | 2026-10-11 R2-11 | `component-system.md` C-26; `spacing-layout-system.md` 7.4 | DOC-31: poll row layout trigger (viewport 600 or container 600), `legend` against the start column, no column split token. `components.css` has `poll-layout` | Workaround in code |
 | 2026-10-11 R2-12 | `component-system.md` C-07; `spacing-layout-system.md` 3.1 | DOC-32: Most read gaps (24px columns, 20 / 24px rows) against the tier gaps (16 / 20px, row = column). Built as the sheet | Open |
 | 2026-10-11 R2-14 | `component-system.md` C-21; `spacing-layout-system.md` 4, 5.3 | DOC-33: panel inset at the sides plus the shell gutter leaves 224px at 320. Built with the band inset and a centered content box of at most the shell width | Open (flag) |
 | 2026-10-11 R2-15 | `component-system.md` C-17; `spacing-layout-system.md` 12.3 | DOC-34: top bar `h-(--bar-height)` cannot wrap at 200% text size. Built `min-h-(--bar-height)` with `flex-wrap` | Open (flag) |
 | 2026-10-11 R2-17 | `spacing-layout-system.md` 9; AdSlot | DOC-35: every ad region has the same label (বিজ্ঞাপন / Advertisement), so axe reports `landmark-unique` (moderate) | Open (flag) |
-| 2026-10-07 FL-13 | `typography-system.md` 8.2 | DOC-24: No `overflow-wrap` on the headline roles; one long compound word scrolls the page | Open |
-| 2026-10-07 FL-08 | `typography-system.md` 7.1 | DOC-17: No role for the lead of a category section (page lead `type-story-lead` or second level `type-story-title-lg`). Built with `type-story-title-lg` | Open |
+| 2026-10-13 Audit | `component-system.md` C-24; LAY-14 | DOC-36: C-24 says "body first in the markup", but the phone stack shows the image first by grid rows, so the visual order differs from the source order (R2A-06) | Open (flag) |
+| 2026-10-13 Audit | sheets; LAY-21 | DOC-37: sheet values off the 4px scale (3, 10, 14, 26px) built with scale classes (R2A-32) | Open |

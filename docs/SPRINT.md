@@ -17,7 +17,7 @@ This is a small sprint for a simple prototype: one homepage, mock data, Bangla a
 
 ## Run 1 board (record)
 
-Prototype run 1 finished on 8 October 2026. tajmin rejected FL-14. The report is `docs/milestone-1-report.md` and the handover note is `docs/HANDOVER.md`.
+Prototype run 1 finished on 8 October 2026. tajmin rejected FL-14. The report is `docs/milestone-1-report.md`. The run 1 handover note is in the git history of `docs/HANDOVER.md`; the file now describes the state after run 2 (rewritten 13 October 2026).
 
 | Ticket | Title | Status |
 | --- | --- | --- |
@@ -40,7 +40,11 @@ Prototype run 1 finished on 8 October 2026. tajmin rejected FL-14. The report is
 
 Run 2 builds the homepage again from the component sheets in `docs/design-system/component-system.md` and the current specs. It uses the run 1 code: change a file in place, or write it again when its sheet is very different. Mock data only.
 
+Status: finished on 11 October 2026. All 22 tickets are Done; PR #1 (run 2), PR #2 (Claude workflows) and PR #3 (R2-21 bookkeeping) are merged into `main`. The audit of run 2 (12 and 13 October 2026) is `PROTOTYPE_RUN_2.md`. A "Result" line under a ticket below records where the outcome differs from its "Done" line.
+
 ### Branch
+
+Record: these rules applied during run 2. `prototype-run-2` was deleted in R2-21.
 
 - All run 2 work happens on the branch `prototype-run-2`, made from `main` in R2-00.
 - `/accept` commits each ticket on `prototype-run-2` and pushes that branch. Do not commit to `main` or push to `main` during run 2.
@@ -99,7 +103,7 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 ### R2-01 Clean up from run 1
 
 - Goal: remove run 1 leftovers so tests and the repo stay small.
-- Read: `docs/HANDOVER.md` §5 only.
+- Read: `docs/HANDOVER.md` §5 only (the run 1 version; the file was rewritten on 13 October 2026).
 - Touch: `playwright.config.ts`, the `?content=sparse` code in `src/`, `docs/fl-13/`, `tests/final-check/`.
 - Do: delete `docs/fl-13/` and `tests/final-check/` if they still exist (tajmin approves the delete). Keep `?content=sparse` only in development (`NODE_ENV !== 'production'`). Add a WebKit project to Playwright for Bangla shaping on Safari.
 - Done: the sparse URL shows full content in `pnpm build && pnpm start`; `pnpm test:e2e --project=webkit -g header` runs.
@@ -211,6 +215,7 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 - Goal: help tajmin judge if the gutter, column gap and section space are too tight.
 - Do: full-page screenshots at 1024, 1280 and 1920 with the current tokens, then with one step up (gutter 24 to 32, column gap 24 to 32, space-module 40 to 48) set in a local CSS override that is not committed.
 - Done: the screenshot pairs are in `test-results/spacing/`. tajmin decides. A token change needs tajmin's yes and a spec change first.
+- Result: 12 screenshots were made and not committed, by design. They are gone: `pnpm test:e2e` clears `test-results/` at the start of each run. Rerun this ticket to see them again. No token change.
 
 ### R2-17 Final check
 
@@ -231,6 +236,7 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 - Do: `git fetch origin main`. If `main` moved, merge `origin/main` into the branch, fix conflicts, and run the checks again. Run `pnpm check` and the full `pnpm test:e2e`. Push. Then `gh pr create --base main --head prototype-run-2 --title "Prototype run 2: homepage"` (asks tajmin).
 - PR body: what changed per ticket (one line each), the open `UNRESOLVED_DESIGN_SYSTEM` items, the R2-17 result table link, the preview URL, and test steps.
 - Done: the PR URL is in `docs/PROGRESS.md`; all checks pass on the branch.
+- Result: PR #1 (`https://github.com/tajmin/fact-lens-web/pull/1`). The URL was not written into `docs/PROGRESS.md` at the time; added to the R2-19 Done row on 13 October 2026. `pnpm check` and Chromium e2e (561) passed; WebKit had 40 failures, listed in `docs/webkit-failures.md`. So the full `pnpm test:e2e` did not pass (R2A-39 in `PROTOTYPE_RUN_2.md`).
 
 ### R2-20 Code review
 
@@ -243,9 +249,17 @@ Status values: To do, In progress, In review, Done, Rejected. A ticket starts on
 - Guideline: comment only with a rule ID or a clear bug. Mark each comment blocker, fix or note. No style opinions. Do not push code. A spec gap is a note marked `UNRESOLVED_DESIGN_SYSTEM` for tajmin.
 - Do: tajmin comments on the PR: `@claude review this PR with the R2-20 goals and guideline in docs/SPRINT.md.`
 - Done: inline comments plus one summary comment with the count per severity. tajmin can add own comments. The review does not lead to code fixes: run 2 tests the specs, so each finding goes to `docs/prototype-findings.md` as a spec gap, a spec conflict or a code issue, for the blueprint to resolve.
+- Result: one summary comment (0 blockers, 2 fix, 5 note), no inline comments. Findings IMP-53 to IMP-57. The workflow in `.github/workflows/claude-code-review.yml` runs the generic `/code-review` plugin on every PR event, has `pull-requests: read` and does not use the R2-20 goals (R2A-18).
 
 ### R2-21 Merge into main
 
 - Goal: run 2 is in `main`. Needs tajmin's explicit go.
 - Do: `gh pr merge --merge --delete-branch` (a merge commit keeps one commit per ticket). Then `git switch main`, `git pull origin main`, and `pnpm check` on `main`. Set "Now" in `docs/PROGRESS.md` to "run 2 finished" and set the run 2 board to Done, in one commit on a short branch with its own PR, or as tajmin says.
 - Done: the PR shows Merged; `main` builds and its tests pass; the branch `prototype-run-2` is deleted.
+- Result: PR #1 merged (`8863410`), `prototype-run-2` deleted, `pnpm check` green on `main`. The bookkeeping went in through PR #3 from the branch `r2-21-run-2-finished` (`f4b4b7e`; remote `main` is now `931b0f8`). That branch and the PR #2 branch `add-claude-github-actions-1791724540471` still exist on the remote (R2A-21).
+
+## After run 2
+
+- No ticket is open. Do not start one until tajmin plans the next run.
+- Done on 13 October 2026: the docs and tracking clean-up in `PROTOTYPE_RUN_2.md` §9 steps 1 to 4 (findings statuses, `PROGRESS.md` tables, `HANDOVER.md`, `milestone-1-report.md` banner, `README.md` status). Step 5 (findings update in `/ticket` and `/accept`, R2A-17) is not done: tajmin chose not to edit the skills.
+- Open flags and decisions for tajmin: `docs/HANDOVER.md` §4 and `PROTOTYPE_RUN_2.md` §7.

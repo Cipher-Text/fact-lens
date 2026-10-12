@@ -2,6 +2,8 @@
 
 8 October 2026 · Milestone 1, phase 3 · Status: **Finished, not deployed**
 
+> **Run 1 snapshot, superseded by run 2.** This report shows the state on 8 October 2026 and is not updated. Prototype run 2 (R2-00 to R2-21) finished on 11 October 2026 and fixed or closed many of the items below; WebKit was added to the tests. For the current state read `docs/HANDOVER.md` (13 October 2026), the audit `PROTOTYPE_RUN_2.md` and `docs/prototype-findings.md`.
+
 This report closes the homepage prototype sprint. The full list of findings, with a suggested solution for each, is `docs/prototype-findings.md`. The measured results are the FL-13 tables in `docs/PROGRESS.md`. The next steps are in `docs/HANDOVER.md`.
 
 ## 1. Result
