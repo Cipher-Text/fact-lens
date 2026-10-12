@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.3 · 10 October 2026 · For homepage prototype run 2
+Version 1.4 · 13 October 2026 · After homepage prototype run 2
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -10,7 +10,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Item | Status |
 | --- | --- |
-| Current work | Homepage prototype run 2 (Milestone 1). It builds the approved components. Milestone 2 is full development and hosting |
+| Current work | Homepage prototype run 2 (Milestone 1) finished on 11 October 2026 and is merged into `main`. No ticket is open until tajmin plans the next run. Milestone 2 is full development and hosting |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
 | Pages | Homepage first. Do not start article or category pages until their layout pass is complete |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |
@@ -162,7 +162,7 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple 
 4. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
 5. **Hand over.** List each acceptance criterion as met or not met, and give the user test steps. Then stop.
 6. **Record progress.** Keep the board in `docs/SPRINT.md` and `docs/PROGRESS.md` current.
-7. **Commit on acceptance.** One commit per accepted ticket: `FL-06: Hero`, with the rule IDs on the next line.
+7. **Commit on acceptance.** One commit per accepted ticket: `FL-06: Hero` on the subject line, and the rule IDs on the next line, not on the subject line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
 
 ## 10. What you must not change
 
