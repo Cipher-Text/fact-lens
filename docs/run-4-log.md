@@ -15,4 +15,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 
 | Ticket | Started | Ended | Result | Rounds | Spec findings | Commit | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| R4-00 Setup, specs and repo docs | 2026-10-16 | 2026-10-16 | Done | 0 | none | see git log | Done by the blueprint setup (DR-352): specs, sprint, docs and kit; no code change except two stale comments |
+| R4-00 Setup, specs and repo docs | 2026-10-16 | 2026-10-16 | Done | 0 | none | 63ca584 | Done by the blueprint setup (DR-352): specs, sprint, docs and kit; no code change except two stale comments |
