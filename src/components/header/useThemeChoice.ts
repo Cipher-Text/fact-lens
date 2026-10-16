@@ -4,14 +4,18 @@ import { useSyncExternalStore } from "react";
 
 import {
   THEME_CHANGE_EVENT,
+  applyTheme,
   THEME_STORAGE_KEY,
   readThemeChoice,
   type ThemeChoice,
 } from "@/lib/theme";
 
 function subscribe(onChange: () => void) {
+  // Another tab changed the choice (the storage event): apply it here too (DR-340).
   const onStorage = (event: StorageEvent) => {
-    if (event.key === THEME_STORAGE_KEY) onChange();
+    if (event.key !== THEME_STORAGE_KEY && event.key !== null) return;
+    applyTheme(readThemeChoice());
+    onChange();
   };
   window.addEventListener(THEME_CHANGE_EVENT, onChange);
   window.addEventListener("storage", onStorage);

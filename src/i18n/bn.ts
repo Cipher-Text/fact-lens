@@ -29,6 +29,8 @@ export const bn = {
     closeSearch: "অনুসন্ধান বন্ধ করুন",
     // Mock search (DR-01): the prototype has no results page.
     searchUnavailable: "এই প্রোটোটাইপে অনুসন্ধানের ফল দেখানো হয় না।",
+    // SkipLink (C-17, DR-269).
+    skipLink: "মূল খবরে যান",
     navHome: "হোম",
     // The name of the caret button that opens the sub-items of a drawer row.
     expand: "উপবিভাগ",
@@ -47,7 +49,6 @@ export const bn = {
     title: "বিশ্লেষণ ও মতামত",
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
-    opEd: "অপ-এড",
   },
   // P-5. Working label: the specs name the section in English only (U-26).
   mostRead: {

@@ -124,6 +124,9 @@
   --type-rank-weight: 700;
   --type-rank-line: 1;
   --type-rank-nudge: -0.1em;
+  --type-logo-size: 1.25rem;
+  --type-logo-weight: 700;
+  --type-logo-line: 1;
   --type-input-size: 1rem;
   --type-input-weight: 400;
   --type-input-line: 1.4;
@@ -224,6 +227,7 @@
   --type-button-tracking: 0;
   --type-rank-family: var(--font-ui-active);
   --type-rank-nudge: -0.125em;
+  --type-logo-line: 1.1;
   --type-input-size: 1rem;
   --type-input-weight: 400;
   --type-input-line: 1.5;
@@ -240,9 +244,14 @@ body {
   font-optical-sizing: auto;
 }
 
+@media (min-width: 48rem) {
+  :root,
+  :lang(en) { --type-logo-size: 1.75rem; }
+}
+
 @media (min-width: 64rem) {
   :root,
-  :lang(en) { --type-rank-size: 3.5rem; }
+  :lang(en) { --type-rank-size: 3.5rem; --type-logo-size: 2rem; }
 }
 
 :lang(bn) em { font-style: normal; font-weight: 600; }
@@ -376,6 +385,24 @@ body {
   font-weight: var(--type-section-title-weight);
   line-height: var(--type-section-title-line);
   letter-spacing: var(--type-section-title-tracking);
+}
+
+@utility type-logo {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-logo-size);
+  font-weight: var(--type-logo-weight);
+  line-height: var(--type-logo-line);
+  /* Stuck bar (data-bar-stuck, DR-287): 24px from 768 */
+  @media (width >= 48rem) {
+    html[data-bar-stuck] & { font-size: 1.5rem; }
+  }
+}
+
+@utility type-logo-sm {
+  font-family: var(--font-editorial-active);
+  font-size: 1.5rem;
+  font-weight: var(--type-logo-weight);
+  line-height: var(--type-logo-line);
 }
 
 @utility type-eyebrow {

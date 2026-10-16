@@ -34,27 +34,35 @@
   --icon-size: 1.25rem;
   --button-icon-gap: 0.5rem;
 
-  /* Page chrome (component-system.md C-12, C-17; no token in Section 6, CPT-07).
-     Top bar side padding = the page gutter minus the inner space of the edge control:
-     (32 - 20) / 2 = 6px on phones, (44 - 20) / 2 = 12px from 768. */
-  --top-bar-inset: calc(var(--gutter-page) - 0.375rem);
-  /* ThemeToggle switch corners: the one place with radius (CPT-05, DR-168) */
-  --switch-radius-track: 0.375rem;
-  --switch-radius-thumb: 0.25rem;
-  /* Theme controls: interactive in light, ink in dark (color-system.md 2.9, DR-211) */
-  --color-theme-control: var(--interactive);
+  /* Page chrome (component-system.md Section 6, DR-294, DR-295, DR-303) */
+  --top-bar-inset: 0.625rem;
+  --switch-radius: 0.25rem;
+  --switch-thumb-inset: 0.1875rem;
+  --color-theme-control: var(--fill-neutral);
 }
 
 .dark {
   --color-bar: var(--interactive);
-  --color-theme-control: var(--ink);
+  --color-theme-control: var(--interactive);
+}
+
+@media (min-width: 37.5rem) {
+  :root {
+    --top-bar-inset: 1.125rem;
+  }
 }
 
 @media (min-width: 48rem) {
   :root {
-    --top-bar-inset: calc(var(--gutter-page) - 0.75rem);
+    --top-bar-inset: 0.75rem;
   }
 }
+
+/* The NavBar sets data-bar-stuck on <html> when it scrolls away; the TopBar reads it
+   through this variant, not an arbitrary one (DR-287). */
+@custom-variant bar-stuck (html[data-bar-stuck] &);
+/* Bangla pages: the language difference is in CSS, not in a component (TYP-04) */
+@custom-variant lang-bn (&:lang(bn));
 
 @media (min-width: 64rem) {
   :root {
@@ -160,5 +168,47 @@
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* shadcn Sheet and Drawer motion (CPT-16, DR-280). The default slide: the Sheet moves 2.5rem
+   and fades over 200ms; the top Drawer slides in from above over 450ms with ease-slide and
+   follows a swipe up. The base rule in globals.css removes both with reduced motion. */
+@utility sheet-overlay {
+  transition: opacity 200ms;
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+}
+
+@utility sheet-left {
+  transition:
+    transform 200ms ease-in-out,
+    opacity 200ms ease-in-out;
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: translateX(-2.5rem);
+    opacity: 0;
+  }
+}
+
+@utility drawer-overlay {
+  transition: opacity 450ms var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+}
+
+@utility drawer-top {
+  transform: translateY(var(--drawer-swipe-movement-y, 0px));
+  transition: transform 450ms var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: translateY(-100%);
+  }
+  &[data-swiping] {
+    transition-duration: 0s;
   }
 }

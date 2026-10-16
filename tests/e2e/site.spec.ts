@@ -96,8 +96,9 @@ test.describe("theme", () => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/en");
     const html = page.locator("html");
-    await expect(html).toHaveAttribute("data-theme", "light");
     await expect(html).not.toHaveClass(/\bdark\b/);
+    // Only the .dark class sets the theme (DR-281).
+    await expect(html).not.toHaveAttribute("data-theme");
     await expect(page.locator("header [data-theme-toggle]")).toHaveAttribute(
       "aria-checked",
       "false",
@@ -114,10 +115,10 @@ test.describe("theme", () => {
         timeout: 500,
       });
     }).toPass();
-    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(html).toHaveClass(/\bdark\b/);
 
     await page.reload();
-    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(html).toHaveClass(/\bdark\b/);
     await expect(toggle).toHaveAttribute("data-theme-toggle", "dark");
     const background = await page.evaluate(
       () => getComputedStyle(document.body).backgroundColor,
@@ -126,7 +127,7 @@ test.describe("theme", () => {
 
     // A second press goes back to light, not to a system state.
     await toggle.click();
-    await expect(html).toHaveAttribute("data-theme", "light");
+    await expect(html).not.toHaveClass(/\bdark\b/);
   });
 
   test("the stored theme is set before the first paint", async ({ page }) => {

@@ -51,13 +51,8 @@ export default async function RootLayout({
   if (!isLang(lang)) notFound();
 
   return (
-    // The theme script changes the class and data-theme before hydration.
-    // data-modal-open: the page does not scroll behind the drawer or search dialog.
-    <html
-      lang={lang}
-      className={`${fontVariables} data-modal-open:overflow-hidden`}
-      suppressHydrationWarning
-    >
+    // The theme script sets the .dark class before hydration (DR-281).
+    <html lang={lang} className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>

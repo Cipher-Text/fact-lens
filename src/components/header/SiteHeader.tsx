@@ -26,7 +26,7 @@ type Props = {
  *
  * Phones: menu | logo | En, theme button. From 768px: menu, search | logo | English, theme
  * switch. No subscribe button (DR-188). The logo is a text stand-in in brand color until
- * the logo file exists (BRD-06, COL-04, U-08).
+ * the logo file exists (BRD-06, COL-04, U-08). The logo type is `type-logo` (DR-306).
  */
 export function SiteHeader({ lang, path = "/" }: Props) {
   const t = getDictionary(lang);
@@ -55,7 +55,7 @@ export function SiteHeader({ lang, path = "/" }: Props) {
           <Link
             href={home}
             aria-label={t.header.home}
-            className="type-section-title whitespace-nowrap text-brand"
+            className="type-logo whitespace-nowrap text-brand"
             data-logo
           >
             {t.site.name}

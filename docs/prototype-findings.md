@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. Use the entry format under "New findings (run 3)".
+New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. Use the entry format under "New findings (run 3)".
 
 ## Summary
 
@@ -64,17 +64,17 @@ New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. U
 | DOC-24 | FL-13 | Headline roles have no `overflow-wrap`; one long compound word scrolls the page | Medium | Resolved by spec: typography v2.7 (TYP-25, DR-217), `overflow-wrap: break-word` on `body` |
 | DOC-25 | R2-04 | The §6 CSS block of `component-system.md` leaves out the button and icon tokens that its table lists | Low | Closed (DR-292): no run 3 code change |
 | DOC-26 | R2-04 | The Chip label sheet gives "15px 600", the `type-eyebrow` role is 14px 700 uppercase in English | Low | Decided (DR-293); code in R3-04 |
-| DOC-27 | R2-05 | C-12 and C-17 give the switch corners and the top bar padding in px, §6 has no tokens, and §2.9 says no component has color tokens | Low | Decided (DR-294); code in R3-02 |
-| DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Decided (DR-295); code in R3-02 |
+| DOC-27 | R2-05 | C-12 and C-17 give the switch corners and the top bar padding in px, §6 has no tokens, and §2.9 says no component has color tokens | Low | Fixed in R3-02 |
+| DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Fixed in R3-02 |
 | DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Decided (DR-296); code in R3-07 |
 | DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Decided (DR-297); code in R3-04 |
 | DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Decided (DR-298); code in R3-05 |
 | DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Decided (DR-300); code in R3-03 |
 | DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Decided (DR-264); code in R3-03 |
-| DOC-34 | R2-15 | C-17 and §12.3 give the top bar `h-(--bar-height)` (a fixed height); the C-17 checks and DR-81 say the bar can wrap to two lines at 200% text size | Low | Decided (DR-265); code in R3-02 |
+| DOC-34 | R2-15 | C-17 and §12.3 give the top bar `h-(--bar-height)` (a fixed height); the C-17 checks and DR-81 say the bar can wrap to two lines at 200% text size | Low | Fixed in R3-02 |
 | DOC-35 | R2-17 | Every ad region carries the same accessible label, so axe reports `landmark-unique` (moderate, no serious or critical). C-16 gives one label text; it does not say whether slots need a number or a name each. Suggested: name each slot (top, band 1..n, inset, rail) | Low | Decided (DR-266); code in R3-07 |
 | DOC-36 | Audit 13 Oct | StoryCard: "body first in the markup" against LAY-14 on phones | Medium | Fixed in R3-01 |
-| DOC-37 | Audit 13 Oct | Sheet values off the 4px scale | Low | Decided (DR-303); code in R3-02 |
+| DOC-37 | Audit 13 Oct | Sheet values off the 4px scale | Low | Fixed in R3-02 |
 | DOC-38 | R3-01 | `component-system.md` P-2 Accessibility says text comes before the image in the markup; C-24 (DR-267) says the image comes first | Low | Open; code follows C-24 |
 | U-01 | FL-01 | English category labels | Medium | Later: IA label table (DR-342, DR-282) |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Resolved by spec: no radius or shadow (CPT-05, COL-15), Lucide icons, 450ms slide (DR-227), card variants in C-01, C-02, C-24 |
@@ -106,16 +106,16 @@ New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. U
 | U-28 | FL-11 | Region chip and region column heading look | Low | Fixed in R2-13 (C-15: outline chips; panel heading `type-story-title-sm`, no top rule) |
 | U-29 | FL-11 | Slider button place, icon and disabled look | Low | Fixed in R2-13 (C-15: 44px IconButtons, disabled look, 450ms `--ease-slide`) |
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Fixed in R2-14 (C-21) |
-| U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Decided (DR-306); code in R3-02 |
-| U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Decided (DR-301); code in R3-02 |
+| U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Fixed in R3-02 |
+| U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Fixed in R3-02 |
 | U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Decided (DR-338); code in R3-04 |
 | U-34 | R2-09 | P-4 analysis stories: the P-4 sheet says rules between stories wait on the item divider (DR-104), but C-03 says StoryList rules and the other lists draw them | Low | Decided (DR-268); code in R3-03 |
 | U-35 | R2-09 | C-06 quote mark: the sheet gives sizes and color, no drawing | Low | Decided (DR-301); code in R3-02 |
 | U-36 | R2-13 | C-15 panel: "3:2 image, 3 stories". The sheet does not say if the image belongs to the first story. Built as an image story (StoryCard 3:2) plus two text stories = 3 stories | Low | Closed (DR-307): no run 3 code change |
 | U-37 | R2-15 | At 200% text size nothing sets the P-4 compact rows to stack: no trigger exists (DR-81, A11Y-18). Most read stacks because the rem breakpoints move with the browser text size | Medium | Decided (DR-308); code in R3-01, R3-03, R3-04 |
-| U-38 | Audit 13 Oct | No skip link | Medium | Decided (DR-269); code in R3-02 |
+| U-38 | Audit 13 Oct | No skip link | Medium | Fixed in R3-02 |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Decided (DR-270); code in R3-08 |
-| IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Decided (DR-309); import done in R3-00, primitives in R3-02 |
+| IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Fixed in R3-02 |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Done in R2-18 |
 | IMP-04 | FL-02 | Theme choice kept in local storage, not a cookie | Low | Closed (no action) |
 | IMP-05 | FL-01 | shadcn `base-nova` preset | Medium | Resolved by spec: CPT-16 keeps base-nova. No shadcn primitive is installed |
@@ -126,7 +126,7 @@ New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. U
 | IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Decided (DR-272); field exists since FL-04, display in R3-04 |
 | IMP-11 | FL-04 | `getHomepage` applies the content rules and has a sparse variant | Low | Done in R2-01 (`?content=sparse` in development only) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Later: backend integration; labels stay in `src/i18n/` (DR-263) |
-| IMP-13 | FL-05 | Drawer and search use native `<dialog>`, not shadcn | Medium | Decided (DR-344); code in R3-02 |
+| IMP-13 | FL-05 | Drawer and search use native `<dialog>`, not shadcn | Medium | Fixed in R3-02 |
 | IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Later: backend integration; homepage anchors stay (run 2 review, no DR) |
 | IMP-15 | FL-05 | Search field is `type="text"`, not `type="search"` | Low | Resolved by spec: `type="text"` with `enterKeyHint` (DR-246) |
 | IMP-16 | FL-05 | Nav row hides the items that do not fit after hydration | Low | Resolved by spec: DR-255, no "More" item. The server HTML wraps before hydration (R2A-08, IMP-56) |
@@ -144,7 +144,7 @@ New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. U
 | IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Obsolete: `StoryStack` deleted in R2-13. The `SectionHeading` `actions` slot stays; the sheet names it |
 | IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Decided (DR-278); code in R3-08 |
 | IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Done in R2-01 (`docs/fl-13/` and `tests/final-check/` removed) |
-| IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Decided (DR-309); import done in R3-00, primitives in R3-02 |
+| IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Fixed in R3-02 |
 | IMP-32 | R2-02 | `components.css` is not imported in `globals.css` | Low | Done in R2-04 |
 | IMP-33 | R2-03 | Newsletter strings and components stay until R2-11, because R2-03 only touches `src/content/` | Low | Later: newsletter phase (DR-343) |
 | IMP-34 | R2-03 | Mock ad creatives are plain gray SVG files with no text, one per size | Low | Closed (DR-310): no run 3 code change |
@@ -152,10 +152,10 @@ New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. U
 | IMP-36 | R2-04 | The Bangla Breaking label is "সদ্যপ্রাপ্ত"; the Chip sheet says the working label is ব্রেকিং | Low | Decided (DR-279); code in R3-04 |
 | IMP-37 | R2-04 | Item divider is a class, not a component; the section divider is a component | Low | Decided (DR-312); code in R3-03 |
 | IMP-38 | R2-04 | 106 e2e tests were red on the branch before R2-04; five keyboard tests accept the old ring or the base outline for now | Medium | Fixed in R3-00 (the three loose keyboard tests now require the base outline) |
-| IMP-39 | R2-05 | Drawer and SearchDialog stay on the native `<dialog>`; the sheets name the shadcn Sheet, Dialog, Switch and Collapsible (CPT-16) | Medium | Decided (DR-280); code in R3-02 |
-| IMP-40 | R2-05 | The theme has two states and does not follow the system; an old stored "system" reads as light; e2e tests set the theme in storage | Medium | Decided (DR-281); code in R3-02 |
+| IMP-39 | R2-05 | Drawer and SearchDialog stay on the native `<dialog>`; the sheets name the shadcn Sheet, Dialog, Switch and Collapsible (CPT-16) | Medium | Fixed in R3-02 |
+| IMP-40 | R2-05 | The theme has two states and does not follow the system; an old stored "system" reads as light; e2e tests set the theme in storage | Medium | Fixed in R3-02 |
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Later: IA label table; working labels stay (DR-282) |
-| IMP-42 | R2-05 | Trending terms are mock buttons that run the mock search; Op-ed and the Analysis anchors | Low | Decided (DR-302); code in R3-02 |
+| IMP-42 | R2-05 | Trending terms are mock buttons that run the mock search; Op-ed and the Analysis anchors | Low | Fixed in R3-02 |
 | IMP-43 | R2-05 | LinkedIn mark from Simple Icons 13.21.0, the last release that has it; the Drawer lists 5 links, the Footer still 4 | Low | Decided (DR-314); code in R3-08 |
 | IMP-44 | R2-06 | At 768–1023 the band shows the 728×90 creative inside the 250 reserve, so 160px of the band is empty | Low | Decided (DR-315); code in R3-07 |
 | IMP-45 | R2-06 | `AdSlot` reads its mock booking itself and always renders; the Phase 1 rule "no booking, no `ad-top` row" (DR-250) has no code path yet | Low | Later: no-booking path with real ad data, M3 (DR-316) |
@@ -169,7 +169,7 @@ New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. U
 | IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Decided (DR-319); code in R3-05 |
 | IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Decided (DR-320); code in R3-03 |
 | IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Decided (DR-321); code in R3-06 |
-| IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Decided (DR-322); code in R3-02 |
+| IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Fixed in R3-02 |
 | IMP-57 | R2-20 | Nav and Drawer links are plain `<a>` (full page load) with no comment, unlike `LanguageSwitch` | Low | Fixed in R3-01 (`LanguageSwitch` stays a plain `<a>`, R3-08) |
 | IMP-58 | Audit 13 Oct | Installed packages that the spec forbids or that nothing uses | Medium | Decided (DR-285); `tw-animate-css` removed in R3-00, rest in R3-02 |
 | IMP-59 | Audit 13 Oct | Tests that depend on the environment | Medium | Fixed in R3-00 (slider animation test and a fixed sleep no longer depend on machine speed) |
@@ -181,8 +181,8 @@ New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. U
 | IMP-65 | Audit 13 Oct | Production-only behavior is not tested | Low | Decided (DR-327); code in R3-09 |
 | IMP-66 | Audit 13 Oct | Proxy matcher and language cookie | Medium | Decided (DR-328); code in R3-08 |
 | IMP-67 | Audit 13 Oct | Storage fallbacks and missing tests | Medium | Decided (DR-329); code in R3-08 |
-| IMP-68 | Audit 13 Oct | Drawer link leaves `tabindex="-1"` on its target | Low | Decided (DR-330); code in R3-02 |
-| IMP-69 | Audit 13 Oct | Drawer links to Analysis and Opinion have no target | Medium | Decided (DR-331); code in R3-02 |
+| IMP-68 | Audit 13 Oct | Drawer link leaves `tabindex="-1"` on its target | Low | Fixed in R3-02 |
+| IMP-69 | Audit 13 Oct | Drawer links to Analysis and Opinion have no target | Medium | Fixed in R3-02 |
 | IMP-70 | Audit 13 Oct | Footer year fixed at build time | Low | Decided (DR-332); code in R3-08 |
 | IMP-71 | R3-01 | `PeerCard` (subgrid) is named in the spec as a helper part but nothing on the homepage uses it | Low | Open; kept |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Fixed: `visual-qa` step 3 uses the theme control or the `dark` class |
@@ -195,6 +195,13 @@ New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. U
 | KIT-08 | Audit 13 Oct | GitHub workflows and MCP servers | Low | Decided (DR-335); kit change: workflows and MCP pins |
 | KIT-09 | Audit 13 Oct | Hooks and local permissions | Low | Decided (DR-336); kit change: hook regexes and local permissions |
 | KIT-10 | Audit 13 Oct | Definition of done names an e2e command that cannot pass | Medium | Fixed in R3-00 (`pnpm test:e2e:chromium`) |
+| DOC-39 | R3-02 | Header sheets disagree on focus, on the search component and on the close button order | Low | Open |
+| U-39 | R3-02 | No token for the theme control icon color (`interactive` in light, `ink` in dark) | Medium | Workaround in code (`interactive` in both themes) |
+| IMP-72 | R3-02 | Base UI hides the page behind the panel with `aria-hidden`, not `inert` | Low | Open |
+| IMP-73 | R3-02 | ThemeToggle is a hand-built switch, not the shadcn Switch | Low | Open |
+| IMP-74 | R3-02 | Region links in the Drawer have no target for 3 of 7 regions | Medium | Open; code in R3-06 |
+| IMP-75 | R3-02 | The bar rule under 1280px follows the scroll position | Low | Open |
+| IMP-76 | R3-02 | Removing `--scroll-offset` in the effect cleanup breaks a #hash scroll in development | Low | Workaround in code |
 
 ## Open items (Later)
 
@@ -310,10 +317,59 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 - **Problem:** the hero pair no longer uses subgrid (DR-99), so only a unit test uses `PeerCard`. The spec still names it.
 - **Suggested solution:** keep it until the spec drops the name or a section needs aligned peer rows (LAY-08).
 
+### DOC-39 Header sheets disagree on focus, on the search component and on the close button order
+
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `spacing-layout-system.md` §6 Search ("focus goes to the panel itself, DR-249 … Focus moves to the field") and §11 checks ("search is the shadcn `Dialog`"); `component-system.md` C-20 (shadcn `Drawer`, focus to the panel, "one Tab reaches the field", close button in the top right corner).
+- **Problem:** §6 gives two focus targets for the search panel in one paragraph, and the check list names the shadcn Dialog where C-20 names the Drawer from the top. With the close button first in the source, one Tab from the panel reaches the close button, not the field.
+- **Suggested solution:** keep C-20 (Drawer, focus to the panel). Say in §6 that focus goes to the panel and one Tab reaches the field. Say in C-20 that the close button comes after the field in the source and sits in the corner by position. The code does this.
+
+### U-39 No token for the theme control icon color
+
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Medium · **Status:** Open
+- **Source:** `color-system.md` §2.9 (icon `interactive` in light, `ink` in dark; only `--color-bar` and `--color-theme-control` are component color tokens); `COL-03`; `component-system.md` C-12 ThemeToggle and ThemeButton.
+- **Problem:** `--color-theme-control` is now the track color (`fill-neutral` / `interactive`). The icon color changes between themes, there is no token for it and `dark:` is not allowed. The code uses `text-interactive` in both themes. In dark the ThemeButton icon is `interactive`, not `ink` like the En text.
+- **Suggested solution:** allow a third component color token `--color-theme-icon` (`interactive` in light, `ink` in dark), or approve `interactive` in both themes. tajmin decides.
+
+### IMP-72 Base UI hides the page behind the panel with aria-hidden, not inert
+
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `spacing-layout-system.md` §6 ("the page behind it is `inert`"); `src/components/ui/sheet.tsx`, `drawer.tsx` (Base UI Dialog and Drawer).
+- **Problem:** the shadcn base-nova primitives use Base UI. It sets `aria-hidden` on the page outside the panel, traps Tab with focus guards and locks the scroll on `<body>`. It does not set `inert`. The page is out of reach for keyboard and screen reader, and the backdrop covers pointer input.
+- **Suggested solution:** accept `aria-hidden` plus the focus trap as "inert", and say so in §6.
+
+### IMP-73 ThemeToggle is a hand-built switch, not the shadcn Switch
+
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-12 ThemeToggle ("shadcn Switch (CPT-16)"); `AGENTS.md` §5 (`components/ui/` lists Sheet, Drawer, Collapsible, Tabs, RadioGroup, not Switch).
+- **Problem:** the sheet names the shadcn Switch, the ticket and the folder list do not. The R3-02 code keeps the `role="switch"` button with the sheet's sizes and tokens.
+- **Suggested solution:** keep the button, or add the shadcn Switch in a later ticket and restyle it to the sheet. tajmin decides.
+
+### IMP-74 Region links in the Drawer have no target for 3 of 7 regions
+
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Medium · **Status:** Open
+- **Source:** `component-system.md` C-19 Content (DR-331: every # target in the nav must exist); `src/components/header/navItems.ts`, `src/content/homepage.ts` (the slider shows 4 regions: China, India, Middle East, Africa).
+- **Problem:** the Drawer lists 7 regions, so `#region-myanmar`, `#region-southeast-asia` and `#region-europe` have no panel on the homepage. All other # links (categories, `#regions`, `#analysis-opinion-title`) have a target and a test checks them.
+- **Suggested solution:** R3-06 uses the 7 regions of `bn.ts` in the slider (DR-284), which creates the missing targets. The e2e check for region anchors goes in R3-06.
+
+### IMP-75 The bar rule under 1280px follows the scroll position
+
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-17 Surface ("1px border rule at the bottom when the bar is stuck, … every width"); C-18 NavBar.rules; DR-287, DR-295.
+- **Problem:** the NavBar sets `data-bar-stuck` when it scrolls away, but it is hidden under 1280px. Run 2 showed the bar rule at the page top under 1280px. The code now sets `data-bar-stuck` when the page has scrolled (scrollY above 0) while the NavBar is hidden, so the rule shows only when the bar is stuck, at every width.
+- **Suggested solution:** say in C-17 that under 1280px the bar is stuck once the page scrolls.
+
+### IMP-76 Removing `--scroll-offset` in the effect cleanup breaks a #hash scroll in development
+
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `src/components/header/ScrollOffset.tsx`; test `regions.spec.ts` "a #region-<id> link selects the region on phones".
+- **Problem:** with `removeProperty` in the cleanup, the page did not scroll to `#region-europe` on load (React Strict Mode runs the cleanup once in development). The cause is not found. The code leaves the property set on cleanup.
+- **Suggested solution:** keep it as it is; the bar is on every page. Check a production build in R3-09.
+
 Entry format:
 
 ```markdown
-### IMP-72 Short title
+### IMP-77 Short title
 
 - **Found:** R3-0x, date · **Severity:** High | Medium | Low · **Status:** Open
 - **Source:** spec section and rule IDs; file and line.
@@ -330,3 +386,4 @@ Entry format:
 | 2026-10-13 | Audit | Statuses checked against specs and code; run 2 audit items moved in (DOC-36, DOC-37, U-38, IMP-58 to IMP-70, KIT-06 to KIT-10) |
 | 2026-10-16 | Run 3 start | File shortened for run 3: every item has its run 2 review decision (DR-262 to DR-344) and its run 3 ticket; full text kept for the Later items only |
 | 2026-10-16 | R3-01 | DOC-38 and IMP-71 added; DOC-36, IMP-09, IMP-48, IMP-57, IMP-61 and IMP-64 set to Fixed in R3-01 |
+| 2026-10-16 | R3-02 | DOC-39, U-39 and IMP-72 to IMP-76 added; DOC-27, DOC-28, DOC-34, DOC-37, U-31, U-32, U-38, IMP-02, IMP-13, IMP-31, IMP-39, IMP-40, IMP-42, IMP-56, IMP-68 and IMP-69 set to Fixed in R3-02 |

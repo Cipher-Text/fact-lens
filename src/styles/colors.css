@@ -41,6 +41,7 @@
   --selection: #edcec4;
   --overlay: rgb(31 26 23 / 0.48);
   --skeleton: #eae1d6;
+  --fill-neutral: #7e7e7e;
   /* Component colors */
 }
 
@@ -78,6 +79,7 @@
   --selection: #5a2a1c;
   --overlay: rgb(0 0 0 / 0.64);
   --skeleton: #2d3036;
+  --fill-neutral: #7e7e7e;
 }
 
 @theme {
@@ -135,6 +137,7 @@
   --color-live: var(--live);
   --color-on-live: var(--on-live);
   --color-skeleton: var(--skeleton);
+  --color-fill-neutral: var(--fill-neutral);
   --color-overlay: var(--overlay);
 }
 

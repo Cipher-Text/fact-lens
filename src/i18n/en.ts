@@ -30,6 +30,8 @@ export const en: Dictionary = {
     closeSearch: "Close search",
     // Mock search (DR-01): the prototype has no results page.
     searchUnavailable: "This prototype does not show search results.",
+    // SkipLink (C-17, DR-269).
+    skipLink: "Skip to main content",
     navHome: "Home",
     // The name of the caret button that opens the sub-items of a drawer row.
     expand: "sub-sections",
@@ -48,7 +50,6 @@ export const en: Dictionary = {
     title: "Analysis and Opinion",
     analysis: "Analysis",
     opinion: "Opinion",
-    opEd: "Op-ed",
   },
   // P-5 Most read (spacing-layout-system.md 7.2).
   mostRead: {

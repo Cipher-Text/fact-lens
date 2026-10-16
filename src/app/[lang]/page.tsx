@@ -3,6 +3,7 @@ import { Fragment } from "react";
 
 import { Footer } from "@/components/footer/Footer";
 import { SiteHeader } from "@/components/header/SiteHeader";
+import { SkipLink } from "@/components/header/SkipLink";
 import { AnalysisSection } from "@/components/home/analysis/AnalysisSection";
 import { FeaturedCategorySection } from "@/components/home/featured/FeaturedCategorySection";
 import { GroupedCategoriesSection } from "@/components/home/grouped/GroupedCategoriesSection";
@@ -42,9 +43,15 @@ export default async function HomePage({
 
   return (
     <>
+      <SkipLink label={t.header.skipLink} />
       <AdSlot variant="top" lang={lang} strings={t.ads} />
       <SiteHeader lang={lang} />
-      <main id="main" className="pt-(--space-page-start)">
+      {/* tabIndex -1: the SkipLink target takes focus in every browser (DR-269). */}
+      <main
+        id="main"
+        tabIndex={-1}
+        className="pt-(--space-page-start) focus-visible:outline-none"
+      >
         <h1 className="sr-only">{t.home.title}</h1>
         {/* A hidden section also hides its ad row (Section 7.3, LAY-13). The space
             before the ad row belongs to the section (LAY-12). */}

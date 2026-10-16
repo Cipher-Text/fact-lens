@@ -1,7 +1,7 @@
 // Theme switch logic: light and dark (spacing-layout-system.md Section 6, DR-201).
 // Light is the first state on every device. The system setting is not used.
-// The colors change through the `.dark` class on <html> (color-system.md Section 5).
-// `data-theme` on <html> holds the resolved theme for tests and tools.
+// Only the `.dark` class on <html> sets the theme (color-system.md Section 5, DR-281).
+// The choice is kept in local storage under `fl-theme` (DR-340).
 
 export const themeChoices = ["light", "dark"] as const;
 export type ThemeChoice = (typeof themeChoices)[number];
@@ -17,21 +17,24 @@ export function applyTheme(choice: string | null) {
   const isDark = choice === "dark";
   const root = document.documentElement;
   root.classList.toggle("dark", isDark);
-  root.dataset.theme = isDark ? "dark" : "light";
   root.style.colorScheme = isDark ? "dark" : "light";
 }
 
+// The choice for this page only, used when storage is blocked (DR-340). Light is first.
+let pageChoice: ThemeChoice = "light";
+
 export function readThemeChoice(): ThemeChoice {
   try {
-    if (window.localStorage.getItem(THEME_STORAGE_KEY) === "dark")
-      return "dark";
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (stored !== null) return stored === "dark" ? "dark" : "light";
   } catch {
-    // Storage can be blocked. Fall back to light.
+    // Storage can be blocked. Use the choice kept for this page.
   }
-  return "light";
+  return pageChoice;
 }
 
 export function setThemeChoice(choice: ThemeChoice) {
+  pageChoice = choice;
   try {
     window.localStorage.setItem(THEME_STORAGE_KEY, choice);
   } catch {

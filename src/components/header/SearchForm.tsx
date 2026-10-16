@@ -10,7 +10,11 @@ import { cn } from "@/lib/utils";
 
 type Props = {
   strings: Dictionary["header"];
-  /** "drawer": 48px field (Drawer.search). "dialog": 56px field (SearchDialog.field). */
+  /**
+   * "drawer": 44px field with the search icon inside at the start, no attached button
+   * (Drawer.search). "dialog": 56px field with the attached submit button
+   * (SearchDialog.field).
+   */
   size: "drawer" | "dialog";
   /** Marks the field for the dialog that opens the form, so it can take the focus. */
   fieldProps?: Record<`data-${string}`, string>;
@@ -49,10 +53,18 @@ export function SearchForm({
       </label>
       <div
         className={cn(
-          "flex border border-border-interactive bg-background",
-          size === "dialog" ? "h-14" : "h-12",
+          "group/field flex items-center border border-border-interactive bg-background",
+          size === "dialog"
+            ? "h-14"
+            : "h-11 transition-colors duration-200 focus-within:border-interactive",
         )}
       >
+        {size === "drawer" ? (
+          <Search
+            aria-hidden="true"
+            className="ms-3 size-(--icon-size) shrink-0 text-ink-muted transition-colors duration-200 group-focus-within/field:text-interactive"
+          />
+        ) : null}
         <input
           ref={inputRef}
           id={fieldId}
@@ -66,10 +78,13 @@ export function SearchForm({
             setValue(event.target.value);
             setSubmitted(false);
           }}
-          className="min-w-0 flex-1 bg-transparent px-4 type-input text-ink placeholder:text-ink-muted"
+          className={cn(
+            "h-full min-w-0 flex-1 bg-transparent type-input text-ink placeholder:text-ink-muted",
+            size === "dialog" ? "px-4" : "px-3",
+          )}
           {...fieldProps}
         />
-        {value ? (
+        {value && size === "dialog" ? (
           <Button
             variant="text"
             className="h-full"
@@ -82,13 +97,15 @@ export function SearchForm({
             {strings.clear}
           </Button>
         ) : null}
-        <IconButton
-          type="submit"
-          variant="filled"
-          size="field"
-          label={strings.searchSubmit}
-          icon={Search}
-        />
+        {size === "dialog" ? (
+          <IconButton
+            type="submit"
+            variant="filled"
+            size="field"
+            label={strings.searchSubmit}
+            icon={Search}
+          />
+        ) : null}
       </div>
       <p role="status" className="type-ui-sm text-ink-secondary not-empty:mt-3">
         {submitted ? strings.searchUnavailable : null}

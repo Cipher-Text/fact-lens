@@ -3,9 +3,10 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { setTheme } from "./theme";
 
-// R2-05: top bar, nav row, Drawer and search dialog
+// R2-05, R3-02: top bar, nav row, Drawer (shadcn Sheet) and search dialog (shadcn Drawer)
 // (spacing-layout-system.md Sections 6 and 9; component-system.md C-12, C-17 to C-20;
-// DR-21, DR-41, DR-173, DR-188, DR-201, DR-249, LAY-15).
+// DR-21, DR-41, DR-173, DR-188, DR-201, DR-249, DR-269, DR-280, DR-281, DR-295, DR-340,
+// LAY-15).
 
 const PAGES = [
   {
@@ -55,13 +56,31 @@ async function expectNoBlockingAxe(page: Page) {
   expect(blocking, JSON.stringify(blocking, null, 2)).toEqual([]);
 }
 
-/** Presses Enter on a focused trigger until the dialog opens (the page may still hydrate). */
-async function openWithKeyboard(trigger: Locator, dialog: Locator) {
+/** Presses Enter on a focused trigger until the panel opens (the page may still hydrate). */
+async function openWithKeyboard(trigger: Locator, panel: Locator) {
   await expect(async () => {
     await trigger.focus();
     await trigger.press("Enter");
-    await expect(dialog).toHaveJSProperty("open", true, { timeout: 500 });
+    await expect(panel).toBeVisible({ timeout: 500 });
   }).toPass();
+}
+
+/** Waits until a Sheet has finished its slide in from the start edge. */
+async function expectSettled(panel: Locator) {
+  await expect.poll(async () => Math.round((await box(panel)).x)).toBe(0);
+}
+
+/** A closed shadcn Sheet or Drawer is not in the page. */
+async function expectClosed(panel: Locator) {
+  await expect(panel).toHaveCount(0);
+}
+
+/** The bottom rule of the top bar is drawn when its color is not transparent. */
+async function barRuleShown(page: Page) {
+  const color = await page
+    .locator("[data-top-bar]")
+    .evaluate((el) => getComputedStyle(el).borderBottomColor);
+  return color !== "rgba(0, 0, 0, 0)";
 }
 
 async function activeLabel(page: Page) {
@@ -169,21 +188,24 @@ for (const p of PAGES) {
           );
           // The row is 48px (--nav-row-height) and the 1px rule is below it.
           expect(Math.round(navBox.height)).toBe(49);
-          const rules = await page.evaluate(() => ({
-            bar: getComputedStyle(document.querySelector("[data-top-bar]")!)
-              .borderBottomWidth,
-            nav: getComputedStyle(document.querySelector("[data-nav-row]")!)
-              .borderBottomWidth,
-          }));
-          // No rule between the bar and the nav row; the nav row keeps its own.
-          expect(rules).toEqual({ bar: "0px", nav: "1px" });
-        } else {
-          await expect(navRow).toBeHidden();
-          const barRule = await bar.evaluate(
+          const navRule = await navRow.evaluate(
             (el) => getComputedStyle(el).borderBottomWidth,
           );
-          expect(barRule).toBe("1px");
+          expect(navRule).toBe("1px");
+        } else {
+          await expect(navRow).toBeHidden();
         }
+        // No rule on the bar at the page top, at any width: the bar shows its rule only when
+        // it is stuck (DR-173, DR-295). The border is transparent, so the bar does not move.
+        expect(await barRuleShown(page)).toBe(false);
+        await expect(bar).toHaveCSS("border-bottom-width", "1px");
+
+        // The logo is type-logo: 20px on phones, 28px at 768, 32px from 1024 (DR-306).
+        await expect(logo).toHaveCSS(
+          "font-size",
+          width >= 1024 ? "32px" : width >= 768 ? "28px" : "20px",
+        );
+        await expect(logo).toHaveCSS("font-weight", "700");
 
         // No horizontal scroll (LAY-02).
         const scrollWidth = await page.evaluate(
@@ -240,10 +262,95 @@ for (const p of PAGES) {
         .locator("[data-nav-row]")
         .evaluate((el) => getComputedStyle(el).position);
       expect(navPosition).toBe("static");
-      // The nav row is gone, so the bar shows its own 1px rule again.
-      await expect(bar).toHaveCSS("border-bottom-width", "1px");
+      // The nav row is gone, so the bar shows its own 1px rule again (DR-287).
+      await expect.poll(() => barRuleShown(page)).toBe(true);
+      await expect(page.locator("html")).toHaveAttribute("data-bar-stuck", "");
+      // Stuck: the logo is 24px, and the bar keeps its height (DR-295).
+      await expect(bar.locator("[data-logo]")).toHaveCSS("font-size", "24px");
+      expect(Math.round((await box(bar)).height)).toBe(64);
       await page.evaluate(() => window.scrollTo(0, 0));
-      await expect(bar).toHaveCSS("border-bottom-width", "0px");
+      await expect.poll(() => barRuleShown(page)).toBe(false);
+      await expect(page.locator("html")).not.toHaveAttribute("data-bar-stuck");
+    });
+
+    test("under 1280 the bar sticks alone: its rule shows once the page scrolls (DR-295)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(p.path);
+      const bar = page.locator("[data-top-bar]");
+      expect(await barRuleShown(page)).toBe(false);
+      await page.evaluate(() => window.scrollTo(0, 600));
+      await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
+      await expect.poll(() => barRuleShown(page)).toBe(true);
+      // Phones keep the 20px logo when stuck.
+      await expect(bar.locator("[data-logo]")).toHaveCSS("font-size", "20px");
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await expect.poll(() => barRuleShown(page)).toBe(false);
+    });
+
+    test("--scroll-offset is the rendered bar height + 16px; anchors stop below the bar (DR-265)", async ({
+      page,
+    }) => {
+      for (const [width, bar] of [
+        [360, 56],
+        [1024, 64],
+      ] as const) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(p.path);
+        await expect
+          .poll(() =>
+            page.evaluate(
+              () => getComputedStyle(document.documentElement).scrollPaddingTop,
+            ),
+          )
+          .toBe(`${bar + 16}px`);
+      }
+    });
+
+    test("SkipLink is the first focusable element and moves focus to main (DR-269)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1024, height: 800 });
+      await page.goto(p.path);
+      const skip = page.locator("[data-skip-link]");
+      await expect(skip).toHaveText(
+        p.lang === "bn" ? "মূল খবরে যান" : "Skip to main content",
+      );
+      await expect(skip).not.toBeInViewport();
+      await expect(async () => {
+        await page.evaluate(() =>
+          (document.activeElement as HTMLElement).blur(),
+        );
+        await page.keyboard.press("Tab");
+        await expect(skip).toBeFocused({ timeout: 500 });
+      }).toPass();
+      // Shown at the page start, with the focus outline of the base rule.
+      await expect(skip).toBeInViewport();
+      expect(Math.round((await box(skip)).y)).toBeLessThan(64);
+      await expect(skip).not.toHaveCSS("outline-style", "none");
+      await page.keyboard.press("Enter");
+      await expect(page.locator("main#main")).toBeFocused();
+      await expect(page.locator("main#main")).toHaveAttribute("tabindex", "-1");
+    });
+
+    test("nav row items: Bangla is type-ui 16px, English type-ui-sm; every # link has a target (DR-295, DR-331)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(p.path);
+      const item = page.locator("[data-nav-row] li:not([hidden]) a").nth(1);
+      await expect(item).toHaveCSS("font-weight", "600");
+      await expect(item).toHaveCSS(
+        "font-size",
+        p.lang === "bn" ? "16px" : "14px",
+      );
+      const hrefs = await page
+        .locator('[data-nav-row] a[href^="#"]:not([href^="#region-"])')
+        .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
+      expect(hrefs.length).toBeGreaterThan(0);
+      for (const href of hrefs)
+        await expect(page.locator(href), href).toHaveCount(1);
     });
 
     for (const width of [360, 1280]) {
@@ -251,11 +358,12 @@ for (const p of PAGES) {
         await page.setViewportSize({ width, height: 800 });
         await page.goto(p.path);
         const menu = page.getByRole("button", { name: p.menu, exact: true });
-        const drawer = page.locator("dialog[data-drawer]");
+        const drawer = page.locator("[data-drawer]");
 
         await openWithKeyboard(menu, drawer);
         // Focus moves to the panel itself, not to an item (DR-249).
-        await expect(drawer.locator("[data-drawer-panel]")).toBeFocused();
+        await expect(drawer).toBeFocused();
+        await expect(drawer).toHaveAttribute("role", "dialog");
 
         // Search is the first item on phones only.
         const search = drawer.locator('input[name="q"]');
@@ -276,11 +384,24 @@ for (const p of PAGES) {
         expect(head.y).toBeLessThan(56);
 
         // Every nav item is in the drawer: 9 rows, Regions with 7 regions (China among
-        // them, DR-19) and Analysis and Opinion with 3 sub-items. All closed (DR-181).
+        // them, DR-19) and Analysis and Opinion with 2 sub-items, no Op-ed (DR-302). All
+        // accordions are closed (DR-181).
         await expect(drawer.locator("nav > ul > li")).toHaveCount(9);
-        await expect(drawer.locator("nav ul ul")).toHaveCount(2);
-        await expect(drawer.locator("nav ul ul[hidden]")).toHaveCount(2);
-        await expect(drawer.locator("nav ul ul a")).toHaveCount(10);
+        const carets = drawer.locator("nav button[aria-expanded]");
+        await expect(carets).toHaveCount(2);
+        for (const caret of await carets.all())
+          await expect(caret).toHaveAttribute("aria-expanded", "false");
+        await expect(drawer.locator("nav ul ul")).toHaveCount(0);
+        for (const caret of await carets.all()) await caret.click();
+        await expect(drawer.locator("nav ul ul a")).toHaveCount(9);
+        await expect(drawer.locator('a[href*="op-ed"]')).toHaveCount(0);
+        // Every # link has a target on the page (DR-331). The region links wait for R3-06:
+        // the slider shows 4 of the 7 regions until it uses all of them.
+        const hrefs = await drawer
+          .locator('nav a[href^="#"]:not([href^="#region-"])')
+          .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
+        for (const href of hrefs)
+          await expect(page.locator(href), href).toHaveCount(1);
 
         // The social band is pinned at the bottom, with the 5 links of the footer.
         const social = drawer.locator("[data-social]");
@@ -292,17 +413,28 @@ for (const p of PAGES) {
           expect([Math.round(b.width), Math.round(b.height)]).toEqual([44, 44]);
         }
 
-        // Tab stays inside the open drawer: the page behind it is inert.
-        for (let i = 0; i < 40; i++) await page.keyboard.press("Tab");
+        // Tab stays inside the open drawer: the page behind it is hidden and out of reach.
+        // The focus guards move focus on the next frame, so wait a frame after each key.
+        for (let i = 0; i < 40; i++) {
+          await page.keyboard.press("Tab");
+          await page.evaluate(
+            () => new Promise((resolve) => requestAnimationFrame(resolve)),
+          );
+        }
         const inside = await page.evaluate(
-          () => document.activeElement?.closest("dialog[data-drawer]") !== null,
+          () => document.activeElement?.closest("[data-drawer]") !== null,
         );
         expect(inside).toBe(true);
+        // The page behind the drawer is hidden from assistive technology (Base UI sets
+        // aria-hidden, not inert) and does not scroll.
+        await expect(page.getByRole("main")).toHaveCount(0);
+        // Base UI locks the scroll on <body> while the panel is open.
+        await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
 
         await expectNoBlockingAxe(page);
 
         await page.keyboard.press("Escape");
-        await expect(drawer).toHaveJSProperty("open", false);
+        await expectClosed(drawer);
         expect(await activeLabel(page)).toBe(p.menu);
       });
     }
@@ -312,25 +444,40 @@ for (const p of PAGES) {
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
       await page.goto(p.path);
-      const drawer = page.locator("dialog[data-drawer]");
+      const drawer = page.locator("[data-drawer]");
       await openWithKeyboard(
         page.getByRole("button", { name: p.menu, exact: true }),
         drawer,
       );
-      const row = drawer.locator("nav > ul > li").first().locator("> div");
+      await expectSettled(drawer);
+      // The rows and rules sit inside the 20px panel inset, with no side padding of their
+      // own (DR-295).
+      const row = drawer
+        .locator("nav > ul > li")
+        .first()
+        .locator("a")
+        .locator("..");
       expect(Math.round((await box(row)).height)).toBe(53); // 52px + 1px rule
+      expect(Math.round((await box(row)).x)).toBe(20);
+      // 360 - 48 = 312 wide, less the 2 x 20 inset.
+      expect(Math.round((await box(row)).width)).toBe(272);
       await expect(row).toHaveCSS("border-bottom-width", "1px");
 
       const caret = drawer.locator("nav button[aria-expanded]").first();
       await expect(caret).toHaveAttribute("aria-expanded", "false");
       const children = drawer.locator("nav ul ul").first();
-      await expect(children).toBeHidden();
+      await expect(children).toHaveCount(0);
       await caret.click();
       await expect(caret).toHaveAttribute("aria-expanded", "true");
       await expect(children).toBeVisible();
-      // Children are 44px rows on the page surface, indented 16px past the panel inset.
+      // The child group is as wide as the rules. Children are 44px rows on the page
+      // surface, indented 16px.
+      expect(Math.round((await box(children)).x)).toBe(20);
+      expect(Math.round((await box(children)).width)).toBe(272);
       const child = children.locator("a").first();
       expect(Math.round((await box(child)).height)).toBe(44);
+      await expect(child).toHaveCSS("padding-inline-start", "16px");
+      await expect(child).toHaveCSS("font-weight", "500");
       await expect(children).toHaveCSS(
         "background-color",
         "rgb(255, 249, 237)",
@@ -343,33 +490,32 @@ for (const p of PAGES) {
         drawer,
       );
       await expect(caret).toHaveAttribute("aria-expanded", "false");
-      await expect(children).toBeHidden();
+      await expect(children).toHaveCount(0);
     });
 
-    test("drawer slides in over 450ms, and with reduced motion it does not slide", async ({
+    test("drawer opens with the Sheet slide, and with reduced motion it does not slide (DR-280)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
       await page.goto(p.path);
-      const drawer = page.locator("dialog[data-drawer]");
-      const duration = await drawer.evaluate((el) => ({
+      const drawer = page.locator("[data-drawer]");
+      const menu = page.getByRole("button", { name: p.menu, exact: true });
+      await openWithKeyboard(menu, drawer);
+      const slide = await drawer.evaluate((el) => ({
         time: getComputedStyle(el).transitionDuration,
         property: getComputedStyle(el).transitionProperty,
       }));
-      expect(duration.time).toBe("0.45s");
-      expect(duration.property).toContain("transform");
+      // Transform and opacity, 200ms each.
+      expect(slide.time).toBe("0.2s, 0.2s");
+      expect(slide.property).toContain("transform");
+      await page.keyboard.press("Escape");
+      await expectClosed(drawer);
 
       await page.emulateMedia({ reducedMotion: "reduce" });
-      const reduced = await drawer.evaluate(
-        (el) => getComputedStyle(el).transitionDuration,
-      );
-      expect(reduced).toBe("0s");
-      await openWithKeyboard(
-        page.getByRole("button", { name: p.menu, exact: true }),
-        drawer,
-      );
+      await openWithKeyboard(menu, drawer);
+      await expect(drawer).toHaveCSS("transition-duration", "0s");
       // In place at once, with no wait for a slide.
-      expect(Math.round((await box(drawer)).x)).toBe(0);
+      await expectSettled(drawer);
     });
 
     test("drawer closes with the close button and the backdrop", async ({
@@ -378,17 +524,17 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 360, height: 800 });
       await page.goto(p.path);
       const menu = page.getByRole("button", { name: p.menu, exact: true });
-      const drawer = page.locator("dialog[data-drawer]");
+      const drawer = page.locator("[data-drawer]");
 
       await openWithKeyboard(menu, drawer);
       await drawer.getByRole("button", { name: p.closeMenu }).click();
-      await expect(drawer).toHaveJSProperty("open", false);
+      await expectClosed(drawer);
       expect(await activeLabel(page)).toBe(p.menu);
 
       await openWithKeyboard(menu, drawer);
       // The backdrop is to the right of the drawer.
       await page.mouse.click(350, 400);
-      await expect(drawer).toHaveJSProperty("open", false);
+      await expectClosed(drawer);
       expect(await activeLabel(page)).toBe(p.menu);
     });
 
@@ -398,26 +544,36 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 360, height: 800 });
       await page.goto(p.path);
       const menu = page.getByRole("button", { name: p.menu, exact: true });
-      const drawer = page.locator("dialog[data-drawer]");
+      const drawer = page.locator("[data-drawer]");
       await openWithKeyboard(menu, drawer);
       // The target is the P-2 বাংলাদেশ section (FL-08).
       await drawer.locator('nav a[href="#category-bangladesh"]').click();
-      await expect(drawer).toHaveJSProperty("open", false);
-      await expect(page.locator("#category-bangladesh")).toBeFocused();
-      await expect(page.locator("html")).not.toHaveAttribute("data-modal-open");
+      await expectClosed(drawer);
+      const target = page.locator("#category-bangladesh");
+      await expect(target).toBeFocused();
+      // The target keeps no tabindex once focus has left it (DR-330).
+      await page.keyboard.press("Tab");
+      await expect(target).not.toHaveAttribute("tabindex");
+      // The scroll lock is gone with the drawer.
+      await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
     });
 
     test("search dialog works with the keyboard from 768", async ({ page }) => {
       await page.setViewportSize({ width: 1024, height: 800 });
       await page.goto(p.path);
       const search = page.getByRole("button", { name: p.search, exact: true });
-      const dialog = page.locator("dialog[data-search-dialog]");
+      const dialog = page.locator("[data-search-dialog]");
 
       await openWithKeyboard(search, dialog);
       const field = dialog.locator('input[name="q"]');
+      // Focus is on the panel itself; one Tab reaches the field (DR-249, DR-280).
+      await expect(dialog).toBeFocused();
+      await expect(dialog).toHaveAttribute("role", "dialog");
+      await page.keyboard.press("Tab");
       await expect(field).toBeFocused();
 
       // Panel: full width at the top, 96px above the field, a 56px field (C-20).
+      await expect.poll(async () => Math.round((await box(dialog)).y)).toBe(0);
       const panel = await box(dialog);
       expect([Math.round(panel.x), Math.round(panel.y)]).toEqual([0, 0]);
       expect(Math.round(panel.width)).toBe(1024);
@@ -432,8 +588,8 @@ for (const p of PAGES) {
         1024 - 24,
       );
 
-      // The dialog has no animation (DR-227).
-      await expect(dialog).toHaveCSS("transition-duration", "0s");
+      // It opens with the shadcn Drawer slide (DR-280).
+      await expect(dialog).toHaveCSS("transition-duration", "0.45s");
 
       // Trending: up to 6 terms under the field, 24px below it (C-20).
       const terms = dialog.locator("[data-trending] button");
@@ -464,37 +620,57 @@ for (const p of PAGES) {
       await expectNoBlockingAxe(page);
 
       await page.keyboard.press("Escape");
-      await expect(dialog).toHaveJSProperty("open", false);
+      await expectClosed(dialog);
       expect(await activeLabel(page)).toBe(p.search);
 
       // The close button also closes it, and so does a press on the backdrop.
       await openWithKeyboard(search, dialog);
       await dialog.getByRole("button", { name: p.closeSearch }).click();
-      await expect(dialog).toHaveJSProperty("open", false);
+      await expectClosed(dialog);
       expect(await activeLabel(page)).toBe(p.search);
 
       await openWithKeyboard(search, dialog);
       await page.mouse.click(500, 790);
-      await expect(dialog).toHaveJSProperty("open", false);
+      await expectClosed(dialog);
       expect(await activeLabel(page)).toBe(p.search);
+
+      // With reduced motion there is no slide.
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await openWithKeyboard(search, dialog);
+      await expect(dialog).toHaveCSS("transition-duration", "0s");
     });
 
-    test("the Drawer search field is 48px with a 46px attached button (phones)", async ({
+    test("the Drawer search field is 44px with the icon inside and no attached button (phones)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
       await page.goto(p.path);
-      const drawer = page.locator("dialog[data-drawer]");
+      const drawer = page.locator("[data-drawer]");
       await openWithKeyboard(
         page.getByRole("button", { name: p.menu, exact: true }),
         drawer,
       );
+      await expectSettled(drawer);
       const field = drawer.locator('input[name="q"]');
       const frame = await box(field.locator(".."));
-      expect(Math.round(frame.height)).toBe(48);
-      const submit = await box(drawer.locator('button[type="submit"]'));
-      expect(Math.round(submit.height)).toBe(46);
-      expect(Math.round(submit.width)).toBe(46);
+      expect(Math.round(frame.height)).toBe(44);
+      expect(Math.round(frame.x)).toBe(20);
+      await expect(drawer.locator('button[type="submit"]')).toHaveCount(0);
+      const icon = drawer.locator('[role="search"] svg');
+      await expect(icon).toHaveAttribute("aria-hidden", "true");
+      expect(Math.round((await box(icon)).width)).toBe(20);
+      // The border and the icon fade to interactive on focus (DR-225).
+      await expect(icon).toHaveCSS("color", "rgb(110, 104, 98)");
+      await field.focus();
+      await expect(icon).toHaveCSS("color", "rgb(153, 51, 20)");
+      await expect(field.locator("..")).toHaveCSS(
+        "border-bottom-color",
+        "rgb(153, 51, 20)",
+      );
+      // Enter runs the search.
+      await field.fill("Bay of Bengal");
+      await page.keyboard.press("Enter");
+      await expect(drawer.getByRole("status")).not.toBeEmpty();
     });
 
     test("the theme starts light and does not follow the system (DR-201)", async ({
@@ -502,7 +678,10 @@ for (const p of PAGES) {
     }) => {
       await page.emulateMedia({ colorScheme: "dark" });
       await page.goto(p.path);
-      await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+      const html = page.locator("html");
+      await expect(html).not.toHaveClass(/dark/);
+      // Only the .dark class sets the theme (DR-281).
+      await expect(html).not.toHaveAttribute("data-theme");
     });
 
     test("ThemeToggle (from 768) is a switch: aria-checked is dark, the thumb slides, the choice is kept", async ({
@@ -531,23 +710,78 @@ for (const p of PAGES) {
         });
       }).toPass();
       const html = page.locator("html");
-      await expect(html).toHaveAttribute("data-theme", "dark");
+      await expect(html).toHaveClass(/dark/);
       await expect
         .poll(async () => Math.round((await box(thumb)).x - track.x))
         .toBe(27);
-      // The track is ink in dark, interactive in light.
-      await expect(toggle).toHaveCSS("background-color", "rgb(245, 245, 245)");
+      // The track is interactive in dark, fill-neutral in light (DR-295).
+      await expect(toggle).toHaveCSS("background-color", "rgb(252, 119, 79)");
       // No hover color: the track does not change under the pointer.
       await toggle.hover();
-      await expect(toggle).toHaveCSS("background-color", "rgb(245, 245, 245)");
+      await expect(toggle).toHaveCSS("background-color", "rgb(252, 119, 79)");
+      expect(await page.evaluate(() => localStorage.getItem("fl-theme"))).toBe(
+        "dark",
+      );
 
       await page.reload();
-      await expect(html).toHaveAttribute("data-theme", "dark");
+      await expect(html).toHaveClass(/dark/);
       await expect(toggle).toHaveAttribute("aria-checked", "true");
 
       await toggle.click();
-      await expect(html).toHaveAttribute("data-theme", "light");
-      await expect(toggle).toHaveCSS("background-color", "rgb(153, 51, 20)");
+      await expect(html).not.toHaveClass(/dark/);
+      await expect(toggle).toHaveCSS("background-color", "rgb(126, 126, 126)");
+    });
+
+    test("a theme change in one tab applies in the other tab (storage event, DR-340)", async ({
+      context,
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1024, height: 800 });
+      await page.goto(p.path);
+      const other = await context.newPage();
+      await other.setViewportSize({ width: 1024, height: 800 });
+      await other.goto(p.path);
+      await expect(other.locator("html")).not.toHaveClass(/dark/);
+      const toggle = page.locator("[data-top-bar] [data-theme-toggle]");
+      await expect(async () => {
+        // Click only while the switch is off, so a retry never turns it back.
+        if ((await toggle.getAttribute("aria-checked")) !== "true")
+          await toggle.click();
+        await expect(page.locator("html")).toHaveClass(/dark/, {
+          timeout: 500,
+        });
+      }).toPass();
+      await expect(other.locator("html")).toHaveClass(/dark/);
+      await expect(
+        other.locator("[data-top-bar] [data-theme-toggle]"),
+      ).toHaveAttribute("aria-checked", "true");
+    });
+
+    test("with storage blocked the choice lasts for this page only (DR-340)", async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        Object.defineProperty(window, "localStorage", {
+          get() {
+            throw new DOMException("blocked", "SecurityError");
+          },
+        });
+      });
+      await page.setViewportSize({ width: 1024, height: 800 });
+      await page.goto(p.path);
+      const html = page.locator("html");
+      const toggle = page.locator("[data-top-bar] [data-theme-toggle]");
+      await expect(html).not.toHaveClass(/dark/);
+      await expect(async () => {
+        await toggle.click();
+        await expect(toggle).toHaveAttribute("aria-checked", "true", {
+          timeout: 500,
+        });
+      }).toPass();
+      await expect(html).toHaveClass(/dark/);
+      await toggle.click();
+      await expect(toggle).toHaveAttribute("aria-checked", "false");
+      await expect(html).not.toHaveClass(/dark/);
     });
 
     test("ThemeButton (phones) is a switch with the icon of the theme it switches to", async ({
@@ -565,12 +799,13 @@ for (const p of PAGES) {
           timeout: 500,
         });
       }).toPass();
-      await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+      await expect(page.locator("html")).toHaveClass(/dark/);
       await expect(button.locator("svg")).toHaveClass(/lucide-sun/);
-      // The icon is ink in dark and shows no hover color.
-      await expect(button).toHaveCSS("color", "rgb(245, 245, 245)");
+      // Every top bar icon is 20px (DR-295). The icon shows no hover color.
+      expect(Math.round((await box(button.locator("svg"))).width)).toBe(20);
+      await expect(button).toHaveCSS("color", "rgb(252, 119, 79)");
       await button.hover();
-      await expect(button).toHaveCSS("color", "rgb(245, 245, 245)");
+      await expect(button).toHaveCSS("color", "rgb(252, 119, 79)");
       await expect(button).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     });
 
@@ -607,7 +842,7 @@ for (const p of PAGES) {
         );
       for (const s of styles) {
         expect(s.shadow).toBe("none");
-        expect(s.radius).toBe(s.toggle ? "6px" : "0px");
+        expect(s.radius).toBe(s.toggle ? "4px" : "0px");
       }
     });
 
@@ -615,10 +850,9 @@ for (const p of PAGES) {
       test(`no serious axe violations in ${scheme}`, async ({ page }) => {
         await setTheme(page, scheme);
         await page.goto(p.path);
-        await expect(page.locator("html")).toHaveAttribute(
-          "data-theme",
-          scheme,
-        );
+        if (scheme === "dark")
+          await expect(page.locator("html")).toHaveClass(/dark/);
+        else await expect(page.locator("html")).not.toHaveClass(/dark/);
         await expectNoBlockingAxe(page);
       });
     }
