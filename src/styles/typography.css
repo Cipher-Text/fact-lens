@@ -464,10 +464,9 @@ body {
 
 @utility rank-list {
   list-style: none;
-  counter-reset: rank;
-  & > li { counter-increment: rank; display: grid; grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
-  & > li::before {
-    content: counter(rank, decimal) / "";
+  & > li { display: grid; grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
+  /* The rank number from the data, in <span aria-hidden="true"> (DR-290) */
+  & > li > [aria-hidden="true"]:first-child {
     font-family: var(--type-rank-family);
     font-size: var(--type-rank-size);
     font-weight: var(--type-rank-weight);
@@ -476,5 +475,4 @@ body {
     color: var(--interactive);
     font-variant-numeric: tabular-nums;
   }
-  &:lang(bn) > li::before { content: counter(rank, bengali) / ""; }
 }

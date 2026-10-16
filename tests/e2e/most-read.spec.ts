@@ -98,12 +98,13 @@ for (const p of PAGES) {
 
         // type-rank (typography-system.md 7.1): numeral 44px in a 33px column with a
         // 12px gap; 56px in a 42px column from 1024. The numeral uses
-        // text-interactive, not brand (COL-04), and the page-language counter.
+        // text-interactive, not brand (COL-04), and the rank from the data.
         const rank = await items.first().evaluate((li) => {
-          const before = getComputedStyle(li, "::before");
+          const before = getComputedStyle(li.firstElementChild!);
           const probe = document.createElement("span");
           probe.style.color = "var(--interactive)";
           li.append(probe);
+          const text = li.firstElementChild!.textContent;
           const interactive = getComputedStyle(probe).color;
           probe.remove();
           return {
@@ -113,7 +114,8 @@ for (const p of PAGES) {
             weight: before.fontWeight,
             color: before.color,
             interactive,
-            content: before.content,
+            text,
+            hidden: li.firstElementChild!.getAttribute("aria-hidden"),
           };
         });
         const big = width >= 1024;
@@ -123,12 +125,10 @@ for (const p of PAGES) {
         expect(rank.size).toBe(big ? "56px" : "44px");
         expect(rank.weight).toBe("700");
         expect(rank.color).toBe(rank.interactive);
-        // Bengali digits on Bangla pages; decimal (the default, which Chrome omits
-        // from the computed value) on English pages. The empty alternative text hides
-        // the numeral from screen readers (DOC-19).
-        if (p.bengali) expect(rank.content).toContain("bengali");
-        else expect(rank.content).not.toContain("bengali");
-        expect(rank.content).toMatch(/^counter\(rank.*\/ ""$/);
+        // The rank comes from the data, in an aria-hidden span, digits in the page
+        // language (DR-290). No CSS counter.
+        expect(rank.hidden).toBe("true");
+        expect(rank.text).toBe(p.bengali ? "১" : "1");
 
         // Every title starts at the same position in its item.
         const offsets = await items.evaluateAll((lis) =>
@@ -207,7 +207,7 @@ for (const p of PAGES) {
       const s = mostRead(page);
       const first = s.locator("[data-most-read-item]").first();
       const info = await first.evaluate((li) => {
-        const before = getComputedStyle(li, "::before");
+        const before = getComputedStyle(li.firstElementChild!);
         const size = parseFloat(before.fontSize);
         const link = li.querySelector("a")!;
         const probe = (v: string) => {
@@ -259,7 +259,9 @@ for (const p of PAGES) {
       // The numeral is hidden from screen readers; the list order gives the rank.
       const names = await list
         .locator("li")
-        .evaluateAll((lis) => lis.map((li) => li.textContent));
+        .evaluateAll((lis) =>
+          lis.map((li) => li.querySelector("h3")!.textContent),
+        );
       const snapshot = await list.ariaSnapshot();
       for (const name of names) expect(snapshot).toContain(name!);
       expect(snapshot).not.toMatch(/listitem:?\s*"?[0-9০-৯]/);

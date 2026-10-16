@@ -377,6 +377,58 @@ for (const p of PAGES) {
       expect(result.positions.some((x) => x > 0 && x < end - 1)).toBe(true);
     });
 
+    test("phone tabs: a chip press fades the panel out, then the new one in, opacity only (DR-284)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(p.path);
+      const s = regions(page);
+      const tabs = s.getByRole("tab");
+      const row = s.locator("[data-region-row]");
+      const duration = await row.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return [style.transitionProperty, style.transitionDuration];
+      });
+      expect(duration).toEqual(["opacity", "0.2s"]);
+      const samples = await row.evaluate(
+        (el) =>
+          new Promise<number[]>((resolve) => {
+            const seen: number[] = [];
+            const start = performance.now();
+            const frame = () => {
+              seen.push(parseFloat(getComputedStyle(el).opacity));
+              if (performance.now() - start < 700) requestAnimationFrame(frame);
+              else resolve(seen);
+            };
+            document
+              .querySelector<HTMLElement>('[role="tab"]:nth-child(2)')!
+              .click();
+            frame();
+          }),
+      );
+      // Out to (almost) 0, then back to 1: both fades happen, one after the other.
+      expect(Math.min(...samples)).toBeLessThan(0.1);
+      expect(samples.some((x) => x > 0.2 && x < 0.9)).toBe(true);
+      expect(samples.at(-1)).toBe(1);
+      await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
+      await expect(s.getByRole("tabpanel")).toHaveCount(1);
+    });
+
+    test("phone tabs: with reduced motion a press changes the panel at once (DR-151)", async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(p.path);
+      const s = regions(page);
+      await s.getByRole("tab").nth(1).click();
+      await expect(s.getByRole("tab").nth(1)).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      await expect(s.locator("[data-region-row]")).toHaveCSS("opacity", "1");
+    });
+
     test("phone tabs: arrow keys, Home and End select a region", async ({
       page,
     }) => {

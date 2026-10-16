@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
 
 import { getHomepage } from "@/content";
@@ -51,32 +57,31 @@ describe("RegionsSection (P-3b)", () => {
     expect(tabs[0]).toHaveAttribute("aria-selected", "true");
     expect(tabs[0]).toHaveAttribute("tabindex", "0");
     expect(tabs[1]).toHaveAttribute("tabindex", "-1");
-    const panel = document.getElementById(
-      tabs[0].getAttribute("aria-controls")!,
-    )!;
+    const panel = document.getElementById(`region-${regions[0].region}`)!;
     expect(panel).toHaveAttribute("role", "tabpanel");
     expect(panel).toHaveAttribute("aria-labelledby", tabs[0].id);
+    expect(tabs[0]).toHaveAttribute("aria-controls", panel.id);
     expect(panel.className).not.toContain("max-sm:hidden");
-    const other = document.getElementById(
-      tabs[1].getAttribute("aria-controls")!,
-    )!;
+    const other = document.getElementById(`region-${regions[1].region}`)!;
     expect(other.className).toContain("max-sm:hidden");
   });
 
-  it("moves the selection with the arrow keys, Home and End", () => {
+  it("moves the selection with the arrow keys, Home and End, after the 200ms fade (DR-284)", async () => {
     const { regions } = renderSection("en");
     const tablist = screen.getByRole("tablist");
     const tabs = within(tablist).getAllByRole("tab");
+    const selectedAfter = async (key: string, index: number) => {
+      fireEvent.keyDown(document.activeElement!, { key });
+      await waitFor(() =>
+        expect(tabs[index]).toHaveAttribute("aria-selected", "true"),
+      );
+      expect(document.activeElement).toBe(tabs[index]);
+    };
     tabs[0].focus();
-    fireEvent.keyDown(tablist, { key: "ArrowRight" });
-    expect(tabs[1]).toHaveAttribute("aria-selected", "true");
-    expect(document.activeElement).toBe(tabs[1]);
-    fireEvent.keyDown(tablist, { key: "End" });
-    expect(tabs[regions.length - 1]).toHaveAttribute("aria-selected", "true");
-    fireEvent.keyDown(tablist, { key: "ArrowRight" });
-    expect(tabs[0]).toHaveAttribute("aria-selected", "true");
-    fireEvent.keyDown(tablist, { key: "ArrowLeft" });
-    expect(tabs[regions.length - 1]).toHaveAttribute("aria-selected", "true");
+    await selectedAfter("ArrowRight", 1);
+    await selectedAfter("End", regions.length - 1);
+    await selectedAfter("ArrowRight", 0);
+    await selectedAfter("ArrowLeft", regions.length - 1);
   });
 
   it("has previous and next buttons with names in the page language (7.4)", () => {

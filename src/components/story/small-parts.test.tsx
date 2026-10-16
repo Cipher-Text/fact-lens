@@ -166,28 +166,6 @@ describe("Chip (C-11)", () => {
     );
     expect(chip.className).not.toMatch(/rounded|hover:/);
   });
-
-  it("filter is a 44px button with an outline, selected fill, and no hover or pressed color (DR-222)", () => {
-    const onClick = vi.fn();
-    render(
-      <Chip variant="filter" role="tab" aria-selected={false} onClick={onClick}>
-        Asia
-      </Chip>,
-    );
-    const chip = screen.getByRole("tab", { name: "Asia" });
-    expect(chip).toHaveAttribute("type", "button");
-    expect(chip).toHaveClass(
-      "min-h-11",
-      "px-4",
-      "border",
-      "border-border-interactive",
-      "aria-selected:bg-interactive",
-      "aria-selected:text-on-interactive",
-    );
-    expect(chip.className).not.toMatch(/hover:|active:|rounded|ring/);
-    fireEvent.click(chip);
-    expect(onClick).toHaveBeenCalledOnce();
-  });
 });
 
 describe("Button (C-12)", () => {

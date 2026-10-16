@@ -6,17 +6,15 @@ import {
   useEffect,
   useRef,
   useState,
-  type KeyboardEvent,
   type ReactNode,
 } from "react";
 
 import { SectionHeading } from "@/components/layout/SectionHeading";
-import { Chip } from "@/components/story/Chip";
 import { IconButton } from "@/components/story/IconButton";
+import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import type { Dictionary } from "@/i18n";
 import {
   cubicBezier,
-  nextTabIndex,
   parseCubicBezier,
   sliderEdges,
   sliderTarget,
@@ -36,6 +34,9 @@ type RegionSliderProps = {
   regions: RegionPanel[];
   strings: Dictionary["regionSlider"];
 };
+
+// A chip press fades the panel out, then the new one in, 200ms each (DR-284).
+const FADE_MS = 200;
 
 // duration-450 (DR-227, DR-151). The curve is the --ease-slide token, read at run time.
 const SLIDE_MS = 450;
@@ -68,7 +69,8 @@ const prefersReducedMotion = () =>
  * view, 3 from 1024px, 4 from 1280px. The previous and next buttons move one column
  * (width + gap) in 450ms with ease-slide, or at once with reduced motion, and are disabled
  * at each end. No loop, no autoplay. Swipe is native scrolling; the scrollbar is hidden. All regions are in the HTML, so the keyboard reaches every link.
- * Below 600px: region chips as tabs (tablist, arrow keys, aria-selected). One panel shows.
+ * Below 600px: region chips as shadcn Tabs (tablist, arrow keys, aria-selected). One panel
+ * shows; a chip press fades it out and the new one in (200ms each, opacity only, DR-284).
  * The tab mode follows the CSS: it is on while the tablist is displayed, so the JS has no
  * breakpoint of its own.
  * Each panel is #region-<id>, the anchor of the region links in the nav and drawer (IMP-14).
@@ -82,8 +84,9 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
   });
   const rootRef = useRef<HTMLDivElement>(null);
   const tablistRef = useRef<HTMLDivElement>(null);
+  const fadeTimer = useRef<number | undefined>(undefined);
+  const [fading, setFading] = useState(false);
   const rowRef = useRef<HTMLDivElement>(null);
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const animation = useRef<{ frame: number; target: number } | null>(null);
 
   const updateEdges = useCallback(() => {
@@ -133,6 +136,7 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
   useEffect(
     () => () => {
       if (animation.current) cancelAnimationFrame(animation.current.frame);
+      window.clearTimeout(fadeTimer.current);
     },
     [],
   );
@@ -184,22 +188,29 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
     if (rowRef.current) rowRef.current.style.scrollSnapType = "";
   };
 
-  const select = (index: number) => {
-    setSelected(index);
-    const tab = tabRefs.current[index];
-    tab?.focus();
-    tab?.scrollIntoView({
+  // The selected chip scrolls into view (C-15). Only after a press, never on load.
+  const showTab = (index: number) =>
+    document.getElementById(`region-${regions[index].id}-tab`)?.scrollIntoView({
       block: "nearest",
       inline: "nearest",
       behavior: prefersReducedMotion() ? "auto" : "smooth",
     });
-  };
 
-  const onTabKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-    const index = nextTabIndex(selected, event.key, regions.length);
-    if (index === null) return;
-    event.preventDefault();
-    select(index);
+  // Fade the shown panel out, swap, fade the new one in. Reduced motion: at once.
+  const select = (index: number) => {
+    if (index === selected) return;
+    window.clearTimeout(fadeTimer.current);
+    if (prefersReducedMotion()) {
+      setSelected(index);
+      showTab(index);
+      return;
+    }
+    setFading(true);
+    fadeTimer.current = window.setTimeout(() => {
+      setSelected(index);
+      setFading(false);
+      showTab(index);
+    }, FADE_MS);
   };
 
   const buttons = (
@@ -224,47 +235,48 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
   );
 
   return (
-    <div ref={rootRef}>
+    <Tabs
+      ref={rootRef}
+      value={regions[selected].id}
+      onValueChange={(value) =>
+        select(regions.findIndex((region) => region.id === value))
+      }
+    >
       <SectionHeading id="regions-title" actions={buttons}>
         {title}
       </SectionHeading>
       {/* Phone tabs. -mx-1 with p-1 leaves room for the focus ring inside the scroll box;
           the chips stay in line with the shell. */}
-      <div
+      <TabsList
         ref={tablistRef}
-        role="tablist"
+        activateOnFocus
         aria-labelledby="regions-title"
-        onKeyDown={onTabKeyDown}
-        className="-mx-1 mb-(--space-section-title-after) no-scrollbar flex gap-2 overflow-x-auto p-1 sm:hidden"
+        className="-mx-1 mb-(--space-section-title-after) no-scrollbar overflow-x-auto p-1 sm:hidden"
       >
-        {regions.map((region, index) => (
-          <Chip
-            variant="filter"
+        {regions.map((region) => (
+          <TabsTab
             key={region.id}
-            ref={(node) => {
-              tabRefs.current[index] = node;
-            }}
-            role="tab"
+            value={region.id}
             id={`region-${region.id}-tab`}
-            aria-selected={index === selected}
             aria-controls={`region-${region.id}`}
-            tabIndex={index === selected ? 0 : -1}
-            onClick={() => select(index)}
             data-region-tab={region.id}
           >
             {region.label}
-          </Chip>
+          </TabsTab>
         ))}
-      </div>
+      </TabsList>
       {/* From 600: the slider row (`region-row`, components.css). Below 600 only the
-          selected panel shows. */}
+          selected panel shows, faded in and out (DR-284). */}
       <div
         ref={rowRef}
         id="regions-row"
         onScroll={updateEdges}
         onPointerDown={stopSlide}
         onWheel={stopSlide}
-        className="region-row"
+        className={cn(
+          "region-row max-sm:transition-opacity max-sm:duration-200",
+          fading && "max-sm:opacity-0",
+        )}
         data-region-row
       >
         {regions.map((region, index) => (
@@ -293,6 +305,6 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
           </div>
         ))}
       </div>
-    </div>
+    </Tabs>
   );
 }

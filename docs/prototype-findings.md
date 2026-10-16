@@ -56,8 +56,8 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | DOC-16 | FL-07 | LAY-12 section-to-ad space on a section with its own background | Low | Resolved by spec: layout v2.5 (DR-205) |
 | DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Fixed in R2-10 |
 | DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Resolved by spec (DR-207); fixed in R2-06 |
-| DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Decided (DR-290); mock `rank` field added in R3-00, markup in R3-06 |
-| DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Decided (DR-291); code in R3-06 |
+| DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Fixed in R3-06 |
+| DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Fixed in R3-06 |
 | DOC-21 | FL-11 | "4 regions in view" next to "no 4-up rows" (LAY-07), and no buttons at 600–1023 with 3 or 4 regions | Low | Resolved by spec (LAY-07 allows 4 panels from 1280, C-15); fixed in R2-13 |
 | DOC-22 | FL-12 | Footer: 7.1 calls it an "ad container"; DR-59 and 7.4 list different links | Low | Resolved by spec: §7.1 row 15 "Full-width row"; five links in §7.4 and C-21 |
 | DOC-23 | FL-13 | 1366×768 first screen: the 264px hero estimate leaves out the section space; no headline in view | Medium | Resolved by spec (accepted trade-off): §13 (DR-257) says the lead headline shows after scrolling; R2-17 measured 224px |
@@ -164,11 +164,11 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-48 | R2-07 | `StoryCard` `layout` has four values (`stack`, `row`, `row-from-md`, `row-until-lg`) and `OverlapCard` has a `surface` prop, so a section can set the page-breakpoint switch and the P-4 background; the sheets say "the section sets it" but give no prop | Low | Fixed in R3-01 |
 | IMP-49 | R2-09 | Mock content changed to the sheet counts: 3 analysis stories (1 feature, 2 compact) and 5 opinion pieces; the `listItem` class file is gone | Low | Done in R2-09 (mock counts follow the sheets) |
 | IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Fixed in R3-05 |
-| IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Decided (DR-284); code in R3-06 |
-| IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Decided (DR-318); code in R3-06 |
+| IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Fixed in R3-06 |
+| IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Fixed in R3-06 |
 | IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Fixed in R3-05 |
 | IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Fixed in R3-03 |
-| IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Decided (DR-321); code in R3-06 |
+| IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Fixed in R3-06 |
 | IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Fixed in R3-02 |
 | IMP-57 | R2-20 | Nav and Drawer links are plain `<a>` (full page load) with no comment, unlike `LanguageSwitch` | Low | Fixed in R3-01 (`LanguageSwitch` stays a plain `<a>`, R3-08) |
 | IMP-58 | Audit 13 Oct | Installed packages that the spec forbids or that nothing uses | Medium | Decided (DR-285); `tw-animate-css` removed in R3-00, rest in R3-02 |
@@ -176,7 +176,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-60 | Audit 13 Oct | Next.js LCP warning on hero images | Low | Fixed in R3-04 |
 | IMP-61 | Audit 13 Oct | Component and folder names differ from the approved list | Medium | Fixed in R3-01 |
 | IMP-62 | Audit 13 Oct | Arbitrary variants that couple components | Medium | Fixed in R3-02 and R3-05 |
-| IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Decided (DR-288); code in R3-06 |
+| IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Fixed in R3-06 |
 | IMP-64 | Audit 13 Oct | Dead code, stale comments and unused tokens | Low | Fixed in R3-01 |
 | IMP-65 | Audit 13 Oct | Production-only behavior is not tested | Low | Decided (DR-327); code in R3-09 |
 | IMP-66 | Audit 13 Oct | Proxy matcher and language cookie | Medium | Decided (DR-328); code in R3-08 |
@@ -201,6 +201,8 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-80 | R3-05 | DailyPoll: the fieldset is `display: contents` so its legend sits in the grid | Low | Open |
 | DOC-40 | R3-05 | C-26 `DailyPoll.vote`: "focus stays on the group" does not fit a button press | Low | Open |
 | IMP-81 | R3-05 | DailyPoll keeps a hidden copy of the results to hold the cell height | Low | Open |
+| DOC-41 | R3-06 | `region-row` block in §12.3 sets 2 columns at every width | Low | Open |
+| IMP-82 | R3-06 | Base UI Tabs.Panel cannot be used for the region panels | Low | Open |
 | IMP-72 | R3-02 | Base UI hides the page behind the panel with `aria-hidden`, not `inert` | Low | Open |
 | IMP-73 | R3-02 | ThemeToggle is a hand-built switch, not the shadcn Switch | Low | Open |
 | IMP-74 | R3-02 | Region links in the Drawer have no target for 3 of 7 regions | Medium | Open; code in R3-06 |
@@ -354,7 +356,8 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 - **Found:** R3-02, 16 Oct 2026 · **Severity:** Medium · **Status:** Open
 - **Source:** `component-system.md` C-19 Content (DR-331: every # target in the nav must exist); `src/components/header/navItems.ts`, `src/content/homepage.ts` (the slider shows 4 regions: China, India, Middle East, Africa).
 - **Problem:** the Drawer lists 7 regions, so `#region-myanmar`, `#region-southeast-asia` and `#region-europe` have no panel on the homepage. All other # links (categories, `#regions`, `#analysis-opinion-title`) have a target and a test checks them.
-- **Suggested solution:** R3-06 uses the 7 regions of `bn.ts` in the slider (DR-284), which creates the missing targets. The e2e check for region anchors goes in R3-06.
+- **R3-06:** the slider builds every region that has stories (6 of 7). `#region-africa` still has no target, because the mock keeps Africa without stories on purpose (mock-content skill, `spacing-layout-system.md` 7.3: a region with no stories does not show).
+- **Suggested solution:** tajmin decides: give Africa two mock stories (7 panels), or drop `africa` from the Drawer list while it has no stories.
 
 ### IMP-75 The bar rule under 1280px follows the scroll position
 
@@ -426,6 +429,21 @@ Entry format:
 - **Spec difference:** C-26 names `@utility stack-cell` for the shared cell. The legend and the choose parts are inside the fieldset (`display: contents`) while the results are outside, so one wrapper cannot hold both. The code puts both in the grid area `cell` of `poll-layout`. The result is the same.
 - **Suggested solution:** keep it, and let the sheet say "share one grid cell" without the utility name. tajmin decides.
 
+### DOC-41 `region-row` block in `spacing-layout-system.md` §12.3 sets 2 columns at every width
+
+- **Found:** R3-06, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `spacing-layout-system.md` §12.3 `@utility region-row` ("Copy this block"); `component-system.md` C-15.
+- **Problem:** the block sets `grid-auto-columns` for 2 in view and `overflow-x: auto` with snap at all widths. Below 600px one panel shows, so it would be half the row wide.
+- **What the code does:** it keeps its own `region-row` in `components.css` (`--region-in-view` 1 under 600, 2, 3, 4; scroll and snap from 600). Same result from 600px.
+- **Suggested solution:** change the §12.3 block to the `--region-in-view` form.
+
+### IMP-82 Base UI Tabs.Panel cannot be used for the region panels
+
+- **Found:** R3-06, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-15 (Chips: shadcn Tabs, CPT-16).
+- **Problem:** the Base UI panel sets `hidden` and `inert` when not selected, but from 600px every panel is a live column of the slider. `ui/tabs.tsx` has `Tabs`, `TabsList` and `TabsTab` only; `RegionSlider` writes its own panels and sets `aria-controls` on the tabs.
+- **Suggested solution:** keep it; say in the sheet that the panels are the slider columns.
+
 ## Change log
 
 | Date | Ticket | Change |
@@ -439,3 +457,4 @@ Entry format:
 | 2026-10-16 | R3-03 | U-40 added; DOC-32, DOC-33, U-03, U-16, U-34, IMP-37 and IMP-54 set to Fixed in R3-03 |
 | 2026-10-16 | R3-04 | IMP-78 and IMP-79 added; DOC-26, DOC-30, U-14, U-33, U-37, IMP-10, IMP-19, IMP-36 and IMP-60 set to Fixed in R3-04 |
 | 2026-10-16 | R3-05 | IMP-80, DOC-40 and IMP-81 added; DOC-31, IMP-26, IMP-50, IMP-53 and IMP-62 set to Fixed in R3-05 |
+| 2026-10-16 | R3-06 | DOC-41 and IMP-82 added; DOC-19, DOC-20, IMP-51, IMP-52, IMP-55 and IMP-63 set to Fixed in R3-06; IMP-74 updated (only `#region-africa` has no target) |

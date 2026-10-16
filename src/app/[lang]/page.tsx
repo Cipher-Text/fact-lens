@@ -120,6 +120,7 @@ export default async function HomePage({
         {home.mostRead ? (
           <>
             <MostReadSection
+              lang={lang}
               stories={home.mostRead}
               t={t}
               className={cn(
