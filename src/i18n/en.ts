@@ -33,6 +33,8 @@ export const en: Dictionary = {
     // SkipLink (C-17, DR-269).
     skipLink: "Skip to main content",
     navHome: "Home",
+    // The NavBar and Drawer item over the regions (component-system.md Section 3.3, DR-345).
+    navRegions: "Regions",
     // The name of the caret button that opens the sub-items of a drawer row.
     expand: "sub-sections",
   },

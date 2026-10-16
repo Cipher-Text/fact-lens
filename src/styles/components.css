@@ -30,20 +30,16 @@
   --button-height: 3rem;
   --button-padding: 1.25rem;
   --icon-button-size: 2.75rem;
-  --icon-button-size-bar: 2rem;
+  --icon-button-size-ghost: 2rem;
   --icon-size: 1.25rem;
   --button-icon-gap: 0.5rem;
 
-  /* Page chrome (component-system.md Section 6, DR-294, DR-295, DR-303) */
+  /* Page chrome (component-system.md Section 6, DR-294, DR-349) */
   --top-bar-inset: 0.625rem;
-  --switch-radius: 0.25rem;
-  --switch-thumb-inset: 0.1875rem;
-  --color-theme-control: var(--fill-neutral);
 }
 
 .dark {
   --color-bar: var(--interactive);
-  --color-theme-control: var(--interactive);
 }
 
 @media (min-width: 37.5rem) {
@@ -54,15 +50,14 @@
 
 @media (min-width: 48rem) {
   :root {
-    --top-bar-inset: 0.75rem;
+    --top-bar-inset: 1rem;
+    --icon-button-size-ghost: 2.25rem;
   }
 }
 
 /* The NavBar sets data-bar-stuck on <html> when it scrolls away; the TopBar reads it
    through this variant, not an arbitrary one (DR-287). */
 @custom-variant bar-stuck (html[data-bar-stuck] &);
-/* Bangla pages: the language difference is in CSS, not in a component (TYP-04) */
-@custom-variant lang-bn (&:lang(bn));
 
 @media (min-width: 64rem) {
   :root {

@@ -91,6 +91,23 @@ Safari does not move focus to links with the Tab key unless the setting "Press T
 | 13 | Low (keyboard) | `regions.spec.ts:540` | keyboard: every link in every region is reachable with the focus ring | bn |
 | 14 | Low (keyboard) | `regions.spec.ts:540` | keyboard: every link in every region is reachable with the focus ring | en |
 
+## Run 4 (new failures, by ticket)
+
+Each new WebKit failure of a run 4 ticket gets an ID here. R4-05 checks them in real Safari and gives the run 3 failures their IDs.
+
+### R4-01 (17 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit tests/e2e/header.spec.ts tests/e2e/site.spec.ts tests/e2e/regions.spec.ts` on `prototype-run-4`. 18 failed, 149 passed. 14 of the 18 are the run 3 failures in these files (SkipLink, drawer and search keyboard, theme storage event across tabs, regions phone tabs, regions axe in dark at 360, regions keyboard). 4 are new:
+
+| ID | Importance | File | Test | Lang | Error |
+| --- | --- | --- | --- | --- | --- |
+| W4-01 | Low (keyboard) | `header.spec.ts:885` | ghost buttons and the language link: … focus ring in light | bn | Tab reaches 2 of the 4 bar controls (`seen.size` 2, expected 4) |
+| W4-02 | Low (keyboard) | `header.spec.ts:885` | ghost buttons and the language link: … focus ring in dark | bn | Same |
+| W4-03 | Low (keyboard) | `header.spec.ts:885` | ghost buttons and the language link: … focus ring in light | en | Same |
+| W4-04 | Low (keyboard) | `header.spec.ts:885` | ghost buttons and the language link: … focus ring in dark | en | Same |
+
+Size, ink, hover, pressed and no-wash checks pass in WebKit; only the Tab part fails. Likely group C (Safari Tab order without "Press Tab to highlight each item"); not checked in a real Safari.
+
 ## Not checked
 
 - Whether each failure is new since R2-13. `PROGRESS.md` only gives counts (40 at R2-12, 5 regions at R2-13), not names.

@@ -119,11 +119,9 @@ export function Drawer({
         render={
           <IconButton
             variant="ghost"
-            size="bar"
             icon={Menu}
             label={strings.menu}
             title={strings.menu}
-            className="md:size-(--icon-button-size)"
             data-drawer-trigger=""
           />
         }
@@ -152,11 +150,10 @@ export function Drawer({
             render={
               <IconButton
                 variant="ghost"
-                size="bar"
                 icon={X}
                 label={strings.closeMenu}
                 title={strings.closeMenu}
-                className="-me-1.5 md:-me-3 md:size-(--icon-button-size)"
+                className="-me-1.5 md:-me-2"
               />
             }
           />
@@ -226,7 +223,7 @@ type ItemProps = {
 
 // Drawer.item: type-ui 600, rows min-h-13 (52px), a 1px rule under every category row,
 // inside the panel inset. Drawer.accordion: the label links to the category; a 44px caret
-// button at the end opens the child list below the row. The child group sits on the page
+// button (ghost, size default) at the end opens the child list below the row. The child group sits on the page
 // surface, as wide as the rules, with children indented 16px (DR-185, DR-295).
 function DrawerItem({
   item,
@@ -258,6 +255,7 @@ function DrawerItem({
               render={
                 <IconButton
                   variant="ghost"
+                  size="default"
                   icon={expanded ? ChevronUp : ChevronDown}
                   label={`${item.label}: ${strings.expand}`}
                   className="aria-expanded:text-interactive"

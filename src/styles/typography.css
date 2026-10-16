@@ -115,6 +115,9 @@
   --type-ui-sm-weight: 500;
   --type-ui-sm-line: 1.4;
   --type-ui-sm-tracking: 0;
+  --type-nav-size: 0.875rem;
+  --type-nav-weight: 600;
+  --type-nav-line: 1.4;
   --type-button-size: 0.875rem;
   --type-button-weight: 600;
   --type-button-line: 1.2;
@@ -221,6 +224,9 @@
   --type-ui-sm-weight: 500;
   --type-ui-sm-line: 1.5;
   --type-ui-sm-tracking: 0;
+  --type-nav-size: 1rem;
+  --type-nav-weight: 600;
+  --type-nav-line: 1.5;
   --type-button-size: 0.9375rem;
   --type-button-weight: 600;
   --type-button-line: 1.35;
@@ -444,6 +450,13 @@ body {
   font-weight: var(--type-ui-sm-weight);
   line-height: var(--type-ui-sm-line);
   letter-spacing: var(--type-ui-sm-tracking);
+}
+
+@utility type-nav {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-nav-size);
+  font-weight: var(--type-nav-weight);
+  line-height: var(--type-nav-line);
 }
 
 @utility type-button {

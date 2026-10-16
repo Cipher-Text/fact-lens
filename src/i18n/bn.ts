@@ -32,6 +32,8 @@ export const bn = {
     // SkipLink (C-17, DR-269).
     skipLink: "মূল খবরে যান",
     navHome: "হোম",
+    // The NavBar and Drawer item over the regions (component-system.md Section 3.3, DR-345).
+    navRegions: "অঞ্চলসমূহ",
     // The name of the caret button that opens the sub-items of a drawer row.
     expand: "উপবিভাগ",
   },

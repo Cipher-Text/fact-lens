@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 4 take the next free number: DOC-44, U-41, IMP-84, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
+New findings in run 4 take the next free number: DOC-45, U-41, IMP-84, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
 
 ## Summary
 
@@ -176,7 +176,7 @@ New findings in run 4 take the next free number: DOC-44, U-41, IMP-84, KIT-11 (I
 | IMP-60 | Audit 13 Oct | Next.js LCP warning on hero images | Low | Fixed in R3-04 |
 | IMP-61 | Audit 13 Oct | Component and folder names differ from the approved list | Medium | Fixed in R3-01 |
 | IMP-62 | Audit 13 Oct | Arbitrary variants that couple components | Medium | Fixed in R3-02 and R3-05 |
-| IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Decided (DR-345); code in R4-04 (hero শীর্ষ খবর; অঞ্চলসমূহ in P-3b, NavBar and Drawer) |
+| IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Decided (DR-345); NavBar and Drawer item অঞ্চলসমূহ fixed in R4-01; code in R4-04 (hero শীর্ষ খবর; অঞ্চলসমূহ in P-3b) |
 | IMP-64 | Audit 13 Oct | Dead code, stale comments and unused tokens | Low | Fixed in R3-01 |
 | IMP-65 | Audit 13 Oct | Production-only behavior is not tested | Low | Later: production smoke run in M2 (DR-345) |
 | IMP-66 | Audit 13 Oct | Proxy matcher and language cookie | Medium | Fixed in R3-08 |
@@ -196,7 +196,7 @@ New findings in run 4 take the next free number: DOC-44, U-41, IMP-84, KIT-11 (I
 | KIT-09 | Audit 13 Oct | Hooks and local permissions | Low | Fixed (kit patch applied 16 Oct, DR-336) |
 | KIT-10 | Audit 13 Oct | Definition of done names an e2e command that cannot pass | Medium | Fixed in R3-00 (`pnpm test:e2e:chromium`) |
 | DOC-39 | R3-02 | Header sheets disagree on focus, on the search component and on the close button order | Low | Decided (DR-348); code in R4-04 |
-| U-39 | R3-02 | No token for the theme control icon color (`interactive` in light, `ink` in dark) | Medium | Closed (DR-349: ThemeToggle and the theme icon token removed, icon ink); code in R4-01 |
+| U-39 | R3-02 | No token for the theme control icon color (`interactive` in light, `ink` in dark) | Medium | Closed (DR-349: ThemeToggle and the theme icon token removed, icon ink); Fixed in R4-01 |
 | U-40 | R3-03 | Divider.column (column-inset, column-full): tajmin sets where each version is used (DR-262) | Low | Decided (DR-351); code in R4-03 |
 | IMP-80 | R3-05 | DailyPoll: the fieldset is `display: contents` so its legend sits in the grid | Low | Closed: kept as built (DR-348); Safari check in R4-05 |
 | DOC-40 | R3-05 | C-26 `DailyPoll.vote`: "focus stays on the group" does not fit a button press | Low | Decided (DR-348); code in R4-04 |
@@ -212,6 +212,7 @@ New findings in run 4 take the next free number: DOC-44, U-41, IMP-84, KIT-11 (I
 | IMP-75 | R3-02 | The bar rule under 1280px follows the scroll position | Low | Resolved by spec (DR-348) |
 | IMP-76 | R3-02 | Removing `--scroll-offset` in the effect cleanup breaks a #hash scroll in development | Low | Closed: kept as built (DR-348); production check in R4-05 |
 | IMP-78 | R3-04 | The story time script is a little over 1 KB | Low | Resolved by spec (DR-348: 1.5 KB or less); check in R4-04 |
+| DOC-44 | R4-01 | C-17 gives the TopBar language link as 15px 600; typography §7 gives `type-ui-sm` 600 (14px on the En / English label) | Low | Open |
 | IMP-79 | R3-04 | A failed image shows the placeholder only after hydration | Low | Closed: kept as built (DR-348) |
 
 ## Open items (Later)
@@ -337,7 +338,7 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 
 ### U-39 No token for the theme control icon color
 
-- **Found:** R3-02, 16 Oct 2026 · **Severity:** Medium · **Status:** Closed (DR-349: ThemeToggle and the theme icon token removed, icon ink); code in R4-01
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Medium · **Status:** Closed (DR-349: ThemeToggle and the theme icon token removed, icon ink); Fixed in R4-01
 - **Source:** `color-system.md` §2.9 (icon `interactive` in light, `ink` in dark; only `--color-bar` and `--color-theme-control` are component color tokens); `COL-03`; `component-system.md` C-12 ThemeToggle and ThemeButton.
 - **Problem:** `--color-theme-control` is now the track color (`fill-neutral` / `interactive`). The icon color changes between themes, there is no token for it and `dark:` is not allowed. The code uses `text-interactive` in both themes. In dark the ThemeButton icon is `interactive`, not `ink` like the En text.
 - **Suggested solution:** allow a third component color token `--color-theme-icon` (`interactive` in light, `ink` in dark), or approve `interactive` in both themes. tajmin decides.
@@ -474,7 +475,12 @@ Entry format:
 
 ## New findings (run 4)
 
-None yet.
+### DOC-44 Language link size: C-17 and typography §7 disagree
+
+- **Found:** R4-01, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-17 `TopBar.language` ("Text link, 15px 600"); `typography-system.md` Section 7 ("Top bar language link: `type-ui-sm` at weight 600"); `TYP-04`.
+- **Problem:** the link carries `lang` of the other language (TYP-03), so `type-ui-sm` is 14px on the En / English label of a Bangla page and 15px only on বাংলা. C-17 says 15px at every place. The code follows typography §7 (`src/components/header/LanguageSwitch.tsx`), as it did in run 3.
+- **Suggested solution:** C-17 says "type-ui-sm 600 (typography §7)", or typography names a fixed 15px role for the link. tajmin decides.
 
 ## Change log
 
@@ -495,3 +501,4 @@ None yet.
 | 2026-10-16 | R3-00 (added later) | IMP-38, IMP-59 and KIT-10 set to Fixed in R3-00 |
 | 2026-10-16 | R3-08 (added later) | IMP-01, IMP-20, IMP-29, IMP-43, IMP-66, IMP-67 and IMP-70 set to Fixed in R3-08 |
 | 2026-10-16 | R4-00 | Run 3 review and design change (DR-345 to DR-351): statuses and run 4 tickets set; Summary rows IMP-78 and IMP-79 added; next free IDs DOC-44, U-41, IMP-84, KIT-11; template heading has no real ID |
+| 2026-10-17 | R4-01 | DOC-44 added; U-39 set to Fixed in R4-01; IMP-63 NavBar and Drawer part fixed in R4-01 |

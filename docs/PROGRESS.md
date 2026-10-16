@@ -7,9 +7,9 @@ Claude Code reads the "Now" section at the start of each session. `/ticket` and 
 ## Now
 
 - Run: 4 (short fix run). Branch `prototype-run-4`, made from `main` at `0bebd07`.
-- Ticket: R4-01 is next (To do). R4-00 (specs, docs and kit) was done by the blueprint setup on 16 October 2026.
+- Ticket: R4-02 (Motion and sticky header) is next (To do). R4-01 Done on 17 October 2026.
 - Specs in `docs/design-system/`: color 2.14, typography 2.15, layout 2.21, component-system 1.16, agent-contract 2.11.
-- Next action: tajmin runs `pnpm install` and `pnpm check`, then `/ticket` for R4-01.
+- Next action: tajmin runs `/clear`, then `/ticket` for R4-02.
 
 ## Past runs
 
@@ -28,7 +28,7 @@ The full run 1 and run 2 tables of this file are in git history at `0225398`; th
 | Ticket | Status | Log row |
 | --- | --- | --- |
 | R4-00 | Done (16 Oct 2026, blueprint setup) | `docs/run-4-log.md` |
-| R4-01 | To do | |
+| R4-01 | Done (17 Oct 2026) | `docs/run-4-log.md` |
 | R4-02 | To do | |
 | R4-03 | To do | |
 | R4-04 | To do | |
@@ -61,4 +61,4 @@ Add a row when a ticket reports `UNRESOLVED_DESIGN_SYSTEM`. Add the full entry t
 | ID | Found | File and component | Treatment used | Status |
 | --- | --- | --- | --- | --- |
 | U-40 | R3-03 | `Divider.tsx` (C-22) | No column divider built or placed | Decided: C-22 places column-inset (P-4 from 768, P-3 from 1024). Code in R4-03 |
-| U-39 | R3-02 | `ThemeToggle.tsx`, `ThemeButton.tsx` (C-12) | Icon `text-interactive` in both themes | Closed: ThemeToggle and the theme icon token are removed; ThemeButton icon is ink (C-12, C-17). Code in R4-01 |
+| U-39 | R3-02 | `ThemeToggle.tsx`, `ThemeButton.tsx` (C-12) | Icon `text-interactive` in both themes | Closed: ThemeToggle and the theme icon token are removed; ThemeButton icon is ink (C-12, C-17). Fixed in R4-01 |

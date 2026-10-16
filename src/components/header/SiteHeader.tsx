@@ -9,7 +9,6 @@ import { getNavItems } from "./navItems";
 import { NavBar } from "./NavBar";
 import { SearchDialog } from "./SearchDialog";
 import { ThemeButton } from "./ThemeButton";
-import { ThemeToggle } from "./ThemeToggle";
 import { TopBar } from "./TopBar";
 
 type Props = {
@@ -21,11 +20,11 @@ type Props = {
 /**
  * The page chrome (spacing-layout-system.md Section 6): the TopBar (C-17), then the NavBar
  * (C-18) from 1280. The Drawer (C-19) and the SearchDialog (C-20) open from the bar. The top
- * ad row goes above this, in the page. The bar and the nav row are siblings in <body>, so
- * the bar sticks for the whole page and the nav row scrolls away (LAY-15).
+ * ad row goes below this, in the page (DR-295). A fragment, not a wrapper: the TopBar is the
+ * one header landmark and the NavBar is a sibling nav landmark (DR-349).
  *
- * Phones: menu | logo | En, theme button. From 768px: menu, search | logo | English, theme
- * switch. No subscribe button (DR-188). The logo is a text stand-in in brand color until
+ * Phones: menu | logo | En, ThemeButton. From 768px: menu, search | logo | English,
+ * ThemeButton (one ThemeButton at every width, DR-349). No subscribe button (DR-188). The logo is a text stand-in in brand color until
  * the logo file exists (BRD-06, COL-04, U-08). The logo type is `type-logo` (DR-306).
  */
 export function SiteHeader({ lang, path = "/" }: Props) {
@@ -65,7 +64,6 @@ export function SiteHeader({ lang, path = "/" }: Props) {
           <>
             <LanguageSwitch lang={lang} path={path} />
             <ThemeButton strings={t.theme} />
-            <ThemeToggle strings={t.theme} />
           </>
         }
       />

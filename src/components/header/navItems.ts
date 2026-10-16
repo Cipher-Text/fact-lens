@@ -18,6 +18,7 @@ export type NavItem = {
  * (DR-01). There is no Op-ed item (DR-302). Both sub-items of Analysis and Opinion link to
  * the section heading, #analysis-opinion-title; every # target must exist (DR-331).
  * The labels are the working category labels (U-01); the C-18 list names them shorter.
+ * The Regions item reads অঞ্চলসমূহ / Regions (component-system.md Section 3.3, DR-345).
  */
 export function getNavItems(
   t: Dictionary,
@@ -29,18 +30,21 @@ export function getNavItems(
     label: t.categories[id],
     href: `#category-${id}`,
   });
-  const { title: regionsTitle, ...regionLabels } = t.regions;
-  const regions = Object.entries(regionLabels).map(([id, label]) => ({
-    id,
-    label,
-    href: `#region-${id}`,
-  }));
+  // The regions are every entry of the table but the section heading.
+  const regions = Object.entries(t.regions)
+    .filter(([id]) => id !== "title")
+    .map(([id, label]) => ({ id, label, href: `#region-${id}` }));
   const home = localizedPath(lang);
 
   return [
     { id: "home", label: t.header.navHome, href: home, current: path === "/" },
     category("bangladesh"),
-    { id: "regions", label: regionsTitle, href: "#regions", children: regions },
+    {
+      id: "regions",
+      label: t.header.navRegions,
+      href: "#regions",
+      children: regions,
+    },
     category("geopolitics"),
     category("economy"),
     category("security"),

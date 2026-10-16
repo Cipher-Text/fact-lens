@@ -28,7 +28,7 @@ function subscribe(onChange: () => void) {
 // The server does not know the stored choice, so it renders light, the first state.
 const getServerChoice = (): ThemeChoice => "light";
 
-/** The reader's stored theme choice, for ThemeToggle and ThemeButton. */
+/** The reader's stored theme choice, for the ThemeButton. */
 export function useThemeChoice(): ThemeChoice {
   return useSyncExternalStore(subscribe, readThemeChoice, getServerChoice);
 }

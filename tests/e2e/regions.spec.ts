@@ -142,6 +142,14 @@ for (const p of PAGES) {
           await expect(previous).toBeVisible();
           await expect(previous).toHaveAttribute("aria-disabled", "true");
           await expect(next).not.toHaveAttribute("aria-disabled");
+          // The filled slider buttons stay 44 x 44 (C-12, DR-349).
+          for (const button of [previous, next]) {
+            const size = await button.boundingBox();
+            expect([
+              Math.round(size?.width ?? 0),
+              Math.round(size?.height ?? 0),
+            ]).toEqual([44, 44]);
+          }
           const style = await row(page).evaluate((el) => ({
             snap: getComputedStyle(el).scrollSnapType,
             scrollbar: getComputedStyle(el).scrollbarWidth,
