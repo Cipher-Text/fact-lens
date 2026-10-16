@@ -18,7 +18,6 @@ const PAGES = [
     ],
     s: {
       vote: "ভোট দিন",
-      chooseOption: "একটি উত্তর বেছে নিন।",
       more: "আরও দেখুন",
       option: "সমুদ্র নিরাপত্তা",
       yourVote: "আপনার ভোট",
@@ -35,7 +34,6 @@ const PAGES = [
     ],
     s: {
       vote: "Vote",
-      chooseOption: "Choose an answer.",
       more: "See more",
       option: "Maritime security",
       yourVote: "Your vote",
@@ -268,71 +266,72 @@ for (const p of PAGES) {
         await expectNoBlockingAxe(page);
 
         const s = grouped(page);
-        await s.getByRole("button", { name: p.s.vote }).click();
-        await expect(s.getByText(p.s.chooseOption)).toBeVisible();
         await expectNoBlockingAxe(page);
-        await s.getByRole("radio", { name: p.s.option }).check({ force: true });
+        await s.getByRole("radio", { name: p.s.option }).click();
+        await expectNoBlockingAxe(page);
         await s.getByRole("button", { name: p.s.vote }).click();
         await expect(s.locator("[data-poll-results]")).toBeVisible();
         await expectNoBlockingAxe(page);
       });
     }
 
-    // C-26 sheet checks: the panel, its inset (LAY-20, DR-224), the layout per container
-    // width, the square markers (DR-138) and the vote button (C-12).
+    // C-26 sheet checks: no panel (DR-273), the layout per container width (DR-298), the
+    // spacing, the square markers (DR-138) and the vote button (C-12).
     for (const width of [360, 600, 768, 1023, 1024, 1280]) {
       test(`poll sheet at ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
         const poll = grouped(page).locator("[data-poll]");
-        const panel = poll.locator(".panel-inset");
-        const panelBox = await box(panel);
-        // In the 304px rail from 1024: container under 600, so 40 / 32 and stacked.
         // The container is the shell: width minus two gutters (24px from 600). A container
         // of 600px or more means a viewport of 648px or more (DOC-31).
         const inRow = width < 1024 && width - 48 >= 600;
-        const style = await panel.evaluate((el) => {
+
+        // No panel: no background, padding, border, radius or shadow on the section.
+        const style = await poll.evaluate((el) => {
           const c = getComputedStyle(el);
           return {
             bg: c.backgroundColor,
-            top: c.paddingTop,
-            start: c.paddingLeft,
+            padding: c.padding,
+            border: c.borderTopWidth,
           };
         });
-        expect(style.top).toBe(inRow ? "48px" : "40px");
-        expect(style.start).toBe(inRow ? "40px" : "32px");
-        // The panel is surface-elevated, not the page color.
-        const page_bg = await page.evaluate(
-          () => getComputedStyle(document.body).backgroundColor,
-        );
-        expect(style.bg).not.toBe(page_bg);
-        if (width >= 1024) expect(Math.round(panelBox.width)).toBe(304);
-
-        // Row layout: heading and question at the start, options and button at the end.
-        const heading = await box(poll.getByRole("heading", { level: 2 }));
-        const options = await box(poll.locator("fieldset"));
-        if (inRow) {
-          expect(options.x).toBeGreaterThan(heading.x + heading.width - 1);
-          expect(Math.round(options.y)).toBe(Math.round(heading.y));
-        } else {
-          expect(options.y).toBeGreaterThan(heading.y + heading.height);
+        expect(style.bg).toBe("rgba(0, 0, 0, 0)");
+        expect(style.padding).toBe("0px");
+        expect(style.border).toBe("0px");
+        expect(await poll.locator(".panel-inset").count()).toBe(0);
+        if (width >= 1024) {
+          expect(Math.round((await box(poll)).width)).toBe(304);
         }
 
-        // Heading 22px role, plain text; question to options 24px when stacked.
-        const question = await box(poll.locator("p").first());
-        if (!inRow) {
+        // The question is the legend of the fieldset and names the group (DR-273).
+        const heading = await box(poll.getByRole("heading", { level: 2 }));
+        const legend = poll.locator("fieldset > legend");
+        await expect(legend).toHaveCount(1);
+        const question = await box(legend);
+        const group = poll.getByRole("group");
+        await expect(group).toHaveCount(1);
+        await expect(poll.getByRole("radiogroup")).toHaveCount(1);
+        const options = await box(poll.getByRole("radiogroup"));
+        // Heading 16px to the question.
+        expect(Math.round(question.y - (heading.y + heading.height))).toBe(16);
+        if (inRow) {
+          // Heading and question at the start, options at the end, tops level.
+          expect(options.x).toBeGreaterThan(question.x + question.width - 1);
+          expect(Math.round(options.y)).toBe(Math.round(heading.y));
+        } else {
+          // Stacked: 24px from the question to the first option.
           expect(Math.round(options.y - (question.y + question.height))).toBe(
             24,
           );
         }
 
-        // 2 to 4 rows, 4px apart, no radius on markers, rows or the button.
-        const rows = poll.locator("fieldset label");
+        // 2 to 4 rows, 48px or more, 4px apart; markers, rows and button have no radius.
+        const rows = poll.getByRole("radio");
         await expect(rows).toHaveCount(4);
         const first = await box(rows.nth(0));
         const second = await box(rows.nth(1));
         expect(Math.round(second.y - (first.y + first.height))).toBe(4);
-        expect(first.height).toBeGreaterThanOrEqual(44);
+        expect(first.height).toBeGreaterThanOrEqual(48);
         const radii = await poll.evaluate((el) =>
           [el, ...el.querySelectorAll("*")]
             .map((n) => getComputedStyle(n).borderRadius)
@@ -346,7 +345,19 @@ for (const p of PAGES) {
         );
         expect(shadows).toEqual([]); // COL-15
 
-        // The vote button: one 48px size, the full width of the options column.
+        // Marker: 20px square, 2px interactive border; selected holds a 12px square.
+        const marker = rows.first().locator("[data-slot=radio-group-marker]");
+        const markerBox = await box(marker);
+        expect([markerBox.width, markerBox.height]).toEqual([20, 20]);
+        expect(
+          await marker.evaluate((el) => getComputedStyle(el).borderTopWidth),
+        ).toBe("2px");
+        await expect(marker.locator("span")).toHaveCount(0);
+        await rows.first().click();
+        const dot = await box(marker.locator("span"));
+        expect([dot.width, dot.height]).toEqual([12, 12]);
+
+        // The vote button: 48px, the full width of the options column, 24px below them.
         const button = await box(poll.getByRole("button", { name: p.s.vote }));
         expect(Math.round(button.height)).toBe(48);
         expect(Math.round(button.width)).toBe(Math.round(options.width));
@@ -355,17 +366,15 @@ for (const p of PAGES) {
       });
     }
 
-    test("poll: no answer shows the error and keeps the focus on the first option", async ({
+    test("poll: pressing vote with no choice does nothing", async ({
       page,
     }) => {
       await page.goto(p.path);
       const poll = grouped(page).locator("[data-poll]");
       await poll.getByRole("button", { name: p.s.vote }).click();
-      await expect(poll.getByText(p.s.chooseOption)).toBeVisible();
-      await expect(poll.getByRole("radio").first()).toBeFocused();
-      await expect(poll.locator("fieldset")).toHaveAccessibleDescription(
-        p.s.chooseOption,
-      );
+      await expect(poll.getByRole("radio")).toHaveCount(4);
+      await expect(poll.locator("[data-poll-results]")).toHaveCount(0);
+      await expect(poll.locator("[role=alert]")).toHaveCount(0);
       await expect(poll.getByRole("group", { name: /./ })).toHaveCount(1);
     });
 
@@ -378,22 +387,44 @@ for (const p of PAGES) {
       const railAd = grouped(page).locator('[data-ad-slot="ad-rail"]');
       const pageY = async () =>
         (await box(railAd)).y + (await page.evaluate(() => scrollY));
+      // Wait until fonts and images have settled, or the first reading is of a page that
+      // is still growing.
+      await page.waitForLoadState("load");
+      await page.evaluate(() => document.fonts.ready);
       const adBefore = await pageY();
-      await poll
-        .getByRole("radio", { name: p.s.option })
-        .check({ force: true });
+      await poll.getByRole("radio", { name: p.s.option }).click();
       await poll.getByRole("button", { name: p.s.vote }).click();
       // The vote does not move the rail ad (LAY-10).
       expect(await pageY()).toBe(adBefore);
       const mine = poll.locator('[data-poll-result="maritime"]');
       await expect(mine).toContainText(p.s.yourVote);
-      const markerFill = (id: string) =>
+      // Own vote: interactive bar; the others: fill-neutral (DR-295). Bars are aria-hidden.
+      const barFill = (id: string) =>
         poll
-          .locator(`[data-poll-result="${id}"] span[aria-hidden="true"]`)
-          .nth(1)
+          .locator(`[data-poll-result="${id}"] [data-poll-bar]`)
           .evaluate((el) => getComputedStyle(el).backgroundColor);
-      expect(await markerFill("maritime")).not.toBe(await markerFill("trade"));
+      expect(await barFill("maritime")).not.toBe(await barFill("trade"));
+      expect(await barFill("trade")).toBe("rgb(126, 126, 126)");
+      // Results are the one live region; the markers are gone.
       await expect(poll.locator("[role=status]")).toHaveCount(1);
+      await expect(poll.locator("[data-poll-results]")).toHaveAttribute(
+        "role",
+        "status",
+      );
+      await expect(poll.getByRole("radio")).toHaveCount(0);
+      const markers = poll.locator("[data-slot=radio-group-marker]");
+      for (const state of await markers.evaluateAll((els) =>
+        els.map((el) => getComputedStyle(el).visibility),
+      )) {
+        expect(state).toBe("hidden");
+      }
+      // Bars are 32px high with no radius.
+      const bar = await box(
+        poll
+          .locator('[data-poll-result="trade"] [data-poll-bar]')
+          .locator(".."),
+      );
+      expect(Math.round(bar.height)).toBe(32);
     });
 
     test("poll: one vote per browser, then result bars", async ({
@@ -403,9 +434,7 @@ for (const p of PAGES) {
       await page.goto(p.path);
       const poll = grouped(page).locator("[data-poll]");
       await expect(poll.getByRole("radio")).toHaveCount(4);
-      await poll
-        .getByRole("radio", { name: p.s.option })
-        .check({ force: true });
+      await poll.getByRole("radio", { name: p.s.option }).click();
       await poll.getByRole("button", { name: p.s.vote }).click();
 
       const results = poll.locator("[data-poll-result]");
@@ -426,6 +455,24 @@ for (const p of PAGES) {
         );
       expect(fractions.reduce((sum, f) => sum + f, 0)).toBeCloseTo(1, 1);
       for (const f of fractions) expect(f).toBeLessThanOrEqual(1);
+      // The percent is ink, and the whole number turns background once the fill reaches the
+      // start of the number (C-26, DR-273). Measured, not hard-coded.
+      const flips = await poll.locator("[data-poll-bar]").evaluateAll((bars) =>
+        bars.map((bar) => {
+          const number = bar.nextElementSibling as HTMLElement;
+          const fillEnd = bar.getBoundingClientRect().right;
+          const reaches = fillEnd >= number.getBoundingClientRect().left;
+          return {
+            reaches,
+            color: getComputedStyle(number).color,
+            ink: getComputedStyle(document.body).color,
+            background: getComputedStyle(document.body).backgroundColor,
+          };
+        }),
+      );
+      for (const flip of flips) {
+        expect(flip.color).toBe(flip.reaches ? flip.background : flip.ink);
+      }
       const text = await poll.innerText();
       if (p.lang === "bn") expect(text).not.toMatch(/[0-9]/); // TYP-17
 
@@ -482,14 +529,9 @@ for (const p of PAGES) {
           if (!el?.closest(sel)) return null;
           return {
             name: `${el.tagName}:${el.getAttribute("href") ?? el.getAttribute("type") ?? ""}`,
-            // The base outline (COL-13). The radio input is hidden, so the outline is on its
-            // square marker, the next element.
+            // The base outline (COL-13) on the focused element.
             ring: (() => {
-              const target =
-                el instanceof HTMLInputElement && el.type === "radio"
-                  ? (el.nextElementSibling as HTMLElement)
-                  : el;
-              const s = getComputedStyle(target);
+              const s = getComputedStyle(el);
               return s.outlineStyle === "solid" && s.outlineWidth === "2px"
                 ? "outline"
                 : "none";

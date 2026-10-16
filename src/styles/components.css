@@ -149,17 +149,35 @@
   }
 }
 
-/* DailyPoll layout (C-26): stacked in a container under 600px, a row from 600px with the
-   question and heading at the start and the options and button at the end. The panel
-   container is the DailyPoll section. Section 6 has no token for it (CPT-07, DOC-31). */
+/* DailyPoll layout (C-26, DR-298): one column in a container under 600px (phones, the 304px
+   rail); from 600px two equal columns with the column gap: heading and question at the start,
+   options (or results) and the button at the end. The parts are marked data-poll-part and sit
+   in grid areas, so the source order stays the reading order (LAY-14). The choose parts and
+   the results share the area "cell", so the vote does not change the height (LAY-10). The
+   section is the container. Section 6 has no token for it (CPT-07, DOC-31). */
 @utility poll-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: --spacing(6);
+  grid-template-areas: "heading" "question" "cell";
+  & [data-poll-part="heading"] {
+    grid-area: heading;
+  }
+  & [data-poll-part="question"] {
+    grid-area: question;
+    margin-block-start: --spacing(4);
+  }
+  & [data-poll-part="cell"] {
+    grid-area: cell;
+    margin-block-start: --spacing(6);
+  }
   @container (width >= 37.5rem) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "heading cell" "question cell";
     column-gap: var(--grid-column-gap);
-    row-gap: 0;
+    & [data-poll-part="cell"] {
+      margin-block-start: 0;
+    }
   }
 }
 

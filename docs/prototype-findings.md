@@ -68,7 +68,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Fixed in R3-02 |
 | DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Decided (DR-296); code in R3-07 |
 | DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Fixed in R3-04 |
-| DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Decided (DR-298); code in R3-05 |
+| DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Fixed in R3-05 |
 | DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Fixed in R3-03 |
 | DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Fixed in R3-03 |
 | DOC-34 | R2-15 | C-17 and §12.3 give the top bar `h-(--bar-height)` (a fixed height); the C-17 checks and DR-81 say the bar can wrap to two lines at 200% text size | Low | Fixed in R3-02 |
@@ -139,7 +139,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-23 | FL-08 | P-2 has no "আরও দেখুন" link | Low | Fixed in R2-10 |
 | IMP-24 | FL-09 | Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test | Medium | Decided (DR-276); code in R3-07 |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Later: newsletter phase (DR-343) |
-| IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Decided (DR-277); code in R3-05 |
+| IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Fixed in R3-05 |
 | IMP-27 | FL-11 | Regions slider: tab mode follows the CSS, scripted 250ms scroll, hash selects a tab | Low | Decided by C-15 in R2-13: scrollbar hidden; scripted slide is 450ms with `--ease-slide`; see IMP-51 |
 | IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Obsolete: `StoryStack` deleted in R2-13. The `SectionHeading` `actions` slot stays; the sheet names it |
 | IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Decided (DR-278); code in R3-08 |
@@ -163,10 +163,10 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-47 | R2-07 | The story units are wired into the hero (needed to keep it building); two hero tests and the hero e2e layout checks were changed to the sheets. A development-only test page `/dev/story-units` carries the unit tests | Medium | Closed (DR-317): no run 3 code change |
 | IMP-48 | R2-07 | `StoryCard` `layout` has four values (`stack`, `row`, `row-from-md`, `row-until-lg`) and `OverlapCard` has a `surface` prop, so a section can set the page-breakpoint switch and the P-4 background; the sheets say "the section sets it" but give no prop | Low | Fixed in R3-01 |
 | IMP-49 | R2-09 | Mock content changed to the sheet counts: 3 analysis stories (1 feature, 2 compact) and 5 opinion pieces; the `listItem` class file is gone | Low | Done in R2-09 (mock counts follow the sheets) |
-| IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Decided (DR-273); code in R3-05 |
+| IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Fixed in R3-05 |
 | IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Decided (DR-284); code in R3-06 |
 | IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Decided (DR-318); code in R3-06 |
-| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Decided (DR-319); code in R3-05 |
+| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Fixed in R3-05 |
 | IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Fixed in R3-03 |
 | IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Decided (DR-321); code in R3-06 |
 | IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Fixed in R3-02 |
@@ -175,7 +175,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-59 | Audit 13 Oct | Tests that depend on the environment | Medium | Fixed in R3-00 (slider animation test and a fixed sleep no longer depend on machine speed) |
 | IMP-60 | Audit 13 Oct | Next.js LCP warning on hero images | Low | Fixed in R3-04 |
 | IMP-61 | Audit 13 Oct | Component and folder names differ from the approved list | Medium | Fixed in R3-01 |
-| IMP-62 | Audit 13 Oct | Arbitrary variants that couple components | Medium | Decided (DR-287); code in R3-02, R3-05 |
+| IMP-62 | Audit 13 Oct | Arbitrary variants that couple components | Medium | Fixed in R3-02 and R3-05 |
 | IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Decided (DR-288); code in R3-06 |
 | IMP-64 | Audit 13 Oct | Dead code, stale comments and unused tokens | Low | Fixed in R3-01 |
 | IMP-65 | Audit 13 Oct | Production-only behavior is not tested | Low | Decided (DR-327); code in R3-09 |
@@ -198,6 +198,9 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | DOC-39 | R3-02 | Header sheets disagree on focus, on the search component and on the close button order | Low | Open |
 | U-39 | R3-02 | No token for the theme control icon color (`interactive` in light, `ink` in dark) | Medium | Workaround in code (`interactive` in both themes) |
 | U-40 | R3-03 | Divider.column (column-inset, column-full): tajmin sets where each version is used (DR-262) | Low | Open: flag for tajmin |
+| IMP-80 | R3-05 | DailyPoll: the fieldset is `display: contents` so its legend sits in the grid | Low | Open |
+| DOC-40 | R3-05 | C-26 `DailyPoll.vote`: "focus stays on the group" does not fit a button press | Low | Open |
+| IMP-81 | R3-05 | DailyPoll keeps a hidden copy of the results to hold the cell height | Low | Open |
 | IMP-72 | R3-02 | Base UI hides the page behind the panel with `aria-hidden`, not `inert` | Low | Open |
 | IMP-73 | R3-02 | ThemeToggle is a hand-built switch, not the shadcn Switch | Low | Open |
 | IMP-74 | R3-02 | Region links in the Drawer have no target for 3 of 7 regions | Medium | Open; code in R3-06 |
@@ -401,6 +404,28 @@ Entry format:
 - **Suggested solution:** one proposal. tajmin decides.
 ```
 
+### IMP-80 DailyPoll: the fieldset is `display: contents` so its legend sits in the grid
+
+- **Found:** R3-05, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-26 (DR-273, DR-298); `DailyPoll.tsx`, `@utility poll-layout` in `components.css`.
+- **Problem:** the sheet wants the question as the legend of a fieldset, and also in the start column next to the options (DOC-31). A legend of a normal fieldset cannot be a grid item. The fieldset has `display: contents`, so the legend and the options cell are items of the grid. The group name works in Chromium (tested). WebKit and Firefox are not tested yet.
+- **Suggested solution:** keep it. Check the group name in WebKit in R3-09.
+
+### DOC-40 C-26 `DailyPoll.vote`: "focus stays on the group" does not fit a button press
+
+- **Found:** R3-05, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-26 `DailyPoll.vote` ("a press with no choice does nothing and focus stays on the group").
+- **Problem:** the button has the focus when it is pressed, so focus cannot stay on the group. The code does nothing: no message, no focus move, so the focus stays on the button.
+- **Suggested solution:** change the sheet to "does nothing and focus stays where it is", or say that focus returns to the first option.
+
+### IMP-81 DailyPoll keeps a hidden copy of the results to hold the cell height
+
+- **Found:** R3-05, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-26 `DailyPoll.results` ("replaces the choose state in place"); `LAY-10`; `DailyPoll.tsx`.
+- **Problem:** the results (4 rows of 64px, gaps and the total line) are taller than the choose state, so the vote would move the rail ad (66px at 1280). A hidden copy of the results (`inert`, `aria-hidden`, `invisible`) shares the grid cell before the vote and holds the height.
+- **Spec difference:** C-26 names `@utility stack-cell` for the shared cell. The legend and the choose parts are inside the fieldset (`display: contents`) while the results are outside, so one wrapper cannot hold both. The code puts both in the grid area `cell` of `poll-layout`. The result is the same.
+- **Suggested solution:** keep it, and let the sheet say "share one grid cell" without the utility name. tajmin decides.
+
 ## Change log
 
 | Date | Ticket | Change |
@@ -413,3 +438,4 @@ Entry format:
 | 2026-10-16 | R3-02 | DOC-39, U-39 and IMP-72 to IMP-76 added; DOC-27, DOC-28, DOC-34, DOC-37, U-31, U-32, U-38, IMP-02, IMP-13, IMP-31, IMP-39, IMP-40, IMP-42, IMP-56, IMP-68 and IMP-69 set to Fixed in R3-02 |
 | 2026-10-16 | R3-03 | U-40 added; DOC-32, DOC-33, U-03, U-16, U-34, IMP-37 and IMP-54 set to Fixed in R3-03 |
 | 2026-10-16 | R3-04 | IMP-78 and IMP-79 added; DOC-26, DOC-30, U-14, U-33, U-37, IMP-10, IMP-19, IMP-36 and IMP-60 set to Fixed in R3-04 |
+| 2026-10-16 | R3-05 | IMP-80, DOC-40 and IMP-81 added; DOC-31, IMP-26, IMP-50, IMP-53 and IMP-62 set to Fixed in R3-05 |

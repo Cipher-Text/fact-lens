@@ -76,10 +76,8 @@ export const bn = {
   poll: {
     title: "আজকের জরিপ",
     vote: "ভোট দিন",
-    chooseOption: "একটি উত্তর বেছে নিন।",
-    voted: "ধন্যবাদ, আপনার ভোট নেওয়া হয়েছে।",
-    yourVote: "(আপনার ভোট)",
-    total: "মোট {count}টি ভোট",
+    yourVote: "আপনার ভোট",
+    total: "{count} জন ভোট দিয়েছেন",
   },
   ads: {
     label: "বিজ্ঞাপন",

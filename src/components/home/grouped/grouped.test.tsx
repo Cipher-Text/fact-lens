@@ -133,12 +133,14 @@ describe("DailyPoll", () => {
   const poll = getPoll("bn");
   const strings = getDictionary("bn").poll;
 
-  it("asks for an answer before it takes a vote", async () => {
+  it("does nothing when the vote button is pressed with no choice (C-26)", async () => {
     const user = userEvent.setup();
     render(<DailyPoll poll={poll} strings={strings} />);
     expect(screen.getAllByRole("radio")).toHaveLength(4);
+    expect(screen.getByRole("group", { name: poll.question })).toBeVisible();
     await user.click(screen.getByRole("button", { name: "ভোট দিন" }));
-    expect(screen.getByText("একটি উত্তর বেছে নিন।")).toBeInTheDocument();
+    expect(screen.getAllByRole("radio")).toHaveLength(4);
+    expect(screen.queryByRole("status")).toBeNull();
     expect(window.localStorage.getItem(pollStorageKey(poll.id))).toBeNull();
   });
 
@@ -158,9 +160,11 @@ describe("DailyPoll", () => {
     expect(mine).toHaveTextContent("আপনার ভোট");
     // 538 + 1 of 1,401 votes is 38.47%; the largest remainder rounds it to 39%, so the four add up to 100.
     expect(mine).toHaveTextContent("৩৯%");
-    expect(container).toHaveTextContent("মোট ১,৪০১টি ভোট");
+    expect(container).toHaveTextContent("১,৪০১ জন ভোট দিয়েছেন");
     expect(container.textContent).not.toMatch(/[0-9]/);
-    expect(screen.getByRole("status")).toHaveTextContent(strings.voted);
+    expect(screen.getByRole("status")).toBe(
+      container.querySelector("[data-poll-results]"),
+    );
 
     // A new visit shows the results, not the form.
     unmount();

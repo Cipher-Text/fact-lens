@@ -76,10 +76,8 @@ export const en: Dictionary = {
   poll: {
     title: "Daily poll",
     vote: "Vote",
-    chooseOption: "Choose an answer.",
-    voted: "Thank you, your vote is counted.",
-    yourVote: "(Your vote)",
-    total: "{count} votes in total",
+    yourVote: "Your vote",
+    total: "{count} votes",
   },
   ads: {
     label: "Advertisement",

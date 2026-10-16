@@ -63,7 +63,7 @@ The specs in `docs/design-system/` must be the 16 October versions (layout 2.18,
 | R3-02 | Header, panels and theme | Done |
 | R3-03 | Dividers, gaps and panel band | Done |
 | R3-04 | Story units and images | Done |
-| R3-05 | DailyPoll | To do |
+| R3-05 | DailyPoll | Done |
 | R3-06 | Regions and Most read | To do |
 | R3-07 | Ads | To do |
 | R3-08 | Accessibility, language and footer | To do |
