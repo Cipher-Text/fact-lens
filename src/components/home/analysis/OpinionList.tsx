@@ -7,7 +7,7 @@ import type { Lang, Story } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
 import { formatTime } from "@/lib/format";
 
-import { QuoteMark } from "./QuoteMark";
+import { QuoteMark } from "@/components/story/QuoteMark";
 
 type OpinionListProps = {
   lang: Lang;

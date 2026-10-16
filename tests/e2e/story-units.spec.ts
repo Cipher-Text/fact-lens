@@ -128,7 +128,7 @@ for (const path of PAGES) {
         else expect(b.y).toBeGreaterThan(a.y);
       });
 
-      test("StoryCard: layouts move the image with the grid, text first in the markup", async ({
+      test("StoryCard: layouts move the image with the grid, image first in the markup", async ({
         page,
       }) => {
         const wrapperWidth = (await box(page.locator('[data-case="feature"]')))

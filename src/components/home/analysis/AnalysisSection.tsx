@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { AnalysisList } from "./AnalysisList";
 import { OpinionList } from "./OpinionList";
 
-type AnalysisOpinionProps = {
+type AnalysisSectionProps = {
   lang: Lang;
   section: AnalysisOpinionSection;
   t: Dictionary;
@@ -24,12 +24,12 @@ type AnalysisOpinionProps = {
  * inner div carries `panel-inset`. Space before and after the section is margin outside the
  * background, set by the page (LAY-12, DR-205).
  */
-export function AnalysisOpinion({
+export function AnalysisSection({
   lang,
   section,
   t,
   className,
-}: AnalysisOpinionProps) {
+}: AnalysisSectionProps) {
   const { analysis, opinion } = section;
   const both = analysis.length > 0 && opinion.length > 0;
   return (

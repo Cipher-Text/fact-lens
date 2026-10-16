@@ -6,13 +6,16 @@ import { getHomepage, getPoll } from "@/content";
 import { getDictionary } from "@/i18n";
 
 import { DailyPoll } from "./DailyPoll";
-import { GroupedCategories, MAX_INSETS } from "./GroupedCategories";
+import {
+  GroupedCategoriesSection,
+  MAX_INSETS,
+} from "./GroupedCategoriesSection";
 import { pollStorageKey } from "./usePollVote";
 
 function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
   const grouped = getHomepage(lang, { variant }).grouped!;
   return render(
-    <GroupedCategories
+    <GroupedCategoriesSection
       lang={lang}
       categories={grouped.categories}
       poll={grouped.poll}
@@ -30,7 +33,7 @@ const rowsOf = (container: HTMLElement) =>
 
 beforeEach(() => window.localStorage.clear());
 
-describe("GroupedCategories (P-3)", () => {
+describe("GroupedCategoriesSection (P-3)", () => {
   it("puts the categories in rows of two in the wrapper, then the rail (LAY-05, LAY-14)", () => {
     const { container } = renderSection("bn");
     const grid = container.querySelector(".with-rail")!;

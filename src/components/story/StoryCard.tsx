@@ -37,7 +37,8 @@ type StoryCardProps = {
 
 const ratioClass = { "3:2": "aspect-3/2", "16:9": "aspect-video" } as const;
 
-// Placement on one grid, no `order` (LAY-14). The body is first in the markup at every layout.
+// Placement on one grid, no `order` (LAY-14). The media is first in the markup at every layout
+// (C-24, DR-267); in a row layout the grid puts it at the end.
 // `grid-cols-1` is the stack; a split utility sets the two row columns. Class names are whole
 // strings so Tailwind finds them.
 const splitRow = {
@@ -82,8 +83,8 @@ function layoutClasses(layout: StoryCardLayout, split: "third" | "feature") {
 
 /**
  * C-24 StoryCard: one story with an image and text. Every image story that is not a
- * LeadStory or an OverlapCard. One grid with a body and a media part; the body is first in
- * the markup and the grid moves the image. No radius, no card border; the list around the
+ * LeadStory or an OverlapCard. One grid with a media and a body part; the media is first in
+ * the markup (DR-267) and the grid moves it to the end in a row. No radius, no card border; the list around the
  * card draws the rules. Titles wrap and are never cut (CPT-08). A story with no image shows
  * the placeholder image (StoryImage, U-33).
  */
@@ -108,6 +109,12 @@ export function StoryCard({
       data-layout={layout}
       className={cn("grid", classes.root, className)}
     >
+      <StoryImage
+        story={story}
+        eager={eager}
+        className={cn("self-start", classes.media)}
+        imageClassName={ratioClass[ratio]}
+      />
       <div className={cn("min-w-0", classes.body)}>
         {eyebrow ? (
           <Eyebrow
@@ -137,12 +144,6 @@ export function StoryCard({
           }
         />
       </div>
-      <StoryImage
-        story={story}
-        eager={eager}
-        className={cn("self-start", classes.media)}
-        imageClassName={ratioClass[ratio]}
-      />
     </article>
   );
 }

@@ -4,18 +4,22 @@ import { describe, expect, it } from "vitest";
 import { getHomepage, type FeaturedSection } from "@/content";
 import { getDictionary } from "@/i18n";
 
-import { FeaturedCategory } from "./FeaturedCategory";
+import { FeaturedCategorySection } from "./FeaturedCategorySection";
 
 function renderSection(lang: "bn" | "en", section: FeaturedSection) {
   return render(
-    <FeaturedCategory lang={lang} section={section} t={getDictionary(lang)} />,
+    <FeaturedCategorySection
+      lang={lang}
+      section={section}
+      t={getDictionary(lang)}
+    />,
   );
 }
 
 const full = getHomepage("bn").featured;
 const sparse = getHomepage("bn", { variant: "sparse" }).featured;
 
-describe("FeaturedCategory (P-2)", () => {
+describe("FeaturedCategorySection (P-2)", () => {
   it("is a shell section named by its category, with the nav anchor id (IMP-14)", () => {
     const { container } = renderSection("bn", full.bangladesh!);
     const section = container.firstElementChild as HTMLElement;
@@ -48,9 +52,9 @@ describe("FeaturedCategory (P-2)", () => {
     expect(card).toHaveAttribute("data-layout", "row-from-md");
     expect(card.className).toContain("md:story-split-feature");
     expect(card.className).not.toMatch(/\border-/);
-    // Text before the image in the markup (LAY-14).
-    expect(card.children[0]).not.toHaveAttribute("data-story-media");
-    expect(card.children[1]).toHaveAttribute("data-story-media");
+    // Image before the text in the markup; the grid puts the image at the end (LAY-14, DR-267).
+    expect(card.children[0]).toHaveAttribute("data-story-media");
+    expect(card.children[1]).not.toHaveAttribute("data-story-media");
     expect(card.querySelector("[data-story-media] img")).toHaveClass(
       "aspect-3/2",
     );

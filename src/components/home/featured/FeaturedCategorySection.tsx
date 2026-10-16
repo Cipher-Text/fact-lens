@@ -9,7 +9,7 @@ import { StoryList } from "@/components/story/StoryList";
 import type { FeaturedSection, Lang } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
 
-type FeaturedCategoryProps = {
+type FeaturedCategorySectionProps = {
   lang: Lang;
   section: FeaturedSection;
   t: Dictionary;
@@ -25,12 +25,12 @@ type FeaturedCategoryProps = {
  * stories: the wrapper spans the shell. One MoreLink at the section end (DR-110, DR-123).
  * The heading is plain text (DR-122). The section id is the anchor of the nav links (IMP-14).
  */
-export function FeaturedCategory({
+export function FeaturedCategorySection({
   lang,
   section,
   t,
   className,
-}: FeaturedCategoryProps) {
+}: FeaturedCategorySectionProps) {
   const { category, lead, rail } = section;
   const titleId = `category-${category}-title`;
   const [imageStory, ...textStories] = rail;

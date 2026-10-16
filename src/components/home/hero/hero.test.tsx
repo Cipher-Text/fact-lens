@@ -1,19 +1,19 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { getHomepage, type HeroSection } from "@/content";
+import { getHomepage, type HeroContent } from "@/content";
 import { getDictionary } from "@/i18n";
 
-import { Hero } from "./Hero";
+import { HeroSection } from "./HeroSection";
 
-function renderHero(lang: "bn" | "en", hero: HeroSection) {
-  return render(<Hero hero={hero} t={getDictionary(lang)} />);
+function renderHero(lang: "bn" | "en", hero: HeroContent) {
+  return render(<HeroSection hero={hero} t={getDictionary(lang)} />);
 }
 
 const full = getHomepage("bn").hero!;
 const sparse = getHomepage("bn", { variant: "sparse" }).hero!;
 
-describe("Hero (P-1)", () => {
+describe("HeroSection (P-1)", () => {
   it("has the wrapper before the rail, with the lead, two top stories and Latest", () => {
     const { container } = renderHero("bn", full);
     const grid = container.querySelector(".with-rail")!;

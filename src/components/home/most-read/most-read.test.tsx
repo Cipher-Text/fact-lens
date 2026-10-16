@@ -4,15 +4,17 @@ import { describe, expect, it } from "vitest";
 import { getHomepage } from "@/content";
 import { getDictionary } from "@/i18n";
 
-import { MostRead } from "./MostRead";
+import { MostReadSection } from "./MostReadSection";
 
 function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
   const stories = getHomepage(lang, { variant }).mostRead!;
-  const view = render(<MostRead stories={stories} t={getDictionary(lang)} />);
+  const view = render(
+    <MostReadSection stories={stories} t={getDictionary(lang)} />,
+  );
   return { ...view, stories };
 }
 
-describe("MostRead (P-5)", () => {
+describe("MostReadSection (P-5)", () => {
   it("is a section named by its heading, with the top 5 as an ordered list (DR-51)", () => {
     const { stories } = renderSection("bn");
     const section = screen.getByRole("region", { name: "সর্বাধিক পঠিত" });

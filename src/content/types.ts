@@ -49,7 +49,7 @@ export interface Story {
 }
 
 /** P-1: lead, one or two top stories (DR-44), and the Latest rail. */
-export interface HeroSection {
+export interface HeroContent {
   lead: Story;
   top: Story[];
   latest: Story[];
@@ -99,7 +99,7 @@ export interface Poll {
  */
 export interface Homepage {
   lang: Lang;
-  hero: HeroSection | null;
+  hero: HeroContent | null;
   analysisOpinion: AnalysisOpinionSection | null;
   featured: {
     bangladesh: FeaturedSection | null;

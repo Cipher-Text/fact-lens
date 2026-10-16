@@ -95,13 +95,13 @@ describe("OverlapCard (C-02)", () => {
 });
 
 describe("StoryCard (C-24)", () => {
-  it("puts the text before the image in the markup, with no order class (LAY-14)", () => {
+  it("puts the image before the text in the markup at every layout, with no order class (LAY-14, DR-267)", () => {
     const { container } = render(
       <StoryCard story={withImage} strings={bn} layout="row" />,
     );
     const card = container.querySelector("[data-story-card]")!;
-    expect(card.children[0]).not.toHaveAttribute("data-story-media");
-    expect(card.children[1]).toHaveAttribute("data-story-media");
+    expect(card.children[0]).toHaveAttribute("data-story-media");
+    expect(card.children[1]).not.toHaveAttribute("data-story-media");
     expect(container.innerHTML).not.toMatch(/\border-/);
   });
 
@@ -164,7 +164,7 @@ describe("StoryCard (C-24)", () => {
       "",
     );
     expect(
-      container.querySelector("[data-story-card]")!.children[1],
+      container.querySelector("[data-story-card]")!.children[0],
     ).toHaveAttribute("data-story-media");
     expect(screen.getByRole("heading", { level: 3 })).toHaveTextContent(
       longNoImage.title,

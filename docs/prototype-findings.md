@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. Use the entry format under "New findings (run 3)".
+New findings in run 3 take the next free number: DOC-39, U-39, IMP-72, KIT-11. Use the entry format under "New findings (run 3)".
 
 ## Summary
 
@@ -73,8 +73,9 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Decided (DR-264); code in R3-03 |
 | DOC-34 | R2-15 | C-17 and §12.3 give the top bar `h-(--bar-height)` (a fixed height); the C-17 checks and DR-81 say the bar can wrap to two lines at 200% text size | Low | Decided (DR-265); code in R3-02 |
 | DOC-35 | R2-17 | Every ad region carries the same accessible label, so axe reports `landmark-unique` (moderate, no serious or critical). C-16 gives one label text; it does not say whether slots need a number or a name each. Suggested: name each slot (top, band 1..n, inset, rail) | Low | Decided (DR-266); code in R3-07 |
-| DOC-36 | Audit 13 Oct | StoryCard: "body first in the markup" against LAY-14 on phones | Medium | Decided (DR-267); code in R3-01 |
+| DOC-36 | Audit 13 Oct | StoryCard: "body first in the markup" against LAY-14 on phones | Medium | Fixed in R3-01 |
 | DOC-37 | Audit 13 Oct | Sheet values off the 4px scale | Low | Decided (DR-303); code in R3-02 |
+| DOC-38 | R3-01 | `component-system.md` P-2 Accessibility says text comes before the image in the markup; C-24 (DR-267) says the image comes first | Low | Open; code follows C-24 |
 | U-01 | FL-01 | English category labels | Medium | Later: IA label table (DR-342, DR-282) |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Resolved by spec: no radius or shadow (CPT-05, COL-15), Lucide icons, 450ms slide (DR-227), card variants in C-01, C-02, C-24 |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Decided (DR-264); code in R3-03 |
@@ -121,7 +122,7 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | IMP-06 | FL-01 | `agentRules: false` in `next.config.ts` | Low | Closed (no action) |
 | IMP-07 | FL-01 | Playwright runs Chromium only | Low | Done in R2-01 (WebKit project; 40 known WebKit failures, `docs/webkit-failures.md`) |
 | IMP-08 | FL-03 | Which creative the ad placeholder shows | Low | Resolved by spec: `AdSlot` follows the §9 tiers. 768–1023 stays IMP-44 |
-| IMP-09 | FL-03 | Extra layout part `WithRail` | Low | Decided (DR-271); code in R3-01 |
+| IMP-09 | FL-03 | Extra layout part `WithRail` | Low | Fixed in R3-01 |
 | IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Decided (DR-272); field exists since FL-04, display in R3-04 |
 | IMP-11 | FL-04 | `getHomepage` applies the content rules and has a sparse variant | Low | Done in R2-01 (`?content=sparse` in development only) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Later: backend integration; labels stay in `src/i18n/` (DR-263) |
@@ -160,7 +161,7 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | IMP-45 | R2-06 | `AdSlot` reads its mock booking itself and always renders; the Phase 1 rule "no booking, no `ad-top` row" (DR-250) has no code path yet | Low | Later: no-booking path with real ad data, M3 (DR-316) |
 | IMP-46 | R2-06 | The `rail` variant is built and tested alone; it goes into the P-3 rail in R2-11. 28 chromium e2e tests stay red from before (`most-read`, R2-12) | Low | Done in R2-11 |
 | IMP-47 | R2-07 | The story units are wired into the hero (needed to keep it building); two hero tests and the hero e2e layout checks were changed to the sheets. A development-only test page `/dev/story-units` carries the unit tests | Medium | Closed (DR-317): no run 3 code change |
-| IMP-48 | R2-07 | `StoryCard` `layout` has four values (`stack`, `row`, `row-from-md`, `row-until-lg`) and `OverlapCard` has a `surface` prop, so a section can set the page-breakpoint switch and the P-4 background; the sheets say "the section sets it" but give no prop | Low | Decided (DR-283); code in R3-01 |
+| IMP-48 | R2-07 | `StoryCard` `layout` has four values (`stack`, `row`, `row-from-md`, `row-until-lg`) and `OverlapCard` has a `surface` prop, so a section can set the page-breakpoint switch and the P-4 background; the sheets say "the section sets it" but give no prop | Low | Fixed in R3-01 |
 | IMP-49 | R2-09 | Mock content changed to the sheet counts: 3 analysis stories (1 feature, 2 compact) and 5 opinion pieces; the `listItem` class file is gone | Low | Done in R2-09 (mock counts follow the sheets) |
 | IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Decided (DR-273); code in R3-05 |
 | IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Decided (DR-284); code in R3-06 |
@@ -169,20 +170,21 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Decided (DR-320); code in R3-03 |
 | IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Decided (DR-321); code in R3-06 |
 | IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Decided (DR-322); code in R3-02 |
-| IMP-57 | R2-20 | Nav and Drawer links are plain `<a>` (full page load) with no comment, unlike `LanguageSwitch` | Low | Decided (DR-323); code in R3-01 |
+| IMP-57 | R2-20 | Nav and Drawer links are plain `<a>` (full page load) with no comment, unlike `LanguageSwitch` | Low | Fixed in R3-01 (`LanguageSwitch` stays a plain `<a>`, R3-08) |
 | IMP-58 | Audit 13 Oct | Installed packages that the spec forbids or that nothing uses | Medium | Decided (DR-285); `tw-animate-css` removed in R3-00, rest in R3-02 |
 | IMP-59 | Audit 13 Oct | Tests that depend on the environment | Medium | Fixed in R3-00 (slider animation test and a fixed sleep no longer depend on machine speed) |
 | IMP-60 | Audit 13 Oct | Next.js LCP warning on hero images | Low | Decided (DR-325); code in R3-04 |
-| IMP-61 | Audit 13 Oct | Component and folder names differ from the approved list | Medium | Decided (DR-286); code in R3-01 |
+| IMP-61 | Audit 13 Oct | Component and folder names differ from the approved list | Medium | Fixed in R3-01 |
 | IMP-62 | Audit 13 Oct | Arbitrary variants that couple components | Medium | Decided (DR-287); code in R3-02, R3-05 |
 | IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Decided (DR-288); code in R3-06 |
-| IMP-64 | Audit 13 Oct | Dead code, stale comments and unused tokens | Low | Decided (DR-326); code in R3-01 |
+| IMP-64 | Audit 13 Oct | Dead code, stale comments and unused tokens | Low | Fixed in R3-01 |
 | IMP-65 | Audit 13 Oct | Production-only behavior is not tested | Low | Decided (DR-327); code in R3-09 |
 | IMP-66 | Audit 13 Oct | Proxy matcher and language cookie | Medium | Decided (DR-328); code in R3-08 |
 | IMP-67 | Audit 13 Oct | Storage fallbacks and missing tests | Medium | Decided (DR-329); code in R3-08 |
 | IMP-68 | Audit 13 Oct | Drawer link leaves `tabindex="-1"` on its target | Low | Decided (DR-330); code in R3-02 |
 | IMP-69 | Audit 13 Oct | Drawer links to Analysis and Opinion have no target | Medium | Decided (DR-331); code in R3-02 |
 | IMP-70 | Audit 13 Oct | Footer year fixed at build time | Low | Decided (DR-332); code in R3-08 |
+| IMP-71 | R3-01 | `PeerCard` (subgrid) is named in the spec as a helper part but nothing on the homepage uses it | Low | Open; kept |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Fixed: `visual-qa` step 3 uses the theme control or the `dark` class |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Fixed: `visual-qa` takes the pages to check from the prompt and checks the drawer and the search dialog |
 | KIT-03 | FL-02 | Raw-value hook flags object keys named `dark:` | Low | Fixed: the hook skips `src/i18n/` |
@@ -294,10 +296,24 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 
 ## New findings (run 3)
 
-None yet. Entry format:
+### DOC-38 P-2 Accessibility contradicts C-24 on markup order
+
+- **Found:** R3-01, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` P-2 FeaturedCategorySection, Accessibility ("Text comes before the image in the markup at every width"); C-24 StoryCard, `StoryCard.body` and Accessibility (DR-267: the image comes before the text at every layout).
+- **Problem:** the two sheets give opposite source orders for the same component (the P-2 feature story is a StoryCard).
+- **Suggested solution:** change the P-2 line to "the image comes before the text in the markup at every width; grid areas move it". The code follows C-24.
+
+### IMP-71 PeerCard has no user on the homepage
+
+- **Found:** R3-01, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` §3.1 helper parts (PeerCard); `src/components/layout/PeerRow.tsx`, `src/styles/layout.css` (`peer-card`).
+- **Problem:** the hero pair no longer uses subgrid (DR-99), so only a unit test uses `PeerCard`. The spec still names it.
+- **Suggested solution:** keep it until the spec drops the name or a section needs aligned peer rows (LAY-08).
+
+Entry format:
 
 ```markdown
-### IMP-71 Short title
+### IMP-72 Short title
 
 - **Found:** R3-0x, date · **Severity:** High | Medium | Low · **Status:** Open
 - **Source:** spec section and rule IDs; file and line.
@@ -313,3 +329,4 @@ None yet. Entry format:
 | 2026-10-11 | R2-00 to R2-20 | Run 2: DOC-25 to DOC-35, U-31 to U-37, IMP-31 to IMP-57 and KIT-05 added; many run 1 items fixed |
 | 2026-10-13 | Audit | Statuses checked against specs and code; run 2 audit items moved in (DOC-36, DOC-37, U-38, IMP-58 to IMP-70, KIT-06 to KIT-10) |
 | 2026-10-16 | Run 3 start | File shortened for run 3: every item has its run 2 review decision (DR-262 to DR-344) and its run 3 ticket; full text kept for the Later items only |
+| 2026-10-16 | R3-01 | DOC-38 and IMP-71 added; DOC-36, IMP-09, IMP-48, IMP-57, IMP-61 and IMP-64 set to Fixed in R3-01 |

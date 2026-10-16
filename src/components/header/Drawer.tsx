@@ -198,7 +198,7 @@ function DrawerItem({
   return (
     <li>
       <div className="flex items-center border-b border-border ps-5 pe-2">
-        <a
+        <Link
           href={item.href}
           onClick={onNavigate}
           aria-current={item.current ? "page" : undefined}
@@ -209,7 +209,7 @@ function DrawerItem({
           )}
         >
           {item.label}
-        </a>
+        </Link>
         {hasChildren ? (
           <IconButton
             variant="ghost"
@@ -226,13 +226,13 @@ function DrawerItem({
         <ul id={listId} hidden={!expanded} className="bg-background py-2">
           {item.children?.map((child) => (
             <li key={child.id}>
-              <a
+              <Link
                 href={child.href}
                 onClick={onNavigate}
                 className="flex min-h-11 items-center ps-9 pe-5 type-ui-sm text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed"
               >
                 {child.label}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

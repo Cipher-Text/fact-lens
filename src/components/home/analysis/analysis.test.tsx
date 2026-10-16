@@ -4,18 +4,18 @@ import { describe, expect, it } from "vitest";
 import { getHomepage, type AnalysisOpinionSection } from "@/content";
 import { getDictionary } from "@/i18n";
 
-import { AnalysisOpinion } from "./AnalysisOpinion";
+import { AnalysisSection } from "./AnalysisSection";
 
 function renderSection(lang: "bn" | "en", section: AnalysisOpinionSection) {
   return render(
-    <AnalysisOpinion lang={lang} section={section} t={getDictionary(lang)} />,
+    <AnalysisSection lang={lang} section={section} t={getDictionary(lang)} />,
   );
 }
 
 const full = getHomepage("bn").analysisOpinion!;
 const sparse = getHomepage("bn", { variant: "sparse" }).analysisOpinion!;
 
-describe("AnalysisOpinion (P-4)", () => {
+describe("AnalysisSection (P-4)", () => {
   it("is a shell section with surface-elevated inside the shell (DR-76)", () => {
     const { container } = renderSection("bn", full);
     const section = container.firstElementChild as HTMLElement;

@@ -7,7 +7,7 @@ Claude Code reads the "Now" section at the start of each session. `/ticket` and 
 ## Now
 
 - Run: 3 (fix run). Branch `prototype-run-3`, made from `main` at `0225398`.
-- Ticket: none. R3-01 is the next ticket.
+- Ticket: none. R3-02 is the next ticket.
 - Before R3-00: the 16 October specs are in `docs/design-system/` (copied on 16 October 2026). The kit changes DR-333, DR-335 and DR-336 are applied.
 - Next action: tajmin types `/ticket`.
 
@@ -27,7 +27,8 @@ The full run 1 and run 2 tables of this file (FL-13 and R2-17 results, run 1 sta
 | Ticket | Status | Log row |
 | --- | --- | --- |
 | R3-00 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-01 to R3-09 | To do | – |
+| R3-01 | Done (16 Oct 2026) | `docs/run-3-log.md` |
+| R3-02 to R3-09 | To do | – |
 
 `/accept` updates this table and the board in `docs/SPRINT.md`.
 

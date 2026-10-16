@@ -26,7 +26,7 @@ type Props = {
  * phones), the copyright line. Footer landmark; the links are lists. Labels in the page
  * language. The design extension comes after run 2 (CMP-33): add nothing here.
  */
-export function SiteFooter({ lang }: Props) {
+export function Footer({ lang }: Props) {
   const t = getDictionary(lang);
   const strings = t.footer;
 

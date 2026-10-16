@@ -14,7 +14,7 @@ import { DailyPoll } from "./DailyPoll";
 /** The homepage has 3 ad-inset slots or fewer (spacing-layout-system.md Section 9). */
 export const MAX_INSETS = 3;
 
-type GroupedCategoriesProps = {
+type GroupedCategoriesSectionProps = {
   lang: Lang;
   categories: CategoryBlockData[];
   poll: Poll;
@@ -37,13 +37,13 @@ function pairs<T>(items: T[]): T[][] {
  * 1024px the rail is under the wrapper (LAY-05). The source order is the phone reading
  * order: A, B, ad, C, D, poll (LAY-14).
  */
-export function GroupedCategories({
+export function GroupedCategoriesSection({
   lang,
   categories,
   poll,
   t,
   className,
-}: GroupedCategoriesProps) {
+}: GroupedCategoriesSectionProps) {
   const rows = pairs(categories);
   return (
     <Shell as="div" data-section="grouped" className={className}>

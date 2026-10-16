@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLayoutEffect, useRef } from "react";
 
 import { uiLink } from "./classes";
@@ -82,13 +83,13 @@ export function NavBar({ items, label }: Props) {
       >
         {items.map((item) => (
           <li key={item.id}>
-            <a
+            <Link
               href={item.href}
               aria-current={item.current ? "page" : undefined}
               className={`inline-flex min-h-(--nav-row-height) items-center type-ui-sm font-semibold aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar) ${uiLink}`}
             >
               {item.label}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

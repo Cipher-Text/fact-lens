@@ -4,7 +4,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { getHomepage } from "@/content";
 import { getDictionary } from "@/i18n";
 
-import { Regions } from "./Regions";
+import { RegionsSection } from "./RegionsSection";
 
 beforeAll(() => {
   // jsdom has no ResizeObserver or matchMedia.
@@ -25,12 +25,12 @@ beforeAll(() => {
 function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
   const regions = getHomepage(lang, { variant }).regions!;
   const view = render(
-    <Regions lang={lang} regions={regions} t={getDictionary(lang)} />,
+    <RegionsSection lang={lang} regions={regions} t={getDictionary(lang)} />,
   );
   return { ...view, regions };
 }
 
-describe("Regions (P-3b)", () => {
+describe("RegionsSection (P-3b)", () => {
   it("is the #regions section named by its heading, with every region in the HTML", () => {
     const { container, regions } = renderSection("bn");
     const section = screen.getByRole("region", { name: "অঞ্চল" });

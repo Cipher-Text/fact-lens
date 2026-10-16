@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { SiteFooter } from "./SiteFooter";
+import { Footer } from "./Footer";
 
 const CASES = [
   {
@@ -32,11 +32,11 @@ const CASES = [
 
 const PATHS = ["about", "contact", "corrections", "privacy", "terms"];
 
-describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
+describe("Footer (spacing-layout-system.md 7.4, DR-59)", () => {
   for (const c of CASES) {
     describe(c.lang, () => {
       it("is the contentinfo landmark with the logo linking home", () => {
-        render(<SiteFooter lang={c.lang} />);
+        render(<Footer lang={c.lang} />);
         const footer = screen.getByRole("contentinfo");
         const logo = footer.querySelector("[data-logo]");
         expect(logo).toHaveAttribute("href", c.prefix || "/");
@@ -44,7 +44,7 @@ describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
       });
 
       it("links About, Contact, Corrections, Privacy and Terms in the page language", () => {
-        render(<SiteFooter lang={c.lang} />);
+        render(<Footer lang={c.lang} />);
         const nav = screen.getByRole("navigation", { name: c.siteNav });
         const links = within(nav).getAllByRole("link");
         // Source order is the reading order (LAY-14).
@@ -62,7 +62,7 @@ describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
       });
 
       it("is a surface-elevated band with the panel inset, not surface-alt (C-21, LAY-20)", () => {
-        render(<SiteFooter lang={c.lang} />);
+        render(<Footer lang={c.lang} />);
         const footer = screen.getByRole("contentinfo");
         expect(footer.className).toContain("bg-surface-elevated");
         expect(footer.className).not.toContain("surface-alt");
@@ -70,7 +70,7 @@ describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
       });
 
       it("shows the copyright line in metadata size and ink-muted", () => {
-        render(<SiteFooter lang={c.lang} />);
+        render(<Footer lang={c.lang} />);
         const line = screen
           .getByRole("contentinfo")
           .querySelector("p.type-metadata");
@@ -79,7 +79,7 @@ describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
       });
 
       it("gives each social link a text name for screen readers and hides the icon", () => {
-        render(<SiteFooter lang={c.lang} />);
+        render(<Footer lang={c.lang} />);
         const list = screen.getByRole("list", { name: c.social });
         const links = within(list).getAllByRole("link");
         expect(links.map((l) => l.getAttribute("aria-label"))).toEqual([
@@ -98,7 +98,7 @@ describe("SiteFooter (spacing-layout-system.md 7.4, DR-59)", () => {
   }
 
   it("shows no interface text from the other language (T-27)", () => {
-    const { container } = render(<SiteFooter lang="bn" />);
+    const { container } = render(<Footer lang="bn" />);
     const text = [
       container.textContent ?? "",
       ...Array.from(container.querySelectorAll("[aria-label]")).map(

@@ -60,7 +60,7 @@ function newestFirst(a: Story, b: Story): number {
   return Date.parse(b.publishedAt) - Date.parse(a.publishedAt);
 }
 
-export function getRegionStories(region: RegionId, lang: Lang): Story[] {
+function getRegionStories(region: RegionId, lang: Lang): Story[] {
   return stories
     .filter((def) => def.region === region)
     .map((def) => toStory(def, lang))
