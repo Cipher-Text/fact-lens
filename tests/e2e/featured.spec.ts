@@ -250,6 +250,59 @@ for (const p of PAGES) {
       });
     }
 
+    for (const width of [360, 600, 768, 1024, 1280, 1440]) {
+      test(`image first in the markup, visual order kept at ${width} (C-24, DR-267, DR-348)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        for (const category of CATEGORIES) {
+          const section = page.locator(`[data-category="${category}"]`);
+          const cards = [
+            {
+              card: section.locator("[data-featured-wrapper] article"),
+              row: width >= 768,
+            },
+            {
+              card: section.locator(
+                "[data-featured-rail] article[data-story-card]",
+              ),
+              row: width < 1024,
+            },
+          ];
+          for (const { card, row } of cards) {
+            const media = card.locator(".story-media");
+            const body = card.locator(".story-body");
+            // DOM order: the image comes before the text, and no CSS order is set.
+            expect(
+              await card.evaluate((el) => {
+                const m = el.querySelector(".story-media")!;
+                const b = el.querySelector(".story-body")!;
+                return (
+                  (m.compareDocumentPosition(b) &
+                    Node.DOCUMENT_POSITION_FOLLOWING) !==
+                    0 &&
+                  getComputedStyle(m).order === "0" &&
+                  getComputedStyle(b).order === "0"
+                );
+              }),
+            ).toBe(true);
+            // Visual order: a row puts the image at the end, beside the text; a stack puts
+            // the image on top.
+            const m = await box(media);
+            const b = await box(body);
+            if (row) {
+              expect(m.x).toBeGreaterThan(b.x + b.width - 0.5);
+              expect(Math.abs(m.y - b.y)).toBeLessThanOrEqual(0.5);
+            } else {
+              expect(b.y).toBeGreaterThanOrEqual(m.y + m.height - 0.5);
+              expect(Math.abs(m.x - b.x)).toBeLessThanOrEqual(0.5);
+            }
+          }
+        }
+      });
+    }
+
     test("headings, anchors and language", async ({ page }) => {
       await page.goto(p.path);
       for (const category of CATEGORIES) {

@@ -75,7 +75,7 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (I
 | DOC-35 | R2-17 | Every ad region carries the same accessible label, so axe reports `landmark-unique` (moderate, no serious or critical). C-16 gives one label text; it does not say whether slots need a number or a name each. Suggested: name each slot (top, band 1..n, inset, rail) | Low | Fixed in R3-07 |
 | DOC-36 | Audit 13 Oct | StoryCard: "body first in the markup" against LAY-14 on phones | Medium | Fixed in R3-01 |
 | DOC-37 | Audit 13 Oct | Sheet values off the 4px scale | Low | Fixed in R3-02 |
-| DOC-38 | R3-01 | `component-system.md` P-2 Accessibility says text comes before the image in the markup; C-24 (DR-267) says the image comes first | Low | Decided (DR-348); code in R4-04 |
+| DOC-38 | R3-01 | `component-system.md` P-2 Accessibility says text comes before the image in the markup; C-24 (DR-267) says the image comes first | Low | Fixed in R4-04 |
 | U-01 | FL-01 | English category labels | Medium | Later: IA label table (DR-342, DR-282) |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Resolved by spec: no radius or shadow (CPT-05, COL-15), Lucide icons, 450ms slide (DR-227), card variants in C-01, C-02, C-24 |
 | U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Fixed in R3-03 |
@@ -106,7 +106,7 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (I
 | U-28 | FL-11 | Region chip and region column heading look | Low | Fixed in R2-13 (C-15: outline chips; panel heading `type-story-title-sm`, no top rule) |
 | U-29 | FL-11 | Slider button place, icon and disabled look | Low | Fixed in R2-13 (C-15: 44px IconButtons, disabled look, 450ms `--ease-slide`) |
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Fixed in R2-14 (C-21) |
-| U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Decided (DR-345); code in R4-04 (Footer logo type-logo-sm) |
+| U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Fixed in R4-04 (Footer logo type-logo-sm) |
 | U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Fixed in R3-02 |
 | U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Fixed in R3-04 |
 | U-34 | R2-09 | P-4 analysis stories: the P-4 sheet says rules between stories wait on the item divider (DR-104), but C-03 says StoryList rules and the other lists draw them | Low | Fixed in R3-03 |
@@ -176,14 +176,14 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (I
 | IMP-60 | Audit 13 Oct | Next.js LCP warning on hero images | Low | Fixed in R3-04 |
 | IMP-61 | Audit 13 Oct | Component and folder names differ from the approved list | Medium | Fixed in R3-01 |
 | IMP-62 | Audit 13 Oct | Arbitrary variants that couple components | Medium | Fixed in R3-02 and R3-05 |
-| IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Decided (DR-345); NavBar and Drawer item অঞ্চলসমূহ fixed in R4-01; code in R4-04 (hero শীর্ষ খবর; অঞ্চলসমূহ in P-3b) |
+| IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | NavBar and Drawer item অঞ্চলসমূহ fixed in R4-01; hero শীর্ষ খবর and অঞ্চলসমূহ in P-3b fixed in R4-04 |
 | IMP-64 | Audit 13 Oct | Dead code, stale comments and unused tokens | Low | Fixed in R3-01 |
 | IMP-65 | Audit 13 Oct | Production-only behavior is not tested | Low | Later: production smoke run in M2 (DR-345) |
 | IMP-66 | Audit 13 Oct | Proxy matcher and language cookie | Medium | Fixed in R3-08 |
 | IMP-67 | Audit 13 Oct | Storage fallbacks and missing tests | Medium | Fixed in R3-08 |
 | IMP-68 | Audit 13 Oct | Drawer link leaves `tabindex="-1"` on its target | Low | Fixed in R3-02 |
 | IMP-69 | Audit 13 Oct | Drawer links to Analysis and Opinion have no target | Medium | Fixed in R3-02 |
-| IMP-70 | Audit 13 Oct | Footer year fixed at build time | Low | Decided (DR-345); code in R4-04 (year in Dhaka time) |
+| IMP-70 | Audit 13 Oct | Footer year fixed at build time | Low | Fixed in R4-04 (year in Dhaka time) |
 | IMP-71 | R3-01 | `PeerCard` (subgrid) is named in the spec as a helper part but nothing on the homepage uses it | Low | Closed: kept as built (DR-348) |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Fixed: `visual-qa` step 3 uses the theme control or the `dark` class |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Fixed: `visual-qa` takes the pages to check from the prompt and checks the drawer and the search dialog |
@@ -195,11 +195,11 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (I
 | KIT-08 | Audit 13 Oct | GitHub workflows and MCP servers | Low | Fixed (kit patch applied 16 Oct, DR-335) |
 | KIT-09 | Audit 13 Oct | Hooks and local permissions | Low | Fixed (kit patch applied 16 Oct, DR-336) |
 | KIT-10 | Audit 13 Oct | Definition of done names an e2e command that cannot pass | Medium | Fixed in R3-00 (`pnpm test:e2e:chromium`) |
-| DOC-39 | R3-02 | Header sheets disagree on focus, on the search component and on the close button order | Low | Decided (DR-348); code in R4-04 |
+| DOC-39 | R3-02 | Header sheets disagree on focus, on the search component and on the close button order | Low | Fixed in R4-04 |
 | U-39 | R3-02 | No token for the theme control icon color (`interactive` in light, `ink` in dark) | Medium | Closed (DR-349: ThemeToggle and the theme icon token removed, icon ink); Fixed in R4-01 |
 | U-40 | R3-03 | Divider.column (column-inset, column-full): tajmin sets where each version is used (DR-262) | Low | Fixed in R4-03 (DR-351) |
 | IMP-80 | R3-05 | DailyPoll: the fieldset is `display: contents` so its legend sits in the grid | Low | Closed: kept as built (DR-348); Safari check in R4-05 |
-| DOC-40 | R3-05 | C-26 `DailyPoll.vote`: "focus stays on the group" does not fit a button press | Low | Decided (DR-348); code in R4-04 |
+| DOC-40 | R3-05 | C-26 `DailyPoll.vote`: "focus stays on the group" does not fit a button press | Low | Fixed in R4-04 |
 | IMP-81 | R3-05 | DailyPoll keeps a hidden copy of the results to hold the cell height | Low | Closed: kept as built (DR-348) |
 | DOC-41 | R3-06 | `region-row` block in §12.3 sets 2 columns at every width | Low | Resolved by spec (DR-348) |
 | IMP-82 | R3-06 | Base UI Tabs.Panel cannot be used for the region panels | Low | Closed: kept as built (DR-348) |
@@ -211,7 +211,7 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (I
 | IMP-74 | R3-02 | Region links in the Drawer have no target for 3 of 7 regions | Medium | Later: editorial question, M2 (DR-348) |
 | IMP-75 | R3-02 | The bar rule under 1280px follows the scroll position | Low | Resolved by spec (DR-348); fixed in R4-02 |
 | IMP-76 | R3-02 | Removing `--scroll-offset` in the effect cleanup breaks a #hash scroll in development | Low | Closed: kept as built (DR-348); production check in R4-05 |
-| IMP-78 | R3-04 | The story time script is a little over 1 KB | Low | Resolved by spec (DR-348: 1.5 KB or less); check in R4-04 |
+| IMP-78 | R3-04 | The story time script is a little over 1 KB | Low | Fixed in R4-04 (checked: 985 bytes on `/`, 938 on `/en` in the built HTML) |
 | DOC-44 | R4-01 | C-17 gives the TopBar language link as 15px 600; typography §7 gives `type-ui-sm` 600 (14px on the En / English label) | Low | Open |
 | DOC-45 | R4-02 | Typography §8 `type-logo` shrinks the stuck logo with font-size; C-17 says a transform | Low | Open (code follows C-17, tajmin's choice) |
 | DOC-46 | R4-02 | C-18 intro says the NavBar "scrolls away with the page"; layout §6 says it hides "past the page top" | Low | Open |
@@ -330,7 +330,7 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 
 ### DOC-38 P-2 Accessibility contradicts C-24 on markup order
 
-- **Found:** R3-01, 16 Oct 2026 · **Severity:** Low · **Status:** Decided (DR-348); code in R4-04
+- **Found:** R3-01, 16 Oct 2026 · **Severity:** Low · **Status:** Fixed in R4-04
 - **Source:** `component-system.md` P-2 FeaturedCategorySection, Accessibility ("Text comes before the image in the markup at every width"); C-24 StoryCard, `StoryCard.body` and Accessibility (DR-267: the image comes before the text at every layout).
 - **Problem:** the two sheets give opposite source orders for the same component (the P-2 feature story is a StoryCard).
 - **Suggested solution:** change the P-2 line to "the image comes before the text in the markup at every width; grid areas move it". The code follows C-24.
@@ -344,7 +344,7 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 
 ### DOC-39 Header sheets disagree on focus, on the search component and on the close button order
 
-- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Decided (DR-348); code in R4-04
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Fixed in R4-04
 - **Source:** `spacing-layout-system.md` §6 Search ("focus goes to the panel itself, DR-249 … Focus moves to the field") and §11 checks ("search is the shadcn `Dialog`"); `component-system.md` C-20 (shadcn `Drawer`, focus to the panel, "one Tab reaches the field", close button in the top right corner).
 - **Problem:** §6 gives two focus targets for the search panel in one paragraph, and the check list names the shadcn Dialog where C-20 names the Drawer from the top. With the close button first in the source, one Tab from the panel reaches the close button, not the field.
 - **Suggested solution:** keep C-20 (Drawer, focus to the panel). Say in §6 that focus goes to the panel and one Tab reaches the field. Say in C-20 that the close button comes after the field in the source and sits in the corner by position. The code does this.
@@ -403,7 +403,7 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 
 ### IMP-78 The story time script is a little over 1 KB
 
-- **Found:** R3-04, 16 Oct 2026 · **Severity:** Low · **Status:** Resolved by spec (DR-348: 1.5 KB or less); check in R4-04
+- **Found:** R3-04, 16 Oct 2026 · **Severity:** Low · **Status:** Fixed in R4-04 (checked: 985 bytes on `/`, 938 on `/en` in the built HTML)
 - **Source:** `typography-system.md` TYP-17 (DR-274: "under 1 KB"); `src/lib/story-time.ts`.
 - **Problem:** the inline script is about 1.1 to 1.4 KB in the development build (it holds the format function and its Intl calls). I did not measure the production build. The unit test allows 1.5 KB.
 - **Suggested solution:** accept up to 1.5 KB, or drop the year rule from the script. tajmin decides.
@@ -435,7 +435,7 @@ Entry format:
 
 ### DOC-40 C-26 `DailyPoll.vote`: "focus stays on the group" does not fit a button press
 
-- **Found:** R3-05, 16 Oct 2026 · **Severity:** Low · **Status:** Decided (DR-348); code in R4-04
+- **Found:** R3-05, 16 Oct 2026 · **Severity:** Low · **Status:** Fixed in R4-04
 - **Source:** `component-system.md` C-26 `DailyPoll.vote` ("a press with no choice does nothing and focus stays on the group").
 - **Problem:** the button has the focus when it is pressed, so focus cannot stay on the group. The code does nothing: no message, no focus move, so the focus stays on the button.
 - **Suggested solution:** change the sheet to "does nothing and focus stays where it is", or say that focus returns to the first option.
@@ -615,3 +615,4 @@ Entry format:
 | 2026-10-17 | R4-01 | DOC-44 added; U-39 set to Fixed in R4-01; IMP-63 NavBar and Drawer part fixed in R4-01 |
 | 2026-10-17 | R4-02 | DOC-45, DOC-46 and IMP-84 to IMP-86 added; IMP-75 code fixed in R4-02 |
 | 2026-10-17 | R4-03 | U-41, DOC-47 to DOC-50 and IMP-87 to IMP-89 added; U-40 and IMP-87 set to Fixed in R4-03 |
+| 2026-10-17 | R4-04 | No new findings; DOC-38, DOC-39, DOC-40, U-31, IMP-63, IMP-70 and IMP-78 set to Fixed in R4-04 (DOC-38 and DOC-39: the code already followed the decision; R4-04 adds the tests) |

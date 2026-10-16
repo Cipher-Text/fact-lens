@@ -10,7 +10,8 @@ const PAGES = [
   {
     path: "/",
     lang: "bn",
-    title: "অঞ্চল",
+    // The P-3b heading reads অঞ্চলসমূহ (component-system.md 3.3, DR-345).
+    title: "অঞ্চলসমূহ",
     previous: "আগের অঞ্চল",
     next: "পরের অঞ্চল",
   },
@@ -589,12 +590,11 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
       const s = regions(page);
-      await expect(page.getByRole("region", { name: p.title })).toHaveAttribute(
-        "id",
-        "regions",
-      );
       await expect(
-        s.getByRole("heading", { level: 2, name: p.title }),
+        page.getByRole("region", { name: p.title, exact: true }),
+      ).toHaveAttribute("id", "regions");
+      await expect(
+        s.getByRole("heading", { level: 2, name: p.title, exact: true }),
       ).toBeVisible();
       await expect(s.getByRole("heading", { level: 3 })).toHaveCount(
         REGION_COUNT,

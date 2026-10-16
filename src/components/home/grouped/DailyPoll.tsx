@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState, type Ref } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/story/Button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -33,11 +33,12 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
   );
   const [choice, setChoice] = useState<string | null>(null);
   const [justVoted, setJustVoted] = useState(false);
-  const resultsRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
-  // The vote button leaves the page, so focus moves to the results.
+  // The vote button leaves the page, so focus moves to the poll heading (C-26, DR-346). The
+  // results are in role status, so the change is announced.
   useEffect(() => {
-    if (justVoted) resultsRef.current?.focus();
+    if (justVoted) headingRef.current?.focus();
   }, [justVoted]);
 
   // After the vote the choose parts stay in the cell, hidden, to keep the height.
@@ -54,7 +55,9 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
     >
       <div className="poll-layout">
         <h2
+          ref={headingRef}
           id={`${poll.id}-title`}
+          tabIndex={-1}
           data-poll-part="heading"
           className="type-section-title text-ink"
         >
@@ -83,7 +86,7 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
               fullWidth
               className="mt-6"
               onClick={() => {
-                // No choice: nothing happens (C-26).
+                // No choice: nothing happens and focus stays on the button (C-26, DR-348).
                 if (!choice) return;
                 setJustVoted(true);
                 castVote(choice);
@@ -95,12 +98,7 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
         </fieldset>
         {/* Before the vote a hidden copy of the results holds the cell at the height of the
             results, because they are taller than the choose parts (LAY-10). */}
-        <PollResults
-          poll={poll}
-          vote={vote}
-          strings={strings}
-          ref={resultsRef}
-        />
+        <PollResults poll={poll} vote={vote} strings={strings} />
       </div>
     </section>
   );
@@ -110,7 +108,6 @@ type PollResultsProps = {
   poll: Poll;
   vote: string | null;
   strings: Dictionary["poll"];
-  ref: Ref<HTMLDivElement>;
 };
 
 /**
@@ -119,15 +116,14 @@ type PollResultsProps = {
  * `fill-neutral`, on a `border` track (COL-17, DR-295). The bars repeat the percent, so
  * they are hidden from screen readers.
  */
-function PollResults({ poll, vote, strings, ref }: PollResultsProps) {
+function PollResults({ poll, vote, strings }: PollResultsProps) {
   const { results, total } = pollResults(poll.options, vote);
   const labels = new Map(poll.options.map((o) => [o.id, o.label]));
   const live = vote
-    ? { role: "status", tabIndex: -1, "data-poll-results": "" }
+    ? { role: "status", "data-poll-results": "" }
     : { inert: true, "aria-hidden": true, "data-poll-ghost": "" };
   return (
     <div
-      ref={vote ? ref : undefined}
       data-poll-part="cell"
       className={cn("min-w-0", !vote && "invisible")}
       {...live}

@@ -41,6 +41,7 @@ describe("Footer (spacing-layout-system.md 7.4, DR-59)", () => {
         const logo = footer.querySelector("[data-logo]");
         expect(logo).toHaveAttribute("href", c.prefix || "/");
         expect(logo?.className).toContain("text-brand"); // identity only (COL-04)
+        expect(logo?.className).toContain("type-logo-sm"); // C-21 Footer.logo (DR-306)
       });
 
       it("links About, Contact, Corrections, Privacy and Terms in the page language", () => {

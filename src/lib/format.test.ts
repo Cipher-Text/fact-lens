@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { fill, formatDate, formatNumber, formatPercent } from "./format";
+import {
+  dhakaYear,
+  fill,
+  formatDate,
+  formatNumber,
+  formatPercent,
+} from "./format";
 
 describe("formatting for the page language (TYP-17)", () => {
   it("uses Bangla digits on Bangla pages", () => {
@@ -13,6 +19,14 @@ describe("formatting for the page language (TYP-17)", () => {
     const date = new Date("2026-10-06T23:30:00Z");
     expect(formatDate(date, "bn")).toBe("৭ অক্টোবর, ২০২৬");
     expect(formatDate(date, "en")).toBe("7 October 2026");
+  });
+});
+
+describe("dhakaYear (C-21 footer year)", () => {
+  it("turns the year at midnight in Dhaka, not in UTC", () => {
+    // Dhaka is UTC+6: 18:30Z on 31 December is 00:30 on 1 January.
+    expect(dhakaYear(new Date("2026-12-31T18:30:00Z"))).toBe(2027);
+    expect(dhakaYear(new Date("2026-12-31T17:59:00Z"))).toBe(2026);
   });
 });
 

@@ -13,7 +13,12 @@ type RegionsSectionProps = {
   regions: RegionBlock[];
   t: Pick<
     Dictionary,
-    "regions" | "regionSlider" | "story" | "categories" | "common"
+    | "regions"
+    | "regionsSection"
+    | "regionSlider"
+    | "story"
+    | "categories"
+    | "common"
   >;
   className?: string;
 };
@@ -26,7 +31,7 @@ const STORIES_PER_REGION = 3;
  * Regions with no stories are already removed (7.3). চীন is a region here, not a nav item
  * (DR-19). Each RegionSlider.panel is the region name (h3), a 3:2 image story and two text
  * stories with rules between; no "more" link per column. One MoreLink at the section end
- * links to the regions page (DR-142, DR-160). The section id is the anchor of the অঞ্চল
+ * links to the regions page (DR-142, DR-160). The section id is the anchor of the অঞ্চলসমূহ
  * links (IMP-14). The panels render on the server; only the slider and tabs are client code.
  */
 export function RegionsSection({
@@ -44,7 +49,7 @@ export function RegionsSection({
       className={className}
     >
       <RegionSlider
-        title={t.regions.title}
+        title={t.regionsSection.title}
         strings={t.regionSlider}
         regions={regions.map(({ region, stories }) => {
           const [lead, ...rest] = stories.slice(0, STORIES_PER_REGION);
@@ -76,7 +81,7 @@ export function RegionsSection({
       />
       <MoreLink
         href={localizedPath(lang, "/regions")}
-        section={t.regions.title}
+        section={t.regionsSection.title}
         strings={t.common}
       />
     </Shell>

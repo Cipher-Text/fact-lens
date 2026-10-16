@@ -30,10 +30,12 @@ export function getNavItems(
     label: t.categories[id],
     href: `#category-${id}`,
   });
-  // The regions are every entry of the table but the section heading.
-  const regions = Object.entries(t.regions)
-    .filter(([id]) => id !== "title")
-    .map(([id, label]) => ({ id, label, href: `#region-${id}` }));
+  // The regions are every entry of the region table.
+  const regions = Object.entries(t.regions).map(([id, label]) => ({
+    id,
+    label,
+    href: `#region-${id}`,
+  }));
   const home = localizedPath(lang);
 
   return [

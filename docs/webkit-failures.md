@@ -136,6 +136,15 @@ Run: `pnpm exec playwright test --project=webkit` on the ticket's test files (`h
 
 A first WebKit run found two more causes, both fixed: the trimmed meta margin collapsed out of its item across the column break (fixed with `display: flow-root` on Divider.item), and the pixel scan read a rule that WebKit snaps to the row above a fractional top (the scan now finds the rule within 1 row). R4-05 checks the Latest columns and the item rule space in real Safari.
 
+### R4-04 (17 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit` on the ticket's test files (`hero`, `regions`, `grouped`, `header`, `footer`, `featured`, `story-units`, `site`, `page`) on `prototype-run-4`. 38 failed, 431 passed. 35 are known: group C keyboard (featured, footer, grouped, hero, regions: 10), SkipLink (2), drawer keyboard (4), search keyboard (2), W4-01 to W4-04 (4), W4-07 and W4-08 (8), regions phone tabs (2), regions axe at 360 (2) and group A `grouped.spec.ts` "layout at 1920" on `/en` (1, page height). The ticket's new and changed checks (hero heading, regions heading, footer logo and year, P-2 order, search order, story time script size) pass in WebKit.
+
+| ID | Importance | File | Test | Lang | Error |
+| --- | --- | --- | --- | --- | --- |
+| W4-10 | Low | `grouped.spec.ts:370` | poll: pressing vote with no choice does nothing | bn, en | The keyboard part passes (Enter and Space on the focused button: no change, focus stays). The mouse click part fails: after `click()` the button is not focused. Safari does not focus a button on a mouse click (platform default), so this is likely a test fact, not a page fault. Not checked in a real Safari |
+| W4-11 | Low (flaky) | `footer.spec.ts:230` | hover and press states of links and icons, no underline (C-21, DR-220) | en | Failed once under parallel load; passed alone |
+
 ## Not checked
 
 - Whether each failure is new since R2-13. `PROGRESS.md` only gives counts (40 at R2-12, 5 regions at R2-13), not names.

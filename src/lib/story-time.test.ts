@@ -56,9 +56,17 @@ describe("story time (TYP-17, DR-274)", () => {
     );
   });
 
-  it("builds an inline script under 1.5 KB that has no outside reference", () => {
-    const script = storyTimeScript("en", JUST_NOW.en, ONE.en, AGO.en);
-    expect(script.length).toBeLessThan(1536);
-    expect(script).toContain("time[data-story-time]");
+  it("builds an inline script of 1.5 KB or less that has no outside reference", () => {
+    // Bytes, not characters: the Bangla strings take 3 bytes a letter in UTF-8 (DR-348).
+    for (const lang of ["bn", "en"] as const) {
+      const script = storyTimeScript(
+        lang,
+        JUST_NOW[lang],
+        ONE[lang],
+        AGO[lang],
+      );
+      expect(new TextEncoder().encode(script).length).toBeLessThanOrEqual(1536);
+      expect(script).toContain("time[data-story-time]");
+    }
   });
 });

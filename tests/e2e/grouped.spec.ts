@@ -370,9 +370,32 @@ for (const p of PAGES) {
     test("poll: pressing vote with no choice does nothing", async ({
       page,
     }) => {
+      const errors: string[] = [];
+      page.on("console", (m) => {
+        if (m.type() === "error") errors.push(m.text());
+      });
+      page.on("pageerror", (e) => errors.push(e.message));
       await page.goto(p.path);
       const poll = grouped(page).locator("[data-poll]");
-      await poll.getByRole("button", { name: p.s.vote }).click();
+      // With the keyboard: focus the button, press it with Enter and with Space.
+      const vote = poll.getByRole("button", { name: p.s.vote });
+      await vote.focus();
+      await page.keyboard.press("Enter");
+      await page.keyboard.press("Space");
+      // No state change, and focus stays on the button (C-26, DR-348).
+      await expect(vote).toBeFocused();
+      await expect(poll).not.toHaveAttribute("data-voted");
+      await expect(
+        poll.locator('[role="radio"][aria-checked="true"]'),
+      ).toHaveCount(0);
+      expect(
+        await page.evaluate(() =>
+          Object.keys(localStorage).filter((k) => k.startsWith("fl-poll:")),
+        ),
+      ).toEqual([]);
+      await vote.click();
+      await expect(vote).toBeFocused();
+      expect(errors).toEqual([]);
       await expect(poll.getByRole("radio")).toHaveCount(4);
       await expect(poll.locator("[data-poll-results]")).toHaveCount(0);
       await expect(poll.locator("[role=alert]")).toHaveCount(0);
@@ -554,7 +577,19 @@ for (const p of PAGES) {
       await page.keyboard.press("Tab");
       await expect(poll.getByRole("button", { name: p.s.vote })).toBeFocused();
       await page.keyboard.press("Enter");
-      await expect(poll.locator("[data-poll-results]")).toBeFocused();
+      // The vote button is gone: focus moves to the poll h2 (tabindex -1), and the results
+      // are in role status (C-26, DR-346).
+      const heading = poll.getByRole("heading", { level: 2 });
+      await expect(heading).toBeFocused();
+      await expect(heading).toHaveAttribute("tabindex", "-1");
+      expect(await page.evaluate(() => document.activeElement?.tagName)).toBe(
+        "H2",
+      );
+      await expect(poll.getByRole("status")).toHaveCount(1);
+      await expect(poll.getByRole("status")).toHaveAttribute(
+        "data-poll-results",
+        "",
+      );
     });
   });
 }

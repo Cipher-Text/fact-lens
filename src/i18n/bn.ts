@@ -43,7 +43,7 @@ export const bn = {
   },
   hero: {
     // Visually hidden name of the P-1 section.
-    title: "প্রধান খবর",
+    title: "শীর্ষ খবর",
     latest: "সর্বশেষ",
   },
   analysisOpinion: {
@@ -111,9 +111,13 @@ export const bn = {
     economy: "অর্থনীতি ও বাণিজ্য",
     technology: "প্রযুক্তি ও কৌশলগত শক্তি",
   },
-  // Entries under অঞ্চল. Working labels until the IA table exists (U-01).
+  // P-3b heading (component-system.md Section 3.3, DR-345). Its own string, apart from the
+  // nav item and from the region table.
+  regionsSection: {
+    title: "অঞ্চলসমূহ",
+  },
+  // Entries under অঞ্চলসমূহ. Working labels until the IA table exists (U-01).
   regions: {
-    title: "অঞ্চল",
     china: "চীন",
     india: "ভারত",
     myanmar: "মিয়ানমার",

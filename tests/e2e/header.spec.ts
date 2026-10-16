@@ -712,6 +712,24 @@ for (const p of PAGES) {
       await expect(dialog).toHaveAttribute("role", "dialog");
       await page.keyboard.press("Tab");
       await expect(field).toBeFocused();
+      // The close button comes after the field group in the source; position puts it in
+      // the corner (C-20, DR-348).
+      expect(
+        await dialog.evaluate((panel, label) => {
+          const input = panel.querySelector('input[name="q"]')!;
+          const form = input.closest('[role="search"]')!;
+          const buttons = [...panel.querySelectorAll("button")];
+          const close = buttons.find(
+            (b) => b.getAttribute("aria-label") === label,
+          );
+          return Boolean(
+            close &&
+            form.compareDocumentPosition(close) &
+              Node.DOCUMENT_POSITION_FOLLOWING &&
+            !form.contains(close),
+          );
+        }, p.closeSearch),
+      ).toBe(true);
 
       // Panel: full width at the top, 96px above the field, a 56px field (C-20).
       await expect.poll(async () => Math.round((await box(dialog)).y)).toBe(0);

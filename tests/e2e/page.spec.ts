@@ -112,3 +112,24 @@ test("section headings have the divider above them: border rule, brand bar, 12px
     (await divider.boundingBox())!.height;
   expect(Math.round(gap)).toBe(12); // space-section-rule-title
 });
+
+// Story time script (typography-system.md TYP-17, DR-348): 1.5 KB or less, measured as the
+// UTF-8 bytes of the inline script in the served HTML. The dev server does not minify, so
+// this is the upper bound of the built size.
+for (const path of ["/", "/en"]) {
+  test(`${path} story time script is 1.5 KB or less (DR-348)`, async ({
+    request,
+  }) => {
+    const html = await (await request.get(path)).text();
+    // The inline script itself, not the copy of it in the RSC payload.
+    const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)]
+      .map((m) => m[1])
+      .filter(
+        (s) => s.startsWith("(function") && s.includes("time[data-story-time]"),
+      );
+    expect(scripts).toHaveLength(1);
+    expect(new TextEncoder().encode(scripts[0]).length).toBeLessThanOrEqual(
+      1536,
+    );
+  });
+}

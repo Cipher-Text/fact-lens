@@ -6,8 +6,20 @@ import { setTheme } from "./theme";
 // DR-39, DR-44, LAY-05, LAY-12, LAY-13).
 
 const PAGES = [
-  { path: "/", lang: "bn", latest: "সর্বশেষ", more: "আরও দেখুন: সর্বশেষ" },
-  { path: "/en", lang: "en", latest: "Latest", more: "See more: Latest" },
+  {
+    path: "/",
+    lang: "bn",
+    title: "শীর্ষ খবর",
+    latest: "সর্বশেষ",
+    more: "আরও দেখুন: সর্বশেষ",
+  },
+  {
+    path: "/en",
+    lang: "en",
+    title: "Top stories",
+    latest: "Latest",
+    more: "See more: Latest",
+  },
 ] as const;
 
 const WIDTHS = [
@@ -46,6 +58,39 @@ async function expectNoBlockingAxe(page: Page) {
 
 for (const p of PAGES) {
   test.describe(`hero ${p.path}`, () => {
+    test("hidden h2 names the section and is in the heading outline (C-01, DR-345)", async ({
+      page,
+    }) => {
+      await page.goto(p.path);
+      const hero = page.locator('[data-section="hero"]');
+      const heading = page.getByRole("heading", {
+        level: 2,
+        name: p.title,
+        exact: true,
+      });
+      await expect(heading).toHaveCount(1);
+      await expect(heading).toHaveText(p.title);
+      // Visually hidden: the sr-only clip, not display none, so it stays in the outline.
+      await expect(heading).toHaveClass(/\bsr-only\b/);
+      expect(
+        await heading.evaluate((el) => {
+          const s = getComputedStyle(el);
+          return [s.display, s.visibility, s.position, s.width, s.height];
+        }),
+      ).toEqual(["block", "visible", "absolute", "1px", "1px"]);
+      await expect(
+        page.getByRole("region", { name: p.title, exact: true }),
+      ).toHaveAttribute("data-section", "hero");
+      // The first h2 of the page outline is the hero heading.
+      const outline = await page
+        .locator("main h2")
+        .evaluateAll((els) => els.map((el) => el.id));
+      expect(outline[0]).toBe("hero-title");
+      expect(await hero.locator("h2").first().getAttribute("id")).toBe(
+        "hero-title",
+      );
+    });
+
     for (const width of WIDTHS) {
       test(`layout at ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
