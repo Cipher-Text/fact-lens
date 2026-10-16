@@ -10,6 +10,7 @@
 | `pnpm test:e2e:chromium` | Pass, 591 tests, including axe |
 | `pnpm test:e2e` WebKit | 42 failures, 533 pass, 16 skipped (see below) |
 | `main` moved since the branch | No (`git fetch origin main`, nothing new) |
+| After the merge (PR #5, 16 October 2026) | `pnpm check` and `pnpm test:e2e:chromium` ran on `prototype-run-3` and were not repeated on `main`: `main` had not moved, so the merge has the same code. Only the last two commits (docs) came after the checks |
 
 ## Tickets
 
