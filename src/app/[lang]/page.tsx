@@ -15,6 +15,8 @@ import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
 import { cn } from "@/lib/utils";
 
+// The page reads searchParams, so it renders on each request: the footer year is the
+// year of the request, not of the build (DR-332).
 // Homepage. Page order: spacing-layout-system.md Section 7.1.
 // ?content=sparse shows the sparse cases of Section 7.3, in development only (IMP-11).
 export default async function HomePage({

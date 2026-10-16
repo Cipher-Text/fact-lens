@@ -237,7 +237,7 @@ for (const p of PAGES) {
           ).toBeCloseTo(unit, 0);
           expect(Math.round(body.x)).toBe(Math.round(cardImage.x));
         }
-        await expect(lead.getByRole("heading", { level: 2 })).toHaveClass(
+        await expect(lead.getByRole("heading", { level: 3 })).toHaveClass(
           /type-story-lead/,
         );
         // One tab stop for the story and one for the eyebrow (C-01).

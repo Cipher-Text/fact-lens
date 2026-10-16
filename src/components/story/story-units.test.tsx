@@ -25,9 +25,9 @@ function expectPlaceholder(container: HTMLElement) {
 }
 
 describe("LeadStory (C-01)", () => {
-  it("has an h2 title with one link, an aria-hidden image link, the bar and the panel", () => {
+  it("has an h3 title with one link, an aria-hidden image link, the bar and the panel", () => {
     const { container } = render(<LeadStory story={withImage} strings={bn} />);
-    const h2 = screen.getByRole("heading", { level: 2 });
+    const h2 = screen.getByRole("heading", { level: 3 });
     expect(h2).toHaveClass("type-story-lead");
     expect(within(h2).getAllByRole("link")).toHaveLength(1);
     const media = container.querySelector("[data-story-media]")!;
@@ -256,5 +256,5 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
 });
 
 function h2Text(container: HTMLElement) {
-  return container.querySelector("h2")!.textContent;
+  return container.querySelector("h3")!.textContent;
 }

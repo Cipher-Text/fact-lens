@@ -114,7 +114,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | U-36 | R2-13 | C-15 panel: "3:2 image, 3 stories". The sheet does not say if the image belongs to the first story. Built as an image story (StoryCard 3:2) plus two text stories = 3 stories | Low | Closed (DR-307): no run 3 code change |
 | U-37 | R2-15 | At 200% text size nothing sets the P-4 compact rows to stack: no trigger exists (DR-81, A11Y-18). Most read stacks because the rem breakpoints move with the browser text size | Medium | Fixed in R3-04 |
 | U-38 | Audit 13 Oct | No skip link | Medium | Fixed in R3-02 |
-| IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Decided (DR-270); code in R3-08 |
+| IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Fixed in R3-08 |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Fixed in R3-02 |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Done in R2-18 |
 | IMP-04 | FL-02 | Theme choice kept in local storage, not a cookie | Low | Closed (no action) |
@@ -133,7 +133,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-17 | FL-05 | On phones the drawer focuses the search field first | Low | Fixed in R2-05 (focus goes to the panel, DR-249) |
 | IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section and story pages; URL patterns are set, 404s stay (run 2 review, no DR) |
 | IMP-19 | FL-06 | Hero metadata shows the clock time only, 24-hour | Low | Fixed in R3-04 |
-| IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Decided (DR-275); code in R3-08 |
+| IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Fixed in R3-08 |
 | IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Fixed in R2-09 (the sheets give h3 titles and a chip label) |
 | IMP-22 | FL-07 | Shared `MoreLink` and elevated link classes | Low | Resolved by spec: `MoreLink` is sheet C-10; the elevated link classes are gone. The 404s stay IMP-18 |
 | IMP-23 | FL-08 | P-2 has no "আরও দেখুন" link | Low | Fixed in R2-10 |
@@ -142,7 +142,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Fixed in R3-05 |
 | IMP-27 | FL-11 | Regions slider: tab mode follows the CSS, scripted 250ms scroll, hash selects a tab | Low | Decided by C-15 in R2-13: scrollbar hidden; scripted slide is 450ms with `--ease-slide`; see IMP-51 |
 | IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Obsolete: `StoryStack` deleted in R2-13. The `SectionHeading` `actions` slot stays; the sheet names it |
-| IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Decided (DR-278); code in R3-08 |
+| IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Fixed in R3-08 |
 | IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Done in R2-01 (`docs/fl-13/` and `tests/final-check/` removed) |
 | IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Fixed in R3-02 |
 | IMP-32 | R2-02 | `components.css` is not imported in `globals.css` | Low | Done in R2-04 |
@@ -156,7 +156,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-40 | R2-05 | The theme has two states and does not follow the system; an old stored "system" reads as light; e2e tests set the theme in storage | Medium | Fixed in R3-02 |
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Later: IA label table; working labels stay (DR-282) |
 | IMP-42 | R2-05 | Trending terms are mock buttons that run the mock search; Op-ed and the Analysis anchors | Low | Fixed in R3-02 |
-| IMP-43 | R2-05 | LinkedIn mark from Simple Icons 13.21.0, the last release that has it; the Drawer lists 5 links, the Footer still 4 | Low | Decided (DR-314); code in R3-08 |
+| IMP-43 | R2-05 | LinkedIn mark from Simple Icons 13.21.0, the last release that has it; the Drawer lists 5 links, the Footer still 4 | Low | Fixed in R3-08 |
 | IMP-44 | R2-06 | At 768–1023 the band shows the 728×90 creative inside the 250 reserve, so 160px of the band is empty | Low | Fixed in R3-07 |
 | IMP-45 | R2-06 | `AdSlot` reads its mock booking itself and always renders; the Phase 1 rule "no booking, no `ad-top` row" (DR-250) has no code path yet | Low | Later: no-booking path with real ad data, M3 (DR-316) |
 | IMP-46 | R2-06 | The `rail` variant is built and tested alone; it goes into the P-3 rail in R2-11. 28 chromium e2e tests stay red from before (`most-read`, R2-12) | Low | Done in R2-11 |
@@ -179,11 +179,11 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Fixed in R3-06 |
 | IMP-64 | Audit 13 Oct | Dead code, stale comments and unused tokens | Low | Fixed in R3-01 |
 | IMP-65 | Audit 13 Oct | Production-only behavior is not tested | Low | Decided (DR-327); code in R3-09 |
-| IMP-66 | Audit 13 Oct | Proxy matcher and language cookie | Medium | Decided (DR-328); code in R3-08 |
-| IMP-67 | Audit 13 Oct | Storage fallbacks and missing tests | Medium | Decided (DR-329); code in R3-08 |
+| IMP-66 | Audit 13 Oct | Proxy matcher and language cookie | Medium | Fixed in R3-08 |
+| IMP-67 | Audit 13 Oct | Storage fallbacks and missing tests | Medium | Fixed in R3-08 |
 | IMP-68 | Audit 13 Oct | Drawer link leaves `tabindex="-1"` on its target | Low | Fixed in R3-02 |
 | IMP-69 | Audit 13 Oct | Drawer links to Analysis and Opinion have no target | Medium | Fixed in R3-02 |
-| IMP-70 | Audit 13 Oct | Footer year fixed at build time | Low | Decided (DR-332); code in R3-08 |
+| IMP-70 | Audit 13 Oct | Footer year fixed at build time | Low | Fixed in R3-08 |
 | IMP-71 | R3-01 | `PeerCard` (subgrid) is named in the spec as a helper part but nothing on the homepage uses it | Low | Open; kept |
 | KIT-01 | FL-02 | `visual-qa` agent switches theme with `data-theme` | Medium | Fixed: `visual-qa` step 3 uses the theme control or the `dark` class |
 | KIT-02 | FL-02 | `visual-qa` agent checks the homepage only | Low | Fixed: `visual-qa` takes the pages to check from the prompt and checks the drawer and the search dialog |

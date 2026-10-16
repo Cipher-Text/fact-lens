@@ -45,11 +45,11 @@ export function LeadStory({ story, strings, className }: LeadStoryProps) {
               strings={strings}
               className="mb-(--space-lead-eyebrow-title)"
             />
-            <h2 className="type-story-lead">
+            <h3 className="type-story-lead">
               <Link href={storyHref(story)} className={headlineLink}>
                 {story.title}
               </Link>
-            </h2>
+            </h3>
             {story.summary ? (
               <p className="mt-(--space-story-title-summary) type-summary text-ink-secondary">
                 {story.summary}

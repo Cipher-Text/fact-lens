@@ -42,7 +42,7 @@ describe("HeroSection (P-1)", () => {
 
   it("uses the role mapping of typography-system.md 7.1", () => {
     const { container } = renderHero("en", getHomepage("en").hero!);
-    expect(container.querySelector("[data-lead] h2")).toHaveClass(
+    expect(container.querySelector("[data-lead] h3")).toHaveClass(
       "type-story-lead",
     );
     for (const h of container.querySelectorAll("[data-top-stories] h3"))
