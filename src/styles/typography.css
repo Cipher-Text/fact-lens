@@ -398,10 +398,8 @@ body {
   font-size: var(--type-logo-size);
   font-weight: var(--type-logo-weight);
   line-height: var(--type-logo-line);
-  /* Stuck bar (data-bar-stuck, DR-287): 24px from 768 */
-  @media (width >= 48rem) {
-    html[data-bar-stuck] & { font-size: 1.5rem; }
-  }
+  /* Stuck bar: 24px by a transform, not by font-size (C-17, DR-349). The logo-scale utility
+     in components.css does it. Typography §8 still has the font-size rule: DOC-45. */
 }
 
 @utility type-logo-sm {

@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 4 take the next free number: DOC-45, U-41, IMP-84, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
+New findings in run 4 take the next free number: DOC-47, U-41, IMP-87, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
 
 ## Summary
 
@@ -209,10 +209,15 @@ New findings in run 4 take the next free number: DOC-45, U-41, IMP-84, KIT-11 (I
 | IMP-72 | R3-02 | Base UI hides the page behind the panel with `aria-hidden`, not `inert` | Low | Resolved by spec (DR-348) |
 | IMP-73 | R3-02 | ThemeToggle is a hand-built switch, not the shadcn Switch | Low | Closed (DR-349: ThemeToggle removed) |
 | IMP-74 | R3-02 | Region links in the Drawer have no target for 3 of 7 regions | Medium | Later: editorial question, M2 (DR-348) |
-| IMP-75 | R3-02 | The bar rule under 1280px follows the scroll position | Low | Resolved by spec (DR-348) |
+| IMP-75 | R3-02 | The bar rule under 1280px follows the scroll position | Low | Resolved by spec (DR-348); fixed in R4-02 |
 | IMP-76 | R3-02 | Removing `--scroll-offset` in the effect cleanup breaks a #hash scroll in development | Low | Closed: kept as built (DR-348); production check in R4-05 |
 | IMP-78 | R3-04 | The story time script is a little over 1 KB | Low | Resolved by spec (DR-348: 1.5 KB or less); check in R4-04 |
 | DOC-44 | R4-01 | C-17 gives the TopBar language link as 15px 600; typography §7 gives `type-ui-sm` 600 (14px on the En / English label) | Low | Open |
+| DOC-45 | R4-02 | Typography §8 `type-logo` shrinks the stuck logo with font-size; C-17 says a transform | Low | Open (code follows C-17, tajmin's choice) |
+| DOC-46 | R4-02 | C-18 intro says the NavBar "scrolls away with the page"; layout §6 says it hides "past the page top" | Low | Open |
+| IMP-84 | R4-02 | Focus on a control in the stuck header scrolls the page to the top in Chromium | Medium | Open (flag) |
+| IMP-85 | R4-02 | The pinned NavBar is a full-width page-color band; only its shell has the items and the rule (`UNRESOLVED_DESIGN_SYSTEM`) | Low | Open |
+| IMP-86 | R4-02 | The theme storage-event test fails now and then under parallel load in Chromium | Low | Open |
 | IMP-79 | R3-04 | A failed image shows the placeholder only after hydration | Low | Closed: kept as built (DR-348) |
 
 ## Open items (Later)
@@ -367,7 +372,7 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 
 ### IMP-75 The bar rule under 1280px follows the scroll position
 
-- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Resolved by spec (DR-348)
+- **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Resolved by spec (DR-348); fixed in R4-02
 - **Source:** `component-system.md` C-17 Surface ("1px border rule at the bottom when the bar is stuck, … every width"); C-18 NavBar.rules; DR-287, DR-295.
 - **Problem:** the NavBar sets `data-bar-stuck` when it scrolls away, but it is hidden under 1280px. Run 2 showed the bar rule at the page top under 1280px. The code now sets `data-bar-stuck` when the page has scrolled (scrollY above 0) while the NavBar is hidden, so the rule shows only when the bar is stuck, at every width.
 - **Suggested solution:** say in C-17 that under 1280px the bar is stuck once the page scrolls.
@@ -482,6 +487,44 @@ Entry format:
 - **Problem:** the link carries `lang` of the other language (TYP-03), so `type-ui-sm` is 14px on the En / English label of a Bangla page and 15px only on বাংলা. C-17 says 15px at every place. The code follows typography §7 (`src/components/header/LanguageSwitch.tsx`), as it did in run 3.
 - **Suggested solution:** C-17 says "type-ui-sm 600 (typography §7)", or typography names a fixed 15px role for the link. tajmin decides.
 
+### DOC-45 Stuck logo: typography §8 changes the font size, C-17 uses a transform
+
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Open (code follows C-17, tajmin's choice on 17 Oct 2026)
+- **Source:** `typography-system.md` Section 8 `@utility type-logo` (`html[data-bar-stuck] & { font-size: 1.5rem; }` from 768) and Section 3 role table; `component-system.md` C-17 `TopBar.logo` ("the logo scales down with a transform (zoom out), 450ms ease-slide"); DR-295, DR-349.
+- **Problem:** the two level-1 specs give two ways to draw the 24px stuck logo. Both together shrink it twice (32 to 24 to 18px). A font-size change cannot run as the C-17 transform.
+- **What the code does:** `src/styles/typography.css` drops the stuck font-size rule (a comment points here). The `logo-scale` utility in `components.css` scales the logo with `transform: scale(var(--logo-stuck-scale))`: 24/32 from 1024, 24/28 at 768 to 1023, 1 on phones.
+- **Suggested solution:** remove the stuck rule from typography §8 and say in the role table "24px when stuck: a transform, C-17".
+
+### DOC-46 NavBar: "scrolls away" and "past the page top"
+
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-18 intro ("Scrolls away with the page"); C-18 `NavBar.rules`, C-17 Surface, LAY-15 ("past the nav row"); `spacing-layout-system.md` Section 6 table ("past the page top it slides up") and §15 changelog line for DR-349.
+- **Problem:** the C-18 intro is the old rule; the sheet and LAY-15 now make the NavBar sticky. Section 6 says "past the page top" in one place and "past the nav row" in another. The R4-02 check (46px) follows "past the nav row".
+- **What the code does:** the NavBar is sticky with the TopBar. `data-bar-stuck` is set once `scrollY` is the row height (45px) or more, and removed only at `scrollY` 0.
+- **Suggested solution:** C-18 intro: "Sticky with the TopBar; hides past its row." Section 6 table: "past the nav row".
+
+### IMP-84 Focus in the stuck header scrolls the page to the top (Chromium)
+
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Medium · **Status:** Open (flag to tajmin)
+- **Source:** `spacing-layout-system.md` §6 and §12.3 (`scroll-padding-top: var(--scroll-offset)` on `html`); `src/components/header/ScrollOffset.tsx`; LAY-15.
+- **Problem:** when the bar is stuck and focus moves into it (Shift+Tab back from the page, or `focus()`), Chromium scrolls the focused control out of the `scroll-padding-top` area. The control is sticky, so the page scrolls all the way to the top. From 1280 the NavBar then shows again. The run 3 code does the same (checked on `0bebd07` with a script), so R4-02 did not cause it. The R4-02 test focuses the theme button with `preventScroll` to check the tab order without this jump.
+- **Suggested solution:** a rule that the header controls are not scrolled to, for example `scroll-margin-top: calc(-1 * var(--scroll-offset))` on the focusable elements of the site header. This is a workaround that no rule names, so tajmin decides. Check Safari in R4-05.
+
+### IMP-85 The pinned NavBar is a full-width band
+
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-18 Surface ("Shell width, page color, 1px border rule at the bottom"); DR-349.
+- **Problem:** the NavBar is now pinned under the TopBar for the first 45px of scroll. A shell-width row lets the page show in the gutters beside it while the page scrolls under it.
+- **What the code does:** SiteHeader stays a fragment (component-system §3). The `nav` (`data-nav-row`) is sticky by itself at `top: calc(var(--scroll-offset) - 1rem)` (the rendered bar height) on `--z-bar`. It is a full-width band in the page color; an inner shell (`data-nav-shell`) holds the items and the 1px rule, so the rule and the items stay at shell width. At rest it looks the same as before. Both parts share `--z-bar`, and the NavBar comes later in the source, so a transform alone would draw it over the TopBar. A `clip-path` moves with the transform and cuts off the part that has passed the bar bottom (`nav-row-slide` in `components.css`).
+- **Suggested solution:** C-18 Surface says "band full width in the page color; items and rule in the shell".
+
+### IMP-86 The theme storage-event test is flaky under load (Chromium)
+
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `tests/e2e/header.spec.ts` "a theme change in one tab applies in the other tab (storage event, DR-340)"; `src/components/header/useThemeChoice.ts`.
+- **Problem:** in 3 of 4 full or near-full Chromium runs in R4-02 one language of this test failed: the second tab did not get `.dark`. It passed 30 of 30 alone and in a full header spec run. The test clicks in the first tab once that tab has hydrated, but it does not wait for the second tab to hydrate, so its storage listener may not be attached yet. The run 3 WebKit list has the same test. R4-02 does not change the theme code; the test runs at 1024, where the NavBar is hidden.
+- **Suggested solution:** in the test, wait until the second tab has hydrated (for example its theme button responds) before the click. This is a test fix, not a loosening; tajmin decides whether it goes in R4-05.
+
 ## Change log
 
 | Date | Ticket | Change |
@@ -502,3 +545,4 @@ Entry format:
 | 2026-10-16 | R3-08 (added later) | IMP-01, IMP-20, IMP-29, IMP-43, IMP-66, IMP-67 and IMP-70 set to Fixed in R3-08 |
 | 2026-10-16 | R4-00 | Run 3 review and design change (DR-345 to DR-351): statuses and run 4 tickets set; Summary rows IMP-78 and IMP-79 added; next free IDs DOC-44, U-41, IMP-84, KIT-11; template heading has no real ID |
 | 2026-10-17 | R4-01 | DOC-44 added; U-39 set to Fixed in R4-01; IMP-63 NavBar and Drawer part fixed in R4-01 |
+| 2026-10-17 | R4-02 | DOC-45, DOC-46 and IMP-84 to IMP-86 added; IMP-75 code fixed in R4-02 |

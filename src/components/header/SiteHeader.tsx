@@ -20,8 +20,13 @@ type Props = {
 /**
  * The page chrome (spacing-layout-system.md Section 6): the TopBar (C-17), then the NavBar
  * (C-18) from 1280. The Drawer (C-19) and the SearchDialog (C-20) open from the bar. The top
- * ad row goes below this, in the page (DR-295). A fragment, not a wrapper: the TopBar is the
- * one header landmark and the NavBar is a sibling nav landmark (DR-349).
+ * ad row goes below this, in the page (DR-295). The TopBar is the one header landmark and
+ * the NavBar is a sibling nav landmark (DR-349).
+ *
+ * A fragment, not a wrapper (component-system §3). Both parts are sticky (LAY-15, DR-349):
+ * the TopBar at the top, the NavBar just below it. Past the NavBar row the NavBar slides up
+ * under the TopBar and is hidden, and the logo scales down (`nav-row-slide`, `logo-scale`).
+ * The NavBar keeps its place in the flow, so the page does not move.
  *
  * Phones: menu | logo | En, ThemeButton. From 768px: menu, search | logo | English,
  * ThemeButton (one ThemeButton at every width, DR-349). No subscribe button (DR-188). The logo is a text stand-in in brand color until
@@ -54,7 +59,7 @@ export function SiteHeader({ lang, path = "/" }: Props) {
           <Link
             href={home}
             aria-label={t.header.home}
-            className="type-logo whitespace-nowrap text-brand"
+            className="inline-block logo-scale type-logo whitespace-nowrap text-brand"
             data-logo
           >
             {t.site.name}

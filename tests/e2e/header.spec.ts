@@ -77,6 +77,16 @@ async function expectClosed(panel: Locator) {
   await expect(panel).toHaveCount(0);
 }
 
+/** The drawn logo size: its font size times the scale of its transform (C-17, DR-349). */
+async function logoSize(logo: Locator) {
+  return logo.evaluate((el) => {
+    const style = getComputedStyle(el);
+    const scale =
+      style.transform === "none" ? 1 : new DOMMatrix(style.transform).a;
+    return Math.round(parseFloat(style.fontSize) * scale * 10) / 10;
+  });
+}
+
 /** The bottom rule of the top bar is drawn when its color is not transparent. */
 async function barRuleShown(page: Page) {
   const color = await page
@@ -171,9 +181,9 @@ for (const p of PAGES) {
 
         // The theme icon ends on the gutter too (--top-bar-inset, DR-349).
         const endIcon = await box(bar.locator("[data-theme-button] svg"));
-        expect(Math.abs(width - (endIcon.x + endIcon.width) - gutter)).toBeLessThanOrEqual(
-          0.5,
-        );
+        expect(
+          Math.abs(width - (endIcon.x + endIcon.width) - gutter),
+        ).toBeLessThanOrEqual(0.5);
         expect(Math.abs(icon.x - gutter)).toBeLessThanOrEqual(0.5);
 
         // The logo is in the center at every width (1fr auto 1fr).
@@ -213,11 +223,16 @@ for (const p of PAGES) {
         // No subscribe button in the header (DR-188).
         expect(await page.locator('a[href="#newsletter"]').count()).toBe(0);
 
-        // The nav row shows from 1280 only, at shell width, with a 1px rule (DR-41).
+        // The nav row shows from 1280 only, at shell width, with a 1px rule (DR-41). The
+        // nav is a full-width band in the page color; its shell holds the items and the
+        // rule, so the page does not show beside it while it is pinned (DR-349).
         if (width >= 1280) {
           await expect(navRow).toBeVisible();
           const navBox = await box(navRow);
-          expect(Math.round(navBox.width)).toBe(Math.min(width - 48, 1280));
+          expect(Math.round(navBox.width)).toBe(width);
+          const shellBox = await box(navRow.locator("[data-nav-shell]"));
+          expect(Math.round(shellBox.width)).toBe(Math.min(width - 48, 1280));
+          expect(Math.round(shellBox.height)).toBe(45);
           expect(Math.round(navBox.y)).toBe(
             Math.round(barBox.y + barBox.height),
           );
@@ -225,9 +240,9 @@ for (const p of PAGES) {
           expect(Math.round(navBox.height)).toBe(45);
           const list = await box(navRow.locator("ul"));
           expect(Math.round(list.height)).toBe(44);
-          const navRule = await navRow.evaluate(
-            (el) => getComputedStyle(el).borderBottomWidth,
-          );
+          const navRule = await navRow
+            .locator("[data-nav-shell]")
+            .evaluate((el) => getComputedStyle(el).borderBottomWidth);
           expect(navRule).toBe("1px");
         } else {
           await expect(navRow).toBeHidden();
@@ -283,48 +298,110 @@ for (const p of PAGES) {
       await expect(links.first()).toHaveAttribute("aria-current", "page");
     });
 
-    test("only the top bar sticks; the top ad and nav row scroll away; the bar rule returns (LAY-15, DR-173)", async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: 1280, height: 800 });
-      await page.goto(p.path);
-      const bar = page.locator("[data-top-bar]");
-      await page.evaluate(() => window.scrollTo(0, 600));
-      await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
-      const top = await box(page.locator('[data-ad-slot="ad-top"]'));
-      expect(top.y + top.height).toBeLessThanOrEqual(0);
-      const nav = await box(page.locator("[data-nav-row]"));
-      expect(nav.y + nav.height).toBeLessThan(64);
-      const navPosition = await page
-        .locator("[data-nav-row]")
-        .evaluate((el) => getComputedStyle(el).position);
-      expect(navPosition).toBe("static");
-      // The nav row is gone, so the bar shows its own 1px rule again (DR-287).
-      await expect.poll(() => barRuleShown(page)).toBe(true);
-      await expect(page.locator("html")).toHaveAttribute("data-bar-stuck", "");
-      // Stuck: the logo is 24px, and the bar keeps its height (DR-295).
-      await expect(bar.locator("[data-logo]")).toHaveCSS("font-size", "24px");
-      expect(Math.round((await box(bar)).height)).toBe(64);
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await expect.poll(() => barRuleShown(page)).toBe(false);
-      await expect(page.locator("html")).not.toHaveAttribute("data-bar-stuck");
-    });
+    for (const width of [1280, 1440]) {
+      test(`site header sticks; past the nav row the row hides under the bar until the page top at ${width} (LAY-15, DR-173, DR-349)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(p.path);
+        const html = page.locator("html");
+        const bar = page.locator("[data-top-bar]");
+        const nav = page.locator("[data-nav-row]");
+        const logo = bar.locator("[data-logo]");
+        await expect
+          .poll(async () => Math.round((await box(nav)).height))
+          .toBe(45);
 
-    test("under 1280 the bar sticks alone: its rule shows once the page scrolls (DR-295)", async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: 360, height: 800 });
-      await page.goto(p.path);
-      const bar = page.locator("[data-top-bar]");
-      expect(await barRuleShown(page)).toBe(false);
-      await page.evaluate(() => window.scrollTo(0, 600));
-      await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
-      await expect.poll(() => barRuleShown(page)).toBe(true);
-      // Phones keep the 20px logo when stuck.
-      await expect(bar.locator("[data-logo]")).toHaveCSS("font-size", "20px");
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await expect.poll(() => barRuleShown(page)).toBe(false);
-    });
+        // Page top: the row shows below the bar; the bar has no rule; logo 32px.
+        await expect(html).not.toHaveAttribute("data-bar-stuck");
+        expect(await nav.evaluate((el) => (el as HTMLElement).inert)).toBe(
+          false,
+        );
+        expect(Math.round((await box(nav)).y)).toBe(64);
+        expect(await barRuleShown(page)).toBe(false);
+        await expect.poll(() => logoSize(logo)).toBe(32);
+
+        // Past the row (45px): stuck. The row slides up under the bar, is hidden and inert,
+        // the bar shows its rule and the logo is 24px. The bar keeps its height.
+        await page.evaluate(() => window.scrollTo(0, 46));
+        await expect(html).toHaveAttribute("data-bar-stuck", "");
+        await expect
+          .poll(async () => {
+            const n = await box(nav);
+            return Math.round(n.y + n.height);
+          })
+          .toBeLessThanOrEqual(64);
+        await expect(nav).toHaveCSS("visibility", "hidden");
+        await expect(nav).toBeHidden();
+        expect(await nav.evaluate((el) => (el as HTMLElement).inert)).toBe(
+          true,
+        );
+        await expect.poll(() => barRuleShown(page)).toBe(true);
+        await expect.poll(() => logoSize(logo)).toBe(24);
+        expect(Math.round((await box(bar)).height)).toBe(64);
+        expect(Math.round((await box(bar)).y)).toBe(0);
+        // The row is out of the tab order: Tab from the theme button leaves the header.
+        // (preventScroll: a focus in the stuck bar scrolls the page to the top in Chromium,
+        // a separate finding, IMP-84.)
+        await bar
+          .getByRole("switch")
+          .evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }));
+        expect(await page.evaluate(() => window.scrollY)).toBe(46);
+        await page.keyboard.press("Tab");
+        expect(
+          await page.evaluate(
+            () => !!document.activeElement?.closest("[data-nav-row]"),
+          ),
+        ).toBe(false);
+
+        // A small scroll up does not bring the row back.
+        await page.evaluate(() => window.scrollTo(0, 10));
+        await page.waitForTimeout(100);
+        await expect(html).toHaveAttribute("data-bar-stuck", "");
+        await expect(nav).toBeHidden();
+
+        // At the page top it shows again.
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await expect(html).not.toHaveAttribute("data-bar-stuck");
+        await expect.poll(async () => Math.round((await box(nav)).y)).toBe(64);
+        await expect(nav).toBeVisible();
+        expect(await nav.evaluate((el) => (el as HTMLElement).inert)).toBe(
+          false,
+        );
+        await expect.poll(() => barRuleShown(page)).toBe(false);
+        await expect.poll(() => logoSize(logo)).toBe(32);
+
+        // Far down the page the bar is still at the top.
+        await page.evaluate(() => window.scrollTo(0, 2000));
+        await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
+        const top = await box(page.locator('[data-ad-slot="ad-top"]'));
+        expect(top.y + top.height).toBeLessThanOrEqual(0);
+      });
+    }
+
+    for (const width of [360, 600, 768, 1024]) {
+      test(`under 1280 the bar sticks alone: rule and logo scale once the page scrolls at ${width} (DR-295, DR-348)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(p.path);
+        const html = page.locator("html");
+        const bar = page.locator("[data-top-bar]");
+        const logo = bar.locator("[data-logo]");
+        expect(await barRuleShown(page)).toBe(false);
+        await expect(html).not.toHaveAttribute("data-bar-stuck");
+        await page.evaluate(() => window.scrollTo(0, 1));
+        await expect(html).toHaveAttribute("data-bar-stuck", "");
+        await expect.poll(() => barRuleShown(page)).toBe(true);
+        // Stuck: 24px from 768; phones keep the 20px logo.
+        await expect.poll(() => logoSize(logo)).toBe(width >= 768 ? 24 : 20);
+        await page.evaluate(() => window.scrollTo(0, 600));
+        await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await expect.poll(() => barRuleShown(page)).toBe(false);
+        await expect(html).not.toHaveAttribute("data-bar-stuck");
+      });
+    }
 
     test("--scroll-offset is the rendered bar height + 16px; anchors stop below the bar (DR-265)", async ({
       page,
@@ -423,9 +500,10 @@ for (const p of PAGES) {
         // inset, like the logo starts on it (DR-209, DR-349).
         const close = drawer.getByRole("button", { name: p.closeMenu });
         const closeBox = await box(close);
-        expect([Math.round(closeBox.width), Math.round(closeBox.height)]).toEqual(
-          [ghostSize(width), ghostSize(width)],
-        );
+        expect([
+          Math.round(closeBox.width),
+          Math.round(closeBox.height),
+        ]).toEqual([ghostSize(width), ghostSize(width)]);
         const closeIcon = await box(close.locator("svg"));
         expect(
           Math.abs(drawerBox.x + drawerBox.width - 20 - (closeIcon.x + 20)),
@@ -521,9 +599,9 @@ for (const p of PAGES) {
       await expect(caret).toHaveAttribute("aria-expanded", "false");
       // The caret button stays 44 x 44 (C-19, DR-349).
       const caretBox = await box(caret);
-      expect([Math.round(caretBox.width), Math.round(caretBox.height)]).toEqual([
-        44, 44,
-      ]);
+      expect([Math.round(caretBox.width), Math.round(caretBox.height)]).toEqual(
+        [44, 44],
+      );
       const children = drawer.locator("nav ul ul").first();
       await expect(children).toHaveCount(0);
       await caret.click();
@@ -552,7 +630,7 @@ for (const p of PAGES) {
       await expect(children).toHaveCount(0);
     });
 
-    test("drawer opens with the Sheet slide, and with reduced motion it does not slide (DR-280)", async ({
+    test("drawer opens with a 450ms ease-slide slide, and with reduced motion it does not slide (DR-280, DR-346)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
@@ -563,10 +641,14 @@ for (const p of PAGES) {
       const slide = await drawer.evaluate((el) => ({
         time: getComputedStyle(el).transitionDuration,
         property: getComputedStyle(el).transitionProperty,
+        ease: getComputedStyle(el).transitionTimingFunction,
       }));
-      // Transform and opacity, 200ms each.
-      expect(slide.time).toBe("0.2s, 0.2s");
-      expect(slide.property).toContain("transform");
+      // One slide from the start edge: transform, 450ms ease-slide (DR-346).
+      expect(slide).toEqual({
+        time: "0.45s",
+        property: "transform",
+        ease: "cubic-bezier(0.22, 1, 0.36, 1)",
+      });
       await page.keyboard.press("Escape");
       await expectClosed(drawer);
 
@@ -729,7 +811,9 @@ for (const p of PAGES) {
         const fieldBox = await box(field);
         expect(iconBox.x).toBeGreaterThan(fieldBox.x + fieldBox.width - 0.5);
         expect(
-          Math.abs(frame.x + frame.width - 1 - 12 - (iconBox.x + iconBox.width)),
+          Math.abs(
+            frame.x + frame.width - 1 - 12 - (iconBox.x + iconBox.width),
+          ),
         ).toBeLessThanOrEqual(0.5);
         expect(Math.abs(fieldBox.x - (frame.x + 1))).toBeLessThanOrEqual(0.5);
         await expect(field).toHaveCSS("padding-inline-start", "12px");
@@ -964,14 +1048,16 @@ for (const p of PAGES) {
       await expect(page.getByRole("banner")).toHaveAttribute("data-top-bar");
       const nav = page.locator("[data-nav-row]");
       await expect(nav).toHaveJSProperty("tagName", "NAV");
-      expect(
-        await nav.evaluate((el) => el.closest("header") === null),
-      ).toBe(true);
+      expect(await nav.evaluate((el) => el.closest("header") === null)).toBe(
+        true,
+      );
       // The nav is the next sibling of the header.
       expect(
         await page
           .locator("header")
-          .evaluate((el) => el.nextElementSibling?.hasAttribute("data-nav-row")),
+          .evaluate((el) =>
+            el.nextElementSibling?.hasAttribute("data-nav-row"),
+          ),
       ).toBe(true);
       const results = await new AxeBuilder({ page })
         .withRules([
@@ -983,9 +1069,10 @@ for (const p of PAGES) {
           "landmark-main-is-top-level",
         ])
         .analyze();
-      expect(results.violations, JSON.stringify(results.violations, null, 2)).toEqual(
-        [],
-      );
+      expect(
+        results.violations,
+        JSON.stringify(results.violations, null, 2),
+      ).toEqual([]);
     });
 
     test("the NavBar Regions item reads অঞ্চলসমূহ / Regions (DR-345)", async ({

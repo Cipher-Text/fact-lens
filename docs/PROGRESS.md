@@ -7,9 +7,9 @@ Claude Code reads the "Now" section at the start of each session. `/ticket` and 
 ## Now
 
 - Run: 4 (short fix run). Branch `prototype-run-4`, made from `main` at `0bebd07`.
-- Ticket: R4-02 (Motion and sticky header) is next (To do). R4-01 Done on 17 October 2026.
+- Ticket: R4-03 (Lists and dividers) is next (To do). R4-02 Done on 17 October 2026.
 - Specs in `docs/design-system/`: color 2.14, typography 2.15, layout 2.21, component-system 1.16, agent-contract 2.11.
-- Next action: tajmin runs `/clear`, then `/ticket` for R4-02.
+- Next action: tajmin runs `/clear`, then `/ticket` for R4-03.
 
 ## Past runs
 
@@ -29,7 +29,7 @@ The full run 1 and run 2 tables of this file are in git history at `0225398`; th
 | --- | --- | --- |
 | R4-00 | Done (16 Oct 2026, blueprint setup) | `docs/run-4-log.md` |
 | R4-01 | Done (17 Oct 2026) | `docs/run-4-log.md` |
-| R4-02 | To do | |
+| R4-02 | Done (17 Oct 2026) | `docs/run-4-log.md` |
 | R4-03 | To do | |
 | R4-04 | To do | |
 | R4-05 | To do | |
@@ -60,5 +60,7 @@ Add a row when a ticket reports `UNRESOLVED_DESIGN_SYSTEM`. Add the full entry t
 
 | ID | Found | File and component | Treatment used | Status |
 | --- | --- | --- | --- | --- |
+| IMP-85 | R4-02 | `NavBar.tsx`, `components.css` `nav-row-slide` (C-18) | Full-width page-color band, items and rule in the shell; sticky under the bar with a clip-path slide | Open: C-18 Surface names shell width only |
+| IMP-84 | R4-02 | `ScrollOffset.tsx`, site header (C-17, LAY-15) | None: focus in the stuck bar scrolls the page to the top in Chromium (also on run 3 code) | Open: flag, tajmin decides |
 | U-40 | R3-03 | `Divider.tsx` (C-22) | No column divider built or placed | Decided: C-22 places column-inset (P-4 from 768, P-3 from 1024). Code in R4-03 |
 | U-39 | R3-02 | `ThemeToggle.tsx`, `ThemeButton.tsx` (C-12) | Icon `text-interactive` in both themes | Closed: ThemeToggle and the theme icon token are removed; ThemeButton icon is ink (C-12, C-17). Fixed in R4-01 |

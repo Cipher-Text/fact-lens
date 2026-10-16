@@ -108,6 +108,22 @@ Run: `pnpm exec playwright test --project=webkit tests/e2e/header.spec.ts tests/
 
 Size, ink, hover, pressed and no-wash checks pass in WebKit; only the Tab part fails. Likely group C (Safari Tab order without "Press Tab to highlight each item"); not checked in a real Safari.
 
+### R4-02 (17 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit tests/e2e/motion.spec.ts tests/e2e/header.spec.ts tests/e2e/regions.spec.ts tests/e2e/ads.spec.ts` on `prototype-run-4`. 20 failed, 186 passed on the first run. `motion.spec.ts` (new) passes in WebKit.
+
+- 1 was a test race, fixed in the test: `ads.spec.ts` "the top ad is below the header" read the nav row before the items that do not fit were hidden (IMP-16). It now waits for the 45px row, as the header test does. It passes in WebKit and Chromium.
+- 19 are known: SkipLink (2), drawer keyboard (4), search keyboard (2), theme storage event across tabs (1, bn), regions phone tabs (2), regions keyboard (2), W4-01 to W4-04 (4), and regions axe at 360 (2). Regions axe at 360 is the run 3 `scrollable-region-focusable` failure; it shows in light or dark from run to run (light in `/` and `/en` this time, dark in R4-01).
+
+Second run after the SiteHeader fragment fix (`motion`, `header`, `ads` specs): 15 failed, 120 passed. 13 are the known ones above. 2 are new and flaky:
+
+| ID | Importance | File | Test | Lang | Error |
+| --- | --- | --- | --- | --- | --- |
+| W4-05 | Low (flaky) | `header.spec.ts:302` | site header sticks; past the nav row the row hides … at 1280 | en | Failed once under parallel load; passed 12 of 12 alone and in a second parallel run |
+| W4-06 | Low (flaky) | `header.spec.ts:302` | site header sticks; past the nav row the row hides … at 1440 | en | Same |
+
+R4-05 checks the sticky hide in real Safari.
+
 ## Not checked
 
 - Whether each failure is new since R2-13. `PROGRESS.md` only gives counts (40 at R2-12, 5 regions at R2-13), not names.

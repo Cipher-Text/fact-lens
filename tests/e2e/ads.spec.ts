@@ -104,12 +104,17 @@ for (const path of ["/", "/en"]) {
   }
 }
 
-test("the top ad is below the header and nothing is sticky but the top bar (LAY-11, LAY-15, DR-295)", async ({
+test("the top ad is below the header and nothing is sticky but the site header (LAY-11, LAY-15, DR-295, DR-349)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/en");
   const top = page.locator('[data-ad-slot="ad-top"]');
+  // The server HTML of the nav row wraps until the items that do not fit are hidden after
+  // hydration (IMP-16). Wait for the one-line row: 44px + the 1px rule.
+  await expect
+    .poll(async () => Math.round((await box(page.locator("[data-nav-row]"))).height))
+    .toBe(45);
   const nav = await box(page.locator("[data-nav-row]"));
   // At 1280 the nav row shows; the top ad row starts where it ends, above the hero.
   expect(Math.round((await box(top)).y)).toBe(Math.round(nav.y + nav.height));

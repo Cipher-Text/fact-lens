@@ -55,9 +55,79 @@
   }
 }
 
-/* The NavBar sets data-bar-stuck on <html> when it scrolls away; the TopBar reads it
+/* The NavBar sets data-bar-stuck on <html> once the page scrolls past it; the TopBar reads it
    through this variant, not an arbitrary one (DR-287). */
 @custom-variant bar-stuck (html[data-bar-stuck] &);
+
+/* Site header hide (C-17, C-18, DR-349). The NavBar is sticky just below the TopBar:
+   --scroll-offset is the rendered bar height + 16px (layout §6). Past the row, html gets
+   data-bar-stuck: the NavBar slides up under the TopBar and is hidden. The clip-path moves
+   with the transform and cuts off the part that has passed the bar bottom, so the row goes
+   under the bar on the same layer. The logo scales down to 24px with a transform, so the bar
+   height and the page do not move (DR-295). */
+@utility nav-row-slide {
+  position: sticky;
+  top: calc(var(--scroll-offset) - 1rem);
+  z-index: var(--z-bar);
+  clip-path: inset(0);
+  transition:
+    transform 450ms var(--ease-slide),
+    clip-path 450ms var(--ease-slide),
+    visibility 450ms var(--ease-slide);
+  html[data-bar-stuck] & {
+    transform: translateY(-100%);
+    clip-path: inset(100% 0 0 0);
+    visibility: hidden;
+  }
+}
+
+@utility logo-scale {
+  transition: transform 450ms var(--ease-slide);
+  html[data-bar-stuck] & {
+    transform: scale(var(--logo-stuck-scale));
+  }
+}
+
+/* TopBar.logo when stuck: 24px; phones keep 20px (C-17). Each ratio is 24px over the
+   type-logo size of that tier (typography §3: 28px from 768, 32px from 1024). Change them
+   with those sizes; header.spec.ts checks the drawn 24px. A length / length calc would tie
+   them, but Safari does not support it yet. */
+:root {
+  --logo-stuck-scale: 1;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --logo-stuck-scale: calc(24 / 28);
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --logo-stuck-scale: calc(24 / 32);
+  }
+}
+
+/* Drawer.accordion (C-19, DR-349): the child group opens and closes with a height
+   animation; Base UI sets --collapsible-panel-height. The caret turns with it. */
+@utility accordion-panel {
+  height: var(--collapsible-panel-height);
+  overflow: hidden;
+  transition: height 450ms var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    height: 0;
+  }
+}
+
+@utility accordion-caret {
+  & svg {
+    transition: transform 450ms var(--ease-slide);
+  }
+  &[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+  }
+}
 
 @media (min-width: 64rem) {
   :root {
@@ -219,11 +289,14 @@
   }
 }
 
-/* shadcn Sheet and Drawer motion (CPT-16, DR-280). The default slide: the Sheet moves 2.5rem
-   and fades over 200ms; the top Drawer slides in from above over 450ms with ease-slide and
-   follows a swipe up. The base rule in globals.css removes both with reduced motion. */
+/* One motion (DR-346, DR-349): every slide, fade and height change is 450ms ease-slide.
+   Button colors keep the 200ms theme default. The base rule in globals.css sets every
+   duration to 0 with reduced motion, so the end state shows at once.
+
+   shadcn Sheet and Drawer (CPT-16, DR-280): the Sheet slides in from the start edge and the
+   top Drawer slides in from above and follows a swipe up. */
 @utility sheet-overlay {
-  transition: opacity 200ms;
+  transition: opacity 450ms var(--ease-slide);
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 0;
@@ -231,13 +304,10 @@
 }
 
 @utility sheet-left {
-  transition:
-    transform 200ms ease-in-out,
-    opacity 200ms ease-in-out;
+  transition: transform 450ms var(--ease-slide);
   &[data-starting-style],
   &[data-ending-style] {
-    transform: translateX(-2.5rem);
-    opacity: 0;
+    transform: translateX(-100%);
   }
 }
 

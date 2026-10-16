@@ -385,7 +385,7 @@ for (const p of PAGES) {
       expect(result.positions.some((x) => x > 0 && x < end - 1)).toBe(true);
     });
 
-    test("phone tabs: a chip press fades the panel out, then the new one in, opacity only (DR-284)", async ({
+    test("phone tabs: a chip press fades the panel out, then the new one in, 450ms ease-slide each, opacity only (DR-284, DR-346)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
@@ -395,9 +395,17 @@ for (const p of PAGES) {
       const row = s.locator("[data-region-row]");
       const duration = await row.evaluate((el) => {
         const style = getComputedStyle(el);
-        return [style.transitionProperty, style.transitionDuration];
+        return [
+          style.transitionProperty,
+          style.transitionDuration,
+          style.transitionTimingFunction,
+        ];
       });
-      expect(duration).toEqual(["opacity", "0.2s"]);
+      expect(duration).toEqual([
+        "opacity",
+        "0.45s",
+        "cubic-bezier(0.22, 1, 0.36, 1)",
+      ]);
       const samples = await row.evaluate(
         (el) =>
           new Promise<number[]>((resolve) => {
@@ -405,7 +413,8 @@ for (const p of PAGES) {
             const start = performance.now();
             const frame = () => {
               seen.push(parseFloat(getComputedStyle(el).opacity));
-              if (performance.now() - start < 700) requestAnimationFrame(frame);
+              if (performance.now() - start < 1200)
+                requestAnimationFrame(frame);
               else resolve(seen);
             };
             document

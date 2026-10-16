@@ -35,11 +35,17 @@ type RegionSliderProps = {
   strings: Dictionary["regionSlider"];
 };
 
-// A chip press fades the panel out, then the new one in, 200ms each (DR-284).
-const FADE_MS = 200;
-
-// duration-450 (DR-227, DR-151). The curve is the --ease-slide token, read at run time.
+// One motion (DR-346): 450ms ease-slide for the scroll of the slider buttons and for each
+// half of the phone fade. The curve is the --ease-slide token, read at run time.
 const SLIDE_MS = 450;
+
+function slideEasing() {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(
+    "--ease-slide",
+  );
+  const curve = parseCubicBezier(value);
+  return curve ? cubicBezier(...curve) : (t: number) => t;
+}
 
 // Buttons show when more regions exist than are in view: 2 from 600px, 3 from 1024px and
 // 4 from 1280px (DR-140, DR-141). CSS decides, so the server markup has no layout shift.
@@ -52,14 +58,6 @@ function buttonsVisibility(count: number) {
   );
 }
 
-function slideEasing() {
-  const value = getComputedStyle(document.documentElement).getPropertyValue(
-    "--ease-slide",
-  );
-  const curve = parseCubicBezier(value);
-  return curve ? cubicBezier(...curve) : (t: number) => t;
-}
-
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -70,7 +68,8 @@ const prefersReducedMotion = () =>
  * (width + gap) in 450ms with ease-slide, or at once with reduced motion, and are disabled
  * at each end. No loop, no autoplay. Swipe is native scrolling; the scrollbar is hidden. All regions are in the HTML, so the keyboard reaches every link.
  * Below 600px: region chips as shadcn Tabs (tablist, arrow keys, aria-selected). One panel
- * shows; a chip press fades it out and the new one in (200ms each, opacity only, DR-284).
+ * shows; a chip press fades it out and the new one in (450ms ease-slide each, opacity only,
+ * DR-284, DR-346).
  * The tab mode follows the CSS: it is on while the tablist is displayed, so the JS has no
  * breakpoint of its own.
  * Each panel is #region-<id>, the anchor of the region links in the nav and drawer (IMP-14).
@@ -210,7 +209,7 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
       setSelected(index);
       setFading(false);
       showTab(index);
-    }, FADE_MS);
+    }, SLIDE_MS);
   };
 
   const buttons = (
@@ -266,7 +265,9 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
         ))}
       </TabsList>
       {/* From 600: the slider row (`region-row`, components.css). Below 600 only the
-          selected panel shows, faded in and out (DR-284). */}
+          selected panel shows, faded in and out (DR-284). The row carries the one motion
+          (450ms ease-slide) at every width: the phone fade uses it, and from 600 it
+          states the slide time that SLIDE_MS runs in JS (DR-346). Keep the two equal. */}
       <div
         ref={rowRef}
         id="regions-row"
@@ -274,7 +275,7 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
         onPointerDown={stopSlide}
         onWheel={stopSlide}
         className={cn(
-          "region-row max-sm:transition-opacity max-sm:duration-200",
+          "region-row transition-opacity duration-450 ease-slide",
           fading && "max-sm:opacity-0",
         )}
         data-region-row
