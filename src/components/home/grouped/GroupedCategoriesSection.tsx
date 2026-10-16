@@ -56,7 +56,7 @@ export function GroupedCategoriesSection({
               ) : null}
               <div
                 data-grouped-row
-                className="grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-(--space-module) sm:grid-cols-2"
+                className="grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-(--grid-row-gap) sm:grid-cols-2"
               >
                 {row.map((block) => (
                   <CategoryBlock

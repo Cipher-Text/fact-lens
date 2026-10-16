@@ -39,12 +39,12 @@ describe("MostReadSection (P-5)", () => {
     expect(list.className).not.toMatch(/(md|2xl):grid-cols/);
   });
 
-  it("uses the sheet gaps: 24px columns, 20px rows on phones, 24px from 600 (C-07, LAY-21)", () => {
+  it("uses the column gap token and a rule inside each column, no row gap (C-07, DR-299, DR-300)", () => {
     renderSection("en");
     const list = screen.getByRole("list");
-    for (const name of ["gap-x-6", "gap-y-5", "sm:gap-y-6"]) {
-      expect(list).toHaveClass(name);
-    }
+    expect(list).toHaveClass("gap-x-(--grid-column-gap)", "gap-y-0");
+    for (const item of screen.getAllByRole("listitem"))
+      expect(item).toHaveClass("divider-item-grid");
   });
 
   it("links each title to its story in the page language", () => {

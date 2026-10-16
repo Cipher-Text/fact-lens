@@ -16,11 +16,13 @@ const full = getHomepage("bn").analysisOpinion!;
 const sparse = getHomepage("bn", { variant: "sparse" }).analysisOpinion!;
 
 describe("AnalysisSection (P-4)", () => {
-  it("is a shell section with surface-elevated inside the shell (DR-76)", () => {
+  it("is a panel band: surface-elevated across the full width, content in the shell (DR-264)", () => {
     const { container } = renderSection("bn", full);
     const section = container.firstElementChild as HTMLElement;
     expect(section.tagName).toBe("SECTION");
-    expect(section).toHaveClass("shell", "bg-surface-elevated");
+    expect(section).toHaveClass("bg-surface-elevated");
+    expect(section).not.toHaveClass("shell");
+    expect(section.firstElementChild).toHaveClass("shell");
     expect(
       screen.getByRole("heading", { level: 2, name: "বিশ্লেষণ ও মতামত" }),
     ).toBeInTheDocument();
@@ -71,13 +73,12 @@ describe("AnalysisSection (P-4)", () => {
     }
   });
 
-  it("gives the background the panel inset inside the shell (LAY-20, DR-224)", () => {
+  it("gives the band the block inset only, no inline inset (LAY-20, DR-224, DR-264)", () => {
     const { container } = renderSection("bn", full);
     const section = container.firstElementChild as HTMLElement;
-    expect(section).toHaveClass("@container");
-    const inset = section.querySelector(".panel-inset");
-    expect(inset?.parentElement).toBe(section);
-    expect(section.className).not.toMatch(/\bp[xy]?-/);
+    expect(section).toHaveClass("py-10", "sm:py-12");
+    expect(section.className).not.toMatch(/\bpx-/);
+    expect(section.querySelector(".panel-inset")).toBeNull();
   });
 
   it("builds the analysis column from one OverlapCard and compact StoryCard rows (P-4)", () => {
@@ -114,15 +115,15 @@ describe("AnalysisSection (P-4)", () => {
     const opinion = container.querySelector('[data-column="opinion"]')!;
     const items = opinion.querySelectorAll("li");
     expect(items).toHaveLength(5);
-    expect(opinion.querySelector("ul")).toHaveClass("gap-y-6");
+    // Divider.item between items; no row gap on the list (DR-299).
+    expect(opinion.querySelector("ul")?.className ?? "").not.toMatch(/gap-y/);
     for (const item of items) {
       const mark = item.querySelector("[data-quote-mark]")!;
       expect(mark).toHaveAttribute("aria-hidden", "true");
       expect(mark).toHaveClass("w-7", "sm:w-9", "lg:w-11");
+      expect(item).toHaveClass("divider-item");
       expect(item.querySelector("article")).toHaveClass(
-        "gap-x-3",
-        "sm:gap-x-4",
-        "lg:gap-x-5",
+        "gap-x-(--grid-column-gap)",
       );
       expect(item.querySelectorAll("h3 a")).toHaveLength(1);
       expect(item.querySelector("img")).toBeNull();

@@ -27,6 +27,7 @@ describe("Divider (C-22)", () => {
     const divider = container.firstElementChild!;
     expect(divider).toHaveAttribute("aria-hidden", "true");
     expect(divider).toHaveClass("h-(--bar-section-height)");
+    expect(divider.querySelector("span")).toHaveClass("h-0.5", "bg-border"); // 2px rule
     expect(divider.querySelector("[data-divider-bar]")).toHaveClass(
       "bottom-0",
       "h-full",
@@ -35,10 +36,11 @@ describe("Divider (C-22)", () => {
     );
   });
 
-  it("has an item rule with no rule above the first row", () => {
-    expect(dividerItem).toContain("border-t");
-    expect(dividerItem).toContain("first:border-t-0");
-    expect(dividerItem).toContain("pt-(--space-list-item)");
+  it("has a dotted item rule from the divider-item utility, none above the first row", () => {
+    // The utility (components.css) draws the 1px dotted gradient rule, space-list-item on each
+    // side, and no rule on the first child. No border-style dotted (DR-262).
+    expect(dividerItem).toBe("divider-item");
+    expect(dividerItem).not.toMatch(/border/);
   });
 });
 

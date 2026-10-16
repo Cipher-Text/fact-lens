@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { dividerItemGrid } from "@/components/layout/Divider";
 import { headlineLink, storyHref } from "@/components/story/links";
 import type { Story } from "@/content";
 import { cn } from "@/lib/utils";
@@ -15,18 +16,23 @@ type RankedListProps = {
  * row 2). The numeral is the .rank-list CSS counter (typography-system.md 7.1, type-rank):
  * Bengali digits on Bangla pages, decimal on English pages, text-interactive, hidden from
  * screen readers; the <ol> order gives the rank. RankedList.item is the title only: no image,
- * no meta. Column gap 24px; row gap 20px on phones, 24px from 600.
+ * no meta. Column gap is --grid-column-gap. Divider.item between two items in the same column, none across
+ * columns (DR-299, DR-300), so the list has no row gap: the rule has space-list-item on each side.
  */
 export function RankedList({ stories, className }: RankedListProps) {
   return (
     <ol
       className={cn(
-        "rank-list grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 sm:gap-y-6 lg:grid-cols-3 xl:grid-cols-4",
+        "rank-list grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-0 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
         className,
       )}
     >
       {stories.map((story) => (
-        <li key={story.id} data-most-read-item className="min-w-0">
+        <li
+          key={story.id}
+          data-most-read-item
+          className={cn("min-w-0", dividerItemGrid)}
+        >
           <h3 className="type-story-title-sm">
             <Link href={storyHref(story)} className={headlineLink}>
               {story.title}

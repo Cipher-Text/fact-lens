@@ -61,12 +61,15 @@ describe("Footer (spacing-layout-system.md 7.4, DR-59)", () => {
         }
       });
 
-      it("is a surface-elevated band with the panel inset, not surface-alt (C-21, LAY-20)", () => {
+      it("is a panel band: full-width surface-elevated, block inset only, content in the shell (C-21, DR-264)", () => {
         render(<Footer lang={c.lang} />);
         const footer = screen.getByRole("contentinfo");
         expect(footer.className).toContain("bg-surface-elevated");
         expect(footer.className).not.toContain("surface-alt");
-        expect(footer.querySelector(".panel-inset")).not.toBeNull();
+        expect(footer).toHaveClass("py-10", "sm:py-12");
+        expect(footer.className).not.toMatch(/\bpx-/);
+        expect(footer.querySelector(".panel-inset")).toBeNull();
+        expect(footer.firstElementChild).toHaveClass("shell");
       });
 
       it("shows the copyright line in metadata size and ink-muted", () => {

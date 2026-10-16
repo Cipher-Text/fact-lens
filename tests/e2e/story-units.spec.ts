@@ -206,10 +206,11 @@ for (const path of PAGES) {
             expect(Math.round(next.x)).toBe(Math.round(prev.x));
           }
         }
+        // Divider.item: a 1px dotted rule drawn on the li (DR-262).
         expect(
           await items
             .nth(1)
-            .evaluate((n) => getComputedStyle(n).borderTopWidth),
+            .evaluate((n) => getComputedStyle(n, "::before").height),
         ).toBe("1px");
       });
     });

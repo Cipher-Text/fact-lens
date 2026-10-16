@@ -1,8 +1,8 @@
 /* Component tokens: component-system.md Section 6. Imported after layout.css. */
 :root {
   --bar-brand: 0.375rem;
-  --bar-section-width: 3rem;
-  --bar-section-height: 0.375rem;
+  --bar-section-width: 2.5rem;
+  --bar-section-height: 0.5rem;
   --space-lead-inset-start: 0;
   --space-lead-inset-end: 2rem;
   --space-lead-panel: 1rem;
@@ -66,8 +66,7 @@
 
 @media (min-width: 64rem) {
   :root {
-    --bar-section-width: 4rem;
-    --bar-section-height: 0.5rem;
+    --bar-section-width: 3rem;
     --story-feature-media-share: 0.6;
   }
 }
@@ -210,5 +209,91 @@
   }
   &[data-swiping] {
     transition-duration: 0s;
+  }
+}
+
+/* Divider.item (C-22, DR-262): a 1px dotted rule, square 1 x 1px dots with a 1px gap, drawn
+   with a repeating gradient because border-style dotted differs between browsers. The li has
+   space-list-item above and below the rule. The first item has no rule (no rule before the
+   first row, none after the last). */
+@utility divider-item {
+  position: relative;
+  margin-block-start: var(--space-list-item);
+  padding-block-start: var(--space-list-item);
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border) 0 1px,
+      transparent 1px 2px
+    );
+  }
+  &:first-child {
+    margin-block-start: 0;
+    padding-block-start: 0;
+    &::before {
+      display: none;
+    }
+  }
+}
+
+/* Divider.item inside a multi-column grid list (RankedList): the rule runs within a column
+   only (DR-299, DR-300), so an item on the first grid row has no rule and the others have
+   one above them. Items per row: 1, 2 from 600, 3 from 1024, 4 from 1280 (DR-51, DR-145).
+   The list sets row-gap 0: the space above and below the rule is space-list-item. The rule
+   is the ::after of the li, because the rank numeral is its ::before. */
+@utility divider-item-grid {
+  position: relative;
+  margin-block-start: var(--space-list-item);
+  padding-block-start: var(--space-list-item);
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border) 0 1px,
+      transparent 1px 2px
+    );
+  }
+  &:nth-child(-n + 1) {
+    margin-block-start: 0;
+    padding-block-start: 0;
+    &::after {
+      display: none;
+    }
+  }
+  @media (width >= 37.5rem) {
+    &:nth-child(-n + 2) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  @media (width >= 64rem) {
+    &:nth-child(-n + 3) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  @media (width >= 80rem) {
+    &:nth-child(-n + 4) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
   }
 }

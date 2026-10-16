@@ -206,8 +206,7 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
     render(<StoryList stories={latest} strings={bn} />);
     const items = screen.getAllByRole("listitem");
     expect(items).toHaveLength(5);
-    for (const li of items)
-      expect(li).toHaveClass("border-t", "first:border-t-0");
+    for (const li of items) expect(li).toHaveClass("divider-item");
   });
 
   it("fills two columns column-first, with no rule at the top of a column", () => {
@@ -220,8 +219,8 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
     );
     expect(ul).toHaveClass("md:max-lg:grid-flow-col");
     const items = screen.getAllByRole("listitem");
-    expect(items[3]).toHaveClass("md:max-lg:border-t-0");
-    expect(items[1]).not.toHaveClass("md:max-lg:border-t-0");
+    expect(items[3]).toHaveClass("md:max-lg:before:hidden");
+    expect(items[1]).not.toHaveClass("md:max-lg:before:hidden");
   });
 });
 

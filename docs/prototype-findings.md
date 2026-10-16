@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. Use the entry format under "New findings (run 3)".
+New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. Use the entry format under "New findings (run 3)".
 
 ## Summary
 
@@ -69,8 +69,8 @@ New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. U
 | DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Decided (DR-296); code in R3-07 |
 | DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Decided (DR-297); code in R3-04 |
 | DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Decided (DR-298); code in R3-05 |
-| DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Decided (DR-300); code in R3-03 |
-| DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Decided (DR-264); code in R3-03 |
+| DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Fixed in R3-03 |
+| DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Fixed in R3-03 |
 | DOC-34 | R2-15 | C-17 and §12.3 give the top bar `h-(--bar-height)` (a fixed height); the C-17 checks and DR-81 say the bar can wrap to two lines at 200% text size | Low | Fixed in R3-02 |
 | DOC-35 | R2-17 | Every ad region carries the same accessible label, so axe reports `landmark-unique` (moderate, no serious or critical). C-16 gives one label text; it does not say whether slots need a number or a name each. Suggested: name each slot (top, band 1..n, inset, rail) | Low | Decided (DR-266); code in R3-07 |
 | DOC-36 | Audit 13 Oct | StoryCard: "body first in the markup" against LAY-14 on phones | Medium | Fixed in R3-01 |
@@ -78,7 +78,7 @@ New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. U
 | DOC-38 | R3-01 | `component-system.md` P-2 Accessibility says text comes before the image in the markup; C-24 (DR-267) says the image comes first | Low | Open; code follows C-24 |
 | U-01 | FL-01 | English category labels | Medium | Later: IA label table (DR-342, DR-282) |
 | U-02 | FL-01 | Card variants, radius, icons, motion | Medium | Resolved by spec: no radius or shadow (CPT-05, COL-15), Lucide icons, 450ms slide (DR-227), card variants in C-01, C-02, C-24 |
-| U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Decided (DR-264); code in R3-03 |
+| U-03 | FL-01 | বিশ্লেষণ ও মতামত section background | Low | Fixed in R3-03 |
 | U-04 | FL-02 | Theme switch and language switch look | Medium | Fixed in R2-05 (C-12, C-17) |
 | U-05 | FL-02 | No minimum touch target size | Medium | Resolved by spec: IconButton and controls are 44px (`--icon-button-size`); no global target token |
 | U-06 | FL-03 | Section heading rule thickness | Low | Fixed in R2-04 (C-13 and C-22 give it) |
@@ -91,7 +91,7 @@ New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. U
 | U-13 | FL-06 | Card without image beside a card with image | Medium | Fixed in R2-07 (C-01, C-02, no subgrid) and through U-33 (R2-08) |
 | U-14 | FL-06 | Bangla Breaking label and label padding | Low | Decided (DR-344); code in R3-04 |
 | U-15 | FL-07 | Analysis item layout (image-led list) | Low | Fixed in R2-09 |
-| U-16 | FL-07 | Opinion chip padding and quote icon | Low | Decided (DR-299); code in R3-03 |
+| U-16 | FL-07 | Opinion chip padding and quote icon | Low | Fixed in R3-03 |
 | U-17 | FL-07 | Padding inside the বিশ্লেষণ ও মতামত background | Low | Fixed in R2-09 |
 | U-18 | FL-08 | P-2 lead: image and text split from 1280px | Low | Fixed in R2-10 |
 | U-19 | FL-08 | P-2 rail at 600–1023px | Low | Fixed in R2-10 |
@@ -109,7 +109,7 @@ New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. U
 | U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Fixed in R3-02 |
 | U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Fixed in R3-02 |
 | U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Decided (DR-338); code in R3-04 |
-| U-34 | R2-09 | P-4 analysis stories: the P-4 sheet says rules between stories wait on the item divider (DR-104), but C-03 says StoryList rules and the other lists draw them | Low | Decided (DR-268); code in R3-03 |
+| U-34 | R2-09 | P-4 analysis stories: the P-4 sheet says rules between stories wait on the item divider (DR-104), but C-03 says StoryList rules and the other lists draw them | Low | Fixed in R3-03 |
 | U-35 | R2-09 | C-06 quote mark: the sheet gives sizes and color, no drawing | Low | Decided (DR-301); code in R3-02 |
 | U-36 | R2-13 | C-15 panel: "3:2 image, 3 stories". The sheet does not say if the image belongs to the first story. Built as an image story (StoryCard 3:2) plus two text stories = 3 stories | Low | Closed (DR-307): no run 3 code change |
 | U-37 | R2-15 | At 200% text size nothing sets the P-4 compact rows to stack: no trigger exists (DR-81, A11Y-18). Most read stacks because the rem breakpoints move with the browser text size | Medium | Decided (DR-308); code in R3-01, R3-03, R3-04 |
@@ -150,7 +150,7 @@ New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. U
 | IMP-34 | R2-03 | Mock ad creatives are plain gray SVG files with no text, one per size | Low | Closed (DR-310): no run 3 code change |
 | IMP-35 | R2-04 | The Eyebrow is now a link to `/category/<id>`, which is a 404 page | Low | Later: covered by the URL patterns, 404 stays (DR-311) |
 | IMP-36 | R2-04 | The Bangla Breaking label is "সদ্যপ্রাপ্ত"; the Chip sheet says the working label is ব্রেকিং | Low | Decided (DR-279); code in R3-04 |
-| IMP-37 | R2-04 | Item divider is a class, not a component; the section divider is a component | Low | Decided (DR-312); code in R3-03 |
+| IMP-37 | R2-04 | Item divider is a class, not a component; the section divider is a component | Low | Fixed in R3-03 |
 | IMP-38 | R2-04 | 106 e2e tests were red on the branch before R2-04; five keyboard tests accept the old ring or the base outline for now | Medium | Fixed in R3-00 (the three loose keyboard tests now require the base outline) |
 | IMP-39 | R2-05 | Drawer and SearchDialog stay on the native `<dialog>`; the sheets name the shadcn Sheet, Dialog, Switch and Collapsible (CPT-16) | Medium | Fixed in R3-02 |
 | IMP-40 | R2-05 | The theme has two states and does not follow the system; an old stored "system" reads as light; e2e tests set the theme in storage | Medium | Fixed in R3-02 |
@@ -167,7 +167,7 @@ New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. U
 | IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Decided (DR-284); code in R3-06 |
 | IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Decided (DR-318); code in R3-06 |
 | IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Decided (DR-319); code in R3-05 |
-| IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Decided (DR-320); code in R3-03 |
+| IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Fixed in R3-03 |
 | IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Decided (DR-321); code in R3-06 |
 | IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Fixed in R3-02 |
 | IMP-57 | R2-20 | Nav and Drawer links are plain `<a>` (full page load) with no comment, unlike `LanguageSwitch` | Low | Fixed in R3-01 (`LanguageSwitch` stays a plain `<a>`, R3-08) |
@@ -197,6 +197,7 @@ New findings in run 3 take the next free number: DOC-40, U-40, IMP-77, KIT-11. U
 | KIT-10 | Audit 13 Oct | Definition of done names an e2e command that cannot pass | Medium | Fixed in R3-00 (`pnpm test:e2e:chromium`) |
 | DOC-39 | R3-02 | Header sheets disagree on focus, on the search component and on the close button order | Low | Open |
 | U-39 | R3-02 | No token for the theme control icon color (`interactive` in light, `ink` in dark) | Medium | Workaround in code (`interactive` in both themes) |
+| U-40 | R3-03 | Divider.column (column-inset, column-full): tajmin sets where each version is used (DR-262) | Low | Open: flag for tajmin |
 | IMP-72 | R3-02 | Base UI hides the page behind the panel with `aria-hidden`, not `inert` | Low | Open |
 | IMP-73 | R3-02 | ThemeToggle is a hand-built switch, not the shadcn Switch | Low | Open |
 | IMP-74 | R3-02 | Region links in the Drawer have no target for 3 of 7 regions | Medium | Open; code in R3-06 |
@@ -359,6 +360,15 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 - **Problem:** the NavBar sets `data-bar-stuck` when it scrolls away, but it is hidden under 1280px. Run 2 showed the bar rule at the page top under 1280px. The code now sets `data-bar-stuck` when the page has scrolled (scrollY above 0) while the NavBar is hidden, so the rule shows only when the bar is stuck, at every width.
 - **Suggested solution:** say in C-17 that under 1280px the bar is stuck once the page scrolls.
 
+### U-40 Where the column dividers go
+
+- **Found:** R3-03, 16 Oct 2026 · **Severity:** Low · **Status:** Open: flag for tajmin (`UNRESOLVED_DESIGN_SYSTEM`)
+- **Source:** `component-system.md` C-22 ("tajmin sets where each column version is used"), `agent-contract.md` Section 9, DR-262.
+- **Problem:** no sheet names a place for `column-inset` or `column-full`. The code draws no column rule. Item and section dividers are done.
+- **Suggested solution:** tajmin names the sections and the version for each (for example P-4 between analysis and opinion). Then add a `variant` to `Divider`.
+
+---
+
 ### IMP-76 Removing `--scroll-offset` in the effect cleanup breaks a #hash scroll in development
 
 - **Found:** R3-02, 16 Oct 2026 · **Severity:** Low · **Status:** Open
@@ -387,3 +397,4 @@ Entry format:
 | 2026-10-16 | Run 3 start | File shortened for run 3: every item has its run 2 review decision (DR-262 to DR-344) and its run 3 ticket; full text kept for the Later items only |
 | 2026-10-16 | R3-01 | DOC-38 and IMP-71 added; DOC-36, IMP-09, IMP-48, IMP-57, IMP-61 and IMP-64 set to Fixed in R3-01 |
 | 2026-10-16 | R3-02 | DOC-39, U-39 and IMP-72 to IMP-76 added; DOC-27, DOC-28, DOC-34, DOC-37, U-31, U-32, U-38, IMP-02, IMP-13, IMP-31, IMP-39, IMP-40, IMP-42, IMP-56, IMP-68 and IMP-69 set to Fixed in R3-02 |
+| 2026-10-16 | R3-03 | U-40 added; DOC-32, DOC-33, U-03, U-16, U-34, IMP-37 and IMP-54 set to Fixed in R3-03 |

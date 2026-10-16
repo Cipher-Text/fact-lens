@@ -1,3 +1,4 @@
+import { dividerItem } from "@/components/layout/Divider";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { MoreLink } from "@/components/story/MoreLink";
 import { StoryCard } from "@/components/story/StoryCard";
@@ -32,29 +33,17 @@ export function CategoryBlock({ lang, block, t }: CategoryBlockProps) {
     >
       <SectionHeading id={titleId}>{t.categories[category]}</SectionHeading>
       {feature ? (
-        <div
-          className={
-            rest.length > 0
-              ? "border-b border-border pb-(--space-list-item)"
-              : undefined
-          }
-        >
-          <StoryCard
-            story={feature}
-            strings={t}
-            layout="stack"
-            ratio="3:2"
-            size="md"
-            eyebrow={false}
-          />
-        </div>
+        <StoryCard
+          story={feature}
+          strings={t}
+          layout="stack"
+          ratio="3:2"
+          size="md"
+          eyebrow={false}
+        />
       ) : null}
       {rest.length > 0 ? (
-        <StoryList
-          stories={rest}
-          strings={t}
-          className="pt-(--space-list-item)"
-        />
+        <StoryList stories={rest} strings={t} className={dividerItem} />
       ) : null}
       <div className="mt-auto">
         <MoreLink

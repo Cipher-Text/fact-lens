@@ -47,15 +47,15 @@ const WIDTHS = [
   320, 360, 600, 767, 768, 834, 1023, 1024, 1180, 1279, 1280, 1366, 1440, 1920,
 ];
 
-// spacing-layout-system.md 3.2: the wrapper is shell − 304 − 24 from 1024.
+// spacing-layout-system.md 3.2: the wrapper is shell − 304 − column gap (24px at 1024, 32px from 1280).
 const WRAPPER: Record<number, number> = {
   1024: 648,
   1180: 804,
   1279: 903,
-  1280: 904,
-  1366: 952,
-  1440: 952,
-  1920: 952,
+  1280: 896,
+  1366: 944,
+  1440: 944,
+  1920: 944,
 };
 
 const grouped = (page: Page) => page.locator('[data-section="grouped"]');
@@ -95,8 +95,8 @@ for (const p of PAGES) {
 
         const gutter = width < 600 ? 16 : 24;
         const shell = Math.min(width - 2 * gutter, 1280);
-        // --grid-column-gap: 16 / 20 from 768 / 24 from 1024 (spacing-layout-system.md 3).
-        const columnGap = width >= 1024 ? 24 : width >= 768 ? 20 : 16;
+        // --grid-column-gap: 16 / 24 from 768 / 32 from 1280 (spacing-layout-system.md 3.1, DR-300).
+        const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
         const space = width >= 1024 ? 40 : width >= 768 ? 32 : 24;
 
         const s = grouped(page);

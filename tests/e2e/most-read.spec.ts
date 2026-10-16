@@ -52,9 +52,10 @@ for (const p of PAGES) {
 
         const gutter = width < 600 ? 16 : 24;
         const shell = Math.min(width - 2 * gutter, 1280);
-        // C-07: 24px column gap at every width; row gap 20px on phones, 24px from 600.
-        const columnGap = 24;
-        const rowGap = width >= 600 ? 24 : 20;
+        // C-07: --grid-column-gap (16 / 24 from 768 / 32 from 1280, DR-300). No row gap: the
+        // rule between rows in a column has space-list-item (16px) on each side (DR-299).
+        const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
+        const rowGap = 16;
         const space = width >= 1024 ? 40 : width >= 768 ? 32 : 24;
 
         const s = mostRead(page);

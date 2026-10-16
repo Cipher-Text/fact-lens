@@ -79,10 +79,13 @@ for (const p of PAGES) {
         );
         expect(scroll).toBeLessThanOrEqual(width);
 
-        // Shell width, not a full-width row (LAY-03, DR-76).
+        // Panel band: the background is full width, the content is in the shell (DR-264).
         const gutter = width < 600 ? 16 : 24;
         const sectionBox = await box(section);
-        expect(Math.round(sectionBox.width)).toBe(
+        expect(Math.round(sectionBox.x)).toBe(0);
+        expect(Math.round(sectionBox.width)).toBe(width);
+        const shellBox = await box(section.locator("> .shell"));
+        expect(Math.round(shellBox.width)).toBe(
           Math.min(width - 2 * gutter, 1280),
         );
 
@@ -145,16 +148,21 @@ for (const p of PAGES) {
         const space = width >= 1024 ? 40 : width >= 768 ? 32 : 24;
         const next = section.locator("xpath=following-sibling::*[1]");
         await expect(next).toHaveAttribute("data-ad-slot", "ad-band");
-        const adBox = await box(next);
-        expect(Math.round(adBox.y - (sectionBox.y + sectionBox.height))).toBe(
-          space,
-        );
         const before = section.locator("xpath=preceding-sibling::*[1]");
         await expect(before).toHaveAttribute("data-ad-slot", "ad-band");
-        const beforeBox = await box(before);
-        expect(
-          Math.round(sectionBox.y - (beforeBox.y + beforeBox.height)),
-        ).toBe(space);
+        // Read both gaps in one pass, so a late layout shift cannot change one box between
+        // two reads (IMP-54: WebKit read -8 from boxes taken at different times).
+        const gaps = await section.evaluate((el) => {
+          const r = el.getBoundingClientRect();
+          return {
+            after:
+              el.nextElementSibling!.getBoundingClientRect().top - r.bottom,
+            before:
+              r.top - el.previousElementSibling!.getBoundingClientRect().bottom,
+          };
+        });
+        expect(Math.round(gaps.after)).toBe(space);
+        expect(Math.round(gaps.before)).toBe(space);
       });
     }
 
@@ -268,10 +276,9 @@ test.describe("sheet checks (P-4, C-02, C-06, C-24)", () => {
         await page.goto(p.path);
         const section = page.locator(SECTION);
 
-        // Panel inset by the section width as container: 40 / 32 under 600, 48 / 40 from 600 (LAY-20, DR-224).
-        const sectionBox = await box(section);
-        const [block, inline] = sectionBox.width < 600 ? [40, 32] : [48, 40];
-        const padding = await section.locator(".panel-inset").evaluate((el) => {
+        // Panel band: block inset only, 40px under 600px and 48px from 600px, no inline inset (LAY-20, DR-264).
+        const [block, inline] = width < 600 ? [40, 0] : [48, 0];
+        const padding = await section.evaluate((el) => {
           const s = getComputedStyle(el);
           return [s.paddingTop, s.paddingBottom, s.paddingLeft, s.paddingRight];
         });
@@ -338,10 +345,14 @@ test.describe("sheet checks (P-4, C-02, C-06, C-24)", () => {
         await expect(section.locator("h3")).toHaveCount(8);
         await expect(section.locator("h3 a")).toHaveCount(8);
 
-        // Opinion: the quote mark width and gap by width, 24px between rows, no rule.
+        // Opinion: the quote mark width and the column gap by width, Divider.item between rows.
         const opinion = section.locator('[data-column="opinion"]');
         const [markWidth, gap] =
-          width < 600 ? [28, 12] : width < 1024 ? [36, 16] : [44, 20];
+          width < 600
+            ? [28, 16]
+            : width < 1024
+              ? [36, 24]
+              : [44, width >= 1280 ? 32 : 24];
         const items = await opinion.locator("li").all();
         expect(items).toHaveLength(5);
         for (const item of items) {
@@ -377,7 +388,15 @@ test.describe("sheet checks (P-4, C-02, C-06, C-24)", () => {
         for (let i = 1; i < items.length; i++) {
           const prev = await box(items[i - 1]);
           const cur = await box(items[i]);
-          expect(Math.round(cur.y - (prev.y + prev.height))).toBe(24);
+          // Divider.item: space-list-item (16px) above the rule, 16px of padding below it.
+          expect(Math.round(cur.y - (prev.y + prev.height))).toBe(16);
+          expect(
+            Math.round(
+              await items[i].evaluate((el) =>
+                parseFloat(getComputedStyle(el).paddingTop),
+              ),
+            ),
+          ).toBe(16);
         }
 
         // The chip: brand fill in light, on-interactive text, 2px 8px, a label and not a link.

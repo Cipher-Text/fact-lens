@@ -1,3 +1,4 @@
+import { dividerItem } from "@/components/layout/Divider";
 import { Rail } from "@/components/layout/Rail";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { Shell } from "@/components/layout/Shell";
@@ -63,31 +64,21 @@ export function FeaturedCategorySection({
         <WithRail>
           {wrapper}
           <Rail data-featured-rail>
-            {/* The rule below the image story is the card's border; the list then
-                starts with space-list-item (C-24, C-03). */}
-            <div
-              className={
-                textStories.length > 0
-                  ? "border-b border-border pb-(--space-list-item)"
-                  : undefined
-              }
-            >
-              <StoryCard
-                story={imageStory}
-                strings={t}
-                layout="row-until-lg"
-                ratio="16:9"
-                size="sm"
-                split="third"
-                eyebrow={false}
-                summary={false}
-              />
-            </div>
+            <StoryCard
+              story={imageStory}
+              strings={t}
+              layout="row-until-lg"
+              ratio="16:9"
+              size="sm"
+              split="third"
+              eyebrow={false}
+              summary={false}
+            />
             {textStories.length > 0 ? (
               <StoryList
                 stories={textStories}
                 strings={t}
-                className="pt-(--space-list-item)"
+                className={dividerItem}
               />
             ) : null}
           </Rail>

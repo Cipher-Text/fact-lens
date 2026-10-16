@@ -85,7 +85,7 @@ for (const p of PAGES) {
 
         const gutter = width < 600 ? 16 : 24;
         const shell = Math.min(width - 2 * gutter, 1280);
-        const columnGap = width >= 1024 ? 24 : width >= 768 ? 20 : 16;
+        const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16; // DR-300
 
         const s = regions(page);
         const sectionBox = await box(s);
@@ -484,10 +484,10 @@ for (const p of PAGES) {
         const rules = await panel
           .locator(":scope > ul > li")
           .evaluateAll((items) =>
-            items.map((li) => getComputedStyle(li).borderTopWidth),
+            items.map((li) => getComputedStyle(li, "::before").display),
           );
-        expect(rules[0]).toBe("0px");
-        for (const rule of rules.slice(1)) expect(rule).toBe("1px");
+        expect(rules[0]).toBe("none");
+        for (const rule of rules.slice(1)) expect(rule).toBe("block");
       }
       // One "more" link at the section end, at the end edge, to the regions page.
       const more = s.getByRole("link", { name: /^(আরও দেখুন|See more)/ });
