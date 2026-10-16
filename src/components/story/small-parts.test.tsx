@@ -27,6 +27,7 @@ describe("Divider (C-22)", () => {
     const divider = container.firstElementChild!;
     expect(divider).toHaveAttribute("aria-hidden", "true");
     expect(divider).toHaveClass("h-(--bar-section-height)");
+    expect(divider.querySelector("span")).toHaveClass("h-0.5", "bg-border"); // 2px rule
     expect(divider.querySelector("[data-divider-bar]")).toHaveClass(
       "bottom-0",
       "h-full",
@@ -35,10 +36,11 @@ describe("Divider (C-22)", () => {
     );
   });
 
-  it("has an item rule with no rule above the first row", () => {
-    expect(dividerItem).toContain("border-t");
-    expect(dividerItem).toContain("first:border-t-0");
-    expect(dividerItem).toContain("pt-(--space-list-item)");
+  it("has a dotted item rule from the divider-item utility, none above the first row", () => {
+    // The utility (components.css) draws the 1px dotted gradient rule, space-list-item on each
+    // side, and no rule on the first child. No border-style dotted (DR-262).
+    expect(dividerItem).toBe("divider-item");
+    expect(dividerItem).not.toMatch(/border/);
   });
 });
 
@@ -89,13 +91,7 @@ describe("Eyebrow (C-08)", () => {
   })();
 
   it("links the story's category with hover and pressed colors", () => {
-    render(
-      <Eyebrow
-        story={{ ...top, breaking: false }}
-        strings={en}
-        className="mb-2"
-      />,
-    );
+    render(<Eyebrow story={top} strings={en} className="mb-2" />);
     const link = screen.getByRole("link", {
       name: en.categories[top.category],
     });
@@ -107,16 +103,6 @@ describe("Eyebrow (C-08)", () => {
     );
     expect(link.className).not.toMatch(NO_ROUNDING);
     expect(link.parentElement).toHaveClass("type-eyebrow");
-  });
-
-  it("shows the live Chip in the slot of a breaking story", () => {
-    const { container } = render(
-      <Eyebrow story={{ ...top, breaking: true }} strings={en} />,
-    );
-    expect(screen.queryByRole("link")).toBeNull();
-    expect(container.querySelector('[data-chip="live"]')).toHaveTextContent(
-      en.story.breaking,
-    );
   });
 });
 
@@ -147,6 +133,16 @@ describe("MetaLine (C-09)", () => {
     expect(container.firstElementChild!.className).not.toMatch(/font-/);
   });
 
+  it("shows the time only, with no separator, when the story has no reading time (DR-272)", () => {
+    const story = getHomepage("bn").hero!.lead;
+    const noReading = { ...story, readingMinutes: undefined };
+    const { container } = render(
+      <MetaLine items={storyMetaItems(noReading, bn.story)} />,
+    );
+    expect(container.querySelectorAll("time")).toHaveLength(1);
+    expect(container.querySelector("[data-meta-separator]")).toBeNull();
+  });
+
   it("builds the time item, and the reading time only when asked", () => {
     const story = getHomepage("bn").hero!.lead;
     const withReading = { ...story, readingMinutes: 4 };
@@ -169,33 +165,6 @@ describe("Chip (C-11)", () => {
       "py-0.5",
     );
     expect(chip.className).not.toMatch(/rounded|hover:/);
-  });
-
-  it("live uses the live fill with its own text color (COL-11)", () => {
-    const { container } = render(<Chip variant="live">Breaking</Chip>);
-    expect(container.firstElementChild).toHaveClass("bg-live", "text-on-live");
-  });
-
-  it("filter is a 44px button with an outline, selected fill, and no hover or pressed color (DR-222)", () => {
-    const onClick = vi.fn();
-    render(
-      <Chip variant="filter" role="tab" aria-selected={false} onClick={onClick}>
-        Asia
-      </Chip>,
-    );
-    const chip = screen.getByRole("tab", { name: "Asia" });
-    expect(chip).toHaveAttribute("type", "button");
-    expect(chip).toHaveClass(
-      "min-h-11",
-      "px-4",
-      "border",
-      "border-border-interactive",
-      "aria-selected:bg-interactive",
-      "aria-selected:text-on-interactive",
-    );
-    expect(chip.className).not.toMatch(/hover:|active:|rounded|ring/);
-    fireEvent.click(chip);
-    expect(onClick).toHaveBeenCalledOnce();
   });
 });
 

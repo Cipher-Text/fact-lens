@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
       issues: read
       id-token: write
 
@@ -36,10 +36,27 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
-          plugins: 'code-review@claude-code-plugins'
-          prompt: '/code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
-          claude_args: '--allowedTools "mcp__github_inline_comment__create_inline_comment"'
+          # The prompt is the run goals (DR-335). Edit the goals when a new run starts.
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+
+            Review this pull request of the Fact Lens homepage prototype (run 3, fix run).
+            Read AGENTS.md, docs/SPRINT.md (the tickets the PR names) and
+            docs/design-system/agent-contract.md Sections 5 to 9 first. The specs in
+            docs/design-system/ are correct when the code and a spec disagree.
+
+            Review against these goals, in this order:
+            1. Specs: the change follows the spec sections its tickets name. Cite the rule ID
+               (COL-, TYP-, LAY-, CPT-, N-) for each break. No raw values, no new rule.
+            2. Bugs: wrong behavior, broken tests, a skipped or weakened test.
+            3. Readers: both languages (/ and /en), light and dark, keyboard, screen reader,
+               200% text size, no layout shift.
+
+            Put each finding as an inline comment on the line. Then post one summary
+            comment with gh pr comment: blockers, fixes, notes, and the goals with no finding.
+            Do not approve or merge.
+          claude_args: '--allowedTools "mcp__github_inline_comment__create_inline_comment,Bash(gh pr comment:*),Bash(gh pr diff:*),Bash(gh pr view:*)"'
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
 

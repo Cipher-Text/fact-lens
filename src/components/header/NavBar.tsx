@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useLayoutEffect, useRef } from "react";
+
+import { cn } from "@/lib/utils";
 
 import { uiLink } from "./classes";
 import type { NavItem } from "./navItems";
@@ -16,9 +19,13 @@ type Props = {
  * items that fit on one line and hides the rest. There is no "More" item: every item is in
  * the Drawer (DR-255). A hidden item leaves the tab order.
  *
- * NavBar.rules: the row keeps a 1px rule at its bottom. While the row is in view the TopBar
- * has no rule of its own; when the row has scrolled away and the TopBar sticks alone, the
- * rule returns (DR-173). This component tells the TopBar through `data-bar-stuck` on <html>.
+ * NavBar.item: Bangla is type-ui 600 (16px), English type-ui-sm 600 (14px) (DR-295). The
+ * row is 48px (`--nav-row-height`) and the 1px rule at its bottom makes 49px in total.
+ *
+ * NavBar.rules: the row keeps a 1px rule at its bottom. This component sets
+ * `data-bar-stuck` on <html> when the row has scrolled behind the bar; the TopBar reads it
+ * and shows its own bottom rule then (DR-173, DR-287). Under 1280px the row is hidden and
+ * the bar sticks alone, so the bar is stuck as soon as the page has scrolled.
  */
 export function NavBar({ items, label }: Props) {
   const navRef = useRef<HTMLElement>(null);
@@ -46,25 +53,31 @@ export function NavBar({ items, label }: Props) {
     return () => observer.disconnect();
   }, []);
 
-  // The bar is "stuck alone" when the row has scrolled up behind it. The root margin takes
-  // the bar height (64px from 1024) off the top of the viewport.
   useLayoutEffect(() => {
     const nav = navRef.current;
-    if (!nav) return;
+    const bar = document.querySelector<HTMLElement>("[data-top-bar]");
+    if (!nav || !bar) return;
     const root = document.documentElement;
-    const barHeight =
-      document.querySelector<HTMLElement>("[data-top-bar]")?.offsetHeight ?? 0;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const stuck = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-        if (stuck) root.dataset.barStuck = "";
-        else delete root.dataset.barStuck;
-      },
-      { rootMargin: `-${barHeight}px 0px 0px 0px` },
-    );
-    observer.observe(nav);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const rowShown = nav.getClientRects().length > 0;
+      const stuck = rowShown
+        ? nav.getBoundingClientRect().bottom <= bar.offsetHeight
+        : window.scrollY > 0;
+      if (stuck) root.dataset.barStuck = "";
+      else delete root.dataset.barStuck;
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
     return () => {
-      observer.disconnect();
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (frame) cancelAnimationFrame(frame);
       delete root.dataset.barStuck;
     };
   }, []);
@@ -82,13 +95,17 @@ export function NavBar({ items, label }: Props) {
       >
         {items.map((item) => (
           <li key={item.id}>
-            <a
+            <Link
               href={item.href}
               aria-current={item.current ? "page" : undefined}
-              className={`inline-flex min-h-(--nav-row-height) items-center type-ui-sm font-semibold aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar) ${uiLink}`}
+              className={cn(
+                "inline-flex min-h-(--nav-row-height) items-center font-semibold aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar)",
+                "type-ui-sm lang-bn:type-ui lang-bn:font-semibold",
+                uiLink,
+              )}
             >
               {item.label}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>

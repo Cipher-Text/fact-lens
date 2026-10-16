@@ -1,3 +1,4 @@
+import { dividerItem } from "@/components/layout/Divider";
 import { Rail } from "@/components/layout/Rail";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { Shell } from "@/components/layout/Shell";
@@ -9,7 +10,7 @@ import { StoryList } from "@/components/story/StoryList";
 import type { FeaturedSection, Lang } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
 
-type FeaturedCategoryProps = {
+type FeaturedCategorySectionProps = {
   lang: Lang;
   section: FeaturedSection;
   t: Dictionary;
@@ -25,12 +26,12 @@ type FeaturedCategoryProps = {
  * stories: the wrapper spans the shell. One MoreLink at the section end (DR-110, DR-123).
  * The heading is plain text (DR-122). The section id is the anchor of the nav links (IMP-14).
  */
-export function FeaturedCategory({
+export function FeaturedCategorySection({
   lang,
   section,
   t,
   className,
-}: FeaturedCategoryProps) {
+}: FeaturedCategorySectionProps) {
   const { category, lead, rail } = section;
   const titleId = `category-${category}-title`;
   const [imageStory, ...textStories] = rail;
@@ -63,31 +64,21 @@ export function FeaturedCategory({
         <WithRail>
           {wrapper}
           <Rail data-featured-rail>
-            {/* The rule below the image story is the card's border; the list then
-                starts with space-list-item (C-24, C-03). */}
-            <div
-              className={
-                textStories.length > 0
-                  ? "border-b border-border pb-(--space-list-item)"
-                  : undefined
-              }
-            >
-              <StoryCard
-                story={imageStory}
-                strings={t}
-                layout="row-until-lg"
-                ratio="16:9"
-                size="sm"
-                split="third"
-                eyebrow={false}
-                summary={false}
-              />
-            </div>
+            <StoryCard
+              story={imageStory}
+              strings={t}
+              layout="row-until-lg"
+              ratio="16:9"
+              size="sm"
+              split="third"
+              eyebrow={false}
+              summary={false}
+            />
             {textStories.length > 0 ? (
               <StoryList
                 stories={textStories}
                 strings={t}
-                className="pt-(--space-list-item)"
+                className={dividerItem}
               />
             ) : null}
           </Rail>

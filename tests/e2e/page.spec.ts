@@ -10,7 +10,7 @@ const WIDTHS = [320, 360, 600, 768, 834, 1024, 1180, 1280, 1366, 1440, 1920];
 // Reserved creative heights (Section 9). The label line (--ad-label) adds 24px.
 function reserved(slot: string, width: number) {
   if (slot === "ad-top") return width < 768 ? 100 : width < 1024 ? 90 : 250;
-  if (slot === "ad-band") return width < 768 ? 280 : 250;
+  if (slot === "ad-band") return width < 768 ? 280 : width < 1024 ? 90 : 250; // DR-315
   if (slot === "ad-rail") return 600; // from 1280 only
   return width < 1280 ? 250 : 90; // ad-inset
 }
@@ -103,7 +103,7 @@ test("section headings have the divider above them: border rule, brand bar, 12px
     });
     return { rule, bar };
   });
-  expect(style.rule.height).toBe("1px");
+  expect(style.rule.height).toBe("2px"); // 2px solid rule (DR-262)
   expect(style.rule.background).toBe("rgb(221, 210, 196)"); // border, light theme
   expect(style.bar.background).toBe("rgb(153, 51, 20)"); // brand, light theme
   const gap =

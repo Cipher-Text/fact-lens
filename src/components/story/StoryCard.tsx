@@ -37,10 +37,11 @@ type StoryCardProps = {
 
 const ratioClass = { "3:2": "aspect-3/2", "16:9": "aspect-video" } as const;
 
-// Placement on one grid, no `order` (LAY-14). The body is first in the markup at every layout.
-// `grid-cols-1` is the stack; a split utility sets the two row columns. Class names are whole
-// strings so Tailwind finds them.
-const splitRow = {
+// The grid areas media and body place the parts, no `order` (LAY-14). The media is first in
+// the markup at every layout (C-24, DR-267); a row layout puts it at the end. The utilities
+// are in components.css and stack a row when the card is narrower than 17.5rem (DR-308).
+// Class names are whole strings so Tailwind finds them.
+const split = {
   third: "story-split-third",
   feature: "story-split-feature",
 } as const;
@@ -49,43 +50,25 @@ const splitFromMd = {
   feature: "md:story-split-feature",
 } as const;
 
-const stack = {
-  root: "grid-cols-1 gap-y-(--space-story-media-text)",
-  media: "row-start-1",
-  body: "row-start-2",
-};
-
-function layoutClasses(layout: StoryCardLayout, split: "third" | "feature") {
+function gridClass(layout: StoryCardLayout, kind: "third" | "feature") {
   switch (layout) {
     case "stack":
-      return stack;
+      return "story-stacked";
     case "row":
-      return {
-        root: splitRow[split],
-        media: "col-start-2 row-start-1",
-        body: "col-start-1 row-start-1",
-      };
+      return split[kind];
     case "row-from-md":
-      return {
-        root: `${stack.root} ${splitFromMd[split]} md:gap-y-0`,
-        media: `${stack.media} md:col-start-2`,
-        body: `${stack.body} md:col-start-1 md:row-start-1`,
-      };
+      return `story-stacked ${splitFromMd[kind]}`;
     case "row-until-lg":
-      return {
-        root: `${splitRow[split]} lg:grid-cols-1 lg:gap-x-0 lg:gap-y-(--space-story-media-text)`,
-        media: "col-start-2 row-start-1 lg:col-start-1",
-        body: "col-start-1 row-start-1 lg:row-start-2",
-      };
+      return `${split[kind]} lg:story-stacked`;
   }
 }
 
 /**
  * C-24 StoryCard: one story with an image and text. Every image story that is not a
- * LeadStory or an OverlapCard. One grid with a body and a media part; the body is first in
- * the markup and the grid moves the image. No radius, no card border; the list around the
+ * LeadStory or an OverlapCard. One grid with a media and a body part; the media is first in
+ * the markup (DR-267) and the grid moves it to the end in a row. No radius, no card border; the list around the
  * card draws the rules. Titles wrap and are never cut (CPT-08). A story with no image shows
- * the placeholder image (StoryImage, U-33).
+ * the no-image placeholder (StoryImage, DR-338).
  */
 export function StoryCard({
   story,
@@ -93,56 +76,59 @@ export function StoryCard({
   layout = "stack",
   ratio = "16:9",
   size = "md",
-  split = "third",
+  split: splitKind = "third",
   eyebrow = true,
   summary = true,
   titleAs: Title = "h3",
   eager = false,
   className,
 }: StoryCardProps) {
-  const classes = layoutClasses(layout, split);
   const showSummary = summary && Boolean(story.summary);
   return (
     <article
       data-story-card
       data-layout={layout}
-      className={cn("grid", classes.root, className)}
+      className={cn("@container", className)}
     >
-      <div className={cn("min-w-0", classes.body)}>
-        {eyebrow ? (
-          <Eyebrow
-            story={story}
-            strings={strings}
-            className="mb-(--space-lead-eyebrow-title)"
-          />
-        ) : null}
-        <Title
-          className={size === "md" ? "type-story-title" : "type-story-title-sm"}
-        >
-          <Link href={storyHref(story)} className={headlineLink}>
-            {story.title}
-          </Link>
-        </Title>
-        {showSummary ? (
-          <p className="mt-(--space-story-title-summary) type-summary text-ink-secondary">
-            {story.summary}
-          </p>
-        ) : null}
-        <MetaLine
-          items={storyMetaItems(story, strings.story)}
-          className={
-            showSummary
-              ? "mt-(--space-lead-summary-meta)"
-              : "mt-(--space-story-title-meta)"
-          }
+      <div className={cn("grid", gridClass(layout, splitKind))}>
+        <StoryImage
+          story={story}
+          eager={eager}
+          className="self-start story-media"
+          imageClassName={ratioClass[ratio]}
         />
+        <div className="min-w-0 story-body">
+          {eyebrow ? (
+            <Eyebrow
+              story={story}
+              strings={strings}
+              className="mb-(--space-lead-eyebrow-title)"
+            />
+          ) : null}
+          <Title
+            className={
+              size === "md" ? "type-story-title" : "type-story-title-sm"
+            }
+          >
+            <Link href={storyHref(story)} className={headlineLink}>
+              {story.title}
+            </Link>
+          </Title>
+          {showSummary ? (
+            <p className="mt-(--space-story-title-summary) type-summary text-ink-secondary">
+              {story.summary}
+            </p>
+          ) : null}
+          <MetaLine
+            items={storyMetaItems(story, strings.story)}
+            className={
+              showSummary
+                ? "mt-(--space-lead-summary-meta)"
+                : "mt-(--space-story-title-meta)"
+            }
+          />
+        </div>
       </div>
-      <StoryImage
-        story={story}
-        eager={eager}
-        className={cn("self-start", classes.media)}
-        imageClassName={ratioClass[ratio]}
-      />
     </article>
   );
 }

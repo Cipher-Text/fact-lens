@@ -55,6 +55,20 @@ test.describe("language URLs (DR-17)", () => {
     expect(plain.status()).toBe(200);
   });
 
+  test("the ?lang redirect is not stored and files keep their URL (DR-328)", async ({
+    request,
+  }) => {
+    const switched = await request.get("/?lang=en", { maxRedirects: 0 });
+    expect(switched.headers()["cache-control"]).toBe("no-store");
+    expect(switched.headers()["set-cookie"]).toContain("fl-lang=en");
+
+    const file = await request.get("/favicon.ico", {
+      headers: { Cookie: "fl-lang=en" },
+      maxRedirects: 0,
+    });
+    expect(file.status()).toBe(200);
+  });
+
   test("the language switch keeps the choice in a cookie", async ({
     page,
     context,
@@ -89,6 +103,35 @@ test.describe("language URLs (DR-17)", () => {
   });
 });
 
+test.describe("heading outline (DR-275)", () => {
+  for (const [path, title] of [
+    ["/", "ফ্যাক্ট লেন্স: প্রথম পাতা"],
+    ["/en", "Fact Lens: front page"],
+  ] as const) {
+    test(`${path}: one h1, no skipped level, titles are h3`, async ({
+      page,
+    }) => {
+      await page.goto(path);
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(title);
+      const levels = await page
+        .locator("h1, h2, h3, h4, h5, h6")
+        .evaluateAll((els) => els.map((el) => Number(el.tagName[1])));
+      expect(levels[0]).toBe(1);
+      for (let i = 1; i < levels.length; i++) {
+        expect(levels[i] - levels[i - 1]).toBeLessThanOrEqual(1);
+      }
+      // The hero h2 comes before the lead story title (an h3).
+      const hero = page.locator('[data-section="hero"]');
+      await expect(
+        hero.getByRole("heading", { level: 2 }).first(),
+      ).toBeAttached();
+      await expect(page.locator("[data-lead] h3.type-story-lead")).toHaveCount(
+        1,
+      );
+    });
+  }
+});
+
 test.describe("theme", () => {
   test("starts light and does not follow the system theme (DR-201)", async ({
     page,
@@ -96,8 +139,9 @@ test.describe("theme", () => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/en");
     const html = page.locator("html");
-    await expect(html).toHaveAttribute("data-theme", "light");
     await expect(html).not.toHaveClass(/\bdark\b/);
+    // Only the .dark class sets the theme (DR-281).
+    await expect(html).not.toHaveAttribute("data-theme");
     await expect(page.locator("header [data-theme-toggle]")).toHaveAttribute(
       "aria-checked",
       "false",
@@ -114,10 +158,10 @@ test.describe("theme", () => {
         timeout: 500,
       });
     }).toPass();
-    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(html).toHaveClass(/\bdark\b/);
 
     await page.reload();
-    await expect(html).toHaveAttribute("data-theme", "dark");
+    await expect(html).toHaveClass(/\bdark\b/);
     await expect(toggle).toHaveAttribute("data-theme-toggle", "dark");
     const background = await page.evaluate(
       () => getComputedStyle(document.body).backgroundColor,
@@ -126,7 +170,7 @@ test.describe("theme", () => {
 
     // A second press goes back to light, not to a system state.
     await toggle.click();
-    await expect(html).toHaveAttribute("data-theme", "light");
+    await expect(html).not.toHaveClass(/\bdark\b/);
   });
 
   test("the stored theme is set before the first paint", async ({ page }) => {

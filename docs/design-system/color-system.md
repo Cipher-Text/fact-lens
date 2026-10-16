@@ -1,6 +1,6 @@
 # Fact Lens Color System
 
-Version 2.7 · 10 October 2026 · Approved for prototype run 2
+Version 2.12 · 15 October 2026 · Approved for prototype run 2
 
 The values are not final. Some colors can change after a few prototype rounds. Run the contrast tests in Section 3 again after each change.
 
@@ -8,7 +8,7 @@ This document is the single source for Fact Lens colors. It is for designers, de
 
 The system has two themes: **Light** (warm ivory) and **Dark** (graphite). The two themes must look like one publication.
 
-Light is the default on every device. Dark applies only when the reader turns it on with the theme switch. The site keeps that choice. The site does not follow the system color setting (DR-201).
+Light is the default on every device. Dark applies only when the reader turns it on with the theme switch. The site keeps that choice. The site does not follow the system color setting (DR-201). Only the `.dark` class on `<html>` drives the colors; do not set a `data-theme` attribute (DR-281).
 
 All text pairs in this document meet WCAG 2.2 AA on every surface. Section 3 gives the results.
 
@@ -48,7 +48,7 @@ Components use utilities only.
 | --- | --- | --- | --- | --- |
 | `background` | `background` | `#FFF9ED` | `#18191E` | Page canvas |
 | `surface` | `surface`, `card` | `#FFFCF7` | `#202126` | Cards |
-| `surface-alt` | `surface-alt`, `muted`, `secondary` | `#F6EEDF` | `#27292F` | Sections, bands |
+| `surface-alt` | `surface-alt`, `muted`, `secondary` | `#F6EEDF` | `#27292F` | Sections, bands, the no-image placeholder in StoryImage (DR-338) |
 | `surface-elevated` | `surface-elevated`, `popover` | `#FFFFFF` | `#303239` | Menus, dialogs, popovers, the বিশ্লেষণ ও মতামত section |
 
 ### 2.2 Ink (text)
@@ -101,8 +101,6 @@ Each status has one name. The value changes by theme.
 | `info-subtle` | `#EAEFF3` | `#1C2531` | Background of an info message |
 | `destructive` | `#B3261E` | `#E5827B` | Fill of a delete button |
 | `on-destructive` | `#FFF9ED` | `#18191E` | Text on a delete button |
-| `live` | `#B3261E` | `#FF5A4F` | Fill of a Breaking or Live label |
-| `on-live` | `#FFF9ED` | `#18191E` | Text on a Breaking or Live label |
 
 The utility name is the same as the token name, for example `text-success` and `bg-success-subtle`.
 
@@ -113,6 +111,7 @@ The utility name is the same as the token name, for example `text-success` and `
 | `selection` | `#EDCEC4` | `#5A2A1C` | Selected text background |
 | `overlay` | `rgb(31 26 23 / 0.48)` | `rgb(0 0 0 / 0.64)` | Behind dialogs and the menu drawer (scrim) |
 | `skeleton` | `#EAE1D6` | `#2D3036` | Loading placeholders |
+| `fill-neutral` | `#7E7E7E` | `#7E7E7E` | Poll result fill for the other options (C-26); light ThemeToggle track (C-12). 3.87:1 on light `background`, enough for a control (3:1). Not for text (DR-295) |
 
 ### 2.8 Focus ring
 
@@ -125,11 +124,11 @@ The utility name is the same as the token name, for example `text-success` and `
 
 ### 2.9 Component colors
 
-No component has its own color tokens. Components use the tokens in Sections 2.1 to 2.8.
+Components use the tokens in Sections 2.1 to 2.8. Two component color tokens are allowed; each only points at a token above (DR-294): `--color-bar` (brand bar: `brand` in light, `interactive` in dark) and `--color-theme-control` (ThemeToggle track: `fill-neutral` in light, `interactive` in dark). They are in `component-system.md` Section 6. Add no other component color token without a decision.
 
 NewsletterSignup (DR-229; paused for prototype run 2, built in a later phase, DR-239): panel `accent-soft`; heading `ink`; text line `ink-secondary`; arrow button and privacy link `interactive`, with the UI link and button states; email field `background` with `border-interactive`. The field text is `ink` and the placeholder is `ink-muted`.
 
-Theme controls (DR-211, DR-237): phone ThemeButton icon `interactive` in light, `ink` in dark. ThemeToggle from 768px: track `interactive` in light, `ink` in dark; thumb `background`; icon `interactive` in light, `ink` in dark. Neither control has a hover or pressed color; both show the focus outline only.
+Theme controls (DR-211, DR-237): phone ThemeButton icon `interactive` in light, `ink` in dark. ThemeToggle from 768px: track `--color-theme-control` (`fill-neutral` in light, `interactive` in dark, DR-295); thumb `background`; icon `interactive` in light, `ink` in dark. Neither control has a hover or pressed color; both show the focus outline only.
 
 Form error (DR-230): the field gets a 2px `error` border. The message is `ink` with a 20px `error` icon (`COL-09`).
 
@@ -153,7 +152,6 @@ Method: WCAG 2.2 contrast ratio. Each text token was tested on `background`, `su
 | Focus ring (3:1) | 6.42 | 4.81 |
 | `on-interactive` on all button states | 7.06 | 6.59 |
 | `on-destructive` on `destructive` | 6.23 | 6.53 |
-| `on-live` on `live` | 6.23 | 5.71 |
 
 The hardest surface is `accent-subtle` in Light and `surface-elevated` in Dark.
 
@@ -223,17 +221,15 @@ Reason: opacity changes the contrast on each surface.
 
 ### COL-09 Show status with color and a second cue
 
-Add a label, an icon or a shape to each status color, for example "✓ Subscribed" or "● Live".
+Add a label, an icon or a shape to each status color, for example "✓ Subscribed".
 
 ### COL-10 Put status text on safe surfaces only
 
 Put status text on the four surfaces, `accent-subtle` or its own `*-subtle` tint. Do not put it on `accent-soft`.
 
-### COL-11 Show Breaking and Live as a filled label
+### COL-11 Do not show a Breaking or Live label
 
-Use `bg-live text-on-live` with the word "Breaking" or "Live". Do not use `live` as plain text.
-
-Reason: dark `live` is 4.16:1 on `surface-elevated`.
+The site has no Breaking or Live label in either language and no `live` color tokens (DR-279). Do not add them.
 
 ### COL-12 Use `border-interactive` for form controls
 
@@ -259,11 +255,11 @@ The page uses `background` and the text color `ink`. The base rule in Section 5 
 
 ### COL-17 Show a selected item with `interactive` and a word
 
-Give a selected item an `interactive` cue and a word (`COL-09`). Do not use `accent-soft` as the only cue. Example: the own poll vote keeps its filled `interactive` marker and the label আপনার ভোট (DR-221).
+Give a selected item an `interactive` cue and a word (`COL-09`). Do not use `accent-soft` as the only cue. Example: the own poll vote has an `interactive` bar and the label আপনার ভোট; other options have a `fill-neutral` bar (C-26, DR-273, DR-295).
 
 ## 5. Implementation
 
-Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and exposes them to Tailwind 4 and shadcn/ui. The block has no `@import "tailwindcss"`: `app/globals.css` imports Tailwind once, then imports this file (DR-200). `app/globals.css` also imports `shadcn/tailwind.css`. Do not install or import `tw-animate-css` (DR-236).
+Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and exposes them to Tailwind 4 and shadcn/ui. The block has no `@import "tailwindcss"`: `app/globals.css` imports Tailwind once, then this file (DR-200). The full import list and order are in `spacing-layout-system.md` Section 12.5 (DR-339). Do not install or import `tw-animate-css` (DR-236).
 
 ```css
 @custom-variant dark (&:is(.dark *));
@@ -303,12 +299,11 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --info-subtle: #eaeff3;
   --destructive: #b3261e;
   --on-destructive: #fff9ed;
-  --live: #b3261e;
-  --on-live: #fff9ed;
   /* Utility */
   --selection: #edcec4;
   --overlay: rgb(31 26 23 / 0.48);
   --skeleton: #eae1d6;
+  --fill-neutral: #7e7e7e;
   /* Component colors */
 }
 
@@ -341,11 +336,10 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --info-subtle: #1c2531;
   --destructive: #e5827b;
   --on-destructive: #18191e;
-  --live: #ff5a4f;
-  --on-live: #18191e;
   --selection: #5a2a1c;
   --overlay: rgb(0 0 0 / 0.64);
   --skeleton: #2d3036;
+  --fill-neutral: #7e7e7e;
 }
 
 @theme {
@@ -400,9 +394,8 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --color-info: var(--info);
   --color-info-subtle: var(--info-subtle);
   --color-on-destructive: var(--on-destructive);
-  --color-live: var(--live);
-  --color-on-live: var(--on-live);
   --color-skeleton: var(--skeleton);
+  --color-fill-neutral: var(--fill-neutral);
   --color-overlay: var(--overlay);
 }
 
@@ -455,9 +448,6 @@ Examples:
   full timeline
 </a>
 
-// Breaking label (COL-11)
-<span className="bg-live text-on-live">● Breaking</span>
-
 // Delete button (COL-14)
 <Button className="bg-destructive text-on-destructive">Delete</Button>
 ```
@@ -475,6 +465,11 @@ Examples:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.12 | 2026-10-15 | Section 5 links to the one `globals.css` import list in layout Section 12.5 (DR-339). |
+| 2.11 | 2026-10-15 | `surface-alt` also fills the StoryImage no-image placeholder (DR-338). `skeleton` stays for loading only. |
+| 2.10 | 2026-10-14 | New token `fill-neutral` (#7E7E7E, both themes) for the poll bars and the light ThemeToggle track; dark track `interactive` (DR-295). §2.9 allows two component color tokens, `--color-bar` and `--color-theme-control` (DR-294). |
+| 2.9 | 2026-10-13 | Only `.dark` drives the theme, no `data-theme` (DR-281). No Breaking or Live label; the `live` and `on-live` tokens are removed (COL-11, DR-279). |
+| 2.8 | 2026-10-13 | Poll results: own vote `interactive` bar + আপনার ভোট, others `#7E7E7E` in both themes on a `border` track (C-26, DR-273). Amends DR-221. |
 | 2.7 | 2026-10-10 | NewsletterSignup colors apply after prototype run 2 (DR-239). `border-interactive` `#7D7369` stays for every field (DR-238). |
 | 2.6 | 2026-10-10 | Light `border-interactive` is `#7D7369` (was `#857A70`): 3.14:1 on the `accent-soft` newsletter panel, 3.82:1 or more on the other surfaces (DR-238). |
 | 2.5 | 2026-10-10 | Newsletter panel `accent-soft` with existing tokens; `newsletter-*` tokens removed (DR-229). Focus is a base-layer outline (`COL-13`, DR-225). New rule `COL-16` page colors (DR-232). Default palette removed; base layer for border, body, focus and placeholder (DR-235). Phone ThemeButton icon `interactive` (DR-237). Form error colors (DR-230). |

@@ -85,7 +85,7 @@ for (const p of PAGES) {
 
         const gutter = width < 600 ? 16 : 24;
         const shell = Math.min(width - 2 * gutter, 1280);
-        const columnGap = width >= 1024 ? 24 : width >= 768 ? 20 : 16;
+        const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16; // DR-300
 
         const s = regions(page);
         const sectionBox = await box(s);
@@ -206,7 +206,12 @@ for (const p of PAGES) {
         await expect(previous).not.toHaveAttribute("aria-disabled");
         // Playwright does not click an aria-disabled button, so send the event.
         await next.dispatchEvent("click");
-        await page.waitForTimeout(400);
+        // Wait for animation frames, not for a time: the test must not depend on the machine.
+        await page.evaluate(async () => {
+          for (let i = 0; i < 30; i++) {
+            await new Promise((r) => requestAnimationFrame(r));
+          }
+        });
         expect(
           Math.abs((await scrollLeft(page)) - moves * step),
         ).toBeLessThanOrEqual(1);
@@ -340,36 +345,88 @@ for (const p of PAGES) {
       expect(after).toBeGreaterThan(0);
     });
 
-    test("with motion: a button press animates for about 450ms", async ({
+    test("with motion: a button press animates and does not jump", async ({
       page,
     }) => {
       await page.emulateMedia({ reducedMotion: "no-preference" });
       await page.setViewportSize({ width: 1366, height: 900 });
       await page.goto(p.path);
       await waitForSlider(page);
+      // The test checks what the reader sees, not how long it takes: the speed depends on
+      // the frame rate of the machine (the 450ms and the curve are set in the component).
       const result = await page.evaluate(async () => {
         const el = document.querySelector<HTMLElement>("[data-region-row]")!;
         const button =
           document.querySelector<HTMLElement>("[data-region-next]")!;
         button.click();
         const sameTask = el.scrollLeft;
-        const start = performance.now();
-        let end = start;
-        let last = el.scrollLeft;
-        while (performance.now() - start < 1000) {
+        const positions = [sameTask];
+        let still = 0;
+        while (still < 30 && positions.length < 600) {
           await new Promise((r) => requestAnimationFrame(r));
-          if (el.scrollLeft !== last) {
-            last = el.scrollLeft;
-            end = performance.now();
-          }
+          const now = el.scrollLeft;
+          still = now === positions[positions.length - 1] ? still + 1 : 0;
+          positions.push(now);
         }
-        return { sameTask, moved: el.scrollLeft, duration: end - start };
+        return { sameTask, positions };
       });
+      const end = result.positions[result.positions.length - 1];
       expect(result.sameTask).toBe(0);
-      expect(result.moved).toBeGreaterThan(0);
-      // 450ms with ease-slide: the last frames barely move, so the last change is earlier.
-      expect(result.duration).toBeGreaterThan(250);
-      expect(result.duration).toBeLessThan(700);
+      expect(end).toBeGreaterThan(0);
+      // At least one frame between the start and the end: it animates, it does not jump.
+      expect(result.positions.some((x) => x > 0 && x < end - 1)).toBe(true);
+    });
+
+    test("phone tabs: a chip press fades the panel out, then the new one in, opacity only (DR-284)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(p.path);
+      const s = regions(page);
+      const tabs = s.getByRole("tab");
+      const row = s.locator("[data-region-row]");
+      const duration = await row.evaluate((el) => {
+        const style = getComputedStyle(el);
+        return [style.transitionProperty, style.transitionDuration];
+      });
+      expect(duration).toEqual(["opacity", "0.2s"]);
+      const samples = await row.evaluate(
+        (el) =>
+          new Promise<number[]>((resolve) => {
+            const seen: number[] = [];
+            const start = performance.now();
+            const frame = () => {
+              seen.push(parseFloat(getComputedStyle(el).opacity));
+              if (performance.now() - start < 700) requestAnimationFrame(frame);
+              else resolve(seen);
+            };
+            document
+              .querySelector<HTMLElement>('[role="tab"]:nth-child(2)')!
+              .click();
+            frame();
+          }),
+      );
+      // Out to (almost) 0, then back to 1: both fades happen, one after the other.
+      expect(Math.min(...samples)).toBeLessThan(0.1);
+      expect(samples.some((x) => x > 0.2 && x < 0.9)).toBe(true);
+      expect(samples.at(-1)).toBe(1);
+      await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
+      await expect(s.getByRole("tabpanel")).toHaveCount(1);
+    });
+
+    test("phone tabs: with reduced motion a press changes the panel at once (DR-151)", async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: "reduce" });
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(p.path);
+      const s = regions(page);
+      await s.getByRole("tab").nth(1).click();
+      await expect(s.getByRole("tab").nth(1)).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      await expect(s.locator("[data-region-row]")).toHaveCSS("opacity", "1");
     });
 
     test("phone tabs: arrow keys, Home and End select a region", async ({
@@ -470,7 +527,8 @@ for (const p of PAGES) {
         const panel = panels.nth(i);
         await expect(panel.locator("h3")).toHaveCount(1);
         await expect(panel.locator("[data-story-card]")).toHaveCount(1);
-        const image = await box(panel.locator("[data-story-media] img"));
+        // The image or, for a story with no image, the placeholder in the same slot (DR-338).
+        const image = await box(panel.locator("[data-story-media] > *"));
         expect(Math.abs(image.width / image.height - 1.5)).toBeLessThan(0.02);
         expect(
           await panel.locator("[data-story-list-item]").count(),
@@ -479,10 +537,10 @@ for (const p of PAGES) {
         const rules = await panel
           .locator(":scope > ul > li")
           .evaluateAll((items) =>
-            items.map((li) => getComputedStyle(li).borderTopWidth),
+            items.map((li) => getComputedStyle(li, "::before").display),
           );
-        expect(rules[0]).toBe("0px");
-        for (const rule of rules.slice(1)) expect(rule).toBe("1px");
+        expect(rules[0]).toBe("none");
+        for (const rule of rules.slice(1)) expect(rule).toBe("block");
       }
       // One "more" link at the section end, at the end edge, to the regions page.
       const more = s.getByRole("link", { name: /^(আরও দেখুন|See more)/ });
@@ -556,19 +614,19 @@ for (const p of PAGES) {
           const rowBox = el.closest(sel)!.getBoundingClientRect();
           return {
             name: el.getAttribute("href") ?? el.tagName,
-            // The base outline (COL-13), or the old ring on controls that are not rebuilt yet.
+            // The base outline (COL-13).
             ring: (() => {
               const s = getComputedStyle(el);
               return s.outlineStyle === "solid" && s.outlineWidth === "2px"
                 ? "outline"
-                : s.boxShadow;
+                : "missing";
             })(),
             // The focused link scrolls into the row's view.
             inView: r.left >= rowBox.left - 1 && r.right <= rowBox.right + 1,
           };
         }, selector);
         if (info) {
-          expect(info.ring, info.name).not.toBe("none"); // COL-13
+          expect(info.ring, info.name).toBe("outline"); // COL-13
           expect(info.inView, info.name).toBe(true);
           seen.add(info.name);
         }

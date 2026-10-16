@@ -29,6 +29,8 @@ export const bn = {
     closeSearch: "অনুসন্ধান বন্ধ করুন",
     // Mock search (DR-01): the prototype has no results page.
     searchUnavailable: "এই প্রোটোটাইপে অনুসন্ধানের ফল দেখানো হয় না।",
+    // SkipLink (C-17, DR-269).
+    skipLink: "মূল খবরে যান",
     navHome: "হোম",
     // The name of the caret button that opens the sub-items of a drawer row.
     expand: "উপবিভাগ",
@@ -47,7 +49,6 @@ export const bn = {
     title: "বিশ্লেষণ ও মতামত",
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
-    opEd: "অপ-এড",
   },
   // P-5. Working label: the specs name the section in English only (U-26).
   mostRead: {
@@ -62,7 +63,9 @@ export const bn = {
   story: {
     // {minutes} is already in Bangla digits.
     readingTime: "পড়তে {minutes} মিনিট",
-    breaking: "সদ্যপ্রাপ্ত",
+    justNow: "এইমাত্র",
+    hourAgo: "{hours} ঘণ্টা আগে",
+    hoursAgo: "{hours} ঘণ্টা আগে",
   },
   common: {
     more: "আরও দেখুন",
@@ -73,10 +76,8 @@ export const bn = {
   poll: {
     title: "আজকের জরিপ",
     vote: "ভোট দিন",
-    chooseOption: "একটি উত্তর বেছে নিন।",
-    voted: "ধন্যবাদ, আপনার ভোট নেওয়া হয়েছে।",
-    yourVote: "(আপনার ভোট)",
-    total: "মোট {count}টি ভোট",
+    yourVote: "আপনার ভোট",
+    total: "{count} জন ভোট দিয়েছেন",
   },
   ads: {
     label: "বিজ্ঞাপন",

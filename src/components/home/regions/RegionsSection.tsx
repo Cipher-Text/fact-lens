@@ -8,7 +8,7 @@ import { localizedPath, type Dictionary } from "@/i18n";
 
 import { RegionSlider } from "./RegionSlider";
 
-type RegionsProps = {
+type RegionsSectionProps = {
   lang: Lang;
   regions: RegionBlock[];
   t: Pick<
@@ -29,7 +29,12 @@ const STORIES_PER_REGION = 3;
  * links to the regions page (DR-142, DR-160). The section id is the anchor of the অঞ্চল
  * links (IMP-14). The panels render on the server; only the slider and tabs are client code.
  */
-export function Regions({ lang, regions, t, className }: RegionsProps) {
+export function RegionsSection({
+  lang,
+  regions,
+  t,
+  className,
+}: RegionsSectionProps) {
   return (
     <Shell
       as="section"

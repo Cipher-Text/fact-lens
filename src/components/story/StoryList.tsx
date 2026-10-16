@@ -21,10 +21,10 @@ type StoryListProps = {
 };
 
 // A column start has no rule above it, so the list rules stay inside a column.
-const columnStart = "md:max-lg:mt-0 md:max-lg:border-t-0 md:max-lg:pt-0";
+const columnStart = "md:max-lg:mt-0 md:max-lg:pt-0 md:max-lg:before:hidden";
 
 /**
- * C-03 StoryList: a ul of StoryListItem rows, 16px padding and a 1px rule between rows, no
+ * C-03 StoryList: a ul of StoryListItem rows, Divider.item (dotted, 16px each side) between rows, no
  * rule after the last row. Two columns fill column-first (1 to 3, then 4 and 5 for five
  * stories) with a grid that flows by column.
  */

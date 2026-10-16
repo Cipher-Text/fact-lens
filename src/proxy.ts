@@ -11,12 +11,17 @@ import {
 
 const ONE_YEAR = 60 * 60 * 24 * 365;
 
+// A path with a file extension is a file from public/ (images, icons). It keeps its URL.
+const FILE_PATH = /\.[^/]+$/;
+
 // Bangla at the root URL, English under /en (DR-17).
 // The language comes from the URL and the reader's own choice only.
 // This proxy never reads Accept-Language.
 export function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const first = pathname.split("/")[1] ?? "";
+
+  if (FILE_PATH.test(pathname)) return NextResponse.next();
 
   // The language switch links to "?lang=xx". Keep the choice, then go to the clean URL.
   const chosen = searchParams.get(LANG_QUERY);
@@ -30,8 +35,11 @@ export function proxy(request: NextRequest) {
         path: "/",
         maxAge: ONE_YEAR,
         sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
       });
     }
+    // The answer sets a cookie, so no cache may keep it (DR-328).
+    response.headers.set("Cache-Control", "no-store");
     return response;
   }
 
@@ -61,6 +69,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip Next.js internals and files with an extension (images, icons, fonts).
-  matcher: ["/((?!api|_next/static|_next/image|.*\\..*).*)"],
+  // Every path except api/ and _next/ (DR-328). Files from public/ pass through in the proxy.
+  matcher: ["/((?!api/|_next/).*)"],
 };

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   applyTheme,
@@ -14,20 +14,17 @@ describe("theme", () => {
   beforeEach(() => {
     localStorage.clear();
     document.documentElement.className = "";
-    delete document.documentElement.dataset.theme;
   });
 
   it("starts light when nothing is stored", () => {
     expect(readThemeChoice()).toBe("light");
     applyTheme(null);
     expect(document.documentElement.classList.contains("dark")).toBe(false);
-    expect(document.documentElement.dataset.theme).toBe("light");
   });
 
   it("dark is applied only when chosen", () => {
     applyTheme("dark");
     expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(document.documentElement.dataset.theme).toBe("dark");
     applyTheme("light");
     expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
@@ -38,13 +35,33 @@ describe("theme", () => {
     localStorage.setItem("fl-theme", "system");
     expect(readThemeChoice()).toBe("light");
     applyTheme("system");
-    expect(document.documentElement.dataset.theme).toBe("light");
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
   });
 
   it("stores the choice", () => {
     setThemeChoice("dark");
     expect(readThemeChoice()).toBe("dark");
-    expect(document.documentElement.dataset.theme).toBe("dark");
+  });
+
+  it("sets no data-theme attribute (DR-281)", () => {
+    applyTheme("dark");
+    expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
+  });
+
+  it("keeps the choice for this page when storage is blocked (DR-340)", () => {
+    const getItem = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    const setItem = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    setThemeChoice("dark");
+    expect(readThemeChoice()).toBe("dark");
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    setThemeChoice("light");
+    expect(readThemeChoice()).toBe("light");
+    getItem.mockRestore();
+    setItem.mockRestore();
   });
 
   it("the switch moves between light and dark", () => {

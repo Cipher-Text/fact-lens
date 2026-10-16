@@ -2,17 +2,25 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { getHomepage, getPoll } from "@/content";
+import {
+  getHomepage,
+  getPoll,
+  type CategoryBlock as CategoryBlockData,
+} from "@/content";
 import { getDictionary } from "@/i18n";
 
 import { DailyPoll } from "./DailyPoll";
-import { GroupedCategories, MAX_INSETS } from "./GroupedCategories";
+import {
+  GroupedCategoriesSection,
+  insetBefore,
+  MAX_INSETS,
+} from "./GroupedCategoriesSection";
 import { pollStorageKey } from "./usePollVote";
 
 function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
   const grouped = getHomepage(lang, { variant }).grouped!;
   return render(
-    <GroupedCategories
+    <GroupedCategoriesSection
       lang={lang}
       categories={grouped.categories}
       poll={grouped.poll}
@@ -30,7 +38,7 @@ const rowsOf = (container: HTMLElement) =>
 
 beforeEach(() => window.localStorage.clear());
 
-describe("GroupedCategories (P-3)", () => {
+describe("GroupedCategoriesSection (P-3)", () => {
   it("puts the categories in rows of two in the wrapper, then the rail (LAY-05, LAY-14)", () => {
     const { container } = renderSection("bn");
     const grid = container.querySelector(".with-rail")!;
@@ -130,12 +138,14 @@ describe("DailyPoll", () => {
   const poll = getPoll("bn");
   const strings = getDictionary("bn").poll;
 
-  it("asks for an answer before it takes a vote", async () => {
+  it("does nothing when the vote button is pressed with no choice (C-26)", async () => {
     const user = userEvent.setup();
     render(<DailyPoll poll={poll} strings={strings} />);
     expect(screen.getAllByRole("radio")).toHaveLength(4);
+    expect(screen.getByRole("group", { name: poll.question })).toBeVisible();
     await user.click(screen.getByRole("button", { name: "ভোট দিন" }));
-    expect(screen.getByText("একটি উত্তর বেছে নিন।")).toBeInTheDocument();
+    expect(screen.getAllByRole("radio")).toHaveLength(4);
+    expect(screen.queryByRole("status")).toBeNull();
     expect(window.localStorage.getItem(pollStorageKey(poll.id))).toBeNull();
   });
 
@@ -155,14 +165,38 @@ describe("DailyPoll", () => {
     expect(mine).toHaveTextContent("আপনার ভোট");
     // 538 + 1 of 1,401 votes is 38.47%; the largest remainder rounds it to 39%, so the four add up to 100.
     expect(mine).toHaveTextContent("৩৯%");
-    expect(container).toHaveTextContent("মোট ১,৪০১টি ভোট");
+    expect(container).toHaveTextContent("১,৪০১ জন ভোট দিয়েছেন");
     expect(container.textContent).not.toMatch(/[0-9]/);
-    expect(screen.getByRole("status")).toHaveTextContent(strings.voted);
+    expect(screen.getByRole("status")).toBe(
+      container.querySelector("[data-poll-results]"),
+    );
 
     // A new visit shows the results, not the form.
     unmount();
     render(<DailyPoll poll={poll} strings={strings} />);
     expect(screen.queryByRole("radio")).toBeNull();
     expect(screen.getByText("৩৯%")).toBeInTheDocument();
+  });
+});
+
+describe("insetBefore (DR-276)", () => {
+  const block = (image: boolean) =>
+    ({
+      category: "x",
+      stories: [{ id: "s", ...(image ? { image: { src: "i" } } : {}) }],
+    }) as unknown as CategoryBlockData;
+  const row = (image: boolean) => [block(image), block(image)];
+
+  it("puts an inset between rows and at most 3 in all", () => {
+    const rows = [row(true), row(true), row(true), row(true), row(true)];
+    expect(insetBefore(rows)).toEqual([false, true, true, true, false]);
+  });
+
+  it("puts none after a row with only text stories", () => {
+    expect(insetBefore([row(false), row(true), row(true)])).toEqual([
+      false,
+      false,
+      true,
+    ]);
   });
 });

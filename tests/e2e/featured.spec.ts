@@ -30,15 +30,15 @@ const WIDTHS = [
   320, 360, 600, 767, 768, 834, 1023, 1024, 1180, 1279, 1280, 1366, 1440, 1920,
 ];
 
-// spacing-layout-system.md 3.2: the wrapper is shell − 304 − 24 from 1024.
+// spacing-layout-system.md 3.2: the wrapper is shell − 304 − column gap (24px at 1024, 32px from 1280).
 const WRAPPER: Record<number, number> = {
   1024: 648,
   1180: 804,
   1279: 903,
-  1280: 904,
-  1366: 952,
-  1440: 952,
-  1920: 952,
+  1280: 896,
+  1366: 944,
+  1440: 944,
+  1920: 944,
 };
 
 const section = (page: Page, category: string) =>
@@ -79,6 +79,8 @@ for (const p of PAGES) {
 
         const gutter = width < 600 ? 16 : 24;
         const shell = Math.min(width - 2 * gutter, 1280);
+        // --grid-column-gap: 16px, 24px from 768, 32px from 1280 (spacing-layout-system.md §3).
+        const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
         const space = width >= 1024 ? 40 : width >= 768 ? 32 : 24;
 
         for (const category of CATEGORIES) {
@@ -87,7 +89,7 @@ for (const p of PAGES) {
           const rail = s.locator("[data-featured-rail]");
           const feature = wrapper.locator("[data-story-card]");
           const featureImage = feature.locator("[data-story-media] img");
-          const featureText = feature.locator("> div").first();
+          const featureText = feature.locator(".story-body");
 
           // Shell width (LAY-03).
           const sectionBox = await box(s);
@@ -122,12 +124,12 @@ for (const p of PAGES) {
             const share = width >= 1024 ? 0.6 : 0.5;
             const expected = Math.min(
               557,
-              Math.max(420, (w.width - 24) * share),
+              Math.max(420, (w.width - columnGap) * share),
             );
             expect(Math.abs(i.width - expected)).toBeLessThanOrEqual(1);
             expect(Math.round(t.y)).toBe(Math.round(i.y));
             expect(Math.round(i.x + i.width)).toBe(Math.round(w.x + w.width));
-            expect(Math.round(i.x - (t.x + t.width))).toBe(24);
+            expect(Math.round(i.x - (t.x + t.width))).toBe(columnGap);
           }
 
           // The image link is as tall as its image, so the focus ring fits (COL-13).
@@ -143,7 +145,7 @@ for (const p of PAGES) {
           // Rail: one image story, then two text rows with a rule between (C-24, C-03).
           const card = rail.locator("[data-story-card]");
           const cardImage = card.locator("[data-story-media] img");
-          const cardText = card.locator("> div").first();
+          const cardText = card.locator(".story-body");
           const rows = rail.locator("[data-story-list] > li");
           await expect(rows).toHaveCount(2);
           await expect(rows.locator("img")).toHaveCount(0);
@@ -155,12 +157,12 @@ for (const p of PAGES) {
             expect(Math.round(ci.width)).toBe(304);
             expect(Math.round(ct.y)).toBe(Math.round(ci.y + ci.height + 16));
           } else {
-            // Row 2 : 1, 16px gap, text at the start, image at the end (DR-121).
-            const imageWidth = (r.width - 16) / 3;
+            // Row 2 : 1, --grid-column-gap between them (DR-300), text at the start, image at the end (DR-121).
+            const imageWidth = (r.width - columnGap) / 3;
             expect(Math.abs(ci.width - imageWidth)).toBeLessThanOrEqual(1);
             expect(Math.round(ct.y)).toBe(Math.round(ci.y));
             expect(Math.round(ci.x + ci.width)).toBe(Math.round(r.x + r.width));
-            expect(Math.round(ci.x - (ct.x + ct.width))).toBe(16);
+            expect(Math.round(ci.x - (ct.x + ct.width))).toBe(columnGap);
           }
           const cardBox = await box(card);
           const firstRow = await box(rows.nth(0));
@@ -287,17 +289,17 @@ for (const p of PAGES) {
           if (!el?.closest(sel)) return null;
           return {
             href: el.getAttribute("href") ?? "",
-            // The base outline (COL-13), or the old ring on controls that are not rebuilt yet.
+            // The base outline (COL-13).
             ring: (() => {
               const s = getComputedStyle(el);
               return s.outlineStyle === "solid" && s.outlineWidth === "2px"
                 ? "outline"
-                : s.boxShadow;
+                : "missing";
             })(),
           };
         }, selector);
         if (info) {
-          expect(info.ring).not.toBe("none"); // COL-13
+          expect(info.ring).toBe("outline"); // COL-13
           seen.push(info.href);
         }
       }

@@ -1,19 +1,22 @@
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
 
-import { SiteFooter } from "@/components/footer/SiteFooter";
+import { Footer } from "@/components/footer/Footer";
 import { SiteHeader } from "@/components/header/SiteHeader";
-import { AnalysisOpinion } from "@/components/home/analysis-opinion/AnalysisOpinion";
-import { FeaturedCategory } from "@/components/home/featured/FeaturedCategory";
-import { GroupedCategories } from "@/components/home/grouped/GroupedCategories";
-import { Hero } from "@/components/home/hero/Hero";
-import { MostRead } from "@/components/home/most-read/MostRead";
-import { Regions } from "@/components/home/regions/Regions";
+import { SkipLink } from "@/components/header/SkipLink";
+import { AnalysisSection } from "@/components/home/analysis/AnalysisSection";
+import { FeaturedCategorySection } from "@/components/home/featured/FeaturedCategorySection";
+import { GroupedCategoriesSection } from "@/components/home/grouped/GroupedCategoriesSection";
+import { HeroSection } from "@/components/home/hero/HeroSection";
+import { MostReadSection } from "@/components/home/most-read/MostReadSection";
+import { RegionsSection } from "@/components/home/regions/RegionsSection";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
 import { cn } from "@/lib/utils";
 
+// The page reads searchParams, so it renders on each request: the footer year is the
+// year of the request, not of the build (DR-332).
 // Homepage. Page order: spacing-layout-system.md Section 7.1.
 // ?content=sparse shows the sparse cases of Section 7.3, in development only (IMP-11).
 export default async function HomePage({
@@ -42,15 +45,27 @@ export default async function HomePage({
 
   return (
     <>
-      <AdSlot variant="top" lang={lang} strings={t.ads} />
+      <SkipLink label={t.header.skipLink} />
       <SiteHeader lang={lang} />
-      <main id="main" className="pt-(--space-page-start)">
+      {/* The top ad row is below the header: below the nav row from 1280, below the
+          top bar under 1280 (DR-295). */}
+      <AdSlot variant="top" lang={lang} strings={t.ads} />
+      {/* tabIndex -1: the SkipLink target takes focus in every browser (DR-269). */}
+      <main
+        id="main"
+        tabIndex={-1}
+        className="pt-(--space-page-start) focus-visible:outline-none"
+      >
         <h1 className="sr-only">{t.home.title}</h1>
         {/* A hidden section also hides its ad row (Section 7.3, LAY-13). The space
             before the ad row belongs to the section (LAY-12). */}
         {home.hero ? (
           <>
-            <Hero hero={home.hero} t={t} className="pb-(--space-module)" />
+            <HeroSection
+              hero={home.hero}
+              t={t}
+              className="pb-(--space-module)"
+            />
             <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
@@ -59,7 +74,7 @@ export default async function HomePage({
             {/* P-4 has its own background, so its space to the ad rows is margin
                 outside the background (LAY-12). After the header, main sets
                 space-page-start. */}
-            <AnalysisOpinion
+            <AnalysisSection
               lang={lang}
               section={home.analysisOpinion}
               t={t}
@@ -74,7 +89,7 @@ export default async function HomePage({
         {/* P-2 for বাংলাদেশ, then ভূরাজনীতি, each with its ad row (DR-68). */}
         {featured.map((section, index) => (
           <Fragment key={section.category}>
-            <FeaturedCategory
+            <FeaturedCategorySection
               lang={lang}
               section={section}
               t={t}
@@ -92,7 +107,7 @@ export default async function HomePage({
         {/* P-3: no ad row of its own; its ad-inset slots are inside it. P-5 Most read
             follows without an ad row between (7.1), so space-section is below it. */}
         {home.grouped ? (
-          <GroupedCategories
+          <GroupedCategoriesSection
             lang={lang}
             categories={home.grouped.categories}
             poll={home.grouped.poll}
@@ -108,7 +123,8 @@ export default async function HomePage({
             space-section; after an ad row, space-module (LAY-12). */}
         {home.mostRead ? (
           <>
-            <MostRead
+            <MostReadSection
+              lang={lang}
               stories={home.mostRead}
               t={t}
               className={cn(
@@ -124,7 +140,7 @@ export default async function HomePage({
         {/* P-3b Regions, the last section (7.1). space-module after an ad row (LAY-12);
             space-section below it, before the footer (FL-12). No ad row of its own. */}
         {home.regions ? (
-          <Regions
+          <RegionsSection
             lang={lang}
             regions={home.regions}
             t={t}
@@ -137,7 +153,7 @@ export default async function HomePage({
       </main>
       {/* Row 15: the minimum footer, a full-width row with its content in the shell
           (7.1, 7.4, DR-59). */}
-      <SiteFooter lang={lang} />
+      <Footer lang={lang} />
     </>
   );
 }

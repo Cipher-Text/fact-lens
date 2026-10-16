@@ -75,14 +75,15 @@ for (const path of PAGES) {
         }
       });
 
-      test("LeadStory with no image: the placeholder image and the same overlap (U-33)", async ({
+      test("LeadStory with no image: the no-image placeholder and the same overlap (DR-338)", async ({
         page,
       }) => {
         const lead = page.locator(
           '[data-unit="lead-story-no-image"] [data-lead]',
         );
-        await expect(lead.locator("[data-placeholder] img")).toHaveCount(1);
-        const image = await box(lead.locator("img"));
+        await expect(lead.locator("[data-placeholder]")).toHaveCount(1);
+        await expect(lead.locator("img")).toHaveCount(0);
+        const image = await box(lead.locator("[data-placeholder]"));
         const panel = await box(lead.locator("[data-lead-panel]"));
         expect(image.y + image.height - panel.y).toBeGreaterThan(0);
         expect(panel.width).toBeLessThan(image.width);
@@ -105,7 +106,7 @@ for (const path of PAGES) {
         expect(body.x).toBe(image.x);
       });
 
-      test("OverlapCard with no image shows the placeholder with the same overlap and notch, and the cards are top-aligned (U-33)", async ({
+      test("OverlapCard with no image shows the placeholder with the same overlap and notch, and the cards are top-aligned (DR-338)", async ({
         page,
       }) => {
         const cards = page.locator(
@@ -113,10 +114,9 @@ for (const path of PAGES) {
         );
         const a = await box(cards.nth(0));
         const b = await box(cards.nth(1));
-        await expect(
-          cards.nth(1).locator("[data-placeholder] img"),
-        ).toHaveCount(1);
-        const image = await box(cards.nth(1).locator("img"));
+        await expect(cards.nth(1).locator("[data-placeholder]")).toHaveCount(1);
+        await expect(cards.nth(1).locator("img")).toHaveCount(0);
+        const image = await box(cards.nth(1).locator("[data-placeholder]"));
         const body = await box(cards.nth(1).locator("[data-overlap-body]"));
         const expected = clamp(40, image.width * 0.1, 64);
         expect(image.y + image.height - body.y).toBeCloseTo(expected, 0);
@@ -128,11 +128,13 @@ for (const path of PAGES) {
         else expect(b.y).toBeGreaterThan(a.y);
       });
 
-      test("StoryCard: layouts move the image with the grid, text first in the markup", async ({
+      test("StoryCard: layouts move the image with the grid, image first in the markup", async ({
         page,
       }) => {
         const wrapperWidth = (await box(page.locator('[data-case="feature"]')))
           .width;
+        // --grid-column-gap: 16px, 24px from 768, 32px from 1280 (spacing-layout-system.md §3).
+        const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
 
         // Feature split: stack under 768, text then clamped image column from 768.
         const feature = page.locator('[data-case="feature"]');
@@ -145,25 +147,26 @@ for (const path of PAGES) {
           const share = width >= 1024 ? 0.6 : 0.5;
           expect(fImg.x).toBeGreaterThan(fText.x);
           expect(fImg.width).toBeCloseTo(
-            clamp(420, (wrapperWidth - 24) * share, 557),
+            clamp(420, (wrapperWidth - columnGap) * share, 557),
             0,
           );
         }
 
-        // Row, third: text 2fr, image 1fr, 16px gap, at every width.
+        // Row, third: text 2fr, image 1fr, --grid-column-gap between them (DR-300).
         const row = page.locator('[data-case="row"]');
         const rImg = await box(row.locator("img"));
         const rText = await box(row.locator("h3"));
         expect(rImg.x).toBeGreaterThan(rText.x);
-        expect(rImg.width).toBeCloseTo((wrapperWidth - 16) / 3, 0);
+        expect(rImg.width).toBeCloseTo((wrapperWidth - columnGap) / 3, 0);
 
-        // No image: the placeholder, in the same row layout (U-33).
+        // No image: the placeholder, in the same row layout (DR-338).
         const none = page.locator('[data-case="no-image"]');
-        await expect(none.locator("[data-placeholder] img")).toHaveCount(1);
-        const nImg = await box(none.locator("img"));
+        await expect(none.locator("[data-placeholder]")).toHaveCount(1);
+        await expect(none.locator("img")).toHaveCount(0);
+        const nImg = await box(none.locator("[data-placeholder]"));
         const nTitle = await box(none.locator("h3"));
         expect(nImg.x).toBeGreaterThan(nTitle.x);
-        expect(nImg.width).toBeCloseTo((wrapperWidth - 16) / 3, 0);
+        expect(nImg.width).toBeCloseTo((wrapperWidth - columnGap) / 3, 0);
 
         // Rail image story: row under 1024, stack in the 304px rail from 1024.
         const rail = page.locator('[data-case="rail"]');
@@ -206,10 +209,11 @@ for (const path of PAGES) {
             expect(Math.round(next.x)).toBe(Math.round(prev.x));
           }
         }
+        // Divider.item: a 1px dotted rule drawn on the li (DR-262).
         expect(
           await items
             .nth(1)
-            .evaluate((n) => getComputedStyle(n).borderTopWidth),
+            .evaluate((n) => getComputedStyle(n, "::before").height),
         ).toBe("1px");
       });
     });

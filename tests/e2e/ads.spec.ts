@@ -18,7 +18,7 @@ function expected(slot: string, width: number) {
     case "ad-band":
       if (width < 768)
         return { reserve: 280, file: width >= 336 ? "336x280" : "300x250" };
-      if (width < 1024) return { reserve: 250, file: "728x90" };
+      if (width < 1024) return { reserve: 90, file: "728x90" }; // DR-315
       return { reserve: 250, file: "970x250" };
     case "ad-inset":
       return width < 1280
@@ -104,15 +104,16 @@ for (const path of ["/", "/en"]) {
   }
 }
 
-test("the top ad is above the header and nothing is sticky but the top bar (LAY-11, LAY-15)", async ({
+test("the top ad is below the header and nothing is sticky but the top bar (LAY-11, LAY-15, DR-295)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/en");
   const top = page.locator('[data-ad-slot="ad-top"]');
-  const header = page.locator("header").first();
-  expect((await box(top)).y).toBe(0);
-  expect((await box(header)).y).toBeGreaterThanOrEqual(
+  const nav = await box(page.locator("[data-nav-row]"));
+  // At 1280 the nav row shows; the top ad row starts where it ends, above the hero.
+  expect(Math.round((await box(top)).y)).toBe(Math.round(nav.y + nav.height));
+  expect((await box(page.locator("main"))).y).toBeGreaterThanOrEqual(
     (await box(top)).y + (await box(top)).height - 1,
   );
   const positions = await page.evaluate(() =>
@@ -144,4 +145,18 @@ test("the bands follow the sections and never sit together (7.1, LAY-13)", async
   expect(order.filter((o) => o === "ad")).toHaveLength(5);
   for (let i = 1; i < order.length; i++)
     expect(order[i] === "ad" && order[i - 1] === "ad").toBe(false); // LAY-13
+});
+
+test("an ad row is not a landmark and its label is visible (DR-266)", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const slots = page.locator("[data-ad-slot]:visible");
+  expect(await slots.count()).toBeGreaterThan(0);
+  for (const slot of await slots.all()) {
+    expect(await slot.evaluate((el) => el.tagName)).toBe("DIV");
+    await expect(slot).not.toHaveAttribute("aria-label");
+    await expect(slot.getByText("বিজ্ঞাপন", { exact: true })).toBeVisible();
+  }
 });

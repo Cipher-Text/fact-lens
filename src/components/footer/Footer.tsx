@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { Shell } from "@/components/layout/Shell";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
 import { fill, formatYear } from "@/lib/format";
 
@@ -20,20 +21,20 @@ type Props = {
 };
 
 /**
- * C-21 Footer (provisional, DR-193): the minimum footer after the last ad band. A full-width
- * surface-elevated band with the panel inset (LAY-20, DR-224); the band is the container.
+ * C-21 Footer (provisional, DR-193): the minimum footer after the last ad band. A panel band
+ * (DR-264): full-width surface-elevated, content in the shell, block inset only (LAY-20).
  * Everything is centered: logo, the five social links, the site links (wrap to 2 lines on
  * phones), the copyright line. Footer landmark; the links are lists. Labels in the page
  * language. The design extension comes after run 2 (CMP-33): add nothing here.
  */
-export function SiteFooter({ lang }: Props) {
+export function Footer({ lang }: Props) {
   const t = getDictionary(lang);
   const strings = t.footer;
 
   return (
-    <footer className="@container bg-surface-elevated" data-footer>
-      <div className="panel-inset">
-        <div className="mx-auto flex w-full max-w-(--measure-shell) flex-col items-center gap-6 text-center">
+    <footer className="bg-surface-elevated py-10 sm:py-12" data-footer>
+      <Shell>
+        <div className="flex flex-col items-center gap-6 text-center">
           <Link
             href={localizedPath(lang)}
             aria-label={t.header.home}
@@ -80,7 +81,7 @@ export function SiteFooter({ lang }: Props) {
             })}
           </p>
         </div>
-      </div>
+      </Shell>
     </footer>
   );
 }

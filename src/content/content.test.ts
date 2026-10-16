@@ -220,6 +220,10 @@ describe("getHomepage full", () => {
         expect(home.mostRead).toHaveLength(5);
       });
 
+      it("gives each most-read item its rank from the data, 1 to 5 (DR-290)", () => {
+        expect(home.mostRead!.map((s) => s.rank)).toEqual([1, 2, 3, 4, 5]);
+      });
+
       it("has 6 or more regions, with চীন, and drops the region with no stories", () => {
         const ids = home.regions!.map((r) => r.region);
         expect(ids.length).toBeGreaterThanOrEqual(6);
@@ -350,8 +354,7 @@ describe("mock ads (spacing-layout-system.md 9, C-16)", () => {
           const file = join(process.cwd(), "public", c.src);
           expect(existsSync(file), c.src).toBe(true);
           const [, w, h] =
-            /viewBox="0 0 (\d+) (\d+)"/.exec(readFileSync(file, "utf8")) ??
-            [];
+            /viewBox="0 0 (\d+) (\d+)"/.exec(readFileSync(file, "utf8")) ?? [];
           expect([Number(w), Number(h)]).toEqual([c.width, c.height]);
         }
       });

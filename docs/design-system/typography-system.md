@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.8 · 10 October 2026 · Approved for prototype run 2
+Version 2.14 · 15 October 2026 · Approved for prototype run 2
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -98,6 +98,7 @@ Tracking for Bangla is 0 in every role.
 | `type-blockquote` | Serif | 18–22px | 400 | 1.6 | 0 | 19–22px | 500 | 1.68 | Quoted text in the article |
 | `type-pullquote` | Serif | 28–36px | 500 | 1.2 | -0.015em | 26–34px | 500 | 1.32 | Pulled quote in the article |
 | `type-section-title` | Serif | 22px | 600 | 1.25 | -0.01em | 22px | 600 | 1.3 | Homepage section heading (`SectionHeading`, DR-163) |
+| `type-logo` | Serif | 20px; 28px from 768; 32px from 1024; 24px when the bar is stuck (from 768) | 700 | 1 | 0 | same | 700 | 1.1 | Logo text stand-in in the TopBar until the logo file exists (BRD-06, BRD-09, DR-295, DR-306). `type-logo-sm` = the same role at 24px for the Footer and `Drawer.head` |
 | `type-eyebrow` | Sans | 14px | 700 | 1.2 | 0.06em | 15px | 600 | 1.35 | Category and label above a headline |
 | `type-metadata` | Sans | 14px | 400 | 1.4 | 0.01em | 15px | 400 | 1.5 | Byline, date, reading time. One size per language on the page (DR-96, DR-101) |
 | `type-caption` | Sans | 14px | 400 | 1.5 | 0 | 15px | 400 | 1.6 | Image and figure captions |
@@ -251,6 +252,19 @@ Use the article role, `text-interactive` and an underline. Keep the paragraph we
 
 Use `Intl.DateTimeFormat` and `Intl.NumberFormat` with `en-GB` or `bn-BD`. Keep identifiers as written, for example F-35, G7, 5G. Use `tabular-nums` for times, live updates, scores and tables.
 
+**Story time (DR-274).** Show a relative time for 24 hours, then the date and time in the reader's time zone.
+
+| Age | Bangla | English |
+| --- | --- | --- |
+| Under 1 hour | এইমাত্র | Just in |
+| 1 to 23 hours (round down) | ১ ঘণ্টা আগে, ২ ঘণ্টা আগে | 1 hour ago, 2 hours ago |
+| 24 hours or more | ১২ অক্টোবর, ১৪:৩০ | 12 Oct, 14:30 |
+
+- Hours only. No minutes and no days.
+- 24 hours or more: date and 24-hour time in the browser time zone. Add the year only for an earlier year.
+- Put the exact time in `<time datetime>`. The server renders the Dhaka time; a small script (under 1 KB, no library) writes the reader text on load, every few minutes and when the tab gets focus. Give `<time>` `suppressHydrationWarning`.
+- This applies to every metadata line (hero, Latest, cards).
+
 ### TYP-18 Use utilities, not raw values
 
 Use `type-*` utilities. Do not write `text-[57px]` or `leading-[1.07]` in a component. If a raw value is necessary, write the reason in the component.
@@ -297,6 +311,7 @@ The component names are in `component-system.md` Section 3.
 | `StoryCard` size `sm`, `StoryListItem`, every region panel story (DR-254) | `type-story-title-sm` |
 | Card summary | `type-summary` |
 | Section heading (`SectionHeading`) | `type-section-title` |
+| Logo text stand-in: TopBar; Footer and `Drawer.head` | `type-logo`; `type-logo-sm` (DR-306) |
 | Region name in a region panel | `type-story-title-sm` |
 | Category label (`Eyebrow`) | `type-eyebrow` |
 | Time, author (`MetaLine`) | `type-metadata` |
@@ -313,8 +328,8 @@ The component names are in `component-system.md` Section 3.
 | Email field | `type-input` |
 | Vote button ভোট দিন (`Button` primary) | `type-button` |
 | Poll question (`legend`) | `type-story-title-sm` |
-| Poll options | `type-ui` |
-| Poll results, own-vote tag, vote total | `type-ui-sm`, tabular digits in the page language |
+| Poll options and result labels (with the own-vote tag) | `type-ui` |
+| Poll percent, vote total | `type-ui-sm`, tabular digits in the page language |
 | Privacy link (after prototype run 2, DR-239) | `type-ui-sm` at weight 600 (DR-216) |
 | Form error and done messages | `type-ui-sm` |
 | Top bar language link | `type-ui-sm` at weight 600 |
@@ -335,21 +350,23 @@ Every homepage text uses a role in this table. Phones use the low end of each fl
 | 1024–1279 | 3 | 56px | 0.75em (42px) | 12px |
 | From 1280 | 4 | 56px | 0.75em (42px) | 12px |
 
-- The list is an `<ol>`. A CSS counter draws the numeral: `bengali` on Bangla pages, `decimal` on English pages. No leading zero.
+- The list is an `<ol>`. The rank comes from the data (the backend most-read query), not from a CSS counter. React writes it in a `<span aria-hidden="true">` at the start of each item: Bangla digits on Bangla pages (১), Latin digits on English pages (1). No leading zero (DR-290).
 - The numeral column has a fixed width, so every title starts at the same position.
 - The top of the numeral glyph aligns with the top of the title's first line (DR-144). A small negative margin moves the glyph up: -0.125em in Bangla, -0.1em in English.
 - Color: `text-interactive` (light 7.06:1, dark 6.59:1 on `background`). Do not use `brand`: it is 2.37:1 on the dark background (`COL-04`).
-- The numeral is hidden from screen readers: the `content` value has empty alternative text (`/ ""`). The list order gives the rank.
+- The numeral is hidden from screen readers (`aria-hidden`). The list order gives the rank.
 
-The CSS is `@utility rank-list` in §8.2. Put the class on the `<ol>`: `<ol class="rank-list">` (DR-217).
+The CSS is `@utility rank-list` in §8.2. Put the class on the `<ol>`: `<ol class="rank-list">` (DR-217). The numeral span is the first child of each `<li>` (DR-290).
 
 **Other homepage rules.**
 
 - The opinion quote mark is a decorative SVG icon with `aria-hidden="true"`. It is not a text glyph.
-- Metadata order on every card: time, then reading time. Draw the separator with CSS as a 4px square, not a character (`CPT-10`). Put the time in `<time datetime>` and format it per `TYP-17`.
+- Metadata order on every card: time, then reading time. Reading time comes from the optional story field `readingMinutes`. A story with no reading time shows the time only, with no separator (DR-272). Draw the separator with CSS as a 4px square, not a character (`CPT-10`). Put the time in `<time datetime>` and format it per `TYP-17`.
+- Homepage heading outline (DR-275): a hidden `h1` ফ্যাক্ট লেন্স: প্রথম পাতা (English string from `en.ts`); a hidden `h2` names the hero; each section has its `h2`; each story title is an `h3`. The logo is a link, not the `h1`.
 - Each "আরও দেখুন" link has the section name for screen readers, for example "আরও দেখুন: বাংলাদেশ". The visible text stays the same.
 - Interface text is in the page language. Take every interface string from one string file per language (`src/i18n/bn.ts`, `src/i18n/en.ts`). A Bangla page has no English interface words.
 - The language switch shows the other language in its own script, with a matching `lang` attribute. Bangla pages: "En" on phones (under 768px), "English" from 768px. English pages: "বাংলা" at every width (DR-174).
+- Language redirect: a remembered English choice (cookie `fl-lang=en`) redirects to `/en` only at `/`. Every other URL, including a shared link, opens in its own language. Never read the browser language (DR-17, DR-270). The proxy runs on every path except `api/` and `_next/`; the `fl-lang` cookie is `Secure` in production; the `?lang=` redirect sends `Cache-Control: no-store` (DR-328).
 - Every icon-only button (menu, theme, slider) has an accessible name in the page language.
 - Region chips are as wide as their label. Do not truncate or shrink them (`TYP-09`). They are 44px tall or more.
 
@@ -387,7 +404,7 @@ Paragraph gap is 1.1em. Do not indent paragraphs. The spacing tokens in `spacing
 
 ### 7.4 Navigation
 
-Use `type-ui-sm` with weight 600 for the nav row (from 1280px). Use `type-ui` with weight 600 for the drawer (all widths). Use `type-ui-sm` with weight 500 for drawer sub-items. Do not use serif in navigation.
+Use weight 600 for the nav row (from 1280px): `type-ui` (16px) on Bangla pages, `type-ui-sm` (14px) on English pages (DR-295). Use `type-ui` with weight 600 for the drawer (all widths). Use `type-ui-sm` with weight 500 for drawer sub-items. Do not use serif in navigation.
 
 ## 8. Implementation
 
@@ -434,7 +451,7 @@ Load only the families above. Do not load fonts from a CSS `@import` or another 
 
 ### 8.2 Tokens and utilities
 
-Put this in `src/styles/typography.css`. Import it after `colors.css` and `layout.css`. It defines the line length caps (Section 5.1). It works with Tailwind 4.
+Put this in `src/styles/typography.css`. For the import order, see `spacing-layout-system.md` Section 12.5 (DR-339). It defines the line length caps (Section 5.1). It works with Tailwind 4.
 
 ```css
 /* Remove the Tailwind default font families, text sizes and weights (TYP-01, TYP-06, DR-235).
@@ -563,6 +580,9 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-rank-weight: 700;
   --type-rank-line: 1;
   --type-rank-nudge: -0.1em;
+  --type-logo-size: 1.25rem;
+  --type-logo-weight: 700;
+  --type-logo-line: 1;
   --type-input-size: 1rem;
   --type-input-weight: 400;
   --type-input-line: 1.4;
@@ -663,6 +683,7 @@ Put this in `src/styles/typography.css`. Import it after `colors.css` and `layou
   --type-button-tracking: 0;
   --type-rank-family: var(--font-ui-active);
   --type-rank-nudge: -0.125em;
+  --type-logo-line: 1.1;
   --type-input-size: 1rem;
   --type-input-weight: 400;
   --type-input-line: 1.5;
@@ -679,9 +700,14 @@ body {
   font-optical-sizing: auto;
 }
 
+@media (min-width: 48rem) {
+  :root,
+  :lang(en) { --type-logo-size: 1.75rem; }
+}
+
 @media (min-width: 64rem) {
   :root,
-  :lang(en) { --type-rank-size: 3.5rem; }
+  :lang(en) { --type-rank-size: 3.5rem; --type-logo-size: 2rem; }
 }
 
 :lang(bn) em { font-style: normal; font-weight: 600; }
@@ -817,6 +843,24 @@ body {
   letter-spacing: var(--type-section-title-tracking);
 }
 
+@utility type-logo {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-logo-size);
+  font-weight: var(--type-logo-weight);
+  line-height: var(--type-logo-line);
+  /* Stuck bar (data-bar-stuck, DR-287): 24px from 768 */
+  @media (width >= 48rem) {
+    html[data-bar-stuck] & { font-size: 1.5rem; }
+  }
+}
+
+@utility type-logo-sm {
+  font-family: var(--font-editorial-active);
+  font-size: 1.5rem;
+  font-weight: var(--type-logo-weight);
+  line-height: var(--type-logo-line);
+}
+
 @utility type-eyebrow {
   font-family: var(--font-ui-active);
   font-size: var(--type-eyebrow-size);
@@ -876,10 +920,9 @@ body {
 
 @utility rank-list {
   list-style: none;
-  counter-reset: rank;
-  & > li { counter-increment: rank; display: grid; grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
-  & > li::before {
-    content: counter(rank, decimal) / "";
+  & > li { display: grid; grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
+  /* The rank number from the data, in <span aria-hidden="true"> (DR-290) */
+  & > li > [aria-hidden="true"]:first-child {
     font-family: var(--type-rank-family);
     font-size: var(--type-rank-size);
     font-weight: var(--type-rank-weight);
@@ -888,7 +931,6 @@ body {
     color: var(--interactive);
     font-variant-numeric: tabular-nums;
   }
-  &:lang(bn) > li::before { content: counter(rank, bengali) / ""; }
 }
 ```
 
@@ -916,6 +958,7 @@ Put `data-reader-size` on the article element, not on `<html>`. Then only the ar
 | `src/app/fonts.ts` | Font loading (Section 8.1) |
 | `src/styles/colors.css` | Color tokens (`color-system.md`) |
 | `src/styles/typography.css` | Typography tokens and utilities (Section 8.2) |
+| `src/app/globals.css` | The imports and base rules (`spacing-layout-system.md` Sections 12.4 and 12.5) |
 | `src/components/ui/` | shadcn/ui components |
 | `src/components/editorial/` | Story and article components |
 
@@ -948,6 +991,12 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.14 | 2026-10-15 | Section 8.2 links to the one `globals.css` import list (layout Section 12.5, DR-339); Section 8.4 lists `globals.css`. |
+| 2.13 | 2026-10-15 | New role `type-logo` (20 / 28 / 32px, 24px when the bar is stuck) and `type-logo-sm` (24px) for the logo text stand-in (DR-306). Proxy and cookie rules in the language rules (DR-328). |
+| 2.12 | 2026-10-14 | Most read rank from the data in an `aria-hidden` span, digits in the page language; `rank-list` has no counter (DR-290). Nav row: Bangla `type-ui` 16px, English unchanged (DR-295). |
+| 2.11 | 2026-10-13 | Story time: relative for 24 hours (এইমাত্র, hours ago), then date and time in the reader's time zone (TYP-17, DR-274). Homepage heading outline (DR-275). |
+| 2.10 | 2026-10-13 | Poll result labels and the own-vote tag use `type-ui`; the percent and the total use `type-ui-sm` (C-26, DR-273). |
+| 2.9 | 2026-10-13 | Reading time is optional (`readingMinutes`); no reading time shows the time only (DR-272). Language redirect only at `/` (DR-270). |
 | 2.8 | 2026-10-10 | Newsletter rows apply after prototype run 2: NewsletterSignup is paused for run 2 (DR-239). |
 | 2.7 | 2026-10-10 | `TYP-09` has no line clamp; long titles wrap (DR-237). Section 8.2 removes the Tailwind default fonts, text sizes and weights outside 400 to 700, and sets the default font to the UI stack (DR-235). |
 | 2.6 | 2026-10-10 | `type-module-title` removed (DR-196); newsletter and poll headings use `type-section-title` (DR-215). UI links use `type-ui-sm` 600, Drawer rows `type-ui` 600; English uppercase only on Eyebrow and Chip (DR-216). Rank CSS is `@utility rank-list` in §8.2; new rule `TYP-25` (DR-217). |

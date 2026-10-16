@@ -10,6 +10,8 @@
       "Bash(pnpm test *)",
       "Bash(pnpm test:e2e)",
       "Bash(pnpm test:e2e *)",
+      "Bash(pnpm test:e2e:chromium)",
+      "Bash(pnpm test:e2e:chromium *)",
       "Bash(pnpm build)",
       "Bash(pnpm check)",
       "Bash(pnpm exec prettier *)",
@@ -63,7 +65,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "Edit|Write|Bash",
         "hooks": [
           {
             "type": "command",

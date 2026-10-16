@@ -1,8 +1,8 @@
 /* Component tokens: component-system.md Section 6. Imported after layout.css. */
 :root {
   --bar-brand: 0.375rem;
-  --bar-section-width: 3rem;
-  --bar-section-height: 0.375rem;
+  --bar-section-width: 2.5rem;
+  --bar-section-height: 0.5rem;
   --space-lead-inset-start: 0;
   --space-lead-inset-end: 2rem;
   --space-lead-panel: 1rem;
@@ -34,32 +34,39 @@
   --icon-size: 1.25rem;
   --button-icon-gap: 0.5rem;
 
-  /* Page chrome (component-system.md C-12, C-17; no token in Section 6, CPT-07).
-     Top bar side padding = the page gutter minus the inner space of the edge control:
-     (32 - 20) / 2 = 6px on phones, (44 - 20) / 2 = 12px from 768. */
-  --top-bar-inset: calc(var(--gutter-page) - 0.375rem);
-  /* ThemeToggle switch corners: the one place with radius (CPT-05, DR-168) */
-  --switch-radius-track: 0.375rem;
-  --switch-radius-thumb: 0.25rem;
-  /* Theme controls: interactive in light, ink in dark (color-system.md 2.9, DR-211) */
-  --color-theme-control: var(--interactive);
+  /* Page chrome (component-system.md Section 6, DR-294, DR-295, DR-303) */
+  --top-bar-inset: 0.625rem;
+  --switch-radius: 0.25rem;
+  --switch-thumb-inset: 0.1875rem;
+  --color-theme-control: var(--fill-neutral);
 }
 
 .dark {
   --color-bar: var(--interactive);
-  --color-theme-control: var(--ink);
+  --color-theme-control: var(--interactive);
+}
+
+@media (min-width: 37.5rem) {
+  :root {
+    --top-bar-inset: 1.125rem;
+  }
 }
 
 @media (min-width: 48rem) {
   :root {
-    --top-bar-inset: calc(var(--gutter-page) - 0.75rem);
+    --top-bar-inset: 0.75rem;
   }
 }
 
+/* The NavBar sets data-bar-stuck on <html> when it scrolls away; the TopBar reads it
+   through this variant, not an arbitrary one (DR-287). */
+@custom-variant bar-stuck (html[data-bar-stuck] &);
+/* Bangla pages: the language difference is in CSS, not in a component (TYP-04) */
+@custom-variant lang-bn (&:lang(bn));
+
 @media (min-width: 64rem) {
   :root {
-    --bar-section-width: 4rem;
-    --bar-section-height: 0.5rem;
+    --bar-section-width: 3rem;
     --story-feature-media-share: 0.6;
   }
 }
@@ -88,35 +95,89 @@
   }
 }
 
-/* StoryCard row splits (C-24). Text at the start, image at the end. Tracks use minmax(0, …)
-   so a long word does not widen a column (P-2 checks). */
+/* StoryCard layout (C-24). The card root is the container (CPT-04); the grid inside it has
+   a media area and a body area (DR-267: the media is first in the markup, no `order`).
+   story-stacked puts the media above the body. story-split-third and story-split-feature put
+   the text at the start and the image at the end, with --grid-column-gap between them
+   (DR-300). A row stacks when the container is narrower than 17.5rem, which is what happens
+   at 200% text; the width is in rem so it grows with the text (DR-308, A11Y-18). Tracks use
+   minmax(0, ...) so a long word does not widen a column (P-2 checks). */
+@utility story-media {
+  grid-area: media;
+}
+
+@utility story-body {
+  grid-area: body;
+}
+
+@utility story-stacked {
+  grid-template-areas: "media" "body";
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 0;
+  row-gap: var(--space-story-media-text);
+}
+
 @utility story-split-third {
+  grid-template-areas: "body media";
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  column-gap: --spacing(4);
+  column-gap: var(--grid-column-gap);
+  row-gap: 0;
+  @container (width < 17.5rem) {
+    grid-template-areas: "media" "body";
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: var(--space-story-media-text);
+  }
 }
 
 @utility story-split-feature {
+  grid-template-areas: "body media";
   grid-template-columns:
     minmax(0, 1fr)
     clamp(
       var(--story-feature-media-min),
-      calc((100% - --spacing(6)) * var(--story-feature-media-share)),
+      calc((100% - var(--grid-column-gap)) * var(--story-feature-media-share)),
       var(--story-feature-media-max)
     );
-  column-gap: --spacing(6);
+  column-gap: var(--grid-column-gap);
+  row-gap: 0;
+  @container (width < 17.5rem) {
+    grid-template-areas: "media" "body";
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: var(--space-story-media-text);
+  }
 }
 
-/* DailyPoll layout (C-26): stacked in a container under 600px, a row from 600px with the
-   question and heading at the start and the options and button at the end. The panel
-   container is the DailyPoll section. Section 6 has no token for it (CPT-07, DOC-31). */
+/* DailyPoll layout (C-26, DR-298): one column in a container under 600px (phones, the 304px
+   rail); from 600px two equal columns with the column gap: heading and question at the start,
+   options (or results) and the button at the end. The parts are marked data-poll-part and sit
+   in grid areas, so the source order stays the reading order (LAY-14). The choose parts and
+   the results share the area "cell", so the vote does not change the height (LAY-10). The
+   section is the container. Section 6 has no token for it (CPT-07, DOC-31). */
 @utility poll-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  row-gap: --spacing(6);
+  grid-template-areas: "heading" "question" "cell";
+  & [data-poll-part="heading"] {
+    grid-area: heading;
+  }
+  & [data-poll-part="question"] {
+    grid-area: question;
+    margin-block-start: --spacing(4);
+  }
+  & [data-poll-part="cell"] {
+    grid-area: cell;
+    margin-block-start: --spacing(6);
+  }
   @container (width >= 37.5rem) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "heading cell" "question cell";
     column-gap: var(--grid-column-gap);
-    row-gap: 0;
+    & [data-poll-part="cell"] {
+      margin-block-start: 0;
+    }
   }
 }
 
@@ -160,5 +221,133 @@
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+/* shadcn Sheet and Drawer motion (CPT-16, DR-280). The default slide: the Sheet moves 2.5rem
+   and fades over 200ms; the top Drawer slides in from above over 450ms with ease-slide and
+   follows a swipe up. The base rule in globals.css removes both with reduced motion. */
+@utility sheet-overlay {
+  transition: opacity 200ms;
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+}
+
+@utility sheet-left {
+  transition:
+    transform 200ms ease-in-out,
+    opacity 200ms ease-in-out;
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: translateX(-2.5rem);
+    opacity: 0;
+  }
+}
+
+@utility drawer-overlay {
+  transition: opacity 450ms var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+}
+
+@utility drawer-top {
+  transform: translateY(var(--drawer-swipe-movement-y, 0px));
+  transition: transform 450ms var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: translateY(-100%);
+  }
+  &[data-swiping] {
+    transition-duration: 0s;
+  }
+}
+
+/* Divider.item (C-22, DR-262): a 1px dotted rule, square 1 x 1px dots with a 1px gap, drawn
+   with a repeating gradient because border-style dotted differs between browsers. The li has
+   space-list-item above and below the rule. The first item has no rule (no rule before the
+   first row, none after the last). */
+@utility divider-item {
+  position: relative;
+  margin-block-start: var(--space-list-item);
+  padding-block-start: var(--space-list-item);
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border) 0 1px,
+      transparent 1px 2px
+    );
+  }
+  &:first-child {
+    margin-block-start: 0;
+    padding-block-start: 0;
+    &::before {
+      display: none;
+    }
+  }
+}
+
+/* Divider.item inside a multi-column grid list (RankedList): the rule runs within a column
+   only (DR-299, DR-300), so an item on the first grid row has no rule and the others have
+   one above them. Items per row: 1, 2 from 600, 3 from 1024, 4 from 1280 (DR-51, DR-145).
+   The list sets row-gap 0: the space above and below the rule is space-list-item. The rule
+   is the ::after of the li, because the rank numeral is its ::before. */
+@utility divider-item-grid {
+  position: relative;
+  margin-block-start: var(--space-list-item);
+  padding-block-start: var(--space-list-item);
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border) 0 1px,
+      transparent 1px 2px
+    );
+  }
+  &:nth-child(-n + 1) {
+    margin-block-start: 0;
+    padding-block-start: 0;
+    &::after {
+      display: none;
+    }
+  }
+  @media (width >= 37.5rem) {
+    &:nth-child(-n + 2) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  @media (width >= 64rem) {
+    &:nth-child(-n + 3) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  @media (width >= 80rem) {
+    &:nth-child(-n + 4) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
   }
 }

@@ -1,19 +1,19 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { getHomepage, type HeroSection } from "@/content";
+import { getHomepage, type HeroContent } from "@/content";
 import { getDictionary } from "@/i18n";
 
-import { Hero } from "./Hero";
+import { HeroSection } from "./HeroSection";
 
-function renderHero(lang: "bn" | "en", hero: HeroSection) {
-  return render(<Hero hero={hero} t={getDictionary(lang)} />);
+function renderHero(lang: "bn" | "en", hero: HeroContent) {
+  return render(<HeroSection hero={hero} t={getDictionary(lang)} />);
 }
 
 const full = getHomepage("bn").hero!;
 const sparse = getHomepage("bn", { variant: "sparse" }).hero!;
 
-describe("Hero (P-1)", () => {
+describe("HeroSection (P-1)", () => {
   it("has the wrapper before the rail, with the lead, two top stories and Latest", () => {
     const { container } = renderHero("bn", full);
     const grid = container.querySelector(".with-rail")!;
@@ -42,7 +42,7 @@ describe("Hero (P-1)", () => {
 
   it("uses the role mapping of typography-system.md 7.1", () => {
     const { container } = renderHero("en", getHomepage("en").hero!);
-    expect(container.querySelector("[data-lead] h2")).toHaveClass(
+    expect(container.querySelector("[data-lead] h3")).toHaveClass(
       "type-story-lead",
     );
     for (const h of container.querySelectorAll("[data-top-stories] h3"))
@@ -57,13 +57,10 @@ describe("Hero (P-1)", () => {
     expect(row).not.toHaveClass("sm:grid-cols-2");
   });
 
-  it("shows the placeholder image for a lead with no image, and the overlap stays (7.4, U-33)", () => {
+  it("shows the placeholder image for a lead with no image, and the overlap stays (7.4, DR-338)", () => {
     const { container } = renderHero("bn", sparse);
     expect(sparse.lead.image).toBeUndefined();
-    expect(container.querySelector("[data-lead] img")).toHaveAttribute(
-      "alt",
-      "",
-    );
+    expect(container.querySelector("[data-lead] img")).toBeNull();
     expect(
       container.querySelector("[data-lead] [data-placeholder]"),
     ).not.toBeNull();
@@ -101,13 +98,10 @@ describe("Hero (P-1)", () => {
     ).toBeNull();
   });
 
-  it("shows Breaking as a filled label in the page language (COL-11, T-27)", () => {
-    renderHero("bn", full);
-    expect(screen.getByText("সদ্যপ্রাপ্ত")).toHaveClass(
-      "bg-live",
-      "text-on-live",
-    );
-    expect(screen.queryByText("Breaking")).toBeNull();
+  it("shows no Breaking or Live label (COL-11, DR-279)", () => {
+    const { container } = renderHero("bn", full);
+    expect(container.querySelector("[data-chip]")).toBeNull();
+    expect(screen.queryByText("সদ্যপ্রাপ্ত")).toBeNull();
   });
 
   it("formats time and reading time with Bangla digits (TYP-17)", () => {
@@ -117,7 +111,7 @@ describe("Hero (P-1)", () => {
       "datetime",
       full.lead.publishedAt,
     );
-    expect(lead.querySelector("time")).toHaveTextContent("০৯:১৫");
+    expect(lead.querySelector("time")).toHaveTextContent("৭ অক্টোবর, ০৯:১৫");
     expect(lead.querySelector("[data-reading-time]")).toHaveTextContent(
       "পড়তে ৬ মিনিট",
     );

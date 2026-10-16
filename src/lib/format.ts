@@ -1,7 +1,8 @@
 import type { Lang } from "@/i18n/config";
 
-// Format numbers and dates for the page language (TYP-17). Bangla uses Bangla digits.
-const locales: Record<Lang, string> = { bn: "bn-BD", en: "en-GB" };
+// Format numbers and dates for the page language (TYP-17). Bangla uses Bangla digits; `-u-nu-beng`
+// sets them, because WebKit gives Latin digits for plain `bn-BD` and hydration then fails.
+const locales: Record<Lang, string> = { bn: "bn-BD-u-nu-beng", en: "en-GB" };
 
 const TIME_ZONE = "Asia/Dhaka";
 
@@ -19,16 +20,6 @@ export function formatYear(year: number, lang: Lang): string {
 export function formatDate(date: Date, lang: Lang): string {
   return new Intl.DateTimeFormat(locales[lang], {
     dateStyle: "long",
-    timeZone: TIME_ZONE,
-  }).format(date);
-}
-
-/** Clock time, 24-hour, in Dhaka time: "09:15" or "০৯:১৫". No AM/PM, so no English word on a Bangla page. */
-export function formatTime(date: Date, lang: Lang): string {
-  return new Intl.DateTimeFormat(locales[lang], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
     timeZone: TIME_ZONE,
   }).format(date);
 }

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { AnalysisList } from "./AnalysisList";
 import { OpinionList } from "./OpinionList";
 
-type AnalysisOpinionProps = {
+type AnalysisSectionProps = {
   lang: Lang;
   section: AnalysisOpinionSection;
   t: Dictionary;
@@ -15,38 +15,38 @@ type AnalysisOpinionProps = {
 };
 
 /**
- * P-4 বিশ্লেষণ ও মতামত (spacing-layout-system.md 7.2 to 7.4, DR-52, DR-76). Shell width,
- * not a full-width row; the surface-elevated background is inside the shell only. Two
+ * P-4 বিশ্লেষণ ও মতামত (spacing-layout-system.md 7.2 to 7.4, DR-52, DR-76). A panel band
+ * (5.3, DR-264): the surface-elevated background spans the full viewport width and the
+ * content sits in the shell, so it aligns with the page gutter. Two
  * equal columns from 768px, analysis first (left), opinion second; stacked below 768px.
  * No rail. Both columns align to the top and end where their content ends. Sparse (7.3):
  * when one column is empty, the other spans the shell.
- * The background has the panel inset (LAY-20, DR-224): the section is the container, the
- * inner div carries `panel-inset`. Space before and after the section is margin outside the
- * background, set by the page (LAY-12, DR-205).
+ * A panel band takes the block values of the panel inset only, 40px under 600px and 48px
+ * from 600px, and no inline inset (LAY-20, DR-224, DR-264). Space before and after the
+ * section is margin outside the background, set by the page (LAY-12, DR-205).
  */
-export function AnalysisOpinion({
+export function AnalysisSection({
   lang,
   section,
   t,
   className,
-}: AnalysisOpinionProps) {
+}: AnalysisSectionProps) {
   const { analysis, opinion } = section;
   const both = analysis.length > 0 && opinion.length > 0;
   return (
-    <Shell
-      as="section"
+    <section
       aria-labelledby="analysis-opinion-title"
       data-section="analysis-opinion"
-      className={cn("@container bg-surface-elevated", className)}
+      className={cn("bg-surface-elevated py-10 sm:py-12", className)}
     >
-      <div className="panel-inset">
+      <Shell>
         <SectionHeading id="analysis-opinion-title">
           {t.analysisOpinion.title}
         </SectionHeading>
         <div
           data-columns
           className={cn(
-            "grid grid-cols-1 items-start gap-x-(--grid-column-gap) gap-y-(--space-module)",
+            "grid grid-cols-1 items-start gap-x-(--grid-column-gap) gap-y-(--grid-row-gap)",
             both && "md:grid-cols-2",
           )}
         >
@@ -57,7 +57,7 @@ export function AnalysisOpinion({
             <OpinionList lang={lang} stories={opinion} strings={t} />
           ) : null}
         </div>
-      </div>
-    </Shell>
+      </Shell>
+    </section>
   );
 }

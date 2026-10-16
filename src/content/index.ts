@@ -35,7 +35,6 @@ function toStory(def: StoryDef, lang: Lang): Story {
   if (def.region) story.region = def.region;
   if (text.summary) story.summary = text.summary;
   if (def.readingMinutes) story.readingMinutes = def.readingMinutes;
-  if (def.breaking) story.breaking = true;
   if (def.author)
     story.author = { name: authors[def.author][lang], slug: def.author };
   if (def.image) {
@@ -60,7 +59,7 @@ function newestFirst(a: Story, b: Story): number {
   return Date.parse(b.publishedAt) - Date.parse(a.publishedAt);
 }
 
-export function getRegionStories(region: RegionId, lang: Lang): Story[] {
+function getRegionStories(region: RegionId, lang: Lang): Story[] {
   return stories
     .filter((def) => def.region === region)
     .map((def) => toStory(def, lang))
@@ -164,7 +163,12 @@ export function getHomepage(
       groupedCategories.length > 0
         ? { categories: groupedCategories, poll: getPoll(lang) }
         : null,
-    mostRead: nonEmpty(getStories(plan.mostRead, lang)),
+    mostRead: nonEmpty(
+      getStories(plan.mostRead, lang).map((story, index) => ({
+        ...story,
+        rank: index + 1,
+      })),
+    ),
     regions: nonEmpty(regions),
   };
 }

@@ -14,14 +14,14 @@ const WIDTHS = [
   320, 360, 600, 768, 834, 1023, 1024, 1180, 1280, 1366, 1440, 1920,
 ];
 
-// spacing-layout-system.md 3.2: the wrapper is shell − 304 − 24 from 1024.
+// spacing-layout-system.md 3.2: the wrapper is shell − 304 − column gap (24px at 1024, 32px from 1280).
 const WRAPPER: Record<number, number> = {
   1024: 648,
   1180: 804,
-  1280: 904,
-  1366: 952,
-  1440: 952,
-  1920: 952,
+  1280: 896,
+  1366: 944,
+  1440: 944,
+  1920: 944,
 };
 
 async function box(locator: Locator) {
@@ -237,7 +237,7 @@ for (const p of PAGES) {
           ).toBeCloseTo(unit, 0);
           expect(Math.round(body.x)).toBe(Math.round(cardImage.x));
         }
-        await expect(lead.getByRole("heading", { level: 2 })).toHaveClass(
+        await expect(lead.getByRole("heading", { level: 3 })).toHaveClass(
           /type-story-lead/,
         );
         // One tab stop for the story and one for the eyebrow (C-01).
@@ -284,11 +284,14 @@ for (const p of PAGES) {
       );
       // Latest shows the items that exist.
       await expect(hero.locator("[data-hero-rail] li")).toHaveCount(2);
-      // A lead with no image shows the placeholder, with the same overlap (U-33).
-      await expect(
-        hero.locator("[data-lead] [data-placeholder] img"),
-      ).toHaveCount(1);
-      const leadImage = await box(hero.locator("[data-lead] img"));
+      // A lead with no image shows the placeholder, with the same overlap (DR-338).
+      await expect(hero.locator("[data-lead] [data-placeholder]")).toHaveCount(
+        1,
+      );
+      await expect(hero.locator("[data-lead] img")).toHaveCount(0);
+      const leadImage = await box(
+        hero.locator("[data-lead] [data-placeholder]"),
+      );
       const leadPanel = await box(hero.locator("[data-lead-panel]"));
       expect(leadImage.y + leadImage.height - leadPanel.y).toBeGreaterThan(0);
       const scroll = await page.evaluate(

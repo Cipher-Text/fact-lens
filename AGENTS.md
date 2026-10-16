@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.4 · 13 October 2026 · After homepage prototype run 2
+Version 1.5 · 16 October 2026 · For homepage prototype run 3 (fixes)
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -10,7 +10,8 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Item | Status |
 | --- | --- |
-| Current work | Homepage prototype run 2 (Milestone 1) finished on 11 October 2026 and is merged into `main`. No ticket is open until tajmin plans the next run. Milestone 2 is full development and hosting |
+| Current work | Homepage prototype run 3 (Milestone 1): the fix run. Rebuild the run 2 fixes that tajmin decided (`DR-262` to `DR-344`) from the current specs. The tickets are in `docs/SPRINT.md`. Do not add new features. Milestone 2 is full development and hosting |
+| Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
 | Pages | Homepage first. Do not start article or category pages until their layout pass is complete |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |
@@ -44,7 +45,7 @@ Approved in `DR-15`. Do not add a framework, a CSS library or a state library wi
 | Unit tests | Vitest and Testing Library |
 | Browser tests | Playwright with `@axe-core/playwright` |
 | Component gallery | Storybook, later. Not in the prototype runs (`DR-88`) |
-| Hosting | Vercel (Milestone 2) |
+| Hosting | Vercel. Preview: https://fact-lens-web-ashy.vercel.app/. Production hosting is Milestone 2 |
 
 ## 4. Commands
 
@@ -56,7 +57,8 @@ The repository must have these `package.json` scripts. If a script is missing, a
 | `pnpm lint` | ESLint |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm test` | Vitest, one run |
-| `pnpm test:e2e` | Playwright tests, including the axe check |
+| `pnpm test:e2e` | Playwright tests, including the axe check (Chromium and WebKit) |
+| `pnpm test:e2e:chromium` | Playwright tests in Chromium only: the gate (`DR-289`) |
 | `pnpm build` | Production build |
 | `pnpm check` | `lint`, `typecheck`, `test` and `build` in sequence |
 
@@ -66,22 +68,22 @@ The repository must have these `package.json` scripts. If a script is missing, a
 src/
   proxy.ts                 Next.js 16 proxy: rewrites paths without /en to bn
   app/
-    globals.css            Imports the three token files, then the base rules of spacing-layout-system.md §12.4
+    globals.css            The imports in spacing-layout-system.md §12.5, then the base rules of §12.4 (DR-339)
     [lang]/                bn and en. See Section 7
       layout.tsx           Sets <html lang>, fonts and the theme script
       page.tsx             Homepage
   components/
-    ui/                    shadcn/ui primitives (generated, then cleaned)
-    layout/                Shell, Wrapper, Rail, SectionHeading, Divider
-    header/                TopBar, NavBar, Drawer, SearchDialog, ThemeToggle, ThemeButton
+    ui/                    shadcn/ui primitives, restyled after add (CPT-16): Sheet (Drawer), Drawer (SearchDialog, from the top), Collapsible, Tabs, RadioGroup
+    layout/                Shell, Wrapper, Rail, WithRail, PeerRow, SectionHeading, Divider
+    header/                SiteHeader, TopBar, NavBar, Drawer (shadcn Sheet), SearchDialog (shadcn Drawer), ThemeToggle, ThemeButton (DR-280)
     home/                  One folder per section, with the parts that only that section uses:
                            hero (HeroSection), analysis (AnalysisSection, OpinionList),
                            featured (FeaturedCategorySection), grouped (GroupedCategoriesSection,
                            CategoryBlock, DailyPoll), most-read (MostReadSection,
                            RankedList), regions (RegionsSection, RegionSlider)
-    story/                 Shared parts: LeadStory, OverlapCard, StoryCard, StoryListItem, StoryList,
-                           Eyebrow, MetaLine, MoreLink, Chip, Button, IconButton
-    footer/                Footer
+    story/                 Shared parts: LeadStory, OverlapCard, StoryCard, StoryImage, StoryListItem, StoryList,
+                           Eyebrow, MetaLine, MoreLink, Chip, Button, IconButton, QuoteMark
+    footer/                Footer, SocialIcon
     ads/                   AdSlot and its placeholder creative
   content/                 Mock data, typed (see the mock-content skill)
   i18n/                    String tables: bn.ts and en.ts
@@ -121,6 +123,9 @@ The rule IDs link to the full text through `docs/design-system/agent-contract.md
 18. Do not round corners and do not put a border around a card. The ThemeToggle switch is the one exception (`CPT-05`, `CPT-06`).
 19. When a sheet gives a value that has no token, add a component token in `src/styles/components.css` and use it (`CPT-07`).
 20. Do not add a subscribe button to the header or the drawer (`DR-188`).
+21. Do not show a Breaking or Live label (`COL-11`, `DR-279`).
+22. Only the `.dark` class on `<html>` sets the theme. Do not use `data-theme` (`DR-281`). Keep the reader's choice in local storage, key `fl-theme` (`spacing-layout-system.md` Section 6, `DR-340`).
+23. Do not install or import `tw-animate-css` (`DR-236`, `DR-285`).
 
 Before you do one of the things in `agent-contract.md` Section 8 ("If you are about to"), stop and read the rules it names.
 
@@ -128,13 +133,13 @@ Before you do one of the things in `agent-contract.md` Section 8 ("If you are ab
 
 - Bangla is at the root URL (`/`). English is under `/en` (`DR-17`).
 - Use one route tree, `src/app/[lang]/`, with the values `bn` and `en`. A proxy rewrites paths without a language prefix to `bn`.
-- When the reader selects a language, keep the choice in a cookie. Do not redirect by the browser language.
+- When the reader selects a language, keep the choice in a cookie (`fl-lang`). The remembered English choice redirects to `/en` only at `/`, with `Cache-Control: private, no-store`. Shared links open in their own language. Do not read the browser language (`DR-270`, `DR-328`).
 - Every interface string comes from `src/i18n/bn.ts` or `src/i18n/en.ts`. Both files have the same keys. Do not write interface text in a component.
 - Format dates and numbers with `Intl` and the page language. Bangla pages use Bangla digits.
 
 ## 8. Gaps in the design system
 
-The system does not yet define elevation (except `COL-15`), article and category page components, the full footer (the footer is provisional, `DR-193`) or the item and column dividers (`Divider` is a draft). `component-system.md` Section 8 lists the open items and what to do now.
+There is no elevation: no shadows (`COL-15`, `DR-202`). The system does not yet define article and category page components, the full footer (the footer is provisional, `DR-193`) or where each column divider version goes (`Divider` C-22: tajmin sets it, `DR-262`). `component-system.md` Section 8 lists the open items and what to do now.
 
 For a gap:
 
@@ -162,7 +167,7 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple 
 4. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
 5. **Hand over.** List each acceptance criterion as met or not met, and give the user test steps. Then stop.
 6. **Record progress.** Keep the board in `docs/SPRINT.md` and `docs/PROGRESS.md` current.
-7. **Commit on acceptance.** One commit per accepted ticket: `FL-06: Hero` on the subject line, and the rule IDs on the next line, not on the subject line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
+7. **Commit on acceptance.** One commit per accepted ticket: `R3-04: StoryImage placeholder` on the subject line, and the rule IDs on the next line, not on the subject line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
 
 ## 10. What you must not change
 
@@ -176,11 +181,11 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple 
 A task is done when all of these are true:
 
 1. `pnpm check` passes with no new warnings.
-2. `pnpm test:e2e` passes, including the axe check, with no serious or critical violations.
+2. `pnpm test:e2e:chromium` (`pnpm test:e2e --project=chromium`) passes, including the axe check, with no serious or critical violations. WebKit runs as a separate report until its failures are fixed; do not let a WebKit failure block a ticket, and do not skip the test (`DR-289`).
 3. The section matches its row in `spacing-layout-system.md` Section 7.2 at every tier, and the sparse cases in Section 7.3.
 4. Each component passes the checks in its sheet (`component-system.md` Section 7).
 5. The validation widths and content cases in `spacing-layout-system.md` Section 13 show no clipped text and no horizontal scroll.
-6. Bangla and English, light and dark, keyboard focus and 200% zoom work.
+6. Bangla and English, light and dark, keyboard focus and 200% zoom work. Supported browsers are in `agent-contract.md` Section 10 (`DR-341`).
 7. `docs/SPRINT.md` and `docs/PROGRESS.md` are current.
 
 ## 12. Summary format

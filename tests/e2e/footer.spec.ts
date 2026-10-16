@@ -80,19 +80,15 @@ for (const p of PAGES) {
           page.locator("main").locator("xpath=following-sibling::*[1]"),
         ).toHaveAttribute("data-footer");
 
-        // Panel inset (LAY-20, DR-224): 40 / 32 under 600px, 48 / 40 from 600px.
-        const inset = width < 600 ? [40, 32] : [48, 40];
-        const inner = f.locator(".panel-inset");
-        const padding = await inner.evaluate((el) => {
+        // Panel band (DR-264): block inset only, 40px under 600px and 48px from 600px,
+        // and no inline inset; the content sits in the shell.
+        const block = width < 600 ? 40 : 48;
+        const gutter = width < 600 ? 16 : 24;
+        const padding = await f.evaluate((el) => {
           const s = getComputedStyle(el);
           return [s.paddingTop, s.paddingBottom, s.paddingLeft, s.paddingRight];
         });
-        expect(padding).toEqual([
-          `${inset[0]}px`,
-          `${inset[0]}px`,
-          `${inset[1]}px`,
-          `${inset[1]}px`,
-        ]);
+        expect(padding).toEqual([`${block}px`, `${block}px`, "0px", "0px"]);
 
         // The band is surface-elevated, not surface-alt (C-21 checks).
         const colors = await f.evaluate((el) => {
@@ -112,10 +108,10 @@ for (const p of PAGES) {
         expect(colors.band).toBe(colors.elevated);
 
         // The content is centered and inside the shell width (LAY-02, LAY-03).
-        const contentWidth = Math.min(width - 2 * inset[1], 1280);
+        const contentWidth = Math.min(width - 2 * gutter, 1280);
         const left = (width - contentWidth) / 2;
         const innerBox = { x: left, width: contentWidth };
-        const stack = await box(inner.locator("> div"));
+        const stack = await box(f.locator("> .shell > div"));
         expect(Math.round(stack.width)).toBe(contentWidth);
         expect(Math.round(stack.x)).toBe(Math.round(left));
         for (const centered of await f.locator("[data-logo], ul, p").all()) {

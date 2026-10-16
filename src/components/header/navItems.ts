@@ -15,7 +15,8 @@ export type NavItem = {
  * No fact-check item (DR-18). China is a region under Regions, not a nav item (DR-19).
  * Regions and Analysis and Opinion have sub-items, which only the Drawer shows (DR-255).
  * Category and region pages do not exist yet, so the links go to the homepage sections
- * (DR-01); Op-ed has no section and leads to a 404 page, like the story links (IMP-18).
+ * (DR-01). There is no Op-ed item (DR-302). Both sub-items of Analysis and Opinion link to
+ * the section heading, #analysis-opinion-title; every # target must exist (DR-331).
  * The labels are the working category labels (U-01); the C-18 list names them shorter.
  */
 export function getNavItems(
@@ -53,17 +54,12 @@ export function getNavItems(
         {
           id: "analysis",
           label: t.analysisOpinion.analysis,
-          href: "#analysis-title",
+          href: "#analysis-opinion-title",
         },
         {
           id: "opinion",
           label: t.analysisOpinion.opinion,
-          href: "#opinion-title",
-        },
-        {
-          id: "op-ed",
-          label: t.analysisOpinion.opEd,
-          href: localizedPath(lang, "/op-ed"),
+          href: "#analysis-opinion-title",
         },
       ],
     },

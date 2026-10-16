@@ -30,9 +30,9 @@ for (const { path, more } of PAGES) {
       page,
     }) => {
       for (const [width, barW, barH] of [
-        [360, 48, 6],
-        [1023, 48, 6],
-        [1280, 64, 8],
+        [360, 40, 8],
+        [1023, 40, 8],
+        [1280, 48, 8],
       ] as const) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(path);
@@ -49,7 +49,38 @@ for (const { path, more } of PAGES) {
         expect(
           await bar.evaluate((el) => getComputedStyle(el).borderRadius),
         ).toBe("0px");
+        // The rule is 2px solid in the border color (DR-262).
+        const rule = (await divider.locator("span").first().boundingBox())!;
+        expect(Math.round(rule.height)).toBe(2);
+        expect(Math.round(rule.width)).toBe(Math.round(dividerBox.width));
       }
+    });
+
+    test("Divider.item: a 1px dotted rule drawn with a gradient, 16px each side, none before the first row (C-22)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(path);
+      const list = page.locator("[data-latest] [data-story-list]");
+      const items = list.locator("> li");
+      const rule = (el: Element) => {
+        const s = getComputedStyle(el, "::before");
+        return {
+          display: s.display,
+          height: s.height,
+          image: s.backgroundImage,
+          pad: getComputedStyle(el).paddingTop,
+        };
+      };
+      const first = await items.first().evaluate(rule);
+      expect(first.display).toBe("none");
+      const second = await items.nth(1).evaluate(rule);
+      expect(second.height).toBe("1px");
+      expect(second.pad).toBe("16px");
+      expect(second.image).toContain("repeating-linear-gradient");
+      const a = (await items.nth(0).boundingBox())!;
+      const b = (await items.nth(1).boundingBox())!;
+      expect(Math.round(b.y - (a.y + a.height))).toBe(16);
     });
 
     test("SectionHeading: the heading is not a link and the bar changes color in dark (CPT-13, C-22)", async ({
