@@ -17,4 +17,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | R3-00 Kit, scripts and test fixes | 2026-10-16 | 2026-10-16 | Done | 0 | none | 80c74a6 | IMP-58 packages (`cn`, `@base-ui/react`, `class-variance-authority`) flagged for R3-02 |
 | R3-01 Names and structure | 2026-10-16 | 2026-10-16 | Done | 0 | DOC-38, IMP-71 | 3a72b10 | Fixes DOC-36, IMP-09, IMP-48, IMP-57, IMP-61, IMP-64 |
-| R3-02 Header, panels and theme | 2026-10-16 | 2026-10-16 | Done | 1 | DOC-39, U-39, IMP-72 to IMP-76 | pending | Flags: `lang-bn` variant, search close button order, U-35 not done |
+| R3-02 Header, panels and theme | 2026-10-16 | 2026-10-16 | Done | 1 | DOC-39, U-39, IMP-72 to IMP-76 | 2884b76 | Flags: `lang-bn` variant, search close button order, U-35 not done |
