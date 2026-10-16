@@ -56,7 +56,7 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | DOC-16 | FL-07 | LAY-12 section-to-ad space on a section with its own background | Low | Resolved by spec: layout v2.5 (DR-205) |
 | DOC-17 | FL-08 | Typography 7.1 has no role for the lead of a category section | Low | Fixed in R2-10 |
 | DOC-18 | FL-09 | 300×250 inset creative is wider than the 288px shell at 320 | Low | Resolved by spec (DR-207); fixed in R2-06 |
-| DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Decided (DR-290); code in R3-00, R3-06 |
+| DOC-19 | FL-10 | Rank numeral must be `aria-hidden`, but the §7.1 CSS draws it as generated content | Medium | Decided (DR-290); mock `rank` field added in R3-00, markup in R3-06 |
 | DOC-20 | FL-11 | No slider CSS in §12.3: column width, snap and focus-ring room | Medium | Decided (DR-291); code in R3-06 |
 | DOC-21 | FL-11 | "4 regions in view" next to "no 4-up rows" (LAY-07), and no buttons at 600–1023 with 3 or 4 regions | Low | Resolved by spec (LAY-07 allows 4 panels from 1280, C-15); fixed in R2-13 |
 | DOC-22 | FL-12 | Footer: 7.1 calls it an "ad container"; DR-59 and 7.4 list different links | Low | Resolved by spec: §7.1 row 15 "Full-width row"; five links in §7.4 and C-21 |
@@ -114,7 +114,7 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | U-37 | R2-15 | At 200% text size nothing sets the P-4 compact rows to stack: no trigger exists (DR-81, A11Y-18). Most read stacks because the rem breakpoints move with the browser text size | Medium | Decided (DR-308); code in R3-01, R3-03, R3-04 |
 | U-38 | Audit 13 Oct | No skip link | Medium | Decided (DR-269); code in R3-02 |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Decided (DR-270); code in R3-08 |
-| IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Decided (DR-309); code in R3-00, R3-02 |
+| IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Decided (DR-309); import done in R3-00, primitives in R3-02 |
 | IMP-03 | FL-02 | Cookie redirect and CDN caching | Medium | Done in R2-18 |
 | IMP-04 | FL-02 | Theme choice kept in local storage, not a cookie | Low | Closed (no action) |
 | IMP-05 | FL-01 | shadcn `base-nova` preset | Medium | Resolved by spec: CPT-16 keeps base-nova. No shadcn primitive is installed |
@@ -122,7 +122,7 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | IMP-07 | FL-01 | Playwright runs Chromium only | Low | Done in R2-01 (WebKit project; 40 known WebKit failures, `docs/webkit-failures.md`) |
 | IMP-08 | FL-03 | Which creative the ad placeholder shows | Low | Resolved by spec: `AdSlot` follows the §9 tiers. 768–1023 stays IMP-44 |
 | IMP-09 | FL-03 | Extra layout part `WithRail` | Low | Decided (DR-271); code in R3-01 |
-| IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Decided (DR-272); code in R3-00, R3-04 |
+| IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Decided (DR-272); field exists since FL-04, display in R3-04 |
 | IMP-11 | FL-04 | `getHomepage` applies the content rules and has a sparse variant | Low | Done in R2-01 (`?content=sparse` in development only) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Later: backend integration; labels stay in `src/i18n/` (DR-263) |
 | IMP-13 | FL-05 | Drawer and search use native `<dialog>`, not shadcn | Medium | Decided (DR-344); code in R3-02 |
@@ -143,14 +143,14 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | IMP-28 | FL-11 | Shared `StoryStack` for P-3 and P-3b; `actions` slot on `SectionHeading` | Low | Obsolete: `StoryStack` deleted in R2-13. The `SectionHeading` `actions` slot stays; the sheet names it |
 | IMP-29 | FL-12 | Footer links: 404 site pages, social links to network front pages | Low | Decided (DR-278); code in R3-08 |
 | IMP-30 | FL-13 | Screenshots and measurement run in the repository; remove in the next milestone | Low | Done in R2-01 (`docs/fl-13/` and `tests/final-check/` removed) |
-| IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Decided (DR-309); code in R3-00, R3-02 |
+| IMP-31 | R2-02 | `globals.css` does not import `shadcn/tailwind.css`, but `color-system.md` §5 says it does | Low | Decided (DR-309); import done in R3-00, primitives in R3-02 |
 | IMP-32 | R2-02 | `components.css` is not imported in `globals.css` | Low | Done in R2-04 |
 | IMP-33 | R2-03 | Newsletter strings and components stay until R2-11, because R2-03 only touches `src/content/` | Low | Later: newsletter phase (DR-343) |
 | IMP-34 | R2-03 | Mock ad creatives are plain gray SVG files with no text, one per size | Low | Closed (DR-310): no run 3 code change |
 | IMP-35 | R2-04 | The Eyebrow is now a link to `/category/<id>`, which is a 404 page | Low | Later: covered by the URL patterns, 404 stays (DR-311) |
 | IMP-36 | R2-04 | The Bangla Breaking label is "সদ্যপ্রাপ্ত"; the Chip sheet says the working label is ব্রেকিং | Low | Decided (DR-279); code in R3-04 |
 | IMP-37 | R2-04 | Item divider is a class, not a component; the section divider is a component | Low | Decided (DR-312); code in R3-03 |
-| IMP-38 | R2-04 | 106 e2e tests were red on the branch before R2-04; five keyboard tests accept the old ring or the base outline for now | Medium | Decided (DR-313); code in R3-00 |
+| IMP-38 | R2-04 | 106 e2e tests were red on the branch before R2-04; five keyboard tests accept the old ring or the base outline for now | Medium | Fixed in R3-00 (the three loose keyboard tests now require the base outline) |
 | IMP-39 | R2-05 | Drawer and SearchDialog stay on the native `<dialog>`; the sheets name the shadcn Sheet, Dialog, Switch and Collapsible (CPT-16) | Medium | Decided (DR-280); code in R3-02 |
 | IMP-40 | R2-05 | The theme has two states and does not follow the system; an old stored "system" reads as light; e2e tests set the theme in storage | Medium | Decided (DR-281); code in R3-02 |
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Later: IA label table; working labels stay (DR-282) |
@@ -170,8 +170,8 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Decided (DR-321); code in R3-06 |
 | IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Decided (DR-322); code in R3-02 |
 | IMP-57 | R2-20 | Nav and Drawer links are plain `<a>` (full page load) with no comment, unlike `LanguageSwitch` | Low | Decided (DR-323); code in R3-01 |
-| IMP-58 | Audit 13 Oct | Installed packages that the spec forbids or that nothing uses | Medium | Decided (DR-285); code in R3-00, R3-02 |
-| IMP-59 | Audit 13 Oct | Tests that depend on the environment | Medium | Decided (DR-324); code in R3-00 |
+| IMP-58 | Audit 13 Oct | Installed packages that the spec forbids or that nothing uses | Medium | Decided (DR-285); `tw-animate-css` removed in R3-00, rest in R3-02 |
+| IMP-59 | Audit 13 Oct | Tests that depend on the environment | Medium | Fixed in R3-00 (slider animation test and a fixed sleep no longer depend on machine speed) |
 | IMP-60 | Audit 13 Oct | Next.js LCP warning on hero images | Low | Decided (DR-325); code in R3-04 |
 | IMP-61 | Audit 13 Oct | Component and folder names differ from the approved list | Medium | Decided (DR-286); code in R3-01 |
 | IMP-62 | Audit 13 Oct | Arbitrary variants that couple components | Medium | Decided (DR-287); code in R3-02, R3-05 |
@@ -192,7 +192,7 @@ New findings in run 3 take the next free number: DOC-38, U-39, IMP-71, KIT-11. U
 | KIT-07 | Audit 13 Oct | Commit message rules are not written in the repository | Medium | Done: `AGENTS.md` §9.7 (DR-334) |
 | KIT-08 | Audit 13 Oct | GitHub workflows and MCP servers | Low | Decided (DR-335); kit change: workflows and MCP pins |
 | KIT-09 | Audit 13 Oct | Hooks and local permissions | Low | Decided (DR-336); kit change: hook regexes and local permissions |
-| KIT-10 | Audit 13 Oct | Definition of done names an e2e command that cannot pass | Medium | Decided (DR-289); code in R3-00 |
+| KIT-10 | Audit 13 Oct | Definition of done names an e2e command that cannot pass | Medium | Fixed in R3-00 (`pnpm test:e2e:chromium`) |
 
 ## Open items (Later)
 

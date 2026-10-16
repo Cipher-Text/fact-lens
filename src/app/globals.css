@@ -1,8 +1,9 @@
 @import "tailwindcss";
-@import "../styles/colors.css";
-@import "../styles/layout.css";
-@import "../styles/typography.css";
-@import "../styles/components.css";
+@import "shadcn/tailwind.css";
+@import "../styles/colors.css"; /* color-system.md Section 5 */
+@import "../styles/layout.css"; /* spacing-layout-system.md Sections 12.1 to 12.3 */
+@import "../styles/typography.css"; /* typography-system.md Section 8 */
+@import "../styles/components.css"; /* component-system.md Section 6 */
 
 @layer base {
   /* Pointer on enabled buttons (Tailwind 4 uses the browser default) (DR-235) */
@@ -17,7 +18,9 @@
   }
   /* Reduced motion: no transitions and no animations (DR-227) */
   @media (prefers-reduced-motion: reduce) {
-    *, ::before, ::after {
+    *,
+    ::before,
+    ::after {
       transition-duration: 0s !important;
       animation-duration: 0s !important;
     }

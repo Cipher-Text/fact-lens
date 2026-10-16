@@ -15,3 +15,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 
 | Ticket | Started | Ended | Result | Rounds | Spec findings | Commit | Note |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| R3-00 Kit, scripts and test fixes | 2026-10-16 | 2026-10-16 | Done | 0 | none | pending | IMP-58 packages (`cn`, `@base-ui/react`, `class-variance-authority`) flagged for R3-02 |

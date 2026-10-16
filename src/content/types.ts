@@ -43,6 +43,7 @@ export interface Story {
   author?: { name: string; slug: string };
   publishedAt: string; // ISO 8601
   readingMinutes?: number; // card metadata: time, then reading time
+  rank?: number; // Most read only: 1-based place from the most-read query (DR-290)
   image?: ImageRef; // some stories have no image
   breaking?: boolean;
 }

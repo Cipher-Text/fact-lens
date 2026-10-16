@@ -164,7 +164,12 @@ export function getHomepage(
       groupedCategories.length > 0
         ? { categories: groupedCategories, poll: getPoll(lang) }
         : null,
-    mostRead: nonEmpty(getStories(plan.mostRead, lang)),
+    mostRead: nonEmpty(
+      getStories(plan.mostRead, lang).map((story, index) => ({
+        ...story,
+        rank: index + 1,
+      })),
+    ),
     regions: nonEmpty(regions),
   };
 }
