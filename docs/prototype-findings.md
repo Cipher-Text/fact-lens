@@ -204,6 +204,8 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | DOC-41 | R3-06 | `region-row` block in §12.3 sets 2 columns at every width | Low | Open |
 | IMP-82 | R3-06 | Base UI Tabs.Panel cannot be used for the region panels | Low | Open |
 | DOC-42 | R3-07 | §9 says "one ad-inset after every 2nd category row" but P-3 and C-16 place the inset between the two rows | Medium | Open |
+| IMP-83 | R3-09 | WebKit formats `bn-BD` numbers and dates in Latin digits, so Bangla pages fail to hydrate in Safari | High | Fixed in R3-09 |
+| DOC-43 | R3-09 | TYP-17 names `bn-BD` but WebKit needs `bn-BD-u-nu-beng` for Bangla digits | Medium | Open; flag for tajmin |
 | IMP-72 | R3-02 | Base UI hides the page behind the panel with `aria-hidden`, not `inert` | Low | Open |
 | IMP-73 | R3-02 | ThemeToggle is a hand-built switch, not the shadcn Switch | Low | Open |
 | IMP-74 | R3-02 | Region links in the Drawer have no target for 3 of 7 regions | Medium | Open; code in R3-06 |
@@ -453,6 +455,21 @@ Entry format:
 - **What the code does:** it keeps the inset between rows (matches §7.2 and the sheet). The server decides it (`insetBefore`): 3 or fewer, none after a row where no story has an image. No run-time height check.
 - **Suggested solution:** say "between rows of blocks, after every row but the last, 3 or fewer", or say that a "row" in §9 means two rows of blocks. tajmin decides.
 
+### IMP-83 WebKit formats `bn-BD` numbers and dates in Latin digits
+
+- **Found:** R3-09, 16 Oct 2026 · **Severity:** High · **Status:** Fixed in R3-09
+- **Source:** `typography-system.md` (TYP-17: Bangla pages use Bangla digits); `AGENTS.md` Section 7.
+- **Problem:** the Playwright WebKit build returns `29%`, `1,234` and `2026` for the locale `bn-BD`. Node and Chromium return Bangla digits. The server HTML had `২৯%`, so React threw "Hydration failed" on every Bangla page (230 errors in one run) and rebuilt the tree on the client. Most of the first 143 WebKit failures were "element has no box" after this rebuild; 101 of them went away with the fix. It would also show Latin digits in Safari after the rebuild.
+- **What the code does:** `format.ts` and `story-time.ts` use the locale `bn-BD-u-nu-beng`, which sets the digits in every engine.
+- **Result:** WebKit failures fell from 143 to 42. Chromium unchanged (591 pass).
+
+### DOC-43 TYP-17 names `bn-BD`; WebKit needs the numbering system set
+
+- **Found:** R3-09, 16 Oct 2026 · **Severity:** Medium · **Status:** Open
+- **Source:** `typography-system.md` TYP-17 (locales `en-GB` and `bn-BD`); see IMP-83.
+- **Problem:** plain `bn-BD` gives Latin digits in WebKit. The code uses `bn-BD-u-nu-beng`, a workaround no rule names.
+- **Suggested solution:** TYP-17 names `bn-BD-u-nu-beng`. tajmin decides.
+
 ## Change log
 
 | Date | Ticket | Change |
@@ -468,3 +485,4 @@ Entry format:
 | 2026-10-16 | R3-05 | IMP-80, DOC-40 and IMP-81 added; DOC-31, IMP-26, IMP-50, IMP-53 and IMP-62 set to Fixed in R3-05 |
 | 2026-10-16 | R3-06 | DOC-41 and IMP-82 added; DOC-19, DOC-20, IMP-51, IMP-52, IMP-55 and IMP-63 set to Fixed in R3-06; IMP-74 updated (only `#region-africa` has no target) |
 | 2026-10-16 | R3-07 | DOC-42 added; DOC-29, DOC-35, IMP-24 and IMP-44 set to Fixed in R3-07 |
+| 2026-10-16 | R3-09 | IMP-83 added and fixed; DOC-43 added |

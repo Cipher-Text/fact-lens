@@ -24,3 +24,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 | R3-06 Regions and Most read | 2026-10-16 | 2026-10-16 | Done | 0 | DOC-41, IMP-82 | 00c541f | Fixes DOC-19, DOC-20, IMP-51, IMP-52, IMP-55, IMP-63. Flag: `#region-africa` has no target (IMP-74) |
 | R3-07 Ads | 2026-10-16 | 2026-10-16 | Done | 0 | DOC-42 | 6bf71c9 | Fixes DOC-29, DOC-35, IMP-24, IMP-44. Flag: inset placement wording (DOC-42) |
 | R3-08 Accessibility, language and footer | 2026-10-16 | 2026-10-16 | Done | 0 | – | f0881ba | Fixes IMP-01, IMP-20, IMP-29, IMP-43, IMP-66, IMP-67, IMP-70. Footer and storage code were already in place; proxy, heading outline and tests changed |
+| R3-09 Final check, pull request and merge | 2026-10-16 | 2026-10-16 | Done | 0 | DOC-43, IMP-83 | pending | IMP-83 (WebKit Latin digits) fixed. WebKit 42 failures in `docs/run-3-report.md`. PR and merge wait for tajmin's go |

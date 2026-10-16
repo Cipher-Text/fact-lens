@@ -21,7 +21,7 @@ export function storyTimeText(
   hourAgo: string,
   hoursAgo: string,
 ): string {
-  const locale = lang === "bn" ? "bn-BD" : "en-GB";
+  const locale = lang === "bn" ? "bn-BD-u-nu-beng" : "en-GB";
   const date = new Date(iso);
   const hours = Math.floor((Date.now() - date.getTime()) / 3600000);
   if (relative && hours < 1) return justNow;

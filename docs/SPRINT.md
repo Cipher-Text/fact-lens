@@ -66,8 +66,8 @@ The specs in `docs/design-system/` must be the 16 October versions (layout 2.18,
 | R3-05 | DailyPoll | Done |
 | R3-06 | Regions and Most read | Done |
 | R3-07 | Ads | Done |
-| R3-08 | Accessibility, language and footer | In review |
-| R3-09 | Final check, pull request and merge | To do |
+| R3-08 | Accessibility, language and footer | Done |
+| R3-09 | Final check, pull request and merge | Done |
 
 ## Run 3 tickets
 

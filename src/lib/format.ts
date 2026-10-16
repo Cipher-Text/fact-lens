@@ -1,7 +1,8 @@
 import type { Lang } from "@/i18n/config";
 
-// Format numbers and dates for the page language (TYP-17). Bangla uses Bangla digits.
-const locales: Record<Lang, string> = { bn: "bn-BD", en: "en-GB" };
+// Format numbers and dates for the page language (TYP-17). Bangla uses Bangla digits; `-u-nu-beng`
+// sets them, because WebKit gives Latin digits for plain `bn-BD` and hydration then fails.
+const locales: Record<Lang, string> = { bn: "bn-BD-u-nu-beng", en: "en-GB" };
 
 const TIME_ZONE = "Asia/Dhaka";
 
