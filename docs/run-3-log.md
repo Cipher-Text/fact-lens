@@ -19,4 +19,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 | R3-01 Names and structure | 2026-10-16 | 2026-10-16 | Done | 0 | DOC-38, IMP-71 | 3a72b10 | Fixes DOC-36, IMP-09, IMP-48, IMP-57, IMP-61, IMP-64 |
 | R3-02 Header, panels and theme | 2026-10-16 | 2026-10-16 | Done | 1 | DOC-39, U-39, IMP-72 to IMP-76 | 2884b76 | Flags: `lang-bn` variant, search close button order, U-35 not done |
 | R3-03 Dividers, gaps and panel band | 2026-10-16 | 2026-10-16 | Done | 0 | U-40 | f3346dd | Fixes DOC-32, DOC-33, U-03, U-16, U-34, IMP-37, IMP-54. Flag: column divider placement (U-40) |
-| R3-04 Story units and images | 2026-10-16 | 2026-10-16 | Done | 0 | IMP-78, IMP-79 | pending | Fixes DOC-26, DOC-30, U-14, U-33, U-37, IMP-10, IMP-19, IMP-36, IMP-60 |
+| R3-04 Story units and images | 2026-10-16 | 2026-10-16 | Done | 0 | IMP-78, IMP-79 | fac26a3 | Fixes DOC-26, DOC-30, U-14, U-33, U-37, IMP-10, IMP-19, IMP-36, IMP-60 |
