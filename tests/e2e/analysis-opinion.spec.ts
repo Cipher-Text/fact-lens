@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { columnRule, tokenBackground } from "./rules";
 import { setTheme } from "./theme";
 
 // FL-07: P-4 বিশ্লেষণ ও মতামত (spacing-layout-system.md 7.2 to 7.4, 13;
@@ -391,15 +392,21 @@ test.describe("sheet checks (P-4, C-02, C-06, C-24)", () => {
         for (let i = 1; i < items.length; i++) {
           const prev = await box(items[i - 1]);
           const cur = await box(items[i]);
-          // Divider.item: space-list-item (16px) above the rule, 16px of padding below it.
+          // Divider.item: space-list-item (16px) above the rule (the time line above ends
+          // at its ink, DR-350); below it the 1px rule and 16px to the title ink: the padding
+          // is 17px less the blank space above the title ink (--list-ink-start).
           expect(Math.round(cur.y - (prev.y + prev.height))).toBe(16);
-          expect(
-            Math.round(
-              await items[i].evaluate((el) =>
-                parseFloat(getComputedStyle(el).paddingTop),
-              ),
-            ),
-          ).toBe(16);
+          const pad = await items[i].evaluate((el) => {
+            const probe = document.createElement("span");
+            probe.style.display = "block";
+            probe.style.height = "var(--list-ink-start)";
+            el.append(probe);
+            const start = parseFloat(getComputedStyle(probe).height);
+            probe.remove();
+            return { pad: parseFloat(getComputedStyle(el).paddingTop), start };
+          });
+          expect(pad.start).toBeGreaterThanOrEqual(0);
+          expect(Math.abs(pad.pad - (17 - pad.start))).toBeLessThanOrEqual(0.5);
         }
 
         // The chip: brand fill in light, on-interactive text, 2px 8px, a label and not a link.
@@ -426,4 +433,106 @@ test("page order: hero, ad, analysis and opinion, ad (7.1)", async ({
   await expect(main.nth(2)).toHaveAttribute("data-ad-slot", "ad-band");
   await expect(main.nth(3)).toHaveAttribute("data-section", "analysis-opinion");
   await expect(main.nth(4)).toHaveAttribute("data-ad-slot", "ad-band");
+});
+
+// R4-03: the column rule between analysis and opinion, the OpinionList item rule and the
+// chip space (C-06, C-22, P-4; DR-351).
+test.describe("rules (C-06, C-22, DR-351)", () => {
+  for (const p of PAGES) {
+    for (const theme of ["light", "dark"] as const) {
+      test(`${p.path} ${theme}: Divider.column-inset from 768 in the middle of the gap`, async ({
+        page,
+      }) => {
+        await setTheme(page, theme);
+        for (const width of [360, 600, 767, 768, 1023, 1024, 1280, 1440]) {
+          await page.setViewportSize({ width, height: 900 });
+          await page.goto(p.path);
+          const rule = await columnRule(
+            page,
+            `${SECTION} [data-columns]`,
+            `${SECTION} [data-column="analysis"]`,
+            `${SECTION} [data-column="opinion"]`,
+          );
+          // The gap is the column gap of before the change (DR-300, DR-351).
+          const gap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
+          expect(rule.gap, `gap at ${width}`).toBe(`${gap}px`);
+          if (width < 768) {
+            // The columns stack: no rule.
+            expect(rule.shown, `rule at ${width}`).toBe(false);
+            continue;
+          }
+          expect(rule.shown, `rule at ${width}`).toBe(true);
+          expect(rule.width).toBe(1);
+          expect(rule.color).toBe(
+            await tokenBackground(page, "--color-border"),
+          );
+          expect(
+            Math.abs(rule.offCenter),
+            `center at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.top - 16),
+            `top at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.bottom - 16),
+            `bottom at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+        }
+      });
+    }
+
+    test(`${p.path}: the OpinionList rule starts at the text column; chip to the first item`, async ({
+      page,
+    }) => {
+      for (const width of [360, 600, 768, 1024, 1280]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        const opinion = page.locator(`${SECTION} [data-column="opinion"]`);
+        const items = opinion.locator("li");
+        for (let i = 1; i < 5; i++) {
+          const at = await items.nth(i).evaluate((li) => {
+            const s = getComputedStyle(li, "::before");
+            const box = li.getBoundingClientRect();
+            const text = li
+              .querySelector("[data-quote-mark]")!
+              .nextElementSibling!.getBoundingClientRect();
+            const mark = li
+              .querySelector("[data-quote-mark]")!
+              .getBoundingClientRect();
+            return {
+              start: box.left + parseFloat(s.left),
+              end: box.left + parseFloat(s.left) + parseFloat(s.width),
+              text: text.left,
+              textEnd: text.right,
+              mark: mark.right,
+            };
+          });
+          // The rule spans the text column only, not the quote mark (DR-351).
+          expect(
+            Math.abs(at.start - at.text),
+            `start at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(at.end - at.textEnd),
+            `end at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(at.start).toBeGreaterThan(at.mark);
+        }
+        // Chip to the first item: space-section-title-after, 20px under 768 and 24px from
+        // 768 (layout 5.1; DR-351).
+        const chip = await opinion
+          .locator("[data-chip]")
+          .locator("..")
+          .boundingBox();
+        const first = await items.first().boundingBox();
+        expect(
+          Math.abs(
+            first!.y - (chip!.y + chip!.height) - (width >= 768 ? 24 : 20),
+          ),
+          `chip space at ${width}`,
+        ).toBeLessThanOrEqual(0.5);
+      }
+    });
+  }
 });

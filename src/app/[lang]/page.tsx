@@ -62,6 +62,7 @@ export default async function HomePage({
         {home.hero ? (
           <>
             <HeroSection
+              lang={lang}
               hero={home.hero}
               t={t}
               className="pb-(--space-module)"

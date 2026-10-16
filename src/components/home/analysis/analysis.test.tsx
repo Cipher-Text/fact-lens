@@ -122,7 +122,7 @@ describe("AnalysisSection (P-4)", () => {
     for (const item of items) {
       const mark = item.querySelector("[data-quote-mark]")!;
       expect(mark).toHaveAttribute("aria-hidden", "true");
-      expect(mark).toHaveClass("w-7", "sm:w-9", "lg:w-11");
+      expect(mark).toHaveClass("w-(--quote-mark-width)");
       expect(item).toHaveClass("divider-item");
       expect(item.querySelector("article")).toHaveClass(
         "gap-x-(--grid-column-gap)",

@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 4 take the next free number: DOC-47, U-41, IMP-87, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
+New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
 
 ## Summary
 
@@ -197,7 +197,7 @@ New findings in run 4 take the next free number: DOC-47, U-41, IMP-87, KIT-11 (I
 | KIT-10 | Audit 13 Oct | Definition of done names an e2e command that cannot pass | Medium | Fixed in R3-00 (`pnpm test:e2e:chromium`) |
 | DOC-39 | R3-02 | Header sheets disagree on focus, on the search component and on the close button order | Low | Decided (DR-348); code in R4-04 |
 | U-39 | R3-02 | No token for the theme control icon color (`interactive` in light, `ink` in dark) | Medium | Closed (DR-349: ThemeToggle and the theme icon token removed, icon ink); Fixed in R4-01 |
-| U-40 | R3-03 | Divider.column (column-inset, column-full): tajmin sets where each version is used (DR-262) | Low | Decided (DR-351); code in R4-03 |
+| U-40 | R3-03 | Divider.column (column-inset, column-full): tajmin sets where each version is used (DR-262) | Low | Fixed in R4-03 (DR-351) |
 | IMP-80 | R3-05 | DailyPoll: the fieldset is `display: contents` so its legend sits in the grid | Low | Closed: kept as built (DR-348); Safari check in R4-05 |
 | DOC-40 | R3-05 | C-26 `DailyPoll.vote`: "focus stays on the group" does not fit a button press | Low | Decided (DR-348); code in R4-04 |
 | IMP-81 | R3-05 | DailyPoll keeps a hidden copy of the results to hold the cell height | Low | Closed: kept as built (DR-348) |
@@ -218,6 +218,14 @@ New findings in run 4 take the next free number: DOC-47, U-41, IMP-87, KIT-11 (I
 | IMP-84 | R4-02 | Focus on a control in the stuck header scrolls the page to the top in Chromium | Medium | Open (flag) |
 | IMP-85 | R4-02 | The pinned NavBar is a full-width page-color band; only its shell has the items and the rule (`UNRESOLVED_DESIGN_SYSTEM`) | Low | Open |
 | IMP-86 | R4-02 | The theme storage-event test fails now and then under parallel load in Chromium | Low | Open |
+| U-41 | R4-03 | Divider.item: no method and no values for "measured to the text ink" (DR-350); per-language ink tokens (`UNRESOLVED_DESIGN_SYSTEM`) | Medium | Open (tajmin approved the tokens, 17 Oct 2026) |
+| DOC-47 | R4-03 | The R4-03 check "16px ±1 to the ink" cannot hold for every string: glyphs below the baseline and digit heights vary | Low | Open (test: median ±1, each ±3, tajmin's choice) |
+| DOC-48 | R4-03 | Layout §7.2 P-1 row and LAY-18 say Latest has no "more" link; C-03 and C-10 give it one (DR-350) | Low | Open (code follows DR-350) |
+| DOC-49 | R4-03 | P-4 column rule "12 + 1 + 12" and "16 + 1 + 16" is 25 and 33px, not the 24 and 32px gap; R4-03 check gives the chip space 24px from 600, §5.1 from 768 | Low | Open |
+| DOC-50 | R4-03 | C-06 and the R4-03 sprint check give the OpinionList chip space as "20 / 24 / 24" and "24 from 600"; the token changes at 768 | Low | Open (code uses the token) |
+| IMP-87 | R4-03 | The Latest list two columns shared grid rows, so a short item got the height of the item beside it (41px to the rule at 768) | Medium | Fixed in R4-03 (flag F-3: CSS columns, tajmin confirms) |
+| IMP-88 | R4-03 | WebKit starts the second Latest column 1 to 3px low (W4-07, W4-08) | Low | Open (Safari check in R4-05) |
+| IMP-89 | R4-03 | In dark, the border color on `surface-elevated` (P-4) makes the item and column rules very faint | Low | Open |
 | IMP-79 | R3-04 | A failed image shows the placeholder only after hydration | Low | Closed: kept as built (DR-348) |
 
 ## Open items (Later)
@@ -379,7 +387,7 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 
 ### U-40 Where the column dividers go
 
-- **Found:** R3-03, 16 Oct 2026 · **Severity:** Low · **Status:** Decided (DR-351); code in R4-03
+- **Found:** R3-03, 16 Oct 2026 · **Severity:** Low · **Status:** Fixed in R4-03 (DR-351)
 - **Source:** `component-system.md` C-22 ("tajmin sets where each column version is used"), `agent-contract.md` Section 9, DR-262.
 - **Problem:** no sheet names a place for `column-inset` or `column-full`. The code draws no column rule. Item and section dividers are done.
 - **Suggested solution:** tajmin names the sections and the version for each (for example P-4 between analysis and opinion). Then add a `variant` to `Divider`.
@@ -525,6 +533,66 @@ Entry format:
 - **Problem:** in 3 of 4 full or near-full Chromium runs in R4-02 one language of this test failed: the second tab did not get `.dark`. It passed 30 of 30 alone and in a full header spec run. The test clicks in the first tab once that tab has hydrated, but it does not wait for the second tab to hydrate, so its storage listener may not be attached yet. The run 3 WebKit list has the same test. R4-02 does not change the theme code; the test runs at 1024, where the NavBar is hidden.
 - **Suggested solution:** in the test, wait until the second tab has hydrated (for example its theme button responds) before the click. This is a test fix, not a loosening; tajmin decides whether it goes in R4-05.
 
+### U-41 Divider.item: no method or values for "measured to the text ink"
+
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Medium · **Status:** Open (`UNRESOLVED_DESIGN_SYSTEM`; tajmin approved the tokens on 17 Oct 2026, flag F-1)
+- **Source:** `component-system.md` C-22 `Divider.item` ("16px space each side, measured to the text ink, not the line box", DR-350); `spacing-layout-system.md` §5.2 `space-list-item`; `LAY-01`, `CPT-07`; `src/styles/components.css` (`--ink-*` tokens, `divider-item`, `list-ink-*`).
+- **Problem:** no spec gives how to trim the line box or by how much. Measured in Chromium (pixel scan): the line box gave 21 to 22px above and 15px below a rule in Bangla, 18 to 19px in English. CSS `text-box: trim-both cap alphabetic` gave 9 to 14px (Bangla vowel signs stand about 6px above the cap edge; descenders hang below the baseline); the `text` edge gave 18 to 21px. No CSS edge reaches 16px in both scripts.
+- **What the code does:** component tokens per language, as a share of the role size, measured from the fonts: `--ink-title-sm-start` (bn 0.03, en 0.2 × `type-story-title-sm`), `--ink-title-sm-end` (bn 0.25, en 0.12), `--ink-metadata-end` (bn 0.33, en 0.18 × `type-metadata`). The list sets `--list-ink-start` for the top of its items; the item above a rule trims its meta line in place with a negative margin (`[data-meta-line]`), so in a card with the image at the end edge the taller of image and text sets the row. Most read (a row-first grid) uses `--list-ink-end`. Result: 92 of 99 rules 16 ±1px in Chromium, all 16 ±3px.
+- **Suggested solution:** the blueprint adds the ink values (or an approved method) to typography §3 or component-system §6, per language and role.
+
+### DOC-47 The "16px ±1 to the ink" check cannot hold for every string
+
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open (test uses median ±1, each rule ±3; tajmin's choice on 17 Oct 2026, flag F-2)
+- **Source:** `docs/SPRINT.md` R4-03 check "Item rule space … `space-list-item` (16px) ±1px"; C-22 (DR-350).
+- **Problem:** the ink of a line depends on its letters. A Bangla meta line with ্র or ু (প্রযুক্তি ও কৌশলগত শক্তি) hangs about 2px lower than one without; an English title line with g or y hangs 4px lower than one without; Bangla rank digits differ by up to 6px in height. A fixed token gives 16 ±1px for the usual line and 13 to 18px for the others.
+- **What the code does:** `tests/e2e/small-parts.spec.ts` checks, at 360, 768 and 1280 in both languages, that the median space of each list is 16 ±1px and every rule is 16 ±3px (`tests/e2e/rules.ts`).
+- **Suggested solution:** the check says "per list, the median 16 ±1px; each rule 16 ±3px", or C-22 says the space is measured to the baseline and the cap or headline edge.
+
+### DOC-48 Layout P-1 and LAY-18 say Latest has no "more" link
+
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open (code follows DR-350)
+- **Source:** `spacing-layout-system.md` §7.2 P-1 row ("Latest, 5 items, no 'more' link (DR-102)") and LAY-18 ("Latest and Most read have no link"); `component-system.md` C-03 `HeroSection.latest MoreLink` and C-10 Content (DR-350, amends DR-102).
+- **Problem:** the layout spec still has the DR-102 rule. The sheets and the R4-03 ticket give Latest one MoreLink to `/latest`.
+- **Suggested solution:** P-1 row: "Latest, 5 items, one 'more' link to the Latest page (DR-350)"; LAY-18: "Most read has no link".
+
+### DOC-49 P-4 column rule widths do not add up to the gap
+
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` P-4 "Column rule" ("centered in the existing --grid-column-gap (12 + 1 + 12 at 768 to 1279, 16 + 1 + 16 from 1280). No gap change", DR-351); `spacing-layout-system.md` §12.2 (`--grid-column-gap` 24px from 768, 32px from 1280).
+- **Problem:** 12 + 1 + 12 is 25px and 16 + 1 + 16 is 33px; the gap is 24 and 32px and does not change.
+- **What the code does:** the rule is 1px, centered in the 24 or 32px gap (11.5 + 1 + 11.5, 15.5 + 1 + 15.5). The test checks the center ±0.5px and that the gap is 24 or 32px.
+- **Suggested solution:** "11.5 + 1 + 11.5 at 768 to 1279, 15.5 + 1 + 15.5 from 1280", or only "centered in the gap".
+
+### DOC-50 OpinionList chip space: "24 from 600" against the token
+
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open (code uses the token)
+- **Source:** `docs/SPRINT.md` R4-03 check ("chip to the first item is 20px under 600 and 24px from 600"); `component-system.md` C-06 ("space-section-title-after (20 / 24 / 24)"); `spacing-layout-system.md` §5.1 (values "phone / from 768px / from 1024px") and §12.2 (`--space-section-title-after: 1.5rem` from 48rem).
+- **Problem:** the token is 20px up to 767px and 24px from 768. The sprint check says 24px from 600.
+- **What the code does:** `mb-(--space-section-title-after)`: 20px at 360 and 600, 24px from 768. The test follows the token.
+- **Suggested solution:** the sprint check says "20px under 768 and 24px from 768".
+
+### IMP-87 The two Latest columns shared row heights
+
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Medium · **Status:** Fixed in R4-03 (flag F-3: the design-reviewer calls CSS columns a layout choice no sheet names; tajmin confirms)
+- **Source:** `component-system.md` C-03 (2 columns at 768 to 1023, column-first, rules within a column); C-22 (DR-350); `src/components/story/StoryList.tsx`.
+- **Problem:** the two columns were one grid that flowed by column. Grid rows are shared, so an item took the height of the item beside it: 41px from the ink to the rule at 768 in Bangla.
+- **What the code does:** CSS columns (`columns-2`) with a column break before the first item of the second column (items 1 to 3, then 4 and 5). Each column keeps its own heights. The e2e column-first checks are unchanged.
+
+### IMP-88 WebKit starts the second Latest column 1 to 3px low
+
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open (Safari check in R4-05; W4-07, W4-08)
+- **Source:** `docs/webkit-failures.md` W4-07, W4-08; `src/components/story/StoryList.tsx`.
+- **Problem:** in WebKit, item 4 (the top of the second column) is 1 to 3px below item 1. The offset shows only when the column-start item has 0 padding and the other items have a fractional padding (16.43px). Chromium is exact.
+- **Suggested solution:** check in real Safari in R4-05. If it shows, round the item padding to whole pixels or give both column starts the same top. tajmin decides.
+
+### IMP-89 Dark rules on the P-4 panel are very faint
+
+- **Found:** R4-03, 17 Oct 2026 (visual-qa) · **Severity:** Low · **Status:** Open
+- **Source:** `color-system.md` `border` and `surface-elevated` (dark); C-22 (one color: border); P-4 (DR-264).
+- **Problem:** in dark, the rule color rgb(58, 61, 68) on the panel rgb(48, 50, 57) is barely visible: the dotted item rules and the new column rule in বিশ্লেষণ ও মতামত. The rules are drawn as specified. Decorative rules have no contrast minimum, but the grouping is hard to see.
+- **Suggested solution:** the blueprint checks the dark `border` value on `surface-elevated`. No code change in run 4.
+
 ## Change log
 
 | Date | Ticket | Change |
@@ -546,3 +614,4 @@ Entry format:
 | 2026-10-16 | R4-00 | Run 3 review and design change (DR-345 to DR-351): statuses and run 4 tickets set; Summary rows IMP-78 and IMP-79 added; next free IDs DOC-44, U-41, IMP-84, KIT-11; template heading has no real ID |
 | 2026-10-17 | R4-01 | DOC-44 added; U-39 set to Fixed in R4-01; IMP-63 NavBar and Drawer part fixed in R4-01 |
 | 2026-10-17 | R4-02 | DOC-45, DOC-46 and IMP-84 to IMP-86 added; IMP-75 code fixed in R4-02 |
+| 2026-10-17 | R4-03 | U-41, DOC-47 to DOC-50 and IMP-87 to IMP-89 added; U-40 and IMP-87 set to Fixed in R4-03 |

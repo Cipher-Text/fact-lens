@@ -7,7 +7,9 @@ import { getDictionary } from "@/i18n";
 import { HeroSection } from "./HeroSection";
 
 function renderHero(lang: "bn" | "en", hero: HeroContent) {
-  return render(<HeroSection hero={hero} t={getDictionary(lang)} />);
+  return render(
+    <HeroSection lang={lang} hero={hero} t={getDictionary(lang)} />,
+  );
 }
 
 const full = getHomepage("bn").hero!;
@@ -89,13 +91,26 @@ describe("HeroSection (P-1)", () => {
     expect(container.querySelector("[data-hero-rail]")).toBeNull();
   });
 
-  it("shows five Latest items and no more link (C-03, DR-102)", () => {
-    renderHero("bn", full);
-    const latest = screen.getByRole("region", { name: "সর্বশেষ" });
-    expect(within(latest).getAllByRole("listitem")).toHaveLength(5);
-    expect(
-      within(latest).queryByRole("link", { name: /আরও দেখুন/ }),
-    ).toBeNull();
+  it("shows five Latest items, then one more link to the Latest page (C-03, C-10, DR-350)", () => {
+    for (const [lang, name, text, href] of [
+      ["bn", "আরও দেখুন: সর্বশেষ", "আরও দেখুন", "/latest"],
+      ["en", "See more: Latest", "See more", "/en/latest"],
+    ] as const) {
+      const { container, unmount } = renderHero(lang, getHomepage(lang).hero!);
+      const latest = container.querySelector("[data-latest]") as HTMLElement;
+      expect(within(latest).getAllByRole("listitem")).toHaveLength(5);
+      const links = within(latest).getAllByRole("link", { name });
+      expect(links).toHaveLength(1);
+      expect(links[0]).toHaveTextContent(text);
+      expect(links[0]).toHaveAttribute("href", href);
+      // Below the list, at the end edge (CPT-15).
+      expect(latest.lastElementChild).toContainElement(links[0]);
+      expect(latest.lastElementChild).toHaveClass("text-end");
+      expect(latest.lastElementChild?.previousElementSibling?.tagName).toBe(
+        "UL",
+      );
+      unmount();
+    }
   });
 
   it("shows no Breaking or Live label (COL-11, DR-279)", () => {

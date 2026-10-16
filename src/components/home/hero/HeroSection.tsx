@@ -5,13 +5,15 @@ import { Shell } from "@/components/layout/Shell";
 import { WithRail } from "@/components/layout/WithRail";
 import { Wrapper } from "@/components/layout/Wrapper";
 import { LeadStory } from "@/components/story/LeadStory";
+import { MoreLink } from "@/components/story/MoreLink";
 import { OverlapCard } from "@/components/story/OverlapCard";
 import { StoryList } from "@/components/story/StoryList";
-import type { HeroContent } from "@/content";
-import type { Dictionary } from "@/i18n";
+import type { HeroContent, Lang } from "@/content";
+import { localizedPath, type Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 type HeroSectionProps = {
+  lang: Lang;
   hero: HeroContent;
   t: Dictionary;
   className?: string;
@@ -23,7 +25,7 @@ type HeroSectionProps = {
  * the wrapper; below, it goes under it (LAY-05). Sparse (7.3): one top story spans the
  * wrapper; with no Latest items the wrapper spans the shell.
  */
-export function HeroSection({ hero, t, className }: HeroSectionProps) {
+export function HeroSection({ lang, hero, t, className }: HeroSectionProps) {
   // Two top-story cards at most (DR-44).
   const top = hero.top.slice(0, 2);
 
@@ -57,8 +59,9 @@ export function HeroSection({ hero, t, className }: HeroSectionProps) {
         <WithRail>
           {wrapper}
           <Rail data-hero-rail>
-            {/* HeroSection.latest: SectionHeading and StoryList (C-03), category and time.
-                No আরও দেখুন link (DR-102). */}
+            {/* HeroSection.latest: SectionHeading and StoryList (C-03), category and time,
+                then one MoreLink to the Latest page at the end edge (DR-350, amends DR-102).
+                The Latest page is M2: the link goes to 404 until then. */}
             <section aria-labelledby="latest-title" data-latest>
               <SectionHeading as="h2" id="latest-title">
                 {t.hero.latest}
@@ -68,6 +71,11 @@ export function HeroSection({ hero, t, className }: HeroSectionProps) {
                 strings={t}
                 columns={2}
                 meta="category-time"
+              />
+              <MoreLink
+                href={localizedPath(lang, "/latest")}
+                section={t.hero.latest}
+                strings={t.common}
               />
             </section>
           </Rail>

@@ -307,8 +307,8 @@ for (const p of PAGES) {
       await expect(
         hero.getByRole("heading", { level: 2, name: p.latest }),
       ).toBeVisible();
-      // Latest has no more link (C-03, DR-102).
-      await expect(hero.getByRole("link", { name: p.more })).toHaveCount(0);
+      // Latest has one more link, to the Latest page (C-03, C-10, DR-350).
+      await expect(hero.getByRole("link", { name: p.more })).toHaveCount(1);
       const text = (await hero.innerText()).replace(/\s+/g, " ");
       if (p.lang === "bn") {
         // No English words and no Latin digits on a Bangla page (T-27, TYP-17).
@@ -329,8 +329,8 @@ for (const p of PAGES) {
       );
       const count = await links.count();
       // Lead, two top stories and their three category links (Eyebrow, C-08), five Latest
-      // items.
-      expect(count).toBe(11);
+      // items and the Latest MoreLink (DR-350).
+      expect(count).toBe(12);
 
       // Tab from the last control before the hero.
       const seen: string[] = [];
@@ -373,4 +373,51 @@ test("the ad-band follows the hero directly (7.1)", async ({ page }) => {
     "data-ad-slot",
     "ad-band",
   );
+});
+
+// R4-03: the Latest MoreLink to the Latest page (C-03, C-10, DR-350). The page is M2, so
+// the link goes to 404 until then.
+test.describe("Latest MoreLink (C-03, C-10, DR-350)", () => {
+  for (const p of PAGES) {
+    test(`${p.path}: text, href and the end edge below the list`, async ({
+      page,
+    }) => {
+      for (const width of [360, 600, 768, 900, 1023, 1024, 1280, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        const latest = page.locator("[data-latest]");
+        const link = latest.getByRole("link", { name: p.more });
+        await expect(link).toHaveCount(1);
+        await expect(link).toHaveText(
+          p.lang === "bn" ? "আরও দেখুন" : "See more",
+        );
+        await expect(link).toHaveAttribute(
+          "href",
+          p.lang === "bn" ? "/latest" : "/en/latest",
+        );
+        const linkBox = await box(link);
+        const listBox = await box(latest.locator("[data-story-list]"));
+        const latestBox = await box(latest);
+        // Below the list (also below both columns at 768 to 1023), at the end edge (CPT-15).
+        expect(linkBox.y, `below the list at ${width}`).toBeGreaterThanOrEqual(
+          listBox.y + listBox.height,
+        );
+        expect(
+          Math.abs(linkBox.x + linkBox.width - (latestBox.x + latestBox.width)),
+          `end edge at ${width}`,
+        ).toBeLessThanOrEqual(0.5);
+        expect(Math.round(linkBox.height)).toBeGreaterThanOrEqual(44);
+        if (width >= 768 && width < 1024) {
+          // Two columns: the link is below the taller column.
+          const items = latest.locator("[data-story-list] > li");
+          const last = await box(items.nth(2));
+          const fifth = await box(items.nth(4));
+          expect(fifth.x).toBeGreaterThan(last.x);
+          expect(linkBox.y).toBeGreaterThanOrEqual(
+            Math.max(last.y + last.height, fifth.y + fifth.height),
+          );
+        }
+      }
+    });
+  }
 });

@@ -42,9 +42,38 @@
   --color-bar: var(--interactive);
 }
 
+/* Divider (C-22, DR-351). Section 6 has no tokens for these values (CPT-07): the rule
+   weight of Divider.item and Divider.column, the column-inset distance from the top and the
+   bottom, and the OpinionList quote mark width (C-06: 28 / 36 / 44px), which also sets where
+   the OpinionList item rule starts. */
+:root {
+  --divider-rule: 1px;
+  --divider-column-inset: 1rem;
+  --quote-mark-width: 1.75rem;
+}
+
+/* Divider.item ink trim (C-22, DR-350, U-41, flag F-1 approved by tajmin on 17 Oct 2026): the
+   16px each side of the rule is measured to the text ink, not the line box. These are the
+   blank space between the line box edge and the ink of each role next to a rule, as a share
+   of the role font size, measured from the fonts (Noto Serif / Sans Bengali, Source Serif 4,
+   Plus Jakarta Sans). No CSS text-box edge gives the ink in both scripts, so the spec has no
+   value (U-41). */
+:lang(en) {
+  --ink-title-sm-start: calc(var(--type-story-title-sm-size) * 0.2);
+  --ink-title-sm-end: calc(var(--type-story-title-sm-size) * 0.12);
+  --ink-metadata-end: calc(var(--type-metadata-size) * 0.18);
+}
+
+:lang(bn) {
+  --ink-title-sm-start: calc(var(--type-story-title-sm-size) * 0.03);
+  --ink-title-sm-end: calc(var(--type-story-title-sm-size) * 0.25);
+  --ink-metadata-end: calc(var(--type-metadata-size) * 0.33);
+}
+
 @media (min-width: 37.5rem) {
   :root {
     --top-bar-inset: 1.125rem;
+    --quote-mark-width: 2.25rem;
   }
 }
 
@@ -52,6 +81,12 @@
   :root {
     --top-bar-inset: 1rem;
     --icon-button-size-ghost: 2.25rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --quote-mark-width: 2.75rem;
   }
 }
 
@@ -331,24 +366,34 @@
   }
 }
 
-/* Divider.item (C-22, DR-262): a 1px dotted rule, square 1 x 1px dots with a 1px gap, drawn
-   with a repeating gradient because border-style dotted differs between browsers. The li has
-   space-list-item above and below the rule. The first item has no rule (no rule before the
-   first row, none after the last). */
+/* Divider.item (C-22, DR-262, DR-350, DR-351): a 1px dotted rule, square 1 x 1px dots with a
+   2px gap, drawn with a repeating gradient because border-style dotted differs between
+   browsers. space-list-item is on each side of the rule, measured to the ink (DR-350): the
+   list sets --list-ink-start (blank space above the first ink of an item) with a list-ink-*
+   utility and the padding takes it off; the item above ends at its ink because its meta line
+   is trimmed in place (rule below). The padding holds the rule, so the space below the rule
+   is the full space-list-item too. --list-ink-end is for RankedList only.
+   --divider-item-start moves the rule start (OpinionList: the text column only). The first
+   item has no rule (no rule before the first row, none after the last). */
 @utility divider-item {
+  /* Its own block context: the trimmed meta line margin stays inside the item and does not
+     collapse through it (WebKit carried it across the Latest column break). */
+  display: flow-root;
   position: relative;
-  margin-block-start: var(--space-list-item);
-  padding-block-start: var(--space-list-item);
+  margin-block-start: calc(var(--space-list-item) - var(--list-ink-end, 0rem));
+  padding-block-start: calc(
+    var(--space-list-item) + var(--divider-rule) - var(--list-ink-start, 0rem)
+  );
   &::before {
     content: "";
     position: absolute;
-    inset-inline: 0;
+    inset-inline: var(--divider-item-start, 0rem) 0;
     top: 0;
-    height: 1px;
+    height: var(--divider-rule);
     background-image: repeating-linear-gradient(
       to right,
       var(--color-border) 0 1px,
-      transparent 1px 2px
+      transparent 1px 3px
     );
   }
   &:first-child {
@@ -363,22 +408,25 @@
 /* Divider.item inside a multi-column grid list (RankedList): the rule runs within a column
    only (DR-299, DR-300), so an item on the first grid row has no rule and the others have
    one above them. Items per row: 1, 2 from 600, 3 from 1024, 4 from 1280 (DR-51, DR-145).
-   The list sets row-gap 0: the space above and below the rule is space-list-item. The rule
-   is the ::after of the li, because the rank numeral is its ::before. */
+   The list sets row-gap 0: the space above and below the rule is space-list-item, measured
+   to the ink as in divider-item. The rule is the ::after of the li, because the rank numeral
+   is its ::before. */
 @utility divider-item-grid {
   position: relative;
-  margin-block-start: var(--space-list-item);
-  padding-block-start: var(--space-list-item);
+  margin-block-start: calc(var(--space-list-item) - var(--list-ink-end, 0rem));
+  padding-block-start: calc(
+    var(--space-list-item) + var(--divider-rule) - var(--list-ink-start, 0rem)
+  );
   &::after {
     content: "";
     position: absolute;
     inset-inline: 0;
     top: 0;
-    height: 1px;
+    height: var(--divider-rule);
     background-image: repeating-linear-gradient(
       to right,
       var(--color-border) 0 1px,
-      transparent 1px 2px
+      transparent 1px 3px
     );
   }
   &:nth-child(-n + 1) {
@@ -413,6 +461,74 @@
       &::after {
         display: none;
       }
+    }
+  }
+}
+
+/* An item or a card followed by a Divider.item row ends at the ink of its meta line: the
+   line takes its blank space below the ink off with a negative margin (DR-350). In a card
+   with the image at the end edge, the taller of the image and the text then sets the row.
+   The last item of a list keeps its line box: space-more-link is not measured to the ink. */
+@layer components {
+  :where(:has(+ .divider-item)) [data-meta-line] {
+    margin-block-end: calc(-1 * var(--ink-metadata-end));
+  }
+}
+
+/* The ink at the top of the items of a list (DR-350). Set it on the list (and on a
+   StoryList that is itself a row after a card). Items that start with a title: */
+@utility list-ink-title-meta {
+  --list-ink-start: var(--ink-title-sm-start);
+}
+
+/* Cards with an image at the top (the AnalysisSection rows): the image is the first ink. */
+@utility list-ink-media-meta {
+  --list-ink-start: 0rem;
+}
+
+/* RankedList: the title is the first and the last row. A row-first grid: the item below a
+   rule sits under the tallest item of the row above (C-07), so the list sets both edges. */
+@utility list-ink-title {
+  --list-ink-start: var(--ink-title-sm-start);
+  --list-ink-end: var(--ink-title-sm-end);
+}
+
+/* OpinionList: the item rule spans the text column only, not the quote mark (DR-351). */
+@utility opinion-rule-start {
+  --divider-item-start: calc(var(--quote-mark-width) + var(--grid-column-gap));
+}
+
+/* Divider.column-inset (C-22, DR-351): a 1px solid vertical rule in the border color,
+   centered in the existing column gap, --divider-column-inset from the top and the bottom.
+   The grid keeps its gap. divider-column-split: two equal columns (P-4, from 768).
+   divider-column-rail: the wrapper and the rail (P-3, from 1024, --measure-rail). */
+@utility divider-column-split {
+  position: relative;
+  @media (width >= 48rem) {
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: var(--divider-column-inset);
+      inset-inline-start: calc(50% - var(--divider-rule) / 2);
+      width: var(--divider-rule);
+      background-color: var(--color-border);
+    }
+  }
+}
+
+@utility divider-column-rail {
+  position: relative;
+  @media (width >= 64rem) {
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: var(--divider-column-inset);
+      inset-inline-end: calc(
+        var(--measure-rail) + var(--grid-column-gap) / 2 - var(--divider-rule) /
+          2
+      );
+      width: var(--divider-rule);
+      background-color: var(--color-border);
     }
   }
 }

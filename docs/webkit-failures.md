@@ -124,6 +124,18 @@ Second run after the SiteHeader fragment fix (`motion`, `header`, `ads` specs): 
 
 R4-05 checks the sticky hide in real Safari.
 
+### R4-03 (17 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit` on the ticket's test files (`hero`, `analysis-opinion`, `featured`, `grouped`, `most-read`, `story-units`, `small-parts`, `page`) on `prototype-run-4`. 26 failed, 333 passed. 15 are known: group C keyboard (10: `analysis-opinion`, `featured`, `grouped`, `hero`, `most-read`, bn and en), group E focus outline (2), group A English layout at 1280 and wider (3: `featured` 1280, `grouped` 1366 and 1920; these rows change from run to run). 11 are new:
+
+| ID | Importance | File | Test | Lang | Error |
+| --- | --- | --- | --- | --- | --- |
+| W4-07 | Medium | `hero.spec.ts:50` | layout at 768, 834 and 1023 | bn, en | The second Latest column starts 1 to 3px below the first (`1442` / `1439`). The Latest list is now CSS columns with a column break (DR-350). In WebKit the offset shows only when the column-start item has 0 padding and the other items have a fractional padding (16.43px); with a 16px padding on every item it is 0. Chromium is exact (6 tests) |
+| W4-08 | Medium | `story-units.spec.ts:182` | StoryList: one column, two column-first from 768 to 1023 | bn, en | Same as W4-07 (2 tests) |
+| W4-09 | Low | `small-parts.spec.ts:102` | Divider.item space: 16px to the ink … at 360, 768 and 1280 | bn | Most read only: 12 to 14px above the rule (Chromium 13 to 15). WebKit draws the Bangla rank digits and titles a little higher. Every other list is in range (3 tests) |
+
+A first WebKit run found two more causes, both fixed: the trimmed meta margin collapsed out of its item across the column break (fixed with `display: flow-root` on Divider.item), and the pixel scan read a rule that WebKit snaps to the row above a fractional top (the scan now finds the rule within 1 row). R4-05 checks the Latest columns and the item rule space in real Safari.
+
 ## Not checked
 
 - Whether each failure is new since R2-13. `PROGRESS.md` only gives counts (40 at R2-12, 5 regions at R2-13), not names.

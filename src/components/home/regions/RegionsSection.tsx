@@ -1,4 +1,4 @@
-import { dividerItem } from "@/components/layout/Divider";
+import { dividerItem, listInk } from "@/components/layout/Divider";
 import { Shell } from "@/components/layout/Shell";
 import { MoreLink } from "@/components/story/MoreLink";
 import { StoryCard } from "@/components/story/StoryCard";
@@ -52,7 +52,7 @@ export function RegionsSection({
             id: region,
             label: t.regions[region],
             content: (
-              <ul>
+              <ul className={listInk.titleMeta}>
                 <li className={dividerItem}>
                   <StoryCard
                     story={lead}

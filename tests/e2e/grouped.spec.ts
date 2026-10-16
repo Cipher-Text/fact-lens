@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { columnRule, tokenBackground } from "./rules";
 import { setTheme } from "./theme";
 
 // R2-11: P-3 Grouped categories with the ad-inset, the daily poll and the rail ad
@@ -576,4 +577,82 @@ test("a category nav link reaches P-3 (IMP-14)", async ({ page }) => {
     page.locator("#category-economy").getByRole("heading", { level: 2 }),
   ).toBeInViewport();
   await expect(page.locator('a[href="#newsletter"]')).toHaveCount(0);
+});
+
+// R4-03: Divider.column-inset between the wrapper and the rail from 1024, none between the
+// category blocks (C-22, P-3, DR-351).
+test.describe("column rule (C-22, DR-351)", () => {
+  for (const p of PAGES) {
+    for (const theme of ["light", "dark"] as const) {
+      test(`${p.path} ${theme}: in the middle of the wrapper and rail gap from 1024`, async ({
+        page,
+      }) => {
+        await setTheme(page, theme);
+        for (const width of [360, 600, 768, 1023, 1024, 1280, 1440]) {
+          await page.setViewportSize({ width, height: 900 });
+          await page.goto(p.path);
+          const grid = '[data-section="grouped"] .with-rail';
+          const rule = await columnRule(
+            page,
+            grid,
+            "[data-grouped-wrapper]",
+            "[data-grouped-rail]",
+          );
+          // The gap is the column gap of before the change (DR-300, DR-351).
+          const gap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
+          expect(rule.gap, `gap at ${width}`).toBe(`${gap}px`);
+          // No rule between category blocks, at any width.
+          const blockRules = await page.evaluate(() =>
+            [
+              ...document.querySelectorAll(
+                "[data-grouped-row], [data-category-block]",
+              ),
+            ].flatMap((el) => [
+              getComputedStyle(el, "::before").content,
+              getComputedStyle(el, "::after").content,
+              getComputedStyle(el).borderInlineStartWidth,
+              getComputedStyle(el).borderInlineEndWidth,
+            ]),
+          );
+          for (const v of blockRules) expect(["none", "0px"]).toContain(v);
+          if (width < 1024) {
+            // The rail is under the wrapper: no rule.
+            expect(rule.shown, `rule at ${width}`).toBe(false);
+            continue;
+          }
+          expect(rule.shown, `rule at ${width}`).toBe(true);
+          expect(rule.width).toBe(1);
+          expect(rule.color).toBe(
+            await tokenBackground(page, "--color-border"),
+          );
+          expect(
+            Math.abs(rule.offCenter),
+            `center at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.top - 16),
+            `top at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.bottom - 16),
+            `bottom at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+        }
+      });
+    }
+  }
+
+  test("no column rule in the other wrapper and rail sections (DR-351)", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto("/");
+    const others = await page.evaluate(() =>
+      [...document.querySelectorAll(".with-rail")]
+        .filter((el) => !el.closest('[data-section="grouped"]'))
+        .map((el) => getComputedStyle(el, "::after").content),
+    );
+    expect(others.length).toBeGreaterThan(0);
+    for (const content of others) expect(content).toBe("none");
+  });
 });

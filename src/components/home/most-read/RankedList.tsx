@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { dividerItemGrid } from "@/components/layout/Divider";
+import { dividerItemGrid, listInk } from "@/components/layout/Divider";
 import { headlineLink, storyHref } from "@/components/story/links";
 import type { Lang, Story } from "@/content";
 import { formatNumber } from "@/lib/format";
@@ -25,6 +25,7 @@ export function RankedList({ lang, stories, className }: RankedListProps) {
   return (
     <ol
       className={cn(
+        listInk.title,
         "rank-list grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-0 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
         className,
       )}

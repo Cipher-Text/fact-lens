@@ -57,7 +57,7 @@ Run 4 is a short fix run. It adds no new feature and no new page. Mock data only
 | R4-00 | Setup, specs and repo docs | Done (16 Oct 2026, blueprint setup) |
 | R4-01 | Masthead controls and theme | Done (17 Oct 2026) |
 | R4-02 | Motion and sticky header | Done (17 Oct 2026) |
-| R4-03 | Lists and dividers | To do |
+| R4-03 | Lists and dividers | Done (17 Oct 2026) |
 | R4-04 | Words, focus and source order | To do |
 | R4-05 | Safari pass, final check, pull request and merge | To do |
 
