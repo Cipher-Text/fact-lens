@@ -2,7 +2,7 @@
 
 8 October 2026 · Milestone 1, phase 3 · Status: **Finished, not deployed**
 
-> **Run 1 record, not updated.** This report shows the state on 8 October 2026. Run 2 (R2-00 to R2-21) rebuilt the homepage, and run 3 puts the run 2 review decisions in the code. The FL-13 tables named below are in git history at `0225398`. For the current state read `docs/HANDOVER.md` and `docs/PROGRESS.md`.
+> **Run 1 record, not updated.** This report shows the state on 8 October 2026. Run 2 (R2-00 to R2-21) rebuilt the homepage, and runs 3 and 4 put the review decisions in the code. The FL-13 tables named below are in git history at `0225398`. For the current state read `docs/HANDOVER.md` and `docs/PROGRESS.md`.
 
 This report closes the homepage prototype sprint. The full list of findings, with a suggested solution for each, is `docs/prototype-findings.md`. The measured results are the FL-13 tables in `docs/PROGRESS.md`. The next steps are in `docs/HANDOVER.md`.
 

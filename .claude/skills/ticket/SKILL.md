@@ -1,7 +1,7 @@
 ---
 name: ticket
 description: Start the next Fact Lens sprint ticket from docs/SPRINT.md and take it through plan, build, test and verify, then stop for tajmin's acceptance test.
-argument-hint: "[ticket id, e.g. R3-03; default: the next To do ticket]"
+argument-hint: "[ticket id, e.g. R4-03; default: the next To do ticket]"
 disable-model-invocation: true
 ---
 

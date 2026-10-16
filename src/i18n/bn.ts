@@ -50,7 +50,7 @@ export const bn = {
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
   },
-  // P-5. Working label: the specs name the section in English only (U-26).
+  // P-5.
   mostRead: {
     title: "সর্বাধিক পঠিত",
   },

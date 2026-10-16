@@ -1,54 +1,50 @@
 # Fact Lens Homepage Prototype: Progress
 
-Version 3.0 · 16 October 2026 · Run 3 (fix run)
+Version 4.0 · 16 October 2026 · Run 4 (short fix run)
 
-Claude Code reads the "Now" section at the start of each session. `/ticket` and `/accept` keep this file current. The tickets are in `docs/SPRINT.md`, the ticket log is `docs/run-3-log.md`, and the findings are in `docs/prototype-findings.md`.
+Claude Code reads the "Now" section at the start of each session. `/ticket` and `/accept` keep this file current. The tickets are in `docs/SPRINT.md`, the ticket log is `docs/run-4-log.md`, and the findings are in `docs/prototype-findings.md`.
 
 ## Now
 
-- Run: 3 (fix run). Branch `prototype-run-3`, made from `main` at `0225398`.
-- Ticket: none. All run 3 tickets are Done. The pull request into `main` waits for tajmin's go.
-- Before R3-00: the 16 October specs are in `docs/design-system/` (copied on 16 October 2026). The kit changes DR-333, DR-335 and DR-336 are applied.
-- Next action: tajmin decides on the pull request (open, then merge on explicit go).
+- Run: 4 (short fix run). Branch `prototype-run-4`, made from `main` at `0bebd07`.
+- Ticket: R4-01 is next (To do). R4-00 (specs, docs and kit) was done by the blueprint setup on 16 October 2026.
+- Specs in `docs/design-system/`: color 2.14, typography 2.15, layout 2.21, component-system 1.16, agent-contract 2.11.
+- Next action: tajmin runs `pnpm install` and `pnpm check`, then `/ticket` for R4-01.
 
 ## Past runs
 
 | Run | Dates | Result |
 | --- | --- | --- |
 | Run 1 | to 8 Oct 2026 | FL-01 to FL-13 Done, FL-14 (deploy) Rejected. Record: `docs/milestone-1-report.md` |
-| Run 2 | 7 to 11 Oct 2026 | R2-00 to R2-21 Done (`docs/run-2-log.md`). PR #1 merged (`8863410`). R2-17 final check: `pnpm check` and Chromium e2e passed; axe had one moderate issue (DOC-35) and the dark text logo contrast (U-08) |
+| Run 2 | 7 to 11 Oct 2026 | R2-00 to R2-21 Done (`docs/run-2-log.md`). PR #1 merged (`8863410`) |
 | Run 2 audit | 12 to 13 Oct 2026 | `PROTOTYPE_RUN_2.md`, merged by PR #4 (`0225398`) |
-| Run 2 review | 12 to 16 Oct 2026 | The blueprint decided every finding (DR-262 to DR-344) and updated the specs |
+| Run 3 | 16 Oct 2026 | R3-00 to R3-09 Done (`docs/run-3-log.md`, `docs/run-3-report.md`). PR #5 merged (`6edc410`); docs commit `0bebd07` |
+| Run 3 review and design change | 16 Oct 2026 | The blueprint decided the run 3 findings and a masthead, list and divider change (DR-345 to DR-351) and updated the specs |
 
-The full run 1 and run 2 tables of this file (FL-13 and R2-17 results, run 1 status lists) are in git history at `0225398`.
+The full run 1 and run 2 tables of this file are in git history at `0225398`; the run 3 table is at `0bebd07`.
 
-## Run 3 status
+## Run 4 status
 
 | Ticket | Status | Log row |
 | --- | --- | --- |
-| R3-00 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-01 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-02 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-03 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-04 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-05 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-06 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-07 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-08 | Done (16 Oct 2026) | `docs/run-3-log.md` |
-| R3-09 | Done (16 Oct 2026) | `docs/run-3-log.md` |
+| R4-00 | Done (16 Oct 2026, blueprint setup) | `docs/run-4-log.md` |
+| R4-01 | To do | |
+| R4-02 | To do | |
+| R4-03 | To do | |
+| R4-04 | To do | |
+| R4-05 | To do | |
 
 `/accept` updates this table and the board in `docs/SPRINT.md`.
 
-## Known state of the code at run 3 start
+## Known state of the code at run 4 start
 
-- `pnpm check` passed at the end of run 2 (212 unit tests, build, no warnings).
-- Chromium e2e passed at R2-19 (561 tests). One test depends on the environment (IMP-59, fixed in R3-00).
-- WebKit has 40 known failures (`docs/webkit-failures.md`). R3-09 reports the WebKit results.
-- No shadcn primitive is installed yet. `globals.css` does not import `shadcn/tailwind.css` (R3-00).
+- `main` at `0bebd07`. `pnpm check` and Chromium e2e (591 tests) passed on `prototype-run-3` before the merge (`docs/run-3-report.md`).
+- WebKit has 42 failures (`docs/run-3-report.md`, `docs/webkit-failures.md`). R4-05 checks them in real Safari.
+- The code still has the run 3 masthead: ThemeToggle switch, `lang-bn` variant, 48px NavBar row (header test expects 49). R4-01 and R4-02 change it.
 
 ## Open items (Later)
 
-These wait for a later phase. Run 3 keeps the current treatment. Full text: `docs/prototype-findings.md`, "Open items (Later)".
+These wait for a later phase. Run 4 keeps the current treatment. Full text: `docs/prototype-findings.md`, "Open items (Later)".
 
 | ID | Item | Treatment until then |
 | --- | --- | --- |
@@ -58,11 +54,11 @@ These wait for a later phase. Run 3 keeps the current treatment. Full text: `doc
 | IMP-45 | Ad booking | Every mock slot is booked |
 | IMP-25, IMP-33 | Newsletter | Paused (DR-239); no newsletter code |
 
-## Unresolved design-system items (run 3)
+## Unresolved design-system items (run 4)
 
 Add a row when a ticket reports `UNRESOLVED_DESIGN_SYSTEM`. Add the full entry to `docs/prototype-findings.md`.
 
 | ID | Found | File and component | Treatment used | Status |
 | --- | --- | --- | --- | --- |
-| U-40 | R3-03 | `Divider.tsx` (C-22) | No column divider built or placed | Waits for tajmin |
-| U-39 | R3-02 | `ThemeToggle.tsx`, `ThemeButton.tsx` (C-12) | Icon `text-interactive` in both themes; no token for `ink` in dark | Workaround in code, waits for tajmin |
+| U-40 | R3-03 | `Divider.tsx` (C-22) | No column divider built or placed | Decided: C-22 places column-inset (P-4 from 768, P-3 from 1024). Code in R4-03 |
+| U-39 | R3-02 | `ThemeToggle.tsx`, `ThemeButton.tsx` (C-12) | Icon `text-interactive` in both themes | Closed: ThemeToggle and the theme icon token are removed; ThemeButton icon is ink (C-12, C-17). Code in R4-01 |
