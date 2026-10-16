@@ -66,13 +66,13 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | DOC-26 | R2-04 | The Chip label sheet gives "15px 600", the `type-eyebrow` role is 14px 700 uppercase in English | Low | Fixed in R3-04 |
 | DOC-27 | R2-05 | C-12 and C-17 give the switch corners and the top bar padding in px, §6 has no tokens, and §2.9 says no component has color tokens | Low | Fixed in R3-02 |
 | DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Fixed in R3-02 |
-| DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Decided (DR-296); code in R3-07 |
+| DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Fixed in R3-07 |
 | DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Fixed in R3-04 |
 | DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Fixed in R3-05 |
 | DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Fixed in R3-03 |
 | DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Fixed in R3-03 |
 | DOC-34 | R2-15 | C-17 and §12.3 give the top bar `h-(--bar-height)` (a fixed height); the C-17 checks and DR-81 say the bar can wrap to two lines at 200% text size | Low | Fixed in R3-02 |
-| DOC-35 | R2-17 | Every ad region carries the same accessible label, so axe reports `landmark-unique` (moderate, no serious or critical). C-16 gives one label text; it does not say whether slots need a number or a name each. Suggested: name each slot (top, band 1..n, inset, rail) | Low | Decided (DR-266); code in R3-07 |
+| DOC-35 | R2-17 | Every ad region carries the same accessible label, so axe reports `landmark-unique` (moderate, no serious or critical). C-16 gives one label text; it does not say whether slots need a number or a name each. Suggested: name each slot (top, band 1..n, inset, rail) | Low | Fixed in R3-07 |
 | DOC-36 | Audit 13 Oct | StoryCard: "body first in the markup" against LAY-14 on phones | Medium | Fixed in R3-01 |
 | DOC-37 | Audit 13 Oct | Sheet values off the 4px scale | Low | Fixed in R3-02 |
 | DOC-38 | R3-01 | `component-system.md` P-2 Accessibility says text comes before the image in the markup; C-24 (DR-267) says the image comes first | Low | Open; code follows C-24 |
@@ -137,7 +137,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Fixed in R2-09 (the sheets give h3 titles and a chip label) |
 | IMP-22 | FL-07 | Shared `MoreLink` and elevated link classes | Low | Resolved by spec: `MoreLink` is sheet C-10; the elevated link classes are gone. The 404s stay IMP-18 |
 | IMP-23 | FL-08 | P-2 has no "আরও দেখুন" link | Low | Fixed in R2-10 |
-| IMP-24 | FL-09 | Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test | Medium | Decided (DR-276); code in R3-07 |
+| IMP-24 | FL-09 | Ad-inset count is fixed in the markup; the phone 600px rule is checked by a test | Medium | Fixed in R3-07 |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Later: newsletter phase (DR-343) |
 | IMP-26 | FL-09 | Poll vote kept in local storage; percents by largest remainder | Low | Fixed in R3-05 |
 | IMP-27 | FL-11 | Regions slider: tab mode follows the CSS, scripted 250ms scroll, hash selects a tab | Low | Decided by C-15 in R2-13: scrollbar hidden; scripted slide is 450ms with `--ease-slide`; see IMP-51 |
@@ -157,7 +157,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Later: IA label table; working labels stay (DR-282) |
 | IMP-42 | R2-05 | Trending terms are mock buttons that run the mock search; Op-ed and the Analysis anchors | Low | Fixed in R3-02 |
 | IMP-43 | R2-05 | LinkedIn mark from Simple Icons 13.21.0, the last release that has it; the Drawer lists 5 links, the Footer still 4 | Low | Decided (DR-314); code in R3-08 |
-| IMP-44 | R2-06 | At 768–1023 the band shows the 728×90 creative inside the 250 reserve, so 160px of the band is empty | Low | Decided (DR-315); code in R3-07 |
+| IMP-44 | R2-06 | At 768–1023 the band shows the 728×90 creative inside the 250 reserve, so 160px of the band is empty | Low | Fixed in R3-07 |
 | IMP-45 | R2-06 | `AdSlot` reads its mock booking itself and always renders; the Phase 1 rule "no booking, no `ad-top` row" (DR-250) has no code path yet | Low | Later: no-booking path with real ad data, M3 (DR-316) |
 | IMP-46 | R2-06 | The `rail` variant is built and tested alone; it goes into the P-3 rail in R2-11. 28 chromium e2e tests stay red from before (`most-read`, R2-12) | Low | Done in R2-11 |
 | IMP-47 | R2-07 | The story units are wired into the hero (needed to keep it building); two hero tests and the hero e2e layout checks were changed to the sheets. A development-only test page `/dev/story-units` carries the unit tests | Medium | Closed (DR-317): no run 3 code change |
@@ -203,6 +203,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-81 | R3-05 | DailyPoll keeps a hidden copy of the results to hold the cell height | Low | Open |
 | DOC-41 | R3-06 | `region-row` block in §12.3 sets 2 columns at every width | Low | Open |
 | IMP-82 | R3-06 | Base UI Tabs.Panel cannot be used for the region panels | Low | Open |
+| DOC-42 | R3-07 | §9 says "one ad-inset after every 2nd category row" but P-3 and C-16 place the inset between the two rows | Medium | Open |
 | IMP-72 | R3-02 | Base UI hides the page behind the panel with `aria-hidden`, not `inert` | Low | Open |
 | IMP-73 | R3-02 | ThemeToggle is a hand-built switch, not the shadcn Switch | Low | Open |
 | IMP-74 | R3-02 | Region links in the Drawer have no target for 3 of 7 regions | Medium | Open; code in R3-06 |
@@ -444,6 +445,14 @@ Entry format:
 - **Problem:** the Base UI panel sets `hidden` and `inert` when not selected, but from 600px every panel is a live column of the slider. `ui/tabs.tsx` has `Tabs`, `TabsList` and `TabsTab` only; `RegionSlider` writes its own panels and sets `aria-controls` on the tabs.
 - **Suggested solution:** keep it; say in the sheet that the panels are the slider columns.
 
+### DOC-42 Ad-inset placement: "after every 2nd category row" or between the two rows
+
+- **Found:** R3-07, 16 Oct 2026 · **Severity:** Medium · **Status:** Open
+- **Source:** `spacing-layout-system.md` §9 and §14 (DR-276) against §7.2 P-3 ("A, B, ad, C, D") and the `GroupedCategoriesSection.adInset` row of `component-system.md` ("between the two rows of blocks").
+- **Problem:** with the 4 mock categories there are 2 rows of blocks. "After every 2nd row" puts the inset after row 2, next to the poll and Most read; §7.2 puts it between row 1 and row 2.
+- **What the code does:** it keeps the inset between rows (matches §7.2 and the sheet). The server decides it (`insetBefore`): 3 or fewer, none after a row where no story has an image. No run-time height check.
+- **Suggested solution:** say "between rows of blocks, after every row but the last, 3 or fewer", or say that a "row" in §9 means two rows of blocks. tajmin decides.
+
 ## Change log
 
 | Date | Ticket | Change |
@@ -458,3 +467,4 @@ Entry format:
 | 2026-10-16 | R3-04 | IMP-78 and IMP-79 added; DOC-26, DOC-30, U-14, U-33, U-37, IMP-10, IMP-19, IMP-36 and IMP-60 set to Fixed in R3-04 |
 | 2026-10-16 | R3-05 | IMP-80, DOC-40 and IMP-81 added; DOC-31, IMP-26, IMP-50, IMP-53 and IMP-62 set to Fixed in R3-05 |
 | 2026-10-16 | R3-06 | DOC-41 and IMP-82 added; DOC-19, DOC-20, IMP-51, IMP-52, IMP-55 and IMP-63 set to Fixed in R3-06; IMP-74 updated (only `#region-africa` has no target) |
+| 2026-10-16 | R3-07 | DOC-42 added; DOC-29, DOC-35, IMP-24 and IMP-44 set to Fixed in R3-07 |

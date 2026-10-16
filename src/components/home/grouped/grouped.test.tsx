@@ -2,12 +2,17 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { getHomepage, getPoll } from "@/content";
+import {
+  getHomepage,
+  getPoll,
+  type CategoryBlock as CategoryBlockData,
+} from "@/content";
 import { getDictionary } from "@/i18n";
 
 import { DailyPoll } from "./DailyPoll";
 import {
   GroupedCategoriesSection,
+  insetBefore,
   MAX_INSETS,
 } from "./GroupedCategoriesSection";
 import { pollStorageKey } from "./usePollVote";
@@ -171,5 +176,27 @@ describe("DailyPoll", () => {
     render(<DailyPoll poll={poll} strings={strings} />);
     expect(screen.queryByRole("radio")).toBeNull();
     expect(screen.getByText("৩৯%")).toBeInTheDocument();
+  });
+});
+
+describe("insetBefore (DR-276)", () => {
+  const block = (image: boolean) =>
+    ({
+      category: "x",
+      stories: [{ id: "s", ...(image ? { image: { src: "i" } } : {}) }],
+    }) as unknown as CategoryBlockData;
+  const row = (image: boolean) => [block(image), block(image)];
+
+  it("puts an inset between rows and at most 3 in all", () => {
+    const rows = [row(true), row(true), row(true), row(true), row(true)];
+    expect(insetBefore(rows)).toEqual([false, true, true, true, false]);
+  });
+
+  it("puts none after a row with only text stories", () => {
+    expect(insetBefore([row(false), row(true), row(true)])).toEqual([
+      false,
+      false,
+      true,
+    ]);
   });
 });

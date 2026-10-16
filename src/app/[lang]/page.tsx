@@ -44,8 +44,10 @@ export default async function HomePage({
   return (
     <>
       <SkipLink label={t.header.skipLink} />
-      <AdSlot variant="top" lang={lang} strings={t.ads} />
       <SiteHeader lang={lang} />
+      {/* The top ad row is below the header: below the nav row from 1280, below the
+          top bar under 1280 (DR-295). */}
+      <AdSlot variant="top" lang={lang} strings={t.ads} />
       {/* tabIndex -1: the SkipLink target takes focus in every browser (DR-269). */}
       <main
         id="main"

@@ -106,11 +106,16 @@ for (const p of PAGES) {
         });
         const logo = bar.locator("[data-logo]:not(dialog *)");
 
-        // The top ad is the first row, above the bar.
+        // The bar is at the top of the page. The top ad row is below the header: below
+        // the nav row from 1280, below the bar under 1280 (DR-295).
         const topBox = await box(top);
         const barBox = await box(bar);
-        expect(Math.round(topBox.y)).toBe(0);
-        expect(Math.round(barBox.y)).toBe(Math.round(topBox.height));
+        expect(Math.round(barBox.y)).toBe(0);
+        const headerBottom =
+          width >= 1280
+            ? (await box(navRow)).y + (await box(navRow)).height
+            : barBox.y + barBox.height;
+        expect(Math.round(topBox.y)).toBe(Math.round(headerBottom));
 
         // Bar height: 56px, 64px from 1024 (--bar-height). Full page width.
         expect(Math.round(barBox.height)).toBe(width >= 1024 ? 64 : 56);

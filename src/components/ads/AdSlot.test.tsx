@@ -29,9 +29,16 @@ describe("AdSlot", () => {
     });
   }
 
-  it("is a region named by the label, in the page language (C-16, T-27)", () => {
-    render(<AdSlot variant="band" lang="bn" strings={bn.ads} />);
-    expect(screen.getByRole("region", { name: "বিজ্ঞাপন" })).toBeVisible();
+  it("is not a landmark; the visible label is in the page language (C-16, DR-266)", () => {
+    const { container } = render(
+      <AdSlot variant="band" lang="bn" strings={bn.ads} />,
+    );
+    const row = container.firstElementChild as HTMLElement;
+    expect(row.tagName).toBe("DIV");
+    expect(row).not.toHaveAttribute("aria-label");
+    expect(screen.queryByRole("region")).toBeNull();
+    expect(screen.getByText("বিজ্ঞাপন")).toBeVisible();
+    expect(screen.getByText("বিজ্ঞাপন")).not.toHaveAttribute("aria-hidden");
     expect(screen.queryByText("Advertisement")).toBeNull();
   });
 

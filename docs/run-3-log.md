@@ -22,3 +22,4 @@ Claude adds one row when a ticket ends (`/accept`, or Rejected). Do not change o
 | R3-04 Story units and images | 2026-10-16 | 2026-10-16 | Done | 0 | IMP-78, IMP-79 | fac26a3 | Fixes DOC-26, DOC-30, U-14, U-33, U-37, IMP-10, IMP-19, IMP-36, IMP-60 |
 | R3-05 DailyPoll | 2026-10-16 | 2026-10-16 | Done | 0 | IMP-80, DOC-40, IMP-81 | 8ac938b | Fixes DOC-31, IMP-26, IMP-50, IMP-53, IMP-62 |
 | R3-06 Regions and Most read | 2026-10-16 | 2026-10-16 | Done | 0 | DOC-41, IMP-82 | 00c541f | Fixes DOC-19, DOC-20, IMP-51, IMP-52, IMP-55, IMP-63. Flag: `#region-africa` has no target (IMP-74) |
+| R3-07 Ads | 2026-10-16 | 2026-10-16 | Done | 0 | DOC-42 | pending | Fixes DOC-29, DOC-35, IMP-24, IMP-44. Flag: inset placement wording (DOC-42) |

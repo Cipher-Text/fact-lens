@@ -66,7 +66,8 @@ type AdSlotProps = {
  * reserved creative box with the creative centered. No padding, margin or gutter
  * (LAY-09); the section around it owns space-module (LAY-12). Never sticky (LAY-11).
  * One <picture> with a <source> per tier, so the browser loads only the file for the
- * current tier. Only `top` loads at once; the others are lazy (9.1).
+ * current tier. Only `top` loads at once; the others are lazy (9.1). Not a landmark: a
+ * div with no aria-label; the visible label names the slot and is not hidden (DR-266).
  */
 export function AdSlot({ variant, lang, strings }: AdSlotProps) {
   const { slot, sources, fallback } = tiers[variant];
@@ -79,15 +80,11 @@ export function AdSlot({ variant, lang, strings }: AdSlotProps) {
     throw new Error(`No ${fallback} mock creative for slot: ${slot}`);
 
   return (
-    <section
-      aria-label={strings.label}
+    <div
       data-ad-slot={slot}
       className={cn(rowClass[variant], "bg-surface-alt")}
     >
-      <p
-        aria-hidden="true"
-        className="flex min-h-(--ad-label) items-center type-eyebrow text-ink-muted"
-      >
+      <p className="flex min-h-(--ad-label) items-center type-eyebrow text-ink-muted">
         {strings.label}
       </p>
       <div className={cn("flex justify-center", boxClass[variant])}>
@@ -122,6 +119,6 @@ export function AdSlot({ variant, lang, strings }: AdSlotProps) {
           </picture>
         </a>
       </div>
-    </section>
+    </div>
   );
 }

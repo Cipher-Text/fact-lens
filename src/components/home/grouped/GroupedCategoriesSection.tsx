@@ -22,6 +22,23 @@ type GroupedCategoriesSectionProps = {
   className?: string;
 };
 
+/**
+ * The server sets which rows have an ad-inset before them (DR-276): none after a row
+ * with only text stories, and 3 or fewer in all. No run-time height check.
+ */
+export function insetBefore(rows: CategoryBlockData[][]): boolean[] {
+  let count = 0;
+  return rows.map((_, index) => {
+    const previous = rows[index - 1];
+    const show =
+      !!previous &&
+      count < MAX_INSETS &&
+      previous.some((block) => block.stories.some((story) => story.image));
+    if (show) count += 1;
+    return show;
+  });
+}
+
 function pairs<T>(items: T[]): T[][] {
   const rows: T[][] = [];
   for (let i = 0; i < items.length; i += 2) rows.push(items.slice(i, i + 2));
@@ -31,7 +48,7 @@ function pairs<T>(items: T[]): T[][] {
 /**
  * P-3 Grouped categories (spacing-layout-system.md 7.2 to 7.4 and 9). The wrapper has
  * rows of two categories (one per row on phones, LAY-07) with an ad-inset between rows,
- * at wrapper width; rows after the third inset have none. An odd last category keeps
+ * at wrapper width; 3 or fewer, none after a text-only row (DR-276). An odd last category keeps
  * its size and the other half of its row stays empty (7.3). The rail has the daily poll
  * (DR-239) and, from 1280px, the ad-rail space-module below it (DR-240, DR-242); below
  * 1024px the rail is under the wrapper (LAY-05). The source order is the phone reading
@@ -45,13 +62,14 @@ export function GroupedCategoriesSection({
   className,
 }: GroupedCategoriesSectionProps) {
   const rows = pairs(categories);
+  const insets = insetBefore(rows);
   return (
     <Shell as="div" data-section="grouped" className={className}>
       <WithRail>
         <Wrapper data-grouped-wrapper className="grid gap-y-(--space-module)">
           {rows.map((row, index) => (
             <Fragment key={row[0].category}>
-              {index > 0 && index <= MAX_INSETS ? (
+              {insets[index] ? (
                 <AdSlot variant="inset" lang={lang} strings={t.ads} />
               ) : null}
               <div

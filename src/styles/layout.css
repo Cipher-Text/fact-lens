@@ -85,7 +85,7 @@
     --space-section-title-after: 1.5rem;
     --ad-top-w: 728px;
     --ad-top-h: 90px;
-    --ad-band-h: 250px;
+    --ad-band-h: 90px;
   }
 }
 
@@ -100,6 +100,7 @@
     --bar-height: 4rem;
     --ad-top-w: 970px;
     --ad-top-h: 250px;
+    --ad-band-h: 250px;
   }
 }
 
