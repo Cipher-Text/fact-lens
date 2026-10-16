@@ -6,10 +6,11 @@ The text above comes from `AGENTS.md`. It is the source for every agent. This pa
 
 ### Start of each session
 
-1. Read `docs/PROGRESS.md` and the board in `docs/SPRINT.md`. They tell you which ticket is current.
+1. Read `docs/PROGRESS.md` and the board in `docs/SPRINT.md`. They tell you which ticket is current. Run 3 is a fix run: each ticket names the `DR-` IDs and the spec sections it rebuilds. Read those spec sections, not the old run 2 code, as the target.
 2. Read `docs/design-system/agent-contract.md` Sections 1 to 4 before the first code change.
 3. Read only the spec sections that the ticket needs. Do not read all four specs at once.
 4. Before you build a component, read its sheet in `docs/design-system/component-system.md` Section 7 and the names in Section 3.
+5. If the code and the spec do not agree, the spec wins. Change the code; report a spec problem as a `DOC-` issue.
 
 ### The sprint is turn-based
 
@@ -55,3 +56,7 @@ The session starts in "accept edits" mode: file edits run without a question. Co
 ### Context
 
 - One ticket per conversation. tajmin runs `/clear` after `/accept`.
+
+### Preview
+
+The live preview is at https://fact-lens-web-ashy.vercel.app/ (Vercel). Use it only to compare with the local build. Do not deploy, and do not change Vercel settings, unless tajmin asks.

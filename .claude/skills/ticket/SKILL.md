@@ -1,7 +1,7 @@
 ---
 name: ticket
 description: Start the next Fact Lens sprint ticket from docs/SPRINT.md and take it through plan, build, test and verify, then stop for tajmin's acceptance test.
-argument-hint: "[ticket id, e.g. FL-03; default: the next To do ticket]"
+argument-hint: "[ticket id, e.g. R3-03; default: the next To do ticket]"
 disable-model-invocation: true
 ---
 
@@ -18,7 +18,7 @@ The sprint is in `docs/SPRINT.md`. You do one ticket per turn of work. tajmin is
 
 ## 1. Plan
 
-1. Read the ticket: goal, acceptance criteria and original prompt. The original prompt tells you what to build.
+1. Read the ticket: goal, decisions, the spec sections to read, "Do" and "Done". "Do" tells you what to change; the "Done" lines are the acceptance criteria.
 2. Read only the spec sections that the ticket names. For a homepage section, also read its rows in `spacing-layout-system.md` Sections 7.1 to 7.4 and its role mapping in `typography-system.md` Section 7.
 3. Show a short plan: the files you will make, the tests you will add, and the rule IDs that apply. Keep it to about 15 lines.
 4. Continue without waiting, unless the plan needs a decision from tajmin (a spec gap or a choice the spec does not make). Then ask one clear question and wait.
@@ -28,7 +28,7 @@ The sprint is in `docs/SPRINT.md`. You do one ticket per turn of work. tajmin is
 1. Follow `AGENTS.md`. Use the layout parts in `src/components/layout/` once they exist.
 2. When a command needs permission, say in one line why you need it.
 3. When a raw-value hook message comes back, fix the line before you continue.
-4. Keep the work inside the ticket. Write ideas for later in `docs/PROGRESS.md` under "Later".
+4. Keep the work inside the ticket. Write ideas for later in `docs/SPRINT.md` under "Notes for later".
 
 ## 3. Test
 
@@ -37,9 +37,10 @@ The sprint is in `docs/SPRINT.md`. You do one ticket per turn of work. tajmin is
 
 ## 4. Verify
 
-1. Run the `/verify` steps: `pnpm check`, `pnpm test:e2e`, and the `visual-qa` subagent when the dev server runs.
+1. Run the `/verify` steps: `pnpm check`, `pnpm test:e2e:chromium`, and the `visual-qa` subagent when the dev server runs.
 2. Ask the `design-reviewer` subagent to review the changes. Fix every blocker.
 3. Check each acceptance criterion. If one is not met, fix it, or say why it cannot be met.
+4. Update `docs/prototype-findings.md`: add each new finding (next free ID, the entry format in the file) and its Summary row; set the items this ticket fixed to "Fixed in <ticket id>".
 
 ## 5. Hand over and stop
 
@@ -48,7 +49,7 @@ The sprint is in `docs/SPRINT.md`. You do one ticket per turn of work. tajmin is
    - What you built (3 to 5 lines)
    - Each acceptance criterion with ✅ or ❌
    - Test steps for tajmin, as a numbered list with the URLs and widths
-   - Any `UNRESOLVED_DESIGN_SYSTEM` item or `DOC-` issue
+   - Any `UNRESOLVED_DESIGN_SYSTEM` item or `DOC-` issue, with its ID in `docs/prototype-findings.md`
 3. End with: "Test the ticket, then reply with problems or type `/accept`."
 4. Stop. Do not commit. Do not start the next ticket.
 

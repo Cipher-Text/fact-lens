@@ -11,7 +11,7 @@ Run each step. Do not stop at the first failure: collect every result, then fix 
 ## 1. Code checks
 
 1. `pnpm check`
-2. `pnpm test:e2e`
+2. `pnpm test:e2e:chromium` (the gate; WebKit is a separate report, `docs/webkit-failures.md`)
 
 ## 2. Visual check
 

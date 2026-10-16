@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.11 · 10 October 2026 · Homepage approved for prototype run 2
+Version 2.18 · 15 October 2026 · Homepage approved for prototype run 2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -66,27 +66,27 @@ From 1024px, the rail is beside the wrapper. Below 1024px, the rail goes below t
 
 | Tier | From | Columns | Page gutter | Column gap | Row gap |
 | --- | --- | --- | --- | --- | --- |
-| Phone | 0 | 4 | 16px | 16px | 16px |
-| `sm` | 600px | 4 | 24px | 16px | 16px |
-| `md` | 768px | 8 | 24px | 20px | 20px |
+| Phone | 0 | 4 | 16px | 16px | 20px |
+| `sm` | 600px | 4 | 24px | 16px | 24px |
+| `md` | 768px | 8 | 24px | 24px | 24px |
 | `lg` | 1024px | 12 | 24px | 24px | 24px |
-| `xl` | 1280px | 12 | 24px | 24px | 24px |
+| `xl` | 1280px | 12 | 24px | 32px | 24px |
 
 There is no `2xl` tier. From 1366px, no value changes. On a 1920px screen, the shell is 1280px, a column is approximately 84.7px, and four columns are 411px.
 
-The row gap (`--grid-row-gap`) is always equal to the column gap.
+The column gap (`--grid-column-gap`) is the space between any two blocks that sit side by side: wrapper and rail, the two top stories, analysis and opinion, category blocks, region panels, Most read items, the poll columns, and the text and image of a card in a row (feature split, row third) or a quote mark and its text. The row gap (`--grid-row-gap`) is the space between two rows of a grid that have no rule between them. They are separate tokens. Every grid uses them; no component sets its own gap (DR-300). A rule between rows uses `space-list-item` on each side instead (C-22).
 
 ### 3.2 Shell width per tier
 
 The shell is `min(100% − 2 × gutter, 1280px)`.
 
-| Viewport | Shell | Wrapper (shell − 304 − 24) |
+| Viewport | Shell | Wrapper (shell − 304 − column gap) |
 | --- | --- | --- |
 | 360 | 328 | – (rail stacks) |
 | 768 | 720 | – (rail stacks) |
 | 1024 | 976 | 648 |
-| 1280 | 1232 | 904 |
-| 1366 and wider | 1280 | 952 |
+| 1280 | 1232 | 896 |
+| 1366 and wider | 1280 | 944 |
 
 ### 3.3 Cards per row
 
@@ -138,7 +138,7 @@ Values are for phone / from 768px / from 1024px.
 | `space-module` | 24 / 32 / 40 | Between modules in a section. Between a section and its ad row |
 | `space-rail-modules` | 48 / 48 / 64 | Between the newsletter and the poll in the P-3 rail: 64 when the rail is beside the wrapper, 48 when it stacks (DR-150). Prototype run 2 does not use it: the rail has the poll only (DR-239) |
 | `space-section-title-after` | 20 / 24 / 24 | Section heading row to the first content |
-| `--grid-row-gap` | 16 / 20 / 24 | Between card rows. Lead story to top stories |
+| `--grid-row-gap` | 20 / 24 / 24 | Between grid rows with no rule between them. Lead story to top stories (DR-300) |
 
 The space between a section and an ad row belongs to the section, not to the ad row (`LAY-12`).
 
@@ -160,7 +160,9 @@ These values are the same at all widths.
 
 ### 5.3 Panel inset
 
-A colored panel (`DailyPoll`, `Footer`, the বিশ্লেষণ ও মতামত background, and `NewsletterSignup` after prototype run 2) uses the `panel-inset` utility (`LAY-20`, DR-224). The value depends on the container width (`CPT-04`), not on the viewport.
+A colored panel (`Footer`, the বিশ্লেষণ ও মতামত background, and `NewsletterSignup` after prototype run 2) uses the `panel-inset` utility (`LAY-20`, DR-224). The value depends on the container width (`CPT-04`), not on the viewport.
+
+**Panel band.** `AnalysisSection` (P-4) and `Footer` are panel bands (DR-264). The `surface-elevated` background spans the full viewport width. The content sits in the shell, so it aligns with the page gutter. A panel band takes only the block values of `panel-inset` (40px under 600px, 48px from 600px). It has no inline inset (`py-10` / `py-12`, no `px-*`).
 
 | Container | Block | Inline | Classes |
 | --- | --- | --- | --- |
@@ -186,17 +188,19 @@ The component looks are in `component-system.md`: `TopBar` (C-17), `NavBar` (C-1
 - From 768px (tablets, laptops, desktops): menu and search buttons at the start, logo in the center, language ("English") and the theme switch at the end.
 - The page chrome has no subscribe button (DR-170, DR-188). Prototype run 2 has no sign-up point. The newsletter section is the sign-up point in a phase after run 2 (DR-239).
 - There is no sub-navigation row. Its items are in the drawer.
-- The theme control has two states: light and dark. Light is the first state on every device; the system setting is not used (DR-201). After the reader selects a theme, keep the choice. Set the theme class before the first paint. Phones show one icon button; from 768px it is a switch (DR-165, DR-167).
+- The theme control has two states: light and dark. Light is the first state on every device; the system setting is not used (DR-201). After the reader selects a theme, keep the choice in local storage: key `fl-theme`, value `light` or `dark`. If storage is blocked, use light and keep the choice for this page only. An inline script in the head reads the key and sets the `.dark` class before the first paint. Open tabs follow a change (the storage event) (DR-340). Phones show one icon button; from 768px it is a switch (DR-165, DR-167).
 - The nav row shows only the items that fit in the shell. There is no "More" item. All items are in the drawer (DR-255).
 - Edge icons: the 20px icon sits on the page gutter at every width. Inside the Drawer it sits on the 20px Drawer inset (DR-214).
-- There is no rule between the top bar and the nav row. The nav row has a 1px rule at its bottom. When the top bar sticks alone, it shows its own 1px bottom rule (DR-173).
-- The top ad row is above the header. When the top ad scrolls away, the top bar sticks to the top of the viewport.
+- There is no rule between the top bar and the nav row. The nav row has a 1px rule at its bottom. When the top bar sticks alone, it shows its own 1px bottom rule, in both themes and at every width (DR-173, DR-295). The nav row sets `data-bar-stuck` on `<html>` when it scrolls away; the top bar reads it through the `bar-stuck` variant (DR-287).
+- The top ad row is below the header: below the nav row from 1280, below the top bar under 1280, and above the hero (DR-295). The top bar is at the top of the viewport from the first paint and sticks there.
+- At the page top the logo is 32px from 1024, 28px at 768 and 20px on phones. When the bar is stuck the logo is 24px (20px on phones). The bar height does not change; only the logo scales, so the page does not move (DR-295).
+- The gap between the menu and search buttons is the same as the gap between the language link and the theme control (DR-295). Every top bar icon is 20px (DR-295).
 
 | Token | Value | Use |
 | --- | --- | --- |
 | `--bar-height` | 56px; 64px from 1024 | Top bar height |
 | `--nav-row-height` | 48px | Nav row height (from 1280) |
-| `--scroll-offset` | `--bar-height` + 16px | `scroll-padding-top` on `html`, so anchors stop below the sticky bar |
+| `--scroll-offset` | rendered top bar height + 16px | `scroll-padding-top` on `html`, so anchors stop below the sticky bar. At 200% text the bar wraps to 2 lines; the offset follows the real bar height, not `--bar-height` (DR-265) |
 | `--drawer-width` | 320px, or the viewport width minus 48px if smaller | Drawer width |
 
 Drawer behavior:
@@ -205,14 +209,14 @@ Drawer behavior:
 - When the drawer opens, focus moves to the drawer panel itself (`tabindex="-1"`), not to an item. The screen reader reads the drawer name, and no on-screen keyboard opens on phones (DR-249).
 - Escape, the close button and a press on the backdrop close the drawer. The backdrop uses the `overlay` color.
 - When the drawer closes, focus returns to the menu button.
-- The drawer slides in over 450ms with `ease-slide` (DR-227). With reduced motion, the drawer opens with no slide.
+- The drawer opens and closes with the shadcn `Sheet` default slide (DR-280). With reduced motion, the drawer opens with no slide.
 - A category with child items is an accordion (shadcn `Collapsible`). It opens with no animation (DR-227). All accordions are closed when the drawer opens, except the current category (DR-181).
 - The current page has `aria-current="page"` and `interactive` text, like the nav row (DR-226).
 - The social links are on a band pinned to the bottom of the drawer. The list above it scrolls (DR-182).
 
 Search:
 
-- From 768px (tablets, laptops, desktops), the search icon button is next to the menu button at the start. It opens a modal search dialog (shadcn `Dialog`, restyled, DR-228) with the search field and a Trending row. The dialog has no open or close animation (DR-227). Focus moves to the field. Escape, the close button and a press on the backdrop close the dialog. Focus then returns to the search button.
+- From 768px (tablets, laptops, desktops), the search icon button is next to the menu button at the start. It opens a modal search panel (shadcn `Drawer` from the top, restyled, DR-280; focus goes to the panel itself, DR-249) with the search field and a Trending row. It opens and closes with the shadcn slide (DR-280; replaces the no-animation rule of DR-227). Focus moves to the field. Escape, the close button and a press on the backdrop close the dialog. Focus then returns to the search button.
 - Below 768px (phones), the bar has no search icon. Search is the first item in the drawer (two steps: menu, then search).
 
 ## 7. Homepage
@@ -221,11 +225,11 @@ Search:
 
 | # | Row | Container |
 | --- | --- | --- |
-| 1 | Top ad | Ad |
-| 2 | Header | Full / shell |
+| 1 | Header | Full / shell |
+| 2 | Top ad (DR-295) | Ad |
 | 3 | P-1 Hero | Shell |
 | 4 | Ad band | Ad |
-| 5 | P-4 বিশ্লেষণ ও মতামত (analysis and opinion) | Shell, with its own background inside the shell |
+| 5 | P-4 বিশ্লেষণ ও মতামত (analysis and opinion) | Panel band: full-width background, content in the shell (DR-264) |
 | 6 | Ad band | Ad |
 | 7 | P-2 Featured category (বাংলাদেশ) | Shell |
 | 8 | Ad band | Ad |
@@ -273,20 +277,20 @@ The component sheets in `component-system.md` give the looks and sizes. This sec
 
 **P-1 lead story.** The lead text panel overlaps the bottom of the lead image at every width (`LeadStory`, C-01). The panel uses the page color (`background`), so text never sits on the photo. The panel grows down, never up. Every hero story has an image (DR-91). The two top stories are `OverlapCard`s: the text block covers the image bottom and leaves a notch of image at the end side (DR-105, DR-109).
 
-**P-4 বিশ্লেষণ ও মতামত.** The section has the shell width (1280px on FHD), like every other section. It is not a full-width row. Its background is `surface-elevated`, inside the shell only. This color differs from the page background and from the ad rows (`surface-alt`). Only the opinion column has a label chip ("মতামত", brand fill, not a link, DR-112). The analysis column has no chip. Each column has its own "আরও দেখুন" link below its last item (`LAY-18`). Both columns align to the top and end where their content ends. Analysis is the left column. The section name is "বিশ্লেষণ ও মতামত", so the name follows the column order. Put `space-module` before and after the section, outside the background, as margin (`LAY-12`, DR-205). The background uses the panel inset (Section 5.3, `LAY-20`, DR-224).
+**P-4 বিশ্লেষণ ও মতামত.** The section is a panel band (Section 5.3, DR-264): the `surface-elevated` background spans the full viewport width; the content stays in the shell (page gutter at the sides, 1280px maximum). This color differs from the page background and from the ad rows (`surface-alt`). Only the opinion column has a label chip ("মতামত", brand fill, not a link, DR-112). The analysis column has no chip. Each column has its own "আরও দেখুন" link below its last item (`LAY-18`). Both columns align to the top and end where their content ends. Analysis is the left column. The section name is "বিশ্লেষণ ও মতামত", so the name follows the column order. Put `space-module` before and after the section, outside the background, as margin (`LAY-12`, DR-205). The background uses the panel inset (Section 5.3, `LAY-20`, DR-224).
 
 **P-3b Regions slider.** From 600px:
 
-- The region panels are in one row. A button press moves the row one region (column width + gap) with a transform: 450ms, `cubic-bezier(0.22, 1, 0.36, 1)` (DR-151).
+- The region panels are in one scroll-snap row (`@utility region-row`, Section 12.3). A button press scrolls the row one region (column width + gap): the scroll position animates over 450ms with `cubic-bezier(0.22, 1, 0.36, 1)` (DR-227, DR-284). Do not use a transform: native scrolling keeps swipe and keyboard focus working.
 - The previous and next buttons are in the heading row, at the end. They show when more regions exist than are in view (DR-140). At each end, the button for that direction is disabled (`aria-disabled`, so focus stays). No loop and no autoplay. Swipe works. The scrollbar is hidden.
-- The button colors change over 200ms. With reduced motion there is no transition.
+- The button colors change over 200ms. With reduced motion there is no transition and no animated scroll (DR-151).
 - All regions are in the HTML, so the keyboard reaches every link.
 - The buttons have the names "আগের অঞ্চল" and "পরের অঞ্চল".
 - One "আরও দেখুন" link to the regions page is at the section end (DR-142, DR-160). The region panels have no link of their own.
 
-Below 600px, the regions are tabs (`tablist`, arrow keys, `aria-selected`). The tabs are outline chips; the selected chip has the interactive fill (DR-140). A chip is as wide as its label and 44px tall or more. The selected chip scrolls into view. One region panel shows.
+Below 600px, the regions are tabs (`tablist`, arrow keys, `aria-selected`). The tabs are outline chips; the selected chip has the interactive fill (DR-140). A chip is as wide as its label and 44px tall or more. The selected chip scrolls into view. One region panel shows. A chip press fades the current panel out over 200ms, then fades the new panel in over 200ms; opacity only, nothing moves. With reduced motion the panel changes at once (DR-284).
 
-**P-3 rail: daily poll.** In prototype run 2 the rail holds the daily poll only (`DailyPoll`, C-26, DR-239): heading, one question, 2 to 4 options, a vote button, then the results in the option rows. One vote per browser. Mock data. No section divider (DR-128). It never uses the ad label or ad colors. The panel uses the panel inset (Section 5.3, DR-224). From 1024px the poll is at the top of the 304px rail. From 1280px the `ad-rail` slot is `space-module` below it (Section 9, DR-240, DR-242, DR-245). Below 1024px it takes the full row below the blocks, with the question at the start and the options at the end.
+**P-3 rail: daily poll.** In prototype run 2 the rail holds the daily poll only (`DailyPoll`, C-26, DR-239): heading, one question, 2 to 4 options, a vote button, then the results as one bar per option. One vote per browser. Mock data. No section divider (DR-128). It never uses the ad label or ad colors. It has no panel: it sits on `background` with no inset, like every section (DR-273). From 1024px the poll is at the top of the 304px rail. From 1280px the `ad-rail` slot is `space-module` below it (Section 9, DR-240, DR-242, DR-245). Below 1024px it takes the full row below the blocks, with the question at the start and the options at the end.
 
 **Newsletter (after prototype run 2).** `NewsletterSignup` (C-14) is paused for run 2 and comes in a later phase (DR-239). Its spec stays: heading, one line of text, email field with an attached button, privacy link, and error, sending and done states (DR-129 to DR-137, DR-229). In that phase it is at the top of the rail with `space-rail-modules` between it and the poll; at 600–1023px it is a full row with the heading on top, then the text line and the form side by side (DR-135).
 
@@ -309,8 +313,8 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 
 | Slot | Where | Phone and 600 | 768 | From 1024 | Reserved height |
 | --- | --- | --- | --- | --- | --- |
-| `ad-top` | First row, above the header | 320×100 or 320×50 | 728×90 | 970×250, 970×90 or 728×90 | 100 / 90 / 250 |
-| `ad-band` | After the hero, Opinion, each featured category and Most read | 336×280 (from 336px), 300×250 below 336px | 728×90 or 300×250 | 970×250, 970×90 or 728×90 | 280 / 250 / 250 |
+| `ad-top` | Below the header (below the nav row from 1280), above the hero (DR-295) | 320×100 or 320×50 | 728×90 | 970×250, 970×90 or 728×90 | 100 / 90 / 250 |
+| `ad-band` | After the hero, Opinion, each featured category and Most read | 336×280 (from 336px), 300×250 below 336px | 728×90 (DR-315) | 970×250, 970×90 or 728×90 | 280 / 90 / 250 |
 | `ad-inset` | Between category rows in P-3, at wrapper width. No full-width row. Full screen width under 332px | 300×250 | 300×250 | 300×250; 728×90 from 1280 | 250; 90 from 1280 |
 | `ad-rail` | Homepage P-3 rail, below the poll (DR-240). Article pages later | – | – | From 1280 only: 300×600 or 300×250 (DR-241, DR-245) | 600 from 1280 |
 | `ad-inline` | Article pages only | Later | Later | Later | – |
@@ -323,7 +327,7 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 - Ad rows have no padding, margin or gutter at any width.
 - No ad is sticky or fixed at any width.
 - The homepage has 3 `ad-inset` slots or fewer. Rows after the third inset have no ad between them.
-- On phones, put 600px of editorial content or more between two ads. Skip an inset when the rows between are shorter.
+- Place one `ad-inset` after every 2nd category row, 3 or fewer. Do not place one after a row that has only text stories. The server sets the count; there is no run-time height check (DR-276).
 - The homepage has one rail ad: `ad-rail` in the P-3 rail, below the poll, from 1280 only (DR-240, DR-245). Under 1280 there is no rail ad. It is `space-module` below the poll (DR-242). The 300×250 creative sits at the top of the 600 reserve (DR-241).
 - Ad space is 30% of the page height or less. The phone estimate is approximately 20%.
 - Phase 1: static images from direct-sold networks, no timed refresh. Phase 2: programmatic fill (Google Ad Manager) in the same slots.
@@ -452,7 +456,7 @@ Give ad slots their width and reserved height from the `--ad-*` tokens in Sectio
 
 ### LAY-20 Use the panel inset in a colored panel
 
-Give every colored panel the `panel-inset` utility (Section 5.3). Do not type a panel padding in a component (DR-224).
+Give every colored panel the `panel-inset` utility (Section 5.3). Do not type a panel padding in a component (DR-224). A panel band uses the block values only; its content is in the shell (DR-264).
 
 ### LAY-21 Use the 4px scale for one-component values
 
@@ -502,7 +506,7 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
   --gutter-page: 1rem;
   --grid-columns: 4;
   --grid-column-gap: 1rem;
-  --grid-row-gap: var(--grid-column-gap);
+  --grid-row-gap: 1.25rem;
 
   --space-page-start: 1.5rem;
   --space-section: 3rem;
@@ -539,13 +543,13 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
 }
 
 @media (min-width: 37.5rem) {
-  :root { --gutter-page: 1.5rem; }
+  :root { --gutter-page: 1.5rem; --grid-row-gap: 1.5rem; }
 }
 
 @media (min-width: 48rem) {
   :root {
     --grid-columns: 8;
-    --grid-column-gap: 1.25rem;
+    --grid-column-gap: 1.5rem;
     --space-page-start: 2rem;
     --space-section: 4rem;
     --space-section-compact: 2.5rem;
@@ -553,14 +557,13 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
     --space-section-title-after: 1.5rem;
     --ad-top-w: 728px;
     --ad-top-h: 90px;
-    --ad-band-h: 250px;
+    --ad-band-h: 90px;
   }
 }
 
 @media (min-width: 64rem) {
   :root {
     --grid-columns: 12;
-    --grid-column-gap: 1.5rem;
     --space-page-start: 2.5rem;
     --space-section: 5rem;
     --space-section-compact: 3rem;
@@ -569,11 +572,13 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
     --bar-height: 4rem;
     --ad-top-w: 970px;
     --ad-top-h: 250px;
+    --ad-band-h: 250px;
   }
 }
 
 @media (min-width: 80rem) {
   :root {
+    --grid-column-gap: 2rem;
     --ad-inset-w: 728px;
     --ad-inset-h: 90px;
     --ad-rail-w: 300px;
@@ -658,13 +663,38 @@ Write the container classes as Tailwind `@utility` rules, not as plain CSS. Tail
 html {
   scroll-padding-top: var(--scroll-offset);
 }
+
+/* P-3b region slider, from 600px (below 600px the regions are tabs). DR-284, DR-291 */
+@utility region-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - var(--grid-column-gap)) / 2);
+  column-gap: var(--grid-column-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  /* 4px of room for the focus ring; the columns stay in line with the shell */
+  margin: -0.25rem;
+  padding: 0.25rem;
+  scroll-padding: 0.25rem;
+  & > * { scroll-snap-align: start; }
+  &::-webkit-scrollbar { display: none; }
+  @media (width >= 64rem) {
+    grid-auto-columns: calc((100% - 2 * var(--grid-column-gap)) / 3);
+  }
+  @media (width >= 80rem) {
+    grid-auto-columns: calc((100% - 3 * var(--grid-column-gap)) / 4);
+  }
+}
 ```
 
-The top bar has no own CSS class. `TopBar` sets `sticky top-0 z-(--z-bar) h-(--bar-height)` in its classes (DR-234).
+The buttons animate `scrollLeft` (450ms, `--ease-slide`), not a transform (DR-284). Copy this block into `components.css`; if the built utility differs, the code follows this block.
+
+The top bar has no own CSS class. `TopBar` sets `sticky top-0 z-(--z-bar) min-h-(--bar-height)` in its classes (DR-234, DR-265). At 200% text the bar wraps to 2 lines: row 1 menu and logo, row 2 the controls at the end. It stays sticky.
 
 ### 12.4 Base rules
 
-Put these rules in `app/globals.css`, after the imports. Color Section 5 gives the base rules for the page colors, borders, focus and placeholders.
+Put these rules in `app/globals.css`, after the imports (Section 12.5). Color Section 5 gives the base rules for the page colors, borders, focus and placeholders.
 
 ```css
 @layer base {
@@ -692,6 +722,21 @@ Set `--card-parts` on each card variant: it equals the number of card parts (4 w
 
 Always use `minmax(0, 1fr)`. It stops long words from making a track wider.
 
+### 12.5 globals.css imports
+
+This is the one list of the `app/globals.css` imports (DR-339). Other documents link here; they do not state their own order. Import the files in this order, then write the base rules (Section 12.4):
+
+```css
+@import "tailwindcss";
+@import "shadcn/tailwind.css";
+@import "../styles/colors.css";      /* color-system.md Section 5 */
+@import "../styles/layout.css";      /* this document, Sections 12.1 to 12.3 */
+@import "../styles/typography.css";  /* typography-system.md Section 8 */
+@import "../styles/components.css";  /* component-system.md Section 6 */
+```
+
+Do not add other imports. Do not import `tw-animate-css` (DR-236). Do not load fonts with a CSS `@import` (typography Section 8.1).
+
 ## 13. Validation
 
 Test every homepage section at these widths: 320, 360, 600, 768, 834, 1024, 1180, 1280, 1366, 1440 and 1920. Test each width with reader size A++.
@@ -702,7 +747,7 @@ Test these content cases:
 - Stories with no image
 - Sparse sections (Section 7.3)
 - Two top-story cards at 1024px and 1280px
-- The first screen at 1366×768. The browser UI takes about 118px, so about 650px of viewport shows. The top ad (274), bar (64) and nav row (48) leave about 264px for the hero. The lead headline can show only after the reader scrolls (DR-257)
+- The first screen at 1366×768. The browser UI takes about 118px, so about 650px of viewport shows. The bar (64), nav row (48) and top ad (274, now below the nav row, DR-295) leave about 264px for the hero. The lead headline can show only after the reader scrolls (DR-257)
 - The Bangla nav row at 1280px
 - 200% browser text size: no row scrolls sideways. Most read and the AnalysisSection rows stack, and the TopBar can wrap (DR-81)
 
@@ -710,14 +755,47 @@ Test these content cases:
 
 ### 14.1 Homepage
 
-- Check the bar and nav row heights in prototype run 2 (Section 6).
-- Check gutters, gaps and section space by eye in prototype run 2. Change tokens only (L-62).
+- None. Bar and nav row heights: DR-295. Gaps: DR-300 (L-62 closed).
 
 ### 14.2 Article and other pages (not yet revised)
 
 L-01, L-02, L-03, L-13, L-15 to L-20 and L-22 are open. The article layout, media widths, the context module and category pages are not defined. Do not build them until the article layout pass is complete (DR-259). The article pass starts from version 1.1.1, Sections 17 to 19, which the blueprint project keeps in its archive. It is not in the repository and it is not a spec.
 
 ## 15. Changelog
+
+**2.18 (15 October 2026)**
+
+- Section 14.1: the run 2 height and spacing checks are closed (DR-295, DR-300; L-62 closed).
+
+**2.17 (15 October 2026)**
+
+- New Section 12.5: the one `globals.css` import list and order (DR-339).
+- Section 6: the theme choice is kept in local storage, key `fl-theme` (DR-340).
+
+**2.16 (15 October 2026)**
+
+- `ad-band` at 768–1023: 728×90 only, reserve 90 (DR-315).
+- Search panel: shadcn slide, not 'no animation' (DR-280).
+
+**2.15 (15 October 2026)**
+
+- Column gap 16px (phones and 600), 24px from 768, 32px from 1280; it applies wherever blocks sit side by side, also image and text in a card and the quote mark. Row gap is its own token: 20px on phones, 24px from 600. Wrapper 896 at 1280, 944 from 1366 (DR-300).
+
+**2.14 (14 October 2026)**
+
+- Region slider: scroll-snap row moved by its scroll position, no transform; phone tab panels fade 200ms out and in; `region-row` block in §12.3 (DR-284, DR-291).
+- Top ad moves below the header (below the nav row from 1280), above the hero; amends DR-197. Logo 32 / 28 / 20px at the top, 24px when stuck; sticky rule at every width; equal icon-pair gaps (DR-295). `data-bar-stuck` contract (DR-287).
+
+**2.13 (13 October 2026)**
+
+- Search is a shadcn `Drawer` from the top; the menu Sheet and the search Drawer use the shadcn default slide; search focus goes to the panel (§6, DR-280). Amends DR-227, DR-228, DR-249.
+- Ad insets: one after every 2nd category row, 3 or fewer, none after a text-only row; no 600px check (§9, DR-276).
+- `DailyPoll` has no panel and no panel inset; it sits on `background` (§5.3, P-3, DR-273). Amends DR-224 for the poll.
+
+**2.12 (13 October 2026)**
+
+- P-4 and the footer are panel bands: full-width `surface-elevated`, content in the shell, block inset only (§5.3, §7.1, §7.4, LAY-20, DR-264). Amends DR-76.
+- Top bar: `min-h-(--bar-height)`; it wraps to 2 lines at 200% text; `--scroll-offset` follows the real bar height (§6, §12.3, DR-265).
 
 **2.11 (10 October 2026)**
 

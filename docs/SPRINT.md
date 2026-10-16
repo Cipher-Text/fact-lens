@@ -1,13 +1,23 @@
 # Homepage Prototype Sprint
 
-This is a small sprint for a simple prototype: one homepage, mock data, Bangla and English. It is not a full website.
+Version 3.0 · 16 October 2026 · Run 3 (fix run)
+
+This sprint builds a simple prototype: one homepage, mock data, Bangla and English. It is not a full website.
+
+## Past runs (summary)
+
+| Run | Dates | Result |
+| --- | --- | --- |
+| Run 1 | to 6 Oct 2026 | First homepage build, tickets FL-01 to FL-13. Findings went to the blueprint as DOC-, U- and IMP- items. Record: `docs/milestone-1-report.md`. |
+| Run 2 | 7 to 11 Oct 2026 | Homepage rebuilt from the component sheets, tickets R2-00 to R2-21. PR #1 merged (`8863410`). Chromium e2e passed; WebKit had 40 failures (`docs/webkit-failures.md`). Audit: `PROTOTYPE_RUN_2.md`, merged by PR #4 (`0225398`). |
+| Run 2 review | 12 to 16 Oct 2026 | The blueprint decided all run 2 findings (DR-262 to DR-344) and updated the specs. Run 3 puts these decisions in the code. |
 
 ## How it works
 
 - Claude does one ticket at a time: plan, build, test, verify.
 - Claude asks tajmin before a command that needs permission.
 - At the end of a ticket, Claude stops and gives tajmin the test steps.
-- tajmin tests the ticket. tajmin replies with problems, or types `/accept`.
+- tajmin tests the ticket and replies with problems, or types `/accept`.
 - Claude starts the next ticket only after `/accept` and a new `/ticket`. tajmin runs `/clear` between tickets.
 
 | Command | Who | Does |
@@ -15,251 +25,140 @@ This is a small sprint for a simple prototype: one homepage, mock data, Bangla a
 | `/ticket` | tajmin | Claude starts the next ticket that is "To do" |
 | `/accept` | tajmin | Claude marks the ticket "Done", commits and pushes the current branch |
 
-## Run 1 board (record)
+## Run 3
 
-Prototype run 1 finished on 8 October 2026. tajmin rejected FL-14. The report is `docs/milestone-1-report.md`. The run 1 handover note is in the git history of `docs/HANDOVER.md`; the file now describes the state after run 2 (rewritten 13 October 2026).
+Run 3 is a fix run. It changes the run 2 code so that it agrees with the current specs. It adds no new feature and no new page. Mock data only.
 
-| Ticket | Title | Status |
-| --- | --- | --- |
-| FL-01 | Project setup | Done |
-| FL-02 | Design foundations | Done |
-| FL-03 | Layout parts | Done |
-| FL-04 | Mock content | Done |
-| FL-05 | Header | Done |
-| FL-06 | Hero | Done |
-| FL-07 | বিশ্লেষণ ও মতামত | Done |
-| FL-08 | Featured categories | Done |
-| FL-09 | Grouped categories | Done |
-| FL-10 | Most read | Done |
-| FL-11 | Regions | Done |
-| FL-12 | Footer | Done |
-| FL-13 | Final check | Done |
-| FL-14 | Preview deploy (optional) | Rejected |
-
-## Run 2
-
-Run 2 builds the homepage again from the component sheets in `docs/design-system/component-system.md` and the current specs. It uses the run 1 code: change a file in place, or write it again when its sheet is very different. Mock data only.
-
-Status: finished on 11 October 2026. All 22 tickets are Done; PR #1 (run 2), PR #2 (Claude workflows) and PR #3 (R2-21 bookkeeping) are merged into `main`. The audit of run 2 (12 and 13 October 2026) is `PROTOTYPE_RUN_2.md`. A "Result" line under a ticket below records where the outcome differs from its "Done" line.
+Each ticket groups fixes of the same kind. A ticket names the decisions (DR-) and the spec sections. The decision register is not in this repository: read the rule in the spec section, not the DR. If the code and the spec do not agree, the spec is correct.
 
 ### Branch
 
-Record: these rules applied during run 2. `prototype-run-2` was deleted in R2-21.
+- All run 3 work happens on the branch `prototype-run-3`, made from `main` at `0225398`.
+- `/accept` commits each ticket on `prototype-run-3` and pushes that branch. Do not commit to `main` or push to `main`.
+- `main` changes only in R3-09, when the pull request merges with a merge commit, on tajmin's explicit go.
 
-- All run 2 work happens on the branch `prototype-run-2`, made from `main` in R2-00.
-- `/accept` commits each ticket on `prototype-run-2` and pushes that branch. Do not commit to `main` or push to `main` during run 2.
-- `main` changes only in R2-21, when the pull request merges.
+### Log and findings
 
-### Log
-
-- `docs/run-2-log.md` has one row per ticket: dates, result, rounds of fixes, spec findings and commit.
-- `/accept` adds the row in the same commit as the ticket. A rejected ticket also gets a row.
+- `docs/run-3-log.md` has one row per ticket: dates, result, rounds of fixes, spec findings and commit. `/accept` adds the row in the same commit as the ticket. A rejected ticket also gets a row.
+- At the end of each ticket, add new findings to `docs/prototype-findings.md` and update the status of the items that the ticket fixed (DR-333).
 
 ### Rules for every ticket
 
-- Read `AGENTS.md`, `docs/design-system/agent-contract.md` Sections 5 to 9, and only the spec sections that the ticket names. The specs are the only source.
+- Read `AGENTS.md`, `docs/design-system/agent-contract.md` Sections 5 to 9, and only the spec sections that the ticket names.
 - If no rule answers a question, or the only fix is a workaround, or two rules disagree: report `UNRESOLVED_DESIGN_SYSTEM` with the rule IDs and ask tajmin. Do not choose a value.
-- Test each section in Bangla (`/`) and English (`/en`), light and dark, at the widths in `spacing-layout-system.md` §13. Run axe and a keyboard pass.
-- The "Done" lines of a ticket are its acceptance criteria. For every ticket also: `pnpm check` passes, the section tests pass, and `design-reviewer` says `Verdict: pass`.
+- Test in Bangla (`/`) and English (`/en`), light and dark, at the widths in `spacing-layout-system.md` §13. Run axe and a keyboard pass.
+- The "Done" lines are the acceptance criteria. For every ticket also: `pnpm check` passes, `pnpm test:e2e:chromium` passes, and `design-reviewer` says `Verdict: pass`.
+- Do not weaken, skip or delete a test.
 
-### Run 2 board
+### Before R3-00
 
-Status values: To do, In progress, In review, Done, Rejected. A ticket starts only when its "Needs" tickets are Done.
+The specs in `docs/design-system/` must be the 16 October versions (layout 2.18, color 2.12, typography 2.14, component-system 1.12, agent-contract 2.7). They were copied from the blueprint on 16 October 2026. Do not start R3-00 with older specs.
 
-| Ticket | Title | Needs | Status |
-| --- | --- | --- | --- |
-| R2-00 | Start the run 2 branch | – | Done |
-| R2-01 | Clean up from run 1 | R2-00 | Done |
-| R2-02 | Foundations CSS | R2-00 | Done |
-| R2-03 | Mock content | R2-02 | Done |
-| R2-04 | Small parts | R2-02 | Done |
-| R2-05 | Page chrome | R2-04 | Done |
-| R2-06 | Ad slots and page frame | R2-03 | Done |
-| R2-07 | Story units | R2-04 | Done |
-| R2-08 | Hero (P-1) | R2-07 | Done |
-| R2-09 | Analysis and opinion (P-4) | R2-07 | Done |
-| R2-10 | Featured categories (P-2) | R2-07 | Done |
-| R2-11 | Grouped categories and rail (P-3) | R2-06, R2-07 | Done |
-| R2-12 | Most read (P-5) | R2-07 | Done |
-| R2-13 | Regions (P-3b) | R2-07 | Done |
-| R2-14 | Footer | R2-04 | Done |
-| R2-15 | 200% text size | R2-08 to R2-14 | Done |
-| R2-16 | Spacing check | R2-15 | Done |
-| R2-17 | Final check | R2-16 | Done |
-| R2-18 | Branch preview | R2-17 | Done |
-| R2-19 | Pull request | R2-18 | Done |
-| R2-20 | Code review | R2-19 | Done |
-| R2-21 | Merge into main | R2-20 | Done |
+## Run 3 board
 
-## Run 2 tickets
+| Ticket | Title | Status |
+| --- | --- | --- |
+| R3-00 | Kit, scripts and test fixes | To do |
+| R3-01 | Names and structure | To do |
+| R3-02 | Header, panels and theme | To do |
+| R3-03 | Dividers, gaps and panel band | To do |
+| R3-04 | Story units and images | To do |
+| R3-05 | DailyPoll | To do |
+| R3-06 | Regions and Most read | To do |
+| R3-07 | Ads | To do |
+| R3-08 | Accessibility, language and footer | To do |
+| R3-09 | Final check, pull request and merge | To do |
 
-### R2-00 Start the run 2 branch
+## Run 3 tickets
 
-- Goal: run 2 starts from a clean `main` that has the final sync, on its own branch.
-- Check: `git status` is clean on `main`, and `main` is level with `origin/main`. The spec headers show `color-system.md` v2.7, `typography-system.md` v2.8, `spacing-layout-system.md` v2.11, `component-system.md` v1.2, `agent-contract.md` v2.4. There is no `.claude-sync.patch` and no `.claude/rules/.probe`. If one check fails, stop and tell tajmin.
-- Do: `git switch -c prototype-run-2`, then `git push -u origin prototype-run-2` (asks tajmin). Change `.claude/skills/accept/SKILL.md` step 5: push the current branch (`git push`), and stop if the current branch is `main`. Add step 3b to the accept skill: add the ticket's row to `docs/run-2-log.md`. Set "Now" in `docs/PROGRESS.md` to run 2.
-- Done: `git branch --show-current` prints `prototype-run-2`; the branch is on GitHub; the accept skill no longer pushes to `main` and adds the log row; R2-00 is the first row in `docs/run-2-log.md`.
+### R3-00 Kit, scripts and test fixes
 
-### R2-01 Clean up from run 1
+- Goal: the tools and the base files agree with the specs before the component work.
+- Decisions: DR-289, DR-309, DR-285, DR-339, DR-313, DR-324, DR-272, DR-290.
+- Read: `spacing-layout-system.md` §12.5; `agent-contract.md` §4 and §10.
+- Do: add the script `test:e2e:chromium`. Set the `globals.css` imports to the §12.5 order (add `shadcn/tailwind.css`, remove `tw-animate-css` and its package). Fix the tests that the decisions name. Add the mock fields `readingMinutes` and `rank`.
+- Done: `pnpm check` and `pnpm test:e2e:chromium` pass; `globals.css` matches §12.5.
 
-- Goal: remove run 1 leftovers so tests and the repo stay small.
-- Read: `docs/HANDOVER.md` §5 only (the run 1 version; the file was rewritten on 13 October 2026).
-- Touch: `playwright.config.ts`, the `?content=sparse` code in `src/`, `docs/fl-13/`, `tests/final-check/`.
-- Do: delete `docs/fl-13/` and `tests/final-check/` if they still exist (tajmin approves the delete). Keep `?content=sparse` only in development (`NODE_ENV !== 'production'`). Add a WebKit project to Playwright for Bangla shaping on Safari.
-- Done: the sparse URL shows full content in `pnpm build && pnpm start`; `pnpm test:e2e --project=webkit -g header` runs.
+### R3-01 Names and structure
 
-### R2-02 Foundations CSS
+- Goal: component names, files and markup agree with `component-system.md` Section 3.
+- Decisions: DR-286, DR-271, DR-267, DR-283, DR-326, DR-323.
+- Read: `component-system.md` §3 and the sheets of the changed components.
+- Do: rename RankedList, Footer parts and helpers. Add WithRail. Change the StoryCard markup and layout values and the OverlapCard `surface` prop. Remove dead code. Use `next/link` for internal links.
+- Done: no old name stays in `src/` or the tests; no visual change except where a sheet requires it.
 
-- Goal: the token CSS is the spec CSS.
-- Read: `color-system.md` §5; `typography-system.md` §8; `spacing-layout-system.md` §12.
-- Touch: `src/styles/colors.css`, `typography.css`, `layout.css`; delete `src/styles/ads.css` and its import.
-- Do: replace each file with its spec block, unchanged. Do not change components in this ticket.
-- Done: no token in `src/` is undefined (`pnpm build` has no CSS warnings); a list of components that use a removed token goes in the report for the later tickets.
+### R3-02 Header, panels and theme
 
-### R2-03 Mock content
+- Goal: the TopBar, NavBar, drawer, search panel and theme follow the current sheets.
+- Decisions: DR-280, DR-330, DR-249, DR-265, DR-322, DR-295, DR-306, DR-287, DR-269, DR-281, DR-340, DR-302, DR-331, DR-303, DR-301, DR-294.
+- Read: the header sheets in `component-system.md` §7; `spacing-layout-system.md` §6.
+- Do: use the shadcn Sheet (drawer) and Drawer (search). Set the TopBar min-height and wrap, the bar and nav heights, the logo type, the stuck state and the SkipLink. Theme: `.dark` class only, storage key `fl-theme`. Remove Op-ed. Fix the anchors and the moon icon. Use the §6 component tokens (`--top-bar-inset`, the switch radii, `--color-theme-control`).
+- Done: both panels open, close and trap focus with the keyboard; the theme keeps its value after reload.
 
-- Goal: the content set that run 2 needs.
-- Read: `component-system.md` C-26 DailyPoll, C-16 AdSlot; `spacing-layout-system.md` §7.3, §9.
-- Touch: `src/content/`.
-- Do: remove newsletter content. Add a poll (question, 2 to 4 answers) per language. Add the mock ad for each slot: `ad-top`, the bands, `ad-inset`, `ad-rail`. Keep the long-headline, no-image and sparse cases.
-- Done: types compile; a Vitest test checks that each language has the same story IDs.
+### R3-03 Dividers, gaps and panel band
 
-### R2-04 Small parts
+- Goal: dividers, gaps and the panel band follow the layout spec.
+- Decisions: DR-262, DR-268, DR-299, DR-300, DR-264, DR-320.
+- Read: `spacing-layout-system.md` (gaps and dividers); Divider sheet (C-22).
+- Do: place the item and column dividers, set the gaps, and fix the panel band. Check Safari.
+- Done: dividers and gaps match the spec at every §13 width.
 
-- Goal: the shared parts match their sheets.
-- Read: `component-system.md` §4 (CPT, N rules), §6, and the sheets C-22 Divider, C-13 SectionHeading, C-10 MoreLink, C-08 Eyebrow, C-09 MetaLine, C-11 Chip, C-12 Button.
-- Touch: the matching files in `src/components/`. Use the names in `component-system.md` §3.
-- Do: no rounded corners, no card borders, no shadows. Links have no underline. MoreLink sits at the end edge. Button: one 48px size, 20px icons.
-- Done: a Vitest or Playwright test per part for its states (hover, focus, disabled where the sheet has one).
+### R3-04 Story units and images
 
-### R2-05 Page chrome
+- Goal: story units and images follow their sheets.
+- Decisions: DR-338, DR-325, DR-308, DR-297, DR-274, DR-272, DR-293, DR-279.
+- Read: the StoryCard, StoryListItem, OverlapCard and StoryImage sheets.
+- Do: add the image placeholder, image loading, the 17.5rem stack rule, the tokens, the time format and the reading time. Remove the Breaking label and its strings (no Breaking or Live label, COL-11).
+- Done: units stack at 200% text without clipped text.
 
-- Goal: the header and its overlays match the sheets.
-- Read: `spacing-layout-system.md` §6; `component-system.md` C-17 TopBar, C-18 NavBar, C-19 Drawer, C-20 SearchDialog.
-- Touch: `src/components/header/`.
-- Do: the same top bar at every width; menu left, logo center; on phones the theme switch and En at the right and search first in the Drawer; from 768 the search dialog. Only the top bar is sticky. The nav row shows from 1280 and shows only the items that fit. Logo: keep the text placeholder.
-- Done: keyboard test: focus moves into the Drawer and the dialog and comes back; Escape closes them. The Bangla nav row at 1280 does not overflow.
+### R3-05 DailyPoll
 
-### R2-06 Ad slots and page frame
+- Goal: DailyPoll follows its sheet.
+- Decisions: DR-273, DR-277, DR-298, DR-287, DR-319.
+- Read: DailyPoll sheet.
+- Do: fix the poll states, the panel, the stack cell and the results.
+- Done: vote and results work with the keyboard and in both languages.
 
-- Goal: every ad slot has its reserved space.
-- Read: `spacing-layout-system.md` §7.1, §9, LAY-09 to LAY-13, LAY-19; `component-system.md` C-16 AdSlot.
-- Touch: `src/components/ads/`, the homepage file in `src/app/`.
-- Do: the page order in §7.1. The top ad above the header. Full-width bands after each category section and after Most read. `ad-inset` 300x250 below 1280, 728x90 from 1280. No sticky ads.
-- Done: a Playwright test checks the reserved height of each slot at 360, 1024 and 1280, with the ad and without it.
+### R3-06 Regions and Most read
 
-### R2-07 Story units
+- Goal: RegionsSection and MostReadSection follow their sheets.
+- Decisions: DR-284, DR-291, DR-318, DR-321, DR-290, DR-288.
+- Read: the RegionsSection, RegionSlider and MostReadSection sheets.
+- Do: use the 7 regions in `bn.ts`; fix the slider, the rank list and the counts per row.
+- Done: the slider works with the keyboard; the rank list reads in order.
 
-- Goal: the story cards and lists match their sheets.
-- Read: `component-system.md` C-01 LeadStory, C-02 OverlapCard, C-03 StoryList, C-24 StoryCard, C-25 StoryListItem; `typography-system.md` §7.1.
-- Touch: `src/components/story/`.
-- Do: rebuild LeadStory from its sheet. Do not cut a title (CPT-08). Use the missing-image look from the sheet.
-- Done: tests with the long-headline and no-image content at 360, 1024 and 1280.
+### R3-07 Ads
 
-### R2-08 Hero (P-1)
+- Goal: ad slots follow the layout spec.
+- Decisions: DR-266, DR-315, DR-296, DR-276.
+- Read: `spacing-layout-system.md` §9; AdSlot sheet.
+- Do: fix the ad positions, sizes, ad-inset count and order.
+- Done: no two ad rows touch; the reserved height stops layout shift.
 
-- Read: `spacing-layout-system.md` §7.2, §7.4 (P-1); `typography-system.md` §7.1 (hero rows).
-- Touch: `src/components/home/` hero files and the hero test.
-- Do: the two top stories use the story title role from typography §7.1.
-- Done: hero tests pass; screenshot at 1024 and 1280 in both languages.
+### R3-08 Accessibility, language and footer
 
-### R2-09 Analysis and opinion (P-4)
+- Goal: the heading outline, the language switch and the footer are correct.
+- Decisions: DR-275, DR-270, DR-328, DR-329, DR-278, DR-314, DR-332.
+- Read: `agent-contract.md` §7; Footer sheet.
+- Do: fix the heading outline. Set the proxy and the `fl-lang` cookie. Fix the footer URLs and social links.
+- Done: axe shows no serious or critical violation; the language choice stays after reload.
 
-- Read: `component-system.md` P-4 AnalysisSection, C-06 OpinionList; `spacing-layout-system.md` §7.4 (P-4).
-- Touch: the analysis section files.
-- Done: tests at the §13 widths; the section background stays inside the shell.
+### R3-09 Final check, pull request and merge
 
-### R2-10 Featured categories (P-2)
+- Goal: run 3 is checked, reviewed and in `main`. The merge needs tajmin's explicit go.
+- Decisions: DR-327, DR-337, DR-341.
+- Do: run the smoke run, the WebKit keyboard check, a 200% text check and the §13 final check. Write the run 3 report. `git fetch origin main`; merge `origin/main` into the branch if it moved. Open one PR from `prototype-run-3` into `main` (asks tajmin). Merge with `gh pr merge --merge --delete-branch` on tajmin's go.
+- Done: `pnpm check` and `pnpm test:e2e:chromium` pass on `main`; WebKit results are in the report; the board is Done.
 
-- Read: `component-system.md` P-2 FeaturedCategorySection; `spacing-layout-system.md` §7.2, LAY-05.
-- Touch: the featured section files.
-- Do: build both rows (বাংলাদেশ, ভূরাজনীতি) from one component.
-- Done: tests at the §13 widths, with full and sparse content.
+## Notes for later
 
-### R2-11 Grouped categories and rail (P-3)
-
-- Read: `component-system.md` C-23 CategoryBlock, C-26 DailyPoll; `spacing-layout-system.md` §7.2, §7.4 (P-3 rail), §9 (ad-rail).
-- Touch: the grouped section files, a new DailyPoll component.
-- Do: the rail holds DailyPoll, then `ad-rail` below it from 1280 only (300x600 or 300x250, reserve 600). Do not build NewsletterSignup.
-- Done: tests: the rail ad is absent below 1280; its reserved height is 600 from 1280; the poll works with the keyboard.
-
-### R2-12 Most read (P-5)
-
-- Read: `component-system.md` C-07 RankedList; `spacing-layout-system.md` §7.2 (P-5 cards per row).
-- Touch: the Most read files.
-- Done: items per row at 360, 600, 1024 and 1280 match §7.2.
-
-### R2-13 Regions (P-3b)
-
-- Read: `component-system.md` C-15 RegionSlider; `spacing-layout-system.md` §7.4 (P-3b).
-- Touch: the regions files.
-- Do: a slider from 600, tabs below 600 (§7.4).
-- Done: the slider and the tabs work with the keyboard and with touch; no sideways page scroll at 320.
-
-### R2-14 Footer
-
-- Read: `component-system.md` C-21 Footer.
-- Touch: `src/components/footer/`.
-- Do: build the sheet as it is. The footer gets a design extension after run 2, so do not add to it.
-- Done: footer tests in both languages.
-
-### R2-15 200% text size
-
-- Goal: no row scrolls sideways at 200% browser text size.
-- Read: `spacing-layout-system.md` §13 (last case); `component-system.md` P-4, C-07, C-17; agent contract §9.
-- Do: test the homepage at 200% text size at 320, 768 and 1024. Most read and the analysis rows stack, the top bar can wrap. Keep the fix small. The specs give no trigger for the analysis-row stack: do not choose one. Report what makes it stack now as `UNRESOLVED_DESIGN_SYSTEM`.
-- Done: a Playwright test at 200% text size checks `scrollWidth` at each width; the report lists the open trigger question.
-
-### R2-16 Spacing check (visual-qa only, no code)
-
-- Goal: help tajmin judge if the gutter, column gap and section space are too tight.
-- Do: full-page screenshots at 1024, 1280 and 1920 with the current tokens, then with one step up (gutter 24 to 32, column gap 24 to 32, space-module 40 to 48) set in a local CSS override that is not committed.
-- Done: the screenshot pairs are in `test-results/spacing/`. tajmin decides. A token change needs tajmin's yes and a spec change first.
-- Result: 12 screenshots were made and not committed, by design. They are gone: `pnpm test:e2e` clears `test-results/` at the start of each run. Rerun this ticket to see them again. No token change.
-
-### R2-17 Final check
-
-- Goal: run the run 1 final check (FL-13) again on run 2.
-- Read: `spacing-layout-system.md` §13; `agent-contract.md` §10.
-- Do: every §13 width and content case, both languages, both themes, axe, keyboard, the first screen at 1366x768.
-- Done: a table of results in `docs/PROGRESS.md`, with each problem as a ticket fix or an `UNRESOLVED_DESIGN_SYSTEM` item.
-
-### R2-18 Branch preview
-
-- Goal: a preview URL of the branch for tajmin, before the pull request. Needs tajmin's go before any deploy command.
-- Do: deploy `prototype-run-2` as a preview, not production. Test `/` with and without the language cookie; send `Cache-Control: private, no-store` on the redirect if needed. Links to pages that do not exist yet stay 404, or go to one "coming later" page, as tajmin chooses.
-- Done: the preview URL works in both languages; tajmin opens it. If tajmin skips the preview, set this ticket to Rejected and go on.
-
-### R2-19 Pull request
-
-- Goal: one pull request from `prototype-run-2` into `main`.
-- Do: `git fetch origin main`. If `main` moved, merge `origin/main` into the branch, fix conflicts, and run the checks again. Run `pnpm check` and the full `pnpm test:e2e`. Push. Then `gh pr create --base main --head prototype-run-2 --title "Prototype run 2: homepage"` (asks tajmin).
-- PR body: what changed per ticket (one line each), the open `UNRESOLVED_DESIGN_SYSTEM` items, the R2-17 result table link, the preview URL, and test steps.
-- Done: the PR URL is in `docs/PROGRESS.md`; all checks pass on the branch.
-- Result: PR #1 (`https://github.com/tajmin/fact-lens-web/pull/1`). The URL was not written into `docs/PROGRESS.md` at the time; added to the R2-19 Done row on 13 October 2026. `pnpm check` and Chromium e2e (561) passed; WebKit had 40 failures, listed in `docs/webkit-failures.md`. So the full `pnpm test:e2e` did not pass (R2A-39 in `PROTOTYPE_RUN_2.md`).
-
-### R2-20 Code review
-
-- Goal: Claude on GitHub reviews the whole pull request once, before the merge. It needs the Claude GitHub app on the repo (`/install-github-app` in Claude Code, once).
-- Review goals:
-  1. Specs: the code follows the rule IDs (COL, TYP, LAY, CPT, N). No raw values, rounded corners, card borders or shadows.
-  2. Readers: both languages work, the keyboard reaches every control, and no row scrolls sideways.
-  3. Bugs: no logic errors, broken imports or links, or dead code left from run 1.
-  4. Tests: no test is skipped or weakened, and each section has its tests.
-- Guideline: comment only with a rule ID or a clear bug. Mark each comment blocker, fix or note. No style opinions. Do not push code. A spec gap is a note marked `UNRESOLVED_DESIGN_SYSTEM` for tajmin.
-- Do: tajmin comments on the PR: `@claude review this PR with the R2-20 goals and guideline in docs/SPRINT.md.`
-- Done: inline comments plus one summary comment with the count per severity. tajmin can add own comments. The review does not lead to code fixes: run 2 tests the specs, so each finding goes to `docs/prototype-findings.md` as a spec gap, a spec conflict or a code issue, for the blueprint to resolve.
-- Result: one summary comment (0 blockers, 2 fix, 5 note), no inline comments. Findings IMP-53 to IMP-57. The workflow in `.github/workflows/claude-code-review.yml` runs the generic `/code-review` plugin on every PR event, has `pull-requests: read` and does not use the R2-20 goals (R2A-18).
-
-### R2-21 Merge into main
-
-- Goal: run 2 is in `main`. Needs tajmin's explicit go.
-- Do: `gh pr merge --merge --delete-branch` (a merge commit keeps one commit per ticket). Then `git switch main`, `git pull origin main`, and `pnpm check` on `main`. Set "Now" in `docs/PROGRESS.md` to "run 2 finished" and set the run 2 board to Done, in one commit on a short branch with its own PR, or as tajmin says.
-- Done: the PR shows Merged; `main` builds and its tests pass; the branch `prototype-run-2` is deleted.
-- Result: PR #1 merged (`8863410`), `prototype-run-2` deleted, `pnpm check` green on `main`. The bookkeeping went in through PR #3 from the branch `r2-21-run-2-finished` (`f4b4b7e`; remote `main` is now `931b0f8`). That branch and the PR #2 branch `add-claude-github-actions-1791724540471` still exist on the remote (R2A-21).
-
-## After run 2
-
-- No ticket is open. Do not start one until tajmin plans the next run.
-- Done on 13 October 2026: the docs and tracking clean-up in `PROTOTYPE_RUN_2.md` §9 steps 1 to 4 (findings statuses, `PROGRESS.md` tables, `HANDOVER.md`, `milestone-1-report.md` banner, `README.md` status). Step 5 (findings update in `/ticket` and `/accept`, R2A-17) is not done: tajmin chose not to edit the skills.
-- Open flags and decisions for tajmin: `docs/HANDOVER.md` §4 and `PROTOTYPE_RUN_2.md` §7.
+- Do not deploy. The live preview (https://fact-lens-web-ashy.vercel.app/) is for compare only.
+- `?content=sparse` works in development only.
+- While the site is public, story, category, footer, `/regions` and `/latest` links go to 404.
+- Plain `pnpm test:e2e` fails while the WebKit failures stay. The gate is `pnpm test:e2e:chromium`.
+- Set `next/image` sizes again when real photos arrive. Add `scrollbar-gutter` if the scroll lock moves the page.
+- Check VoiceOver with `role=list` on the rank list. Check the Bangla nav row when the IA labels arrive.
+- Mock headlines name real countries; this is mock data only.
+- Ignore the Playwright MCP caret-color hydration warning. Keep `agentRules: false`.
+- The dark logo fails axe contrast until the logo SVG exists (DR-304).
+- tajmin can delete the remote branches `r2-21-run-2-finished`, `add-claude-github-actions-1791724540471` and `docs/run-2-audit`.

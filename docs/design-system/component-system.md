@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.2 · 10 October 2026 · Homepage components for prototype run 2
+Version 1.12 · 15 October 2026 · Homepage components for prototype run 2
 
 This document is the single source for the homepage components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -31,32 +31,32 @@ This file is generated from the component register of the blueprint project (`co
 
 | ID | Component | Group | Status | Decisions |
 | --- | --- | --- | --- | --- |
-| C-01 | `LeadStory` | Story units | Approved | DR-86, DR-87 |
-| C-02 | `OverlapCard` | Story units (shared cards) | Approved | DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109 |
-| C-03 | `StoryList` | Story units (shared cards) | Approved | DR-93, DR-96, DR-98, DR-101, DR-102, DR-124, DR-125 |
-| C-24 | `StoryCard` | Story units (shared cards) | Approved | DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153 |
+| C-01 | `LeadStory` | Story units | Approved | DR-86, DR-87, DR-325 |
+| C-02 | `OverlapCard` | Story units (shared cards) | Approved | DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109, DR-325 |
+| C-03 | `StoryList` | Story units (shared cards) | Approved | DR-93, DR-96, DR-98, DR-101, DR-102, DR-124, DR-125, DR-300 |
+| C-24 | `StoryCard` | Story units (shared cards) | Approved | DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153, DR-267, DR-283, DR-300, DR-308, DR-325 |
 | C-25 | `StoryListItem` | Story units (shared cards) | Approved | DR-93, DR-101, DR-102, DR-126, DR-153 |
-| P-2 | `FeaturedCategorySection` | Sections | Approved | DR-93, DR-101, DR-103, DR-108, DR-110, DR-118, DR-119, DR-121, DR-122, DR-123 |
-| P-4 | `AnalysisSection` | Sections | Approved | DR-52, DR-76, DR-93, DR-101, DR-108, DR-110, DR-111, DR-205, DR-224 |
-| C-06 | `OpinionList` | Section components | Approved | DR-52, DR-76, DR-101, DR-110, DR-112, DR-113 |
+| P-2 | `FeaturedCategorySection` | Sections | Approved | DR-93, DR-101, DR-103, DR-108, DR-110, DR-118, DR-119, DR-121, DR-122, DR-123, DR-300 |
+| P-4 | `AnalysisSection` | Sections | Approved | DR-52, DR-76, DR-93, DR-101, DR-108, DR-110, DR-111, DR-205, DR-224, DR-264, DR-268, DR-300 |
+| C-06 | `OpinionList` | Section components | Approved | DR-52, DR-76, DR-101, DR-110, DR-112, DR-113, DR-299, DR-300, DR-301 |
 | C-23 | `CategoryBlock` | Section components | Approved | DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245 |
-| C-07 | `RankedList` | Section components | Approved | DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148 |
-| C-15 | `RegionSlider` | Section parts | Approved | DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236 |
-| C-16 | `AdSlot` | Section parts | Approved | DR-127, DR-163, DR-197, DR-206, DR-207, DR-233, DR-240, DR-241, DR-242, DR-245, ad proposal (approved 5 Oct) |
+| C-07 | `RankedList` | Section components | Approved | DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148, DR-300 |
+| C-15 | `RegionSlider` | Section parts | Approved | DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236, DR-284, DR-291, DR-318 |
+| C-16 | `AdSlot` | Section parts | Approved | DR-127, DR-163, DR-197, DR-206, DR-207, DR-233, DR-240, DR-241, DR-242, DR-245, ad proposal (approved 5 Oct), DR-315 |
 | C-14 | `NewsletterSignup` | Section parts | Deferred | DR-128, DR-129, DR-130, DR-131, DR-132, DR-133, DR-134, DR-135, DR-137, DR-224, DR-229, DR-230, DR-231, DR-238, DR-239 |
-| C-26 | `DailyPoll` | Section parts | Approved | DR-134, DR-138, DR-139, DR-149, DR-224, DR-236, DR-239 |
-| C-22 | `Divider` | Small parts | Draft | DR-87, DR-102, DR-103 |
-| C-13 | `SectionHeading` | Small parts | Approved | DR-103, DR-122, DR-159, DR-163, DR-164 |
+| C-26 | `DailyPoll` | Section parts | Approved | DR-134, DR-138, DR-139, DR-149, DR-236, DR-239, DR-273, DR-277, DR-287, DR-295, DR-298 |
+| C-22 | `Divider` | Small parts | Approved | DR-87, DR-102, DR-103, DR-262, DR-299 |
+| C-13 | `SectionHeading` | Small parts | Approved | DR-103, DR-122, DR-159, DR-163, DR-262 |
 | C-10 | `MoreLink` | Small parts | Approved | DR-110, DR-123, DR-136, DR-160, DR-163 |
-| C-08 | `Eyebrow` | Small parts | Approved | DR-112, DR-163 |
+| C-08 | `Eyebrow` | Small parts | Approved | DR-112, DR-153, DR-163 |
 | C-09 | `MetaLine` | Small parts | Approved | DR-96, DR-98, DR-100, DR-101, DR-166 |
-| C-11 | `Chip` | Small parts | Approved | DR-112, DR-140, COL-11, DR-163, DR-222 |
-| C-12 | `Button` | Small parts | Approved | DR-133, DR-138, DR-140, DR-163, DR-165, DR-167, DR-168, DR-169, DR-208, DR-225, DR-227, DR-235, DR-237 |
-| C-17 | `TopBar` | Page chrome | Approved | DR-21, DR-41, DR-42, DR-43, DR-165, DR-167, DR-170, DR-171, DR-174, DR-176, DR-177, DR-179, DR-180, DR-234 |
-| C-18 | `NavBar` | Page chrome | Approved | DR-41, DR-157, DR-223 |
-| C-19 | `Drawer` | Page chrome | Approved | DR-21, DR-41, DR-56, DR-170, DR-181, DR-182, DR-185, DR-188, DR-223, DR-226, DR-227, DR-228 |
-| C-20 | `SearchDialog` | Page chrome | Approved | DR-21, DR-186, DR-187, DR-189, DR-190, DR-191, DR-192, DR-227, DR-228, DR-231 |
-| C-21 | `Footer` | Page chrome | Provisional | DR-59, DR-157, DR-193 (provisional; extension after run 2, CMP-33), DR-224 |
+| C-11 | `Chip` | Small parts | Approved | DR-112, DR-140, DR-163, DR-222, DR-279 |
+| C-12 | `Button` | Small parts | Approved | DR-133, DR-138, DR-140, DR-163, DR-165, DR-167, DR-168, DR-169, DR-208, DR-225, DR-227, DR-235, DR-237, DR-303 |
+| C-17 | `TopBar` | Page chrome | Approved | DR-21, DR-41, DR-42, DR-43, DR-165, DR-167, DR-170, DR-171, DR-174, DR-176, DR-177, DR-179, DR-180, DR-234, DR-265, DR-269, DR-287, DR-294, DR-295, DR-306 |
+| C-18 | `NavBar` | Page chrome | Approved | DR-41, DR-157, DR-223, DR-287, DR-295 |
+| C-19 | `Drawer` | Page chrome | Approved | DR-21, DR-41, DR-56, DR-170, DR-181, DR-182, DR-185, DR-188, DR-223, DR-226, DR-227, DR-228, DR-280, DR-295, DR-302, DR-306, DR-331 |
+| C-20 | `SearchDialog` | Page chrome | Approved | DR-21, DR-186, DR-187, DR-189, DR-190, DR-191, DR-192, DR-227, DR-228, DR-231, DR-280 |
+| C-21 | `Footer` | Page chrome | Provisional | DR-59, DR-157, DR-193 (provisional; extension after run 2, CMP-33), DR-224, DR-264, DR-306, DR-314 |
 
 **Approved**: build as written. **Provisional**: build as written; the design can grow later. **Draft**: not decided; use the values that the sheets of the other components give.
 
@@ -68,10 +68,10 @@ In page order. The pattern ID links to `spacing-layout-system.md` Section 7.2.
 
 | Pattern | Section | Label (Bangla / English) | Item | Component | What |
 | --- | --- | --- | --- | --- | --- |
-| — | `AdSlot variant="top"` | – | – | AdSlot | Top ad above the header: 274px from 1024 (250 creative + 24px label line), 124 on phones, 114 at 768 |
 | — | `TopBar, NavBar` | – | – | TopBar (C-17) | Sticky bar: menu, search, logo, language, theme |
 |  |  |  | – | NavBar (C-18) | Category links from 1280px; scrolls away |
 |  |  |  | – | Drawer (C-19), SearchDialog (C-20) | Opened from TopBar |
+| — | `AdSlot variant="top"` | – | – | AdSlot | Top ad below the NavBar (below the TopBar under 1280), above HeroSection (DR-295): 274px from 1024 (250 creative + 24px label line), 124 on phones, 114 at 768 |
 | P-1 | `HeroSection` | শীর্ষ খবর (hidden) / Top stories (hidden) | `HeroSection.leadStory` | LeadStory (C-01) | The lead story of the site. Only here |
 |  |  |  | `HeroSection.topStories` | 2 × OverlapCard (C-02) | The two top stories under the lead |
 |  |  |  | `HeroSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | সর্বশেষ / Latest, in the rail. 2 columns at 768 to 1023px. No আরও দেখুন |
@@ -90,6 +90,30 @@ In page order. The pattern ID links to `spacing-layout-system.md` Section 7.2.
 |  |  |  | `RegionsSection.more` | MoreLink | আরও দেখুন / See more, like every section |
 | — | `Footer` | – | – | Footer (C-21) | Logo, social links, About, Contact, Corrections, Privacy, Terms |
 
+Helper parts. They are not sections or numbered components; use these names in code (DR-286).
+
+| Name | What |
+| --- | --- |
+| SiteHeader | The page header wrapper: TopBar (C-17) and NavBar (C-18). header landmark |
+| PeerRow | A row of peer story cards (layout §8 Peer rows) |
+| PeerCard | One card in a PeerRow |
+| StoryImage | The image part of the story units (ratio, sizes, square corners). No-image placeholder (DR-338): when a story has no image or the image does not load, the same slot shows a flat surface-alt fill at the slot ratio (3:2 or 16:9), square corners, no border, no shadow, no mark, no text. Decorative: aria-hidden; the image link keeps tabindex -1. skeleton is for loading only |
+| QuoteMark | The quote mark drawing in OpinionList (C-06) |
+| WithRail | Layout wrapper: main column and the 304px rail from 1024 |
+
+Code names to change: the code uses the approved names above, and the folder names follow them (DR-286).
+
+| Code name now | Approved name |
+| --- | --- |
+| Hero | HeroSection |
+| AnalysisOpinion | AnalysisSection |
+| Featured | FeaturedCategorySection |
+| Grouped | GroupedCategoriesSection |
+| MostRead | MostReadSection |
+| Regions | RegionsSection |
+| SiteFooter | Footer |
+| Most read list inline in MostRead.tsx | RankedList (C-07), its own component |
+
 ### 3.2 Words
 
 | Word | Meaning |
@@ -107,6 +131,8 @@ In page order. The pattern ID links to `spacing-layout-system.md` Section 7.2.
 | Top stories | The two OverlapCards under LeadStory in HeroSection. |
 | Heading | SectionHeading: the divider bar and the h2 label of a section or block. |
 | Band | A full-width ad row between sections (AdSlot variant band). |
+| Panel band | A full-width surface-elevated row with its content in the shell: AnalysisSection and Footer (DR-264). Not an ad band. |
+| WithRail | Layout part: the Wrapper and the Rail of a section in one grid. Used by HeroSection, FeaturedCategorySection and GroupedCategoriesSection. No rail content: the Wrapper spans the shell (DR-271). |
 
 ### 3.3 Labels
 
@@ -126,6 +152,7 @@ Interface labels come from `src/i18n/bn.ts` and `src/i18n/en.ts`. English labels
 | আরও দেখুন | See more | MoreLink, every section and block |
 | আগের অঞ্চল / পরের অঞ্চল | Previous region / Next region | RegionSlider.prev / .next (button names) |
 | বিজ্ঞাপন | Advertisement | AdSlot.label |
+| মূল খবরে যান | Skip to main content | SkipLink (TopBar sheet) |
 
 ## 4. Rules
 
@@ -147,7 +174,7 @@ Make a component react to the width of its container, not the viewport. Use the 
 
 ### CPT-05 Do not round corners
 
-Do not use rounded corners on images, panels, cards, buttons, inputs or dialogs. Set border-radius to 0. One exception: the ThemeToggle switch (track 6px, thumb 4px). (DR-87, DR-168)
+Do not use rounded corners on images, panels, cards, buttons, inputs or dialogs. Set border-radius to 0. One exception: the ThemeToggle switch (track and thumb 4px, --switch-radius). (DR-87, DR-168, DR-295)
 
 ### CPT-06 Do not put a border around a card
 
@@ -191,7 +218,7 @@ Align a standalone link (a link on its own line, such as আরও দেখু�
 
 ### CPT-16 Restyle a shadcn component when you add it
 
-Restyle a shadcn/ui component when you add it. After shadcn add, change the file to the Fact Lens sheet before use: remove radius, shadow, dark: classes, opacity modifiers (/50), ring-3, leading-none, text-sm and text-xs, size-4 icons and the active translate. Give the parts the typography roles (typography §7.3) and the color tokens. Keep the behavior (focus, keys, aria). Use Button, Input, Dialog (SearchDialog), Sheet (Drawer), Collapsible (Drawer.accordion), Tabs (phone region chips), RadioGroup (DailyPoll) and Switch (theme controls). Do not use Carousel, NavigationMenu, Separator or Badge. Keep the shadcn base-nova preset (Base UI). (DR-236)
+Restyle a shadcn/ui component when you add it. After shadcn add, change the file to the Fact Lens sheet before use: remove radius, shadow, dark: classes, opacity modifiers (/50), ring-3, leading-none, text-sm and text-xs, size-4 icons and the active translate. Give the parts the typography roles (typography §7.3) and the color tokens. Keep the behavior (focus, keys, aria). Use Button, Input, Drawer (SearchDialog, from the top), Sheet (Drawer), Collapsible (Drawer.accordion), Tabs (phone region chips), RadioGroup (DailyPoll) and Switch (theme controls). Do not use Carousel, NavigationMenu, Separator or Badge. Keep the shadcn base-nova preset (Base UI). (DR-236)
 
 ### N-01 Name each section with Section at the end
 
@@ -225,7 +252,7 @@ A component sets `container-type: inline-size` on its root and reacts to its own
 
 ## 6. Component tokens
 
-These tokens add to the tokens of the three foundation documents. Put them in `src/styles/components.css` and import it after `layout.css`.
+These tokens add to the tokens of the three foundation documents. Put them in `src/styles/components.css` and import it as `spacing-layout-system.md` Section 12.5 lists (DR-339).
 
 | Token | Narrow | Medium | Wide | Use | Decision |
 | --- | --- | --- | --- | --- | --- |
@@ -237,7 +264,7 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--space-lead-eyebrow-title` | 0.5rem (8px) | same | same | LeadStory: eyebrow to title | DR-92 |
 | `--space-lead-summary-meta` | 1rem (16px) | same | same | LeadStory: summary to meta | DR-92 |
 | `--color-meta` | #6E6862 (light, 5.2:1 on background, 4.8:1 on surface-alt) | #A3A3A3 (dark, unchanged) |  | Metadata text and its separator. Same value as ink-muted: #6E6862 is the light ink-muted value for all muted text (captions, labels, ad label), replacing #4F4B48 | DR-100 |
-| `--bar-section` | 3rem x 0.375rem (48 x 6px) | 3rem x 0.375rem (48 x 6px) | 4rem x 0.5rem (64 x 8px) | Section divider bar, width x height. Width = 8 x height. Columns: phone / 600-1023 / 1024 and up (page breakpoints). 48 x 6 under 1024 (DR-164) | DR-103, DR-164 |
+| `--bar-section` | 2.5rem x 0.5rem (40 x 8px) | 2.5rem x 0.5rem (40 x 8px) | 3rem x 0.5rem (48 x 8px) | Section divider bar, width x height (DR-262). Columns: phone / 600-1023 / 1024 and up (page breakpoints). 48 x 6 under 1024  | DR-103 |
 | `--space-card-overlap` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same (DR-109: every width) | same (46px at 464, 58px at 584) | How far a story card text block covers its image: 10% of the card width, 40 to 64px. Same percent rule as the lead (DR-89) | DR-105, DR-109 |
 | `--space-card-notch` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same | same (46px at 464, 58px at 584) | Image left visible at the end side of an overlap card: 10% of the card width, 40 to 64px | DR-105, DR-109 |
 | `--button-height` | 3rem (48px) | same | same | Button height at every width | DR-208 |
@@ -246,14 +273,22 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--icon-button-size-bar` | 2rem (32px) |  |  | IconButton size in the phone TopBar and phone Drawer header (DR-177, DR-209) | DR-208, DR-209 |
 | `--icon-size` | 1.25rem (20px) | same | same | Icon size in buttons and icon buttons, every width | DR-208 |
 | `--button-icon-gap` | 0.5rem (8px) | same | same | Space between a button label and its icon | DR-208 |
+| `--top-bar-inset` | 0.625rem (10px) | 1.125rem (18px) at 600; 0.75rem (12px) from 768 |  | TopBar side padding = page gutter minus the controls inner space (C-17). Columns: phone / 600 and 768 up | DR-294 |
+| `--switch-radius` | 0.25rem (4px) | same | same | ThemeToggle track and thumb corners, the one radius exception (DR-168, DR-295) | DR-294, DR-295 |
+| `--switch-thumb-inset` | 0.1875rem (3px) | same | same | ThemeToggle thumb inset from the track edge; 3px is not a 4px-scale step, so it is a token (LAY-21, DR-303) | DR-303 |
+| `--color-theme-control` | fill-neutral (light) / interactive (dark) |  |  | ThemeToggle track color (color §2.9) | DR-294, DR-295 |
+| `--space-lead-panel-start` | 0 | var(--space-lead-panel) | same | Lead panel padding at the start side (container width 600 and up) | DR-297 |
+| `--story-feature-media-min` | 26.25rem (420px) | same | same | Feature split: smallest image column (C-24, P-2) | DR-297 |
+| `--story-feature-media-max` | 34.8125rem (557px) | same | same | Feature split: largest image column | DR-297 |
+| `--story-feature-media-share` | 0.5 | same | 0.6 from 1024 | Feature split: image share of the row (minus one column gap) | DR-297 |
 
 In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-height`, and `--space-lead-inset` is the pair `--space-lead-inset-start` and `--space-lead-inset-end`.
 
 ```css
 :root {
   --bar-brand: 0.375rem;
-  --bar-section-width: 3rem;
-  --bar-section-height: 0.375rem;
+  --bar-section-width: 2.5rem;
+  --bar-section-height: 0.5rem;
   --space-lead-inset-start: 0;
   --space-lead-inset-end: 2rem;
   --space-lead-panel: 1rem;
@@ -264,16 +299,40 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);
   --color-meta: var(--ink-muted);
+  --button-height: 3rem;
+  --button-padding: 1.25rem;
+  --icon-button-size: 2.75rem;
+  --icon-button-size-bar: 2rem;
+  --icon-size: 1.25rem;
+  --button-icon-gap: 0.5rem;
+  --top-bar-inset: 0.625rem;
+  --switch-radius: 0.25rem;
+  --switch-thumb-inset: 0.1875rem;
+  --color-theme-control: var(--fill-neutral);
+  --space-lead-panel-start: 0;
+  --story-feature-media-min: 26.25rem;
+  --story-feature-media-max: 34.8125rem;
+  --story-feature-media-share: 0.5;
 }
 
 .dark {
   --color-bar: var(--interactive);
+  --color-theme-control: var(--interactive);
+}
+
+@media (min-width: 37.5rem) {
+  :root { --top-bar-inset: 1.125rem; }
+}
+
+@media (min-width: 48rem) {
+  :root { --top-bar-inset: 0.75rem; }
 }
 
 @media (min-width: 64rem) {
   :root {
-    --bar-section-width: 4rem;
+    --bar-section-width: 3rem;
     --bar-section-height: 0.5rem;
+    --story-feature-media-share: 0.6;
   }
 }
 
@@ -284,6 +343,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
     --space-lead-inset-start: clamp(2rem, 4.2cqi, 2.5rem);
     --space-lead-inset-end: clamp(2rem, 4.2cqi, 2.5rem);
     --space-lead-panel: 1.5rem;
+    --space-lead-panel-start: var(--space-lead-panel);
     --space-lead-overlap: clamp(4rem, 10cqi, 6rem);
   }
 }
@@ -292,11 +352,24 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   .lead-story {
     --bar-brand: 0.625rem;
     --space-lead-panel: 2rem;
+    --space-lead-panel-start: var(--space-lead-panel);
   }
 }
+
+/* Feature split: image column width (C-24, P-2) */
+/* clamp(var(--story-feature-media-min), calc((100% - var(--grid-column-gap)) * var(--story-feature-media-share)), var(--story-feature-media-max)) */
+
+/* Named utilities instead of arbitrary variants (DR-287) */
+@custom-variant bar-stuck (html[data-bar-stuck] &);
+@utility stack-cell {
+  display: grid;
+  & > * { grid-column: 1; grid-row: 1; }
+}
+The container rule sets the lead tokens on `.lead-story`, so the `@container` is the parent of `.lead-story`, not the card itself (DR-297). The feature split utilities `story-split-third` and `story-split-feature` and the poll utility `poll-layout` are in `components.css` (DR-297, DR-298).
+
 ```
 
-The ThemeToggle colors (and the NewsletterSignup colors, after prototype run 2, DR-239) are in `color-system.md` Section 2.9.
+`--color-bar` and `--color-theme-control` are the allowed component color tokens (color §2.9, DR-294). The ThemeToggle colors (and the NewsletterSignup colors, after prototype run 2, DR-239) are in `color-system.md` Section 2.9.
 
 ## 7. Components
 
@@ -304,7 +377,7 @@ The ThemeToggle colors (and the NewsletterSignup colors, after prototype run 2, 
 
 #### C-01 LeadStory
 
-**Status:** Approved · **Decisions:** DR-86, DR-87
+**Status:** Approved · **Decisions:** DR-86, DR-87, DR-325
 
 The one lead story of the whole site, in the homepage hero (P-1) only (DR-155). It is the largest story on the page.
 
@@ -332,7 +405,8 @@ The one lead story of the whole site, in the homepage hero (P-1) only (DR-155). 
 **Content.**
 
 - Title, eyebrow and meta are required. The summary is optional.
-- The image is required (DR-91). Every hero story has an image.
+- Image loads eagerly and is preloaded (fetchPriority high): it is the page LCP (DR-325).
+- Editors add an image to every hero story (DR-91). If it is missing or does not load, StoryImage shows the no-image placeholder (DR-338).
 - Long title: the panel grows down. Do not reduce the type size.
 
 **Accessibility.**
@@ -354,15 +428,15 @@ The one lead story of the whole site, in the homepage hero (P-1) only (DR-155). 
 
 #### C-02 OverlapCard
 
-**Status:** Approved · **Decisions:** DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109
+**Status:** Approved · **Decisions:** DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109, DR-325
 
 The image-led story card with the text block over the image bottom. Used for the two stories under the lead in the hero (P-1) and the first story of the analysis column (P-4). First shared card of the DR-93 merge (DR-106).
 
-**Variants.** None.
+**Variants.** surface: background (hero) | elevated (P-4). Sets the text block color to the section background (DR-283).
 
 | Part | Spec |
 | --- | --- |
-| `OverlapCard.media` | Image, 16:9, square corners. Required |
+| `OverlapCard.media` | Image, 16:9, square corners (StoryImage). No image: the no-image placeholder (DR-338) |
 | `OverlapCard.body` | Text block in the background color of its section (page color in the hero, surface-elevated in P-4), no border. Covers the image bottom by --space-card-overlap from the start edge, stops --space-card-notch short of the end edge |
 | `OverlapCard.eyebrow` | Category: type-eyebrow, interactive (link) |
 | `OverlapCard.title` | type-story-title, ink, h3. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
@@ -378,7 +452,8 @@ The image-led story card with the text block over the image bottom. Used for the
 
 **Content.**
 
-- Image required (DR-91).
+- Editors add an image (DR-91). If it is missing or does not load, StoryImage shows the no-image placeholder (DR-338).
+- In the hero, both top-story images load eagerly (DR-325).
 - Long title: the body grows down.
 - In the pair, each card flows on its own: no shared rows (no subgrid) for title, summary or meta; the cards are top-aligned and may end at different heights (DR-99). This replaces layout L-14 / LAY-08 peer rows for the hero pair.
 
@@ -393,7 +468,7 @@ The image-led story card with the text block over the image bottom. Used for the
 
 #### C-03 StoryList
 
-**Status:** Approved · **Decisions:** DR-93, DR-96, DR-98, DR-101, DR-102, DR-124, DR-125
+**Status:** Approved · **Decisions:** DR-93, DR-96, DR-98, DR-101, DR-102, DR-124, DR-125, DR-300
 
 Shared list (DR-162, was LatestList): a ul of story items with 16px padding and a 1px rule between rows, no rule after the last. Option columns 1 | 2 (column-first). This sheet gives its first use, HeroSection.latest: the সর্বশেষ (Latest) list in the hero rail (P-1), 5 newest stories as StoryListItem rows. Also used in P-2, P-4, CategoryBlock and RegionSlider.panel.
 
@@ -401,7 +476,7 @@ Shared list (DR-162, was LatestList): a ul of story items with 16px padding and 
 
 | Part | Spec |
 | --- | --- |
-| HeroSection.latest heading | Section divider (C-22: rule with the bar on it, 64 x 8px from 1024, 48 x 6px under 1024, DR-164), then the label সর্বশেষ: type-section-title (serif 22px, 600), h2 |
+| HeroSection.latest heading | Section divider (C-22: 2px rule with the bar on it, 48 x 8px from 1024, 40 x 8px under 1024, DR-262), then the label সর্বশেষ: type-section-title (serif 22px, 600), h2 |
 | `StoryList.item` | One story row. No image. 1px border rule between rows, 16px padding top and bottom |
 | `StoryListItem.title` | type-story-title-sm (serif 18 to 20px, 600), ink, h3 with one link. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
 | `StoryListItem.meta` | category, dot (CPT-10), time: type-metadata at weight 400, ink-muted; same size as every other metadata line (CPT-12) |
@@ -409,7 +484,7 @@ Shared list (DR-162, was LatestList): a ul of story items with 16px padding and 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
 | Items | 5 | 5 | 5 |
-| Columns | Phone and 600 to 767: 1 column, rows stack | 768 to 1023: under the hero, full width, 2 columns, column-first (1 to 3, then 4 and 5), 24px gap, rules within a column only (DR-125) | Rail 304px from 1024: 1 column, rows stack |
+| Columns | Phone and 600 to 767: 1 column, rows stack | 768 to 1023: under the hero, full width, 2 columns, column-first (1 to 3, then 4 and 5), --grid-column-gap (24px, DR-300), rules within a column only (DR-125) | Rail 304px from 1024: 1 column, rows stack |
 | Title | type-story-title-sm (18 to 20px) | Same | Same |
 
 **Content.**
@@ -433,16 +508,16 @@ Shared list (DR-162, was LatestList): a ul of story items with 16px padding and 
 
 #### C-24 StoryCard
 
-**Status:** Approved · **Decisions:** DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153
+**Status:** Approved · **Decisions:** DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153, DR-267, DR-283, DR-300, DR-308, DR-325
 
 Shared card from the merge (DR-93): one story with an image and text. Draws every image story that is not a LeadStory or an OverlapCard. Takes over the working name StoryRow (DR-121). Merge approved (DR-153): no approved look changes.
 
-**Variants.** layout: stack | row (the section sets it at the page breakpoints). ratio: 3:2 | 16:9. size: md (type-story-title) | sm (type-story-title-sm, 18 to 20px). split, row only: third (2fr 1fr, 16px gap, DR-108) | feature (DR-118, DR-119 clamp, 24px gap). eyebrow and summary optional.
+**Variants.** layout: stack | row | row-from-md | row-until-lg (the section sets it; a layout value changes only the grid, never the markup order, DR-283). ratio: 3:2 | 16:9. size: md (type-story-title) | sm (type-story-title-sm, 18 to 20px). split, row only: third (2fr 1fr, DR-108) | feature (DR-118, DR-119 clamp); both use --grid-column-gap between text and image (DR-300). eyebrow and summary optional.
 
 | Part | Spec |
 | --- | --- |
 | `StoryCard.media` | Image, ratio prop, square corners, grid area media. Link with tabindex -1 and aria-hidden |
-| `StoryCard.body` | Grid area body, first in the markup. Eyebrow (optional), title h3, summary (optional, 500), meta. Title: News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
+| `StoryCard.body` | Grid area body. Markup order follows LAY-14: stack has media then body; row has media then body in the DOM and the grid places the image at the end (DR-267). Eyebrow (optional), title h3, summary (optional, 500), meta. Title: News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
 | Spacing | stack: media, 16px, body. Eyebrow to title 8px; title to summary 8px; summary to meta 16px; title to meta 8px when no summary |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -452,17 +527,19 @@ Shared card from the merge (DR-93): one story with an image and text. Draws ever
 
 **Content.**
 
-- Image required.
+- Editors add an image. If it is missing or does not load, StoryImage shows the no-image placeholder (DR-338).
 - Long titles wrap; no clamp.
 
 **Accessibility.**
 
 - Each story is an article with an h3 title link; one tab stop per story.
-- Text before the image in the markup at every layout; grid areas move the image (no order property).
+- Markup order = reading order (LAY-14, DR-267): the image comes before the text in the markup at every layout; in row layout grid areas place the image at the end (no order property).
 
 **Checks.**
 
 - No radius, no card border.
+- Every row layout stacks (image on top, text below) when its container is narrower than 17.5rem (@container, rem-based): at 200% text the rows below 1280 stack; at normal text no row stacks. Check the value in the build (A11Y-18, DR-308).
+- Image loads lazily, except the hero cards (DR-325).
 - The list around the card draws rules and padding, not the card.
 - Each place matches its approved board.
 
@@ -500,7 +577,7 @@ Shared card from the merge (DR-93): one story as a text row, title + meta, no im
 
 #### P-2 FeaturedCategorySection
 
-**Status:** Approved · **Decisions:** DR-93, DR-101, DR-103, DR-108, DR-110, DR-118, DR-119, DR-121, DR-122, DR-123
+**Status:** Approved · **Decisions:** DR-93, DR-101, DR-103, DR-108, DR-110, DR-118, DR-119, DR-121, DR-122, DR-123, DR-300
 
 The featured category section (P-2: বাংলাদেশ, ভূরাজনীতি): a FeatureStory in the wrapper and a rail with one image story and 2 text rows. Was the C-04 sheet CategoryLead (DR-162).
 
@@ -509,9 +586,9 @@ The featured category section (P-2: বাংলাদেশ, ভূরাজন
 | Part | Spec |
 | --- | --- |
 | Heading | Section divider (C-22) + category name, h2, plain text, not a link (DR-122) |
-| featureStory (StoryCard) | Grid, areas body + media, top aligned, 24px gap. From 768: text left, image right; image min 420px, max 557px; 50% of the free width from 768 to 1023 (DR-119), 60% from 1024 (DR-118): minmax(0, 1fr) clamp(26.25rem, calc((100% - 24px) * 0.5 \| 0.6), 34.8125rem). Under 768: one column, image on top, 16px, text below (no overlap). Image 3:2. Title type-story-title (fluid 22 to 26px), summary (500), meta. No eyebrow. Not an OverlapCard |
+| featureStory (StoryCard) | Grid, areas body + media, top aligned, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). From 768: text left, image right; image min 420px, max 557px; 50% of the free width from 768 to 1023 (DR-119), 60% from 1024 (DR-118): minmax(0, 1fr) clamp(26.25rem, calc((100% - var(--grid-column-gap)) * 0.5 \| 0.6), 34.8125rem). Under 768: one column, image on top, 16px, text below (no overlap). Image 3:2. Title type-story-title (fluid 22 to 26px), summary (500), meta. No eyebrow. Not an OverlapCard |
 | rail StoryCard, rail beside | Grid, areas media / body in one column: 16:9 image, 16px, title type-story-title-sm (18 to 20px, 600), 8px, meta. Rule below |
-| rail StoryCard, rail below | Grid 2fr 1fr, areas body media: text at the start, 16:9 image at the end, 16px gap, 16px padding (same as the AnalysisSection rows, DR-108). Rule below |
+| rail StoryCard, rail below | Grid 2fr 1fr, areas body media: text at the start, 16:9 image at the end, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300), 16px padding (same as the AnalysisSection rows, DR-108). Rule below |
 | rail StoryList (2 × StoryListItem) | Title type-story-title-sm + meta, 16px padding, rule between rows (StoryList) |
 | MoreLink | আরও দেখুন links to the category page: one per section, below the feature story and the rail, at the section end edge (DR-110, DR-123) |
 
@@ -524,7 +601,7 @@ The featured category section (P-2: বাংলাদেশ, ভূরাজন
 
 **Content.**
 
-- Feature story image required.
+- Feature story: editors add an image. If it is missing or does not load, StoryImage shows the no-image placeholder (DR-338).
 - Long titles wrap; no clamp.
 - No rail stories: the wrapper spans the shell (layout P-2).
 
@@ -542,7 +619,7 @@ The featured category section (P-2: বাংলাদেশ, ভূরাজন
 
 #### P-4 AnalysisSection
 
-**Status:** Approved · **Decisions:** DR-52, DR-76, DR-93, DR-101, DR-108, DR-110, DR-111, DR-205, DR-224
+**Status:** Approved · **Decisions:** DR-52, DR-76, DR-93, DR-101, DR-108, DR-110, DR-111, DR-205, DR-224, DR-264, DR-268, DR-300
 
 The analysis column (left) of বিশ্লেষণ ও মতামত (P-4): one FeatureStory, then 2 compact stories.
 
@@ -550,21 +627,21 @@ The analysis column (left) of বিশ্লেষণ ও মতামত (P-4)
 
 | Part | Spec |
 | --- | --- |
-| Section background | surface-elevated inside the shell; panel-inset (LAY-20): 40 / 32px in a container under 600px, 48 / 40px from 600px (DR-224); space-module outside as margin (DR-205) |
+| Section background | Panel band (layout §5.3, DR-264): surface-elevated across the full viewport width; the content stays in the shell (page gutter, 1280px max). Block inset from panel-inset only: 40px under 600px, 48px from 600px; no inline inset. space-module outside as margin (DR-205) |
 | featureStory (OverlapCard) | OverlapCard (C-02): image 16:9, text block covers the image bottom by --space-card-overlap (10% of card width), notch --space-card-notch (10%) at the end side; text block background = section background (surface-elevated). Eyebrow, title, summary (500), meta |
-| StoryList (2 × StoryCard row) | Grid: text at the start, 16:9 image at the end, text : image = 2 : 1 (grid 2fr 1fr) at every width, 16px gap (DR-108). At 200% browser text size the rows stack: image on top, text below, no sideways scroll (DR-81). Eyebrow, title type-story-title-sm (18 to 20px, 600), meta. No summary |
+| StoryList (2 × StoryCard row) | Grid: text at the start, 16:9 image at the end, text : image = 2 : 1 (grid 2fr 1fr) at every width, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). At 200% browser text size the rows stack: image on top, text below, no sideways scroll (DR-81). Eyebrow, title type-story-title-sm (18 to 20px, 600), meta. No summary. Divider.item (C-22) between the rows, the same as every list (DR-268) |
 | Eyebrow | The story category (not the word বিশ্লেষণ on every item) |
 | MoreLink | আরও দেখুন below the column, aligned to the column end (right) edge, with a right caret (DR-110, C-10) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| featureStory body | Overlap and notch, 40px minimum (DR-109) | Overlap and notch, 40px minimum (336px column at 768) | Overlap and notch 10% of card width (58px at 584) |
+| featureStory body | Overlap and notch, 40px minimum (DR-109) | Overlap and notch, 40px minimum (348px column at 768) | Overlap and notch 10% of card width (48px at 476, 62px at 624) |
 | featureStory title | 22px | 22px | 24px |
-| Compact image | 1/3 of the row: 104px at 328 | 107px at 336 | 189px at 584 |
+| Compact image | 1/3 of the row after the gap: 104px at 328 | 108px at 348 | 150px at 476, 197px at 624 (DR-300) |
 
 **Content.**
 
-- Image required on every analysis story (to confirm).
+- Analysis stories: editors add an image. If it is missing or does not load, StoryImage shows the no-image placeholder (DR-338).
 - Long titles wrap; no clamp.
 
 **Accessibility.**
@@ -574,14 +651,14 @@ The analysis column (left) of বিশ্লেষণ ও মতামত (P-4)
 **Checks.**
 
 - No radius. No card border.
-- Rules between stories wait on the item divider (DR-104).
+- Divider.item (1px dotted, space-list-item each side) between the analysis rows (DR-262, DR-268).
 - At 200% browser text size the compact rows stack and nothing scrolls sideways (DR-81).
 
 ### Section components
 
 #### C-06 OpinionList
 
-**Status:** Approved · **Decisions:** DR-52, DR-76, DR-101, DR-110, DR-112, DR-113
+**Status:** Approved · **Decisions:** DR-52, DR-76, DR-101, DR-110, DR-112, DR-113, DR-299, DR-300, DR-301
 
 The opinion column (right) of বিশ্লেষণ ও মতামত (P-4): a মতামত chip, then 5 opinion pieces as quote rows.
 
@@ -589,9 +666,9 @@ The opinion column (right) of বিশ্লেষণ ও মতামত (P-4)
 
 | Part | Spec |
 | --- | --- |
-| Chip | মতামত: brand fill (light), interactive fill (dark), on-interactive text, type-eyebrow (15px 600), padding 2px 8px, square corners. Not a link. Replaces the spec accent-subtle chip (DR-112, issue CLR-09) |
-| `OpinionList.item` | Grid: quote mark column, gap 20px desktop / 16px tablet / 12px phone (DR-112; gap-x-3 sm:gap-x-4 lg:gap-x-5, LAY-21), text. No image. No rule; 24px between items |
-| Quote mark | Drawn SVG, two filled marks, brand (light) / interactive (dark), aria-hidden, top aligned with the title. Width 44 / 36 / 28px |
+| Chip | মতামত: brand fill (light), interactive fill (dark), on-interactive text, type-eyebrow, padding 2px 8px, square corners. Not a link. Replaces the spec accent-subtle chip (DR-112, issue CLR-09) |
+| `OpinionList.item` | Grid: quote mark column, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300), text. No image. Divider.item between items (space-list-item each side), the same as the analysis rows (DR-299). Chip to the first item: space-list-item |
+| Quote mark | Drawn SVG in code (QuoteMark), no icon package (DR-301): viewBox 0 0 44 36, fill currentColor (--color-bar: brand light, interactive dark), paths M0 36V20C0 9 6 2 17 0v6C11 8 9 12 9 17h8v19z and M24 36V20C24 9 30 2 41 0v6c-6 2-8 6-8 11h8v19z. aria-hidden, top aligned with the title. Width 44 / 36 / 28px, height follows |
 | Title | type-story-title-sm (serif 18 to 20px, 600), ink, h3 with one link. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
 | Author | Own line: type-metadata at weight 600, ink-secondary, plain text, not a link (DR-112) |
 | Time | Own line: type-metadata, weight 400, ink-muted |
@@ -616,7 +693,7 @@ The opinion column (right) of বিশ্লেষণ ও মতামত (P-4)
 **Checks.**
 
 - No radius on the chip.
-- No rules between items.
+- Divider.item between items, no rule after the last (DR-299).
 
 #### C-23 CategoryBlock
 
@@ -643,7 +720,7 @@ One category inside the grouped categories section (P-3): heading, a feature sto
 **Content.**
 
 - 4 categories in wireframe V2 (অর্থনীতি ও বাণিজ্য, নিরাপত্তা ও সংঘাত, প্রযুক্তি, ইতিহাস ও প্রেক্ষাপট). Odd count: the last block keeps its size (layout §7.3).
-- Lead image required.
+- Lead story: editors add an image. If it is missing or does not load, StoryImage shows the no-image placeholder (DR-338).
 - Long titles wrap; no clamp.
 
 **Accessibility.**
@@ -659,7 +736,7 @@ One category inside the grouped categories section (P-3): heading, a feature sto
 
 #### C-07 RankedList
 
-**Status:** Approved · **Decisions:** DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148
+**Status:** Approved · **Decisions:** DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148, DR-300
 
 Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = rank numeral + title (DR-162, was RankItem).
 
@@ -668,8 +745,8 @@ Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = r
 | Part | Spec |
 | --- | --- |
 | Heading | Section divider (C-22) + সর্বাধিক পঠিত / Most read, h2, not a link. No section link (no page behind it) |
-| List | ol, 5 items, row-first order. 24px column gap; row gap 24px, 20px on phones (gap-y-5 sm:gap-y-6, LAY-21). No rules |
-| Numeral | type-rank, interactive, weight 700, 56px from 1024, 44px below (DR-146); Bangla: Noto Sans Bengali, English: Source Serif 4 (DR-147); column 0.75em (42 / 33px), 12px gap to the title; glyph top on the first title line (DR-144); aria-hidden (empty alt text in CSS, A11Y-10) |
+| List | ol, 5 items, row-first order. Column gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). Divider.item between two items in the same column (rules within a column only, as Latest), space-list-item on each side; no rule after the last item of a column (DR-299, DR-300) |
+| Numeral | type-rank, interactive, weight 700, 56px from 1024, 44px below (DR-146); Bangla: Noto Sans Bengali, English: Source Serif 4 (DR-147); column 0.75em (42 / 33px), 12px gap to the title; glyph top on the first title line (DR-144). The rank comes from the data (backend query): React writes it in a span with aria-hidden="true", digits in the page language (১ on Bangla pages, 1 on English pages). No CSS counter (DR-290) |
 | Title | h3 link, type-story-title-sm 600, ink. No image, no meta. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -689,14 +766,15 @@ Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = r
 **Checks.**
 
 - Numeral glyph top on the first title line (DR-144).
-- No radius, no card borders, no rules.
+- No radius, no card borders.
+- Divider.item between items in a column, none across columns (DR-300).
 - At 200% browser text size the list stacks and nothing scrolls sideways (DR-81).
 
 ### Section parts
 
 #### C-15 RegionSlider
 
-**Status:** Approved · **Decisions:** DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236
+**Status:** Approved · **Decisions:** DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236, DR-284, DR-291, DR-318
 
 The regions section (P-3b): one column per region in a row that slides, previous / next buttons at the heading end; chips (tabs) on phones.
 
@@ -705,7 +783,7 @@ The regions section (P-3b): one column per region in a row that slides, previous
 | Part | Spec |
 | --- | --- |
 | Heading | Section divider (C-22) + অঞ্চলসমূহ, h2, not a link (DR-159) |
-| Buttons | Previous / next at the end of the heading line, 44px squares, interactive fill, on-interactive chevron. Shown whenever more regions exist than are in view (DR-140). At an end: aria-disabled, surface-alt fill, ink-disabled chevron |
+| Buttons | Previous / next at the end of the heading line, 44px squares, interactive fill, on-interactive chevron. Shown whenever more regions exist than are in view (DR-140); CSS hides them when every region fits, no script count (DR-318). At an end: aria-disabled, surface-alt fill, ink-disabled chevron |
 | `RegionSlider.panel` | Region name h3 type-story-title-sm, 3:2 image, 3 stories (title type-story-title-sm + meta), rules between. No আরও দেখুন per column |
 | Section link | আরও দেখুন at the section end, end edge, every width; links to the regions page (DR-142, DR-160) |
 | Chips | Phones only: shadcn Tabs (CPT-16), tabs 44px, as wide as the label, 8px gap, outline (1px border-interactive, no fill); selected = interactive fill; no white chips (DR-140). One panel, h3 visually hidden |
@@ -727,13 +805,13 @@ The regions section (P-3b): one column per region in a row that slides, previous
 **Checks.**
 
 - Own slider code, not the shadcn Carousel (CPT-16): its disabled ends and motion differ from DR-140 and DR-151.
-- One press moves one region: the row slides one column, transform duration-450 ease-slide (450ms cubic-bezier(0.22, 1, 0.36, 1), DR-227); button colors fade 200ms (theme default); no transition with prefers-reduced-motion (DR-151). No loop, no autoplay; scrollbar hidden.
+- The row is a scroll-snap container (@utility region-row, layout §12.3). One press moves one region: the buttons animate the scroll position one column over 450ms with ease-slide (cubic-bezier(0.22, 1, 0.36, 1), DR-227, DR-284); no transform. Swipe and keyboard focus scroll the row natively. Button colors fade 200ms (theme default). Phones: a chip press fades the current tab panel out (200ms) and the new panel in (200ms), opacity only (DR-284). No motion with prefers-reduced-motion (DR-151). No loop, no autoplay; scrollbar hidden.
 - No radius on buttons or chips.
 - The slider is the exception to LAY-07 (4 columns from 1280, layout P-3b).
 
 #### C-16 AdSlot
 
-**Status:** Approved · **Decisions:** DR-127, DR-163, DR-197, DR-206, DR-207, DR-233, DR-240, DR-241, DR-242, DR-245, ad proposal (approved 5 Oct)
+**Status:** Approved · **Decisions:** DR-127, DR-163, DR-197, DR-206, DR-207, DR-233, DR-240, DR-241, DR-242, DR-245, ad proposal (approved 5 Oct), DR-315
 
 One ad row: surface-alt band, 24px label line, creative centered. No padding, margin or gutter (ad proposal). A rail variant for the homepage P-3 rail from 1280 only (DR-240, DR-245): 300×600 or 300×250, reserve 600, space-module below the poll (DR-241, DR-242).
 
@@ -742,7 +820,7 @@ One ad row: surface-alt band, 24px label line, creative centered. No padding, ma
 | Part | Spec |
 | --- | --- |
 | `AdSlot.label` | বিজ্ঞাপন (EN Advertisement, IA-06): type-eyebrow 600, ink-muted, centered, line 24px |
-| `AdSlot.creative` | Reserved box, centered. top: 320 x 100 under 768, 728 x 90 768 to 1023, 970 x 250 from 1024. band: 336 x 280 under 768 when the viewport is 336px or wider, else 300 x 250 (DR-206), 728 x 90 or 300 x 250 768 to 1023, 970 x 250 from 1024. inset: 300 x 250 below 1280, 728 x 90 from 1280. rail: 300 x 600 or 300 x 250 from 1280, the 300 x 250 at the top of the 600 reserve; box = rail width 304, surface-alt, label on top, creative centered, no padding: w-(--ad-rail-w) h-(--ad-rail-h) (DR-241, DR-245). Sizes from the px tokens --ad-*-w and --ad-*-h (layout §12.2, LAY-19): w-(--ad-inset-w) h-(--ad-inset-h) |
+| `AdSlot.creative` | Reserved box, centered. top: 320 x 100 under 768, 728 x 90 768 to 1023, 970 x 250 from 1024. band: 336 x 280 under 768 when the viewport is 336px or wider, else 300 x 250 (DR-206), 728 x 90 768 to 1023 (reserve 90, DR-315), 970 x 250 from 1024. inset: 300 x 250 below 1280, 728 x 90 from 1280. rail: 300 x 600 or 300 x 250 from 1280, the 300 x 250 at the top of the 600 reserve; row = rail width 304, surface-alt, label on top; creative box 300 x 600 centered, no padding: w-(--ad-rail-w) h-(--ad-rail-h) (DR-241, DR-245, DR-296). Sizes from the px tokens --ad-*-w and --ad-*-h (layout §12.2, LAY-19): w-(--ad-inset-w) h-(--ad-inset-h) |
 | AdSlot band width | top and band: full viewport width. inset: wrapper width; full screen width when the viewport is under 332px (DR-207) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -755,7 +833,7 @@ One ad row: surface-alt band, 24px label line, creative centered. No padding, ma
 
 **Accessibility.**
 
-- Region with aria-label বিজ্ঞাপন.
+- Not a landmark: a div, no section element and no aria-label. The visible label বিজ্ঞাপন names the slot and is not aria-hidden (DR-266).
 
 **Checks.**
 
@@ -798,7 +876,7 @@ Paused for prototype run 2: not built or shown; it comes in a phase after run 2 
 
 #### C-26 DailyPoll
 
-**Status:** Approved · **Decisions:** DR-134, DR-138, DR-139, DR-149, DR-224, DR-236, DR-239
+**Status:** Approved · **Decisions:** DR-134, DR-138, DR-139, DR-149, DR-236, DR-239, DR-273, DR-277, DR-287, DR-295, DR-298
 
 Daily poll in the P-3 rail: at the top of the rail from 1024 (the only rail module in prototype run 2, DR-239; NewsletterSignup sits above it after run 2); full row under 1024.
 
@@ -806,16 +884,20 @@ Daily poll in the P-3 rail: at the top of the rail from 1024 (the only rail modu
 
 | Part | Spec |
 | --- | --- |
-| `DailyPoll.panel` | surface-elevated. panel-inset (LAY-20): 40 / 32px in a container under 600px (rail, phones), 48 / 40px from 600px (row) (DR-224) |
-| `DailyPoll.heading` | আজকের জরিপ, h2, type-section-title 22px (DR-215). 16px to the question |
-| `DailyPoll.question` | fieldset legend, type-story-title-sm. 24px to the options (DR-149) |
-| `DailyPoll.options` | shadcn RadioGroup (CPT-16). 2 to 4 rows, square marker (no radius), 16px sans, 4px apart. 24px to the button |
-| `DailyPoll.vote` | Button primary, full width: ভোট দিন (one 48px size, DR-208) |
-| `DailyPoll.results` | Rows fill to the percent: own vote keeps the filled interactive marker + আপনার ভোট (COL-17, DR-221), others border color; total line type-ui-sm ink-muted |
+| `DailyPoll.section` | No panel: no background, padding, border, radius or shadow. The poll sits on background like every section. No section divider, no brand bar, no rule (DR-128, DR-273) |
+| `DailyPoll.heading` | আজকের জরিপ (Daily poll), h2, type-section-title 22px, ink (DR-215). 16px to the question |
+| `DailyPoll.question` | fieldset (border 0, padding 0, margin 0, min-width 0) with the question as legend: type-story-title-sm 20px, ink. 24px to the first option or the first result row (DR-149) |
+| `DailyPoll.options` | Choose state. shadcn RadioGroup (CPT-16). 2 to 4 label rows; the whole row is the tap target: flex, align center, gap 12px, min-height 48px, 4px apart. Label type-ui, ink; long labels wrap. No option selected at first. 24px to the button |
+| `DailyPoll.marker` | 20px square, no radius, 2px border, aria-hidden. Not selected: border-interactive, no fill. Selected: interactive border with a 12px interactive square inside, inset 2px (padding 2px). Not a full fill (DR-273) |
+| `DailyPoll.vote` | Button primary, full width, 48px, no radius: ভোট দিন (Vote) (DR-208). Hover interactive-hover, pressed interactive-pressed. Enabled with no option selected; a press with no choice does nothing and focus stays on the group |
+| `DailyPoll.results` | Results state, in role status; replaces the choose state in place, no page reload. No radio and no marker. Per option: label line (type-ui, ink; the own vote adds " · আপনার ভোট" / " · Your vote" in the same style), 8px, then the bar. 16px between rows |
+| `DailyPoll.bar` | 32px high, full width, no radius, aria-hidden. Track: border token. Fill from the start edge, width = the rounded percent: own vote interactive, others fill-neutral (#7E7E7E) in both themes (color token, DR-295; 2.72:1 / 2.68:1 on the track, accepted because the percent carries the value) (DR-273) |
+| `DailyPoll.percent` | Inside the track at the end edge, 8px in, vertically centered: type-ui-sm, tabular-nums, digits in the page language (৪৬%). Color ink; it switches to the background color when the fill reaches the start of the number (fill end >= track width - 8px - number width; near 85% in the 304 rail, so measure, do not hard-code 85). Switch the whole number, not part of it. Hard to read over the grey fill is accepted (DR-273) |
+| `DailyPoll.total` | Vote count, for example ১,২৪৮ জন ভোট দিয়েছেন / 1,248 votes: type-ui-sm, ink-muted, tabular-nums. 16px below the last bar |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| Layout | Phone: stacked | Under 1024: full row, question left, options and button right | 304 rail from 1024 |
+| Layout | Container under 600px: one column (phones, the 304 rail) | Container 600px or wider (@utility poll-layout): two equal columns with --grid-column-gap; heading and question in the start column, options or results and the button in the end column (DR-298) | 304 rail from 1024: one column |
 
 **Content.**
 
@@ -823,38 +905,44 @@ Daily poll in the P-3 rail: at the top of the rail from 1024 (the only rail modu
 
 **Accessibility.**
 
-- Radio group in a fieldset with legend. Results announced (role status).
+- The shadcn RadioGroup sits in a fieldset; the question is its legend and names the group (no aria-labelledby, DR-273, DR-298).
+- Keys: Tab enters the group, arrow keys move the choice, Space selects, Tab reaches the vote button.
+- Focus: the base 2px ring outline with 2px offset (COL-13, DR-225); no focus classes, no ring utilities.
+- Results in role status, so the change is announced. Markers and bars are aria-hidden; the text gives the label, the own-vote tag and the percent.
 
 **Checks.**
 
-- No radius on markers or rows.
-- No helper lines (DR-138).
+- No panel, no radius, no helper lines (DR-138, DR-273).
+- The choose and results states share one grid cell (@utility stack-cell), so the height does not jump (DR-287).
+- One vote per browser, kept in local storage (key fl-poll:<id>, DR-277). A vote cannot be changed. A return visit with a stored vote for the poll shows the results.
+- Percents by largest remainder, so the sum is 100 (CMP-29, DR-277). Mock data until M3.
 
 ### Small parts
 
 #### C-22 Divider
 
-**Status:** Draft · **Decisions:** DR-87, DR-102, DR-103
+**Status:** Approved · **Decisions:** DR-87, DR-102, DR-103, DR-262, DR-299
 
 A thin rule that separates list rows, sections and (option) columns. Dividers and space show grouping; no card borders or surfaces for that (DR-87).
 
-**Variants.** section (Approved, DR-103). item and column: postponed (DR-104); the drawings stay as drafts.
+**Variants.** section, item, column-inset, column-full (DR-262). tajmin sets where each column version is used. The canvas drawings are stale until the CMP-34 redraw.
 
 | Part | Spec |
 | --- | --- |
-| `Divider.item` | 1px rule, border color, full width of the list. 16px space each side (space-list-item). Between rows only; no rule after the last row |
-| `Divider.section` | 1px rule, border color. A bar sits on the rule at the start and shares its bottom edge (the rule runs along the bar bottom). Bar color: brand (light), interactive (dark). Bar size: --bar-section. 12px from the rule to the heading (space-section-rule-title) |
-| `Divider.column` | Option: 1px vertical rule, border color, centered in the 24px column gap, inset 16px top and bottom |
+| `Divider.item` | 1px dotted rule, border color: square 1 x 1px dots with a 1px gap in every browser (the Chrome look). Draw it with a repeating gradient, not border-style dotted (browsers differ): background-image: repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 2px); height 1px. Full width of the list. 16px space each side (space-list-item). Between rows only; no rule after the last row |
+| `Divider.section` | 2px solid rule, border color. A bar sits on the rule at the start and shares its bottom edge (the rule runs along the bar bottom). Bar color: brand (light), interactive (dark). Bar size: --bar-section. 12px from the rule to the heading (space-section-rule-title) |
+| `Divider.column` | 1px solid vertical rule, border color, centered in the column gap. Two versions: column-inset (16px from the top and bottom) and column-full (full height). The section sheet names the version |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
 | Item | Same | Same | Same |
-| Section bar | 48 x 6px (under 600, DR-164) | 48 x 6px (600 to 1023) | 64 x 8px (1024 and up) |
-| Column | Not shown: columns stack | Shown when 2 columns sit side by side (option) | Same |
+| Section bar | 40 x 8px (under 600) | 40 x 8px (600 to 1023) | 48 x 8px (1024 and up) |
+| Column | Not shown: columns stack | Where a section sheet places it, when columns sit side by side | Same |
 
 **Content.**
 
-- One thickness (1px) and one color (border). No dashed or double rules.
+- One color (border). Section rule 2px solid; item rule 1px dotted; column rule 1px solid. No dashed or double rules.
+- General rule (DR-299): a group of items of the same kind stacked in a column gets Divider.item between the items (StoryList, OpinionList, RankedList, the AnalysisSection rows, RegionSlider.panel). In a multi-column list the rule runs within a column only (DR-300).
 
 **Accessibility.**
 
@@ -867,7 +955,7 @@ A thin rule that separates list rows, sections and (option) columns. Dividers an
 
 #### C-13 SectionHeading
 
-**Status:** Approved · **Decisions:** DR-103, DR-122, DR-159, DR-163, DR-164
+**Status:** Approved · **Decisions:** DR-103, DR-122, DR-159, DR-163, DR-262
 
 The heading of every news and category section: the section divider (C-22) with the bar on the rule, then the section name as plain text (h2). Optional actions slot at the end edge (slider buttons, C-15). Rail modules (NewsletterSignup, DailyPoll) do not use it (DR-128).
 
@@ -875,13 +963,13 @@ The heading of every news and category section: the section divider (C-22) with 
 
 | Part | Spec |
 | --- | --- |
-| `SectionHeading.rule` | Divider.section (C-22): 1px border rule, bar on it (--bar-section 48 x 6px under 1024, 64 x 8px from 1024, DR-164), bar brand (light) / interactive (dark). aria-hidden |
+| `SectionHeading.rule` | Divider.section (C-22): 2px border rule, bar on it (--bar-section 40 x 8px under 1024, 48 x 8px from 1024, DR-262), bar brand (light) / interactive (dark). aria-hidden |
 | `SectionHeading.title` | h2, plain text, never a link (CPT-13). Serif 600, 22px at every width (Noto Serif Bengali / Source Serif 4), ink, line 1.3. 12px below the rule (space-section-rule-title) |
 | `SectionHeading.actions` | Optional. At the end edge, centered on the title line. IconButton filled (C-12) for the slider |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| Bar | 48 x 6px (page under 1024, DR-164) | 48 x 6px | 64 x 8px (1024 and up) |
+| Bar | 40 x 8px (page under 1024, DR-262) | 40 x 8px | 48 x 8px (1024 and up) |
 | Title | 22px | Same | Same |
 
 **Content.**
@@ -933,11 +1021,11 @@ The আরও দেখুন link: one per section, at the end of the section a
 
 #### C-08 Eyebrow
 
-**Status:** Approved · **Decisions:** DR-112, DR-163
+**Status:** Approved · **Decisions:** DR-112, DR-153, DR-163
 
-The category label above a story title. A link to the category page. Off when the section heading already names the category (DR-114, CMP-19).
+The category label above a story title. A link to the category page. Off when the section heading already names the category (DR-153, CMP-19).
 
-**Variants.** None. A live story shows Chip variant="live" in this slot.
+**Variants.** None. No Breaking label in this slot (DR-279).
 
 | Part | Spec |
 | --- | --- |
@@ -992,16 +1080,15 @@ The metadata line under a title: time, read time, category or author, joined by 
 
 #### C-11 Chip
 
-**Status:** Approved · **Decisions:** DR-112, DR-140, COL-11, DR-163, DR-222
+**Status:** Approved · **Decisions:** DR-112, DR-140, DR-163, DR-222, DR-279
 
 A short square label or a filter button. Three variants.
 
-**Variants.** variant="label" | "live" | "filter".
+**Variants.** variant="label" | "filter". No live variant (DR-279).
 
 | Part | Spec |
 | --- | --- |
-| label | Opinion chip মতামত: brand fill (light) / interactive (dark), on-interactive text, type-eyebrow 15px 600, padding 2px 8px (py-0.5 px-2). Not a link |
-| live | Breaking or Live label in the eyebrow slot: live fill, on-live text, same size as label (COL-11). Working label ব্রেকিং (CNT-11) |
+| label | Opinion chip মতামত: brand fill (light) / interactive (dark), on-interactive text, type-eyebrow, padding 2px 8px (py-0.5 px-2). Not a link |
 | filter | Region tabs on phones: button 44px, padding 0 16px, type-ui-sm 15px 500. Outline 1px border-interactive, ink text; selected = interactive fill, on-interactive; no hover color and no pressed color (DR-222); focus ring |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1015,7 +1102,7 @@ A short square label or a filter button. Three variants.
 **Accessibility.**
 
 - filter chips are tabs (role tab, aria-selected) in a tablist.
-- label and live are text, not controls.
+- label is text, not a control.
 
 **Checks.**
 
@@ -1024,7 +1111,7 @@ A short square label or a filter button. Three variants.
 
 #### C-12 Button
 
-**Status:** Approved · **Decisions:** DR-133, DR-138, DR-140, DR-163, DR-165, DR-167, DR-168, DR-169, DR-208, DR-225, DR-227, DR-235, DR-237
+**Status:** Approved · **Decisions:** DR-133, DR-138, DR-140, DR-163, DR-165, DR-167, DR-168, DR-169, DR-208, DR-225, DR-227, DR-235, DR-237, DR-303
 
 Button (text) and IconButton (icon only). Square, no border, no shadow.
 
@@ -1039,9 +1126,9 @@ Button (text) and IconButton (icon only). Square, no border, no shadow.
 | Motion | Colors change over 200ms on every button (theme default transition, DR-227); no transition with reduced motion |
 | IconButton filled | Slider buttons (44 x 44): interactive fill, on-interactive icon; at an end surface-alt + ink-disabled (DR-140). Attached submit (size field): square, fills the field inner height (46 in a 48 field: Drawer search, NewsletterSignup after run 2; 54 in the 56 SearchDialog field), same states |
 | IconButton ghost | TopBar and dialogs: no fill, ink icon. hover accent-subtle wash + interactive icon; pressed accent-soft |
-| Icon | --icon-size 20px at every width, Lucide shapes, 2px stroke, square caps, miter joins (BRD-03; base rule svg.lucide, DR-235), currentColor, aria-hidden. 16px only for the MoreLink chevron and the ThemeToggle thumb |
-| ThemeToggle | From 768: switch (role switch, aria-checked = dark, name ডার্ক থিম). Track 56 x 32, radius 6px; thumb 26 x 26 (size-6.5), radius 4px, 3px inset, slides 450ms ease-slide (DR-227); shadcn Switch (CPT-16) (the one exception to CPT-05, DR-168). Existing tokens only (DR-211): track interactive in light, ink in dark; thumb background; icon 16px inside the thumb (DR-212), interactive in light, ink in dark. Sun at the start when day is on, moon at the end when night is on. No hover and no pressed color; focus ring only (DR-211). 44px tap. Light first on every device; dark only when the reader turns it on, then remembered; no system theme (DR-201, DR-165, DR-167, DR-168, DR-211) |
-| PhoneBarButtons | Phone TopBar: the menu IconButton and the ThemeButton are both 32 x 32 squares (IconButton size 32; 44 elsewhere). Moon glyph redrawn larger, set about 1px above box center (optical center, its weight sits low). Language label text 1px lower (padding-top 2px) so its cap height centers on the bar like the icons (DR-177, DR-178) |
+| Icon | --icon-size 20px at every width, Lucide shapes, 2px stroke, square caps, miter joins (BRD-03; base rule svg.lucide, DR-235), currentColor, aria-hidden. 16px only for the MoreLink chevron. Every TopBar icon is 20px, the ThemeToggle icon too (DR-295) |
+| ThemeToggle | From 768: switch (role switch, aria-checked = dark, name ডার্ক থিম). Track 56 x 32; thumb 26 x 26 (size-6.5), 3px inset (--switch-thumb-inset, DR-303); track and thumb radius 4px (--switch-radius, DR-295), slides 450ms ease-slide (DR-227); shadcn Switch (CPT-16) (the one exception to CPT-05, DR-168). Track --color-theme-control: fill-neutral (#7E7E7E) in light, interactive in dark (DR-295); thumb background; icon 20px inside the thumb (3px each side, DR-295), interactive in light, ink in dark. Sun at the start when day is on, moon at the end when night is on. No hover and no pressed color; focus ring only (DR-211). 44px tap. Light first on every device; dark only when the reader turns it on, then remembered; no system theme (DR-201, DR-165, DR-167, DR-168, DR-211) |
+| PhoneBarButtons | Phone TopBar: the menu IconButton and the ThemeButton are both 32 x 32 squares (IconButton size 32; 44 elsewhere). Moon is the Lucide icon at 20px, like every TopBar icon (DR-295, DR-301); check the optical center in the build. Language label text 1px lower (padding-top 2px) so its cap height centers on the bar like the icons (DR-177, DR-178) |
 | ThemeButton | Phones (under 768): 32 x 32 square tap (WCAG 2.5.8 minimum is 24), no tile, no fill; icon interactive (#993314) in light, ink (same as the En text) in dark (DR-179, DR-180, DR-211, DR-237); no hover and no pressed color, focus ring only (DR-211); about 10px from the En text to the icon. Phone bar: the menu lines start on the 16px gutter and the icon ends on it (moon in light, sun rays in dark) (DR-176, DR-253). 20px icon for the theme the press switches to: moon in light, sun in dark (DR-167, DR-253). role switch, aria-checked = dark (DR-167, DR-171) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1069,9 +1156,9 @@ Button (text) and IconButton (icon only). Square, no border, no shadow.
 
 #### C-17 TopBar
 
-**Status:** Approved · **Decisions:** DR-21, DR-41, DR-42, DR-43, DR-165, DR-167, DR-170, DR-171, DR-174, DR-176, DR-177, DR-179, DR-180, DR-234
+**Status:** Approved · **Decisions:** DR-21, DR-41, DR-42, DR-43, DR-165, DR-167, DR-170, DR-171, DR-174, DR-176, DR-177, DR-179, DR-180, DR-234, DR-265, DR-269, DR-287, DR-294, DR-295, DR-306
 
-The sticky bar at the top of every page, below the top ad band. Full page width with the page gutter (not the shell). Three groups: menu (and search from 768) at the start, logo in the center, language and theme at the end (DR-170).
+The sticky bar at the top of every page. The top ad band is below the NavBar (below the TopBar under 1280), not above the TopBar (DR-295). Full page width with the page gutter (not the shell). Three groups: menu (and search from 768) at the start, logo in the center, language and theme at the end (DR-170).
 
 **Variants.** None. Contents change at the page breakpoints 768 and 1024.
 
@@ -1079,11 +1166,12 @@ The sticky bar at the top of every page, below the top ad band. Full page width 
 | --- | --- |
 | `TopBar.menu` | IconButton ghost, menu icon, opens the Drawer. All widths |
 | `TopBar.search` | IconButton ghost, from 768. Opens the SearchDialog |
-| `TopBar.logo` | Center column of a 1fr auto 1fr grid. Text stand-in until BRD-06: serif 700, 24px (20px phones, 22px at 768) |
+| `TopBar.logo` | Center column of a 1fr auto 1fr grid. Text stand-in until BRD-06: type-logo (serif 700, DR-306). At the page top: 32px from 1024, 28px at 768, 20px on phones. When the bar is stuck: 24px (20px phones). The bar height does not change; only the logo scales, so the page does not move (DR-295) |
 | `TopBar.language` | Text link, 15px 600, ink, 44px tall. Bangla pages: En on phones (under 768), English from 768; English pages: বাংলা (T-27, DR-174). No hover and no pressed color; focus ring only (DR-219) |
 | `TopBar.theme` | ThemeToggle from 768; ThemeButton (one icon button) on phones (C-12, DR-165, DR-167) |
-| Layout | Flex row, full page width, padding = page gutter (16px phones, 24px from 600) minus the controls inner space. Start and end groups flex: 1 1 0, logo group auto, so the logo stays centered. End group gap 4px (EN padding 4px on phones) |
-| Surface | background (page color), 1px border rule at the bottom, no shadow. Height --bar-height 56px, 64px from 1024. Sticky at every width: classes sticky top-0 z-(--z-bar) h-(--bar-height); no .top-bar CSS (DR-234) |
+| Layout | Flex row, full page width, padding --top-bar-inset (page gutter minus the controls inner space, DR-294). Start and end groups flex: 1 1 0, logo group auto, so the logo stays centered. The gap between menu and search is the same as the gap between language and theme (DR-295). End group gap 4px (EN padding 4px on phones) |
+| Surface | background (page color), 1px border rule at the bottom when the bar is stuck, both themes, every width (DR-295), no shadow. Height --bar-height 56px, 64px from 1024. Sticky at every width: classes sticky top-0 z-(--z-bar) min-h-(--bar-height); no .top-bar CSS (DR-234, DR-265). Stuck state: the NavBar sets data-bar-stuck on html when it scrolls away (C-18); the TopBar shows its rule through the bar-stuck variant in components.css, not an arbitrary variant (DR-287) |
+| SkipLink | The first focusable element of the page, before the top ad band. Hidden until it gets focus, then shown at the page start with the base focus outline. Text মূল খবরে যান / Skip to main content. Target <main id="main" tabindex="-1"> (the hero; tabindex so Safari moves focus). scroll-padding-top keeps the sticky bar off the target (DR-269) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
@@ -1101,11 +1189,11 @@ The sticky bar at the top of every page, below the top ad band. Full page width 
 
 - Logo stays centered at every width.
 - No shadow, no radius.
-- At 200% browser text size the bar can wrap to two lines; it never scrolls sideways (DR-81).
+- At 200% browser text size the bar wraps to two lines (row 1 menu and logo, row 2 the controls at the end), stays sticky and never scrolls sideways (DR-81, DR-265).
 
 #### C-18 NavBar
 
-**Status:** Approved · **Decisions:** DR-41, DR-157, DR-223
+**Status:** Approved · **Decisions:** DR-41, DR-157, DR-223, DR-287, DR-295
 
 The row of section links under the TopBar, from 1280 only. Scrolls away with the page.
 
@@ -1113,8 +1201,8 @@ The row of section links under the TopBar, from 1280 only. Scrolls away with the
 
 | Part | Spec |
 | --- | --- |
-| `NavBar.item` | type-ui-sm weight 600 (BN 15px), ink, 28px apart (gap-7), centered in the shell (DR-170), row min-h-12 (48px, --nav-row-height; LAY-17, DR-223). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199) |
-| `NavBar.rules` | No rule between TopBar and NavBar: the TopBar drops its bottom rule while the NavBar shows below it; the NavBar keeps a 1px rule at its bottom. When only the TopBar sticks, its 1px bottom rule returns (DR-173) |
+| `NavBar.item` | Bangla: type-ui weight 600 (16px, DR-295); English: type-ui-sm weight 600 (14px, unchanged). Ink, 28px apart (gap-7), centered in the shell (DR-170), row min-h-12 (48px, --nav-row-height; LAY-17, DR-223). The 48px row does not include the 1px bottom rule: 49px in total (DR-295). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199) |
+| `NavBar.rules` | No rule between TopBar and NavBar: the TopBar drops its bottom rule while the NavBar shows below it; the NavBar keeps a 1px rule at its bottom. When only the TopBar sticks, its 1px bottom rule returns (DR-173). Contract: when the NavBar scrolls away it sets data-bar-stuck on html; the TopBar reads it (DR-287) |
 | `NavBar.current` | interactive text + 3px line (border-b-3, --color-bar) at the row bottom, aria-current page (aria-[current=page]:text-interactive) |
 | Surface | Shell width, page color, 1px border rule at the bottom |
 
@@ -1124,7 +1212,7 @@ The row of section links under the TopBar, from 1280 only. Scrolls away with the
 
 **Content.**
 
-- Order: হোম, বাংলাদেশ, অঞ্চল (working label), ভূরাজনীতি, বিশ্ব অর্থনীতি, নিরাপত্তা ও সংঘাত, প্রযুক্তি, ইতিহাস ও প্রেক্ষাপট, বিশ্লেষণ ও মতামত. No ফ্যাক্টচেক (DR-18), no চীন (DR-19).
+- One label per category, the same in the NavBar, the section heading and the Drawer, from the IA label table (U-01, DR-282). Until that table is approved, use the working labels as built (bn.ts). No ফ্যাক্টচেক (DR-18), no চীন (DR-19).
 
 **Accessibility.**
 
@@ -1137,7 +1225,7 @@ The row of section links under the TopBar, from 1280 only. Scrolls away with the
 
 #### C-19 Drawer
 
-**Status:** Approved · **Decisions:** DR-21, DR-41, DR-56, DR-170, DR-181, DR-182, DR-185, DR-188, DR-223, DR-226, DR-227, DR-228
+**Status:** Approved · **Decisions:** DR-21, DR-41, DR-56, DR-170, DR-181, DR-182, DR-185, DR-188, DR-223, DR-226, DR-227, DR-228, DR-280, DR-295, DR-302, DR-306, DR-331
 
 Modal menu from the start edge with every section. Opens from TopBar.menu at every width.
 
@@ -1145,11 +1233,11 @@ Modal menu from the start edge with every section. Opens from TopBar.menu at eve
 
 | Part | Spec |
 | --- | --- |
-| `Drawer.panel` | shadcn Sheet side left, restyled (CPT-16, DR-228). surface-elevated, --drawer-width (320px, or viewport minus 48), full height, no shadow, overlay backdrop behind, z-(--z-overlay). Slides in 450ms ease-slide (DR-227). Panel inset 20px (px-5, LAY-21, DR-223) |
-| `Drawer.head` | 56px: logo at the start, close IconButton ghost at the end, no rule below (DR-181). Phones (under 768): close button size bar 32 x 32, its 20px icon on the 20px panel inset like the logo (DR-209). From 768: 44 x 44, its 20px icon on the panel inset (DR-214) |
-| `Drawer.search` | Phones only, first: 48px (h-12) search field with attached square button; same field type as SearchDialog.field (DR-246) |
-| `Drawer.item` | type-ui 600 16px, ink, rows min-h-13 (52px; LAY-17, DR-223), 1px rule (rule color) under every category row (DR-181). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199). Current page: interactive text, aria-current page (aria-[current=page]:text-interactive), no line (DR-226) |
-| `Drawer.accordion` | shadcn Collapsible (CPT-16), no animation (DR-227). Category with children: the label links to the category page; a 44px caret IconButton at the end (20px caret, down when closed, up and interactive color when open; aria-expanded, aria-controls) opens the child list below the row. Child group on a tint (page surface) that runs to the panel edges, padding 8px top and bottom; children indented 16px, 15px 500, ink-secondary, 44px rows, no rules between children (DR-185). All closed when the Drawer opens; the current category opens (DR-181) |
+| `Drawer.panel` | shadcn Sheet side left, restyled (CPT-16, DR-228). surface-elevated, --drawer-width (320px, or viewport minus 48), full height, no shadow, overlay backdrop behind, z-(--z-overlay). Opens and closes with the shadcn Sheet default slide (DR-280). Panel inset 20px (px-5, LAY-21, DR-223) on the panel content wrapper (the shell); rows, links and dividers do not set their own side padding (DR-295) |
+| `Drawer.head` | 56px: logo at the start (type-logo-sm, 24px, DR-306), close IconButton ghost at the end, no rule below (DR-181). Phones (under 768): close button size bar 32 x 32, its 20px icon on the 20px panel inset like the logo (DR-209). From 768: 44 x 44, its 20px icon on the panel inset (DR-214) |
+| `Drawer.search` | Phones only, first: 44px (h-11) search field, background, 1px border; 20px search icon inside the field at the start, ink-muted, aria-hidden; no attached button, Enter runs the search (DR-295). On focus-within the border and the icon fade to interactive over 200ms; the base focus outline stays (DR-225). No motion with reduced motion. SearchDialog.field is unchanged |
+| `Drawer.item` | type-ui 600 16px, ink, rows min-h-13 (52px; LAY-17, DR-223), 1px rule (rule color) under every category row, inside the shell (not the full panel width) (DR-181, DR-295). For a row with children the rule sits under the parent row; the open child group follows it (DR-295). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199). Current page: interactive text, aria-current page (aria-[current=page]:text-interactive), no line (DR-226) |
+| `Drawer.accordion` | shadcn Collapsible (CPT-16), no animation (DR-227). Category with children: the label links to the category page; a 44px caret IconButton at the end (20px caret, down when closed, up and interactive color when open; aria-expanded, aria-controls) opens the child list below the row. Child group on a tint (page surface) inside the shell, the same width as the rules (amends DR-185, DR-295), padding 8px top and bottom; children indented 16px, 15px 500, ink-secondary, 44px rows, no rules between children (DR-185). All closed when the Drawer opens; the current category opens (DR-181) |
 | `Drawer.social` | Pinned to the panel bottom (stays in view while the list scrolls): surface-alt band, padding 12px 20px, social links centered, 44px taps, 8px apart, ink icons; UI link states: icon interactive-hover, pressed interactive-pressed, no wash (DR-220). Same 5 links as the Footer (DR-182, DR-184) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1158,7 +1246,7 @@ Modal menu from the start edge with every section. Opens from TopBar.menu at eve
 
 **Content.**
 
-- Sub-items: regions under অঞ্চল; বিশ্লেষণ, মতামত and অপ-এড under বিশ্লেষণ ও মতামত, in accordions (Drawer.accordion).
+- Sub-items: regions under অঞ্চল; বিশ্লেষণ and মতামত under বিশ্লেষণ ও মতামত, in accordions (Drawer.accordion). No অপ-এড item (DR-302). Both sub-items link to #analysis-opinion-title (the P-4 heading); every # target in the nav must exist (DR-331).
 
 **Accessibility.**
 
@@ -1170,7 +1258,7 @@ Modal menu from the start edge with every section. Opens from TopBar.menu at eve
 
 #### C-20 SearchDialog
 
-**Status:** Approved · **Decisions:** DR-21, DR-186, DR-187, DR-189, DR-190, DR-191, DR-192, DR-227, DR-228, DR-231
+**Status:** Approved · **Decisions:** DR-21, DR-186, DR-187, DR-189, DR-190, DR-191, DR-192, DR-227, DR-228, DR-231, DR-280
 
 Search panel from TopBar.search, from 768. Phones search inside the Drawer.
 
@@ -1178,7 +1266,7 @@ Search panel from TopBar.search, from 768. Phones search inside the Drawer.
 
 | Part | Spec |
 | --- | --- |
-| `SearchDialog.panel` | shadcn Dialog, restyled (CPT-16, DR-228), no open or close animation (DR-227). surface-elevated, full width at the top, overlay backdrop behind, z-(--z-overlay); padding 96px top, 56px bottom (the height sets the field group apart from the close icon); contents in the shell (DR-190) |
+| `SearchDialog.panel` | shadcn Drawer from the top, restyled (CPT-16, DR-280); opens and closes with the shadcn default slide. surface-elevated, full width at the top, overlay backdrop behind, z-(--z-overlay); padding 96px top, 56px bottom (the height sets the field group apart from the close icon); contents in the shell (DR-190) |
 | `SearchDialog.trending` | Below the field, 24px gap, one wrapping line: label ট্রেন্ডিং (Trending on English pages; 15px 600, ink-muted, h2, 24px before the first term), then up to 6 term links that run a search: plain text, type-ui-sm 600 (DR-216), link color (interactive), no underline (hover interactive-hover, pressed interactive-pressed; COL-06, DR-199), 44px tall targets, one wrapping row split by the 4px square separator (DR-166) with 16px each side. Editorial or analytics list, later (DR-190..192) |
 | `SearchDialog.field` | 56px (h-14, DR-231), 1px border-interactive, input type="text" with enterKeyHint="search" inside a role="search" form (DR-246: one Escape closes the dialog), hidden label, square submit button attached (interactive fill) |
 | `SearchDialog.close` | IconButton ghost in the panel top right corner, 12px from the top, glyph on the page gutter (same edge as the TopBar controls), apart from the field group. The field starts below it (DR-186, DR-189) |
@@ -1194,7 +1282,7 @@ Search panel from TopBar.search, from 768. Phones search inside the Drawer.
 
 **Accessibility.**
 
-- Modal dialog, focus to the field, Escape, the close button and a backdrop press close it (DR-228), focus back to the search button.
+- Modal, page inert. Focus to the panel itself (tabindex -1, no visible ring), as in the Drawer (DR-249, DR-280); one Tab reaches the field. Escape, the close button and a backdrop press close it, focus back to the search button. No slide with reduced motion.
 
 **Checks.**
 
@@ -1202,7 +1290,7 @@ Search panel from TopBar.search, from 768. Phones search inside the Drawer.
 
 #### C-21 Footer
 
-**Status:** Provisional · **Decisions:** DR-59, DR-157, DR-193 (provisional; extension after run 2, CMP-33), DR-224
+**Status:** Provisional · **Decisions:** DR-59, DR-157, DR-193 (provisional; extension after run 2, CMP-33), DR-224, DR-264, DR-306, DR-314
 
 The minimum footer (DR-59) after the last ad band. Wireframe V2 look: everything centered.
 
@@ -1210,10 +1298,10 @@ The minimum footer (DR-59) after the last ad band. Wireframe V2 look: everything
 
 | Part | Spec |
 | --- | --- |
-| `Footer.panel` | surface-elevated band, full width, panel-inset (LAY-20): 40 / 32px under 600px, 48 / 40px from 600px (DR-224), contents in the shell, centered. CPT-15 exception |
-| `Footer.logo` | Same stand-in as TopBar.logo, 24px |
-| `Footer.social` | 5 links 44 x 44 in this order: Facebook, YouTube, X, Instagram, LinkedIn. Filled brand marks (Simple Icons, CC0), 20px, ink color, each with a text name for screen readers (DR-184). UI link states: icon interactive-hover, pressed interactive-pressed, no wash (DR-220) |
-| `Footer.links` | আমাদের সম্পর্কে, যোগাযোগ, সংশোধনী, গোপনীয়তা নীতি, শর্তাবলি: type-ui-sm 600 (DR-216) ink-secondary, 24px apart, wrap centered. UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199) |
+| `Footer.panel` | Panel band (layout §5.3, DR-264): surface-elevated across the full viewport width; contents in the shell, so they align with the page gutter (288px at 320). Block inset only: 40px under 600px, 48px from 600px; no inline inset. Contents centered. CPT-15 exception |
+| `Footer.logo` | Same stand-in as TopBar.logo: type-logo-sm, 24px (DR-306) |
+| `Footer.social` | 5 links 44 x 44 in this order: Facebook, YouTube, X, Instagram, LinkedIn. Filled brand marks (Simple Icons 13.21.0, CC0), drawn in code (SocialIcon), no icon package (DR-301, DR-314), 20px, ink color, each with a text name for screen readers (DR-184). UI link states: icon interactive-hover, pressed interactive-pressed, no wash (DR-220). Placeholder targets: each network front page until the real account URLs are known (DR-278) |
+| `Footer.links` | আমাদের সম্পর্কে /about, যোগাযোগ /contact, সংশোধনী /corrections, গোপনীয়তা নীতি /privacy, শর্তাবলি /terms (same paths under /en; 404 until the pages exist, DR-278): type-ui-sm 600 (DR-216) ink-secondary, 24px apart, wrap centered. UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199) |
 | `Footer.copyright` | metadata size, ink-muted |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1237,10 +1325,8 @@ The minimum footer (DR-59) after the last ad band. Wireframe V2 look: everything
 | Item | What to do now |
 | --- | --- |
 | Footer (C-21) | Provisional. Run 2 builds the drawn look. The design extension comes after run 2 (CMP-33). |
-| Divider item and column rules (C-22) | Draft (DR-104). Lists use the item rule as their sheets give it (StoryList, StoryListItem). |
+| Divider column rule placement (C-22) | tajmin sets where column-inset and column-full are used (DR-262). |
 | SearchDialog Trending terms | The term source (editorial or analytics) is not decided. Use mock terms. |
-| RegionSlider region list | The editorial team sets the regions and their order (U-07). Use the 6 mock regions. |
+| RegionSlider region list | The editorial team sets the regions and their order (U-07). Use the 7 working regions as built (bn.ts). The final list and order go in the IA label table (DR-342). |
 | English labels | Working labels until IA-06. |
-| DailyPoll storage | Keep the vote in local storage; percents by largest remainder (CMP-29, to confirm in the build). |
 | Logo | Text stand-in until the logo file exists (BRD-06). |
-| Spacing check | Check gutters, gaps and section space by eye in run 2. Change tokens only (L-62). |

@@ -1,12 +1,12 @@
 {
   "mcpServers": {
     "next-devtools": {
-      "command": "npx",
-      "args": ["-y", "next-devtools-mcp@latest"]
+      "command": "pnpm",
+      "args": ["exec", "next-devtools-mcp"]
     },
     "playwright": {
-      "command": "npx",
-      "args": ["-y", "@playwright/mcp@latest"]
+      "command": "pnpm",
+      "args": ["dlx", "@playwright/mcp@0.0.83"]
     }
   }
 }

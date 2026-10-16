@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.4 · 10 October 2026 · For prototype run 2
+Version 2.7 · 16 October 2026 · For prototype run 3
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.7, `typography-system.md` v2.8, `spacing-layout-system.md` v2.11, `component-system.md` v1.2 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.12, `typography-system.md` v2.14, `spacing-layout-system.md` v2.18, `component-system.md` v1.12 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -41,10 +41,10 @@ If this contract and a foundation document do not agree, follow the foundation d
 
 | Area | Status | Use |
 | --- | --- | --- |
-| Color | Approved for prototype run 2 | `color-system.md` |
-| Typography | Approved for prototype run 2 | `typography-system.md` |
-| Homepage layout and spacing | Approved for prototype run 2 | `spacing-layout-system.md` |
-| Homepage components, radius, icons, motion | Approved for prototype run 2. The footer is provisional | `component-system.md` |
+| Color | Approved for prototype run 3 | `color-system.md` |
+| Typography | Approved for prototype run 3 | `typography-system.md` |
+| Homepage layout and spacing | Approved for prototype run 3 | `spacing-layout-system.md` |
+| Homepage components, radius, icons, motion | Approved for prototype run 3. The footer is provisional | `component-system.md` |
 | Article and other page layout | Not defined | Do not build. `spacing-layout-system.md` Section 14.2 lists the open items |
 | Article components | Not defined | Section 9 of this contract |
 
@@ -56,7 +56,8 @@ Build the homepage first. Do not start article or category templates until their
 | --- | --- |
 | Color tokens, light and dark | `color-system.md` Section 2 |
 | Contrast results | `color-system.md` Section 3 |
-| `globals.css` with Tailwind 4 and shadcn/ui names | `color-system.md` Section 5 |
+| `globals.css` imports and their order | `spacing-layout-system.md` Section 12.5 |
+| Tailwind 4 and shadcn/ui color names | `color-system.md` Section 5 |
 | Theme resets, container sizes, motion, base rules | `spacing-layout-system.md` Sections 12.1 and 12.4 |
 | Font families and stacks | `typography-system.md` Section 2 |
 | Type roles (size, weight, line height, tracking) | `typography-system.md` Section 3 |
@@ -79,13 +80,12 @@ Build the homepage first. Do not start article or category templates until their
 | Component tokens and `components.css` | `component-system.md` Section 6 |
 | ThemeToggle colors | `color-system.md` Section 2.9 |
 | One sheet per component: parts, sizes per width, checks | `component-system.md` Section 7 |
-| Full ad system | `design-system/spacing-layout-system.md` §9 |
 
 ## 5. Rule index
 
 Each row links to the rule. The rule text is in the foundation document.
 
-### Color (`color-system.md` v2.7, 17 rules)
+### Color (`color-system.md` v2.12, 17 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -99,7 +99,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`COL-08`](color-system.md#col-08-do-not-lower-text-opacity) | Do not lower text opacity |
 | [`COL-09`](color-system.md#col-09-show-status-with-color-and-a-second-cue) | Show status with color and a second cue |
 | [`COL-10`](color-system.md#col-10-put-status-text-on-safe-surfaces-only) | Put status text on safe surfaces only |
-| [`COL-11`](color-system.md#col-11-show-breaking-and-live-as-a-filled-label) | Show Breaking and Live as a filled label |
+| [`COL-11`](color-system.md#col-11-do-not-show-a-breaking-or-live-label) | Do not show a Breaking or Live label |
 | [`COL-12`](color-system.md#col-12-use-border-interactive-for-form-controls) | Use `border-interactive` for form controls |
 | [`COL-13`](color-system.md#col-13-show-a-focus-outline-on-every-focusable-element) | Show a focus outline on every focusable element |
 | [`COL-14`](color-system.md#col-14-use-on-destructive-on-delete-buttons) | Use `on-destructive` on delete buttons |
@@ -107,7 +107,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`COL-16`](color-system.md#col-16-set-the-page-colors-on-body) | Set the page colors on body |
 | [`COL-17`](color-system.md#col-17-show-a-selected-item-with-interactive-and-a-word) | Show a selected item with `interactive` and a word |
 
-### Typography (`typography-system.md` v2.8, 25 rules)
+### Typography (`typography-system.md` v2.14, 25 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -137,7 +137,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`TYP-24`](typography-system.md#typ-24-show-meaning-with-more-than-style) | Show meaning with more than style |
 | [`TYP-25`](typography-system.md#typ-25-break-a-word-only-when-it-does-not-fit) | Break a word only when it does not fit |
 
-### Spacing and layout (`spacing-layout-system.md` v2.11, 21 rules)
+### Spacing and layout (`spacing-layout-system.md` v2.18, 21 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -163,7 +163,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`LAY-20`](spacing-layout-system.md#lay-20-use-the-panel-inset-in-a-colored-panel) | Use the panel inset in a colored panel |
 | [`LAY-21`](spacing-layout-system.md#lay-21-use-the-4px-scale-for-one-component-values) | Use the 4px scale for one-component values |
 
-### Components (`component-system.md` v1.2, 21 rules)
+### Components (`component-system.md` v1.12, 21 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -221,9 +221,9 @@ These decisions are not in the foundation documents, but every build must obey t
 
 | Decision | Rule for the build |
 | --- | --- |
-| `DR-15`, `DR-88` | Stack: Next.js 16 App Router, React 19, TypeScript strict, Tailwind CSS 4, shadcn/ui, `next/font`, pnpm. Do not add Storybook in prototype run 2 |
+| `DR-15`, `DR-88` | Stack: Next.js 16 App Router, React 19, TypeScript strict, Tailwind CSS 4, shadcn/ui, `next/font`, pnpm. Do not add Storybook in prototype run 3 (the development test page stays, DR-317) |
 | `DR-01` | Use mock data. Do not connect a backend |
-| `DR-17` | Bangla is at the root URL. English is under `/en`. Remember the reader's choice. Do not redirect by browser language |
+| `DR-17` | Bangla is at the root URL. English is under `/en`. Remember the reader's choice; the remembered English choice redirects only at `/` (DR-270). Do not redirect by browser language |
 | `DR-18` | Fact Lens has no fact-checking product. Do not add "Fact Check" or ফ্যাক্টচেক as a category, tag or navigation item |
 | `DR-19` | চীন is not in the navigation. It is an entry under অঞ্চল |
 | `DR-35` | The first prototype uses the fixed rail only. Do not build the 8+4 hero |
@@ -232,7 +232,7 @@ These decisions are not in the foundation documents, but every build must obey t
 | `DR-87` | No rounded corners and no card borders. The ThemeToggle switch is the one exception (`CPT-05`) |
 | `DR-162` | Use the approved component and section names (`component-system.md` Section 3) |
 | `DR-188` | No subscribe button in the header or the drawer |
-| `DR-239` | Do not build `NewsletterSignup` in prototype run 2. The P-3 rail holds the `DailyPoll` only. Run 2 has no sign-up point |
+| `DR-239` | Do not build `NewsletterSignup` in prototype run 3. The P-3 rail holds the `DailyPoll`, and from 1280px the `ad-rail` slot below it (DR-240, DR-245). Run 3 has no sign-up point |
 | `DR-193` | The footer is provisional. Build the drawn look |
 
 ## 8. Check list: if you are about to
@@ -268,7 +268,7 @@ These decisions are not in the foundation documents, but every build must obey t
 
 ## 9. Gaps in the system
 
-The system does not yet define article and category page components, the full footer (the footer is provisional) or the item and column dividers (`Divider` is a draft). It also does not define what makes the AnalysisSection rows stack at 200% browser text size (DR-81, A11Y-18): test 200%, report what you find as `UNRESOLVED_DESIGN_SYSTEM`, and do not choose a trigger yourself.
+The system does not yet define article and category page components, the full footer (the footer is provisional) or where each column divider version goes (`Divider` C-22: tajmin sets it, DR-262). The 200% text stack trigger is the 17.5rem container rule in `StoryCard` (C-24, DR-308); check the value in the build and report a failure as `UNRESOLVED_DESIGN_SYSTEM`; do not choose another trigger yourself.
 
 For a gap:
 
@@ -295,7 +295,8 @@ Before you finish a task:
 3. Do the prototype checks in `typography-system.md` Section 9 and the checks in each component sheet (`component-system.md` Section 7).
 4. If you changed a color, run the contrast test in `color-system.md` Section 3 again.
 5. Test English and Bangla, light and dark, keyboard focus and 200% zoom.
-6. In your summary, give the changed files, the checks you did, the failures that remain and each `UNRESOLVED_DESIGN_SYSTEM` item.
+6. Supported browsers: the last 2 versions of Chrome (Android and desktop), Edge, Firefox and Safari (macOS and iOS). The gate is the Chromium e2e run. WebKit runs as a separate report until its failures are fixed (DR-289). Check Firefox by hand before M2 (DR-341).
+7. In your summary, give the changed files, the checks you did, the failures that remain and each `UNRESOLVED_DESIGN_SYSTEM` item.
 
 ## 11. How to change this contract
 

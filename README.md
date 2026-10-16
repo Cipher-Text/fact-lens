@@ -2,7 +2,9 @@
 
 The new website frontend for **Fact Lens**, a Bangladesh-first international news publisher. The site publishes in Bangla and English.
 
-> Status: homepage prototype run 2 (Milestone 1) finished on 11 October 2026 and merged into `main`. Run 1 finished on 8 October 2026. A Vercel branch preview was made in R2-18; no production deploy is confirmed. Mock data only. See [`docs/HANDOVER.md`](docs/HANDOVER.md).
+> Status: homepage prototype run 3 (Milestone 1): the fix run. It rebuilds the run 2 fixes that tajmin decided on 13 to 15 October 2026 (`DR-262` to `DR-344`) from the updated specs. Run 2 finished on 11 October 2026 and run 1 on 8 October 2026. Mock data only.
+>
+> Live preview: [fact-lens-web-ashy.vercel.app](https://fact-lens-web-ashy.vercel.app/) (Vercel). It is a prototype, not the production site.
 
 ## Stack
 
@@ -14,8 +16,11 @@ Next.js 16 (App Router) · React 19 · TypeScript (strict) · Tailwind CSS 4 · 
 pnpm install
 pnpm dev          # http://localhost:3000 (Bangla), /en (English)
 pnpm check        # lint, typecheck, unit tests, build
-pnpm test:e2e     # browser tests with accessibility checks
+pnpm test:e2e     # browser tests with accessibility checks (Chromium and WebKit)
+pnpm test:e2e:chromium   # the gate: Chromium only (DR-289)
 ```
+
+Supported browsers: the last 2 versions of Chrome (Android and desktop), Edge, Firefox and Safari (macOS and iOS). Chromium is the test gate; WebKit is a separate report until its failures are fixed ([`docs/webkit-failures.md`](docs/webkit-failures.md)); Firefox gets a manual check before Milestone 2 (`DR-341`).
 
 ## Design system
 
@@ -40,3 +45,4 @@ This repository is built with Claude Code, under rules that humans and agents sh
 - [`.claude/`](.claude): permissions, hooks that block raw design values, skills (`/ticket`, `/accept`, `/verify`, `/check-rules`) and review subagents
 - [`docs/SPRINT.md`](docs/SPRINT.md): the tickets, each with a goal, acceptance criteria and the original prompt
 - [`docs/PROGRESS.md`](docs/PROGRESS.md): the build log
+- [`docs/prototype-findings.md`](docs/prototype-findings.md): findings and gaps from runs 1 and 2, with the decided fix for each
