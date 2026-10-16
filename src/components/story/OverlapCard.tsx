@@ -25,7 +25,7 @@ type OverlapCardProps = {
  * --space-card-notch short of the end edge, so the corner of the image shows. The card is
  * the container, so cqi means the card width (CPT-04, CPT-09). Each card flows on its own, with
  * no shared rows (DR-99). The body grows down (LAY-17); the title is never cut (CPT-08). A story with
- * no image shows the placeholder image (StoryImage, U-33).
+ * no image shows the no-image placeholder (StoryImage, DR-338).
  */
 export function OverlapCard({
   story,

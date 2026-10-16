@@ -99,8 +99,10 @@ describe("AnalysisSection (P-4)", () => {
       expect(row).toHaveAttribute("data-layout", "row");
       expect(row.querySelector(".type-summary")).toBeNull();
     }
-    // Every story has an image: the mock story with none shows the placeholder (U-33).
-    expect(analysis.querySelectorAll("img")).toHaveLength(3);
+    // Every story has an image slot: the mock story with none shows the placeholder (DR-338).
+    expect(analysis.querySelectorAll("[data-story-media]")).toHaveLength(3);
+    expect(analysis.querySelectorAll("img")).toHaveLength(2);
+    expect(analysis.querySelectorAll("[data-placeholder]")).toHaveLength(1);
     // Every title is an h3 with one link; the column has no heading of its own.
     expect(analysis.querySelectorAll("h3")).toHaveLength(3);
     expect(analysis.querySelectorAll("h3 a")).toHaveLength(3);

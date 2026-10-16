@@ -4,9 +4,9 @@ import { dividerItem } from "@/components/layout/Divider";
 import { Chip } from "@/components/story/Chip";
 import { headlineLink, storyHref } from "@/components/story/links";
 import { MoreLink } from "@/components/story/MoreLink";
+import { StoryTime } from "@/components/story/StoryTime";
 import type { Lang, Story } from "@/content";
 import { localizedPath, type Dictionary } from "@/i18n";
-import { formatTime } from "@/lib/format";
 
 import { QuoteMark } from "@/components/story/QuoteMark";
 
@@ -50,9 +50,7 @@ export function OpinionList({ lang, stories, strings }: OpinionListProps) {
                   </p>
                 ) : null}
                 <p data-time className="type-metadata text-ink-muted">
-                  <time dateTime={story.publishedAt}>
-                    {formatTime(new Date(story.publishedAt), story.lang)}
-                  </time>
+                  <StoryTime story={story} />
                 </p>
               </div>
             </article>

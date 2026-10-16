@@ -35,8 +35,6 @@
   --info-subtle: #eaeff3;
   --destructive: #b3261e;
   --on-destructive: #fff9ed;
-  --live: #b3261e;
-  --on-live: #fff9ed;
   /* Utility */
   --selection: #edcec4;
   --overlay: rgb(31 26 23 / 0.48);
@@ -74,8 +72,6 @@
   --info-subtle: #1c2531;
   --destructive: #e5827b;
   --on-destructive: #18191e;
-  --live: #ff5a4f;
-  --on-live: #18191e;
   --selection: #5a2a1c;
   --overlay: rgb(0 0 0 / 0.64);
   --skeleton: #2d3036;
@@ -134,8 +130,6 @@
   --color-info: var(--info);
   --color-info-subtle: var(--info-subtle);
   --color-on-destructive: var(--on-destructive);
-  --color-live: var(--live);
-  --color-on-live: var(--on-live);
   --color-skeleton: var(--skeleton);
   --color-fill-neutral: var(--fill-neutral);
   --color-overlay: var(--overlay);

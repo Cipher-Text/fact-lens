@@ -63,7 +63,9 @@ export const bn = {
   story: {
     // {minutes} is already in Bangla digits.
     readingTime: "পড়তে {minutes} মিনিট",
-    breaking: "সদ্যপ্রাপ্ত",
+    justNow: "এইমাত্র",
+    hourAgo: "{hours} ঘণ্টা আগে",
+    hoursAgo: "{hours} ঘণ্টা আগে",
   },
   common: {
     more: "আরও দেখুন",

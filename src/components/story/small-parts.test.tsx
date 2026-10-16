@@ -91,13 +91,7 @@ describe("Eyebrow (C-08)", () => {
   })();
 
   it("links the story's category with hover and pressed colors", () => {
-    render(
-      <Eyebrow
-        story={{ ...top, breaking: false }}
-        strings={en}
-        className="mb-2"
-      />,
-    );
+    render(<Eyebrow story={top} strings={en} className="mb-2" />);
     const link = screen.getByRole("link", {
       name: en.categories[top.category],
     });
@@ -109,16 +103,6 @@ describe("Eyebrow (C-08)", () => {
     );
     expect(link.className).not.toMatch(NO_ROUNDING);
     expect(link.parentElement).toHaveClass("type-eyebrow");
-  });
-
-  it("shows the live Chip in the slot of a breaking story", () => {
-    const { container } = render(
-      <Eyebrow story={{ ...top, breaking: true }} strings={en} />,
-    );
-    expect(screen.queryByRole("link")).toBeNull();
-    expect(container.querySelector('[data-chip="live"]')).toHaveTextContent(
-      en.story.breaking,
-    );
   });
 });
 
@@ -149,6 +133,16 @@ describe("MetaLine (C-09)", () => {
     expect(container.firstElementChild!.className).not.toMatch(/font-/);
   });
 
+  it("shows the time only, with no separator, when the story has no reading time (DR-272)", () => {
+    const story = getHomepage("bn").hero!.lead;
+    const noReading = { ...story, readingMinutes: undefined };
+    const { container } = render(
+      <MetaLine items={storyMetaItems(noReading, bn.story)} />,
+    );
+    expect(container.querySelectorAll("time")).toHaveLength(1);
+    expect(container.querySelector("[data-meta-separator]")).toBeNull();
+  });
+
   it("builds the time item, and the reading time only when asked", () => {
     const story = getHomepage("bn").hero!.lead;
     const withReading = { ...story, readingMinutes: 4 };
@@ -171,11 +165,6 @@ describe("Chip (C-11)", () => {
       "py-0.5",
     );
     expect(chip.className).not.toMatch(/rounded|hover:/);
-  });
-
-  it("live uses the live fill with its own text color (COL-11)", () => {
-    const { container } = render(<Chip variant="live">Breaking</Chip>);
-    expect(container.firstElementChild).toHaveClass("bg-live", "text-on-live");
   });
 
   it("filter is a 44px button with an outline, selected fill, and no hover or pressed color (DR-222)", () => {

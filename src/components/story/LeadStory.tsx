@@ -21,7 +21,7 @@ type LeadStoryProps = {
  * --space-lead-inset each side, with the brand bar on top. The wrapper is the container
  * (CPT-04): the tokens in components.css change at 600 and 880px of the card width. Text sits
  * on the panel, never on the photo. The panel grows down (LAY-17); the title is never cut
- * (CPT-08). A story with no image shows the placeholder image (StoryImage, U-33).
+ * (CPT-08). A story with no image shows the no-image placeholder (StoryImage, DR-338).
  */
 export function LeadStory({ story, strings, className }: LeadStoryProps) {
   return (

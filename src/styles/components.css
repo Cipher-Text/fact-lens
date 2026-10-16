@@ -95,22 +95,58 @@
   }
 }
 
-/* StoryCard row splits (C-24). Text at the start, image at the end. Tracks use minmax(0, …)
-   so a long word does not widen a column (P-2 checks). */
+/* StoryCard layout (C-24). The card root is the container (CPT-04); the grid inside it has
+   a media area and a body area (DR-267: the media is first in the markup, no `order`).
+   story-stacked puts the media above the body. story-split-third and story-split-feature put
+   the text at the start and the image at the end, with --grid-column-gap between them
+   (DR-300). A row stacks when the container is narrower than 17.5rem, which is what happens
+   at 200% text; the width is in rem so it grows with the text (DR-308, A11Y-18). Tracks use
+   minmax(0, ...) so a long word does not widen a column (P-2 checks). */
+@utility story-media {
+  grid-area: media;
+}
+
+@utility story-body {
+  grid-area: body;
+}
+
+@utility story-stacked {
+  grid-template-areas: "media" "body";
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 0;
+  row-gap: var(--space-story-media-text);
+}
+
 @utility story-split-third {
+  grid-template-areas: "body media";
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  column-gap: --spacing(4);
+  column-gap: var(--grid-column-gap);
+  row-gap: 0;
+  @container (width < 17.5rem) {
+    grid-template-areas: "media" "body";
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: var(--space-story-media-text);
+  }
 }
 
 @utility story-split-feature {
+  grid-template-areas: "body media";
   grid-template-columns:
     minmax(0, 1fr)
     clamp(
       var(--story-feature-media-min),
-      calc((100% - --spacing(6)) * var(--story-feature-media-share)),
+      calc((100% - var(--grid-column-gap)) * var(--story-feature-media-share)),
       var(--story-feature-media-max)
     );
-  column-gap: --spacing(6);
+  column-gap: var(--grid-column-gap);
+  row-gap: 0;
+  @container (width < 17.5rem) {
+    grid-template-areas: "media" "body";
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: var(--space-story-media-text);
+  }
 }
 
 /* DailyPoll layout (C-26): stacked in a container under 600px, a row from 600px with the

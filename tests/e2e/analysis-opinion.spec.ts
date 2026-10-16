@@ -325,17 +325,20 @@ test.describe("sheet checks (P-4, C-02, C-06, C-24)", () => {
             .evaluate((el) => getComputedStyle(el).backgroundColor),
         ).toBe(await tokenColor(page, "--surface-elevated"));
 
-        // Compact rows: text at the start, 16:9 image at the end, text : image = 2 : 1, 16px gap.
+        // Compact rows: text at the start, 16:9 image at the end, text : image = 2 : 1, --grid-column-gap between them (DR-300).
+        // --grid-column-gap: 16px, 24px from 768, 32px from 1280 (spacing-layout-system.md §3).
+        const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
         for (const row of await analysis.locator("[data-story-card]").all()) {
           const rowBox = await box(row);
-          const img = await box(row.locator("[data-story-media] img"));
+          // The image or, for a story with no image, the placeholder in the same slot (DR-338).
+          const img = await box(row.locator("[data-story-media] > *"));
           const text = await box(row.locator("h3"));
           expect(Math.round((img.width / img.height) * 100)).toBe(178);
           expect(img.x).toBeGreaterThan(text.x);
           expect(Math.round(img.x + img.width)).toBe(
             Math.round(rowBox.x + rowBox.width),
           );
-          expect(Math.round(((rowBox.width - 16) * 1) / 3)).toBe(
+          expect(Math.round(((rowBox.width - columnGap) * 1) / 3)).toBe(
             Math.round(img.width),
           );
           await expect(row.locator(".type-summary")).toHaveCount(0);

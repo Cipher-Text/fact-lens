@@ -45,7 +45,6 @@ export interface Story {
   readingMinutes?: number; // card metadata: time, then reading time
   rank?: number; // Most read only: 1-based place from the most-read query (DR-290)
   image?: ImageRef; // some stories have no image
-  breaking?: boolean;
 }
 
 /** P-1: lead, one or two top stories (DR-44), and the Latest rail. */

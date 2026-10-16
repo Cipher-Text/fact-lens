@@ -57,13 +57,10 @@ describe("HeroSection (P-1)", () => {
     expect(row).not.toHaveClass("sm:grid-cols-2");
   });
 
-  it("shows the placeholder image for a lead with no image, and the overlap stays (7.4, U-33)", () => {
+  it("shows the placeholder image for a lead with no image, and the overlap stays (7.4, DR-338)", () => {
     const { container } = renderHero("bn", sparse);
     expect(sparse.lead.image).toBeUndefined();
-    expect(container.querySelector("[data-lead] img")).toHaveAttribute(
-      "alt",
-      "",
-    );
+    expect(container.querySelector("[data-lead] img")).toBeNull();
     expect(
       container.querySelector("[data-lead] [data-placeholder]"),
     ).not.toBeNull();
@@ -101,13 +98,10 @@ describe("HeroSection (P-1)", () => {
     ).toBeNull();
   });
 
-  it("shows Breaking as a filled label in the page language (COL-11, T-27)", () => {
-    renderHero("bn", full);
-    expect(screen.getByText("সদ্যপ্রাপ্ত")).toHaveClass(
-      "bg-live",
-      "text-on-live",
-    );
-    expect(screen.queryByText("Breaking")).toBeNull();
+  it("shows no Breaking or Live label (COL-11, DR-279)", () => {
+    const { container } = renderHero("bn", full);
+    expect(container.querySelector("[data-chip]")).toBeNull();
+    expect(screen.queryByText("সদ্যপ্রাপ্ত")).toBeNull();
   });
 
   it("formats time and reading time with Bangla digits (TYP-17)", () => {
@@ -117,7 +111,7 @@ describe("HeroSection (P-1)", () => {
       "datetime",
       full.lead.publishedAt,
     );
-    expect(lead.querySelector("time")).toHaveTextContent("০৯:১৫");
+    expect(lead.querySelector("time")).toHaveTextContent("৭ অক্টোবর, ০৯:১৫");
     expect(lead.querySelector("[data-reading-time]")).toHaveTextContent(
       "পড়তে ৬ মিনিট",
     );

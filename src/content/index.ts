@@ -35,7 +35,6 @@ function toStory(def: StoryDef, lang: Lang): Story {
   if (def.region) story.region = def.region;
   if (text.summary) story.summary = text.summary;
   if (def.readingMinutes) story.readingMinutes = def.readingMinutes;
-  if (def.breaking) story.breaking = true;
   if (def.author)
     story.author = { name: authors[def.author][lang], slug: def.author };
   if (def.image) {

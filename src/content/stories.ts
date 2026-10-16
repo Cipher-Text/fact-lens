@@ -26,7 +26,6 @@ export interface StoryDef {
   publishedAt: string;
   readingMinutes?: number;
   image?: ImageFile;
-  breaking?: boolean;
   author?: AuthorId;
   bn: StoryText;
   en: StoryText;
@@ -144,7 +143,6 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "economy",
     publishedAt: at("10-07 10:05"),
-    breaking: true,
     bn: { title: "রপ্তানি আয়ে সেপ্টেম্বরে ৭ শতাংশ প্রবৃদ্ধি" },
     en: { title: "Export earnings grow 7 percent in September" },
   },

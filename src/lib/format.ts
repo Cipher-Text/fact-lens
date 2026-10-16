@@ -23,16 +23,6 @@ export function formatDate(date: Date, lang: Lang): string {
   }).format(date);
 }
 
-/** Clock time, 24-hour, in Dhaka time: "09:15" or "০৯:১৫". No AM/PM, so no English word on a Bangla page. */
-export function formatTime(date: Date, lang: Lang): string {
-  return new Intl.DateTimeFormat(locales[lang], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-    timeZone: TIME_ZONE,
-  }).format(date);
-}
-
 /** Fills {name} placeholders in a string from the string tables. */
 export function fill(
   template: string,

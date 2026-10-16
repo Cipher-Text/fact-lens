@@ -475,7 +475,8 @@ for (const p of PAGES) {
         const panel = panels.nth(i);
         await expect(panel.locator("h3")).toHaveCount(1);
         await expect(panel.locator("[data-story-card]")).toHaveCount(1);
-        const image = await box(panel.locator("[data-story-media] img"));
+        // The image or, for a story with no image, the placeholder in the same slot (DR-338).
+        const image = await box(panel.locator("[data-story-media] > *"));
         expect(Math.abs(image.width / image.height - 1.5)).toBeLessThan(0.02);
         expect(
           await panel.locator("[data-story-list-item]").count(),

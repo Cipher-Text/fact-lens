@@ -2,8 +2,10 @@ import { Fragment, type ReactNode } from "react";
 
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
-import { fill, formatNumber, formatTime } from "@/lib/format";
+import { fill, formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
+
+import { StoryTime } from "./StoryTime";
 
 type MetaLineProps = {
   /** 1 to 3 items, set by the parent: plain text, no links. */
@@ -41,19 +43,16 @@ export function MetaLine({ items, className }: MetaLineProps) {
 }
 
 /**
- * The items of a story's MetaLine: time, then reading time. Time and digits in the story
- * language (typography-system.md 7.1). Off for the reading time in compact lists.
+ * The items of a story's MetaLine: time, then reading time (DR-272). A story with no
+ * readingMinutes shows the time only. Time and digits in the story language (TYP-17). Off for
+ * the reading time in compact lists.
  */
 export function storyMetaItems(
   story: Story,
   strings: Dictionary["story"],
   { readingTime = true }: { readingTime?: boolean } = {},
 ): ReactNode[] {
-  const items: ReactNode[] = [
-    <time key="time" dateTime={story.publishedAt}>
-      {formatTime(new Date(story.publishedAt), story.lang)}
-    </time>,
-  ];
+  const items: ReactNode[] = [<StoryTime key="time" story={story} />];
   if (readingTime && story.readingMinutes) {
     items.push(
       <span key="reading" data-reading-time>

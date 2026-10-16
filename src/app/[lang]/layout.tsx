@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getDictionary, isLang, langs, localizedPath } from "@/i18n";
+import { storyTimeScript } from "@/lib/story-time";
 import { themeScript } from "@/lib/theme";
 
 import {
@@ -49,6 +50,7 @@ export default async function RootLayout({
 }: LayoutProps<"/[lang]">) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
+  const { justNow, hourAgo, hoursAgo } = getDictionary(lang).story;
 
   return (
     // The theme script sets the .dark class before hydration (DR-281).
@@ -56,7 +58,15 @@ export default async function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="bg-background text-ink">{children}</body>
+      <body className="bg-background text-ink">
+        {children}
+        {/* Writes the reader's story times after load (TYP-17, DR-274). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: storyTimeScript(lang, justNow, hourAgo, hoursAgo),
+          }}
+        />
+      </body>
     </html>
   );
 }

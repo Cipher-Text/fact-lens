@@ -77,4 +77,53 @@ test.describe("200% browser text size", () => {
       });
     }
   }
+
+  // C-24, DR-308: a StoryCard row stacks (image above the text) when its container is narrower
+  // than 17.5rem. The rule is in rem, so at 200% text it is 560px and the rows stack on the
+  // phone and tablet widths; at normal text it is 280px and no row stacks.
+  for (const p of [
+    { name: "bn", path: "/" },
+    { name: "en", path: "/en" },
+  ]) {
+    for (const width of [...WIDTHS, 1280]) {
+      test(`${p.name} at ${width}: a story row stacks when its card is under 17.5rem`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        const cards = await page.evaluate(() => {
+          const rem = parseFloat(
+            getComputedStyle(document.documentElement).fontSize,
+          );
+          return [...document.querySelectorAll("[data-story-card]")]
+            .filter((card) => {
+              const layout = card.getAttribute("data-layout") ?? "";
+              return layout === "row" || layout === "row-until-lg";
+            })
+            .map((card) => {
+              const media = card
+                .querySelector("[data-story-media]")!
+                .getBoundingClientRect();
+              const body = card
+                .querySelector(".story-body")!
+                .getBoundingClientRect();
+              return {
+                width: card.getBoundingClientRect().width,
+                limit: 17.5 * rem,
+                stacked: media.bottom <= body.top + 0.5,
+                rows: getComputedStyle(card.firstElementChild!)
+                  .gridTemplateAreas,
+              };
+            });
+        });
+        for (const card of cards) {
+          // A row-until-lg card stacks from 1024 by its layout, not by its width.
+          if (width >= 1024 && card.stacked) continue;
+          expect(card.stacked, JSON.stringify(card)).toBe(
+            card.width < card.limit,
+          );
+        }
+      });
+    }
+  }
 });

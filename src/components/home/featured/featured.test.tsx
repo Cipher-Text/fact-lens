@@ -50,11 +50,13 @@ describe("FeaturedCategorySection (P-2)", () => {
       "[data-featured-wrapper] [data-story-card]",
     ) as HTMLElement;
     expect(card).toHaveAttribute("data-layout", "row-from-md");
-    expect(card.className).toContain("md:story-split-feature");
-    expect(card.className).not.toMatch(/\border-/);
+    const grid = card.firstElementChild as HTMLElement;
+    expect(card).toHaveClass("@container");
+    expect(grid.className).toContain("md:story-split-feature");
+    expect(card.innerHTML).not.toMatch(/\border-/);
     // Image before the text in the markup; the grid puts the image at the end (LAY-14, DR-267).
-    expect(card.children[0]).toHaveAttribute("data-story-media");
-    expect(card.children[1]).not.toHaveAttribute("data-story-media");
+    expect(grid.children[0]).toHaveAttribute("data-story-media");
+    expect(grid.children[1]).not.toHaveAttribute("data-story-media");
     expect(card.querySelector("[data-story-media] img")).toHaveClass(
       "aspect-3/2",
     );

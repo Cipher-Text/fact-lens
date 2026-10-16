@@ -284,11 +284,14 @@ for (const p of PAGES) {
       );
       // Latest shows the items that exist.
       await expect(hero.locator("[data-hero-rail] li")).toHaveCount(2);
-      // A lead with no image shows the placeholder, with the same overlap (U-33).
-      await expect(
-        hero.locator("[data-lead] [data-placeholder] img"),
-      ).toHaveCount(1);
-      const leadImage = await box(hero.locator("[data-lead] img"));
+      // A lead with no image shows the placeholder, with the same overlap (DR-338).
+      await expect(hero.locator("[data-lead] [data-placeholder]")).toHaveCount(
+        1,
+      );
+      await expect(hero.locator("[data-lead] img")).toHaveCount(0);
+      const leadImage = await box(
+        hero.locator("[data-lead] [data-placeholder]"),
+      );
       const leadPanel = await box(hero.locator("[data-lead-panel]"));
       expect(leadImage.y + leadImage.height - leadPanel.y).toBeGreaterThan(0);
       const scroll = await page.evaluate(

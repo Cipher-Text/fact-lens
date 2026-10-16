@@ -63,7 +63,9 @@ export const en: Dictionary = {
   },
   story: {
     readingTime: "{minutes} min read",
-    breaking: "Breaking",
+    justNow: "Just in",
+    hourAgo: "{hours} hour ago",
+    hoursAgo: "{hours} hours ago",
   },
   common: {
     more: "See more",

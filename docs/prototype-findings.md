@@ -63,11 +63,11 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | DOC-23 | FL-13 | 1366×768 first screen: the 264px hero estimate leaves out the section space; no headline in view | Medium | Resolved by spec (accepted trade-off): §13 (DR-257) says the lead headline shows after scrolling; R2-17 measured 224px |
 | DOC-24 | FL-13 | Headline roles have no `overflow-wrap`; one long compound word scrolls the page | Medium | Resolved by spec: typography v2.7 (TYP-25, DR-217), `overflow-wrap: break-word` on `body` |
 | DOC-25 | R2-04 | The §6 CSS block of `component-system.md` leaves out the button and icon tokens that its table lists | Low | Closed (DR-292): no run 3 code change |
-| DOC-26 | R2-04 | The Chip label sheet gives "15px 600", the `type-eyebrow` role is 14px 700 uppercase in English | Low | Decided (DR-293); code in R3-04 |
+| DOC-26 | R2-04 | The Chip label sheet gives "15px 600", the `type-eyebrow` role is 14px 700 uppercase in English | Low | Fixed in R3-04 |
 | DOC-27 | R2-05 | C-12 and C-17 give the switch corners and the top bar padding in px, §6 has no tokens, and §2.9 says no component has color tokens | Low | Fixed in R3-02 |
 | DOC-28 | R2-05 | C-18: does the 48px row include the 1px bottom rule? And where does the Drawer row rule sit when a row has children? | Low | Fixed in R3-02 |
 | DOC-29 | R2-06 | C-16 says the rail box is "rail width 304" and also `w-(--ad-rail-w)`, which is 300px | Low | Decided (DR-296); code in R3-07 |
-| DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Decided (DR-297); code in R3-04 |
+| DOC-30 | R2-07 | C-01 and C-24 give values that §6 has no token for: the LeadStory panel start padding (0 narrow) and the P-2 feature split image column (share, min, max) | Low | Fixed in R3-04 |
 | DOC-31 | R2-11 | C-26 poll: the layout table says "under 1024: full row", but the inset follows the container width, so 600–647 stays stacked; the legend cannot sit in the start column of the row layout; the row layout has no column split or token | Low | Decided (DR-298); code in R3-05 |
 | DOC-32 | R2-12 | C-07 Most read: the sheet gives a 24px column gap and 20 / 24px row gaps; `spacing-layout-system.md` 3.1 gives 16px (phone, 600) and 20px (768) column gaps and says the row gap equals the column gap | Low | Fixed in R3-03 |
 | DOC-33 | R2-14 | C-21 Footer: the band has the panel inset (32 / 40px sides) and the contents sit "in the shell" (gutter 16 / 24px); both together leave 224px of content at 320 | Low | Fixed in R3-03 |
@@ -89,7 +89,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | U-11 | FL-06 | Headline link color | Low | Fixed in R2-07 (sheets: `ink`, `ink-muted` on hover, no pressed color) |
 | U-12 | FL-06 | Lead text panel inset and padding | Low | Fixed in R2-07 (C-01 tokens) |
 | U-13 | FL-06 | Card without image beside a card with image | Medium | Fixed in R2-07 (C-01, C-02, no subgrid) and through U-33 (R2-08) |
-| U-14 | FL-06 | Bangla Breaking label and label padding | Low | Decided (DR-344); code in R3-04 |
+| U-14 | FL-06 | Bangla Breaking label and label padding | Low | Fixed in R3-04 |
 | U-15 | FL-07 | Analysis item layout (image-led list) | Low | Fixed in R2-09 |
 | U-16 | FL-07 | Opinion chip padding and quote icon | Low | Fixed in R3-03 |
 | U-17 | FL-07 | Padding inside the বিশ্লেষণ ও মতামত background | Low | Fixed in R2-09 |
@@ -108,11 +108,11 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | U-30 | FL-12 | Minimum footer look and social icons | Low | Fixed in R2-14 (C-21) |
 | U-31 | R2-05 | Logo size and weight (serif 700, 20/22/24px) have no type role | Medium | Fixed in R3-02 |
 | U-32 | R2-05 | ThemeButton moon "redrawn larger" has no asset | Low | Fixed in R3-02 |
-| U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Decided (DR-338); code in R3-04 |
+| U-33 | R2-07 | No sheet draws a story with no image, but the mock set has them (hero top card, lead in the sparse case, many list stories). C-01, C-02 and C-24 say the image is required | Medium | Fixed in R3-04 |
 | U-34 | R2-09 | P-4 analysis stories: the P-4 sheet says rules between stories wait on the item divider (DR-104), but C-03 says StoryList rules and the other lists draw them | Low | Fixed in R3-03 |
 | U-35 | R2-09 | C-06 quote mark: the sheet gives sizes and color, no drawing | Low | Decided (DR-301); code in R3-02 |
 | U-36 | R2-13 | C-15 panel: "3:2 image, 3 stories". The sheet does not say if the image belongs to the first story. Built as an image story (StoryCard 3:2) plus two text stories = 3 stories | Low | Closed (DR-307): no run 3 code change |
-| U-37 | R2-15 | At 200% text size nothing sets the P-4 compact rows to stack: no trigger exists (DR-81, A11Y-18). Most read stacks because the rem breakpoints move with the browser text size | Medium | Decided (DR-308); code in R3-01, R3-03, R3-04 |
+| U-37 | R2-15 | At 200% text size nothing sets the P-4 compact rows to stack: no trigger exists (DR-81, A11Y-18). Most read stacks because the rem breakpoints move with the browser text size | Medium | Fixed in R3-04 |
 | U-38 | Audit 13 Oct | No skip link | Medium | Fixed in R3-02 |
 | IMP-01 | FL-02 | Remembered English choice redirects only at `/` | Medium | Decided (DR-270); code in R3-08 |
 | IMP-02 | FL-02 | shadcn CSS imports left out of `globals.css` | Medium | Fixed in R3-02 |
@@ -123,7 +123,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-07 | FL-01 | Playwright runs Chromium only | Low | Done in R2-01 (WebKit project; 40 known WebKit failures, `docs/webkit-failures.md`) |
 | IMP-08 | FL-03 | Which creative the ad placeholder shows | Low | Resolved by spec: `AdSlot` follows the §9 tiers. 768–1023 stays IMP-44 |
 | IMP-09 | FL-03 | Extra layout part `WithRail` | Low | Fixed in R3-01 |
-| IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Decided (DR-272); field exists since FL-04, display in R3-04 |
+| IMP-10 | FL-04 | `readingMinutes` added to the `Story` type | Low | Fixed in R3-04 |
 | IMP-11 | FL-04 | `getHomepage` applies the content rules and has a sparse variant | Low | Done in R2-01 (`?content=sparse` in development only) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Later: backend integration; labels stay in `src/i18n/` (DR-263) |
 | IMP-13 | FL-05 | Drawer and search use native `<dialog>`, not shadcn | Medium | Fixed in R3-02 |
@@ -132,7 +132,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-16 | FL-05 | Nav row hides the items that do not fit after hydration | Low | Resolved by spec: DR-255, no "More" item. The server HTML wraps before hydration (R2A-08, IMP-56) |
 | IMP-17 | FL-05 | On phones the drawer focuses the search field first | Low | Fixed in R2-05 (focus goes to the panel, DR-249) |
 | IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section and story pages; URL patterns are set, 404s stay (run 2 review, no DR) |
-| IMP-19 | FL-06 | Hero metadata shows the clock time only, 24-hour | Low | Decided (DR-274); code in R3-04 |
+| IMP-19 | FL-06 | Hero metadata shows the clock time only, 24-hour | Low | Fixed in R3-04 |
 | IMP-20 | FL-06 | Hidden page heading and hero heading | Low | Decided (DR-275); code in R3-08 |
 | IMP-21 | FL-07 | P-4 heading outline: hidden analysis heading, chip as the opinion heading | Low | Fixed in R2-09 (the sheets give h3 titles and a chip label) |
 | IMP-22 | FL-07 | Shared `MoreLink` and elevated link classes | Low | Resolved by spec: `MoreLink` is sheet C-10; the elevated link classes are gone. The 404s stay IMP-18 |
@@ -149,7 +149,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-33 | R2-03 | Newsletter strings and components stay until R2-11, because R2-03 only touches `src/content/` | Low | Later: newsletter phase (DR-343) |
 | IMP-34 | R2-03 | Mock ad creatives are plain gray SVG files with no text, one per size | Low | Closed (DR-310): no run 3 code change |
 | IMP-35 | R2-04 | The Eyebrow is now a link to `/category/<id>`, which is a 404 page | Low | Later: covered by the URL patterns, 404 stays (DR-311) |
-| IMP-36 | R2-04 | The Bangla Breaking label is "সদ্যপ্রাপ্ত"; the Chip sheet says the working label is ব্রেকিং | Low | Decided (DR-279); code in R3-04 |
+| IMP-36 | R2-04 | The Bangla Breaking label is "সদ্যপ্রাপ্ত"; the Chip sheet says the working label is ব্রেকিং | Low | Fixed in R3-04 |
 | IMP-37 | R2-04 | Item divider is a class, not a component; the section divider is a component | Low | Fixed in R3-03 |
 | IMP-38 | R2-04 | 106 e2e tests were red on the branch before R2-04; five keyboard tests accept the old ring or the base outline for now | Medium | Fixed in R3-00 (the three loose keyboard tests now require the base outline) |
 | IMP-39 | R2-05 | Drawer and SearchDialog stay on the native `<dialog>`; the sheets name the shadcn Sheet, Dialog, Switch and Collapsible (CPT-16) | Medium | Fixed in R3-02 |
@@ -173,7 +173,7 @@ New findings in run 3 take the next free number: DOC-40, U-41, IMP-77, KIT-11. U
 | IMP-57 | R2-20 | Nav and Drawer links are plain `<a>` (full page load) with no comment, unlike `LanguageSwitch` | Low | Fixed in R3-01 (`LanguageSwitch` stays a plain `<a>`, R3-08) |
 | IMP-58 | Audit 13 Oct | Installed packages that the spec forbids or that nothing uses | Medium | Decided (DR-285); `tw-animate-css` removed in R3-00, rest in R3-02 |
 | IMP-59 | Audit 13 Oct | Tests that depend on the environment | Medium | Fixed in R3-00 (slider animation test and a fixed sleep no longer depend on machine speed) |
-| IMP-60 | Audit 13 Oct | Next.js LCP warning on hero images | Low | Decided (DR-325); code in R3-04 |
+| IMP-60 | Audit 13 Oct | Next.js LCP warning on hero images | Low | Fixed in R3-04 |
 | IMP-61 | Audit 13 Oct | Component and folder names differ from the approved list | Medium | Fixed in R3-01 |
 | IMP-62 | Audit 13 Oct | Arbitrary variants that couple components | Medium | Decided (DR-287); code in R3-02, R3-05 |
 | IMP-63 | Audit 13 Oct | Bangla headings differ from the sheet words | Medium | Decided (DR-288); code in R3-06 |
@@ -376,10 +376,24 @@ These items wait for a later phase. Run 3 does not change them, except where a t
 - **Problem:** with `removeProperty` in the cleanup, the page did not scroll to `#region-europe` on load (React Strict Mode runs the cleanup once in development). The cause is not found. The code leaves the property set on cleanup.
 - **Suggested solution:** keep it as it is; the bar is on every page. Check a production build in R3-09.
 
+### IMP-78 The story time script is a little over 1 KB
+
+- **Found:** R3-04, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `typography-system.md` TYP-17 (DR-274: "under 1 KB"); `src/lib/story-time.ts`.
+- **Problem:** the inline script is about 1.1 to 1.4 KB in the development build (it holds the format function and its Intl calls). I did not measure the production build. The unit test allows 1.5 KB.
+- **Suggested solution:** accept up to 1.5 KB, or drop the year rule from the script. tajmin decides.
+
+### IMP-79 A failed image shows the placeholder only after hydration
+
+- **Found:** R3-04, 16 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Source:** `component-system.md` C-24 (DR-338); `src/components/story/StoryImage.tsx`.
+- **Problem:** a broken image switches to the placeholder in `onError`. Before hydration the browser shows the broken-image icon over the `bg-surface-alt` fill.
+- **Suggested solution:** keep it. Mock images are local files that always load.
+
 Entry format:
 
 ```markdown
-### IMP-77 Short title
+### IMP-80 Short title
 
 - **Found:** R3-0x, date · **Severity:** High | Medium | Low · **Status:** Open
 - **Source:** spec section and rule IDs; file and line.
@@ -398,3 +412,4 @@ Entry format:
 | 2026-10-16 | R3-01 | DOC-38 and IMP-71 added; DOC-36, IMP-09, IMP-48, IMP-57, IMP-61 and IMP-64 set to Fixed in R3-01 |
 | 2026-10-16 | R3-02 | DOC-39, U-39 and IMP-72 to IMP-76 added; DOC-27, DOC-28, DOC-34, DOC-37, U-31, U-32, U-38, IMP-02, IMP-13, IMP-31, IMP-39, IMP-40, IMP-42, IMP-56, IMP-68 and IMP-69 set to Fixed in R3-02 |
 | 2026-10-16 | R3-03 | U-40 added; DOC-32, DOC-33, U-03, U-16, U-34, IMP-37 and IMP-54 set to Fixed in R3-03 |
+| 2026-10-16 | R3-04 | IMP-78 and IMP-79 added; DOC-26, DOC-30, U-14, U-33, U-37, IMP-10, IMP-19, IMP-36 and IMP-60 set to Fixed in R3-04 |
