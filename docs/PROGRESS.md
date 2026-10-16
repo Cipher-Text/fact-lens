@@ -9,6 +9,7 @@ Claude Code reads the "Now" section at the start of each session. `/ticket` and 
 - Run: 4 (short fix run). Branch `prototype-run-4`, made from `main` at `0bebd07`.
 - Ticket: R4-03 (Lists and dividers) is next (To do). R4-02 Done on 17 October 2026.
 - Specs in `docs/design-system/`: color 2.14, typography 2.15, layout 2.21, component-system 1.16, agent-contract 2.11.
+- Tests from R4-03: `pnpm check` plus Chromium e2e on the ticket's "Test files" only; the full suite runs in R4-05 or when a ticket changes a shared file (`docs/SPRINT.md` "Test scope").
 - Next action: tajmin runs `/clear`, then `/ticket` for R4-03.
 
 ## Past runs

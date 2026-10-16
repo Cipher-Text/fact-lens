@@ -181,7 +181,7 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple 
 A task is done when all of these are true:
 
 1. `pnpm check` passes with no new warnings.
-2. `pnpm test:e2e:chromium` (`pnpm test:e2e --project=chromium`) passes, including the axe check, with no serious or critical violations. WebKit runs as a separate report until its failures are fixed; do not let a WebKit failure block a ticket, and do not skip the test (`DR-289`).
+2. Chromium e2e passes on the ticket's "Test files" (`docs/SPRINT.md`) and on every test file the ticket adds or changes (`pnpm exec playwright test --project=chromium <files>`). Run the full `pnpm test:e2e:chromium` in the final ticket of a run, and in any ticket that changes the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`). The run passes, including the axe check, with no serious or critical violations. WebKit runs as a separate report until its failures are fixed; do not let a WebKit failure block a ticket, and do not skip the test (`DR-289`).
 3. The section matches its row in `spacing-layout-system.md` Section 7.2 at every tier, and the sparse cases in Section 7.3.
 4. Each component passes the checks in its sheet (`component-system.md` Section 7).
 5. The validation widths and content cases in `spacing-layout-system.md` Section 13 show no clipped text and no horizontal scroll.

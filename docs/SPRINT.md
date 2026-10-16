@@ -39,7 +39,7 @@ Run 4 is a short fix run. It adds no new feature and no new page. Mock data only
 ### Test scope (all tickets)
 
 - Test only what the ticket changes. Each ticket lists its checks. Add or change a test only for those checks.
-- The existing suite is the regression gate: `pnpm check` and `pnpm test:e2e:chromium` pass at the end of every ticket. Do not weaken, skip or delete a test. A test that pins an old decision changes with the decision (the ticket names it).
+- Regression gate (from R4-03): `pnpm check` passes at the end of every ticket. Chromium e2e runs only on the ticket's "Test files" and on any test file the ticket adds or changes: `pnpm exec playwright test --project=chromium <files>`. If the ticket changes the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`), run the full `pnpm test:e2e:chromium`. R4-05 runs the full suite. Do not weaken, skip or delete a test. A test that pins an old decision changes with the decision (the ticket names it).
 - Matrix for each check, unless the check says less: Bangla (`/`) and English (`/en`); light and dark; widths 360, 600, 768, 1024, 1280, 1440; reduced motion on and off where the check has motion; keyboard pass; axe on the changed sections (no serious or critical violation).
 - Run the ticket's spec files in WebKit too (`pnpm exec playwright test --project=webkit <files>`). Record each WebKit failure in `docs/webkit-failures.md` with an ID. R4-05 checks them in real Safari.
 - Measure, do not judge by eye: sizes, gaps and positions are read from `getBoundingClientRect` and computed styles, with a tolerance of 0.5px. Ink positions are read from a screenshot pixel scan.
@@ -133,6 +133,7 @@ Run 4 is a short fix run. It adds no new feature and no new page. Mock data only
 - Decisions: DR-350, DR-351.
 - Read: C-22 Divider, C-03 StoryList, C-06 OpinionList, C-10 MoreLink, `HeroSection.latest`; `spacing-layout-system.md` P-3, P-4 and the column gap.
 - Do: Divider.item space measured to the text ink (trim the line box). Dots 1px with a 2px gap. Divider.column-inset in P-4 from 768 and between the P-3 wrapper and rail from 1024, centered in the existing gap. OpinionList rule under the text column only; chip to list `space-section-title-after`. Latest MoreLink আরও দেখুন / See more to `/latest` (`/en/latest`).
+- Test files: `hero`, `analysis-opinion`, `featured`, `grouped`, `most-read`, `story-units`, `small-parts`, `page` (`tests/e2e/<name>.spec.ts`).
 - Checks:
   - Item rule space: on every list with Divider.item, the distance from the last ink row of the item above to the rule, and from the rule to the first ink row of the item below, is `space-list-item` (16px) ±1px. Screenshot pixel scan, Bangla and English, at 360, 768 and 1280.
   - Dots: rule 1px tall; computed `background-image` is `repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 3px)`; both themes.
@@ -146,6 +147,7 @@ Run 4 is a short fix run. It adds no new feature and no new page. Mock data only
 - Decisions: DR-345 A1, A2, A6; DR-346 B3, B4; DR-348 DOC-38, DOC-39, DOC-40, IMP-78.
 - Read: §3.1 and §3.3 names; C-01, C-20, C-21, C-24, C-26; P-2 and P-3b in the layout spec.
 - Do: hero hidden h2 শীর্ষ খবর / Top stories; P-3b heading অঞ্চলসমূহ (own string); Footer logo `type-logo-sm`; footer year in Dhaka time; English poll heading Daily poll everywhere; after a vote focus moves to the poll h2 (`tabindex -1`); a vote with no choice does nothing; search focus to the panel, one Tab to the field, close button after the field in source; P-2 image first in the markup.
+- Test files: `hero`, `regions`, `grouped`, `header`, `footer`, `featured`, `story-units`, `site`, `page` (`tests/e2e/<name>.spec.ts`).
 - Checks:
   - Hero h2 text শীর্ষ খবর / Top stories, visually hidden, in the heading outline. P-3b h2 reads অঞ্চলসমূহ; `regions.spec.ts` expects it (the test that pinned অঞ্চল changes).
   - Footer logo computed font size 24px and class `type-logo-sm`.

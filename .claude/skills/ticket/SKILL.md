@@ -37,7 +37,7 @@ The sprint is in `docs/SPRINT.md`. You do one ticket per turn of work. tajmin is
 
 ## 4. Verify
 
-1. Run the `/verify` steps: `pnpm check`, `pnpm test:e2e:chromium`, and the `visual-qa` subagent when the dev server runs.
+1. Run the `/verify` steps: `pnpm check`, Chromium e2e on the ticket's "Test files" (the full suite only when `/verify` says so), and the `visual-qa` subagent when the dev server runs.
 2. Ask the `design-reviewer` subagent to review the changes. Fix every blocker.
 3. Check each acceptance criterion. If one is not met, fix it, or say why it cannot be met.
 4. Update `docs/prototype-findings.md`: add each new finding (next free ID, the entry format in the file) and its Summary row; set the items this ticket fixed to "Fixed in <ticket id>".
