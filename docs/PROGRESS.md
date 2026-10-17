@@ -7,10 +7,10 @@ Claude Code reads the "Now" section at the start of each session. `/ticket` and 
 ## Now
 
 - Run: 4 (short fix run). Branch `prototype-run-4`, made from `main` at `0bebd07`.
-- Ticket: R4-05 (Safari pass, final check, pull request and merge) is next (To do). R4-04 Done on 17 October 2026.
+- Ticket: none. R4-05 Done on 17 October 2026; every run 4 ticket is Done. Still open from R4-05: the real Safari checklist (`docs/run-4-report.md`) and the PR from `prototype-run-4` into `main` and its merge, each on tajmin's explicit go.
 - Specs in `docs/design-system/`: color 2.14, typography 2.15, layout 2.21, component-system 1.16, agent-contract 2.11.
 - Tests from R4-03: `pnpm check` plus Chromium e2e on the ticket's "Test files" only; the full suite runs in R4-05 or when a ticket changes a shared file (`docs/SPRINT.md` "Test scope").
-- Next action: tajmin runs `/clear`, then `/ticket` for R4-05.
+- Next action: tajmin runs the Safari checklist and gives the go for the PR. After the merge, run `pnpm check` and `pnpm test:e2e:chromium` on `main`.
 
 ## Past runs
 
@@ -33,7 +33,7 @@ The full run 1 and run 2 tables of this file are in git history at `0225398`; th
 | R4-02 | Done (17 Oct 2026) | `docs/run-4-log.md` |
 | R4-03 | Done (17 Oct 2026) | `docs/run-4-log.md` |
 | R4-04 | Done (17 Oct 2026) | `docs/run-4-log.md` |
-| R4-05 | To do | |
+| R4-05 | Done (17 Oct 2026) | `docs/run-4-log.md` |
 
 `/accept` updates this table and the board in `docs/SPRINT.md`.
 

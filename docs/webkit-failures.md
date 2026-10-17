@@ -145,6 +145,49 @@ Run: `pnpm exec playwright test --project=webkit` on the ticket's test files (`h
 | W4-10 | Low | `grouped.spec.ts:370` | poll: pressing vote with no choice does nothing | bn, en | The keyboard part passes (Enter and Space on the focused button: no change, focus stays). The mouse click part fails: after `click()` the button is not focused. Safari does not focus a button on a mouse click (platform default), so this is likely a test fact, not a page fault. Not checked in a real Safari |
 | W4-11 | Low (flaky) | `footer.spec.ts:230` | hover and press states of links and icons, no underline (C-21, DR-220) | en | Failed once under parallel load; passed alone |
 
+### R4-05 full run (17 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit` (full suite) on `prototype-run-4`.
+
+- First run: 52 failed, 592 passed, 16 skipped.
+- Test fixes in R4-05 (W3-09, W4-11, W4-12 below), then a second full run: **48 failed, 596 passed, 16 skipped**. Chromium: 660 passed before and after the fixes.
+- Run 3 had 42. The 6 more are run 4 tests (W4-01 to W4-04, W4-07 to W4-10) less the families fixed here. No failure is in a new family.
+
+#### IDs for the run 3 failures (DR-346 B6)
+
+The run 3 list (`docs/run-3-report.md`) and the run 2 groups above get one ID per family. "Safari" is the real Safari check (macOS and iOS); tajmin runs it (checklist in `docs/run-4-report.md`). A failure that shows in Safari is a code fix; one that does not is a test fix.
+
+| ID | Family (run 2 group) | Tests now | Result in R4-05 | Safari |
+| --- | --- | --- | --- | --- |
+| W3-01 | Tab key reaches no link (C): `analysis-opinion`, `featured`, `footer`, `grouped`, `hero`, `most-read`, `regions` keyboard tests | 14 | Open. Safari default: Tab skips links unless "Press Tab to highlight each item" is on | Pending |
+| W3-02 | SkipLink is not the first Tab stop (`header.spec.ts:425`) | 2 | Open. Same cause as W3-01 likely (the SkipLink is a link) | Pending |
+| W3-03 | Drawer works with the keyboard at 360 and 1280 (`header.spec.ts:471`) | 4 | Open | Pending |
+| W3-04 | Search dialog works with the keyboard from 768 (`header.spec.ts:702`) | 2 | Open | Pending |
+| W3-05 | Theme change in one tab applies in the other tab (`header.spec.ts:913`, storage event, DR-340) | 2 (bn and en; run 3 had bn only) | Open. Fails 6 of 6 alone: the second tab's `html` gets no `dark` class | Pending |
+| W3-06 | Phone tabs: arrow keys, Home and End (D, `regions.spec.ts:450`) | 2 | Open | Pending |
+| W3-07 | Regions axe at 360, `scrollable-region-focusable` (`regions.spec.ts:579`) | 3 (bn light, bn dark, en dark; the theme changes from run to run) | Open | Pending |
+| W3-08 | Focus outline values on MoreLink and Eyebrow (E, `small-parts.spec.ts:229`) | 2 | Open. Check that the ring shows | Pending |
+| W3-09 | Page height or spacing differs at 1280 and wider, English only (A) | 0 | **Test fix.** Not font metrics: the difference is one nav row (48px in run 2, 44px now). The server HTML of the nav row wraps until hydration hides the items that do not fit (IMP-16); WebKit hydrates later, so the tests read the boxes on each side of the shift. New helper `tests/e2e/settle.ts` `waitForNavRow` (the wait `ads.spec.ts` and `header.spec.ts` already had) in the layout tests of `hero`, `featured`, `most-read`, `analysis-opinion`, `grouped` and the `ads` reserve test. No expected value changed | Not needed (the shift at hydration is IMP-16, same in every browser) |
+| W3-10 | Poll radio cannot be set (B) | 0 | Passes since run 3 (not in the run 3 list) | Vote check in the checklist |
+| W3-11 | Footer hover and press (run 3 "hover and press timeout") | 0 | **Test fix**, see W4-11 | Not needed |
+
+#### Run 4 IDs: results
+
+| ID | Tests now | Result in R4-05 | Safari |
+| --- | --- | --- | --- |
+| W4-01 to W4-04 | 4 | Open. Tab reaches 2 of the 4 bar controls (likely the link, as W3-01; not checked which) | Pending |
+| W4-05, W4-06 | 0 | Passed in both full runs (flaky under load) | Sticky check in the checklist |
+| W4-07, W4-08 | 8 | Open. Second Latest column 1 to 3px lower (CSS columns, fractional item padding) | Pending (look at the Latest columns at 768 to 1023) |
+| W4-09 | 3 | Open. Most read Bangla: 12 to 14px above the rule (range 15 to 17) | Pending (item rule space by eye) |
+| W4-10 | 2 | Open. Safari does not focus a button on a mouse click | Pending |
+| W4-11 | 0 | **Test fix.** Not flaky: it failed 6 of 6 alone. `mouse.down` and `mouse.up` on the footer nav link make a click; the link opens `/en/about` (404) and the next target leaves the DOM. The test now stops the click from leaving the page; the hover and pressed checks are the same | Not needed |
+
+#### New in R4-05
+
+| ID | Importance | File | Test | Lang | Result |
+| --- | --- | --- | --- | --- | --- |
+| W4-12 | Medium | `grouped.spec.ts:405` | poll results: own vote filled and named, fills follow the percents | en | **Test fix.** The rail ad Y read before the vote was 44px lower than after (5834 / 5790): the same nav row race as W3-09, not the vote. A probe read 5790 before, 0.3s and 1.8s after the vote in WebKit. The test now waits for the nav row (`waitForNavRow`) |
+
 ## Not checked
 
 - Whether each failure is new since R2-13. `PROGRESS.md` only gives counts (40 at R2-12, 5 regions at R2-13), not names.

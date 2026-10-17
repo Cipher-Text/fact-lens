@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { waitForNavRow } from "./settle";
 
 // R2-06: the reserved space of each ad slot, with the ad and without it
 // (spacing-layout-system.md Section 9, LAY-09 to LAY-13, LAY-19; C-16 AdSlot).
@@ -92,6 +93,7 @@ for (const path of ["/", "/en"]) {
       await page.route("**/mock/ad-*.svg", (route) => route.abort());
       await page.setViewportSize({ width, height: 900 });
       await page.goto(path);
+      await waitForNavRow(page);
       const before = await mainTop(page);
       const rows = await heights(page);
       expect(rows.length).toBeGreaterThan(0);
@@ -113,7 +115,9 @@ test("the top ad is below the header and nothing is sticky but the site header (
   // The server HTML of the nav row wraps until the items that do not fit are hidden after
   // hydration (IMP-16). Wait for the one-line row: 44px + the 1px rule.
   await expect
-    .poll(async () => Math.round((await box(page.locator("[data-nav-row]"))).height))
+    .poll(async () =>
+      Math.round((await box(page.locator("[data-nav-row]"))).height),
+    )
     .toBe(45);
   const nav = await box(page.locator("[data-nav-row]"));
   // At 1280 the nav row shows; the top ad row starts where it ends, above the hero.

@@ -59,7 +59,7 @@ Run 4 is a short fix run. It adds no new feature and no new page. Mock data only
 | R4-02 | Motion and sticky header | Done (17 Oct 2026) |
 | R4-03 | Lists and dividers | Done (17 Oct 2026) |
 | R4-04 | Words, focus and source order | Done (17 Oct 2026) |
-| R4-05 | Safari pass, final check, pull request and merge | To do |
+| R4-05 | Safari pass, final check, pull request and merge | Done (17 Oct 2026) |
 
 ## Run 4 tickets
 

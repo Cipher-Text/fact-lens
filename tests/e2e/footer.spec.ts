@@ -247,6 +247,11 @@ for (const p of PAGES) {
           s.remove();
           return c;
         }, name);
+      // mouse.down and mouse.up make a click; stop the link from leaving the page, or the
+      // next target is read from the page that opens (R4-05, W4-11).
+      await page.evaluate(() =>
+        document.addEventListener("click", (e) => e.preventDefault(), true),
+      );
       const hover = await probe("--interactive-hover");
       const pressed = await probe("--interactive-pressed");
       for (const target of [

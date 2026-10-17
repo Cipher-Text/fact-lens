@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // FL-06: P-1 Hero with the Latest rail (spacing-layout-system.md 7.2 to 7.4, 13;
@@ -95,6 +96,7 @@ for (const p of PAGES) {
       test(`layout at ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
+        await waitForNavRow(page);
 
         const hero = page.locator('[data-section="hero"]');
         const wrapper = hero.locator("[data-hero-wrapper]");

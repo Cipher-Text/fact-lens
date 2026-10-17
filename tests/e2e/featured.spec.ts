@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // R2-10: P-2 FeaturedCategorySection for বাংলাদেশ and ভূরাজনীতি (component-system.md P-2,
@@ -70,6 +71,7 @@ for (const p of PAGES) {
       test(`layout at ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
+        await waitForNavRow(page);
 
         // No horizontal scroll (LAY-02, Section 13).
         const scroll = await page.evaluate(

@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { columnRule, tokenBackground } from "./rules";
+import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // R2-11: P-3 Grouped categories with the ad-inset, the daily poll and the rail ad
@@ -85,6 +86,7 @@ for (const p of PAGES) {
       test(`layout at ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
+        await waitForNavRow(page);
 
         // No horizontal scroll (LAY-02, Section 13).
         const scroll = await page.evaluate(
@@ -415,6 +417,7 @@ for (const p of PAGES) {
       // is still growing.
       await page.waitForLoadState("load");
       await page.evaluate(() => document.fonts.ready);
+      await waitForNavRow(page);
       const adBefore = await pageY();
       await poll.getByRole("radio", { name: p.s.option }).click();
       await poll.getByRole("button", { name: p.s.vote }).click();

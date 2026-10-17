@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
+New findings in run 4 take the next free number: DOC-51, U-42, IMP-91, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
 
 ## Summary
 
@@ -166,7 +166,7 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (I
 | IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Fixed in R3-05 |
 | IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Fixed in R3-06 |
 | IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Fixed in R3-06 |
-| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Open: real Safari check in R4-05 (DR-345) |
+| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Open: the WebKit e2e vote passes (R4-05, W3-10); real Safari and VoiceOver check by tajmin (DR-345) |
 | IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Fixed in R3-03 |
 | IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Fixed in R3-06 |
 | IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Fixed in R3-02 |
@@ -226,6 +226,7 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-90, KIT-11 (I
 | IMP-87 | R4-03 | The Latest list two columns shared grid rows, so a short item got the height of the item beside it (41px to the rule at 768) | Medium | Fixed in R4-03 (flag F-3: CSS columns, tajmin confirms) |
 | IMP-88 | R4-03 | WebKit starts the second Latest column 1 to 3px low (W4-07, W4-08) | Low | Open (Safari check in R4-05) |
 | IMP-89 | R4-03 | In dark, the border color on `surface-elevated` (P-4) makes the item and column rules very faint | Low | Open |
+| IMP-90 | R4-05 | The page below the header moves up 44px at hydration from 1280: the server HTML of the nav row wraps (IMP-16) | Medium | Open |
 | IMP-79 | R3-04 | A failed image shows the placeholder only after hydration | Low | Closed: kept as built (DR-348) |
 
 ## Open items (Later)
@@ -593,6 +594,14 @@ Entry format:
 - **Problem:** in dark, the rule color rgb(58, 61, 68) on the panel rgb(48, 50, 57) is barely visible: the dotted item rules and the new column rule in বিশ্লেষণ ও মতামত. The rules are drawn as specified. Decorative rules have no contrast minimum, but the grouping is hard to see.
 - **Suggested solution:** the blueprint checks the dark `border` value on `surface-elevated`. No code change in run 4.
 
+### IMP-90 The page moves up one nav row at hydration from 1280
+
+- **Found:** R4-05, 17 Oct 2026 · **Severity:** Medium · **Status:** Open
+- **Source:** IMP-16 (DR-255: no "More" item; the items that do not fit are hidden after hydration); `src/components/header/NavBar.tsx`; `docs/webkit-failures.md` W3-09, W4-12.
+- **Problem:** from 1280 the server HTML of the nav row wraps to two lines on `/en` (and on `/` when the items do not fit), so everything below the header is 44px lower until hydration hides the extra items. Then the page moves up 44px. This is a layout shift on load for every reader, larger on a slow device. WebKit hydrates later than Chromium, so the run 2 and run 3 WebKit "page height differs at 1280 and wider, English only" failures (48px in run 2, 44px now: one nav row) were this shift, not font metrics.
+- **What the code does:** no change in run 4 (a fix run, no new behavior). The tests wait for the one-line row (`tests/e2e/settle.ts`).
+- **Suggested solution:** keep the row one line in the server HTML, for example `overflow: hidden` with the row height (44px) before hydration, or hide the items past a fixed count on the server. tajmin decides; M2.
+
 ## Change log
 
 | Date | Ticket | Change |
@@ -616,3 +625,4 @@ Entry format:
 | 2026-10-17 | R4-02 | DOC-45, DOC-46 and IMP-84 to IMP-86 added; IMP-75 code fixed in R4-02 |
 | 2026-10-17 | R4-03 | U-41, DOC-47 to DOC-50 and IMP-87 to IMP-89 added; U-40 and IMP-87 set to Fixed in R4-03 |
 | 2026-10-17 | R4-04 | No new findings; DOC-38, DOC-39, DOC-40, U-31, IMP-63, IMP-70 and IMP-78 set to Fixed in R4-04 (DOC-38 and DOC-39: the code already followed the decision; R4-04 adds the tests) |
+| 2026-10-17 | R4-05 | IMP-90 added; IMP-53 updated (WebKit vote passes, Safari pending) |

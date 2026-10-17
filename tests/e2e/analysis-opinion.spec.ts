@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import { columnRule, tokenBackground } from "./rules";
+import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // FL-07: P-4 বিশ্লেষণ ও মতামত (spacing-layout-system.md 7.2 to 7.4, 13;
@@ -69,6 +70,7 @@ for (const p of PAGES) {
       test(`layout at ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
+        await waitForNavRow(page);
 
         const section = page.locator(SECTION);
         const analysis = section.locator('[data-column="analysis"]');
