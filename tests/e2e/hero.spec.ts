@@ -1,13 +1,26 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // FL-06: P-1 Hero with the Latest rail (spacing-layout-system.md 7.2 to 7.4, 13;
 // DR-39, DR-44, LAY-05, LAY-12, LAY-13).
 
 const PAGES = [
-  { path: "/", lang: "bn", latest: "সর্বশেষ", more: "আরও দেখুন: সর্বশেষ" },
-  { path: "/en", lang: "en", latest: "Latest", more: "See more: Latest" },
+  {
+    path: "/",
+    lang: "bn",
+    title: "শীর্ষ খবর",
+    latest: "সর্বশেষ",
+    more: "আরও দেখুন: সর্বশেষ",
+  },
+  {
+    path: "/en",
+    lang: "en",
+    title: "Top stories",
+    latest: "Latest",
+    more: "See more: Latest",
+  },
 ] as const;
 
 const WIDTHS = [
@@ -46,10 +59,44 @@ async function expectNoBlockingAxe(page: Page) {
 
 for (const p of PAGES) {
   test.describe(`hero ${p.path}`, () => {
+    test("hidden h2 names the section and is in the heading outline (C-01, DR-345)", async ({
+      page,
+    }) => {
+      await page.goto(p.path);
+      const hero = page.locator('[data-section="hero"]');
+      const heading = page.getByRole("heading", {
+        level: 2,
+        name: p.title,
+        exact: true,
+      });
+      await expect(heading).toHaveCount(1);
+      await expect(heading).toHaveText(p.title);
+      // Visually hidden: the sr-only clip, not display none, so it stays in the outline.
+      await expect(heading).toHaveClass(/\bsr-only\b/);
+      expect(
+        await heading.evaluate((el) => {
+          const s = getComputedStyle(el);
+          return [s.display, s.visibility, s.position, s.width, s.height];
+        }),
+      ).toEqual(["block", "visible", "absolute", "1px", "1px"]);
+      await expect(
+        page.getByRole("region", { name: p.title, exact: true }),
+      ).toHaveAttribute("data-section", "hero");
+      // The first h2 of the page outline is the hero heading.
+      const outline = await page
+        .locator("main h2")
+        .evaluateAll((els) => els.map((el) => el.id));
+      expect(outline[0]).toBe("hero-title");
+      expect(await hero.locator("h2").first().getAttribute("id")).toBe(
+        "hero-title",
+      );
+    });
+
     for (const width of WIDTHS) {
       test(`layout at ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
+        await waitForNavRow(page);
 
         const hero = page.locator('[data-section="hero"]');
         const wrapper = hero.locator("[data-hero-wrapper]");
@@ -307,8 +354,8 @@ for (const p of PAGES) {
       await expect(
         hero.getByRole("heading", { level: 2, name: p.latest }),
       ).toBeVisible();
-      // Latest has no more link (C-03, DR-102).
-      await expect(hero.getByRole("link", { name: p.more })).toHaveCount(0);
+      // Latest has one more link, to the Latest page (C-03, C-10, DR-350).
+      await expect(hero.getByRole("link", { name: p.more })).toHaveCount(1);
       const text = (await hero.innerText()).replace(/\s+/g, " ");
       if (p.lang === "bn") {
         // No English words and no Latin digits on a Bangla page (T-27, TYP-17).
@@ -329,8 +376,8 @@ for (const p of PAGES) {
       );
       const count = await links.count();
       // Lead, two top stories and their three category links (Eyebrow, C-08), five Latest
-      // items.
-      expect(count).toBe(11);
+      // items and the Latest MoreLink (DR-350).
+      expect(count).toBe(12);
 
       // Tab from the last control before the hero.
       const seen: string[] = [];
@@ -373,4 +420,51 @@ test("the ad-band follows the hero directly (7.1)", async ({ page }) => {
     "data-ad-slot",
     "ad-band",
   );
+});
+
+// R4-03: the Latest MoreLink to the Latest page (C-03, C-10, DR-350). The page is M2, so
+// the link goes to 404 until then.
+test.describe("Latest MoreLink (C-03, C-10, DR-350)", () => {
+  for (const p of PAGES) {
+    test(`${p.path}: text, href and the end edge below the list`, async ({
+      page,
+    }) => {
+      for (const width of [360, 600, 768, 900, 1023, 1024, 1280, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        const latest = page.locator("[data-latest]");
+        const link = latest.getByRole("link", { name: p.more });
+        await expect(link).toHaveCount(1);
+        await expect(link).toHaveText(
+          p.lang === "bn" ? "আরও দেখুন" : "See more",
+        );
+        await expect(link).toHaveAttribute(
+          "href",
+          p.lang === "bn" ? "/latest" : "/en/latest",
+        );
+        const linkBox = await box(link);
+        const listBox = await box(latest.locator("[data-story-list]"));
+        const latestBox = await box(latest);
+        // Below the list (also below both columns at 768 to 1023), at the end edge (CPT-15).
+        expect(linkBox.y, `below the list at ${width}`).toBeGreaterThanOrEqual(
+          listBox.y + listBox.height,
+        );
+        expect(
+          Math.abs(linkBox.x + linkBox.width - (latestBox.x + latestBox.width)),
+          `end edge at ${width}`,
+        ).toBeLessThanOrEqual(0.5);
+        expect(Math.round(linkBox.height)).toBeGreaterThanOrEqual(44);
+        if (width >= 768 && width < 1024) {
+          // Two columns: the link is below the taller column.
+          const items = latest.locator("[data-story-list] > li");
+          const last = await box(items.nth(2));
+          const fifth = await box(items.nth(4));
+          expect(fifth.x).toBeGreaterThan(last.x);
+          expect(linkBox.y).toBeGreaterThanOrEqual(
+            Math.max(last.y + last.height, fifth.y + fifth.height),
+          );
+        }
+      }
+    });
+  }
 });

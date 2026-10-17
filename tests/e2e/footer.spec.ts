@@ -160,6 +160,9 @@ for (const p of PAGES) {
 
       const logo = f.locator("[data-logo]");
       await expect(logo).toHaveAttribute("href", p.prefix || "/");
+      // Footer.logo: type-logo-sm, 24px in both languages (C-21, DR-306).
+      await expect(logo).toHaveClass(/\btype-logo-sm\b/);
+      await expect(logo).toHaveCSS("font-size", "24px");
 
       const nav = f.getByRole("navigation");
       await expect(nav.getByRole("link")).toHaveText([...p.pages]);
@@ -244,6 +247,11 @@ for (const p of PAGES) {
           s.remove();
           return c;
         }, name);
+      // mouse.down and mouse.up make a click; stop the link from leaving the page, or the
+      // next target is read from the page that opens (R4-05, W4-11).
+      await page.evaluate(() =>
+        document.addEventListener("click", (e) => e.preventDefault(), true),
+      );
       const hover = await probe("--interactive-hover");
       const pressed = await probe("--interactive-pressed");
       for (const target of [
@@ -267,6 +275,12 @@ for (const p of PAGES) {
           ? /^© [০-৯]{4} ফ্যাক্ট লেন্স।/
           : /^© 20\d\d Fact Lens\./,
       );
+      // The year is the current year in Dhaka time (C-21), in the page digits.
+      const year = new Intl.DateTimeFormat(
+        p.lang === "bn" ? "bn-BD-u-nu-beng" : "en-GB",
+        { year: "numeric", timeZone: "Asia/Dhaka" },
+      ).format(new Date());
+      await expect(line).toContainText(`© ${year} `);
     });
 
     for (const theme of ["light", "dark"] as const) {

@@ -147,6 +147,8 @@ describe("DailyPoll", () => {
     expect(screen.getAllByRole("radio")).toHaveLength(4);
     expect(screen.queryByRole("status")).toBeNull();
     expect(window.localStorage.getItem(pollStorageKey(poll.id))).toBeNull();
+    // Focus stays where it is (DR-348).
+    expect(screen.getByRole("button", { name: "ভোট দিন" })).toHaveFocus();
   });
 
   it("records one vote per browser and shows the results in Bangla digits", async () => {
@@ -170,6 +172,10 @@ describe("DailyPoll", () => {
     expect(screen.getByRole("status")).toBe(
       container.querySelector("[data-poll-results]"),
     );
+    // The vote button is gone: focus is on the poll heading (C-26, DR-346).
+    expect(
+      screen.getByRole("heading", { level: 2, name: "আজকের জরিপ" }),
+    ).toHaveFocus();
 
     // A new visit shows the results, not the form.
     unmount();

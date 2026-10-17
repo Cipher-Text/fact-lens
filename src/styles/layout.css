@@ -58,7 +58,7 @@
   --ad-inset-h: 250px;
 
   --bar-height: 3.5rem;
-  --nav-row-height: 3rem;
+  --nav-row-height: 2.75rem;
   --scroll-offset: calc(var(--bar-height) + 1rem);
   --drawer-width: min(20rem, 100% - 3rem);
 

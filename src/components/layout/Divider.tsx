@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Divider.item (C-22, DR-262): a 1px dotted rule in the border color, with space-list-item on
- * each side, between list rows only. No rule before the first row or after the last, and no
- * hr between list items: lists keep their ul/li semantics. Put it on the li (DR-102).
+ * Divider.item (C-22, DR-262, DR-350): a 1px dotted rule in the border color (1px dots, 2px
+ * gap), with space-list-item on each side measured to the text ink, between list rows only.
+ * No rule before the first row or after the last, and no hr between list items: lists keep
+ * their ul/li semantics. Put it on the li (DR-102), and one listInk class on the list.
  * The dots come from the `divider-item` utility in components.css (a repeating gradient, so
  * every browser draws the same dots).
  */
@@ -12,8 +13,30 @@ export const dividerItem = "divider-item";
 /** Divider.item for the items of a multi-column grid list: the rule runs within a column only. */
 export const dividerItemGrid = "divider-item-grid";
 
+/**
+ * The ink trim of a list (DR-350), by what starts and ends its items: a title and a meta
+ * line (StoryListItem, OpinionList, a StoryList after a card), an image and a meta line
+ * (the AnalysisSection rows), or a title only (RankedList).
+ */
+export const listInk = {
+  titleMeta: "list-ink-title-meta",
+  mediaMeta: "list-ink-media-meta",
+  title: "list-ink-title",
+} as const;
+
+/**
+ * Divider.column-inset (C-22, DR-351): a 1px solid vertical rule in the middle of the column
+ * gap, 16px from the top and the bottom. Put it on the grid; the gap does not change.
+ * split: two equal columns, from 768 (P-4). rail: the wrapper and the rail, from 1024 (P-3).
+ * column-full is not used on the homepage.
+ */
+export const dividerColumn = {
+  split: "divider-column-split",
+  rail: "divider-column-rail",
+} as const;
+
 type DividerProps = {
-  /** Only the section variant is built. Item is the class above. Column (column-inset, column-full) waits for tajmin to place it (DR-262). */
+  /** Only the section variant is a component. Item and column are the classes above. */
   variant?: "section";
   className?: string;
 };

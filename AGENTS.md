@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.5 · 16 October 2026 · For homepage prototype run 3 (fixes)
+Version 1.6 · 16 October 2026 · For homepage prototype run 4 (fixes)
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -10,7 +10,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Item | Status |
 | --- | --- |
-| Current work | Homepage prototype run 3 (Milestone 1): the fix run. Rebuild the run 2 fixes that tajmin decided (`DR-262` to `DR-344`) from the current specs. The tickets are in `docs/SPRINT.md`. Do not add new features. Milestone 2 is full development and hosting |
+| Current work | Homepage prototype run 4 (Milestone 1): a short fix run. Put the run 3 review and design change decisions (`DR-345` to `DR-351`) in the code from the current specs. The tickets are in `docs/SPRINT.md`. Do not add new features. Milestone 2 is full development and hosting |
 | Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
 | Pages | Homepage first. Do not start article or category pages until their layout pass is complete |
@@ -75,7 +75,7 @@ src/
   components/
     ui/                    shadcn/ui primitives, restyled after add (CPT-16): Sheet (Drawer), Drawer (SearchDialog, from the top), Collapsible, Tabs, RadioGroup
     layout/                Shell, Wrapper, Rail, WithRail, PeerRow, SectionHeading, Divider
-    header/                SiteHeader, TopBar, NavBar, Drawer (shadcn Sheet), SearchDialog (shadcn Drawer), ThemeToggle, ThemeButton (DR-280)
+    header/                SiteHeader, TopBar, NavBar, Drawer (shadcn Sheet), SearchDialog (shadcn Drawer), ThemeButton (DR-280, DR-349)
     home/                  One folder per section, with the parts that only that section uses:
                            hero (HeroSection), analysis (AnalysisSection, OpinionList),
                            featured (FeaturedCategorySection), grouped (GroupedCategoriesSection,
@@ -115,12 +115,12 @@ The rule IDs link to the full text through `docs/design-system/agent-contract.md
 10. Keep the source order equal to the reading order. Do not use CSS `order` (`LAY-14`).
 11. Homepage card rows have 1 card (phone) or 2 cards (from 600px). No 3-up or 4-up rows (`LAY-07`, `DR-44`). Most read is a numbered list: 4 per row from 1280px, 3 at 1024–1279px (`DR-51`, `DR-145`). The regions slider shows 4 panels from 1280px (`DR-140`).
 12. Ad rows are full width with no padding, margin or gutter. Reserve their height. No ad is sticky (`LAY-09` to `LAY-13`).
-13. Only the top bar is sticky (`LAY-15`).
+13. Only the site header is sticky: the TopBar and, from 1280, the NavBar. Past the NavBar row the NavBar hides under the TopBar (`LAY-15`).
 14. Every focusable element shows the focus ring (`COL-13`). Every control works with a keyboard.
 15. Bangla pages show Bangla interface text only. English pages show English only (`T-27`; `typography-system.md` Section 7.1).
-16. Do not add "Fact Check", ফ্যাক্টচেক or a verdict feature anywhere (`DR-18`). চীন is a region under অঞ্চল, not a navigation item (`DR-19`).
+16. Do not add "Fact Check", ফ্যাক্টচেক or a verdict feature anywhere (`DR-18`). চীন is a region under অঞ্চলসমূহ, not a navigation item (`DR-19`).
 17. Build each component from its sheet in `component-system.md` Section 7. Use the approved names for components, parts and sections (`N-05`).
-18. Do not round corners and do not put a border around a card. The ThemeToggle switch is the one exception (`CPT-05`, `CPT-06`).
+18. Do not round corners and do not put a border around a card. There is no exception (`CPT-05`, `CPT-06`).
 19. When a sheet gives a value that has no token, add a component token in `src/styles/components.css` and use it (`CPT-07`).
 20. Do not add a subscribe button to the header or the drawer (`DR-188`).
 21. Do not show a Breaking or Live label (`COL-11`, `DR-279`).
@@ -139,7 +139,7 @@ Before you do one of the things in `agent-contract.md` Section 8 ("If you are ab
 
 ## 8. Gaps in the design system
 
-There is no elevation: no shadows (`COL-15`, `DR-202`). The system does not yet define article and category page components, the full footer (the footer is provisional, `DR-193`) or where each column divider version goes (`Divider` C-22: tajmin sets it, `DR-262`). `component-system.md` Section 8 lists the open items and what to do now.
+There is no elevation: no shadows (`COL-15`, `DR-202`). The system does not yet define article and category page components or the full footer (the footer is provisional, `DR-193`). `component-system.md` Section 8 lists the open items and what to do now.
 
 For a gap:
 
@@ -167,7 +167,7 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple 
 4. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
 5. **Hand over.** List each acceptance criterion as met or not met, and give the user test steps. Then stop.
 6. **Record progress.** Keep the board in `docs/SPRINT.md` and `docs/PROGRESS.md` current.
-7. **Commit on acceptance.** One commit per accepted ticket: `R3-04: StoryImage placeholder` on the subject line, and the rule IDs on the next line, not on the subject line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
+7. **Commit on acceptance.** One commit per accepted ticket: `R4-03: Divider column rules` on the subject line, and the rule IDs on the next line, not on the subject line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
 
 ## 10. What you must not change
 
@@ -181,7 +181,7 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple 
 A task is done when all of these are true:
 
 1. `pnpm check` passes with no new warnings.
-2. `pnpm test:e2e:chromium` (`pnpm test:e2e --project=chromium`) passes, including the axe check, with no serious or critical violations. WebKit runs as a separate report until its failures are fixed; do not let a WebKit failure block a ticket, and do not skip the test (`DR-289`).
+2. Chromium e2e passes on the ticket's "Test files" (`docs/SPRINT.md`) and on every test file the ticket adds or changes (`pnpm exec playwright test --project=chromium <files>`). Run the full `pnpm test:e2e:chromium` in the final ticket of a run, and in any ticket that changes the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`). The run passes, including the axe check, with no serious or critical violations. WebKit runs as a separate report until its failures are fixed; do not let a WebKit failure block a ticket, and do not skip the test (`DR-289`).
 3. The section matches its row in `spacing-layout-system.md` Section 7.2 at every tier, and the sparse cases in Section 7.3.
 4. Each component passes the checks in its sheet (`component-system.md` Section 7).
 5. The validation widths and content cases in `spacing-layout-system.md` Section 13 show no clipped text and no horizontal scroll.

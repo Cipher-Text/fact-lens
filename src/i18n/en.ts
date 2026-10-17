@@ -33,6 +33,8 @@ export const en: Dictionary = {
     // SkipLink (C-17, DR-269).
     skipLink: "Skip to main content",
     navHome: "Home",
+    // The NavBar and Drawer item over the regions (component-system.md Section 3.3, DR-345).
+    navRegions: "Regions",
     // The name of the caret button that opens the sub-items of a drawer row.
     expand: "sub-sections",
   },
@@ -109,9 +111,13 @@ export const en: Dictionary = {
     economy: "Economy and Trade",
     technology: "Technology and Strategic Power",
   },
+  // P-3b heading (component-system.md Section 3.3, DR-345). Its own string, apart from the
+  // nav item and from the region table.
+  regionsSection: {
+    title: "Regions",
+  },
   // Entries under Regions. Working labels until the IA table exists (U-01).
   regions: {
-    title: "Regions",
     china: "China",
     india: "India",
     myanmar: "Myanmar",

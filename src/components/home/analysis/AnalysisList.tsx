@@ -1,4 +1,4 @@
-import { dividerItem } from "@/components/layout/Divider";
+import { dividerItem, listInk } from "@/components/layout/Divider";
 import { MoreLink } from "@/components/story/MoreLink";
 import { OverlapCard } from "@/components/story/OverlapCard";
 import { StoryCard } from "@/components/story/StoryCard";
@@ -18,14 +18,14 @@ type AnalysisListProps = {
  * P-4 AnalysisSection, the analysis column (component-system.md P-4): the first story is an
  * OverlapCard on the section background (surface-elevated), then compact rows (StoryCard
  * row, 16:9, sm, text : image = 2 : 1, eyebrow, no summary). No chip and no heading on this
- * column. The stories sit in one list with the item rule between them (C-03); the P-4
- * sheet says rules wait on DR-104 (UNRESOLVED_DESIGN_SYSTEM U-34). Titles are h3.
+ * column. The stories sit in one list with Divider.item between them (DR-268); the rows start
+ * with the image, so the item space is measured to the image top (DR-350). Titles are h3.
  */
 export function AnalysisList({ lang, stories, strings }: AnalysisListProps) {
   const [feature, ...compact] = stories;
   return (
     <div data-column="analysis">
-      <ul>
+      <ul className={listInk.mediaMeta}>
         <li className={dividerItem}>
           <OverlapCard story={feature} strings={strings} surface="elevated" />
         </li>

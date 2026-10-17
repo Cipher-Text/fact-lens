@@ -1,6 +1,6 @@
 # Fact Lens Color System
 
-Version 2.12 · 15 October 2026 · Approved for prototype run 2
+Version 2.14 · 16 October 2026 · Run-3 design change (DR-349)
 
 The values are not final. Some colors can change after a few prototype rounds. Run the contrast tests in Section 3 again after each change.
 
@@ -75,7 +75,7 @@ Components use utilities only.
 | Token | Utility | Light | Dark | Use |
 | --- | --- | --- | --- | --- |
 | `accent-soft` | `accent-soft` | `#EDCEC4` | `#3A201A` | Tags, selected cards |
-| `accent-subtle` | `accent-subtle`, `accent` | `#F6E6E0` | `#281B18` | Callouts, hover wash on menu items |
+| `accent-subtle` | `accent-subtle`, `accent` | `#F6E6E0` | `#281B18` | Callouts |
 
 ### 2.5 Borders
 
@@ -111,7 +111,7 @@ The utility name is the same as the token name, for example `text-success` and `
 | `selection` | `#EDCEC4` | `#5A2A1C` | Selected text background |
 | `overlay` | `rgb(31 26 23 / 0.48)` | `rgb(0 0 0 / 0.64)` | Behind dialogs and the menu drawer (scrim) |
 | `skeleton` | `#EAE1D6` | `#2D3036` | Loading placeholders |
-| `fill-neutral` | `#7E7E7E` | `#7E7E7E` | Poll result fill for the other options (C-26); light ThemeToggle track (C-12). 3.87:1 on light `background`, enough for a control (3:1). Not for text (DR-295) |
+| `fill-neutral` | `#7E7E7E` | `#7E7E7E` | Poll result fill for the other options (C-26). 3.87:1 on light `background`, enough for a control (3:1). Not for text (DR-295) |
 
 ### 2.8 Focus ring
 
@@ -124,11 +124,11 @@ The utility name is the same as the token name, for example `text-success` and `
 
 ### 2.9 Component colors
 
-Components use the tokens in Sections 2.1 to 2.8. Two component color tokens are allowed; each only points at a token above (DR-294): `--color-bar` (brand bar: `brand` in light, `interactive` in dark) and `--color-theme-control` (ThemeToggle track: `fill-neutral` in light, `interactive` in dark). They are in `component-system.md` Section 6. Add no other component color token without a decision.
+Components use the tokens in Sections 2.1 to 2.8. One component color token is allowed; it only points at a token above (DR-294, DR-349): `--color-bar` (brand bar: `brand` in light, `interactive` in dark). It is in `component-system.md` Section 6. Add no other component color token without a decision.
 
 NewsletterSignup (DR-229; paused for prototype run 2, built in a later phase, DR-239): panel `accent-soft`; heading `ink`; text line `ink-secondary`; arrow button and privacy link `interactive`, with the UI link and button states; email field `background` with `border-interactive`. The field text is `ink` and the placeholder is `ink-muted`.
 
-Theme controls (DR-211, DR-237): phone ThemeButton icon `interactive` in light, `ink` in dark. ThemeToggle from 768px: track `--color-theme-control` (`fill-neutral` in light, `interactive` in dark, DR-295); thumb `background`; icon `interactive` in light, `ink` in dark. Neither control has a hover or pressed color; both show the focus outline only.
+Theme control (DR-349): the ThemeButton at every width is an IconButton ghost. Icon `ink` in both themes; hover `interactive-hover`, pressed `interactive-pressed`; no wash; focus outline. The ThemeToggle switch is removed.
 
 Form error (DR-230): the field gets a 2px `error` border. The message is `ink` with a 20px `error` icon (`COL-09`).
 
@@ -205,7 +205,7 @@ Links have no underline. Hover and press change the color only (DR-199).
 | News link (story title, other link to a news item) | Role color, `ink` for titles | `ink-muted`. A news link that is `ink-muted` at rest goes to `ink` | No own color: the hover color stays |
 | UI link | `interactive`, or the component text color in navigation and the footer | `interactive-hover` | `interactive-pressed` |
 
-Buttons use `interactive-hover` and `interactive-pressed` too. Social icon links (Drawer, Footer) are UI links: the icon changes color, with no wash (DR-220). The TopBar language link and the theme controls have no hover and no pressed color; they show the focus ring only (DR-211, DR-219). Links inside article text: see `COL-07`. Every link shows the focus ring (`COL-13`).
+Buttons use `interactive-hover` and `interactive-pressed` too. Social icon links (Drawer, Footer) are UI links: the icon changes color, with no wash (DR-220). The ghost icon buttons (TopBar menu, search and theme; the Drawer and SearchDialog close) and the TopBar language link work the same: `ink`, hover `interactive-hover`, pressed `interactive-pressed`, no wash (DR-349). Links inside article text: see `COL-07`. Every link shows the focus ring (`COL-13`).
 
 ### COL-07 Make links in body text visible without color
 
@@ -465,6 +465,8 @@ Examples:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.14 | 2026-10-16 | `--color-theme-control` and `--color-theme-icon` removed; `--color-bar` is the one component color token. Ghost icon buttons and the language link: ink, hover `interactive-hover`, no wash; `accent-subtle` has no hover use; `fill-neutral` for the poll only (Section 2.9, Section 4, DR-349). |
+| 2.13 | 2026-10-16 | Third component color token `--color-theme-icon` for the theme control icons (Section 2.9, DR-348). |
 | 2.12 | 2026-10-15 | Section 5 links to the one `globals.css` import list in layout Section 12.5 (DR-339). |
 | 2.11 | 2026-10-15 | `surface-alt` also fills the StoryImage no-image placeholder (DR-338). `skeleton` stays for loading only. |
 | 2.10 | 2026-10-14 | New token `fill-neutral` (#7E7E7E, both themes) for the poll bars and the light ThemeToggle track; dark track `interactive` (DR-295). §2.9 allows two component color tokens, `--color-bar` and `--color-theme-control` (DR-294). |

@@ -142,7 +142,7 @@ test.describe("theme", () => {
     await expect(html).not.toHaveClass(/\bdark\b/);
     // Only the .dark class sets the theme (DR-281).
     await expect(html).not.toHaveAttribute("data-theme");
-    await expect(page.locator("header [data-theme-toggle]")).toHaveAttribute(
+    await expect(page.locator("header [data-theme-button]")).toHaveAttribute(
       "aria-checked",
       "false",
     );
@@ -151,7 +151,7 @@ test.describe("theme", () => {
   test("a stored choice survives a reload", async ({ page }) => {
     await page.goto("/en");
     const html = page.locator("html");
-    const toggle = page.locator("header [data-theme-toggle]");
+    const toggle = page.locator("header [data-theme-button]");
     await expect(async () => {
       await toggle.click();
       await expect(toggle).toHaveAttribute("aria-checked", "true", {
@@ -162,7 +162,7 @@ test.describe("theme", () => {
 
     await page.reload();
     await expect(html).toHaveClass(/\bdark\b/);
-    await expect(toggle).toHaveAttribute("data-theme-toggle", "dark");
+    await expect(toggle).toHaveAttribute("data-theme-button", "dark");
     const background = await page.evaluate(
       () => getComputedStyle(document.body).backgroundColor,
     );

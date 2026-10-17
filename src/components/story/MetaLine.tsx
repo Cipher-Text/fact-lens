@@ -21,6 +21,7 @@ type MetaLineProps = {
 export function MetaLine({ items, className }: MetaLineProps) {
   return (
     <p
+      data-meta-line
       className={cn(
         "flex flex-wrap items-center type-metadata text-(--color-meta) tabular-nums",
         className,

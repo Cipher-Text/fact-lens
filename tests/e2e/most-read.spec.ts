@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // R2-12: P-5 Most read, C-07 RankedList (component-system.md; spacing-layout-system.md
@@ -43,6 +44,7 @@ for (const p of PAGES) {
       test(`layout at ${width}`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
+        await waitForNavRow(page);
 
         // No horizontal scroll (LAY-02, Section 13).
         const scroll = await page.evaluate(
@@ -53,9 +55,24 @@ for (const p of PAGES) {
         const gutter = width < 600 ? 16 : 24;
         const shell = Math.min(width - 2 * gutter, 1280);
         // C-07: --grid-column-gap (16 / 24 from 768 / 32 from 1280, DR-300). No row gap: the
-        // rule between rows in a column has space-list-item (16px) on each side (DR-299).
+        // rule between rows in a column has space-list-item (16px) on each side (DR-299),
+        // measured to the ink (DR-350): the box gap is 16px less the blank space below the
+        // title ink (--list-ink-end). small-parts.spec.ts measures the ink.
         const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
-        const rowGap = 16;
+        const rowGap =
+          16 -
+          (await page
+            .locator("[data-most-read-item]")
+            .first()
+            .evaluate((li) => {
+              const probe = document.createElement("span");
+              probe.style.display = "block";
+              probe.style.height = "var(--list-ink-end)";
+              li.append(probe);
+              const h = parseFloat(getComputedStyle(probe).height);
+              probe.remove();
+              return h;
+            }));
         const space = width >= 1024 ? 40 : width >= 768 ? 32 : 24;
 
         const s = mostRead(page);
@@ -85,7 +102,9 @@ for (const p of PAGES) {
             const rowBottom = Math.max(
               ...b.slice(0, perRow).map((r) => r.y + r.height),
             );
-            expect(Math.round(b[i].y - rowBottom)).toBe(rowGap);
+            expect(Math.abs(b[i].y - rowBottom - rowGap)).toBeLessThanOrEqual(
+              0.5,
+            );
           }
           if (column > 0) {
             const prev = b[i - 1];

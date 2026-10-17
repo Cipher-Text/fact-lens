@@ -38,8 +38,8 @@ lines.forEach((line, i) => {
 });
 
 const isAllowedSticky = (s) => /LAY-11\/LAY-15/.test(s) && /(header|top-bar|topbar|drawer|dialog|sheet)/i.test(rel);
-const isAllowedRadius = (s) => /CPT-05/.test(s) && /(themetoggle|ui\/switch)/i.test(rel);
-const report = found.filter((s) => !isAllowedSticky(s) && !isAllowedRadius(s));
+// CPT-05 has no exception since the ThemeToggle switch was removed (DR-349).
+const report = found.filter((s) => !isAllowedSticky(s));
 
 if (report.length) {
   console.error(

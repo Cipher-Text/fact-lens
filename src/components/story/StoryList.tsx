@@ -1,6 +1,4 @@
-import type { CSSProperties } from "react";
-
-import { dividerItem } from "@/components/layout/Divider";
+import { dividerItem, listInk } from "@/components/layout/Divider";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
@@ -13,6 +11,8 @@ type StoryListProps = {
   /**
    * 1: one column. 2: two columns from 768 to 1023px, column-first, with a 24px gap and rules
    * inside a column only (DR-125); one column elsewhere. 2 is the Latest list under the hero.
+   * The two columns are CSS columns, not grid rows, so an item in one column does not take
+   * the height of the item beside it: the rule space stays 16px to the ink (DR-350).
    */
   columns?: 1 | 2;
   meta?: "category-time" | "time-reading";
@@ -20,13 +20,15 @@ type StoryListProps = {
   className?: string;
 };
 
-// A column start has no rule above it, so the list rules stay inside a column.
+// A column start has no rule above it, so the list rules stay inside a column. The second
+// column starts with a forced column break.
 const columnStart = "md:max-lg:mt-0 md:max-lg:pt-0 md:max-lg:before:hidden";
+const columnBreak = "md:max-lg:break-before-column";
 
 /**
  * C-03 StoryList: a ul of StoryListItem rows, Divider.item (dotted, 16px each side) between rows, no
  * rule after the last row. Two columns fill column-first (1 to 3, then 4 and 5 for five
- * stories) with a grid that flows by column.
+ * stories): CSS columns with a column break before the first item of the second column.
  */
 export function StoryList({
   stories,
@@ -41,10 +43,10 @@ export function StoryList({
     <ul
       data-story-list
       data-columns={columns}
-      style={{ "--story-list-rows": `repeat(${rows}, auto)` } as CSSProperties}
       className={cn(
+        listInk.titleMeta,
         columns === 2 &&
-          "md:max-lg:grid md:max-lg:auto-cols-fr md:max-lg:grid-flow-col md:max-lg:grid-rows-(--story-list-rows) md:max-lg:gap-x-(--grid-column-gap)",
+          "md:max-lg:columns-2 md:max-lg:gap-x-(--grid-column-gap)",
         className,
       )}
     >
@@ -53,7 +55,9 @@ export function StoryList({
           key={story.id}
           className={cn(
             dividerItem,
+            columns === 2 && "md:max-lg:break-inside-avoid",
             columns === 2 && index % rows === 0 && columnStart,
+            columns === 2 && index > 0 && index % rows === 0 && columnBreak,
           )}
         >
           <StoryListItem

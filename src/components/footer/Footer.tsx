@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { Shell } from "@/components/layout/Shell";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
-import { fill, formatYear } from "@/lib/format";
+import { dhakaYear, fill, formatYear } from "@/lib/format";
 
 import { SocialIcon } from "./SocialIcon";
 import { socialLinks } from "./socialLinks";
@@ -23,8 +23,9 @@ type Props = {
 /**
  * C-21 Footer (provisional, DR-193): the minimum footer after the last ad band. A panel band
  * (DR-264): full-width surface-elevated, content in the shell, block inset only (LAY-20).
- * Everything is centered: logo, the five social links, the site links (wrap to 2 lines on
- * phones), the copyright line. Footer landmark; the links are lists. Labels in the page
+ * Everything is centered: logo (type-logo-sm, DR-306), the five social links, the site
+ * links (wrap to 2 lines on phones), the copyright line with the year in Dhaka time.
+ * Footer landmark; the links are lists. Labels in the page
  * language. The design extension comes after run 2 (CMP-33): add nothing here.
  */
 export function Footer({ lang }: Props) {
@@ -38,7 +39,7 @@ export function Footer({ lang }: Props) {
           <Link
             href={localizedPath(lang)}
             aria-label={t.header.home}
-            className="type-section-title whitespace-nowrap text-brand"
+            className="type-logo-sm whitespace-nowrap text-brand"
             data-logo
           >
             {t.site.name}
@@ -76,7 +77,7 @@ export function Footer({ lang }: Props) {
           </nav>
           <p className="type-metadata text-ink-muted">
             {fill(strings.copyright, {
-              year: formatYear(new Date().getFullYear(), lang),
+              year: formatYear(dhakaYear(), lang),
               name: t.site.name,
             })}
           </p>

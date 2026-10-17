@@ -11,8 +11,8 @@ import { cn } from "@/lib/utils";
 type Props = {
   strings: Dictionary["header"];
   /**
-   * "drawer": 44px field with the search icon inside at the start, no attached button
-   * (Drawer.search). "dialog": 56px field with the attached submit button
+   * "drawer": 44px field with the search icon inside at the end, no attached button
+   * (Drawer.search, DR-349). "dialog": 56px field with the attached submit button
    * (SearchDialog.field).
    */
   size: "drawer" | "dialog";
@@ -59,12 +59,6 @@ export function SearchForm({
             : "h-11 transition-colors duration-200 focus-within:border-interactive",
         )}
       >
-        {size === "drawer" ? (
-          <Search
-            aria-hidden="true"
-            className="ms-3 size-(--icon-size) shrink-0 text-ink-muted transition-colors duration-200 group-focus-within/field:text-interactive"
-          />
-        ) : null}
         <input
           ref={inputRef}
           id={fieldId}
@@ -84,6 +78,12 @@ export function SearchForm({
           )}
           {...fieldProps}
         />
+        {size === "drawer" ? (
+          <Search
+            aria-hidden="true"
+            className="me-3 size-(--icon-size) shrink-0 text-ink-muted transition-colors duration-200 group-focus-within/field:text-interactive"
+          />
+        ) : null}
         {value && size === "dialog" ? (
           <Button
             variant="text"

@@ -39,7 +39,7 @@ function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
 describe("RegionsSection (P-3b)", () => {
   it("is the #regions section named by its heading, with every region in the HTML", () => {
     const { container, regions } = renderSection("bn");
-    const section = screen.getByRole("region", { name: "অঞ্চল" });
+    const section = screen.getByRole("region", { name: "অঞ্চলসমূহ" });
     expect(section.id).toBe("regions");
     const panels = container.querySelectorAll("[data-region]");
     expect([...panels].map((p) => p.id)).toEqual(

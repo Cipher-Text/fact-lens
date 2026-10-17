@@ -2,7 +2,7 @@
 
 The new website frontend for **Fact Lens**, a Bangladesh-first international news publisher. The site publishes in Bangla and English.
 
-> Status: homepage prototype run 3 (Milestone 1): the fix run. It rebuilds the run 2 fixes that tajmin decided on 13 to 15 October 2026 (`DR-262` to `DR-344`) from the updated specs. Run 2 finished on 11 October 2026 and run 1 on 8 October 2026. Mock data only.
+> Status: homepage prototype run 4 (Milestone 1): a short fix run. It puts the run 3 review and design change decisions (`DR-345` to `DR-351`) in the code. Run 3 merged on 16 October 2026 (PR #5), run 2 finished on 11 October and run 1 on 8 October 2026. Mock data only.
 >
 > Live preview: [fact-lens-web-ashy.vercel.app](https://fact-lens-web-ashy.vercel.app/) (Vercel). It is a prototype, not the production site.
 
@@ -45,4 +45,4 @@ This repository is built with Claude Code, under rules that humans and agents sh
 - [`.claude/`](.claude): permissions, hooks that block raw design values, skills (`/ticket`, `/accept`, `/verify`, `/check-rules`) and review subagents
 - [`docs/SPRINT.md`](docs/SPRINT.md): the tickets, each with a goal, acceptance criteria and the original prompt
 - [`docs/PROGRESS.md`](docs/PROGRESS.md): the build log
-- [`docs/prototype-findings.md`](docs/prototype-findings.md): findings and gaps from runs 1 and 2, with the decided fix for each
+- [`docs/prototype-findings.md`](docs/prototype-findings.md): findings and gaps from runs 1 to 3, with the decided fix for each

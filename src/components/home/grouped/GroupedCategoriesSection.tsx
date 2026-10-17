@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 
 import { AdSlot } from "@/components/ads/AdSlot";
+import { dividerColumn } from "@/components/layout/Divider";
 import { Rail } from "@/components/layout/Rail";
 import { Shell } from "@/components/layout/Shell";
 import { WithRail } from "@/components/layout/WithRail";
@@ -65,7 +66,7 @@ export function GroupedCategoriesSection({
   const insets = insetBefore(rows);
   return (
     <Shell as="div" data-section="grouped" className={className}>
-      <WithRail>
+      <WithRail className={dividerColumn.rail}>
         <Wrapper data-grouped-wrapper className="grid gap-y-(--space-module)">
           {rows.map((row, index) => (
             <Fragment key={row[0].category}>

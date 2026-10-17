@@ -12,27 +12,32 @@ type IconButtonProps = Omit<
   icon: LucideIcon;
   /** filled: the slider and attached submit buttons. ghost: the TopBar and dialogs. */
   variant?: "filled" | "ghost";
-  /** 44 (default), bar 32 (phone TopBar and Drawer header), field (fills the inner height of its field). */
-  size?: "default" | "bar" | "field";
+  /**
+   * ghost: 32, 36 from 768 (the default of the ghost variant). default: 44 (the default of
+   * the filled variant, and the Drawer accordion caret). field: fills the inner height of
+   * its field.
+   */
+  size?: "default" | "ghost" | "field";
 };
 
 const sizes = {
   default: "size-(--icon-button-size)",
-  bar: "size-(--icon-button-size-bar)",
+  ghost: "size-(--icon-button-size-ghost)",
   field: "h-full aspect-square",
 } as const;
 
 /**
  * C-12 IconButton: a square icon-only button, 20px Lucide icon, no border, no shadow.
  * Disabled is aria-disabled, so focus stays: pass aria-disabled and the click does nothing.
- * filled: interactive fill, at an end surface-alt with ink-disabled. ghost: no fill; hover
- * accent-subtle wash with an interactive icon; pressed accent-soft.
+ * filled: interactive fill, at an end surface-alt with ink-disabled. ghost: no fill and no
+ * wash in any state; the icon is ink, interactive-hover on hover, interactive-pressed when
+ * pressed (DR-349).
  */
 export function IconButton({
   label,
   icon: Icon,
   variant = "filled",
-  size = "default",
+  size = variant === "ghost" ? "ghost" : "default",
   type = "button",
   className,
   onClick,
@@ -56,7 +61,7 @@ export function IconButton({
         sizes[size],
         variant === "filled"
           ? "bg-interactive text-on-interactive not-aria-disabled:hover:bg-interactive-hover not-aria-disabled:active:bg-interactive-pressed aria-disabled:bg-surface-alt aria-disabled:text-ink-disabled"
-          : "text-ink not-aria-disabled:hover:bg-accent-subtle not-aria-disabled:hover:text-interactive not-aria-disabled:active:bg-accent-soft aria-disabled:text-ink-disabled",
+          : "text-ink not-aria-disabled:hover:text-interactive-hover not-aria-disabled:active:text-interactive-pressed aria-disabled:text-ink-disabled",
         className,
       )}
       {...rest}

@@ -3,10 +3,10 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 
 import { setTheme } from "./theme";
 
-// R2-05, R3-02: top bar, nav row, Drawer (shadcn Sheet) and search dialog (shadcn Drawer)
-// (spacing-layout-system.md Sections 6 and 9; component-system.md C-12, C-17 to C-20;
-// DR-21, DR-41, DR-173, DR-188, DR-201, DR-249, DR-269, DR-280, DR-281, DR-295, DR-340,
-// LAY-15).
+// R2-05, R3-02, R4-01: top bar, nav row, Drawer (shadcn Sheet) and search dialog (shadcn
+// Drawer) (spacing-layout-system.md Sections 6 and 9; component-system.md C-12, C-17 to
+// C-20; DR-21, DR-41, DR-173, DR-188, DR-201, DR-249, DR-269, DR-280, DR-281, DR-295,
+// DR-340, DR-345, DR-346, DR-349, LAY-15).
 
 const PAGES = [
   {
@@ -18,6 +18,7 @@ const PAGES = [
     closeSearch: "অনুসন্ধান বন্ধ করুন",
     clear: "মুছুন",
     themeName: "ডার্ক থিম",
+    regions: "অঞ্চলসমূহ",
   },
   {
     path: "/en",
@@ -28,6 +29,7 @@ const PAGES = [
     closeSearch: "Close search",
     clear: "Clear",
     themeName: "Dark theme",
+    regions: "Regions",
   },
 ] as const;
 
@@ -75,6 +77,16 @@ async function expectClosed(panel: Locator) {
   await expect(panel).toHaveCount(0);
 }
 
+/** The drawn logo size: its font size times the scale of its transform (C-17, DR-349). */
+async function logoSize(logo: Locator) {
+  return logo.evaluate((el) => {
+    const style = getComputedStyle(el);
+    const scale =
+      style.transform === "none" ? 1 : new DOMMatrix(style.transform).a;
+    return Math.round(parseFloat(style.fontSize) * scale * 10) / 10;
+  });
+}
+
 /** The bottom rule of the top bar is drawn when its color is not transparent. */
 async function barRuleShown(page: Page) {
   const color = await page
@@ -82,6 +94,25 @@ async function barRuleShown(page: Page) {
     .evaluate((el) => getComputedStyle(el).borderBottomColor);
   return color !== "rgba(0, 0, 0, 0)";
 }
+
+/** Ink, interactive-hover and interactive-pressed per theme (color-system.md Section 2). */
+const COLORS = {
+  light: {
+    ink: "rgb(31, 26, 23)",
+    hover: "rgb(127, 42, 17)",
+    pressed: "rgb(106, 35, 14)",
+  },
+  dark: {
+    ink: "rgb(245, 245, 245)",
+    hover: "rgb(253, 162, 135)",
+    pressed: "rgb(254, 196, 178)",
+  },
+} as const;
+
+const TRANSPARENT = "rgba(0, 0, 0, 0)";
+
+/** The ghost IconButton size: 32 under 768, 36 from 768 (--icon-button-size-ghost). */
+const ghostSize = (width: number) => (width >= 768 ? 36 : 32);
 
 async function activeLabel(page: Page) {
   return page.evaluate(
@@ -106,6 +137,13 @@ for (const p of PAGES) {
         });
         const logo = bar.locator("[data-logo]:not(dialog *)");
 
+        // The server HTML of the nav row wraps until the items that do not fit are hidden
+        // after hydration (IMP-16). Wait for the one-line row: 44px + the 1px rule.
+        if (width >= 1280)
+          await expect
+            .poll(async () => Math.round((await box(navRow)).height))
+            .toBe(45);
+
         // The bar is at the top of the page. The top ad row is below the header: below
         // the nav row from 1280, below the bar under 1280 (DR-295).
         const topBox = await box(top);
@@ -126,7 +164,7 @@ for (const p of PAGES) {
         await expect(logo).toBeVisible();
         await expect(bar.locator("a[hreflang]")).toBeVisible();
         const menuBox = await box(menu);
-        const buttonSize = width >= 768 ? 44 : 32;
+        const buttonSize = ghostSize(width);
         expect(Math.round(menuBox.width)).toBe(buttonSize);
         expect(Math.round(menuBox.height)).toBe(buttonSize);
         if (width >= 768) {
@@ -141,17 +179,12 @@ for (const p of PAGES) {
         const icon = await box(menu.locator("svg"));
         expect(Math.round(icon.x)).toBe(gutter);
 
-        // The end control (the switch from 768) ends on the gutter too: the switch has no
-        // inner space, so the end group adds the difference.
-        const endEdge = await box(
-          bar.locator(
-            width >= 768 ? "[data-theme-toggle]" : "[data-theme-button]",
-          ),
-        );
-        const endInner = width >= 768 ? 0 : 6;
-        expect(Math.round(width - (endEdge.x + endEdge.width) + endInner)).toBe(
-          gutter,
-        );
+        // The theme icon ends on the gutter too (--top-bar-inset, DR-349).
+        const endIcon = await box(bar.locator("[data-theme-button] svg"));
+        expect(
+          Math.abs(width - (endIcon.x + endIcon.width) - gutter),
+        ).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(icon.x - gutter)).toBeLessThanOrEqual(0.5);
 
         // The logo is in the center at every width (1fr auto 1fr).
         const logoBox = await box(logo);
@@ -159,43 +192,57 @@ for (const p of PAGES) {
         const center = logoBox.x + logoBox.width / 2;
         expect(Math.abs(center - width / 2)).toBeLessThanOrEqual(2);
 
-        // The theme control: ThemeButton under 768, ThemeToggle from 768. Not both.
+        // The theme control is one ThemeButton at every width; no switch track or thumb
+        // in the page (DR-349).
         const button = bar.locator("[data-theme-button]");
-        const toggle = bar.locator("[data-theme-toggle]");
-        if (width >= 768) {
-          await expect(toggle).toBeVisible();
-          await expect(button).toBeHidden();
-          const t = await box(toggle);
-          expect([Math.round(t.width), Math.round(t.height)]).toEqual([56, 32]);
-        } else {
-          await expect(button).toBeVisible();
-          await expect(toggle).toBeHidden();
-          const t = await box(button);
-          expect([Math.round(t.width), Math.round(t.height)]).toEqual([32, 32]);
-        }
+        await expect(button).toHaveCount(1);
+        await expect(button).toBeVisible();
+        await expect(page.locator("[data-theme-toggle]")).toHaveCount(0);
+        await expect(button.locator("span")).toHaveCount(0);
+        const t = await box(button);
+        expect([Math.round(t.width), Math.round(t.height)]).toEqual([
+          buttonSize,
+          buttonSize,
+        ]);
 
-        // The language link: "En" on Bangla phones, "English" from 768 (C-17).
-        const language = (await bar.locator("a[hreflang]").innerText()).trim();
+        // The language link: "En" on Bangla phones, "English" from 768 (C-17). As tall as
+        // the icon buttons, and on one center line with the theme button (DR-349).
+        const languageLink = bar.locator("a[hreflang]");
+        const language = (await languageLink.innerText()).trim();
         if (p.lang === "bn")
           expect(language).toBe(width >= 768 ? "English" : "En");
         else expect(language).toBe("বাংলা");
+        const languageBox = await box(languageLink);
+        expect(Math.round(languageBox.height)).toBe(buttonSize);
+        expect(
+          Math.abs(
+            languageBox.y + languageBox.height / 2 - (t.y + t.height / 2),
+          ),
+        ).toBeLessThanOrEqual(0.5);
 
         // No subscribe button in the header (DR-188).
         expect(await page.locator('a[href="#newsletter"]').count()).toBe(0);
 
-        // The nav row shows from 1280 only, at shell width, with a 1px rule (DR-41).
+        // The nav row shows from 1280 only, at shell width, with a 1px rule (DR-41). The
+        // nav is a full-width band in the page color; its shell holds the items and the
+        // rule, so the page does not show beside it while it is pinned (DR-349).
         if (width >= 1280) {
           await expect(navRow).toBeVisible();
           const navBox = await box(navRow);
-          expect(Math.round(navBox.width)).toBe(Math.min(width - 48, 1280));
+          expect(Math.round(navBox.width)).toBe(width);
+          const shellBox = await box(navRow.locator("[data-nav-shell]"));
+          expect(Math.round(shellBox.width)).toBe(Math.min(width - 48, 1280));
+          expect(Math.round(shellBox.height)).toBe(45);
           expect(Math.round(navBox.y)).toBe(
             Math.round(barBox.y + barBox.height),
           );
-          // The row is 48px (--nav-row-height) and the 1px rule is below it.
-          expect(Math.round(navBox.height)).toBe(49);
-          const navRule = await navRow.evaluate(
-            (el) => getComputedStyle(el).borderBottomWidth,
-          );
+          // The row is 44px (--nav-row-height) and the 1px rule is below it (DR-349).
+          expect(Math.round(navBox.height)).toBe(45);
+          const list = await box(navRow.locator("ul"));
+          expect(Math.round(list.height)).toBe(44);
+          const navRule = await navRow
+            .locator("[data-nav-shell]")
+            .evaluate((el) => getComputedStyle(el).borderBottomWidth);
           expect(navRule).toBe("1px");
         } else {
           await expect(navRow).toBeHidden();
@@ -251,48 +298,110 @@ for (const p of PAGES) {
       await expect(links.first()).toHaveAttribute("aria-current", "page");
     });
 
-    test("only the top bar sticks; the top ad and nav row scroll away; the bar rule returns (LAY-15, DR-173)", async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: 1280, height: 800 });
-      await page.goto(p.path);
-      const bar = page.locator("[data-top-bar]");
-      await page.evaluate(() => window.scrollTo(0, 600));
-      await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
-      const top = await box(page.locator('[data-ad-slot="ad-top"]'));
-      expect(top.y + top.height).toBeLessThanOrEqual(0);
-      const nav = await box(page.locator("[data-nav-row]"));
-      expect(nav.y + nav.height).toBeLessThan(64);
-      const navPosition = await page
-        .locator("[data-nav-row]")
-        .evaluate((el) => getComputedStyle(el).position);
-      expect(navPosition).toBe("static");
-      // The nav row is gone, so the bar shows its own 1px rule again (DR-287).
-      await expect.poll(() => barRuleShown(page)).toBe(true);
-      await expect(page.locator("html")).toHaveAttribute("data-bar-stuck", "");
-      // Stuck: the logo is 24px, and the bar keeps its height (DR-295).
-      await expect(bar.locator("[data-logo]")).toHaveCSS("font-size", "24px");
-      expect(Math.round((await box(bar)).height)).toBe(64);
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await expect.poll(() => barRuleShown(page)).toBe(false);
-      await expect(page.locator("html")).not.toHaveAttribute("data-bar-stuck");
-    });
+    for (const width of [1280, 1440]) {
+      test(`site header sticks; past the nav row the row hides under the bar until the page top at ${width} (LAY-15, DR-173, DR-349)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(p.path);
+        const html = page.locator("html");
+        const bar = page.locator("[data-top-bar]");
+        const nav = page.locator("[data-nav-row]");
+        const logo = bar.locator("[data-logo]");
+        await expect
+          .poll(async () => Math.round((await box(nav)).height))
+          .toBe(45);
 
-    test("under 1280 the bar sticks alone: its rule shows once the page scrolls (DR-295)", async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: 360, height: 800 });
-      await page.goto(p.path);
-      const bar = page.locator("[data-top-bar]");
-      expect(await barRuleShown(page)).toBe(false);
-      await page.evaluate(() => window.scrollTo(0, 600));
-      await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
-      await expect.poll(() => barRuleShown(page)).toBe(true);
-      // Phones keep the 20px logo when stuck.
-      await expect(bar.locator("[data-logo]")).toHaveCSS("font-size", "20px");
-      await page.evaluate(() => window.scrollTo(0, 0));
-      await expect.poll(() => barRuleShown(page)).toBe(false);
-    });
+        // Page top: the row shows below the bar; the bar has no rule; logo 32px.
+        await expect(html).not.toHaveAttribute("data-bar-stuck");
+        expect(await nav.evaluate((el) => (el as HTMLElement).inert)).toBe(
+          false,
+        );
+        expect(Math.round((await box(nav)).y)).toBe(64);
+        expect(await barRuleShown(page)).toBe(false);
+        await expect.poll(() => logoSize(logo)).toBe(32);
+
+        // Past the row (45px): stuck. The row slides up under the bar, is hidden and inert,
+        // the bar shows its rule and the logo is 24px. The bar keeps its height.
+        await page.evaluate(() => window.scrollTo(0, 46));
+        await expect(html).toHaveAttribute("data-bar-stuck", "");
+        await expect
+          .poll(async () => {
+            const n = await box(nav);
+            return Math.round(n.y + n.height);
+          })
+          .toBeLessThanOrEqual(64);
+        await expect(nav).toHaveCSS("visibility", "hidden");
+        await expect(nav).toBeHidden();
+        expect(await nav.evaluate((el) => (el as HTMLElement).inert)).toBe(
+          true,
+        );
+        await expect.poll(() => barRuleShown(page)).toBe(true);
+        await expect.poll(() => logoSize(logo)).toBe(24);
+        expect(Math.round((await box(bar)).height)).toBe(64);
+        expect(Math.round((await box(bar)).y)).toBe(0);
+        // The row is out of the tab order: Tab from the theme button leaves the header.
+        // (preventScroll: a focus in the stuck bar scrolls the page to the top in Chromium,
+        // a separate finding, IMP-84.)
+        await bar
+          .getByRole("switch")
+          .evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }));
+        expect(await page.evaluate(() => window.scrollY)).toBe(46);
+        await page.keyboard.press("Tab");
+        expect(
+          await page.evaluate(
+            () => !!document.activeElement?.closest("[data-nav-row]"),
+          ),
+        ).toBe(false);
+
+        // A small scroll up does not bring the row back.
+        await page.evaluate(() => window.scrollTo(0, 10));
+        await page.waitForTimeout(100);
+        await expect(html).toHaveAttribute("data-bar-stuck", "");
+        await expect(nav).toBeHidden();
+
+        // At the page top it shows again.
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await expect(html).not.toHaveAttribute("data-bar-stuck");
+        await expect.poll(async () => Math.round((await box(nav)).y)).toBe(64);
+        await expect(nav).toBeVisible();
+        expect(await nav.evaluate((el) => (el as HTMLElement).inert)).toBe(
+          false,
+        );
+        await expect.poll(() => barRuleShown(page)).toBe(false);
+        await expect.poll(() => logoSize(logo)).toBe(32);
+
+        // Far down the page the bar is still at the top.
+        await page.evaluate(() => window.scrollTo(0, 2000));
+        await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
+        const top = await box(page.locator('[data-ad-slot="ad-top"]'));
+        expect(top.y + top.height).toBeLessThanOrEqual(0);
+      });
+    }
+
+    for (const width of [360, 600, 768, 1024]) {
+      test(`under 1280 the bar sticks alone: rule and logo scale once the page scrolls at ${width} (DR-295, DR-348)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(p.path);
+        const html = page.locator("html");
+        const bar = page.locator("[data-top-bar]");
+        const logo = bar.locator("[data-logo]");
+        expect(await barRuleShown(page)).toBe(false);
+        await expect(html).not.toHaveAttribute("data-bar-stuck");
+        await page.evaluate(() => window.scrollTo(0, 1));
+        await expect(html).toHaveAttribute("data-bar-stuck", "");
+        await expect.poll(() => barRuleShown(page)).toBe(true);
+        // Stuck: 24px from 768; phones keep the 20px logo.
+        await expect.poll(() => logoSize(logo)).toBe(width >= 768 ? 24 : 20);
+        await page.evaluate(() => window.scrollTo(0, 600));
+        await expect.poll(async () => Math.round((await box(bar)).y)).toBe(0);
+        await page.evaluate(() => window.scrollTo(0, 0));
+        await expect.poll(() => barRuleShown(page)).toBe(false);
+        await expect(html).not.toHaveAttribute("data-bar-stuck");
+      });
+    }
 
     test("--scroll-offset is the rendered bar height + 16px; anchors stop below the bar (DR-265)", async ({
       page,
@@ -339,7 +448,7 @@ for (const p of PAGES) {
       await expect(page.locator("main#main")).toHaveAttribute("tabindex", "-1");
     });
 
-    test("nav row items: Bangla is type-ui 16px, English type-ui-sm; every # link has a target (DR-295, DR-331)", async ({
+    test("nav row items are type-nav: 16px 600 on Bangla pages, 14px 600 on English pages; every # link has a target (DR-346, DR-331)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1280, height: 800 });
@@ -387,6 +496,24 @@ for (const p of PAGES) {
         expect(await page.locator('a[href="#newsletter"]').count()).toBe(0);
         const head = await box(drawer.locator("[data-logo]"));
         expect(head.y).toBeLessThan(56);
+        // The close button is an IconButton ghost; its 20px icon ends on the 20px panel
+        // inset, like the logo starts on it (DR-209, DR-349).
+        const close = drawer.getByRole("button", { name: p.closeMenu });
+        const closeBox = await box(close);
+        expect([
+          Math.round(closeBox.width),
+          Math.round(closeBox.height),
+        ]).toEqual([ghostSize(width), ghostSize(width)]);
+        const closeIcon = await box(close.locator("svg"));
+        expect(
+          Math.abs(drawerBox.x + drawerBox.width - 20 - (closeIcon.x + 20)),
+        ).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(head.x - drawerBox.x - 20)).toBeLessThanOrEqual(0.5);
+
+        // The Regions item reads অঞ্চলসমূহ / Regions (DR-345).
+        await expect(
+          drawer.locator('nav > ul > li a[href="#regions"]'),
+        ).toHaveText(p.regions);
 
         // Every nav item is in the drawer: 9 rows, Regions with 7 regions (China among
         // them, DR-19) and Analysis and Opinion with 2 sub-items, no Op-ed (DR-302). All
@@ -470,6 +597,11 @@ for (const p of PAGES) {
 
       const caret = drawer.locator("nav button[aria-expanded]").first();
       await expect(caret).toHaveAttribute("aria-expanded", "false");
+      // The caret button stays 44 x 44 (C-19, DR-349).
+      const caretBox = await box(caret);
+      expect([Math.round(caretBox.width), Math.round(caretBox.height)]).toEqual(
+        [44, 44],
+      );
       const children = drawer.locator("nav ul ul").first();
       await expect(children).toHaveCount(0);
       await caret.click();
@@ -498,7 +630,7 @@ for (const p of PAGES) {
       await expect(children).toHaveCount(0);
     });
 
-    test("drawer opens with the Sheet slide, and with reduced motion it does not slide (DR-280)", async ({
+    test("drawer opens with a 450ms ease-slide slide, and with reduced motion it does not slide (DR-280, DR-346)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
@@ -509,10 +641,14 @@ for (const p of PAGES) {
       const slide = await drawer.evaluate((el) => ({
         time: getComputedStyle(el).transitionDuration,
         property: getComputedStyle(el).transitionProperty,
+        ease: getComputedStyle(el).transitionTimingFunction,
       }));
-      // Transform and opacity, 200ms each.
-      expect(slide.time).toBe("0.2s, 0.2s");
-      expect(slide.property).toContain("transform");
+      // One slide from the start edge: transform, 450ms ease-slide (DR-346).
+      expect(slide).toEqual({
+        time: "0.45s",
+        property: "transform",
+        ease: "cubic-bezier(0.22, 1, 0.36, 1)",
+      });
       await page.keyboard.press("Escape");
       await expectClosed(drawer);
 
@@ -576,6 +712,24 @@ for (const p of PAGES) {
       await expect(dialog).toHaveAttribute("role", "dialog");
       await page.keyboard.press("Tab");
       await expect(field).toBeFocused();
+      // The close button comes after the field group in the source; position puts it in
+      // the corner (C-20, DR-348).
+      expect(
+        await dialog.evaluate((panel, label) => {
+          const input = panel.querySelector('input[name="q"]')!;
+          const form = input.closest('[role="search"]')!;
+          const buttons = [...panel.querySelectorAll("button")];
+          const close = buttons.find(
+            (b) => b.getAttribute("aria-label") === label,
+          );
+          return Boolean(
+            close &&
+            form.compareDocumentPosition(close) &
+              Node.DOCUMENT_POSITION_FOLLOWING &&
+            !form.contains(close),
+          );
+        }, p.closeSearch),
+      ).toBe(true);
 
       // Panel: full width at the top, 96px above the field, a 56px field (C-20).
       await expect.poll(async () => Math.round((await box(dialog)).y)).toBe(0);
@@ -589,6 +743,9 @@ for (const p of PAGES) {
       expect(Math.round(fieldBox.x)).toBe(24);
       const close = dialog.getByRole("button", { name: p.closeSearch });
       expect(Math.round((await box(close)).y)).toBe(12);
+      // IconButton ghost, 36 x 36 (DR-349).
+      expect(Math.round((await box(close)).width)).toBe(36);
+      expect(Math.round((await box(close)).height)).toBe(36);
       expect(Math.round((await box(close.locator("svg"))).x + 20)).toBe(
         1024 - 24,
       );
@@ -645,38 +802,64 @@ for (const p of PAGES) {
       await expect(dialog).toHaveCSS("transition-duration", "0s");
     });
 
-    test("the Drawer search field is 44px with the icon inside and no attached button (phones)", async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width: 360, height: 800 });
-      await page.goto(p.path);
-      const drawer = page.locator("[data-drawer]");
-      await openWithKeyboard(
-        page.getByRole("button", { name: p.menu, exact: true }),
-        drawer,
-      );
-      await expectSettled(drawer);
-      const field = drawer.locator('input[name="q"]');
-      const frame = await box(field.locator(".."));
-      expect(Math.round(frame.height)).toBe(44);
-      expect(Math.round(frame.x)).toBe(20);
-      await expect(drawer.locator('button[type="submit"]')).toHaveCount(0);
-      const icon = drawer.locator('[role="search"] svg');
-      await expect(icon).toHaveAttribute("aria-hidden", "true");
-      expect(Math.round((await box(icon)).width)).toBe(20);
-      // The border and the icon fade to interactive on focus (DR-225).
-      await expect(icon).toHaveCSS("color", "rgb(110, 104, 98)");
-      await field.focus();
-      await expect(icon).toHaveCSS("color", "rgb(153, 51, 20)");
-      await expect(field.locator("..")).toHaveCSS(
-        "border-bottom-color",
-        "rgb(153, 51, 20)",
-      );
-      // Enter runs the search.
-      await field.fill("Bay of Bengal");
-      await page.keyboard.press("Enter");
-      await expect(drawer.getByRole("status")).not.toBeEmpty();
-    });
+    for (const width of [360, 600]) {
+      test(`the Drawer search field is 44px with the icon at the end and no attached button at ${width} (DR-349)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(p.path);
+        const drawer = page.locator("[data-drawer]");
+        await openWithKeyboard(
+          page.getByRole("button", { name: p.menu, exact: true }),
+          drawer,
+        );
+        await expectSettled(drawer);
+        const field = drawer.locator('input[name="q"]');
+        const frame = await box(field.locator(".."));
+        expect(Math.round(frame.height)).toBe(44);
+        expect(Math.round(frame.x)).toBe(20);
+        await expect(drawer.locator('button[type="submit"]')).toHaveCount(0);
+        const icon = drawer.locator('[role="search"] svg');
+        await expect(icon).toHaveAttribute("aria-hidden", "true");
+        const iconBox = await box(icon);
+        expect(Math.round(iconBox.width)).toBe(20);
+        // The icon is at the field end: after the input in the source, 12px from the
+        // inner end edge. The placeholder and the typed text start at the start edge: the
+        // input starts at the inner start edge with its 12px padding (DR-349).
+        const fieldBox = await box(field);
+        expect(iconBox.x).toBeGreaterThan(fieldBox.x + fieldBox.width - 0.5);
+        expect(
+          Math.abs(
+            frame.x + frame.width - 1 - 12 - (iconBox.x + iconBox.width),
+          ),
+        ).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(fieldBox.x - (frame.x + 1))).toBeLessThanOrEqual(0.5);
+        await expect(field).toHaveCSS("padding-inline-start", "12px");
+        const order = await drawer
+          .locator('[role="search"]')
+          .evaluate((form) => {
+            const input = form.querySelector("input")!;
+            const svg = form.querySelector("svg")!;
+            return input.compareDocumentPosition(svg) &
+              Node.DOCUMENT_POSITION_FOLLOWING
+              ? "input first"
+              : "icon first";
+          });
+        expect(order).toBe("input first");
+        // The border and the icon fade to interactive on focus (DR-225).
+        await expect(icon).toHaveCSS("color", "rgb(110, 104, 98)");
+        await field.focus();
+        await expect(icon).toHaveCSS("color", "rgb(153, 51, 20)");
+        await expect(field.locator("..")).toHaveCSS(
+          "border-bottom-color",
+          "rgb(153, 51, 20)",
+        );
+        // Enter runs the search.
+        await field.fill("Bay of Bengal");
+        await page.keyboard.press("Enter");
+        await expect(drawer.getByRole("status")).not.toBeEmpty();
+      });
+    }
 
     test("the theme starts light and does not follow the system (DR-201)", async ({
       page,
@@ -689,52 +872,42 @@ for (const p of PAGES) {
       await expect(html).not.toHaveAttribute("data-theme");
     });
 
-    test("ThemeToggle (from 768) is a switch: aria-checked is dark, the thumb slides, the choice is kept", async ({
+    test("ThemeButton (from 768) is a switch: aria-checked is dark, the choice is kept (DR-340, DR-349)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1024, height: 800 });
       await page.goto(p.path);
-      const toggle = page.locator("[data-top-bar] [data-theme-toggle]");
-      await expect(toggle).toHaveAttribute("role", "switch");
-      await expect(toggle).toHaveAttribute("aria-label", p.themeName);
-      await expect(toggle).toHaveAttribute("aria-checked", "false");
-      const thumb = toggle.locator("span");
-      const before = await box(thumb);
-      // Thumb 26 x 26, 3px inset in the 56 x 32 track.
-      const track = await box(toggle);
-      expect([Math.round(before.width), Math.round(before.height)]).toEqual([
-        26, 26,
-      ]);
-      expect(Math.round(before.x - track.x)).toBe(3);
+      const button = page.locator("[data-top-bar] [data-theme-button]");
+      await expect(button).toHaveAttribute("role", "switch");
+      await expect(button).toHaveAttribute("aria-label", p.themeName);
+      await expect(button).toHaveAttribute("aria-checked", "false");
+      await expect(button.locator("svg")).toHaveClass(/lucide-moon-star/);
 
       await expect(async () => {
-        await toggle.focus();
-        await toggle.press("Space");
-        await expect(toggle).toHaveAttribute("aria-checked", "true", {
+        await button.focus();
+        await button.press("Space");
+        await expect(button).toHaveAttribute("aria-checked", "true", {
           timeout: 500,
         });
       }).toPass();
       const html = page.locator("html");
       await expect(html).toHaveClass(/dark/);
-      await expect
-        .poll(async () => Math.round((await box(thumb)).x - track.x))
-        .toBe(27);
-      // The track is interactive in dark, fill-neutral in light (DR-295).
-      await expect(toggle).toHaveCSS("background-color", "rgb(252, 119, 79)");
-      // No hover color: the track does not change under the pointer.
-      await toggle.hover();
-      await expect(toggle).toHaveCSS("background-color", "rgb(252, 119, 79)");
+      await expect(button.locator("svg")).toHaveClass(/lucide-sun/);
       expect(await page.evaluate(() => localStorage.getItem("fl-theme"))).toBe(
         "dark",
       );
 
       await page.reload();
       await expect(html).toHaveClass(/dark/);
-      await expect(toggle).toHaveAttribute("aria-checked", "true");
+      await expect(button).toHaveAttribute("aria-checked", "true");
+      await expect(button.locator("svg")).toHaveClass(/lucide-sun/);
 
-      await toggle.click();
+      await button.click();
       await expect(html).not.toHaveClass(/dark/);
-      await expect(toggle).toHaveCSS("background-color", "rgb(126, 126, 126)");
+      await expect(button).toHaveAttribute("aria-checked", "false");
+      expect(await page.evaluate(() => localStorage.getItem("fl-theme"))).toBe(
+        "light",
+      );
     });
 
     test("a theme change in one tab applies in the other tab (storage event, DR-340)", async ({
@@ -747,7 +920,7 @@ for (const p of PAGES) {
       await other.setViewportSize({ width: 1024, height: 800 });
       await other.goto(p.path);
       await expect(other.locator("html")).not.toHaveClass(/dark/);
-      const toggle = page.locator("[data-top-bar] [data-theme-toggle]");
+      const toggle = page.locator("[data-top-bar] [data-theme-button]");
       await expect(async () => {
         // Click only while the switch is off, so a retry never turns it back.
         if ((await toggle.getAttribute("aria-checked")) !== "true")
@@ -758,7 +931,7 @@ for (const p of PAGES) {
       }).toPass();
       await expect(other.locator("html")).toHaveClass(/dark/);
       await expect(
-        other.locator("[data-top-bar] [data-theme-toggle]"),
+        other.locator("[data-top-bar] [data-theme-button]"),
       ).toHaveAttribute("aria-checked", "true");
     });
 
@@ -775,7 +948,7 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 1024, height: 800 });
       await page.goto(p.path);
       const html = page.locator("html");
-      const toggle = page.locator("[data-top-bar] [data-theme-toggle]");
+      const toggle = page.locator("[data-top-bar] [data-theme-button]");
       await expect(html).not.toHaveClass(/dark/);
       await expect(async () => {
         await toggle.click();
@@ -789,15 +962,16 @@ for (const p of PAGES) {
       await expect(html).not.toHaveClass(/dark/);
     });
 
-    test("ThemeButton (phones) is a switch with the icon of the theme it switches to", async ({
+    test("ThemeButton (phones) is a switch with the icon of the theme it switches to (DR-349)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
       await page.goto(p.path);
       const button = page.locator("[data-top-bar] [data-theme-button]");
       await expect(button).toHaveAttribute("role", "switch");
+      await expect(button).toHaveAttribute("aria-label", p.themeName);
       await expect(button).toHaveAttribute("aria-checked", "false");
-      await expect(button.locator("svg")).toHaveClass(/lucide-moon/);
+      await expect(button.locator("svg")).toHaveClass(/lucide-moon-star/);
       await expect(async () => {
         await button.click();
         await expect(button).toHaveAttribute("aria-checked", "true", {
@@ -806,12 +980,127 @@ for (const p of PAGES) {
       }).toPass();
       await expect(page.locator("html")).toHaveClass(/dark/);
       await expect(button.locator("svg")).toHaveClass(/lucide-sun/);
-      // Every top bar icon is 20px (DR-295). The icon shows no hover color.
       expect(Math.round((await box(button.locator("svg"))).width)).toBe(20);
-      await expect(button).toHaveCSS("color", "rgb(252, 119, 79)");
-      await button.hover();
-      await expect(button).toHaveCSS("color", "rgb(252, 119, 79)");
-      await expect(button).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+    });
+
+    for (const scheme of ["light", "dark"] as const) {
+      test(`ghost buttons and the language link: size, ink, hover, pressed, no wash, focus ring in ${scheme} (C-12, C-17, DR-349)`, async ({
+        page,
+      }) => {
+        await setTheme(page, scheme);
+        const colors = COLORS[scheme];
+        for (const width of [360, 600, 768, 1024, 1280, 1440]) {
+          await page.setViewportSize({ width, height: 800 });
+          await page.goto(p.path);
+          const bar = page.locator("[data-top-bar]");
+          const controls = [
+            page.getByRole("button", { name: p.menu, exact: true }),
+            ...(width >= 768
+              ? [page.getByRole("button", { name: p.search, exact: true })]
+              : []),
+            bar.locator("[data-theme-button]"),
+          ];
+          for (const control of controls) {
+            const b = await box(control);
+            expect(
+              [Math.round(b.width), Math.round(b.height)],
+              `${width}`,
+            ).toEqual([ghostSize(width), ghostSize(width)]);
+            const icon = await box(control.locator("svg"));
+            expect([Math.round(icon.width), Math.round(icon.height)]).toEqual([
+              20, 20,
+            ]);
+          }
+          const states = [...controls, bar.locator("a[hreflang]")];
+          for (const control of states) {
+            // At rest: ink, no fill.
+            await page.mouse.move(0, 799);
+            await expect(control).toHaveCSS("color", colors.ink);
+            await expect(control).toHaveCSS("background-color", TRANSPARENT);
+            // Hover: interactive-hover, no wash.
+            await control.hover();
+            await expect(control).toHaveCSS("color", colors.hover);
+            await expect(control).toHaveCSS("background-color", TRANSPARENT);
+            // Pressed: interactive-pressed, no wash. The pointer leaves before the
+            // release, so the press does not click.
+            await page.mouse.down();
+            await expect(control).toHaveCSS("color", colors.pressed);
+            await expect(control).toHaveCSS("background-color", TRANSPARENT);
+            await page.mouse.move(0, 799);
+            await page.mouse.up();
+          }
+        }
+        // Tab shows the focus ring on every bar control (COL-13).
+        await page.setViewportSize({ width: 1024, height: 800 });
+        await page.goto(p.path);
+        const seen = new Set<string>();
+        for (let i = 0; i < 12 && seen.size < 4; i++) {
+          await page.keyboard.press("Tab");
+          const focused = await page.evaluate(() => {
+            const el = document.activeElement as HTMLElement | null;
+            if (!el?.closest("[data-top-bar]") || el.matches("[data-logo]"))
+              return null;
+            const s = getComputedStyle(el);
+            return {
+              name: el.getAttribute("aria-label") ?? el.textContent ?? "",
+              outline: s.outlineStyle,
+              width: s.outlineWidth,
+            };
+          });
+          if (!focused) continue;
+          seen.add(focused.name);
+          expect(focused.outline, focused.name).not.toBe("none");
+          expect(focused.width, focused.name).toBe("2px");
+        }
+        expect(seen.size).toBe(4);
+      });
+    }
+
+    test("one header landmark: the TopBar; the NavBar is a nav outside it (C-17, C-18, DR-349)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(p.path);
+      await expect(page.locator("header")).toHaveCount(1);
+      await expect(page.getByRole("banner")).toHaveCount(1);
+      await expect(page.getByRole("banner")).toHaveAttribute("data-top-bar");
+      const nav = page.locator("[data-nav-row]");
+      await expect(nav).toHaveJSProperty("tagName", "NAV");
+      expect(await nav.evaluate((el) => el.closest("header") === null)).toBe(
+        true,
+      );
+      // The nav is the next sibling of the header.
+      expect(
+        await page
+          .locator("header")
+          .evaluate((el) =>
+            el.nextElementSibling?.hasAttribute("data-nav-row"),
+          ),
+      ).toBe(true);
+      const results = await new AxeBuilder({ page })
+        .withRules([
+          "landmark-banner-is-top-level",
+          "landmark-no-duplicate-banner",
+          "landmark-unique",
+          "landmark-one-main",
+          "landmark-no-duplicate-contentinfo",
+          "landmark-main-is-top-level",
+        ])
+        .analyze();
+      expect(
+        results.violations,
+        JSON.stringify(results.violations, null, 2),
+      ).toEqual([]);
+    });
+
+    test("the NavBar Regions item reads অঞ্চলসমূহ / Regions (DR-345)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(p.path);
+      await expect(
+        page.locator('[data-nav-row] a[href="#regions"]'),
+      ).toHaveText(p.regions);
     });
 
     test("the header has interface text in the page language only (T-27)", async ({
@@ -828,7 +1117,7 @@ for (const p of PAGES) {
       else expect(rest).not.toMatch(/[ঀ-৿]/);
     });
 
-    test("header controls have no rounded corners and no shadow, except the switch (CPT-05, COL-15)", async ({
+    test("header controls have no rounded corners and no shadow, no exception (CPT-05, COL-15, DR-349)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1024, height: 800 });
@@ -839,7 +1128,6 @@ for (const p of PAGES) {
           els.map((el) => {
             const s = getComputedStyle(el);
             return {
-              toggle: el.hasAttribute("data-theme-toggle"),
               radius: s.borderRadius,
               shadow: s.boxShadow,
             };
@@ -847,7 +1135,7 @@ for (const p of PAGES) {
         );
       for (const s of styles) {
         expect(s.shadow).toBe("none");
-        expect(s.radius).toBe(s.toggle ? "4px" : "0px");
+        expect(s.radius).toBe("0px");
       }
     });
 

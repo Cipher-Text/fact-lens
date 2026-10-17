@@ -17,6 +17,19 @@ export function formatYear(year: number, lang: Lang): string {
   );
 }
 
+/**
+ * The current year in Dhaka time, for the footer (C-21). The server may run in UTC, so
+ * `getFullYear` would show the old year for the first six hours of 1 January in Dhaka.
+ */
+export function dhakaYear(now: Date = new Date()): number {
+  return Number(
+    new Intl.DateTimeFormat("en", {
+      year: "numeric",
+      timeZone: TIME_ZONE,
+    }).format(now),
+  );
+}
+
 export function formatDate(date: Date, lang: Lang): string {
   return new Intl.DateTimeFormat(locales[lang], {
     dateStyle: "long",

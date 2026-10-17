@@ -10,7 +10,8 @@ const PAGES = [
   {
     path: "/",
     lang: "bn",
-    title: "অঞ্চল",
+    // The P-3b heading reads অঞ্চলসমূহ (component-system.md 3.3, DR-345).
+    title: "অঞ্চলসমূহ",
     previous: "আগের অঞ্চল",
     next: "পরের অঞ্চল",
   },
@@ -142,6 +143,14 @@ for (const p of PAGES) {
           await expect(previous).toBeVisible();
           await expect(previous).toHaveAttribute("aria-disabled", "true");
           await expect(next).not.toHaveAttribute("aria-disabled");
+          // The filled slider buttons stay 44 x 44 (C-12, DR-349).
+          for (const button of [previous, next]) {
+            const size = await button.boundingBox();
+            expect([
+              Math.round(size?.width ?? 0),
+              Math.round(size?.height ?? 0),
+            ]).toEqual([44, 44]);
+          }
           const style = await row(page).evaluate((el) => ({
             snap: getComputedStyle(el).scrollSnapType,
             scrollbar: getComputedStyle(el).scrollbarWidth,
@@ -377,7 +386,7 @@ for (const p of PAGES) {
       expect(result.positions.some((x) => x > 0 && x < end - 1)).toBe(true);
     });
 
-    test("phone tabs: a chip press fades the panel out, then the new one in, opacity only (DR-284)", async ({
+    test("phone tabs: a chip press fades the panel out, then the new one in, 450ms ease-slide each, opacity only (DR-284, DR-346)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
@@ -387,9 +396,17 @@ for (const p of PAGES) {
       const row = s.locator("[data-region-row]");
       const duration = await row.evaluate((el) => {
         const style = getComputedStyle(el);
-        return [style.transitionProperty, style.transitionDuration];
+        return [
+          style.transitionProperty,
+          style.transitionDuration,
+          style.transitionTimingFunction,
+        ];
       });
-      expect(duration).toEqual(["opacity", "0.2s"]);
+      expect(duration).toEqual([
+        "opacity",
+        "0.45s",
+        "cubic-bezier(0.22, 1, 0.36, 1)",
+      ]);
       const samples = await row.evaluate(
         (el) =>
           new Promise<number[]>((resolve) => {
@@ -397,7 +414,8 @@ for (const p of PAGES) {
             const start = performance.now();
             const frame = () => {
               seen.push(parseFloat(getComputedStyle(el).opacity));
-              if (performance.now() - start < 700) requestAnimationFrame(frame);
+              if (performance.now() - start < 1200)
+                requestAnimationFrame(frame);
               else resolve(seen);
             };
             document
@@ -572,12 +590,11 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
       const s = regions(page);
-      await expect(page.getByRole("region", { name: p.title })).toHaveAttribute(
-        "id",
-        "regions",
-      );
       await expect(
-        s.getByRole("heading", { level: 2, name: p.title }),
+        page.getByRole("region", { name: p.title, exact: true }),
+      ).toHaveAttribute("id", "regions");
+      await expect(
+        s.getByRole("heading", { level: 2, name: p.title, exact: true }),
       ).toBeVisible();
       await expect(s.getByRole("heading", { level: 3 })).toHaveCount(
         REGION_COUNT,

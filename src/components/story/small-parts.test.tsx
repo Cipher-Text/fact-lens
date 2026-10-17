@@ -233,27 +233,30 @@ describe("IconButton (C-12)", () => {
     expect(button.className).not.toMatch(NO_ROUNDING);
   });
 
-  it("has the bar and field sizes", () => {
+  it("ghost has the ghost size by default; the 44px and field sizes stay (DR-349)", () => {
     const { rerender } = render(
-      <IconButton label="a" icon={Search} size="bar" />,
+      <IconButton label="a" icon={Search} variant="ghost" />,
     );
     expect(screen.getByRole("button")).toHaveClass(
-      "size-(--icon-button-size-bar)",
+      "size-(--icon-button-size-ghost)",
     );
+    rerender(
+      <IconButton label="a" icon={Search} variant="ghost" size="default" />,
+    );
+    expect(screen.getByRole("button")).toHaveClass("size-(--icon-button-size)");
     rerender(<IconButton label="a" icon={Search} size="field" />);
     expect(screen.getByRole("button")).toHaveClass("h-full", "aspect-square");
   });
 
-  it("ghost has a wash on hover and a deeper wash when pressed", () => {
+  it("ghost has no wash: ink icon, interactive-hover on hover, interactive-pressed when pressed (DR-349)", () => {
     render(<IconButton label="a" icon={Search} variant="ghost" />);
     const button = screen.getByRole("button");
     expect(button).toHaveClass(
       "text-ink",
-      "not-aria-disabled:hover:bg-accent-subtle",
-      "not-aria-disabled:hover:text-interactive",
-      "not-aria-disabled:active:bg-accent-soft",
+      "not-aria-disabled:hover:text-interactive-hover",
+      "not-aria-disabled:active:text-interactive-pressed",
     );
-    expect(button.className).not.toMatch(/\bbg-interactive\b/);
+    expect(button.className).not.toMatch(/\bbg-/);
   });
 
   it("filled shows surface-alt and ink-disabled at an end, keeps focus and ignores the click", () => {

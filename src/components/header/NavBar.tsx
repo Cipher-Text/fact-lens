@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -15,21 +15,26 @@ type Props = {
 
 /**
  * C-18 NavBar: the row of section links under the TopBar, at shell width, from 1280px only
- * (DR-41). It scrolls away with the page; only the top bar is sticky (LAY-15). It shows the
+ * (DR-41). It is part of the sticky site header with the TopBar (LAY-15, DR-349). It shows the
  * items that fit on one line and hides the rest. There is no "More" item: every item is in
  * the Drawer (DR-255). A hidden item leaves the tab order.
  *
- * NavBar.item: Bangla is type-ui 600 (16px), English type-ui-sm 600 (14px) (DR-295). The
- * row is 48px (`--nav-row-height`) and the 1px rule at its bottom makes 49px in total.
+ * NavBar.item: type-nav, 16px 600 on Bangla pages and 14px 600 on English pages; the role
+ * changes by :lang, with no language variant here (DR-346). The row is 44px
+ * (`--nav-row-height`) and the 1px rule at its bottom makes 45px in total (DR-349).
  *
  * NavBar.rules: the row keeps a 1px rule at its bottom. This component sets
- * `data-bar-stuck` on <html> when the row has scrolled behind the bar; the TopBar reads it
- * and shows its own bottom rule then (DR-173, DR-287). Under 1280px the row is hidden and
- * the bar sticks alone, so the bar is stuck as soon as the page has scrolled.
+ * `data-bar-stuck` on <html> once the page has scrolled past the row (its height); the
+ * TopBar reads it and shows its own bottom rule, and the logo scales down (DR-173, DR-287).
+ * Then the row slides up under the TopBar (`nav-row-slide`, 450ms ease-slide) and is inert,
+ * so it leaves the tab order. It shows again only at the page top (DR-349). Under 1280px the
+ * row is hidden and the bar sticks alone, so the bar is stuck as soon as the page has
+ * scrolled (DR-348).
  */
 export function NavBar({ items, label }: Props) {
   const navRef = useRef<HTMLElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
+  const [stuck, setStuck] = useState(false);
 
   useLayoutEffect(() => {
     const list = listRef.current;
@@ -55,18 +60,22 @@ export function NavBar({ items, label }: Props) {
 
   useLayoutEffect(() => {
     const nav = navRef.current;
-    const bar = document.querySelector<HTMLElement>("[data-top-bar]");
-    if (!nav || !bar) return;
+    if (!nav) return;
     const root = document.documentElement;
     let frame = 0;
     const update = () => {
       frame = 0;
-      const rowShown = nav.getClientRects().length > 0;
-      const stuck = rowShown
-        ? nav.getBoundingClientRect().bottom <= bar.offsetHeight
-        : window.scrollY > 0;
-      if (stuck) root.dataset.barStuck = "";
+      const y = window.scrollY;
+      const wasStuck = "barStuck" in root.dataset;
+      // With the row shown: stuck past the row, and unstuck only at the page top, so the
+      // row does not come back on a small scroll up. Without it: stuck once scrolled.
+      const next =
+        nav.getClientRects().length > 0
+          ? y >= nav.offsetHeight || (wasStuck && y > 0)
+          : y > 0;
+      if (next) root.dataset.barStuck = "";
       else delete root.dataset.barStuck;
+      setStuck(next);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -83,32 +92,36 @@ export function NavBar({ items, label }: Props) {
   }, []);
 
   return (
+    // The band is full width in the page color, so the page does not show beside the shell
+    // while it scrolls under the pinned row. The shell holds the items and the rule (C-18).
     <nav
       ref={navRef}
       aria-label={label}
-      className="shell border-b border-border max-xl:hidden"
+      inert={stuck}
+      className="nav-row-slide bg-background max-xl:hidden"
       data-nav-row
     >
-      <ul
-        ref={listRef}
-        className="flex min-h-(--nav-row-height) flex-wrap items-center justify-center gap-x-7"
-      >
-        {items.map((item) => (
-          <li key={item.id}>
-            <Link
-              href={item.href}
-              aria-current={item.current ? "page" : undefined}
-              className={cn(
-                "inline-flex min-h-(--nav-row-height) items-center font-semibold aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar)",
-                "type-ui-sm lang-bn:type-ui lang-bn:font-semibold",
-                uiLink,
-              )}
-            >
-              {item.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <div className="shell border-b border-border" data-nav-shell>
+        <ul
+          ref={listRef}
+          className="flex min-h-(--nav-row-height) flex-wrap items-center justify-center gap-x-7"
+        >
+          {items.map((item) => (
+            <li key={item.id}>
+              <Link
+                href={item.href}
+                aria-current={item.current ? "page" : undefined}
+                className={cn(
+                  "inline-flex min-h-(--nav-row-height) items-center type-nav aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar)",
+                  uiLink,
+                )}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </nav>
   );
 }

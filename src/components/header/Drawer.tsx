@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronDown, ChevronUp, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
 import { SocialIcon } from "@/components/footer/SocialIcon";
@@ -36,9 +36,11 @@ type Props = {
 /**
  * C-19 Drawer: the menu button and the modal menu from the start edge, at every width. It is
  * the shadcn Sheet with side="left", restyled (CPT-16, DR-228, DR-280), and it opens and
- * closes with the Sheet default slide (no slide with reduced motion). The page behind it is
+ * closes with a slide from the start edge, 450ms ease-slide (DR-346; no slide with reduced
+ * motion). The page behind it is
  * inert and does not scroll. It holds every nav item (DR-255), with the search field first
- * on phones. A category with children is a shadcn Collapsible; all are closed when the
+ * on phones. A category with children is a shadcn Collapsible: the child group opens with a
+ * height animation and the caret turns, 450ms ease-slide (DR-349). All are closed when the
  * Drawer opens, except the current category (DR-181). The social band is pinned to the
  * bottom while the list scrolls. There is no subscribe button (DR-188).
  *
@@ -119,11 +121,9 @@ export function Drawer({
         render={
           <IconButton
             variant="ghost"
-            size="bar"
             icon={Menu}
             label={strings.menu}
             title={strings.menu}
-            className="md:size-(--icon-button-size)"
             data-drawer-trigger=""
           />
         }
@@ -152,11 +152,10 @@ export function Drawer({
             render={
               <IconButton
                 variant="ghost"
-                size="bar"
                 icon={X}
                 label={strings.closeMenu}
                 title={strings.closeMenu}
-                className="-me-1.5 md:-me-3 md:size-(--icon-button-size)"
+                className="-me-1.5 md:-me-2"
               />
             }
           />
@@ -226,7 +225,8 @@ type ItemProps = {
 
 // Drawer.item: type-ui 600, rows min-h-13 (52px), a 1px rule under every category row,
 // inside the panel inset. Drawer.accordion: the label links to the category; a 44px caret
-// button at the end opens the child list below the row. The child group sits on the page
+// button (ghost, size default) at the end opens the child list below the row; the caret
+// points down and turns up when the group is open (accordion-caret). The child group sits on the page
 // surface, as wide as the rules, with children indented 16px (DR-185, DR-295).
 function DrawerItem({
   item,
@@ -258,16 +258,18 @@ function DrawerItem({
               render={
                 <IconButton
                   variant="ghost"
-                  icon={expanded ? ChevronUp : ChevronDown}
+                  size="default"
+                  icon={ChevronDown}
                   label={`${item.label}: ${strings.expand}`}
-                  className="aria-expanded:text-interactive"
+                  className="accordion-caret aria-expanded:text-interactive"
                 />
               }
             />
           ) : null}
         </div>
         {hasChildren ? (
-          <CollapsibleContent render={<ul className="bg-background py-2" />}>
+          <CollapsibleContent className="accordion-panel">
+            <ul className="bg-background py-2">
             {item.children?.map((child) => (
               <li key={child.id}>
                 <Link
@@ -279,6 +281,7 @@ function DrawerItem({
                 </Link>
               </li>
             ))}
+            </ul>
           </CollapsibleContent>
         ) : null}
       </Collapsible>

@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.14 · 15 October 2026 · Approved for prototype run 2
+Version 2.15 · 16 October 2026 · Run 3 review decisions (DR-346, DR-348)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -104,6 +104,7 @@ Tracking for Bangla is 0 in every role.
 | `type-caption` | Sans | 14px | 400 | 1.5 | 0 | 15px | 400 | 1.6 | Image and figure captions |
 | `type-ui` | Sans | 16px | 500 | 1.4 | 0 | 16px | 500 | 1.5 | Standard interface text |
 | `type-ui-sm` | Sans | 14px | 500 | 1.4 | 0 | 15px | 500 | 1.5 | Navigation, tabs, menus, tooltips |
+| `type-nav` | Sans | 14px | 600 | 1.4 | 0 | 16px | 600 | 1.5 | NavBar items (DR-295, DR-346). The size changes by `:lang`; no language variant in the component |
 | `type-button` | Sans | 14px | 600 | 1.2 | 0 | 15px | 600 | 1.35 | Button labels (`Button`, C-12). Same size at every width (DR-208) |
 | `type-input` | Sans | 16px | 400 | 1.4 | 0 | 16px | 400 | 1.5 | Form input values |
 | `type-rank` | Serif | 44px; 56px from 1024 | 700 | 1 | 0 | Sans: 44px; 56px from 1024 | 700 | 1 | Most read rank numeral. Use through `rank-list` only, no element class (§8.2, DR-217) |
@@ -250,7 +251,7 @@ Use the article role, `text-interactive` and an underline. Keep the paragraph we
 
 ### TYP-17 Format numbers and dates for the page language
 
-Use `Intl.DateTimeFormat` and `Intl.NumberFormat` with `en-GB` or `bn-BD`. Keep identifiers as written, for example F-35, G7, 5G. Use `tabular-nums` for times, live updates, scores and tables.
+Use `Intl.DateTimeFormat` and `Intl.NumberFormat` with `en-GB` or `bn-BD-u-nu-beng`. Plain `bn-BD` gives Latin digits in WebKit (DR-348). Keep identifiers as written, for example F-35, G7, 5G. Use `tabular-nums` for times, live updates, scores and tables.
 
 **Story time (DR-274).** Show a relative time for 24 hours, then the date and time in the reader's time zone.
 
@@ -262,7 +263,7 @@ Use `Intl.DateTimeFormat` and `Intl.NumberFormat` with `en-GB` or `bn-BD`. Keep 
 
 - Hours only. No minutes and no days.
 - 24 hours or more: date and 24-hour time in the browser time zone. Add the year only for an earlier year.
-- Put the exact time in `<time datetime>`. The server renders the Dhaka time; a small script (under 1 KB, no library) writes the reader text on load, every few minutes and when the tab gets focus. Give `<time>` `suppressHydrationWarning`.
+- Put the exact time in `<time datetime>`. The server renders the Dhaka time; a small script (1.5 KB or less, no library; DR-348) writes the reader text on load, every few minutes and when the tab gets focus. Give `<time>` `suppressHydrationWarning`.
 - This applies to every metadata line (hero, Latest, cards).
 
 ### TYP-18 Use utilities, not raw values
@@ -404,7 +405,7 @@ Paragraph gap is 1.1em. Do not indent paragraphs. The spacing tokens in `spacing
 
 ### 7.4 Navigation
 
-Use weight 600 for the nav row (from 1280px): `type-ui` (16px) on Bangla pages, `type-ui-sm` (14px) on English pages (DR-295). Use `type-ui` with weight 600 for the drawer (all widths). Use `type-ui-sm` with weight 500 for drawer sub-items. Do not use serif in navigation.
+Use `type-nav` for the nav row (from 1280px): 16px on Bangla pages, 14px on English pages, weight 600 (DR-295, DR-346). Use `type-ui` with weight 600 for the drawer (all widths). Use `type-ui-sm` with weight 500 for drawer sub-items. Do not use serif in navigation.
 
 ## 8. Implementation
 
@@ -571,6 +572,9 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-ui-sm-weight: 500;
   --type-ui-sm-line: 1.4;
   --type-ui-sm-tracking: 0;
+  --type-nav-size: 0.875rem;
+  --type-nav-weight: 600;
+  --type-nav-line: 1.4;
   --type-button-size: 0.875rem;
   --type-button-weight: 600;
   --type-button-line: 1.2;
@@ -677,6 +681,9 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-ui-sm-weight: 500;
   --type-ui-sm-line: 1.5;
   --type-ui-sm-tracking: 0;
+  --type-nav-size: 1rem;
+  --type-nav-weight: 600;
+  --type-nav-line: 1.5;
   --type-button-size: 0.9375rem;
   --type-button-weight: 600;
   --type-button-line: 1.35;
@@ -902,6 +909,13 @@ body {
   letter-spacing: var(--type-ui-sm-tracking);
 }
 
+@utility type-nav {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-nav-size);
+  font-weight: var(--type-nav-weight);
+  line-height: var(--type-nav-line);
+}
+
 @utility type-button {
   font-family: var(--font-ui-active);
   font-size: var(--type-button-size);
@@ -991,6 +1005,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.15 | 2026-10-16 | New role `type-nav` (14px English, 16px Bangla, weight 600) for the NavBar items; no `lang-bn` variant (DR-346). TYP-17: locale `bn-BD-u-nu-beng`; story time script 1.5 KB or less (DR-348). |
 | 2.14 | 2026-10-15 | Section 8.2 links to the one `globals.css` import list (layout Section 12.5, DR-339); Section 8.4 lists `globals.css`. |
 | 2.13 | 2026-10-15 | New role `type-logo` (20 / 28 / 32px, 24px when the bar is stuck) and `type-logo-sm` (24px) for the logo text stand-in (DR-306). Proxy and cookie rules in the language rules (DR-328). |
 | 2.12 | 2026-10-14 | Most read rank from the data in an `aria-hidden` span, digits in the page language; `rank-list` has no counter (DR-290). Nav row: Bangla `type-ui` 16px, English unchanged (DR-295). |

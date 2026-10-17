@@ -1,5 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
+import { prepareInkScan, ruleInkSpaces } from "./rules";
+
 // R2-04: the small parts on the real homepage, measured in the browser
 // (component-system.md C-08 to C-13, C-22; CPT-05, CPT-06, CPT-10, CPT-13, CPT-15,
 // COL-06, COL-13). The states are measured through the computed style.
@@ -56,31 +58,106 @@ for (const { path, more } of PAGES) {
       }
     });
 
-    test("Divider.item: a 1px dotted rule drawn with a gradient, 16px each side, none before the first row (C-22)", async ({
+    test("Divider.item: 1px square dots with a 2px gap, both themes, none before the first row (C-22, DR-351)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(path);
-      const list = page.locator("[data-latest] [data-story-list]");
-      const items = list.locator("> li");
+      const items = page.locator("[data-latest] [data-story-list] > li");
       const rule = (el: Element) => {
         const s = getComputedStyle(el, "::before");
         return {
           display: s.display,
           height: s.height,
           image: s.backgroundImage,
-          pad: getComputedStyle(el).paddingTop,
         };
       };
-      const first = await items.first().evaluate(rule);
-      expect(first.display).toBe("none");
-      const second = await items.nth(1).evaluate(rule);
-      expect(second.height).toBe("1px");
-      expect(second.pad).toBe("16px");
-      expect(second.image).toContain("repeating-linear-gradient");
-      const a = (await items.nth(0).boundingBox())!;
-      const b = (await items.nth(1).boundingBox())!;
-      expect(Math.round(b.y - (a.y + a.height))).toBe(16);
+      // The gradient of the spec, resolved by the browser the same way.
+      const expected = () =>
+        page.evaluate(() => {
+          const probe = document.createElement("div");
+          probe.style.backgroundImage =
+            "repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 3px)";
+          document.body.append(probe);
+          const value = getComputedStyle(probe).backgroundImage;
+          probe.remove();
+          return value;
+        });
+      expect((await items.first().evaluate(rule)).display).toBe("none");
+      for (const theme of ["light", "dark"] as const) {
+        await page.evaluate(
+          (dark) => document.documentElement.classList.toggle("dark", dark),
+          theme === "dark",
+        );
+        const second = await items.nth(1).evaluate(rule);
+        expect(second.height, theme).toBe("1px");
+        expect(second.image, theme).toBe(await expected());
+        expect(second.image, theme).toMatch(
+          /1px, rgba\(0, 0, 0, 0\) 1px, rgba\(0, 0, 0, 0\) 3px\)$/,
+        );
+      }
+    });
+
+    for (const width of [360, 768, 1280]) {
+      test(`Divider.item space: 16px to the ink on each side of every rule at ${width} (C-22, DR-350)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(path);
+        await prepareInkScan(page);
+        const rules = await ruleInkSpaces(page);
+        // Latest, P-4, P-2, P-3, Most read and the regions each have rules in view.
+        const sections = new Set(rules.map((r) => r.label.split(" ")[0]));
+        for (const s of [
+          "hero",
+          "analysis-opinion",
+          "featured",
+          "grouped",
+          "most-read",
+          "regions",
+        ]) {
+          expect(sections, `${s} at ${width}`).toContain(s);
+        }
+        // The ink tokens are measured from the fonts: per list the median space is 16 ±1px.
+        // A glyph that hangs lower or stands higher than the median (Bangla ্র and ু, a
+        // descender, a rank digit) moves one rule by up to 3px (flag F-2, DOC-47).
+        const median = (values: number[]) => {
+          const sorted = [...values].sort((a, b) => a - b);
+          return sorted[Math.floor(sorted.length / 2)];
+        };
+        for (const s of sections) {
+          const list = rules.filter((r) => r.label.startsWith(`${s} `));
+          const sides = list.flatMap((r) => [r.above, r.below]);
+          expect(
+            Math.abs(median(sides) - 16),
+            `${s} median at ${width}: ${JSON.stringify(list)}`,
+          ).toBeLessThanOrEqual(1);
+          for (const r of list) {
+            expect(
+              Math.abs(r.above - 16),
+              `${r.label} above: ${JSON.stringify(r)}`,
+            ).toBeLessThanOrEqual(3);
+            expect(
+              Math.abs(r.below - 16),
+              `${r.label} below`,
+            ).toBeLessThanOrEqual(3);
+          }
+        }
+      });
+    }
+
+    test("Divider.item: no rule after the last row of a list (C-22)", async ({
+      page,
+    }) => {
+      await page.goto(path);
+      const last = await page.evaluate(() =>
+        [...document.querySelectorAll("main ul, main ol")]
+          .map((list) => list.lastElementChild)
+          .filter((li) => li?.classList.contains("divider-item"))
+          .map((li) => getComputedStyle(li!, "::after").content),
+      );
+      // The rule is above an item (::before), so nothing is drawn below the last one.
+      for (const content of last) expect(content).toBe("none");
     });
 
     test("SectionHeading: the heading is not a link and the bar changes color in dark (CPT-13, C-22)", async ({

@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 /**
  * The quote mark of an OpinionList item (C-06): two filled marks, drawn, brand in light and
  * interactive in dark (--color-bar), aria-hidden. The viewBox is 44 x 36, so the height
- * follows the width: 28 x 23 on phones, 36 x 29 from 600px, 44 x 36 from 1024px. The sheet
- * gives the sizes and no drawing (UNRESOLVED_DESIGN_SYSTEM U-35).
+ * follows the width: 28 x 23 on phones, 36 x 29 from 600px, 44 x 36 from 1024px
+ * (--quote-mark-width, which also sets where the OpinionList item rule starts).
  */
 export function QuoteMark({ className }: { className?: string }) {
   return (
@@ -14,7 +14,7 @@ export function QuoteMark({ className }: { className?: string }) {
       viewBox="0 0 44 36"
       fill="currentColor"
       className={cn(
-        "h-auto w-7 shrink-0 text-(--color-bar) sm:w-9 lg:w-11",
+        "h-auto w-(--quote-mark-width) shrink-0 text-(--color-bar)",
         className,
       )}
     >

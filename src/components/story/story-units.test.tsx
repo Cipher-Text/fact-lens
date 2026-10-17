@@ -245,11 +245,14 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
       <StoryList stories={latest} strings={bn} columns={2} />,
     );
     const ul = container.querySelector("ul")!;
-    expect(ul.style.getPropertyValue("--story-list-rows")).toBe(
-      "repeat(3, auto)",
-    );
-    expect(ul).toHaveClass("md:max-lg:grid-flow-col");
+    // CSS columns, so each column keeps its own item heights (DR-350).
+    expect(ul).toHaveClass("md:max-lg:columns-2");
     const items = screen.getAllByRole("listitem");
+    // Items 1 to 3, then a column break before item 4 (DR-125).
+    expect(items[3]).toHaveClass("md:max-lg:break-before-column");
+    expect(
+      items.filter((li) => li.className.includes("break-before")),
+    ).toHaveLength(1);
     expect(items[3]).toHaveClass("md:max-lg:before:hidden");
     expect(items[1]).not.toHaveClass("md:max-lg:before:hidden");
   });
