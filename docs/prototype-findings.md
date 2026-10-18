@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 5 take the next free number: DOC-53, U-42, IMP-93, KIT-11 (IMP-77 is not used). Put them under "New findings (run 5)" in the entry format at the end of "New findings (run 3)".
+New findings in run 5 take the next free number: DOC-53, U-42, IMP-97, KIT-11 (IMP-77 is not used). Put them under "New findings (run 5)" in the entry format at the end of "New findings (run 3)".
 
 ## Summary
 
@@ -228,8 +228,12 @@ New findings in run 5 take the next free number: DOC-53, U-42, IMP-93, KIT-11 (I
 | IMP-89 | R4-03 | In dark, the border color on `surface-elevated` (P-4) makes the item and column rules very faint | Low | Fixed in R5-01 (checkpoint 2: --border #CEC7BD / #494D55, DR-358) |
 | IMP-90 | R4-05 | The page below the header moves up 44px at hydration from 1280: the server HTML of the nav row wraps (IMP-16) | Medium | Fixed in R5-01 (checkpoint 3: the NavBar list is one row tall from the server HTML, DR-359) |
 | IMP-91 | R5-01 | Bangla pages shift at load from 1280: the Noto Sans Bengali swap makes one NavBar item 1px narrower and the centered row moves 3.7px (CLS 0.00003) | Low | Open (test blocks the web fonts, tajmin's choice) |
-| DOC-51 | R5-01 | C-18 cuts the NavBar.item focus ring: the links fill the 44px row and the ring (COL-13, 2px at 2px offset) falls outside it; overflow hidden (DR-359) and the slide clip-path cut its top and bottom | Medium | Open (flag) |
+| DOC-51 | R5-01 | C-18 cuts the NavBar.item focus ring: the links fill the 44px row and the ring (COL-13, 2px at 2px offset) falls outside it; overflow hidden (DR-359) and the slide clip-path cut its top and bottom | Medium | Open (flag; raised again in the PR #7 review) |
 | IMP-92 | R5-02 | Real Safari (macOS): Tab does not reach the poll vote button (checklist item 1) | Low | Open (tajmin: low priority) |
+| IMP-93 | PR #7 review | Before hydration (or with JS off) the NavBar items that wrap are cut off by the one-row list but are still in the Tab order | Low | Open (fix planned later) |
+| IMP-94 | PR #7 review | Latest with one story at 768 to 1023: the column rule shows beside an empty second column (layout §7.3) | Low | Open (fix planned later) |
+| IMP-95 | PR #7 review | `header.spec.ts` uses fixed waits (lines 357, 1216: 100ms; 1310: 500ms) for "nothing changes" checks | Low | Open (fix planned later) |
+| IMP-96 | PR #7 review | `docs/run-5-report.md` says "A11Y-24 closed" with IMP-92 open, and "every WebKit failure is a test fault" without per-test evidence | Low | Open (fix planned later) |
 | DOC-52 | R5-01 | The R5-01 sprint check says the first NavBar item edge equals the shell edge; C-18 centers the items in the shell (DR-170) | Low | Open (test checks the list and rule edges) |
 | IMP-79 | R3-04 | A failed image shows the placeholder only after hydration | Low | Closed: kept as built (DR-348) |
 
@@ -624,12 +628,44 @@ Entry format:
 - **What the code does:** the vote button is a plain `<button>` (the shared Button), not disabled, with no `tabIndex`. Chromium and the WebKit e2e reach it.
 - **Suggested solution:** first check whether the result depends on Safari Settings > Advanced > "Press Tab to highlight each item" (with it off, Safari's Tab skips buttons by design and Option+Tab reaches them). If the button is skipped with the setting on, find the cause in the poll markup. tajmin decides; not in run 5.
 
+### IMP-93 Clipped NavBar items are focusable before hydration
+
+- **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
+- **Source:** C-18 (DR-359, IMP-90); `src/components/header/NavBar.tsx:110`; COL-13.
+- **Problem:** the item list is one row tall from the server HTML (`max-h`, `overflow-hidden`). Items that wrap are cut off but not `hidden` until `fit()` runs, so before hydration, or with JS off, Tab can move focus to a link that is not visible. The R5-01 check "wrapped items are not in the Tab order" is tested only after hydration.
+- **What the code does:** no change.
+- **Suggested solution:** hide the items past a fixed count in the server HTML (the IMP-90 option), so the server and the client agree. A behavior change: plan it with the fix.
+
+### IMP-94 The Latest column rule shows beside an empty column
+
+- **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
+- **Source:** layout §7.3 (P-1: "Latest shows the items that exist"; P-4: "the other column spans"); C-03, DR-355; `src/components/story/StoryList.tsx:55`, `divider-column-columns`.
+- **Problem:** with `columns={2}`, the rule draws at 768 to 1023 whatever the item count. With one story there is no column break, so the second column is empty and the rule stands beside it. With 2 or more stories both columns have items. The mock data (5 stories) hides it.
+- **What the code does:** no change.
+- **Suggested solution:** with fewer than 2 stories, StoryList renders one column (no `columns-2`, no rule), as in P-4. Add a sparse e2e case: one story at 768 and 1000.
+
+### IMP-95 Fixed waits in the header tests
+
+- **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
+- **Source:** `tests/e2e/header.spec.ts:357`, `:1216` (100ms), `:1310` (500ms); IMP-86 (flaky under load).
+- **Problem:** the review calls these flaky. They check that nothing changes (no scroll, the bar stays stuck, no layout shift), so they cannot poll for a state; but the 100ms waits stand for "the scroll handler has run", which is one animation frame.
+- **What the code does:** no change.
+- **Suggested solution:** lines 357 and 1216: wait two animation frames (the handler runs in `requestAnimationFrame`) instead of 100ms. Line 1310: keep the window for late layout shifts after hydration, or end it on a hydration marker. Check with `--repeat-each=10`.
+
+### IMP-96 Run 5 report wording on A11Y-24 and the WebKit failures
+
+- **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
+- **Source:** `docs/run-5-report.md:12`; `docs/webkit-failures.md` "Real Safari (A11Y-24)"; IMP-92.
+- **Problem:** the report says "A11Y-24 closed" while IMP-92 (a keyboard failure on the vote button) is open, and "every WebKit failure is a test fault" although the Safari check maps families to checklist items, not each of the 51 tests. The PR body says "except IMP-92".
+- **Suggested solution:** "A11Y-24 closed with one open item (IMP-92)"; "every WebKit failure family maps to a checklist item that passes in real Safari". Fix the "( Tab" typo in the same line.
+
 ### DOC-51 C-18: the NavBar.item focus ring is cut at its top and bottom
 
 - **Found:** R5-01, 18 Oct 2026 · **Severity:** Medium · **Status:** Open (flag)
 - **Source:** C-18 Surface (max-height --nav-row-height, overflow hidden, DR-359) and NavBar.rules (the slide, `nav-row-slide` clip-path inset(0), DR-349); COL-13 (2px ring, 2px offset); `src/styles/colors.css` `:focus-visible`.
 - **Problem:** the NavBar links are as tall as the 44px row, so the ring is drawn 4px outside the list at the top and the bottom. The overflow hidden of the list cuts it, and the clip-path of the band already cut it in run 4. Only the left and right sides of the ring show (screenshot at 1280, `/en`).
 - **What the code does:** C-18 as written. No treatment chosen (tajmin: flag).
+- **PR #7 review (18 Oct 2026):** claude-review raised it as a fix (COL-13): fix it or approve the clip as an exception. Claude's recommendation: the inset ring, since both the list overflow and the band clip-path stay as specified. Needs tajmin's and the blueprint's decision (COL-13 sets the 2px offset).
 - **Suggested solution:** one of: an inset ring on NavBar.item (outline-offset -4px); a link shorter than the row with the 3px current line on the li; or `overflow: clip` with `overflow-clip-margin` (not in Safari). The blueprint decides.
 
 ### DOC-52 R5-01 check: "first item edge equals the shell edge"
@@ -669,3 +705,4 @@ Entry format:
 | 2026-10-18 | R5-01 checkpoint 3 | IMP-91, DOC-51 and DOC-52 added; DOC-44, DOC-45, DOC-46, IMP-84, IMP-85 and IMP-90 set to Fixed in R5-01 |
 | 2026-10-18 | R5-01 checkpoint 4 | No new findings; IMP-86 and the IMP-87 column rule set to Fixed in R5-01 |
 | 2026-10-18 | R5-02 | IMP-92 added (real Safari: Tab does not reach the vote button); IMP-53 and IMP-88 Closed (not in real Safari) |
+| 2026-10-18 | PR #7 review | IMP-93 to IMP-96 added from the claude-review comments; DOC-51 note added; fixes planned later |

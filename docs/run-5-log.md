@@ -17,6 +17,7 @@ Claude adds one row per ticket when it ends (`/accept`, or Rejected), in the tic
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | R5-01 Docs and run 4 review fixes | 2026-10-18 | 2026-10-18 | Done | 0 | IMP-91, DOC-51 (flag, open), DOC-52 | 7b1efb8 | Four checkpoints: docs and specs; border, --duration-slide, P-4 gap, ink tokens; header focus margin, one-row NavBar; Latest column rule, storage-event test. Chromium 686 pass; WebKit W5-01, W5-02 |
 | R5-02 Real Safari pass, final check, pull request and merge | 2026-10-18 | 2026-10-18 | Done | 0 | IMP-92 (open, low priority) | 361d41d | Full WebKit 51 (all test faults); real Safari macOS and iOS pass except IMP-92; IMP-53 and IMP-88 Closed, no code change; Chromium 686 pass. PR and merge on tajmin's go |
+| Note (2026-10-18) | | | | | | | PR #7 opened. claude-review: no blockers; IMP-93 to IMP-96 added and DOC-51 raised again (`docs/run-5-report.md`, "PR #7 review"). Fixes planned later; merge waits for tajmin's go |
 
 ## Test runs
 

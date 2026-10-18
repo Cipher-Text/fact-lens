@@ -67,8 +67,22 @@ Items 1 to 11 are the R4-05 checklist. Items 12 to 15 are the R5-01 changes.
 | 14 | Latest at 768 to 1023: a 1px rule between the two columns, centered in the gap; none at 767 or 1024 | DR-355 B3 | Pass | Pass |
 | 15 | Rules and borders use the new border color (a little darker than before in light, lighter in dark); Analysis gap and its column rule look centered at 768, 1024, 1280 | DR-358, DR-356 | Pass | Pass |
 
+## PR #7 review (claude-review, 18 October 2026)
+
+No blockers. The fixes are planned later; nothing is changed before the merge yet.
+
+| Comment | Where | Finding | Proposal |
+| --- | --- | --- | --- |
+| NavBar focus ring cut at its top and bottom (COL-13) | `NavBar.tsx:110` | DOC-51 (flag) | Inset ring on NavBar.item; tajmin and the blueprint decide |
+| Wrapped NavBar items focusable before hydration | `NavBar.tsx:110` | IMP-93 | Hide items past a fixed count in the server HTML |
+| Latest column rule beside an empty column | `StoryList.tsx:55` | IMP-94 | One column with fewer than 2 stories; sparse e2e case |
+| Fixed waits in the header tests | `header.spec.ts:357, 1216, 1310` | IMP-95 | Two animation frames at 357 and 1216; keep or end 1310 on hydration |
+| "A11Y-24 closed" with IMP-92 open; WebKit claim without per-test evidence | `docs/run-5-report.md:12` | IMP-96 | Reword the result row |
+| PR edits `docs/design-system/` | – | None | Intended: R5-01 checkpoint 1 copied the blueprint specs |
+
 ## Open items for tajmin
 
 - IMP-92: Tab does not reach the poll vote button in macOS Safari (low priority, open).
-- Flag: DOC-51 (NavBar focus ring cut at top and bottom), open from R5-01.
+- Flag: DOC-51 (NavBar focus ring cut at top and bottom), open from R5-01; raised again in the PR #7 review.
+- IMP-93 to IMP-96 from the PR #7 review; fixes planned later.
 - Firefox is not tested (DR-341: check by hand before M2).
