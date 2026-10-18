@@ -10,7 +10,7 @@ Claude Code reads the "Now" section at the start of each session. `/ticket` and 
 - Ticket: none. R5-01 and R5-02 Done on 18 October 2026; run 5 has no "To do" ticket left.
 - Specs in `docs/design-system/`: color 2.15, typography 2.16, layout 2.22, component-system 1.17.1, agent-contract 2.12.1.
 - Tests: the run 5 test scope (`docs/SPRINT.md` "Test scope"): `pnpm check` at the end of every checkpoint; Chromium e2e on the checkpoint's "Test files" and on each test file it adds or changes; the full `pnpm test:e2e:chromium` when a checkpoint changes `src/styles/`, `src/components/layout/` or `src/i18n/`, and in R5-02. The checkpoint's spec files also run in WebKit (a report). Every run goes in the log.
-- Next action: on tajmin's go, open the PR `production-run-5` into `main`, merge with `gh pr merge --merge --delete-branch`, and run `pnpm check` and the full Chromium suite on `main` (R5-02 step 2; both runs in the log and the report). Then run 6 (`docs/SPRINT.md` "Notes for later"). Open: IMP-92 (Tab to the vote button, macOS Safari, low priority); flag DOC-51 (NavBar focus ring), tajmin decides.
+- Next action: run 5 is merged (PR #7, merge commit `49ff455`, 18 October 2026); `pnpm check` and the full Chromium suite (686) pass on `main`. Next: plan the PR #7 review fixes (IMP-93 to IMP-96, DOC-51) and run 6 (`docs/SPRINT.md` "Notes for later"). Open: IMP-92; flag DOC-51, tajmin decides.
 
 ## Past runs
 

@@ -40,3 +40,5 @@ One row per test run, with its ticket and checkpoint.
 | R5-02 | 1 | 2026-10-18 | Real Safari checklist, macOS and iOS (tajmin) | 15 items | all but 1 | 1 (item 1 macOS: Tab to the vote button, IMP-92) | – |
 | R5-02 | 2 | 2026-10-18 | `pnpm check` | 22 unit files | 251 | 0 | 10 s |
 | R5-02 | 2 | 2026-10-18 | `pnpm test:e2e:chromium` (full) | 18 spec files | 686 | 0 | 4.2 min |
+| R5-02 | 2 (on `main` after the merge, `49ff455`) | 2026-10-18 | `pnpm check` | 22 unit files | 251 | 0 | – |
+| R5-02 | 2 (on `main` after the merge, `49ff455`) | 2026-10-18 | `pnpm test:e2e:chromium` (full) | 18 spec files | 686 | 0 | 4.3 min |

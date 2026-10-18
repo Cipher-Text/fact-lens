@@ -6,12 +6,12 @@
 
 | Check | Result |
 | --- | --- |
-| `pnpm check` | Pass on the branch (251 unit tests, build clean). On `main` after the merge: pending |
-| `pnpm test:e2e:chromium` | 686 pass on the branch (4.2 min). On `main` after the merge: pending |
+| `pnpm check` | Pass on the branch (251 unit tests, build clean). On `main` after the merge (`49ff455`): pass |
+| `pnpm test:e2e:chromium` | 686 pass on the branch (4.2 min). On `main` after the merge (`49ff455`): 686 pass (4.3 min) |
 | `pnpm test:e2e` WebKit (DR-289: a report, not a gate) | 51 failures, 619 pass, 16 skipped (run 4: 48). Every failure is a known family; no new ID |
 | Real Safari (macOS and iOS, A11Y-24) | Every item passes on iOS; on macOS every item passes except item 1 ( Tab does not reach the vote button, IMP-92, open, low priority). A11Y-24 closed. Every WebKit failure is a test fault; IMP-88 needs no rounding |
 | `main` moved since the branch | No: `origin/main` is still `7430d53` (fetched 18 October 2026) |
-| After the merge | Pending: after `/accept`, the PR and the merge wait for tajmin's go; then `pnpm check` and the full Chromium suite run on `main` |
+| After the merge | PR #7 merged on 18 October 2026 on tajmin's go (merge commit `49ff455`, branch deleted). `pnpm check` and the full Chromium suite pass on `main` |
 
 ## Tickets
 
