@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.21 · 16 October 2026 · Homepage, audit after the run-3 design change (DR-349 to DR-351)
+Version 2.22 · 17 October 2026 · Homepage, run 4 review (DR-355 to DR-357, DR-359)
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -74,7 +74,7 @@ From 1024px, the rail is beside the wrapper. Below 1024px, the rail goes below t
 
 There is no `2xl` tier. From 1366px, no value changes. On a 1920px screen, the shell is 1280px, a column is approximately 84.7px, and four columns are 411px.
 
-The column gap (`--grid-column-gap`) is the space between any two blocks that sit side by side: wrapper and rail, the two top stories, analysis and opinion, category blocks, region panels, Most read items, the poll columns, and the text and image of a card in a row (feature split, row third) or a quote mark and its text. The row gap (`--grid-row-gap`) is the space between two rows of a grid that have no rule between them. They are separate tokens. Every grid uses them; no component sets its own gap (DR-300). A rule between rows uses `space-list-item` on each side instead (C-22).
+The column gap (`--grid-column-gap`) is the space between any two blocks that sit side by side: wrapper and rail, the two top stories, analysis and opinion, category blocks, region panels, Most read items, the poll columns, and the text and image of a card in a row (feature split, row third) or a quote mark and its text. The row gap (`--grid-row-gap`) is the space between two rows of a grid that have no rule between them. They are separate tokens. Every grid uses them; no component sets its own gap (DR-300). One exception: the gap between analysis and opinion (P-4) is `--space-analysis-gap`, 32px at 768 to 1023, 48px at 1024 to 1279, 64px from 1280 (DR-356). Keep it as an exception. A rule between rows uses `space-list-item` on each side instead (C-22).
 
 ### 3.2 Shell width per tier
 
@@ -180,7 +180,7 @@ The component looks are in `component-system.md`: `TopBar` (C-17), `NavBar` (C-1
 | Part | Width | Behavior |
 | --- | --- | --- |
 | Top bar | Full viewport, with the page gutter on each side | Sticky at all widths, with the nav row (DR-349) |
-| Nav row | Shell | From 1280px only. Sticky with the top bar; past the page top it slides up under the top bar and hides (DR-349) |
+| Nav row | Shell | From 1280px only. Sticky with the top bar; past the nav row it slides up under the top bar and hides (DR-349, DR-357) |
 | Drawer | From the left, full viewport height | Opens from the menu button at all widths |
 
 - The top bar has three groups. The start group and the end group have the same flexible width, so the logo stays in the center at every width.
@@ -191,7 +191,8 @@ The component looks are in `component-system.md`: `TopBar` (C-17), `NavBar` (C-1
 - The theme control has two states: light and dark. Light is the first state on every device; the system setting is not used (DR-201). After the reader selects a theme, keep the choice in local storage: key `fl-theme`, value `light` or `dark`. If storage is blocked, use light and keep the choice for this page only. An inline script in the head reads the key and sets the `.dark` class before the first paint. Open tabs follow a change (the storage event) (DR-340). The control is the theme button (ThemeButton) at every width (DR-349).
 - The nav row shows only the items that fit in the shell. There is no "More" item. All items are in the drawer (DR-255).
 - Edge icons: the 20px icon sits on the page gutter at every width. Inside the Drawer it sits on the 20px Drawer inset (DR-214).
-- There is no rule between the top bar and the nav row. The nav row has a 1px rule at its bottom. When the top bar sticks alone, it shows its own 1px bottom rule, in both themes and at every width (DR-173, DR-295). When the page scrolls past the nav row (under 1280: once the page scrolls, DR-348), `<html>` gets `data-bar-stuck`; the top bar reads it through the `bar-stuck` variant (DR-287). Then the nav row slides up under the top bar and hides, and the logo scales down, both 450ms `ease-slide`; the nav row shows again only at the page top; no motion with reduced motion (DR-349).
+- There is no rule between the top bar and the nav row. The nav row has a 1px rule at its bottom. When the top bar sticks alone, it shows its own 1px bottom rule, in both themes and at every width (DR-173, DR-295). When the page scrolls past the nav row (under 1280: once the page scrolls, DR-348), `<html>` gets `data-bar-stuck`; the top bar reads it through the `bar-stuck` variant (DR-287). Then the nav row slides up under the top bar and hides, and the logo scales down, both `--duration-slide` `ease-slide`; the nav row shows again only at the page top; no motion with reduced motion (DR-349, DR-357).
+- A focus on a control in the stuck header does not scroll the page: the focusable elements of the site header get `scroll-margin-top: calc(-1 * var(--scroll-offset))` (DR-357, IMP-84).
 - The top ad row is below the header: below the nav row from 1280, below the top bar under 1280, and above the hero (DR-295). The top bar is at the top of the viewport from the first paint and sticks there.
 - At the page top the logo is 32px from 1024, 28px at 768 and 20px on phones. When the bar is stuck the logo is 24px (20px on phones). The bar height does not change; only the logo scales, so the page does not move (DR-295).
 - The gap between the menu and search buttons is the same as the gap between the language link and the theme control (DR-295). Every top bar icon is 20px (DR-295).
@@ -209,14 +210,14 @@ Drawer behavior:
 - When the drawer opens, focus moves to the drawer panel itself (`tabindex="-1"`), not to an item. The screen reader reads the drawer name, and no on-screen keyboard opens on phones (DR-249).
 - Escape, the close button and a press on the backdrop close the drawer. The backdrop uses the `overlay` color.
 - When the drawer closes, focus returns to the menu button.
-- The drawer opens and closes with a slide from the start edge: 450ms, `ease-slide`, the one motion duration of the site (DR-280, DR-346). With reduced motion, the drawer opens with no slide.
-- A category with child items is an accordion (shadcn `Collapsible`). It opens and closes with a height animation, 450ms `ease-slide`; no motion with reduced motion (DR-349). All accordions are closed when the drawer opens, except the current category (DR-181).
+- The drawer opens and closes with a slide from the start edge: `--duration-slide` (450ms), `ease-slide`, the one motion duration of the site (DR-280, DR-346, DR-357). With reduced motion, the drawer opens with no slide.
+- A category with child items is an accordion (shadcn `Collapsible`). It opens and closes with a height animation, `--duration-slide` `ease-slide`; no motion with reduced motion (DR-349). All accordions are closed when the drawer opens, except the current category (DR-181).
 - The current page has `aria-current="page"` and `interactive` text, like the nav row (DR-226).
 - The social links are on a band pinned to the bottom of the drawer. The list above it scrolls (DR-182).
 
 Search:
 
-- From 768px (tablets, laptops, desktops), the search icon button is next to the menu button at the start. It opens a modal search panel (shadcn `Drawer` from the top, restyled, DR-280; focus goes to the panel itself, DR-249) with the search field and a Trending row. It opens and closes with a slide from the top: 450ms, `ease-slide` (DR-280, DR-346; replaces the no-animation rule of DR-227). One Tab from the panel reaches the field: the close button comes after the field group in the source (DR-348). Escape, the close button and a press on the backdrop close the dialog. Focus then returns to the search button.
+- From 768px (tablets, laptops, desktops), the search icon button is next to the menu button at the start. It opens a modal search panel (shadcn `Drawer` from the top, restyled, DR-280; focus goes to the panel itself, DR-249) with the search field and a Trending row. It opens and closes with a slide from the top: `--duration-slide`, `ease-slide` (DR-280, DR-346; replaces the no-animation rule of DR-227). One Tab from the panel reaches the field: the close button comes after the field group in the source (DR-348). Escape, the close button and a press on the backdrop close the dialog. Focus then returns to the search button.
 - Below 768px (phones), the bar has no search icon. Search is the first item in the drawer (two steps: menu, then search).
 
 ## 7. Homepage
@@ -247,11 +248,11 @@ The section heading row is a component. It is not a pattern.
 
 | Pattern | Structure | From 1024px | 600–1023px | Phone |
 | --- | --- | --- | --- | --- |
-| P-1 Hero | Wrapper: lead story, then two top stories. Rail: Latest, 5 items, no "more" link (DR-102) | Wrapper + rail | Lead and top stories full width. Latest below: 1 column at 600–767px, 2 columns column-first at 768–1023px (DR-125) | Lead, top stories, Latest, stacked |
+| P-1 Hero | Wrapper: lead story, then two top stories. Rail: Latest, 5 items, one "more" link to the Latest page (DR-350) | Wrapper + rail | Lead and top stories full width. Latest below: 1 column at 600–767px, 2 columns column-first at 768–1023px (DR-125) | Lead, top stories, Latest, stacked |
 | P-2 Featured category | Wrapper: feature story, text beside the image. Rail: one image story and two text stories | Wrapper + rail. Feature story: text at the start, 3:2 image at the end, 60% of the free width, 420 to 557px (DR-118). Rail image story: image on top (DR-121) | Rail below the wrapper. From 768px the feature story keeps text beside the image, image 50% of the free width (DR-119). At 600–767px the image is on top. Rail image story: text at the start, image at the end, 2 : 1 (DR-121) | Feature image, text, rail image story as a row, text stories |
 | P-3 Grouped categories | One section. Rows of two categories. Inset ad between rows, at wrapper width. Rail: daily poll (DR-239) | Wrapper + rail | Two categories per row. Below the blocks: the poll as a full row (DR-134, DR-239) | A, B, ad, C, D, then the poll |
 | P-3b Regions | All regions in one row of columns. Previous and next buttons in the heading row. One "আরও দেখুন" link at the section end | 4 regions in view from 1280px, 3 at 1024–1279px | 2 regions in view (DR-141) | Region tabs. One region in view |
-| P-4 বিশ্লেষণ ও মতামত | Shell width. Two equal columns: analysis (image-led list) and opinion (quote list). No rail | Two columns | Two columns from 768px. Stacked at 600–767px | Stacked: analysis, then opinion |
+| P-4 বিশ্লেষণ ও মতামত | Shell width. Two equal columns: analysis (image-led list) and opinion (quote list), gap `--space-analysis-gap` (32 / 48 / 64px, DR-356). No rail | Two columns | Two columns from 768px. Stacked at 600–767px | Stacked: analysis, then opinion |
 | P-5 Most read | Top 5, full shell | 4 per row from 1280px, item 5 on row 2. 3 per row at 1024–1279px, items 4 and 5 on row 2 (DR-145) | 2 per row | 1 per row |
 
 The hero, featured category and grouped category sections use the same wrapper + rail layout. The rail is always 304px.
@@ -281,14 +282,14 @@ The component sheets in `component-system.md` give the looks and sizes. This sec
 
 **P-3b Regions slider.** From 600px:
 
-- The region panels are in one scroll-snap row (`@utility region-row`, Section 12.3). A button press scrolls the row one region (column width + gap): the scroll position animates over 450ms with `cubic-bezier(0.22, 1, 0.36, 1)` (DR-227, DR-284). Do not use a transform: native scrolling keeps swipe and keyboard focus working.
+- The region panels are in one scroll-snap row (`@utility region-row`, Section 12.3). A button press scrolls the row one region (column width + gap): the scroll position animates over `--duration-slide` (450ms) with `--ease-slide` (DR-227, DR-284). Do not use a transform: native scrolling keeps swipe and keyboard focus working.
 - The previous and next buttons are in the heading row, at the end. They show when more regions exist than are in view (DR-140). At each end, the button for that direction is disabled (`aria-disabled`, so focus stays). No loop and no autoplay. Swipe works. The scrollbar is hidden.
 - The button colors change over 200ms. With reduced motion there is no transition and no animated scroll (DR-151).
 - All regions are in the HTML, so the keyboard reaches every link.
 - The buttons have the names "আগের অঞ্চল" and "পরের অঞ্চল".
 - One "আরও দেখুন" link to the regions page is at the section end (DR-142, DR-160). The region panels have no link of their own.
 
-Below 600px, the regions are tabs (`tablist`, arrow keys, `aria-selected`). The tabs are outline chips; the selected chip has the interactive fill (DR-140). A chip is as wide as its label and 44px tall or more. The selected chip scrolls into view. One region panel shows. A chip press fades the current panel out over 450ms, then fades the new panel in over 450ms, `ease-slide`; opacity only, nothing moves (DR-346: one motion duration). With reduced motion the panel changes at once (DR-284).
+Below 600px, the regions are tabs (`tablist`, arrow keys, `aria-selected`). The tabs are outline chips; the selected chip has the interactive fill (DR-140). A chip is as wide as its label and 44px tall or more. The selected chip scrolls into view. One region panel shows. A chip press fades the current panel out, then fades the new panel in, each over `--duration-slide`, `ease-slide`; opacity only, nothing moves (DR-346: one motion duration). With reduced motion the panel changes at once (DR-284).
 
 **P-3 rail: daily poll.** In prototype run 2 the rail holds the daily poll only (`DailyPoll`, C-26, DR-239): heading, one question, 2 to 4 options, a vote button, then the results as one bar per option. One vote per browser. Mock data. No section divider (DR-128). It never uses the ad label or ad colors. It has no panel: it sits on `background` with no inset, like every section (DR-273). From 1024px the poll is at the top of the 304px rail. From 1280px the `ad-rail` slot is `space-module` below it (Section 9, DR-240, DR-242, DR-245). Below 1024px it takes the full row below the blocks, with the question at the start and the options at the end. From 1024 a 1px column rule (Divider.column-inset) sits in the middle of the column gap between the wrapper and the rail; there is no rule between category blocks (DR-351).
 
@@ -446,9 +447,11 @@ Bangla and English use the same containers and spacing. Dark mode changes color 
 
 Text containers grow with the text. This is necessary for Bangla, zoom and the reader sizes A+ and A++.
 
+Exception: the NavBar item list is one row tall (`max-height: var(--nav-row-height)`, overflow hidden). Items that do not fit are hidden whole, never cut (DR-255, DR-359). The row height is in rem, so it grows with the reader text size.
+
 ### LAY-18 Put the "see more" link below its block
 
-Put one "আরও দেখুন" link at the end of each section, below the wrapper and the rail (`CPT-14`). In বিশ্লেষণ ও মতামত, each column has its own link. Align the link to the end edge (`CPT-15`). Put `space-more-link` above it. Do not put it in the section heading row. Latest and Most read have no link.
+Put one "আরও দেখুন" link at the end of each section, below the wrapper and the rail (`CPT-14`). In বিশ্লেষণ ও মতামত, each column has its own link. Align the link to the end edge (`CPT-15`). Put `space-more-link` above it. Do not put it in the section heading row. Most read has no link. Latest has one link to the Latest page (DR-350).
 
 ### LAY-19 Write ad sizes in px tokens
 
@@ -482,8 +485,10 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
   --container-medium: 37.5rem;
   --container-wide: 55rem;
 
-  /* Motion (DR-227): color changes 200ms; slides 450ms with ease-slide (duration-450 ease-slide) */
+  /* Motion (DR-227, DR-357): color changes 200ms; every slide, fade and height change uses
+     --duration-slide with ease-slide */
   --default-transition-duration: 200ms;
+  --duration-slide: 450ms;
   --ease-slide: cubic-bezier(0.22, 1, 0.36, 1);
 
   --breakpoint-sm: 37.5rem;  /* 600px */
@@ -550,6 +555,7 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
   :root {
     --grid-columns: 8;
     --grid-column-gap: 1.5rem;
+    --space-analysis-gap: 2rem;
     --space-page-start: 2rem;
     --space-section: 4rem;
     --space-section-compact: 2.5rem;
@@ -564,6 +570,7 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
 @media (min-width: 64rem) {
   :root {
     --grid-columns: 12;
+    --space-analysis-gap: 3rem;
     --space-page-start: 2.5rem;
     --space-section: 5rem;
     --space-section-compact: 3rem;
@@ -579,6 +586,7 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
 @media (min-width: 80rem) {
   :root {
     --grid-column-gap: 2rem;
+    --space-analysis-gap: 4rem;
     --ad-inset-w: 728px;
     --ad-inset-h: 90px;
     --ad-rail-w: 300px;
@@ -690,7 +698,7 @@ html {
 }
 ```
 
-The buttons animate `scrollLeft` (450ms, `--ease-slide`), not a transform (DR-284). Copy this block into `components.css`; if the built utility differs, the code follows this block.
+The buttons animate `scrollLeft` (`--duration-slide`, `--ease-slide`), not a transform (DR-284). Copy this block into `components.css`; if the built utility differs, the code follows this block.
 
 The top bar has no own CSS class. `TopBar` sets `sticky top-0 z-(--z-bar) min-h-(--bar-height)` in its classes (DR-234, DR-265). At 200% text the bar wraps to 2 lines: row 1 menu and logo, row 2 the controls at the end. It stays sticky.
 
@@ -764,6 +772,13 @@ Test these content cases:
 L-01, L-02, L-03, L-13, L-15 to L-20 and L-22 are open. The article layout, media widths, the context module and category pages are not defined. Do not build them until the article layout pass is complete (DR-259). The article pass starts from version 1.1.1, Sections 17 to 19, which the blueprint project keeps in its archive. It is not in the repository and it is not a spec.
 
 ## 15. Changelog
+
+**2.22 (17 October 2026)**
+
+- §3.1 and P-4: the analysis and opinion gap is `--space-analysis-gap` (32 / 48 / 64px), a stated exception to the one column gap (DR-356).
+- §12: new token `--duration-slide: 450ms`; every slide, fade and height change uses it (DR-357).
+- §6: the nav row hides past the nav row (DR-357, DOC-46). A focus in the stuck header does not scroll the page (`scroll-margin-top`, DR-357). LAY-17: the NavBar item list is one row tall; items that do not fit are hidden whole (DR-359).
+- P-1 and LAY-18: Latest has one "more" link to the Latest page (DR-350, DR-359).
 
 **2.21 (16 October 2026)**
 

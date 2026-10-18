@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.15 · 16 October 2026 · Run 3 review decisions (DR-346, DR-348)
+Version 2.16 · 17 October 2026 · Run 4 review (DR-355)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -98,7 +98,7 @@ Tracking for Bangla is 0 in every role.
 | `type-blockquote` | Serif | 18–22px | 400 | 1.6 | 0 | 19–22px | 500 | 1.68 | Quoted text in the article |
 | `type-pullquote` | Serif | 28–36px | 500 | 1.2 | -0.015em | 26–34px | 500 | 1.32 | Pulled quote in the article |
 | `type-section-title` | Serif | 22px | 600 | 1.25 | -0.01em | 22px | 600 | 1.3 | Homepage section heading (`SectionHeading`, DR-163) |
-| `type-logo` | Serif | 20px; 28px from 768; 32px from 1024; 24px when the bar is stuck (from 768) | 700 | 1 | 0 | same | 700 | 1.1 | Logo text stand-in in the TopBar until the logo file exists (BRD-06, BRD-09, DR-295, DR-306). `type-logo-sm` = the same role at 24px for the Footer and `Drawer.head` |
+| `type-logo` | Serif | 20px; 28px from 768; 32px from 1024. When the bar is stuck: drawn at 24px by a transform (C-17), not by font size | 700 | 1 | 0 | same | 700 | 1.1 | Logo text stand-in in the TopBar until the logo file exists (BRD-06, BRD-09, DR-295, DR-306). `type-logo-sm` = the same role at 24px for the Footer and `Drawer.head` |
 | `type-eyebrow` | Sans | 14px | 700 | 1.2 | 0.06em | 15px | 600 | 1.35 | Category and label above a headline |
 | `type-metadata` | Sans | 14px | 400 | 1.4 | 0.01em | 15px | 400 | 1.5 | Byline, date, reading time. One size per language on the page (DR-96, DR-101) |
 | `type-caption` | Sans | 14px | 400 | 1.5 | 0 | 15px | 400 | 1.6 | Image and figure captions |
@@ -114,6 +114,18 @@ Notes:
 - In English, `type-eyebrow` is uppercase on `Eyebrow` and `Chip` only. Other uses add `normal-case` (DR-216). Bangla has no case.
 - `type-blockquote` is italic in English. In Bangla it uses weight 500.
 - `type-rank` uses Noto Sans Bengali in Bangla (already loaded for the interface) and Source Serif 4 in English (DR-147).
+
+### 3.1 Ink inset
+
+The space next to a `Divider.item` rule is measured to the text ink, not to the line box (C-22, DR-350). The ink inset is the blank space between the line box edge and the ink of a role, as a share of the role size. It was measured from the fonts. Only the roles that stand next to a rule have a value (DR-355).
+
+| Token | English | Bangla | Use |
+| --- | --- | --- | --- |
+| `--type-story-title-sm-ink-start` | 0.2 | 0.03 | Above the first title line of a list item |
+| `--type-story-title-sm-ink-end` | 0.12 | 0.25 | Below the last title line (RankedList) |
+| `--type-metadata-ink-end` | 0.18 | 0.33 | Below the meta line of the item above a rule |
+
+Change these values with the fonts or the role sizes. Section 8.2 gives the CSS.
 
 ## 4. Reader sizes
 
@@ -560,6 +572,10 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-metadata-weight: 400;
   --type-metadata-line: 1.4;
   --type-metadata-tracking: 0.01em;
+  /* Ink inset (Section 3.1, DR-355) */
+  --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.2);
+  --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.12);
+  --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.18);
   --type-caption-size: 0.875rem;
   --type-caption-weight: 400;
   --type-caption-line: 1.5;
@@ -669,6 +685,10 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-metadata-weight: 400;
   --type-metadata-line: 1.5;
   --type-metadata-tracking: 0;
+  /* Ink inset (Section 3.1, DR-355) */
+  --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.03);
+  --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.25);
+  --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.33);
   --type-caption-size: 0.9375rem;
   --type-caption-weight: 400;
   --type-caption-line: 1.6;
@@ -855,10 +875,7 @@ body {
   font-size: var(--type-logo-size);
   font-weight: var(--type-logo-weight);
   line-height: var(--type-logo-line);
-  /* Stuck bar (data-bar-stuck, DR-287): 24px from 768 */
-  @media (width >= 48rem) {
-    html[data-bar-stuck] & { font-size: 1.5rem; }
-  }
+  /* Stuck bar: the logo scales to 24px with a transform (C-17, DR-349, DR-355), not here. */
 }
 
 @utility type-logo-sm {
@@ -1005,6 +1022,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.16 | 2026-10-17 | New Section 3.1 ink inset: `--type-story-title-sm-ink-start`, `--type-story-title-sm-ink-end`, `--type-metadata-ink-end` per language, for the Divider.item space measured to the ink (DR-350, DR-355). `type-logo`: the stuck 24px is a transform (C-17); the stuck font-size rule is removed from Section 8.2 (DR-355). |
 | 2.15 | 2026-10-16 | New role `type-nav` (14px English, 16px Bangla, weight 600) for the NavBar items; no `lang-bn` variant (DR-346). TYP-17: locale `bn-BD-u-nu-beng`; story time script 1.5 KB or less (DR-348). |
 | 2.14 | 2026-10-15 | Section 8.2 links to the one `globals.css` import list (layout Section 12.5, DR-339); Section 8.4 lists `globals.css`. |
 | 2.13 | 2026-10-15 | New role `type-logo` (20 / 28 / 32px, 24px when the bar is stuck) and `type-logo-sm` (24px) for the logo text stand-in (DR-306). Proxy and cookie rules in the language rules (DR-328). |

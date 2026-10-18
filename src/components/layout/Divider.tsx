@@ -28,11 +28,13 @@ export const listInk = {
  * Divider.column-inset (C-22, DR-351): a 1px solid vertical rule in the middle of the column
  * gap, 16px from the top and the bottom. Put it on the grid; the gap does not change.
  * split: two equal columns, from 768 (P-4). rail: the wrapper and the rail, from 1024 (P-3).
+ * columns: the two CSS columns of the Latest list, 768 to 1023 (C-03, DR-355).
  * column-full is not used on the homepage.
  */
 export const dividerColumn = {
   split: "divider-column-split",
   rail: "divider-column-rail",
+  columns: "divider-column-columns",
 } as const;
 
 type DividerProps = {

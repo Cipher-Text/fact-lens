@@ -1,4 +1,8 @@
-import { dividerItem, listInk } from "@/components/layout/Divider";
+import {
+  dividerColumn,
+  dividerItem,
+  listInk,
+} from "@/components/layout/Divider";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
@@ -13,6 +17,7 @@ type StoryListProps = {
    * inside a column only (DR-125); one column elsewhere. 2 is the Latest list under the hero.
    * The two columns are CSS columns, not grid rows, so an item in one column does not take
    * the height of the item beside it: the rule space stays 16px to the ink (DR-350).
+   * Divider.column-inset sits between the two columns, in the middle of the gap (DR-355).
    */
   columns?: 1 | 2;
   meta?: "category-time" | "time-reading";
@@ -45,8 +50,10 @@ export function StoryList({
       data-columns={columns}
       className={cn(
         listInk.titleMeta,
-        columns === 2 &&
+        columns === 2 && [
           "md:max-lg:columns-2 md:max-lg:gap-x-(--grid-column-gap)",
+          dividerColumn.columns,
+        ],
         className,
       )}
     >

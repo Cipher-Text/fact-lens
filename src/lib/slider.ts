@@ -95,3 +95,11 @@ export function parseCubicBezier(
     ? (numbers as [number, number, number, number])
     : null;
 }
+
+/** Reads a CSS time (`200ms`, `0.2s`) as milliseconds, or null. */
+export function parseDuration(value: string): number | null {
+  const match = /^\s*(\d*\.?\d+)(ms|s)\s*$/.exec(value);
+  if (!match) return null;
+  const amount = Number(match[1]);
+  return match[2] === "s" ? amount * 1000 : amount;
+}

@@ -36,11 +36,11 @@ type Props = {
 /**
  * C-19 Drawer: the menu button and the modal menu from the start edge, at every width. It is
  * the shadcn Sheet with side="left", restyled (CPT-16, DR-228, DR-280), and it opens and
- * closes with a slide from the start edge, 450ms ease-slide (DR-346; no slide with reduced
+ * closes with a slide from the start edge, --duration-slide ease-slide (DR-346; no slide with reduced
  * motion). The page behind it is
  * inert and does not scroll. It holds every nav item (DR-255), with the search field first
  * on phones. A category with children is a shadcn Collapsible: the child group opens with a
- * height animation and the caret turns, 450ms ease-slide (DR-349). All are closed when the
+ * height animation and the caret turns, --duration-slide ease-slide (DR-349). All are closed when the
  * Drawer opens, except the current category (DR-181). The social band is pinned to the
  * bottom while the list scrolls. There is no subscribe button (DR-188).
  *
@@ -270,17 +270,17 @@ function DrawerItem({
         {hasChildren ? (
           <CollapsibleContent className="accordion-panel">
             <ul className="bg-background py-2">
-            {item.children?.map((child) => (
-              <li key={child.id}>
-                <Link
-                  href={child.href}
-                  onClick={onNavigate}
-                  className="flex min-h-11 items-center ps-4 type-ui-sm text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed"
-                >
-                  {child.label}
-                </Link>
-              </li>
-            ))}
+              {item.children?.map((child) => (
+                <li key={child.id}>
+                  <Link
+                    href={child.href}
+                    onClick={onNavigate}
+                    className="flex min-h-11 items-center ps-4 type-ui-sm text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed"
+                  >
+                    {child.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </CollapsibleContent>
         ) : null}

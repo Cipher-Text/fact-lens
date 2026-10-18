@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.16 · 16 October 2026 · Homepage components (run-3 design change, DR-349 to DR-351; audit wording fixes)
+Version 1.17.1 · 18 October 2026 · Homepage components (run 4 review, DR-355 to DR-357, DR-359; C-15 wording DR-369)
 
 This document is the single source for the homepage components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -478,7 +478,7 @@ Shared list (DR-162, was LatestList): a ul of story items with 16px padding and 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
 | Items | 5 | 5 | 5 |
-| Columns | Phone and 600 to 767: 1 column, rows stack | 768 to 1023: under the hero, full width, 2 columns, column-first (1 to 3, then 4 and 5), --grid-column-gap (24px, DR-300), rules within a column only (DR-125) | Rail 304px from 1024: 1 column, rows stack |
+| Columns | Phone and 600 to 767: 1 column, rows stack | 768 to 1023: under the hero, full width, 2 columns, column-first (1 to 3, then 4 and 5), --grid-column-gap (24px, DR-300), rules within a column only (DR-125). Built with CSS columns and a column break before item 4, so each column keeps its own row heights. Divider.column-inset between the two columns, centered in the gap (DR-355) | Rail 304px from 1024: 1 column, rows stack |
 | Title | type-story-title-sm (18 to 20px) | Same | Same |
 
 **Content.**
@@ -622,7 +622,7 @@ The analysis column (left) of বিশ্লেষণ ও মতামত (P-4)
 | Part | Spec |
 | --- | --- |
 | Section background | Panel band (layout §5.3, DR-264): surface-elevated across the full viewport width; the content stays in the shell (page gutter, 1280px max). Block inset from panel-inset only: 40px under 600px, 48px from 600px; no inline inset. space-module outside as margin (DR-205) |
-| Column rule | From 768 (columns side by side): Divider.column-inset between analysis and opinion, 1px solid, border color, 16px from the top and the bottom, centered in the existing --grid-column-gap (12 + 1 + 12 at 768 to 1279, 16 + 1 + 16 from 1280). No gap change (DR-351) |
+| Column rule | From 768 (columns side by side): Divider.column-inset between analysis and opinion, 1px solid, border color, 16px from the top and the bottom, centered in the gap. The gap is --space-analysis-gap: 32px at 768 to 1023, 48px at 1024 to 1279, 64px from 1280, a stated exception to --grid-column-gap (layout §3.1, DR-356) |
 | featureStory (OverlapCard) | OverlapCard (C-02): image 16:9, text block covers the image bottom by --space-card-overlap (10% of card width), notch --space-card-notch (10%) at the end side; text block background = section background (surface-elevated). Eyebrow, title, summary (500), meta |
 | StoryList (2 × StoryCard row) | Grid: text at the start, 16:9 image at the end, text : image = 2 : 1 (grid 2fr 1fr) at every width, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). At 200% browser text size the rows stack: image on top, text below, no sideways scroll (DR-81). Eyebrow, title type-story-title-sm (18 to 20px, 600), meta. No summary. Divider.item (C-22) between the rows, the same as every list (DR-268) |
 | Eyebrow | The story category (not the word বিশ্লেষণ on every item) |
@@ -802,7 +802,7 @@ The regions section (P-3b): one column per region in a row that slides, previous
 **Checks.**
 
 - Own slider code, not the shadcn Carousel (CPT-16): its disabled ends and motion differ from DR-140 and DR-151.
-- The row is a scroll-snap container (@utility region-row, layout §12.3). One press moves one region: the buttons animate the scroll position one column over 450ms with ease-slide (cubic-bezier(0.22, 1, 0.36, 1), DR-227, DR-284); no transform. Swipe and keyboard focus scroll the row natively. Button colors fade 200ms (theme default). Phones: a chip press fades the current tab panel out (450ms) and the new panel in (450ms), ease-slide, opacity only (DR-284, DR-346: one motion duration). No motion with prefers-reduced-motion (DR-151). No loop, no autoplay; scrollbar hidden.
+- The row is a scroll-snap container (@utility region-row, layout §12.3). One press moves one region: the buttons animate the scroll position one column over --duration-slide (450ms) with ease-slide (cubic-bezier(0.22, 1, 0.36, 1), DR-227, DR-284); no transform. Swipe and keyboard focus scroll the row natively. Button colors fade 200ms (theme default). Phones: a chip press fades the current tab panel out and the new panel in, each --duration-slide (450ms), ease-slide, opacity only (DR-284, DR-346: one motion duration). No motion with prefers-reduced-motion (DR-151). No loop, no autoplay; scrollbar hidden.
 - No radius on buttons or chips.
 - The slider is the exception to LAY-07 (4 columns from 1280, layout P-3b).
 
@@ -926,9 +926,9 @@ A thin rule that separates list rows, sections and (option) columns. Dividers an
 
 | Part | Spec |
 | --- | --- |
-| `Divider.item` | 1px dotted rule, border color: square 1 x 1px dots with a 2px gap in every browser (DR-351). Draw it with a repeating gradient, not border-style dotted (browsers differ): background-image: repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 3px); height 1px. Full width of the list, except OpinionList: the text column only (DR-351). 16px space each side (space-list-item), measured to the text ink, not the line box (DR-350). Between rows only; no rule after the last row |
+| `Divider.item` | 1px dotted rule, border color: square 1 x 1px dots with a 2px gap in every browser (DR-351). Draw it with a repeating gradient, not border-style dotted (browsers differ): background-image: repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 3px); height 1px. Full width of the list, except OpinionList: the text column only (DR-351). 16px space each side (space-list-item), measured to the text ink, not the line box (DR-350): the list takes the ink inset of its roles off its padding (typography §3.1, DR-355). Check: per list, the median space is 16px ±1; each rule is 16px ±3 (the ink depends on the letters, DR-355). Between rows only; no rule after the last row |
 | `Divider.section` | 2px solid rule, border color. A bar sits on the rule at the start and shares its bottom edge (the rule runs along the bar bottom). Bar color: brand (light), interactive (dark). Bar size: --bar-section. 12px from the rule to the heading (space-section-rule-title) |
-| `Divider.column` | 1px solid vertical rule, border color, centered in the column gap. Two versions: column-inset (16px from the top and bottom) and column-full (full height). Placed (DR-351): column-inset in P-4 between analysis and opinion (from 768) and in P-3 between the wrapper and the rail (from 1024). column-full is not used on the homepage |
+| `Divider.column` | 1px solid vertical rule, border color, centered in the column gap. Two versions: column-inset (16px from the top and bottom) and column-full (full height). Placed (DR-351, DR-355): column-inset in P-4 between analysis and opinion (from 768), in P-3 between the wrapper and the rail (from 1024), and between the two HeroSection.latest columns (768 to 1023). Always centered in the gap; no pixel split. column-full is not used on the homepage |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
@@ -1162,8 +1162,8 @@ The sticky bar at the top of every page. The top ad band is below the NavBar (be
 | --- | --- |
 | `TopBar.menu` | IconButton ghost, menu icon, opens the Drawer. All widths |
 | `TopBar.search` | IconButton ghost, from 768. Opens the SearchDialog |
-| `TopBar.logo` | Center column of a 1fr auto 1fr grid. Text stand-in until BRD-06: type-logo (serif 700, DR-306). At the page top: 32px from 1024, 28px at 768, 20px on phones. When the bar is stuck: 24px (20px phones). The bar height does not change; the logo scales down with a transform (zoom out), 450ms ease-slide, so the page does not move (DR-295, DR-349). No motion with reduced motion |
-| `TopBar.language` | Text link, 15px 600, ink, 32px tall under 768, 36px from 768, the same as the icon buttons (DR-349). Bangla pages: En on phones (under 768), English from 768; English pages: বাংলা (T-27, DR-174). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-349) |
+| `TopBar.logo` | Center column of a 1fr auto 1fr grid. Text stand-in until BRD-06: type-logo (serif 700, DR-306). At the page top: 32px from 1024, 28px at 768, 20px on phones. When the bar is stuck: 24px (20px phones). The bar height does not change; the logo scales down with a transform (zoom out), --duration-slide (450ms) ease-slide, so the page does not move (DR-295, DR-349). No motion with reduced motion |
+| `TopBar.language` | Text link, type-ui-sm weight 600 (typography §7; the size follows the link lang, DR-359), ink, 32px tall under 768, 36px from 768, the same as the icon buttons (DR-349). Bangla pages: En on phones (under 768), English from 768; English pages: বাংলা (T-27, DR-174). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-349) |
 | `TopBar.theme` | ThemeButton (one icon button) at every width (C-12, DR-349) |
 | Layout | Flex row, full page width, padding --top-bar-inset (page gutter minus the controls inner space, DR-294). Start and end groups flex: 1 1 0, logo group auto, so the logo stays centered. The gap between menu and search is the same as the gap between language and theme (DR-295). End group gap 4px (EN padding 4px on phones) |
 | Surface | background (page color), 1px border rule at the bottom when the bar is stuck, both themes, every width (DR-295). Under 1280 the NavBar is hidden, so the bar is stuck once the page scrolls (DR-348), no shadow. Height --bar-height 56px, 64px from 1024. The site header (TopBar and, from 1280, the NavBar) is sticky at every width: sticky top-0 z-(--z-bar) (DR-234, DR-265, DR-349). Stuck state: past the NavBar the html gets data-bar-stuck; the NavBar slides up under the TopBar and the logo scales (C-18, DR-349); the TopBar shows its rule through the bar-stuck variant in components.css (DR-287) |
@@ -1191,16 +1191,16 @@ The sticky bar at the top of every page. The top ad band is below the NavBar (be
 
 **Status:** Approved · **Decisions:** DR-41, DR-157, DR-223, DR-287, DR-295, DR-349
 
-The row of section links under the TopBar, from 1280 only. Scrolls away with the page.
+The row of section links under the TopBar, from 1280 only. Sticky with the TopBar; hides past its row (DR-349, DR-357).
 
 **Variants.** None.
 
 | Part | Spec |
 | --- | --- |
 | `NavBar.item` | type-nav (typography §7.4, DR-346): Bangla 16px weight 600 (DR-295), English 14px weight 600. The role changes by :lang; no lang-bn variant. Ink, 28px apart (gap-7), centered in the shell (DR-170), row min-h-11 (44px, --nav-row-height; LAY-17, DR-349). The 44px row does not include the 1px bottom rule: 45px in total (DR-349). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199) |
-| `NavBar.rules` | No rule between TopBar and NavBar: the TopBar drops its bottom rule while the NavBar shows below it; the NavBar keeps a 1px rule at its bottom. When only the TopBar shows, its 1px bottom rule returns (DR-173). Hide (DR-349): the NavBar is part of the sticky site header. When the page scrolls past it, html gets data-bar-stuck and the NavBar slides up under the TopBar (transform, 450ms ease-slide, DR-346) and is hidden (inert, not in the tab order); it shows again only at the page top. No motion with reduced motion (the NavBar hides at once). The TopBar reads data-bar-stuck (DR-287) |
+| `NavBar.rules` | No rule between TopBar and NavBar: the TopBar drops its bottom rule while the NavBar shows below it; the NavBar keeps a 1px rule at its bottom. When only the TopBar shows, its 1px bottom rule returns (DR-173). Hide (DR-349): the NavBar is part of the sticky site header. When the page scrolls past it, html gets data-bar-stuck and the NavBar slides up under the TopBar (transform, --duration-slide (450ms) ease-slide, DR-346) and is hidden (inert, not in the tab order); it shows again only at the page top. No motion with reduced motion (the NavBar hides at once). The TopBar reads data-bar-stuck (DR-287) |
 | `NavBar.current` | interactive text + 3px line (border-b-3, --color-bar) at the row bottom, aria-current page (aria-[current=page]:text-interactive) |
-| Surface | Shell width, page color, 1px border rule at the bottom |
+| Surface | Band full width in the page color; the items and the 1px border rule at the bottom are in the shell (DR-357). The item list is one row tall (max-height --nav-row-height, overflow hidden), so the page does not move when the items that do not fit are hidden (LAY-17 exception, DR-359) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
@@ -1229,11 +1229,11 @@ Modal menu from the start edge with every section. Opens from TopBar.menu at eve
 
 | Part | Spec |
 | --- | --- |
-| `Drawer.panel` | shadcn Sheet side left, restyled (CPT-16, DR-228). surface-elevated, --drawer-width (320px, or viewport minus 48), full height, no shadow, overlay backdrop behind, z-(--z-overlay). Opens and closes with a 450ms ease-slide slide from the start edge, the one motion duration (DR-280, DR-346). Panel inset 20px (px-5, LAY-21, DR-223) on the panel content wrapper (the shell); rows, links and dividers do not set their own side padding (DR-295) |
+| `Drawer.panel` | shadcn Sheet side left, restyled (CPT-16, DR-228). surface-elevated, --drawer-width (320px, or viewport minus 48), full height, no shadow, overlay backdrop behind, z-(--z-overlay). Opens and closes with a --duration-slide (450ms) ease-slide slide from the start edge, the one motion duration (DR-280, DR-346). Panel inset 20px (px-5, LAY-21, DR-223) on the panel content wrapper (the shell); rows, links and dividers do not set their own side padding (DR-295) |
 | `Drawer.head` | 56px: logo at the start (type-logo-sm, 24px, DR-306), close IconButton ghost at the end, no rule below (DR-181). Phones (under 768): close button 32 x 32, from 768: 36 x 36; its 20px icon on the 20px panel inset like the logo (DR-209, DR-349) |
 | `Drawer.search` | Phones only, first: 44px (h-11) search field, background, 1px border; text at the start; 20px search icon inside the field at the end, ink-muted, aria-hidden (DR-349); no attached button, Enter runs the search (DR-295). On focus-within the border and the icon fade to interactive over 200ms; the base focus outline stays (DR-225). No motion with reduced motion. SearchDialog.field is unchanged |
 | `Drawer.item` | type-ui 600 16px, ink, rows min-h-13 (52px; LAY-17, DR-223), 1px rule (rule color) under every category row, inside the shell (not the full panel width) (DR-181, DR-295). For a row with children the rule sits under the parent row; the open child group follows it (DR-295). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199). Current page: interactive text, aria-current page (aria-[current=page]:text-interactive), no line (DR-226) |
-| `Drawer.accordion` | shadcn Collapsible (CPT-16). The child group opens and closes with a height animation and the caret turns, 450ms ease-slide (DR-346, DR-349); no motion with reduced motion. Category with children: the label links to the category page; a 44px caret IconButton at the end (20px caret, down when closed, up and interactive color when open; aria-expanded, aria-controls) opens the child list below the row. Child group on a tint (page surface) inside the shell, the same width as the rules (amends DR-185, DR-295), padding 8px top and bottom; children indented 16px, 15px 500, ink-secondary, 44px rows, no rules between children (DR-185). All closed when the Drawer opens; the current category opens (DR-181) |
+| `Drawer.accordion` | shadcn Collapsible (CPT-16). The child group opens and closes with a height animation and the caret turns, --duration-slide (450ms) ease-slide (DR-346, DR-349); no motion with reduced motion. Category with children: the label links to the category page; a 44px caret IconButton at the end (20px caret, down when closed, up and interactive color when open; aria-expanded, aria-controls) opens the child list below the row. Child group on a tint (page surface) inside the shell, the same width as the rules (amends DR-185, DR-295), padding 8px top and bottom; children indented 16px, 15px 500, ink-secondary, 44px rows, no rules between children (DR-185). All closed when the Drawer opens; the current category opens (DR-181) |
 | `Drawer.social` | Pinned to the panel bottom (stays in view while the list scrolls): surface-alt band, padding 12px 20px, social links centered, 44px taps, 8px apart, ink icons; UI link states: icon interactive-hover, pressed interactive-pressed, no wash (DR-220). Same 5 links as the Footer (DR-182, DR-184) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1262,7 +1262,7 @@ Search panel from TopBar.search, from 768. Phones search inside the Drawer.
 
 | Part | Spec |
 | --- | --- |
-| `SearchDialog.panel` | shadcn Drawer from the top, restyled (CPT-16, DR-280); opens and closes with a 450ms ease-slide slide from the top, the one motion duration (DR-346). surface-elevated, full width at the top, overlay backdrop behind, z-(--z-overlay); padding 96px top, 56px bottom (the height sets the field group apart from the close icon); contents in the shell (DR-190) |
+| `SearchDialog.panel` | shadcn Drawer from the top, restyled (CPT-16, DR-280); opens and closes with a --duration-slide (450ms) ease-slide slide from the top, the one motion duration (DR-346). surface-elevated, full width at the top, overlay backdrop behind, z-(--z-overlay); padding 96px top, 56px bottom (the height sets the field group apart from the close icon); contents in the shell (DR-190) |
 | `SearchDialog.trending` | Below the field, 24px gap, one wrapping line: label ট্রেন্ডিং (Trending on English pages; 15px 600, ink-muted, h2, 24px before the first term), then up to 6 term links that run a search: plain text, type-ui-sm 600 (DR-216), link color (interactive), no underline (hover interactive-hover, pressed interactive-pressed; COL-06, DR-199), 44px tall targets, one wrapping row split by the 4px square separator (DR-166) with 16px each side. Editorial or analytics list, later (DR-190..192) |
 | `SearchDialog.field` | 56px (h-14, DR-231), 1px border-interactive, input type="text" with enterKeyHint="search" inside a role="search" form (DR-246: one Escape closes the dialog), hidden label, square submit button attached (interactive fill) |
 | `SearchDialog.close` | IconButton ghost, 36 x 36 (DR-349), in the panel top right corner, 12px from the top, glyph on the page gutter (same edge as the TopBar controls), apart from the field group. The field starts below it (DR-186, DR-189). In the source the close button comes after the field group, so one Tab from the panel reaches the field; its corner place is set by position (DR-348) |

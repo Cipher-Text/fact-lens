@@ -16,6 +16,7 @@ import type { Dictionary } from "@/i18n";
 import {
   cubicBezier,
   parseCubicBezier,
+  parseDuration,
   sliderEdges,
   sliderTarget,
   type SliderEdges,
@@ -35,9 +36,14 @@ type RegionSliderProps = {
   strings: Dictionary["regionSlider"];
 };
 
-// One motion (DR-346): 450ms ease-slide for the scroll of the slider buttons and for each
-// half of the phone fade. The curve is the --ease-slide token, read at run time.
-const SLIDE_MS = 450;
+// One motion (DR-346, DR-357): --duration-slide with ease-slide for the scroll of the slider
+// buttons and for each half of the phone fade. Both tokens are read at run time.
+function slideDuration() {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(
+    "--duration-slide",
+  );
+  return parseDuration(value) ?? 0;
+}
 
 function slideEasing() {
   const value = getComputedStyle(document.documentElement).getPropertyValue(
@@ -65,10 +71,10 @@ const prefersReducedMotion = () =>
  * C-15 RegionSlider (P-3b, spacing-layout-system.md 7.2 to 7.4).
  * From 600px: one row of region columns in a scroll-snap container (`region-row`), 2 in
  * view, 3 from 1024px, 4 from 1280px. The previous and next buttons move one column
- * (width + gap) in 450ms with ease-slide, or at once with reduced motion, and are disabled
+ * (width + gap) in --duration-slide with ease-slide, or at once with reduced motion, and are disabled
  * at each end. No loop, no autoplay. Swipe is native scrolling; the scrollbar is hidden. All regions are in the HTML, so the keyboard reaches every link.
  * Below 600px: region chips as shadcn Tabs (tablist, arrow keys, aria-selected). One panel
- * shows; a chip press fades it out and the new one in (450ms ease-slide each, opacity only,
+ * shows; a chip press fades it out and the new one in (--duration-slide ease-slide each, opacity only,
  * DR-284, DR-346).
  * The tab mode follows the CSS: it is on while the tablist is displayed, so the JS has no
  * breakpoint of its own.
@@ -162,12 +168,13 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
       return;
     }
     const ease = slideEasing();
+    const duration = slideDuration();
     // Snap would pull each frame back to a column, so it is off while the row moves.
     row.style.scrollSnapType = "none";
     const start = row.scrollLeft;
     const startTime = performance.now();
     const frame = (now: number) => {
-      const t = Math.min((now - startTime) / SLIDE_MS, 1);
+      const t = duration > 0 ? Math.min((now - startTime) / duration, 1) : 1;
       row.scrollLeft = start + (target - start) * ease(t);
       if (t < 1) {
         animation.current = { frame: requestAnimationFrame(frame), target };
@@ -209,7 +216,7 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
       setSelected(index);
       setFading(false);
       showTab(index);
-    }, SLIDE_MS);
+    }, slideDuration());
   };
 
   const buttons = (
@@ -266,8 +273,8 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
       </TabsList>
       {/* From 600: the slider row (`region-row`, components.css). Below 600 only the
           selected panel shows, faded in and out (DR-284). The row carries the one motion
-          (450ms ease-slide) at every width: the phone fade uses it, and from 600 it
-          states the slide time that SLIDE_MS runs in JS (DR-346). Keep the two equal. */}
+          (--duration-slide, ease-slide) at every width: the phone fade uses it, and from 600
+          the JS slide reads the same token (DR-346, DR-357). */}
       <div
         ref={rowRef}
         id="regions-row"
@@ -275,7 +282,7 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
         onPointerDown={stopSlide}
         onWheel={stopSlide}
         className={cn(
-          "region-row transition-opacity duration-450 ease-slide",
+          "region-row transition-opacity duration-(--duration-slide) ease-slide",
           fading && "max-sm:opacity-0",
         )}
         data-region-row

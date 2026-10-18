@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.11 · 16 October 2026 · For prototype run 4 (fix run, DR-345 to DR-351)
+Version 2.12.1 · 18 October 2026 · Run 4 review decisions (DR-354 to DR-359); component-system 1.17.1 (DR-369); run 5
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.14, `typography-system.md` v2.15, `spacing-layout-system.md` v2.21, `component-system.md` v1.16 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.15, `typography-system.md` v2.16, `spacing-layout-system.md` v2.22, `component-system.md` v1.17.1 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -85,7 +85,7 @@ Build the homepage first. Do not start article or category templates until their
 
 Each row links to the rule. The rule text is in the foundation document.
 
-### Color (`color-system.md` v2.14, 17 rules)
+### Color (`color-system.md` v2.15, 17 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -107,7 +107,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`COL-16`](color-system.md#col-16-set-the-page-colors-on-body) | Set the page colors on body |
 | [`COL-17`](color-system.md#col-17-show-a-selected-item-with-interactive-and-a-word) | Show a selected item with `interactive` and a word |
 
-### Typography (`typography-system.md` v2.15, 25 rules)
+### Typography (`typography-system.md` v2.16, 25 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -137,7 +137,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`TYP-24`](typography-system.md#typ-24-show-meaning-with-more-than-style) | Show meaning with more than style |
 | [`TYP-25`](typography-system.md#typ-25-break-a-word-only-when-it-does-not-fit) | Break a word only when it does not fit |
 
-### Spacing and layout (`spacing-layout-system.md` v2.21, 21 rules)
+### Spacing and layout (`spacing-layout-system.md` v2.22, 21 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -163,7 +163,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`LAY-20`](spacing-layout-system.md#lay-20-use-the-panel-inset-in-a-colored-panel) | Use the panel inset in a colored panel |
 | [`LAY-21`](spacing-layout-system.md#lay-21-use-the-4px-scale-for-one-component-values) | Use the 4px scale for one-component values |
 
-### Components (`component-system.md` v1.16, 21 rules)
+### Components (`component-system.md` v1.17.1, 21 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -234,6 +234,7 @@ These decisions are not in the foundation documents, but every build must obey t
 | `DR-188` | No subscribe button in the header or the drawer |
 | `DR-239` | Do not build `NewsletterSignup` in prototype run 4. The P-3 rail holds the `DailyPoll`, and from 1280px the `ad-rail` slot below it (DR-240, DR-245). Run 4 has no sign-up point |
 | `DR-193` | The footer is provisional. Build the drawn look |
+| `DR-356` | The gap between analysis and opinion (P-4) is `--space-analysis-gap` (32 / 48 / 64px), not `--grid-column-gap`. It is the one stated exception to the column gap |
 
 ## 8. Check list: if you are about to
 
