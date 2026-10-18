@@ -214,3 +214,48 @@ Run: `pnpm exec playwright test --project=webkit` on the checkpoint's test files
 
 - Whether each failure is new since R2-13. `PROGRESS.md` only gives counts (40 at R2-12, 5 regions at R2-13), not names.
 - The Safari causes above (groups B, C, E) are my reading of the errors. None is confirmed in a real Safari.
+
+### R5-02 full run (18 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit` (full suite) on `production-run-5` at `c58d670`. **51 failed, 619 passed, 16 skipped** (5.0 min). Run 4 (R4-05): 48. Every failure is a known family; no new ID.
+
+| ID | Tests now | Run 4 | Change |
+| --- | --- | --- | --- |
+| W3-01 | 14 | 14 | Same |
+| W3-02 | 2 | 2 | Same |
+| W3-03 | 4 | 4 | Same |
+| W3-04 | 2 | 2 | Same |
+| W3-05 | 0 | 2 | Passes after the IMP-86 test fix (R5-01 checkpoint 4) |
+| W3-06 | 2 | 2 | Same |
+| W3-07 | 4 | 3 | bn and en, light and dark at 360 this time (the theme changes from run to run) |
+| W3-08 | 2 | 2 | Same |
+| W4-01 to W4-04 | 4 | 4 | Same |
+| W4-07 | 6 | 6 | Same (hero layout at 768, 834 and 1023, bn and en) |
+| W4-08 | 2 | 2 | Same |
+| W4-09 | 2 | 3 | bn at 360 and 1280 |
+| W4-10 | 2 | 2 | Same |
+| W5-01 | 1 | – | R5-01 (en at 768, Most read) |
+| W5-02 | 4 | – | R5-01 (NavBar Tab order, W3-01 family) |
+| Total | 51 | 48 | +5 new R5-01 tests (W5-01, W5-02), +1 W3-07, −2 W3-05, −1 W4-09 |
+
+#### Real Safari (A11Y-24)
+
+tajmin ran the checklist in `docs/run-5-report.md` on macOS Safari and iOS Safari on 18 October 2026, against the production build. Every item passed except the Tab step of item 1 (IMP-92). So every WebKit failure below is a test fault of Playwright WebKit, not a fault readers see (no code fix).
+
+| ID | Checklist item | macOS Safari | iOS Safari | Result |
+| --- | --- | --- | --- | --- |
+| W3-01, W5-02 | 7 | Pass | – | Test fault |
+| W3-02 | 7 | Pass | – | Test fault |
+| W3-03 | 5 | Pass | Pass | Test fault |
+| W3-04 | 5 | Pass | Pass | Test fault |
+| W3-05 | 8 | Pass | Pass | Passes in WebKit too |
+| W3-06 | 9 | – | Pass | Test fault |
+| W3-07 | 9 | – | Pass | Test fault |
+| W3-08 | 10 | Pass | – | Test fault |
+| W4-01 to W4-04 | 7 | Pass | – | Test fault |
+| W4-07, W4-08 (IMP-88) | 6 | Pass | Pass | Test fault; no rounding (IMP-88 Closed) |
+| W4-09, W5-01 | 6 | Pass | Pass | Test fault |
+| W4-10 | 11 | Pass | Pass | Test fault |
+| (no WebKit ID) | 1: Tab from an option to the vote button | Fail | Pass | IMP-92, Open, low priority (tajmin) |
+
+A11Y-24 is closed; the one open item is IMP-92. The run 6 test strategy (TS-01 to TS-09, DR-360) decides how the WebKit test faults are fixed.

@@ -56,7 +56,7 @@ Run 5 adds no new feature and no new page. Mock data only. Each R5-01 checkpoint
 | Ticket | Title | Status |
 | --- | --- | --- |
 | R5-01 | Docs and run 4 review fixes (4 checkpoints) | Done |
-| R5-02 | Real Safari pass, final check, pull request and merge | To do |
+| R5-02 | Real Safari pass, final check, pull request and merge | Done |
 
 ## R5-01 Docs and run 4 review fixes
 

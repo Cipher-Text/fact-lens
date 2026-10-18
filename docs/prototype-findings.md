@@ -32,7 +32,7 @@ Status values:
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 5 take the next free number: DOC-53, U-42, IMP-92, KIT-11 (IMP-77 is not used). Put them under "New findings (run 5)" in the entry format at the end of "New findings (run 3)".
+New findings in run 5 take the next free number: DOC-53, U-42, IMP-93, KIT-11 (IMP-77 is not used). Put them under "New findings (run 5)" in the entry format at the end of "New findings (run 3)".
 
 ## Summary
 
@@ -166,7 +166,7 @@ New findings in run 5 take the next free number: DOC-53, U-42, IMP-92, KIT-11 (I
 | IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Fixed in R3-05 |
 | IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Fixed in R3-06 |
 | IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Fixed in R3-06 |
-| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Open: the WebKit e2e vote passes (R4-05, W3-10); real Safari and VoiceOver check by tajmin (DR-345) |
+| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Closed in R5-02: real Safari sets the radio and VoiceOver reads the result (A11Y-24); Tab to the vote button is IMP-92 |
 | IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Fixed in R3-03 |
 | IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Fixed in R3-06 |
 | IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Fixed in R3-02 |
@@ -224,11 +224,12 @@ New findings in run 5 take the next free number: DOC-53, U-42, IMP-92, KIT-11 (I
 | DOC-49 | R4-03 | P-4 column rule "12 + 1 + 12" and "16 + 1 + 16" is 25 and 33px, not the 24 and 32px gap; R4-03 check gives the chip space 24px from 600, §5.1 from 768 | Low | Fixed in R5-01 (checkpoint 2: P-4 gap --space-analysis-gap 32 / 48 / 64px, rule centered, DR-356) |
 | DOC-50 | R4-03 | C-06 and the R4-03 sprint check give the OpinionList chip space as "20 / 24 / 24" and "24 from 600"; the token changes at 768 | Low | Closed (DR-359): the run 4 check "24 from 600" was wrong; the spec and the code are right, no change |
 | IMP-87 | R4-03 | The Latest list two columns shared grid rows, so a short item got the height of the item beside it (41px to the rule at 768) | Medium | Fixed in R4-03 (CSS columns); column rule between the Latest columns Fixed in R5-01 (checkpoint 4, DR-355) |
-| IMP-88 | R4-03 | WebKit starts the second Latest column 1 to 3px low (W4-07, W4-08) | Low | Decided (DR-359); Safari check in R5-02 |
+| IMP-88 | R4-03 | WebKit starts the second Latest column 1 to 3px low (W4-07, W4-08) | Low | Closed in R5-02: real Safari shows the two columns at the same top; no code change (DR-359), a WebKit test fault |
 | IMP-89 | R4-03 | In dark, the border color on `surface-elevated` (P-4) makes the item and column rules very faint | Low | Fixed in R5-01 (checkpoint 2: --border #CEC7BD / #494D55, DR-358) |
 | IMP-90 | R4-05 | The page below the header moves up 44px at hydration from 1280: the server HTML of the nav row wraps (IMP-16) | Medium | Fixed in R5-01 (checkpoint 3: the NavBar list is one row tall from the server HTML, DR-359) |
 | IMP-91 | R5-01 | Bangla pages shift at load from 1280: the Noto Sans Bengali swap makes one NavBar item 1px narrower and the centered row moves 3.7px (CLS 0.00003) | Low | Open (test blocks the web fonts, tajmin's choice) |
 | DOC-51 | R5-01 | C-18 cuts the NavBar.item focus ring: the links fill the 44px row and the ring (COL-13, 2px at 2px offset) falls outside it; overflow hidden (DR-359) and the slide clip-path cut its top and bottom | Medium | Open (flag) |
+| IMP-92 | R5-02 | Real Safari (macOS): Tab does not reach the poll vote button (checklist item 1) | Low | Open (tajmin: low priority) |
 | DOC-52 | R5-01 | The R5-01 sprint check says the first NavBar item edge equals the shell edge; C-18 centers the items in the shell (DR-170) | Low | Open (test checks the list and rule edges) |
 | IMP-79 | R3-04 | A failed image shows the placeholder only after hydration | Low | Closed: kept as built (DR-348) |
 
@@ -585,7 +586,7 @@ Entry format:
 
 ### IMP-88 WebKit starts the second Latest column 1 to 3px low
 
-- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Decided (DR-359); Safari check in R5-02
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Closed in R5-02: real Safari shows the two columns at the same top; no code change (DR-359), a WebKit test fault
 - **Source:** `docs/webkit-failures.md` W4-07, W4-08; `src/components/story/StoryList.tsx`.
 - **Problem:** in WebKit, item 4 (the top of the second column) is 1 to 3px below item 1. The offset shows only when the column-start item has 0 padding and the other items have a fractional padding (16.43px). Chromium is exact.
 - **Suggested solution:** check in real Safari in R4-05. If it shows, round the item padding to whole pixels or give both column starts the same top. tajmin decides.
@@ -614,6 +615,14 @@ Entry format:
 - **Problem:** on `/` at 1280 and 1440 the load has one layout shift, 0.000036 (1280) and 0.000028 (1440): when Noto Sans Bengali replaces its fallback, ভূরাজনীতি ও কূটনীতি is 1px narrower and the centered items before it move 3.7px sideways. With the `.woff2` files blocked the CLS is 0, and `/en` is 0. The production build shows the same. It is not hydration: the NavBar row is one line from the server HTML (IMP-90).
 - **What the code does:** no change. `header.spec.ts` blocks the web fonts in the hydration test, so it measures the NavBar row only.
 - **Suggested solution:** better fallback metrics for Noto Sans Bengali (size-adjust, ascent and descent overrides), or preload the Bangla UI font. tajmin decides.
+
+### IMP-92 Safari: Tab does not reach the poll vote button
+
+- **Found:** R5-02, 18 Oct 2026 (real Safari checklist, item 1) · **Severity:** Low · **Status:** Open (tajmin: low priority)
+- **Source:** C-26 (DailyPoll), COL-13; `src/components/home/grouped/DailyPoll.tsx`; A11Y-24; IMP-53.
+- **Problem:** in macOS Safari, Tab from a poll option does not move to the vote button, so the keyboard vote (option, Space, Tab, Enter) cannot finish. Every other Safari checklist item passed, on macOS and iOS.
+- **What the code does:** the vote button is a plain `<button>` (the shared Button), not disabled, with no `tabIndex`. Chromium and the WebKit e2e reach it.
+- **Suggested solution:** first check whether the result depends on Safari Settings > Advanced > "Press Tab to highlight each item" (with it off, Safari's Tab skips buttons by design and Option+Tab reaches them). If the button is skipped with the setting on, find the cause in the poll markup. tajmin decides; not in run 5.
 
 ### DOC-51 C-18: the NavBar.item focus ring is cut at its top and bottom
 
@@ -659,3 +668,4 @@ Entry format:
 | 2026-10-18 | R5-01 checkpoint 2 | U-41, DOC-47, DOC-49 and IMP-89 set to Fixed in R5-01; no new findings (WebKit W5-01 in `docs/webkit-failures.md`) |
 | 2026-10-18 | R5-01 checkpoint 3 | IMP-91, DOC-51 and DOC-52 added; DOC-44, DOC-45, DOC-46, IMP-84, IMP-85 and IMP-90 set to Fixed in R5-01 |
 | 2026-10-18 | R5-01 checkpoint 4 | No new findings; IMP-86 and the IMP-87 column rule set to Fixed in R5-01 |
+| 2026-10-18 | R5-02 | IMP-92 added (real Safari: Tab does not reach the vote button); IMP-53 and IMP-88 Closed (not in real Safari) |
