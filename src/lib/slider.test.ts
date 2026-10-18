@@ -4,6 +4,7 @@ import {
   cubicBezier,
   nextTabIndex,
   parseCubicBezier,
+  parseDuration,
   sliderEdges,
   sliderTarget,
 } from "./slider";
@@ -103,5 +104,17 @@ describe("parseCubicBezier", () => {
   it("returns null for anything else", () => {
     expect(parseCubicBezier("ease-out")).toBeNull();
     expect(parseCubicBezier("cubic-bezier(1, 2, 3)")).toBeNull();
+  });
+});
+
+describe("parseDuration", () => {
+  it("reads a CSS time in ms or s", () => {
+    expect(parseDuration(" 200ms")).toBe(200);
+    expect(parseDuration("0.25s")).toBe(250);
+  });
+
+  it("returns null for anything else", () => {
+    expect(parseDuration("")).toBeNull();
+    expect(parseDuration("fast")).toBeNull();
   });
 });

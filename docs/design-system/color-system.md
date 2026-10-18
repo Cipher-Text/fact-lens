@@ -1,6 +1,6 @@
 # Fact Lens Color System
 
-Version 2.14 · 16 October 2026 · Run-3 design change (DR-349)
+Version 2.15 · 17 October 2026 · Run 4 review (DR-358)
 
 The values are not final. Some colors can change after a few prototype rounds. Run the contrast tests in Section 3 again after each change.
 
@@ -81,7 +81,7 @@ Components use utilities only.
 
 | Token | Utility | Light | Dark | Use |
 | --- | --- | --- | --- | --- |
-| `border` | `border` | `#DDD2C4` | `#3A3D44` | Dividers, card edges |
+| `border` | `border` | `#CEC7BD` | `#494D55` | Dividers, card edges |
 | `border-soft` | `border-soft` | `#EAE1D6` | `#2D3036` | Low-priority separators |
 | `border-interactive` | `border-interactive`, `input` | `#7D7369` | `#767E89` | Inputs, selects, checkboxes |
 
@@ -285,7 +285,7 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --accent-soft: #edcec4;
   --accent-subtle: #f6e6e0;
   /* Borders */
-  --border: #ddd2c4;
+  --border: #cec7bd;
   --border-soft: #eae1d6;
   --border-interactive: #7d7369;
   /* Status */
@@ -323,7 +323,7 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --on-interactive: #18191e;
   --accent-soft: #3a201a;
   --accent-subtle: #281b18;
-  --border: #3a3d44;
+  --border: #494d55;
   --border-soft: #2d3036;
   --border-interactive: #767e89;
   --success: #60ae7c;
@@ -465,6 +465,7 @@ Examples:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.15 | 2026-10-17 | `border` changed: light `#DDD2C4` to `#CEC7BD`, dark `#3A3D44` to `#494D55`, so divider rules show on every surface, `surface-elevated` in dark included (Section 2.5, Section 5, DR-358). |
 | 2.14 | 2026-10-16 | `--color-theme-control` and `--color-theme-icon` removed; `--color-bar` is the one component color token. Ghost icon buttons and the language link: ink, hover `interactive-hover`, no wash; `accent-subtle` has no hover use; `fill-neutral` for the poll only (Section 2.9, Section 4, DR-349). |
 | 2.13 | 2026-10-16 | Third component color token `--color-theme-icon` for the theme control icons (Section 2.9, DR-348). |
 | 2.12 | 2026-10-15 | Section 5 links to the one `globals.css` import list in layout Section 12.5 (DR-339). |

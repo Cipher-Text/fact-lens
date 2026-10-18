@@ -104,7 +104,7 @@ test("section headings have the divider above them: border rule, brand bar, 12px
     return { rule, bar };
   });
   expect(style.rule.height).toBe("2px"); // 2px solid rule (DR-262)
-  expect(style.rule.background).toBe("rgb(221, 210, 196)"); // border, light theme
+  expect(style.rule.background).toBe("rgb(206, 199, 189)"); // border #CEC7BD, light theme (DR-358)
   expect(style.bar.background).toBe("rgb(153, 51, 20)"); // brand, light theme
   const gap =
     (await heading.boundingBox())!.y -
@@ -132,4 +132,32 @@ for (const path of ["/", "/en"]) {
       1536,
     );
   });
+}
+
+// R5-01: the border token shows divider rules on every surface (color-system §2.5, DR-358).
+for (const path of ["/", "/en"]) {
+  for (const [theme, hex, rgb] of [
+    ["light", "#cec7bd", "rgb(206, 199, 189)"],
+    ["dark", "#494d55", "rgb(73, 77, 85)"],
+  ] as const) {
+    test(`${path} ${theme}: --border is ${hex} (DR-358)`, async ({ page }) => {
+      await setTheme(page, theme);
+      await page.goto(path);
+      const border = await page.evaluate(() => {
+        const probe = document.createElement("span");
+        probe.style.backgroundColor = "var(--color-border)";
+        document.body.append(probe);
+        const value = {
+          token: getComputedStyle(document.documentElement)
+            .getPropertyValue("--border")
+            .trim(),
+          color: getComputedStyle(probe).backgroundColor,
+        };
+        probe.remove();
+        return value;
+      });
+      expect(border.token).toBe(hex);
+      expect(border.color).toBe(rgb);
+    });
+  }
 }

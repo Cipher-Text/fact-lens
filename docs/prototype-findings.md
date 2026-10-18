@@ -1,11 +1,11 @@
-# Fact Lens Prototype Findings
+# Fact Lens Findings
 
-Version 4.0 · 16 October 2026 · Run 4 (short fix run)
+Version 5.0 · 18 October 2026 · Run 5 (M2 stage F0, stabilize)
 
-The list of issues and gaps found while the homepage prototype is built. Each ticket adds its new findings here and updates the status of the items it fixed (DR-333).
+The list of issues and gaps found while the frontend is built. Each ticket adds its new findings here and updates the status of the items it fixed (DR-333).
 
 - Run 1 (FL-01 to FL-13) and run 2 (R2-00 to R2-21) found the items below. The run 2 review (12 to 16 October 2026) decided all of them (DR-262 to DR-344) and put the rules in the specs.
-- Run 3 put the decisions in the code. Run 3 (R3-01 to R3-09) also found DOC-38 to DOC-43, U-39, U-40 and IMP-71 to IMP-83; the run 3 review and design change decided them (DR-345 to DR-351). Run 4 puts these in the code; the run 4 ticket for each item is in the Summary. Read the rule in the spec section, not the old text of a finding.
+- Run 3 put the decisions in the code. Run 3 (R3-01 to R3-09) also found DOC-38 to DOC-43, U-39, U-40 and IMP-71 to IMP-83; the run 3 review and design change decided them (DR-345 to DR-351). Run 4 (R4-01 to R4-05) put these in the code and found DOC-44 to DOC-50 and IMP-84 to IMP-90 and U-41; the run 4 review decided them (DR-354 to DR-359). Run 5 puts these in the code; the run 5 ticket for each item is in the Summary. Read the rule in the spec section, not the old text of a finding.
 - Open items (status Later) keep their full text below. The full text of every other item is in git history (`docs/prototype-findings.md` at `0225398`).
 
 ## How to read this file
@@ -27,12 +27,12 @@ Status values:
 
 - Open: new, not decided yet.
 - Workaround in code: open, the code uses a value or a pattern the spec does not give.
-- Decided (DR-) ; code in R4-: the spec has the rule; the named run 4 ticket changes the code. The ticket sets it to Fixed in R4-.
-- Fixed in R2-, R3- or R4-, Done: the code follows the rule.
+- Decided (DR-) ; code in R4- or R5-: the spec has the rule; the named run 4 or run 5 ticket changes the code. The ticket sets it to Fixed in R4- or R5-.
+- Fixed in R2-, R3-, R4- or R5-, Done: the code follows the rule.
 - Resolved by spec, Closed, Obsolete: no code change is needed.
 - Later: decided to wait for a later phase (IA label table, logo, backend, newsletter).
 
-New findings in run 4 take the next free number: DOC-51, U-42, IMP-91, KIT-11 (IMP-77 is not used). Put them under "New findings (run 4)" in the entry format at the end of "New findings (run 3)".
+New findings in run 5 take the next free number: DOC-53, U-42, IMP-97, KIT-11 (IMP-77 is not used). Put them under "New findings (run 5)" in the entry format at the end of "New findings (run 3)".
 
 ## Summary
 
@@ -166,7 +166,7 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-91, KIT-11 (I
 | IMP-50 | R2-11 | DailyPoll: native hidden radios with a drawn square marker, `aria-labelledby` on the fieldset instead of a `<legend>`, result rows filled with `accent-soft`, 50 : 50 row layout | Medium | Fixed in R3-05 |
 | IMP-51 | R2-13 | RegionSlider moves by `scrollLeft` (450ms, `--ease-slide` read from the token) in a scroll-snap row, not by a `transform` (C-15, 7.4); native swipe works and the keyboard reaches every link | Medium | Fixed in R3-06 |
 | IMP-52 | R2-13 | The \"See more\" link of P-3b goes to `/regions`, a 404 page until the regions page exists. The slider buttons show by CSS from the region count (no layout shift) | Low | Fixed in R3-06 |
-| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Open: the WebKit e2e vote passes (R4-05, W3-10); real Safari and VoiceOver check by tajmin (DR-345) |
+| IMP-53 | R2-20 | Poll radio cannot be set in WebKit (native radio hidden, drawn marker); may be a test artifact | Medium | Closed in R5-02: real Safari sets the radio and VoiceOver reads the result (A11Y-24); Tab to the vote button is IMP-92 |
 | IMP-54 | R2-20 | P-4 section gap measures -8 instead of 40 in WebKit, English, 1280 and wider | Medium | Fixed in R3-03 |
 | IMP-55 | R2-20 | `RegionSlider` server markup has `role="tabpanel"` at every width before hydration | Low | Fixed in R3-06 |
 | IMP-56 | R2-20 | `NavBar` reads the top bar height once, but the bar can wrap at large text sizes (DOC-34) | Low | Fixed in R3-02 |
@@ -212,21 +212,29 @@ New findings in run 4 take the next free number: DOC-51, U-42, IMP-91, KIT-11 (I
 | IMP-75 | R3-02 | The bar rule under 1280px follows the scroll position | Low | Resolved by spec (DR-348); fixed in R4-02 |
 | IMP-76 | R3-02 | Removing `--scroll-offset` in the effect cleanup breaks a #hash scroll in development | Low | Closed: kept as built (DR-348); production check in R4-05 |
 | IMP-78 | R3-04 | The story time script is a little over 1 KB | Low | Fixed in R4-04 (checked: 985 bytes on `/`, 938 on `/en` in the built HTML) |
-| DOC-44 | R4-01 | C-17 gives the TopBar language link as 15px 600; typography §7 gives `type-ui-sm` 600 (14px on the En / English label) | Low | Open |
-| DOC-45 | R4-02 | Typography §8 `type-logo` shrinks the stuck logo with font-size; C-17 says a transform | Low | Open (code follows C-17, tajmin's choice) |
-| DOC-46 | R4-02 | C-18 intro says the NavBar "scrolls away with the page"; layout §6 says it hides "past the page top" | Low | Open |
-| IMP-84 | R4-02 | Focus on a control in the stuck header scrolls the page to the top in Chromium | Medium | Open (flag) |
-| IMP-85 | R4-02 | The pinned NavBar is a full-width page-color band; only its shell has the items and the rule (`UNRESOLVED_DESIGN_SYSTEM`) | Low | Open |
-| IMP-86 | R4-02 | The theme storage-event test fails now and then under parallel load in Chromium | Low | Open |
-| U-41 | R4-03 | Divider.item: no method and no values for "measured to the text ink" (DR-350); per-language ink tokens (`UNRESOLVED_DESIGN_SYSTEM`) | Medium | Open (tajmin approved the tokens, 17 Oct 2026) |
-| DOC-47 | R4-03 | The R4-03 check "16px ±1 to the ink" cannot hold for every string: glyphs below the baseline and digit heights vary | Low | Open (test: median ±1, each ±3, tajmin's choice) |
-| DOC-48 | R4-03 | Layout §7.2 P-1 row and LAY-18 say Latest has no "more" link; C-03 and C-10 give it one (DR-350) | Low | Open (code follows DR-350) |
-| DOC-49 | R4-03 | P-4 column rule "12 + 1 + 12" and "16 + 1 + 16" is 25 and 33px, not the 24 and 32px gap; R4-03 check gives the chip space 24px from 600, §5.1 from 768 | Low | Open |
-| DOC-50 | R4-03 | C-06 and the R4-03 sprint check give the OpinionList chip space as "20 / 24 / 24" and "24 from 600"; the token changes at 768 | Low | Open (code uses the token) |
-| IMP-87 | R4-03 | The Latest list two columns shared grid rows, so a short item got the height of the item beside it (41px to the rule at 768) | Medium | Fixed in R4-03 (flag F-3: CSS columns, tajmin confirms) |
-| IMP-88 | R4-03 | WebKit starts the second Latest column 1 to 3px low (W4-07, W4-08) | Low | Open (Safari check in R4-05) |
-| IMP-89 | R4-03 | In dark, the border color on `surface-elevated` (P-4) makes the item and column rules very faint | Low | Open |
-| IMP-90 | R4-05 | The page below the header moves up 44px at hydration from 1280: the server HTML of the nav row wraps (IMP-16) | Medium | Open |
+| DOC-44 | R4-01 | C-17 gives the TopBar language link as 15px 600; typography §7 gives `type-ui-sm` 600 (14px on the En / English label) | Low | Fixed in R5-01 (checkpoint 3: the link was already type-ui-sm 600; test added, DR-359) |
+| DOC-45 | R4-02 | Typography §8 `type-logo` shrinks the stuck logo with font-size; C-17 says a transform | Low | Fixed in R5-01 (checkpoint 3: typography 2.16 has no stuck font-size rule; the code comment is the spec's, test added, DR-355) |
+| DOC-46 | R4-02 | C-18 intro says the NavBar "scrolls away with the page"; layout §6 says it hides "past the page top" | Low | Fixed in R5-01 (checkpoint 3: C-18 and layout §6 now agree; the code already hid the row past it, DR-357) |
+| IMP-84 | R4-02 | Focus on a control in the stuck header scrolls the page to the top in Chromium | Medium | Fixed in R5-01 (checkpoint 3: scroll-margin-top on the header focusables, `header-focus`, DR-357) |
+| IMP-85 | R4-02 | The pinned NavBar is a full-width page-color band; only its shell has the items and the rule (`UNRESOLVED_DESIGN_SYSTEM`) | Low | Fixed in R5-01 (checkpoint 3: C-18 Surface is the built treatment; test added, DR-357) |
+| IMP-86 | R4-02 | The theme storage-event test fails now and then under parallel load in Chromium | Low | Fixed in R5-01 (checkpoint 4: the test waits until the second tab's ThemeButton responds; 20 of 20 with --repeat-each=10) |
+| U-41 | R4-03 | Divider.item: no method and no values for "measured to the text ink" (DR-350); per-language ink tokens (`UNRESOLVED_DESIGN_SYSTEM`) | Medium | Fixed in R5-01 (checkpoint 2: typography §3.1 ink tokens, DR-355) |
+| DOC-47 | R4-03 | The R4-03 check "16px ±1 to the ink" cannot hold for every string: glyphs below the baseline and digit heights vary | Low | Fixed in R5-01 (checkpoint 2: test per list median 16px ±1, each rule ±3, DR-355) |
+| DOC-48 | R4-03 | Layout §7.2 P-1 row and LAY-18 say Latest has no "more" link; C-03 and C-10 give it one (DR-350) | Low | Decided (DR-350, DR-359); code in R5-01 (layout 2.22 gives Latest one "more" link; the code has it) |
+| DOC-49 | R4-03 | P-4 column rule "12 + 1 + 12" and "16 + 1 + 16" is 25 and 33px, not the 24 and 32px gap; R4-03 check gives the chip space 24px from 600, §5.1 from 768 | Low | Fixed in R5-01 (checkpoint 2: P-4 gap --space-analysis-gap 32 / 48 / 64px, rule centered, DR-356) |
+| DOC-50 | R4-03 | C-06 and the R4-03 sprint check give the OpinionList chip space as "20 / 24 / 24" and "24 from 600"; the token changes at 768 | Low | Closed (DR-359): the run 4 check "24 from 600" was wrong; the spec and the code are right, no change |
+| IMP-87 | R4-03 | The Latest list two columns shared grid rows, so a short item got the height of the item beside it (41px to the rule at 768) | Medium | Fixed in R4-03 (CSS columns); column rule between the Latest columns Fixed in R5-01 (checkpoint 4, DR-355) |
+| IMP-88 | R4-03 | WebKit starts the second Latest column 1 to 3px low (W4-07, W4-08) | Low | Closed in R5-02: real Safari shows the two columns at the same top; no code change (DR-359), a WebKit test fault |
+| IMP-89 | R4-03 | In dark, the border color on `surface-elevated` (P-4) makes the item and column rules very faint | Low | Fixed in R5-01 (checkpoint 2: --border #CEC7BD / #494D55, DR-358) |
+| IMP-90 | R4-05 | The page below the header moves up 44px at hydration from 1280: the server HTML of the nav row wraps (IMP-16) | Medium | Fixed in R5-01 (checkpoint 3: the NavBar list is one row tall from the server HTML, DR-359) |
+| IMP-91 | R5-01 | Bangla pages shift at load from 1280: the Noto Sans Bengali swap makes one NavBar item 1px narrower and the centered row moves 3.7px (CLS 0.00003) | Low | Open (test blocks the web fonts, tajmin's choice) |
+| DOC-51 | R5-01 | C-18 cuts the NavBar.item focus ring: the links fill the 44px row and the ring (COL-13, 2px at 2px offset) falls outside it; overflow hidden (DR-359) and the slide clip-path cut its top and bottom | Medium | Open (flag; raised again in the PR #7 review) |
+| IMP-92 | R5-02 | Real Safari (macOS): Tab does not reach the poll vote button (checklist item 1) | Low | Open (tajmin: low priority) |
+| IMP-93 | PR #7 review | Before hydration (or with JS off) the NavBar items that wrap are cut off by the one-row list but are still in the Tab order | Low | Open (fix planned later) |
+| IMP-94 | PR #7 review | Latest with one story at 768 to 1023: the column rule shows beside an empty second column (layout §7.3) | Low | Open (fix planned later) |
+| IMP-95 | PR #7 review | `header.spec.ts` uses fixed waits (lines 357, 1216: 100ms; 1310: 500ms) for "nothing changes" checks | Low | Open (fix planned later) |
+| IMP-96 | PR #7 review | `docs/run-5-report.md` says "A11Y-24 closed" with IMP-92 open, and "every WebKit failure is a test fault" without per-test evidence | Low | Open (fix planned later) |
+| DOC-52 | R5-01 | The R5-01 sprint check says the first NavBar item edge equals the shell edge; C-18 centers the items in the shell (DR-170) | Low | Open (test checks the list and rule edges) |
 | IMP-79 | R3-04 | A failed image shows the placeholder only after hydration | Low | Closed: kept as built (DR-348) |
 
 ## Open items (Later)
@@ -421,7 +429,7 @@ Entry format:
 ```markdown
 ### IMP-xx Short title
 
-- **Found:** R4-0x, date · **Severity:** High | Medium | Low · **Status:** Open
+- **Found:** R5-0x, date · **Severity:** High | Medium | Low · **Status:** Open
 - **Source:** spec section and rule IDs; file and line.
 - **Problem:** what is wrong, with the measured or read value.
 - **Suggested solution:** one proposal. tajmin decides.
@@ -491,14 +499,14 @@ Entry format:
 
 ### DOC-44 Language link size: C-17 and typography §7 disagree
 
-- **Found:** R4-01, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Found:** R4-01, 17 Oct 2026 · **Severity:** Low · **Status:** Fixed in R5-01 (checkpoint 3: the link was already type-ui-sm 600; test added, DR-359)
 - **Source:** `component-system.md` C-17 `TopBar.language` ("Text link, 15px 600"); `typography-system.md` Section 7 ("Top bar language link: `type-ui-sm` at weight 600"); `TYP-04`.
 - **Problem:** the link carries `lang` of the other language (TYP-03), so `type-ui-sm` is 14px on the En / English label of a Bangla page and 15px only on বাংলা. C-17 says 15px at every place. The code follows typography §7 (`src/components/header/LanguageSwitch.tsx`), as it did in run 3.
 - **Suggested solution:** C-17 says "type-ui-sm 600 (typography §7)", or typography names a fixed 15px role for the link. tajmin decides.
 
 ### DOC-45 Stuck logo: typography §8 changes the font size, C-17 uses a transform
 
-- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Open (code follows C-17, tajmin's choice on 17 Oct 2026)
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Fixed in R5-01 (checkpoint 3: typography 2.16 has no stuck font-size rule; the code comment is the spec's, test added, DR-355)
 - **Source:** `typography-system.md` Section 8 `@utility type-logo` (`html[data-bar-stuck] & { font-size: 1.5rem; }` from 768) and Section 3 role table; `component-system.md` C-17 `TopBar.logo` ("the logo scales down with a transform (zoom out), 450ms ease-slide"); DR-295, DR-349.
 - **Problem:** the two level-1 specs give two ways to draw the 24px stuck logo. Both together shrink it twice (32 to 24 to 18px). A font-size change cannot run as the C-17 transform.
 - **What the code does:** `src/styles/typography.css` drops the stuck font-size rule (a comment points here). The `logo-scale` utility in `components.css` scales the logo with `transform: scale(var(--logo-stuck-scale))`: 24/32 from 1024, 24/28 at 768 to 1023, 1 on phones.
@@ -506,7 +514,7 @@ Entry format:
 
 ### DOC-46 NavBar: "scrolls away" and "past the page top"
 
-- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Fixed in R5-01 (checkpoint 3: C-18 and layout §6 now agree; the code already hid the row past it, DR-357)
 - **Source:** `component-system.md` C-18 intro ("Scrolls away with the page"); C-18 `NavBar.rules`, C-17 Surface, LAY-15 ("past the nav row"); `spacing-layout-system.md` Section 6 table ("past the page top it slides up") and §15 changelog line for DR-349.
 - **Problem:** the C-18 intro is the old rule; the sheet and LAY-15 now make the NavBar sticky. Section 6 says "past the page top" in one place and "past the nav row" in another. The R4-02 check (46px) follows "past the nav row".
 - **What the code does:** the NavBar is sticky with the TopBar. `data-bar-stuck` is set once `scrollY` is the row height (45px) or more, and removed only at `scrollY` 0.
@@ -514,14 +522,14 @@ Entry format:
 
 ### IMP-84 Focus in the stuck header scrolls the page to the top (Chromium)
 
-- **Found:** R4-02, 17 Oct 2026 · **Severity:** Medium · **Status:** Open (flag to tajmin)
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Medium · **Status:** Fixed in R5-01 (checkpoint 3: scroll-margin-top on the header focusables, `header-focus`, DR-357)
 - **Source:** `spacing-layout-system.md` §6 and §12.3 (`scroll-padding-top: var(--scroll-offset)` on `html`); `src/components/header/ScrollOffset.tsx`; LAY-15.
 - **Problem:** when the bar is stuck and focus moves into it (Shift+Tab back from the page, or `focus()`), Chromium scrolls the focused control out of the `scroll-padding-top` area. The control is sticky, so the page scrolls all the way to the top. From 1280 the NavBar then shows again. The run 3 code does the same (checked on `0bebd07` with a script), so R4-02 did not cause it. The R4-02 test focuses the theme button with `preventScroll` to check the tab order without this jump.
 - **Suggested solution:** a rule that the header controls are not scrolled to, for example `scroll-margin-top: calc(-1 * var(--scroll-offset))` on the focusable elements of the site header. This is a workaround that no rule names, so tajmin decides. Check Safari in R4-05.
 
 ### IMP-85 The pinned NavBar is a full-width band
 
-- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Fixed in R5-01 (checkpoint 3: C-18 Surface is the built treatment; test added, DR-357)
 - **Source:** `component-system.md` C-18 Surface ("Shell width, page color, 1px border rule at the bottom"); DR-349.
 - **Problem:** the NavBar is now pinned under the TopBar for the first 45px of scroll. A shell-width row lets the page show in the gutters beside it while the page scrolls under it.
 - **What the code does:** SiteHeader stays a fragment (component-system §3). The `nav` (`data-nav-row`) is sticky by itself at `top: calc(var(--scroll-offset) - 1rem)` (the rendered bar height) on `--z-bar`. It is a full-width band in the page color; an inner shell (`data-nav-shell`) holds the items and the 1px rule, so the rule and the items stay at shell width. At rest it looks the same as before. Both parts share `--z-bar`, and the NavBar comes later in the source, so a transform alone would draw it over the TopBar. A `clip-path` moves with the transform and cuts off the part that has passed the bar bottom (`nav-row-slide` in `components.css`).
@@ -529,14 +537,14 @@ Entry format:
 
 ### IMP-86 The theme storage-event test is flaky under load (Chromium)
 
-- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Found:** R4-02, 17 Oct 2026 · **Severity:** Low · **Status:** Fixed in R5-01 (checkpoint 4: the test waits until the second tab's ThemeButton responds; 20 of 20 with --repeat-each=10)
 - **Source:** `tests/e2e/header.spec.ts` "a theme change in one tab applies in the other tab (storage event, DR-340)"; `src/components/header/useThemeChoice.ts`.
 - **Problem:** in 3 of 4 full or near-full Chromium runs in R4-02 one language of this test failed: the second tab did not get `.dark`. It passed 30 of 30 alone and in a full header spec run. The test clicks in the first tab once that tab has hydrated, but it does not wait for the second tab to hydrate, so its storage listener may not be attached yet. The run 3 WebKit list has the same test. R4-02 does not change the theme code; the test runs at 1024, where the NavBar is hidden.
 - **Suggested solution:** in the test, wait until the second tab has hydrated (for example its theme button responds) before the click. This is a test fix, not a loosening; tajmin decides whether it goes in R4-05.
 
 ### U-41 Divider.item: no method or values for "measured to the text ink"
 
-- **Found:** R4-03, 17 Oct 2026 · **Severity:** Medium · **Status:** Open (`UNRESOLVED_DESIGN_SYSTEM`; tajmin approved the tokens on 17 Oct 2026, flag F-1)
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Medium · **Status:** Fixed in R5-01 (checkpoint 2: typography §3.1 ink tokens, DR-355)
 - **Source:** `component-system.md` C-22 `Divider.item` ("16px space each side, measured to the text ink, not the line box", DR-350); `spacing-layout-system.md` §5.2 `space-list-item`; `LAY-01`, `CPT-07`; `src/styles/components.css` (`--ink-*` tokens, `divider-item`, `list-ink-*`).
 - **Problem:** no spec gives how to trim the line box or by how much. Measured in Chromium (pixel scan): the line box gave 21 to 22px above and 15px below a rule in Bangla, 18 to 19px in English. CSS `text-box: trim-both cap alphabetic` gave 9 to 14px (Bangla vowel signs stand about 6px above the cap edge; descenders hang below the baseline); the `text` edge gave 18 to 21px. No CSS edge reaches 16px in both scripts.
 - **What the code does:** component tokens per language, as a share of the role size, measured from the fonts: `--ink-title-sm-start` (bn 0.03, en 0.2 × `type-story-title-sm`), `--ink-title-sm-end` (bn 0.25, en 0.12), `--ink-metadata-end` (bn 0.33, en 0.18 × `type-metadata`). The list sets `--list-ink-start` for the top of its items; the item above a rule trims its meta line in place with a negative margin (`[data-meta-line]`), so in a card with the image at the end edge the taller of image and text sets the row. Most read (a row-first grid) uses `--list-ink-end`. Result: 92 of 99 rules 16 ±1px in Chromium, all 16 ±3px.
@@ -544,7 +552,7 @@ Entry format:
 
 ### DOC-47 The "16px ±1 to the ink" check cannot hold for every string
 
-- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open (test uses median ±1, each rule ±3; tajmin's choice on 17 Oct 2026, flag F-2)
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Fixed in R5-01 (checkpoint 2: test per list median 16px ±1, each rule ±3, DR-355)
 - **Source:** `docs/SPRINT.md` R4-03 check "Item rule space … `space-list-item` (16px) ±1px"; C-22 (DR-350).
 - **Problem:** the ink of a line depends on its letters. A Bangla meta line with ্র or ু (প্রযুক্তি ও কৌশলগত শক্তি) hangs about 2px lower than one without; an English title line with g or y hangs 4px lower than one without; Bangla rank digits differ by up to 6px in height. A fixed token gives 16 ±1px for the usual line and 13 to 18px for the others.
 - **What the code does:** `tests/e2e/small-parts.spec.ts` checks, at 360, 768 and 1280 in both languages, that the median space of each list is 16 ±1px and every rule is 16 ±3px (`tests/e2e/rules.ts`).
@@ -552,14 +560,14 @@ Entry format:
 
 ### DOC-48 Layout P-1 and LAY-18 say Latest has no "more" link
 
-- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open (code follows DR-350)
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Decided (DR-350, DR-359); code in R5-01 (layout 2.22 gives Latest one "more" link; the code has it)
 - **Source:** `spacing-layout-system.md` §7.2 P-1 row ("Latest, 5 items, no 'more' link (DR-102)") and LAY-18 ("Latest and Most read have no link"); `component-system.md` C-03 `HeroSection.latest MoreLink` and C-10 Content (DR-350, amends DR-102).
 - **Problem:** the layout spec still has the DR-102 rule. The sheets and the R4-03 ticket give Latest one MoreLink to `/latest`.
 - **Suggested solution:** P-1 row: "Latest, 5 items, one 'more' link to the Latest page (DR-350)"; LAY-18: "Most read has no link".
 
 ### DOC-49 P-4 column rule widths do not add up to the gap
 
-- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Fixed in R5-01 (checkpoint 2: P-4 gap --space-analysis-gap 32 / 48 / 64px, rule centered, DR-356)
 - **Source:** `component-system.md` P-4 "Column rule" ("centered in the existing --grid-column-gap (12 + 1 + 12 at 768 to 1279, 16 + 1 + 16 from 1280). No gap change", DR-351); `spacing-layout-system.md` §12.2 (`--grid-column-gap` 24px from 768, 32px from 1280).
 - **Problem:** 12 + 1 + 12 is 25px and 16 + 1 + 16 is 33px; the gap is 24 and 32px and does not change.
 - **What the code does:** the rule is 1px, centered in the 24 or 32px gap (11.5 + 1 + 11.5, 15.5 + 1 + 15.5). The test checks the center ±0.5px and that the gap is 24 or 32px.
@@ -567,7 +575,7 @@ Entry format:
 
 ### DOC-50 OpinionList chip space: "24 from 600" against the token
 
-- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open (code uses the token)
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Closed (DR-359): the run 4 check "24 from 600" was wrong; the spec and the code are right, no change
 - **Source:** `docs/SPRINT.md` R4-03 check ("chip to the first item is 20px under 600 and 24px from 600"); `component-system.md` C-06 ("space-section-title-after (20 / 24 / 24)"); `spacing-layout-system.md` §5.1 (values "phone / from 768px / from 1024px") and §12.2 (`--space-section-title-after: 1.5rem` from 48rem).
 - **Problem:** the token is 20px up to 767px and 24px from 768. The sprint check says 24px from 600.
 - **What the code does:** `mb-(--space-section-title-after)`: 20px at 360 and 600, 24px from 768. The test follows the token.
@@ -575,32 +583,98 @@ Entry format:
 
 ### IMP-87 The two Latest columns shared row heights
 
-- **Found:** R4-03, 17 Oct 2026 · **Severity:** Medium · **Status:** Fixed in R4-03 (flag F-3: the design-reviewer calls CSS columns a layout choice no sheet names; tajmin confirms)
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Medium · **Status:** Fixed in R4-03 (CSS columns); column rule between the Latest columns Fixed in R5-01 (checkpoint 4, DR-355)
 - **Source:** `component-system.md` C-03 (2 columns at 768 to 1023, column-first, rules within a column); C-22 (DR-350); `src/components/story/StoryList.tsx`.
 - **Problem:** the two columns were one grid that flowed by column. Grid rows are shared, so an item took the height of the item beside it: 41px from the ink to the rule at 768 in Bangla.
 - **What the code does:** CSS columns (`columns-2`) with a column break before the first item of the second column (items 1 to 3, then 4 and 5). Each column keeps its own heights. The e2e column-first checks are unchanged.
 
 ### IMP-88 WebKit starts the second Latest column 1 to 3px low
 
-- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Open (Safari check in R4-05; W4-07, W4-08)
+- **Found:** R4-03, 17 Oct 2026 · **Severity:** Low · **Status:** Closed in R5-02: real Safari shows the two columns at the same top; no code change (DR-359), a WebKit test fault
 - **Source:** `docs/webkit-failures.md` W4-07, W4-08; `src/components/story/StoryList.tsx`.
 - **Problem:** in WebKit, item 4 (the top of the second column) is 1 to 3px below item 1. The offset shows only when the column-start item has 0 padding and the other items have a fractional padding (16.43px). Chromium is exact.
 - **Suggested solution:** check in real Safari in R4-05. If it shows, round the item padding to whole pixels or give both column starts the same top. tajmin decides.
 
 ### IMP-89 Dark rules on the P-4 panel are very faint
 
-- **Found:** R4-03, 17 Oct 2026 (visual-qa) · **Severity:** Low · **Status:** Open
+- **Found:** R4-03, 17 Oct 2026 (visual-qa) · **Severity:** Low · **Status:** Fixed in R5-01 (checkpoint 2: --border #CEC7BD / #494D55, DR-358)
 - **Source:** `color-system.md` `border` and `surface-elevated` (dark); C-22 (one color: border); P-4 (DR-264).
 - **Problem:** in dark, the rule color rgb(58, 61, 68) on the panel rgb(48, 50, 57) is barely visible: the dotted item rules and the new column rule in বিশ্লেষণ ও মতামত. The rules are drawn as specified. Decorative rules have no contrast minimum, but the grouping is hard to see.
 - **Suggested solution:** the blueprint checks the dark `border` value on `surface-elevated`. No code change in run 4.
 
 ### IMP-90 The page moves up one nav row at hydration from 1280
 
-- **Found:** R4-05, 17 Oct 2026 · **Severity:** Medium · **Status:** Open
+- **Found:** R4-05, 17 Oct 2026 · **Severity:** Medium · **Status:** Fixed in R5-01 (checkpoint 3: the NavBar list is one row tall from the server HTML, DR-359)
 - **Source:** IMP-16 (DR-255: no "More" item; the items that do not fit are hidden after hydration); `src/components/header/NavBar.tsx`; `docs/webkit-failures.md` W3-09, W4-12.
 - **Problem:** from 1280 the server HTML of the nav row wraps to two lines on `/en` (and on `/` when the items do not fit), so everything below the header is 44px lower until hydration hides the extra items. Then the page moves up 44px. This is a layout shift on load for every reader, larger on a slow device. WebKit hydrates later than Chromium, so the run 2 and run 3 WebKit "page height differs at 1280 and wider, English only" failures (48px in run 2, 44px now: one nav row) were this shift, not font metrics.
 - **What the code does:** no change in run 4 (a fix run, no new behavior). The tests wait for the one-line row (`tests/e2e/settle.ts`).
 - **Suggested solution:** keep the row one line in the server HTML, for example `overflow: hidden` with the row height (44px) before hydration, or hide the items past a fixed count on the server. tajmin decides; M2.
+
+## New findings (run 5)
+
+### IMP-91 Bangla font swap moves the NavBar items at load
+
+- **Found:** R5-01, 18 Oct 2026 · **Severity:** Low · **Status:** Open (test blocks the web fonts, tajmin's choice)
+- **Source:** R5-01 checkpoint 3 check "CLS 0 at load"; typography §8 (`next/font`); `src/components/header/NavBar.tsx`.
+- **Problem:** on `/` at 1280 and 1440 the load has one layout shift, 0.000036 (1280) and 0.000028 (1440): when Noto Sans Bengali replaces its fallback, ভূরাজনীতি ও কূটনীতি is 1px narrower and the centered items before it move 3.7px sideways. With the `.woff2` files blocked the CLS is 0, and `/en` is 0. The production build shows the same. It is not hydration: the NavBar row is one line from the server HTML (IMP-90).
+- **What the code does:** no change. `header.spec.ts` blocks the web fonts in the hydration test, so it measures the NavBar row only.
+- **Suggested solution:** better fallback metrics for Noto Sans Bengali (size-adjust, ascent and descent overrides), or preload the Bangla UI font. tajmin decides.
+
+### IMP-92 Safari: Tab does not reach the poll vote button
+
+- **Found:** R5-02, 18 Oct 2026 (real Safari checklist, item 1) · **Severity:** Low · **Status:** Open (tajmin: low priority)
+- **Source:** C-26 (DailyPoll), COL-13; `src/components/home/grouped/DailyPoll.tsx`; A11Y-24; IMP-53.
+- **Problem:** in macOS Safari, Tab from a poll option does not move to the vote button, so the keyboard vote (option, Space, Tab, Enter) cannot finish. Every other Safari checklist item passed, on macOS and iOS.
+- **What the code does:** the vote button is a plain `<button>` (the shared Button), not disabled, with no `tabIndex`. Chromium and the WebKit e2e reach it.
+- **Suggested solution:** first check whether the result depends on Safari Settings > Advanced > "Press Tab to highlight each item" (with it off, Safari's Tab skips buttons by design and Option+Tab reaches them). If the button is skipped with the setting on, find the cause in the poll markup. tajmin decides; not in run 5.
+
+### IMP-93 Clipped NavBar items are focusable before hydration
+
+- **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
+- **Source:** C-18 (DR-359, IMP-90); `src/components/header/NavBar.tsx:110`; COL-13.
+- **Problem:** the item list is one row tall from the server HTML (`max-h`, `overflow-hidden`). Items that wrap are cut off but not `hidden` until `fit()` runs, so before hydration, or with JS off, Tab can move focus to a link that is not visible. The R5-01 check "wrapped items are not in the Tab order" is tested only after hydration.
+- **What the code does:** no change.
+- **Suggested solution:** hide the items past a fixed count in the server HTML (the IMP-90 option), so the server and the client agree. A behavior change: plan it with the fix.
+
+### IMP-94 The Latest column rule shows beside an empty column
+
+- **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
+- **Source:** layout §7.3 (P-1: "Latest shows the items that exist"; P-4: "the other column spans"); C-03, DR-355; `src/components/story/StoryList.tsx:55`, `divider-column-columns`.
+- **Problem:** with `columns={2}`, the rule draws at 768 to 1023 whatever the item count. With one story there is no column break, so the second column is empty and the rule stands beside it. With 2 or more stories both columns have items. The mock data (5 stories) hides it.
+- **What the code does:** no change.
+- **Suggested solution:** with fewer than 2 stories, StoryList renders one column (no `columns-2`, no rule), as in P-4. Add a sparse e2e case: one story at 768 and 1000.
+
+### IMP-95 Fixed waits in the header tests
+
+- **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
+- **Source:** `tests/e2e/header.spec.ts:357`, `:1216` (100ms), `:1310` (500ms); IMP-86 (flaky under load).
+- **Problem:** the review calls these flaky. They check that nothing changes (no scroll, the bar stays stuck, no layout shift), so they cannot poll for a state; but the 100ms waits stand for "the scroll handler has run", which is one animation frame.
+- **What the code does:** no change.
+- **Suggested solution:** lines 357 and 1216: wait two animation frames (the handler runs in `requestAnimationFrame`) instead of 100ms. Line 1310: keep the window for late layout shifts after hydration, or end it on a hydration marker. Check with `--repeat-each=10`.
+
+### IMP-96 Run 5 report wording on A11Y-24 and the WebKit failures
+
+- **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
+- **Source:** `docs/run-5-report.md:12`; `docs/webkit-failures.md` "Real Safari (A11Y-24)"; IMP-92.
+- **Problem:** the report says "A11Y-24 closed" while IMP-92 (a keyboard failure on the vote button) is open, and "every WebKit failure is a test fault" although the Safari check maps families to checklist items, not each of the 51 tests. The PR body says "except IMP-92".
+- **Suggested solution:** "A11Y-24 closed with one open item (IMP-92)"; "every WebKit failure family maps to a checklist item that passes in real Safari". Fix the "( Tab" typo in the same line.
+
+### DOC-51 C-18: the NavBar.item focus ring is cut at its top and bottom
+
+- **Found:** R5-01, 18 Oct 2026 · **Severity:** Medium · **Status:** Open (flag)
+- **Source:** C-18 Surface (max-height --nav-row-height, overflow hidden, DR-359) and NavBar.rules (the slide, `nav-row-slide` clip-path inset(0), DR-349); COL-13 (2px ring, 2px offset); `src/styles/colors.css` `:focus-visible`.
+- **Problem:** the NavBar links are as tall as the 44px row, so the ring is drawn 4px outside the list at the top and the bottom. The overflow hidden of the list cuts it, and the clip-path of the band already cut it in run 4. Only the left and right sides of the ring show (screenshot at 1280, `/en`).
+- **What the code does:** C-18 as written. No treatment chosen (tajmin: flag).
+- **PR #7 review (18 Oct 2026):** claude-review raised it as a fix (COL-13): fix it or approve the clip as an exception. Claude's recommendation: the inset ring, since both the list overflow and the band clip-path stay as specified. Needs tajmin's and the blueprint's decision (COL-13 sets the 2px offset).
+- **Suggested solution:** one of: an inset ring on NavBar.item (outline-offset -4px); a link shorter than the row with the 3px current line on the li; or `overflow: clip` with `overflow-clip-margin` (not in Safari). The blueprint decides.
+
+### DOC-52 R5-01 check: "first item edge equals the shell edge"
+
+- **Found:** R5-01, 18 Oct 2026 · **Severity:** Low · **Status:** Open (test checks the list and rule edges)
+- **Source:** `docs/SPRINT.md` R5-01 checkpoint 3 check 2; C-18 NavBar.item "centered in the shell (DR-170)".
+- **Problem:** the items are centered, so the first item starts 25 to 49px inside the shell (1280 and 1440). The item list and the rule are on the shell edges.
+- **What the code does:** follows C-18. The test checks that the band spans the viewport, the list and the rule are on the shell edges ±0.5px and every item is inside the shell.
+- **Suggested solution:** word the check as "the item list and the rule edges equal the shell edges".
 
 ## Change log
 
@@ -626,3 +700,9 @@ Entry format:
 | 2026-10-17 | R4-03 | U-41, DOC-47 to DOC-50 and IMP-87 to IMP-89 added; U-40 and IMP-87 set to Fixed in R4-03 |
 | 2026-10-17 | R4-04 | No new findings; DOC-38, DOC-39, DOC-40, U-31, IMP-63, IMP-70 and IMP-78 set to Fixed in R4-04 (DOC-38 and DOC-39: the code already followed the decision; R4-04 adds the tests) |
 | 2026-10-17 | R4-05 | IMP-90 added; IMP-53 updated (WebKit vote passes, Safari pending) |
+| 2026-10-18 | R5-01 | Run 4 review (DR-355 to DR-359): U-41, DOC-44 to DOC-49, IMP-84, IMP-85, IMP-87, IMP-89 and IMP-90 decided, code in R5-01; DOC-50 Closed (no change); IMP-86 to R5-01; IMP-88 to R5-02; next free IDs for run 5 |
+| 2026-10-18 | R5-01 checkpoint 2 | U-41, DOC-47, DOC-49 and IMP-89 set to Fixed in R5-01; no new findings (WebKit W5-01 in `docs/webkit-failures.md`) |
+| 2026-10-18 | R5-01 checkpoint 3 | IMP-91, DOC-51 and DOC-52 added; DOC-44, DOC-45, DOC-46, IMP-84, IMP-85 and IMP-90 set to Fixed in R5-01 |
+| 2026-10-18 | R5-01 checkpoint 4 | No new findings; IMP-86 and the IMP-87 column rule set to Fixed in R5-01 |
+| 2026-10-18 | R5-02 | IMP-92 added (real Safari: Tab does not reach the vote button); IMP-53 and IMP-88 Closed (not in real Safari) |
+| 2026-10-18 | PR #7 review | IMP-93 to IMP-96 added from the claude-review comments; DOC-51 note added; fixes planned later |

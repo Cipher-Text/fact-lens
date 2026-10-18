@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.6 · 16 October 2026 · For homepage prototype run 4 (fixes)
+Version 1.7 · 18 October 2026 · For the production frontend, run 5 (M2 stage F0)
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -10,7 +10,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Item | Status |
 | --- | --- |
-| Current work | Homepage prototype run 4 (Milestone 1): a short fix run. Put the run 3 review and design change decisions (`DR-345` to `DR-351`) in the code from the current specs. The tickets are in `docs/SPRINT.md`. Do not add new features. Milestone 2 is full development and hosting |
+| Current work | Run 5, M2 stage F0 (Production build): a short fix run. Put the run 4 review decisions (`DR-355` to `DR-359`) in the code from the current specs. The tickets are in `docs/SPRINT.md`. Do not add new features |
 | Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
 | Pages | Homepage first. Do not start article or category pages until their layout pass is complete |
@@ -159,7 +159,7 @@ A flag gives: what is wrong, what you did, the rule IDs, your proposal and an ex
 
 ## 9. How to work
 
-The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple prototype, not a full website.
+The work is a small sprint of tickets in `docs/SPRINT.md`. The repo is the production frontend (`DR-361`); each run is a small sprint.
 
 1. **One ticket at a time.** Do the ticket that the user starts. Do not start the next ticket until the user accepts the current one.
 2. **Plan, build, test, verify.** Show a short plan, build, add tests, then run every check in Section 11.
@@ -167,7 +167,7 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The goal is a simple 
 4. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
 5. **Hand over.** List each acceptance criterion as met or not met, and give the user test steps. Then stop.
 6. **Record progress.** Keep the board in `docs/SPRINT.md` and `docs/PROGRESS.md` current.
-7. **Commit on acceptance.** One commit per accepted ticket: `R4-03: Divider column rules` on the subject line, and the rule IDs on the next line, not on the subject line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
+7. **Commit on acceptance.** One commit per accepted ticket: `R5-01: Docs and run 4 review fixes` on the subject line, and the rule IDs on the next line, not on the subject line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
 
 ## 10. What you must not change
 

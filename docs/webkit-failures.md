@@ -188,7 +188,74 @@ The run 3 list (`docs/run-3-report.md`) and the run 2 groups above get one ID pe
 | --- | --- | --- | --- | --- | --- |
 | W4-12 | Medium | `grouped.spec.ts:405` | poll results: own vote filled and named, fills follow the percents | en | **Test fix.** The rail ad Y read before the vote was 44px lower than after (5834 / 5790): the same nav row race as W3-09, not the vote. A probe read 5790 before, 0.3s and 1.8s after the vote in WebKit. The test now waits for the nav row (`waitForNavRow`) |
 
+## Run 5
+
+### R5-01 checkpoint 2 (18 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit` on the files that checkpoint 2 changed or checks (`page`, `analysis-opinion`, `motion`, `small-parts`) on `production-run-5`. 7 failed, 117 passed. 6 are known families: W3-01 (`analysis-opinion.spec.ts:240` keyboard, bn and en), W3-08 (`small-parts.spec.ts:229`, bn and en), W4-09 (`small-parts.spec.ts:102`, bn at 360 and 1280). The new border, P-4 gap and motion tests pass in WebKit.
+
+| ID | Importance | File | Test | Lang | Error |
+| --- | --- | --- | --- | --- | --- |
+| W5-01 | Low | `small-parts.spec.ts:102` | Divider.item space: 16px to the ink … at 768 | en | Most read only: item 33 is 12px above the rule (range 13 to 19). Same family as W4-09 (WebKit draws the rank digits and titles higher), now in English at 768; Bangla at 768 passes. The ink values did not change in checkpoint 2 (only the token names, DR-355) |
+
+### R5-01 checkpoint 3 (18 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit` on the checkpoint's test files (`header`, `site`, `page`) on `production-run-5`. 18 failed, 133 passed. 14 are known families: W3-02 (SkipLink, bn and en), W3-03 and W3-04 (drawer at 360 and 1280, search dialog; bn and en), W3-05 (storage event, bn and en), W4-01 to W4-04 (ghost buttons and the language link, light and dark, bn and en). The new focus-scroll, band, logo and language-link tests pass in WebKit.
+
+| ID | Importance | File | Test | Lang | Error |
+| --- | --- | --- | --- | --- | --- |
+| W5-02 | Low (keyboard) | `header.spec.ts:1271` | NavBar is one row from the server HTML: no shift at hydration at 1280 and 1440 | bn, en | The height, `main` top and CLS parts pass; the Tab-order part reaches no NavBar link (expected the 8 or 9 shown links, got none). Same family as W3-01 (Safari Tab skips links by default) |
+
+### R5-01 checkpoint 4 (18 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit` on the checkpoint's test files (`hero`, `small-parts`, `header`) on `production-run-5`. 29 failed, 158 passed. Every failure is a known family: W3-01 (hero keyboard, bn and en), W3-02 (2), W3-03 and W3-04 (6), W3-08 (2), W4-01 to W4-04 (4), W4-07 (hero layout at 768, 834 and 1023, bn and en: 6), W4-09 (bn at 360 and 1280), W5-01 (en at 768), W5-02 (4). No new ID. The new Latest column rule test passes in WebKit. W3-05 (storage event) passes in WebKit after the IMP-86 test fix (it failed in checkpoint 3).
+
 ## Not checked
 
 - Whether each failure is new since R2-13. `PROGRESS.md` only gives counts (40 at R2-12, 5 regions at R2-13), not names.
 - The Safari causes above (groups B, C, E) are my reading of the errors. None is confirmed in a real Safari.
+
+### R5-02 full run (18 October 2026)
+
+Run: `pnpm exec playwright test --project=webkit` (full suite) on `production-run-5` at `c58d670`. **51 failed, 619 passed, 16 skipped** (5.0 min). Run 4 (R4-05): 48. Every failure is a known family; no new ID.
+
+| ID | Tests now | Run 4 | Change |
+| --- | --- | --- | --- |
+| W3-01 | 14 | 14 | Same |
+| W3-02 | 2 | 2 | Same |
+| W3-03 | 4 | 4 | Same |
+| W3-04 | 2 | 2 | Same |
+| W3-05 | 0 | 2 | Passes after the IMP-86 test fix (R5-01 checkpoint 4) |
+| W3-06 | 2 | 2 | Same |
+| W3-07 | 4 | 3 | bn and en, light and dark at 360 this time (the theme changes from run to run) |
+| W3-08 | 2 | 2 | Same |
+| W4-01 to W4-04 | 4 | 4 | Same |
+| W4-07 | 6 | 6 | Same (hero layout at 768, 834 and 1023, bn and en) |
+| W4-08 | 2 | 2 | Same |
+| W4-09 | 2 | 3 | bn at 360 and 1280 |
+| W4-10 | 2 | 2 | Same |
+| W5-01 | 1 | – | R5-01 (en at 768, Most read) |
+| W5-02 | 4 | – | R5-01 (NavBar Tab order, W3-01 family) |
+| Total | 51 | 48 | +5 new R5-01 tests (W5-01, W5-02), +1 W3-07, −2 W3-05, −1 W4-09 |
+
+#### Real Safari (A11Y-24)
+
+tajmin ran the checklist in `docs/run-5-report.md` on macOS Safari and iOS Safari on 18 October 2026, against the production build. Every item passed except the Tab step of item 1 (IMP-92). So every WebKit failure below is a test fault of Playwright WebKit, not a fault readers see (no code fix).
+
+| ID | Checklist item | macOS Safari | iOS Safari | Result |
+| --- | --- | --- | --- | --- |
+| W3-01, W5-02 | 7 | Pass | – | Test fault |
+| W3-02 | 7 | Pass | – | Test fault |
+| W3-03 | 5 | Pass | Pass | Test fault |
+| W3-04 | 5 | Pass | Pass | Test fault |
+| W3-05 | 8 | Pass | Pass | Passes in WebKit too |
+| W3-06 | 9 | – | Pass | Test fault |
+| W3-07 | 9 | – | Pass | Test fault |
+| W3-08 | 10 | Pass | – | Test fault |
+| W4-01 to W4-04 | 7 | Pass | – | Test fault |
+| W4-07, W4-08 (IMP-88) | 6 | Pass | Pass | Test fault; no rounding (IMP-88 Closed) |
+| W4-09, W5-01 | 6 | Pass | Pass | Test fault |
+| W4-10 | 11 | Pass | Pass | Test fault |
+| (no WebKit ID) | 1: Tab from an option to the vote button | Fail | Pass | IMP-92, Open, low priority (tajmin) |
+
+A11Y-24 is closed; the one open item is IMP-92. The run 6 test strategy (TS-01 to TS-09, DR-360) decides how the WebKit test faults are fixed.

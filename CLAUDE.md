@@ -6,7 +6,7 @@ The text above comes from `AGENTS.md`. It is the source for every agent. This pa
 
 ### Start of each session
 
-1. Read `docs/PROGRESS.md` and the board in `docs/SPRINT.md`. They tell you which ticket is current. Run 4 is a fix run: each ticket names the `DR-` IDs and the spec sections it rebuilds. Read those spec sections, not the old run 2 code, as the target.
+1. Read `docs/PROGRESS.md` and the board in `docs/SPRINT.md`. They tell you which ticket is current. Run 5 is a fix run (M2 stage F0): each ticket names the `DR-` IDs and the spec sections it rebuilds. Read those spec sections, not the old run 2 code, as the target.
 2. Read `docs/design-system/agent-contract.md` Sections 1 to 4 before the first code change.
 3. Read only the spec sections that the ticket needs. Do not read all four specs at once.
 4. Before you build a component, read its sheet in `docs/design-system/component-system.md` Section 7 and the names in Section 3.

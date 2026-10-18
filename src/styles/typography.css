@@ -103,6 +103,10 @@
   --type-metadata-weight: 400;
   --type-metadata-line: 1.4;
   --type-metadata-tracking: 0.01em;
+  /* Ink inset (Section 3.1, DR-355) */
+  --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.2);
+  --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.12);
+  --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.18);
   --type-caption-size: 0.875rem;
   --type-caption-weight: 400;
   --type-caption-line: 1.5;
@@ -212,6 +216,10 @@
   --type-metadata-weight: 400;
   --type-metadata-line: 1.5;
   --type-metadata-tracking: 0;
+  /* Ink inset (Section 3.1, DR-355) */
+  --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.03);
+  --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.25);
+  --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.33);
   --type-caption-size: 0.9375rem;
   --type-caption-weight: 400;
   --type-caption-line: 1.6;
@@ -398,8 +406,7 @@ body {
   font-size: var(--type-logo-size);
   font-weight: var(--type-logo-weight);
   line-height: var(--type-logo-line);
-  /* Stuck bar: 24px by a transform, not by font-size (C-17, DR-349). The logo-scale utility
-     in components.css does it. Typography §8 still has the font-size rule: DOC-45. */
+  /* Stuck bar: the logo scales to 24px with a transform (C-17, DR-349, DR-355), not here. */
 }
 
 @utility type-logo-sm {

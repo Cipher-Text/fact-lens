@@ -437,7 +437,7 @@ test("page order: hero, ad, analysis and opinion, ad (7.1)", async ({
   await expect(main.nth(4)).toHaveAttribute("data-ad-slot", "ad-band");
 });
 
-// R4-03: the column rule between analysis and opinion, the OpinionList item rule and the
+// R4-03, R5-01 (DR-356 gap): the column rule between analysis and opinion, the OpinionList item rule and the
 // chip space (C-06, C-22, P-4; DR-351).
 test.describe("rules (C-06, C-22, DR-351)", () => {
   for (const p of PAGES) {
@@ -455,8 +455,10 @@ test.describe("rules (C-06, C-22, DR-351)", () => {
             `${SECTION} [data-column="analysis"]`,
             `${SECTION} [data-column="opinion"]`,
           );
-          // The gap is the column gap of before the change (DR-300, DR-351).
-          const gap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
+          // From 768 the gap is --space-analysis-gap, 32 / 48 / 64px (DR-356); the stacked
+          // columns below 768 keep the column gap.
+          const gap =
+            width >= 1280 ? 64 : width >= 1024 ? 48 : width >= 768 ? 32 : 16;
           expect(rule.gap, `gap at ${width}`).toBe(`${gap}px`);
           if (width < 768) {
             // The columns stack: no rule.

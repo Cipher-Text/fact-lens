@@ -52,24 +52,6 @@
   --quote-mark-width: 1.75rem;
 }
 
-/* Divider.item ink trim (C-22, DR-350, U-41, flag F-1 approved by tajmin on 17 Oct 2026): the
-   16px each side of the rule is measured to the text ink, not the line box. These are the
-   blank space between the line box edge and the ink of each role next to a rule, as a share
-   of the role font size, measured from the fonts (Noto Serif / Sans Bengali, Source Serif 4,
-   Plus Jakarta Sans). No CSS text-box edge gives the ink in both scripts, so the spec has no
-   value (U-41). */
-:lang(en) {
-  --ink-title-sm-start: calc(var(--type-story-title-sm-size) * 0.2);
-  --ink-title-sm-end: calc(var(--type-story-title-sm-size) * 0.12);
-  --ink-metadata-end: calc(var(--type-metadata-size) * 0.18);
-}
-
-:lang(bn) {
-  --ink-title-sm-start: calc(var(--type-story-title-sm-size) * 0.03);
-  --ink-title-sm-end: calc(var(--type-story-title-sm-size) * 0.25);
-  --ink-metadata-end: calc(var(--type-metadata-size) * 0.33);
-}
-
 @media (min-width: 37.5rem) {
   :root {
     --top-bar-inset: 1.125rem;
@@ -94,6 +76,15 @@
    through this variant, not an arbitrary one (DR-287). */
 @custom-variant bar-stuck (html[data-bar-stuck] &);
 
+/* A focus in the stuck site header does not scroll the page (layout §6, DR-357, IMP-84).
+   scroll-padding-top on <html> keeps a target below the bar, so the browser scrolled a
+   header control out of that zone; the negative margin cancels the padding for the header. */
+@utility header-focus {
+  & :is(a, button, input, select, textarea, [tabindex]) {
+    scroll-margin-top: calc(-1 * var(--scroll-offset));
+  }
+}
+
 /* Site header hide (C-17, C-18, DR-349). The NavBar is sticky just below the TopBar:
    --scroll-offset is the rendered bar height + 16px (layout §6). Past the row, html gets
    data-bar-stuck: the NavBar slides up under the TopBar and is hidden. The clip-path moves
@@ -106,9 +97,9 @@
   z-index: var(--z-bar);
   clip-path: inset(0);
   transition:
-    transform 450ms var(--ease-slide),
-    clip-path 450ms var(--ease-slide),
-    visibility 450ms var(--ease-slide);
+    transform var(--duration-slide) var(--ease-slide),
+    clip-path var(--duration-slide) var(--ease-slide),
+    visibility var(--duration-slide) var(--ease-slide);
   html[data-bar-stuck] & {
     transform: translateY(-100%);
     clip-path: inset(100% 0 0 0);
@@ -117,7 +108,7 @@
 }
 
 @utility logo-scale {
-  transition: transform 450ms var(--ease-slide);
+  transition: transform var(--duration-slide) var(--ease-slide);
   html[data-bar-stuck] & {
     transform: scale(var(--logo-stuck-scale));
   }
@@ -148,7 +139,7 @@
 @utility accordion-panel {
   height: var(--collapsible-panel-height);
   overflow: hidden;
-  transition: height 450ms var(--ease-slide);
+  transition: height var(--duration-slide) var(--ease-slide);
   &[data-starting-style],
   &[data-ending-style] {
     height: 0;
@@ -157,7 +148,7 @@
 
 @utility accordion-caret {
   & svg {
-    transition: transform 450ms var(--ease-slide);
+    transition: transform var(--duration-slide) var(--ease-slide);
   }
   &[aria-expanded="true"] svg {
     transform: rotate(180deg);
@@ -324,14 +315,14 @@
   }
 }
 
-/* One motion (DR-346, DR-349): every slide, fade and height change is 450ms ease-slide.
+/* One motion (DR-346, DR-349): every slide, fade and height change uses --duration-slide with ease-slide (DR-357).
    Button colors keep the 200ms theme default. The base rule in globals.css sets every
    duration to 0 with reduced motion, so the end state shows at once.
 
    shadcn Sheet and Drawer (CPT-16, DR-280): the Sheet slides in from the start edge and the
    top Drawer slides in from above and follows a swipe up. */
 @utility sheet-overlay {
-  transition: opacity 450ms var(--ease-slide);
+  transition: opacity var(--duration-slide) var(--ease-slide);
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 0;
@@ -339,7 +330,7 @@
 }
 
 @utility sheet-left {
-  transition: transform 450ms var(--ease-slide);
+  transition: transform var(--duration-slide) var(--ease-slide);
   &[data-starting-style],
   &[data-ending-style] {
     transform: translateX(-100%);
@@ -347,7 +338,7 @@
 }
 
 @utility drawer-overlay {
-  transition: opacity 450ms var(--ease-slide);
+  transition: opacity var(--duration-slide) var(--ease-slide);
   &[data-starting-style],
   &[data-ending-style] {
     opacity: 0;
@@ -356,7 +347,7 @@
 
 @utility drawer-top {
   transform: translateY(var(--drawer-swipe-movement-y, 0px));
-  transition: transform 450ms var(--ease-slide);
+  transition: transform var(--duration-slide) var(--ease-slide);
   &[data-starting-style],
   &[data-ending-style] {
     transform: translateY(-100%);
@@ -471,14 +462,14 @@
    The last item of a list keeps its line box: space-more-link is not measured to the ink. */
 @layer components {
   :where(:has(+ .divider-item)) [data-meta-line] {
-    margin-block-end: calc(-1 * var(--ink-metadata-end));
+    margin-block-end: calc(-1 * var(--type-metadata-ink-end));
   }
 }
 
 /* The ink at the top of the items of a list (DR-350). Set it on the list (and on a
    StoryList that is itself a row after a card). Items that start with a title: */
 @utility list-ink-title-meta {
-  --list-ink-start: var(--ink-title-sm-start);
+  --list-ink-start: var(--type-story-title-sm-ink-start);
 }
 
 /* Cards with an image at the top (the AnalysisSection rows): the image is the first ink. */
@@ -489,8 +480,8 @@
 /* RankedList: the title is the first and the last row. A row-first grid: the item below a
    rule sits under the tallest item of the row above (C-07), so the list sets both edges. */
 @utility list-ink-title {
-  --list-ink-start: var(--ink-title-sm-start);
-  --list-ink-end: var(--ink-title-sm-end);
+  --list-ink-start: var(--type-story-title-sm-ink-start);
+  --list-ink-end: var(--type-story-title-sm-ink-end);
 }
 
 /* OpinionList: the item rule spans the text column only, not the quote mark (DR-351). */
@@ -499,12 +490,28 @@
 }
 
 /* Divider.column-inset (C-22, DR-351): a 1px solid vertical rule in the border color,
-   centered in the existing column gap, --divider-column-inset from the top and the bottom.
-   The grid keeps its gap. divider-column-split: two equal columns (P-4, from 768).
+   centered in the column gap, --divider-column-inset from the top and the bottom. The rule
+   takes no space: P-4 sets its gap to --space-analysis-gap (DR-356), P-3 keeps the column gap. divider-column-split: two equal columns (P-4, from 768).
    divider-column-rail: the wrapper and the rail (P-3, from 1024, --measure-rail). */
 @utility divider-column-split {
   position: relative;
   @media (width >= 48rem) {
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: var(--divider-column-inset);
+      inset-inline-start: calc(50% - var(--divider-rule) / 2);
+      width: var(--divider-rule);
+      background-color: var(--color-border);
+    }
+  }
+}
+
+/* divider-column-columns: the two CSS columns of a list, 768 to 1023 only (HeroSection.latest,
+   C-03, DR-355). Equal columns, so the middle of the gap is the middle of the list. */
+@utility divider-column-columns {
+  position: relative;
+  @media (width >= 48rem) and (width < 64rem) {
     &::after {
       content: "";
       position: absolute;

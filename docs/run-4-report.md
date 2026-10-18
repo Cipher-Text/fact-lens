@@ -78,3 +78,7 @@ Run on macOS Safari and on iOS Safari (device or Simulator), light and dark, `/`
 - `UNRESOLVED_DESIGN_SYSTEM`: IMP-85 (pinned NavBar band), U-41 (ink tokens, approved, blueprint to add values).
 - New: IMP-90 (nav row shift at hydration, M2).
 - Spec issues: DOC-44 to DOC-50. Firefox is not tested (DR-341: check by hand before M2).
+
+## Note after the run
+
+18 October 2026 (R5-01): PR #6 merged on 17 October 2026 (`7430d53`) on tajmin's go. The real Safari checklist moves to run 5 (A11Y-24, R5-02). DOC-50: the run 4 check "24 from 600" was wrong; the spec and the code are right (no change).

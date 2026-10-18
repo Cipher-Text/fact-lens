@@ -36,7 +36,7 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
 
 // Restyled after add (CPT-16, DR-228, DR-280): the Drawer uses the left side only.
 // surface-elevated, --drawer-width, full height; no shadow, border, radius or blur. The
-// slide (450ms ease-slide from the start edge, DR-346) is the `sheet-left` utility in
+// slide (--duration-slide ease-slide from the start edge, DR-346) is the `sheet-left` utility in
 // components.css. The close button is the Drawer's own IconButton, so none is built in here.
 function SheetContent({
   className,

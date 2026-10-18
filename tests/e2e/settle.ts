@@ -1,11 +1,11 @@
 import { expect, type Page } from "@playwright/test";
 
 /**
- * The server HTML of the nav row wraps until the items that do not fit are hidden after
- * hydration (IMP-16). Until then the page below the header is one row (44px) lower. A test
- * that reads two boxes at different moments must wait for the one-line row first: 44px +
- * the 1px rule. The nav row shows from 1280 only (C-18); under 1280 this does nothing.
- * R4-05: WebKit hydrates later than Chromium, so it hit this race (W4-12, group A).
+ * Waits for the one-line nav row: 44px + the 1px rule. Until run 4 the server HTML of the
+ * row wrapped until hydration hid the items that do not fit (IMP-16, IMP-90), and WebKit hit
+ * that race (W4-12, group A). Since R5-01 the item list is one row tall from the server
+ * HTML (DR-359), so this is a guard. The nav row shows from 1280 only (C-18); under 1280
+ * this does nothing.
  */
 export async function waitForNavRow(page: Page) {
   const width = page.viewportSize()?.width ?? 0;

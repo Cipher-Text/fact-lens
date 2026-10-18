@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // R2-05, R3-02, R4-01: top bar, nav row, Drawer (shadcn Sheet) and search dialog (shadcn
@@ -341,11 +342,8 @@ for (const p of PAGES) {
         expect(Math.round((await box(bar)).height)).toBe(64);
         expect(Math.round((await box(bar)).y)).toBe(0);
         // The row is out of the tab order: Tab from the theme button leaves the header.
-        // (preventScroll: a focus in the stuck bar scrolls the page to the top in Chromium,
-        // a separate finding, IMP-84.)
-        await bar
-          .getByRole("switch")
-          .evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }));
+        // A focus in the stuck bar does not scroll the page (scroll-margin-top, DR-357).
+        await bar.getByRole("switch").focus();
         expect(await page.evaluate(() => window.scrollY)).toBe(46);
         await page.keyboard.press("Tab");
         expect(
@@ -920,6 +918,19 @@ for (const p of PAGES) {
       await other.setViewportSize({ width: 1024, height: 800 });
       await other.goto(p.path);
       await expect(other.locator("html")).not.toHaveClass(/dark/);
+      // Wait until the second tab's ThemeButton responds: then it has hydrated and
+      // subscribed, so its storage listener is in place (IMP-86). Turn it on and off again.
+      const otherToggle = other.locator("[data-top-bar] [data-theme-button]");
+      for (const state of ["true", "false"]) {
+        await expect(async () => {
+          if ((await otherToggle.getAttribute("aria-checked")) !== state)
+            await otherToggle.click();
+          await expect(otherToggle).toHaveAttribute("aria-checked", state, {
+            timeout: 500,
+          });
+        }).toPass();
+      }
+      await expect(other.locator("html")).not.toHaveClass(/dark/);
       const toggle = page.locator("[data-top-bar] [data-theme-button]");
       await expect(async () => {
         // Click only while the switch is off, so a retry never turns it back.
@@ -1147,6 +1158,257 @@ for (const p of PAGES) {
           await expect(page.locator("html")).toHaveClass(/dark/);
         else await expect(page.locator("html")).not.toHaveClass(/dark/);
         await expectNoBlockingAxe(page);
+      });
+    }
+  });
+}
+
+// R5-01 checkpoint 3: focus in the stuck header (DR-357 C1, IMP-84), the NavBar band and
+// its one-row item list (C-18 Surface, DR-357 C4, DR-359 IMP-90), the stuck logo (C-17,
+// DR-355 B4) and the language link font (C-17, typography §7, DOC-44).
+const SHELL_SELECTOR = "main .shell";
+
+/** The focusables of the page in DOM order that a Tab can reach. */
+async function firstFocusableAfterHeader(page: Page) {
+  return page.evaluate(() => {
+    const all = [
+      ...document.querySelectorAll<HTMLElement>(
+        "a[href], button, input, select, textarea, [tabindex]:not([tabindex='-1'])",
+      ),
+    ].filter((el) => !el.closest("[inert]") && el.getClientRects().length > 0);
+    const header = all.filter((el) =>
+      el.closest("[data-top-bar], [data-nav-row]"),
+    );
+    const last = header[header.length - 1];
+    const next = all.find(
+      (el) =>
+        !el.closest("[data-top-bar], [data-nav-row]") &&
+        last.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING,
+    )!;
+    next.setAttribute("data-test-after-header", "");
+    return true;
+  });
+}
+
+for (const p of PAGES) {
+  test.describe(`site header ${p.path} (R5-01)`, () => {
+    for (const width of [360, 1280, 1440]) {
+      test(`Shift+Tab into the stuck header does not scroll the page at ${width} (DR-357, IMP-84)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        await waitForNavRow(page);
+        await page.evaluate(() => window.scrollTo(0, 600));
+        await expect(page.locator("html")).toHaveAttribute(
+          "data-bar-stuck",
+          "",
+        );
+        // Setup only: put focus on the first control after the header without a scroll.
+        await firstFocusableAfterHeader(page);
+        await page
+          .locator("[data-test-after-header]")
+          .evaluate((el) => (el as HTMLElement).focus({ preventScroll: true }));
+        const before = await page.evaluate(() => window.scrollY);
+        expect(before).toBe(600);
+        // The real key press moves focus into the header.
+        await page.keyboard.press("Shift+Tab");
+        await page.waitForTimeout(100);
+        const after = await page.evaluate(() => {
+          const el = document.activeElement as HTMLElement;
+          const r = el.getBoundingClientRect();
+          return {
+            inHeader: !!el.closest("[data-top-bar], [data-nav-row]"),
+            y: window.scrollY,
+            top: r.top,
+            bottom: r.bottom,
+            visible: getComputedStyle(el).visibility === "visible",
+          };
+        });
+        expect(after.inHeader).toBe(true);
+        expect(after.y).toBe(before);
+        expect(after.visible).toBe(true);
+        expect(after.top).toBeGreaterThanOrEqual(0);
+        expect(after.bottom).toBeLessThanOrEqual(900);
+      });
+    }
+
+    for (const width of [1280, 1440]) {
+      test(`NavBar band spans the viewport; list and rule on the shell edges at ${width} (C-18, DR-357)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        await waitForNavRow(page);
+        const m = await page.evaluate((shellSelector) => {
+          const nav = document.querySelector("[data-nav-row]")!;
+          const shell = nav.querySelector("[data-nav-shell]")!;
+          const list = nav.querySelector("ul")!;
+          const items = [...list.children].filter(
+            (li) => !(li as HTMLElement).hidden,
+          );
+          const edges = (el: Element) => {
+            const r = el.getBoundingClientRect();
+            return { left: r.left, right: r.right };
+          };
+          return {
+            viewport: document.documentElement.clientWidth,
+            band: edges(nav),
+            background: getComputedStyle(nav).backgroundColor,
+            page: getComputedStyle(document.body).backgroundColor,
+            rule: {
+              ...edges(shell),
+              width: getComputedStyle(shell).borderBottomWidth,
+            },
+            list: edges(list),
+            first: edges(items[0]),
+            last: edges(items[items.length - 1]),
+            shell: edges(document.querySelector(shellSelector)!),
+          };
+        }, SHELL_SELECTOR);
+        // The band is full width in the page color.
+        expect(Math.abs(m.band.left)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(m.band.right - m.viewport)).toBeLessThanOrEqual(0.5);
+        expect(m.background).toBe(m.page);
+        // The 1px rule and the item list sit on the shell edges.
+        expect(m.rule.width).toBe("1px");
+        for (const part of [m.rule, m.list]) {
+          expect(Math.abs(part.left - m.shell.left)).toBeLessThanOrEqual(0.5);
+          expect(Math.abs(part.right - m.shell.right)).toBeLessThanOrEqual(0.5);
+        }
+        // The items are centered in the shell (DR-170), so they stay inside its edges.
+        expect(m.first.left).toBeGreaterThanOrEqual(m.shell.left - 0.5);
+        expect(m.last.right).toBeLessThanOrEqual(m.shell.right + 0.5);
+      });
+
+      test(`NavBar is one row from the server HTML: no shift at hydration at ${width} (DR-359, IMP-90)`, async ({
+        browser,
+      }) => {
+        const measure = async (javaScriptEnabled: boolean) => {
+          const context = await browser.newContext({
+            javaScriptEnabled,
+            viewport: { width, height: 900 },
+          });
+          const page = await context.newPage();
+          // The web fonts are blocked, so this measures the NavBar row only: the Bangla font
+          // swap moves the centered items 3.7px sideways (CLS 0.00003), a separate finding
+          // (IMP-91, tajmin's choice on 18 Oct 2026).
+          await page.route(/\.woff2$/, (route) => route.abort());
+          await page.addInitScript(() => {
+            (window as unknown as { __cls: number }).__cls = 0;
+            new PerformanceObserver((list) => {
+              for (const entry of list.getEntries() as unknown as {
+                value: number;
+                hadRecentInput: boolean;
+              }[])
+                if (!entry.hadRecentInput)
+                  (window as unknown as { __cls: number }).__cls += entry.value;
+            }).observe({ type: "layout-shift", buffered: true });
+          });
+          await page.goto(p.path);
+          await page.evaluate(() => document.fonts.ready);
+          await page.waitForTimeout(500);
+          const result = await page.evaluate(() => {
+            const nav = document.querySelector("[data-nav-row]")!;
+            const list = nav.querySelector("ul")!.getBoundingClientRect();
+            const items = [...nav.querySelectorAll("li")].map((li) => {
+              const r = li.getBoundingClientRect();
+              return {
+                hidden: (li as HTMLElement).hidden,
+                inRow:
+                  r.height > 0 && r.top >= list.top && r.bottom <= list.bottom,
+                below: r.top >= list.bottom,
+              };
+            });
+            return {
+              nav: nav.getBoundingClientRect().height,
+              main: document.querySelector("main")!.getBoundingClientRect().top,
+              items,
+              cls: (window as unknown as { __cls?: number }).__cls ?? 0,
+            };
+          });
+          return { page, context, result };
+        };
+        const off = await measure(false);
+        await off.context.close();
+        const on = await measure(true);
+        expect(off.result.nav).toBe(45);
+        expect(on.result.nav).toBe(off.result.nav);
+        expect(on.result.main).toBe(off.result.main);
+        expect(on.result.cls).toBe(0);
+        // Without JavaScript the items that wrap are cut off whole, below the row.
+        for (const item of off.result.items)
+          expect(item.inRow !== item.below).toBe(true);
+        // After hydration an item is in the row or hidden: never seen cut, never tabbed to.
+        for (const item of on.result.items)
+          expect(item.inRow !== item.hidden).toBe(true);
+        const page = on.page;
+        const hiddenLinks = page.locator("[data-nav-row] li[hidden] a");
+        for (const link of await hiddenLinks.all())
+          await expect(link).toBeHidden();
+        const reached = new Set<string>();
+        await page.locator("[data-nav-row] li:not([hidden]) a").first().focus();
+        for (let i = 0; i < 12; i++) {
+          const href = await page.evaluate(
+            () =>
+              document.activeElement?.closest("[data-nav-row]") &&
+              document.activeElement.getAttribute("href"),
+          );
+          if (!href) break;
+          reached.add(href);
+          await page.keyboard.press("Tab");
+        }
+        const shown = await page
+          .locator("[data-nav-row] li:not([hidden]) a")
+          .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
+        expect([...reached].sort()).toEqual([...shown].sort());
+        await on.context.close();
+      });
+    }
+
+    for (const width of [360, 1280]) {
+      test(`stuck logo keeps its font size and scales by transform; language link is type-ui-sm 600 at ${width} (C-17, DR-355, DOC-44)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        await waitForNavRow(page);
+        const logo = page.locator("[data-top-bar] [data-logo]");
+        const fontSize = () =>
+          logo.evaluate((el) => getComputedStyle(el).fontSize);
+        const top = await fontSize();
+        await page.evaluate(() => window.scrollTo(0, 600));
+        await expect(page.locator("html")).toHaveAttribute(
+          "data-bar-stuck",
+          "",
+        );
+        await expect.poll(() => logoSize(logo)).toBe(width >= 768 ? 24 : 20);
+        expect(await fontSize()).toBe(top);
+
+        const link = page.locator("[data-top-bar] a[hreflang]");
+        const font = await link.evaluate((el) => {
+          const probe = document.createElement("span");
+          probe.className = "type-ui-sm";
+          probe.lang = el.getAttribute("lang")!;
+          el.parentElement!.append(probe);
+          const read = (node: Element) => {
+            const s = getComputedStyle(node);
+            return {
+              size: s.fontSize,
+              family: s.fontFamily,
+              line: s.lineHeight,
+            };
+          };
+          const value = {
+            link: read(el),
+            role: read(probe),
+            weight: getComputedStyle(el).fontWeight,
+          };
+          probe.remove();
+          return value;
+        });
+        expect(font.link).toEqual(font.role);
+        expect(font.weight).toBe("600");
       });
     }
   });

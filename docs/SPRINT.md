@@ -1,8 +1,8 @@
-# Homepage Prototype Sprint
+# Fact Lens Production Sprint
 
-Version 4.0 · 16 October 2026 · Run 4 (short fix run)
+Version 5.0 · 18 October 2026 · Run 5 (M2 stage F0, stabilize) · Approved 18 Oct 2026 (DR-368, DR-369)
 
-This sprint builds a simple prototype: one homepage, mock data, Bangla and English. It is not a full website.
+The repository `tajmin/fact-lens-web` is the production frontend (DR-361). Run 5 is stage F0 of the Production build (DR-364, `plan/production-milestone.md`): it puts the run 4 review decisions in the code, brings the specs and docs up to date, and checks the homepage in real Safari. After run 5 the homepage is frozen.
 
 ## Past runs (summary)
 
@@ -10,171 +10,128 @@ This sprint builds a simple prototype: one homepage, mock data, Bangla and Engli
 | --- | --- | --- |
 | Run 1 | to 6 Oct 2026 | First homepage build, FL-01 to FL-13. Record: `docs/milestone-1-report.md`. |
 | Run 2 | 7 to 11 Oct 2026 | Rebuilt from the component sheets, R2-00 to R2-21. PR #1. |
-| Run 3 | 16 Oct 2026 | Fix run, R3-00 to R3-09. PR #5 merged (`6edc410`); docs commit `0bebd07`. Chromium e2e 591 pass; WebKit 42 failures. |
-| Run 3 review and design change | 16 Oct 2026 | The blueprint decided the run 3 findings and a masthead, list and divider change. Run 4 puts these decisions in the code. |
+| Run 3 | 16 Oct 2026 | Fix run, R3-00 to R3-09. PR #5 merged (`6edc410`). |
+| Run 4 | 16 to 17 Oct 2026 | Fix run, R4-00 to R4-05. PR #6 merged (`7430d53`). Chromium e2e 660 pass. Real Safari checklist open (A11Y-24). |
+| Run 4 review | 17 Oct 2026 | The blueprint decided the run 4 findings. Run 5 puts these decisions in the code. |
 
 ## How it works
 
-- Claude does one ticket at a time: plan, build, test, verify.
-- Claude asks tajmin before a command that needs permission.
-- At the end of a ticket, Claude stops and gives tajmin the test steps.
-- tajmin tests the ticket and replies with problems, or types `/accept`.
-- Claude starts the next ticket only after `/accept` and a new `/ticket`. tajmin runs `/clear` between tickets.
+- Run 5 has two tickets: R5-01 docs and all fixes and changes (four checkpoints), R5-02 Safari and merge.
+- Claude does one ticket at a time: plan, build, test, verify. Claude asks tajmin before a command that needs permission.
+- In R5-01, Claude stops at each checkpoint and gives tajmin the checks. tajmin replies with problems or OK; Claude starts the next checkpoint after OK. Checkpoints are not committed: the ticket gets one commit at `/accept` (AGENTS.md §9.7). Do not `/clear` inside a ticket (CLAUDE.md: one ticket per conversation).
+- At the end of each ticket, tajmin tests it and types `/accept`. Claude starts the next ticket only after `/accept` and a new `/ticket`.
 
-## Run 4
+## Run 5
 
-Run 4 is a short fix run. It adds no new feature and no new page. Mock data only. Each ticket groups fixes that share one behavior. A ticket names the decisions (DR-) and the spec sections. The decision register is not in this repository: read the rule in the spec section. If the code and the spec do not agree, the spec is correct.
+Run 5 adds no new feature and no new page. Mock data only. Each R5-01 checkpoint groups fixes that share one behavior and names the decisions (DR-) and the spec sections. The decision register is not in this repository: read the rule in the spec section. If the code and the spec do not agree, the spec is correct.
 
 ### Branch
 
-- tajmin runs `git fetch origin` and checks that `origin/main` is at `0bebd07` or later. Then R4-00 makes the branch `prototype-run-4` from `origin/main`.
-- `/accept` commits each ticket on `prototype-run-4` and pushes that branch. Do not commit to `main` or push to `main`. Post-merge notes also go on a branch (DR-346 B7).
-- `main` changes only in R4-05, when the pull request merges with a merge commit, on tajmin's explicit go.
+- tajmin runs `git fetch --prune origin` and checks that `origin/main` is at `7430d53` or later. Then R5-01 checkpoint 1 makes the branch `production-run-5` from `origin/main`.
+- `/accept` commits each ticket on `production-run-5` and pushes that branch. Do not commit to `main` or push to `main`.
+- `main` changes only in R5-02, when the pull request merges with a merge commit, on tajmin's explicit go.
 
 ### Log and findings
 
-- `docs/run-4-log.md`: one row per ticket (dates, result, rounds of fixes, spec findings, commit). `/accept` adds the row in the ticket commit. Old rows do not change; add a note row.
-- At the end of each ticket, add new findings to `docs/prototype-findings.md` with the next free ID, and set the status of the items the ticket fixed.
+- `docs/run-5-log.md`: one row per ticket (dates, result, rounds of fixes, spec findings, commit, and each test run with its checkpoint: command, spec count, passed, failed, time). `/accept` adds the row in the ticket commit. Old rows do not change; add a note row.
+- At the end of each ticket and checkpoint, add new findings to `docs/prototype-findings.md` with the next free ID, and set the status of the items it fixed.
 
 ### Test scope (all tickets)
 
-- Test only what the ticket changes. Each ticket lists its checks. Add or change a test only for those checks.
-- Regression gate (from R4-03): `pnpm check` passes at the end of every ticket. Chromium e2e runs only on the ticket's "Test files" and on any test file the ticket adds or changes: `pnpm exec playwright test --project=chromium <files>`. If the ticket changes the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`), run the full `pnpm test:e2e:chromium`. R4-05 runs the full suite. Do not weaken, skip or delete a test. A test that pins an old decision changes with the decision (the ticket names it).
+- Test only what each checkpoint changes. Each ticket or checkpoint lists its checks. Add or change a test only for those checks.
+- Gate at the end of every ticket and checkpoint: `pnpm check` passes. Chromium e2e runs on the checkpoint's "Test files" and on each test file it adds or changes: `pnpm exec playwright test --project=chromium <files>`. If the checkpoint changes the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`), run the full `pnpm test:e2e:chromium`. R5-02 runs the full suite. Record every run in the log.
+- Do not weaken, skip or delete a test. A test that pins an old decision changes with the decision (the checkpoint names it).
 - Matrix for each check, unless the check says less: Bangla (`/`) and English (`/en`); light and dark; widths 360, 600, 768, 1024, 1280, 1440; reduced motion on and off where the check has motion; keyboard pass; axe on the changed sections (no serious or critical violation).
-- Run the ticket's spec files in WebKit too (`pnpm exec playwright test --project=webkit <files>`). Record each WebKit failure in `docs/webkit-failures.md` with an ID. R4-05 checks them in real Safari.
-- Measure, do not judge by eye: sizes, gaps and positions are read from `getBoundingClientRect` and computed styles, with a tolerance of 0.5px. Ink positions are read from a screenshot pixel scan.
-- `design-reviewer` says `Verdict: pass` for every ticket.
+- Run the checkpoint's spec files in WebKit too. Record each WebKit failure in `docs/webkit-failures.md` with an ID.
+- Measure, do not judge by eye: sizes, gaps and positions from `getBoundingClientRect` and computed styles, tolerance 0.5px. Ink positions from a screenshot pixel scan.
+- `design-reviewer` says `Verdict: pass` for every ticket and checkpoint.
 
 ### Rules for every ticket
 
-- Read `AGENTS.md`, `docs/design-system/agent-contract.md` Sections 5 to 9, and only the spec sections that the ticket names.
+- Read `AGENTS.md`, `docs/design-system/agent-contract.md` Sections 5 to 9, and only the spec sections that the ticket or checkpoint names.
 - If no rule answers a question, or the only fix is a workaround, or two rules disagree: report `UNRESOLVED_DESIGN_SYSTEM` with the rule IDs and ask tajmin. Do not choose a value.
 
-## Run 4 board
+## Run 5 board
 
 | Ticket | Title | Status |
 | --- | --- | --- |
-| R4-00 | Setup, specs and repo docs | Done (16 Oct 2026, blueprint setup) |
-| R4-01 | Masthead controls and theme | Done (17 Oct 2026) |
-| R4-02 | Motion and sticky header | Done (17 Oct 2026) |
-| R4-03 | Lists and dividers | Done (17 Oct 2026) |
-| R4-04 | Words, focus and source order | Done (17 Oct 2026) |
-| R4-05 | Safari pass, final check, pull request and merge | Done (17 Oct 2026) |
+| R5-01 | Docs and run 4 review fixes (4 checkpoints) | Done |
+| R5-02 | Real Safari pass, final check, pull request and merge | Done |
 
-## Run 4 tickets
+## R5-01 Docs and run 4 review fixes
 
-### R4-00 Setup, specs and repo docs
+- Goal: the repo docs and specs are current, and the code follows the run 4 review decisions (DR-355 to DR-359). One ticket, four checkpoints.
 
-- Goal: the repo docs are current and the specs are the blueprint copies before the code work.
-- Decisions: DR-347; DR-345 A5; the wording that DR-345, DR-348, DR-349 and DR-351 changed.
-- Done on 16 Oct 2026 by the blueprint setup (DR-352); the next ticket is R4-01. tajmin runs the checks below once after `git fetch`.
-- Do: make the branch. Copy the five specs from the blueprint (color 2.14, typography 2.15, layout 2.21, component-system 1.16, agent-contract 2.11). Copy this sprint to `docs/SPRINT.md` (run 3 stays as a row in "Past runs"). Create `docs/run-4-log.md`. Then fix the stale text below. Change only the words named; keep the record files (`run-3-report.md`, `run-2-log.md`, `PROTOTYPE_RUN_2.md`) as they are.
+### Checkpoint 1: setup, specs and repo docs
+
+- Goal: the repo docs say production and are current; the specs are the blueprint copies before the code work (DR-354 D, DOC-42; DR-361; DR-359 DOC-50).
+- Done before the run by the blueprint setup (the `protect-files` hook blocks agent writes to `docs/design-system/`): the five specs (color 2.15, typography 2.16, layout 2.22, component-system 1.17.1, agent-contract 2.12.1) and this sprint as `docs/SPRINT.md` are in the working tree, not committed.
+- Do: first, before any other change, make the branch: `git switch -c production-run-5 origin/main`. The uncommitted spec copies and `docs/SPRINT.md` move with it. Check with `git branch --show-current` (prints `production-run-5`). `docs/PROGRESS.md` still shows run 4 until this checkpoint updates it; follow this sprint. Create `docs/run-5-log.md`. Fix the text below. Change only the words named. Record files keep their old text and rows: `PROTOTYPE_RUN_2.md`, `docs/run-2-log.md`, `docs/run-3-*.md`, `docs/milestone-1-report.md`, `docs/webkit-failures.md` rows. File names with "prototype" (`prototype-findings.md`) stay, so links do not break.
 
 | File | Fix |
 | --- | --- |
-| `AGENTS.md` (to 1.6) | Header and "Current work": run 4, DR-345 to DR-351. §5 header folder: remove ThemeToggle. §6.13: the site header (TopBar and NavBar) is sticky; the NavBar hides past its row (`LAY-15`). §6.16: চীন is a region under অঞ্চলসমূহ. §6.18: remove the ThemeToggle radius exception (no exception, `CPT-05`). §8: remove the column divider gap (C-22 now places it). §9.7: commit example `R4-03: ...` |
-| `CLAUDE.md` | "Run 3 is a fix run" to run 4 |
-| `README.md` | Status: run 4, the fix run for DR-345 to DR-351; run 3 merged 16 Oct (PR #5). Findings "from runs 1 and 2" to "runs 1 to 3" |
-| `docs/PROGRESS.md` (to 4.0) | Now: run 4, branch `prototype-run-4`. Run 3 to "Past runs" (PR #5 merged, `6edc410`). "Run 4 status" table R4-00 to R4-05. Known state at run 4 start: main `0bebd07`, Chromium e2e 591 pass, WebKit 42 failures. Unresolved table: U-39 closed (DR-349: ThemeToggle and the token removed), U-40 closed (DR-351: places set) |
-| `docs/HANDOVER.md` | Run 3: done and merged (PR #5), WebKit 42. Run 4: board in `docs/SPRINT.md`, log `docs/run-4-log.md`. §4 "Before R4-00" with the run 4 spec versions. Remove "R3-00 adds this script" |
-| `docs/run-3-log.md` | Add a note row: PR #5 merged (`6edc410`) on tajmin's go; docs commit `0bebd07` on `main` (DR-346 B7) |
-| `docs/milestone-1-report.md` | Banner: runs 3 and 4 put the review decisions in the code |
-| `docs/prototype-findings.md` | Next free IDs DOC-44, U-41, IMP-84, KIT-11. Summary rows IMP-78, IMP-79. Template heading without a real ID (not IMP-80). Change log rows R3-00 (IMP-38, IMP-59, KIT-10) and R3-08 (IMP-01, IMP-20, IMP-29, IMP-43, IMP-66, IMP-67, IMP-70). Statuses: U-24 Closed (DR-305); U-35 Fixed in R4-00; IMP-58 Fixed (DR-285 applied in run 3); IMP-65 Later (M2, DR-345); KIT-06, KIT-08, KIT-09 (kit patch applied), IMP-74 (Open, M2, no ticket); U-39 and IMP-73 Closed by DR-349; U-40 decided by DR-351 (code R4-03); each run 3 review item with its R4 ticket |
-| `src/i18n/bn.ts`, `QuoteMark.tsx` | Remove the U-26 and U-35 comments |
-| `.claude/rules/components.md` | Remove "The ThemeToggle switch is the one exception". DR-239 line: run 4, not run 2 |
-| `.claude/rules/content.md` | চীন is a region under অঞ্চলসমূহ. Newsletter line: run 4 |
-| `.claude/agents/design-reviewer.md` | Remove "(except the ThemeToggle switch)". "sticky elements other than the top bar" to "other than the site header (TopBar and NavBar)". Newsletter: run 4 |
-| `.claude/agents/visual-qa.md` | Sticky check: the top ad is below the header (DR-295); the header sticks; past the NavBar row the NavBar hides and shows again at the page top |
-| `.claude/skills/accept/SKILL.md` | "Run 3 status", `docs/run-3-log.md`, "during run 3", `prototype-run-3` to run 4 names |
-| `.claude/skills/ticket/SKILL.md` | Example `R4-03` |
-| `.claude/skills/check-rules/SKILL.md` | Description: (COL, TYP, LAY, CPT, N) |
-| `.claude/skills/mock-content/SKILL.md` | Remove `breaking?: boolean` from the shape (no Breaking label, DR-279; `types.ts` has no such field). Regions are under অঞ্চলসমূহ. Newsletter line: run 4 |
+| `AGENTS.md` (to 1.7) | Line 3: "For the production frontend, run 5 (M2 stage F0)". "Current work": run 5, M2 stage F0 (Production build), put the run 4 review decisions (DR-355 to DR-359) in the code. §9 intro: "The goal is a simple prototype, not a full website" to "The repo is the production frontend (DR-361); each run is a small sprint". §9.7 example `R5-01: Docs and run 4 review fixes` |
+| `CLAUDE.md` | Line 9: "Run 4 is a fix run" to "Run 5 is a fix run (M2 stage F0)" |
+| `README.md` | Status: production frontend, run 5 (M2 stage F0) for DR-355 to DR-359; run 4 merged 17 Oct 2026 (PR #6, `7430d53`). Preview line: "test and review only; not the final hosting" (not "a prototype, not the production site"). Findings "runs 1 to 3" to "runs 1 to 4" |
+| `docs/PROGRESS.md` (to 5.0) | Title "Fact Lens: Progress". Now: run 5, branch `production-run-5`, ticket R5-01. Specs: the run 5 versions. Tests: the run 5 test scope. Run 4 to "Past runs" (PR #6 merged, `7430d53`). "Run 5 status" table R5-01, R5-02. Known state at run 5 start: main `7430d53`, Chromium e2e 660 pass. Unresolved table: U-41, IMP-84, IMP-85 decided (DR-355, DR-357), code in R5-01 |
+| `docs/HANDOVER.md` | Date line: start of run 5. Run 4: done and merged (PR #6, `7430d53`). Run 5: board in `docs/SPRINT.md`, log `docs/run-5-log.md`. §4 "Before R5-01" with the run 5 spec versions. "The run 4 pull request merges in R4-05" to run 5 and R5-02 |
+| `docs/run-4-report.md`, `docs/run-4-log.md` | Dated note (old text stays): PR #6 merged 17 Oct 2026 (`7430d53`) on tajmin's go; the real Safari checklist moves to run 5 (A11Y-24); DOC-50: the run 4 check "24 from 600" was wrong, the spec and code are right |
+| `docs/prototype-findings.md` | Next-free line (line 35): "New findings in run 5", IDs unchanged unless used. Statuses: U-41, DOC-44 to DOC-49, IMP-84, IMP-85, IMP-87, IMP-89 decided (DR-355 to DR-359) with "Code in R5-01"; DOC-50 Closed (no change); IMP-86, IMP-90 to R5-01; IMP-88 to R5-02. Change log row R5-01 |
+| `.claude/skills/accept/SKILL.md` | "Run 4 status", `docs/run-4-log.md` (twice), "during run 4" to run 5 names |
+| `.claude/skills/ticket/SKILL.md` | Example `R5-01` |
+| `.claude/rules/components.md`, `.claude/rules/content.md`, `.claude/skills/mock-content/SKILL.md`, `.claude/agents/design-reviewer.md` | Newsletter line: "in run 5" (not "prototype run 4") |
 
-- Checks: each spec copy is byte-identical to the blueprint file (`cmp`). A grep of every tracked `.md` file outside the record files finds no `ThemeToggle`, no "run 3" as the current run, no `prototype-run-3` as the current branch, no `breaking?`, and অঞ্চল only where the spec uses it. `grep` finds no `U-35` and no `U-26` comment in `src/`. The findings "next free" line matches the highest ID + 1 in each series. `pnpm check` passes.
-- tajmin, outside the ticket: delete the remote branches `r2-21-run-2-finished`, `add-claude-github-actions-1791724540471`, `docs/run-2-audit` (also the local copies).
+- Checks: the version line of each spec copy matches the list above, and `sha256sum docs/design-system/*.md` matches: agent-contract `9ba718c0…`, color-system `edea4803…`, component-system `6ef7e621…`, spacing-layout-system `efaa1f42…`, typography-system `082a7f07…`. A grep of tracked `.md` files outside the record files finds no "run 4" as the current run, no `prototype-run-4`, no `R4-` example, and no "prototype" for the current repo. `pnpm check` passes. Claude gives tajmin the results; no e2e run (no file in `src/` or `tests/` changes).
 
-### R4-01 Masthead controls and theme
+### Checkpoint 2: tokens from the specs
 
-- Goal: the TopBar, NavBar and Drawer controls follow C-12, C-17, C-18 and C-19.
-- Decisions: DR-349 (controls, ThemeButton, tokens, language link, NavBar row, Drawer search), DR-346 B2 and B5, DR-345 A1 (nav item).
-- Read: `component-system.md` C-12, C-17 to C-19, §5 tokens; `spacing-layout-system.md` §6; `typography-system.md` §7.4 (`type-nav`); `color-system.md` theme control.
-- Do: ghost IconButton for menu, search, theme and the Drawer and SearchDialog close. Remove ThemeToggle; ThemeButton at every width (MoonStar light, Sun dark). Remove `--color-theme-icon`, `--color-theme-control`, `--switch-radius`, `--switch-thumb-inset`. Language link states and height. NavBar row 44px and `type-nav` by `:lang`; remove the `lang-bn` variant. TopBar is the header landmark; SiteHeader is a fragment; NavBar is a sibling nav. Nav and Drawer item অঞ্চলসমূহ. Drawer.search icon at the field end.
+- Read: `color-system.md` border token; `spacing-layout-system.md` §12 and P-4; `typography-system.md` §3.1; C-22.
+- Do: `--border` to `#CEC7BD` light, `#494D55` dark (DR-358). Add `--duration-slide: 450ms` and use it for every slide, fade and height change (DR-357 C2). P-4 gap is `--space-analysis-gap` 32 / 48 / 64px at 768 / 1024 / 1280; the column rule stays centered (DR-356). Replace the R4-03 ink tokens in `components.css` with the typography §3.1 tokens and values (DR-355 B1).
+- Tests: full Chromium run (token CSS changes).
 - Checks:
-  - Ghost buttons: 32 x 32 at 360 and 600, 36 x 36 from 768; icon 20 x 20; background transparent at rest, hover and pressed; icon color ink at rest, `interactive-hover` on hover, `interactive-pressed` when pressed; focus ring on Tab. Both themes.
-  - Edge icons: the menu icon start edge and the theme icon end edge sit on the page gutter at every width (`--top-bar-inset` 16px from 768).
-  - Filled slider buttons, the Drawer accordion caret and the social links stay 44 x 44.
-  - ThemeButton: one button at every width; no switch track or thumb in the DOM; MoonStar in light, Sun in dark; role switch with `aria-checked` true in dark; name ডার্ক থিম on Bangla pages and the English name on `/en`; the choice stays after reload (`fl-theme`).
-  - The four removed tokens and `lang-bn` do not occur in `src/` (grep test). No `border-radius` other than 0 in `src/` (CPT-05, no exception).
-  - Language link: height 32 under 768, 36 from 768; ink, hover and pressed colors; end group items share one center line.
-  - NavBar (1280, 1440): row 44px, 45px with the rule (the header test changes from 49 to 45); item 16px weight 600 on `/`, 14px weight 600 on `/en`.
-  - Landmarks: one `header` (TopBar); NavBar is a `nav` outside it; axe landmark rules pass.
-  - Nav item and Drawer item read অঞ্চলসমূহ on `/`.
-  - Drawer.search (360, 600): the icon is at the field end; the placeholder and the typed text start at the start edge.
+  - Computed `--border` is `#CEC7BD` light and `#494D55` dark.
+  - `450ms` occurs in `src/` only in the token definition (grep test); durations stay 450ms; reduced motion 0.
+  - P-4 computed gap 32px at 768, 48px at 1024, 64px at 1280 and 1440; column rule centered ±0.5px.
+  - Old ink token names do not occur in `src/`. Item rule space per C-22: per list median 16px ±1, each rule 16px ±3 (pixel scan; bn, en; 360, 768, 1280).
 
-### R4-02 Motion and sticky header
+### Checkpoint 3: site header
 
-- Goal: all motion is 450ms `ease-slide`; the header sticks and hides the NavBar as LAY-15 says.
-- Decisions: DR-346 B1, DR-349 (sticky header, logo scale, accordion), DR-348 IMP-75.
-- Read: `spacing-layout-system.md` §6, LAY-15, §12 motion tokens; C-17, C-18, C-19, C-20, C-15.
-- Do: one motion (450ms `ease-slide`) for the menu Sheet, the search Drawer, the region slider and the region tab fade. Sticky TopBar and NavBar; past the nav row the NavBar slides up under the TopBar and hides, and the logo scales down; the NavBar shows again only at the page top. Drawer accordion with the shadcn Collapsible, panel height and caret animated. Button colors stay 200ms.
+- Read: C-17, C-18 Surface, layout §6, LAY-15, LAY-17, typography §3 logo row and §7.
+- Do: header focusables get `scroll-margin-top: calc(-1 * var(--scroll-offset))` (DR-357 C1). NavBar band full width in the page color; items and rule in the shell (C4). Item list one row tall from the server HTML: `max-height: var(--nav-row-height)`, `overflow: hidden` (DR-359 IMP-90). Confirm the stuck logo uses only the transform and `typography.css` has no stuck font-size rule (DR-355 B4). Language link `type-ui-sm` 600 (DOC-44).
+- Test files: `header`, `site`, `page`.
 - Checks:
-  - Computed `transition-duration` (or animation duration) 450ms and timing `cubic-bezier(0.22, 1, 0.36, 1)` on the Sheet, the Drawer, the slider track, the region tab panel, the NavBar, the logo and the accordion panel and caret. Button color transitions stay 200ms.
-  - Reduced motion: each of the above has duration 0 and the end state shows at once.
-  - Sticky (1280, 1440): at scroll 0 the NavBar shows and `html` has no `data-bar-stuck`. Scroll to 46px or more: `data-bar-stuck` is set, the NavBar is off screen, `inert`, and not in the Tab order; the TopBar shows its 1px bottom rule; the logo is 24px. Scroll back to 10px: the NavBar stays hidden. Scroll to 0: it shows again.
-  - Under 1280: `data-bar-stuck` is set once the page scrolls; the rule shows; the logo is 24px (20px on phones).
-  - No layout shift: the bar height and the top of `main` are the same before and after the hide (CLS 0 in a scripted scroll).
-  - Anchors: `#hash` links stop below the bar with the NavBar hidden (`--scroll-offset`).
-  - Accordion: `aria-expanded` changes; the panel height animates from 0 to its content height; keyboard Enter and Space open and close it.
-  - Panels: open, close, Escape and focus trap still work with the keyboard after the motion change.
+  - Scroll to 600px, Shift+Tab into the header with a real key press (no `preventScroll`): `scrollY` does not change; the control is visible (360, 1280, 1440).
+  - NavBar (1280, 1440): band spans the viewport; first item and rule edges equal the shell edges ±0.5px.
+  - Hydration (1280, 1440; `/`, `/en`): NavBar height and the top of `main` are equal with JavaScript off and after hydration; CLS 0 at load; wrapped items are not visible and not in the Tab order.
+  - Stuck logo: font size unchanged; the transform gives 24px (20px on phones). Language link font matches `type-ui-sm` 600 for its `lang`.
 
-### R4-03 Lists and dividers
+### Checkpoint 4: Latest columns and the theme test
 
-- Goal: list rules, column rules and the Latest link follow C-22, C-03, C-06 and P-4.
-- Decisions: DR-350, DR-351.
-- Read: C-22 Divider, C-03 StoryList, C-06 OpinionList, C-10 MoreLink, `HeroSection.latest`; `spacing-layout-system.md` P-3, P-4 and the column gap.
-- Do: Divider.item space measured to the text ink (trim the line box). Dots 1px with a 2px gap. Divider.column-inset in P-4 from 768 and between the P-3 wrapper and rail from 1024, centered in the existing gap. OpinionList rule under the text column only; chip to list `space-section-title-after`. Latest MoreLink আরও দেখুন / See more to `/latest` (`/en/latest`).
-- Test files: `hero`, `analysis-opinion`, `featured`, `grouped`, `most-read`, `story-units`, `small-parts`, `page` (`tests/e2e/<name>.spec.ts`).
+- Read: C-03 `HeroSection.latest`, C-22 column-inset, C-10.
+- Do: Latest at 768 to 1023 stays CSS columns with a column break; add Divider.column-inset between the two columns, centered in the gap (DR-355 B3). Theme storage-event test waits until the second tab's theme button responds, then changes the theme; expected values stay (IMP-86).
+- Test files: `hero`, `small-parts`, the spec with the storage-event test.
 - Checks:
-  - Item rule space: on every list with Divider.item, the distance from the last ink row of the item above to the rule, and from the rule to the first ink row of the item below, is `space-list-item` (16px) ±1px. Screenshot pixel scan, Bangla and English, at 360, 768 and 1280.
-  - Dots: rule 1px tall; computed `background-image` is `repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 3px)`; both themes.
-  - Column rules: present in P-4 from 768 and in P-3 from 1024; absent below those widths and between category blocks. Width 1px, border color, centered in the gap ±0.5px, 16px from the top and the bottom. The computed column gap is the same as before the change.
-  - OpinionList: the rule start edge equals the text column start edge, not the quote mark; chip to the first item is 20px under 600 and 24px from 600.
-  - Latest MoreLink: text আরও দেখুন on `/`, See more on `/en`; `href` `/latest` and `/en/latest`; at the end edge below the list, also in the two-column Latest at 768 to 1023. (The page is M2; a 404 is expected.)
+  - Latest column rule present at 768 and 1000, absent at 767 and 1024; 1px, border color, centered ±0.5px, 16px from the top and the bottom. Column order 1 to 3, then 4 and 5 (LAY-14). MoreLink stays at the end edge below the list.
+  - Storage-event test passes with `--repeat-each=10` in Chromium.
 
-### R4-04 Words, focus and source order
+## R5-02 Real Safari pass, final check, pull request and merge
 
-- Goal: the copy, the focus moves and the markup order follow the decided sheets.
-- Decisions: DR-345 A1, A2, A6; DR-346 B3, B4; DR-348 DOC-38, DOC-39, DOC-40, IMP-78.
-- Read: §3.1 and §3.3 names; C-01, C-20, C-21, C-24, C-26; P-2 and P-3b in the layout spec.
-- Do: hero hidden h2 শীর্ষ খবর / Top stories; P-3b heading অঞ্চলসমূহ (own string); Footer logo `type-logo-sm`; footer year in Dhaka time; English poll heading Daily poll everywhere; after a vote focus moves to the poll h2 (`tabindex -1`); a vote with no choice does nothing; search focus to the panel, one Tab to the field, close button after the field in source; P-2 image first in the markup.
-- Test files: `hero`, `regions`, `grouped`, `header`, `footer`, `featured`, `story-units`, `site`, `page` (`tests/e2e/<name>.spec.ts`).
-- Checks:
-  - Hero h2 text শীর্ষ খবর / Top stories, visually hidden, in the heading outline. P-3b h2 reads অঞ্চলসমূহ; `regions.spec.ts` expects it (the test that pinned অঞ্চল changes).
-  - Footer logo computed font size 24px and class `type-logo-sm`.
-  - Footer year: unit test with the clock at 2026-12-31T18:30Z shows 2027, and at 2026-12-31T17:59Z shows 2026.
-  - "Today's poll" occurs nowhere in `src/` or the specs copy; `/en` poll h2 is Daily poll.
-  - Vote with the keyboard: after the vote `document.activeElement` is the poll h2; the results are in `role=status`. Vote button with no choice: no state change, focus stays on the button, no console error.
-  - Search: open it from the keyboard; focus is on the panel; one Tab reaches the field; the close button comes after the field in DOM order; Escape returns focus to the search button.
-  - P-2: the image element comes before the text in DOM order; the visual order is unchanged (bounding boxes as before).
-  - Story time script is 1.5 KB or less (bytes of the inline script in the built HTML).
+- Goal: the homepage works in real Safari, run 5 is in `main`, and the homepage is frozen. The merge needs tajmin's explicit go.
+- Decisions: DR-354 C3 (A11Y-24), DR-359 IMP-88.
 
-### R4-05 Safari pass, final check, pull request and merge
+### Step 1: real Safari pass
 
-- Goal: the run 4 changes work in real Safari, run 4 is reviewed and in `main`. The merge needs tajmin's explicit go.
-- Decisions: DR-345 A4, DR-346 B6 and B9, DR-341.
-- Do: run the full suite in WebKit and compare with the run 3 list (42). Give each new failure an ID. Check in real Safari on macOS and on iOS (device or Simulator): a failure that shows in Safari is a code fix; one that does not is a test fix. Record each result in `docs/webkit-failures.md`. Write the run 4 report. `git fetch origin main`; merge `origin/main` into the branch if it moved. Open one PR from `prototype-run-4` into `main` (asks tajmin). Merge with `gh pr merge --merge --delete-branch` on tajmin's go.
-- Real Safari checks (macOS and iOS, light and dark, Bangla and English):
-  - Poll vote with the keyboard and with VoiceOver: the vote works, focus goes to the h2, the result is read once (IMP-53, B3).
-  - VoiceOver reads the poll legend as the group name (IMP-80).
-  - `#hash` scroll in a production build (`pnpm build && pnpm start`): the target stops below the bar (IMP-76).
-  - Sticky header: the NavBar hide and logo scale run once, with no flicker on the overscroll bounce at the page top; reduced motion turns them off.
-  - Menu Sheet, search Drawer, region slider and accordion move at 450ms; keyboard and focus trap work.
-  - Dotted rules and column rules show at 1px; item rule space looks the same as in Chromium.
-  - The run 3 new WebKit failures (regions axe at 360, theme storage event across tabs, drawer and search keyboard) each have an ID and a result.
-- Done: `pnpm check` and `pnpm test:e2e:chromium` pass on the branch and on `main` after the merge; the WebKit and Safari results are in the report; the board is Done.
+- Do: full suite in WebKit; compare with the run 4 list. Real Safari on macOS and iOS (device or Simulator), light and dark, bn and en: the R4-05 checklist (11 items, `docs/run-4-report.md`) plus the R5-01 changes. A failure that shows in Safari is a code fix; one that does not is a test fix. IMP-88: if the second Latest column starts 1 to 3px low, round the item padding to whole pixels with CSS `round()` on the ink calc, in the `divider-item` utility only. Record results in `docs/webkit-failures.md`.
+- Checks: each Safari item has a result; A11Y-24 is closed or each open item has an ID.
+
+### Step 2: final check, pull request and merge
+
+- Do: full `pnpm test:e2e:chromium` and `pnpm check`. Write `docs/run-5-report.md`. `git fetch origin main`; merge `origin/main` into the branch if it moved. Open one PR from `production-run-5` into `main` (asks tajmin). Merge with `gh pr merge --merge --delete-branch` on tajmin's go.
+- Done: `pnpm check` and the full Chromium suite pass on the branch and on `main` after the merge (both runs in the log); Safari results in the report; board Done.
 
 ## Notes for later
 
-- Do not deploy. The preview (https://fact-lens-web-ashy.vercel.app/) is for compare only.
-- `/latest` and story links go to 404 until M2.
-- The canvas redraw (CMP-34, CMP-35), the 200% text report (A11Y-18), the newsletter and the other MVP pages come after run 4.
+- Do not deploy. The preview (https://fact-lens-web-ashy.vercel.app/) is for test and review only.
+- Run 6: test strategy TS-01 to TS-09 (DR-360), including the CI gate. Then F1 content contract (needs the IA phase 1 decisions).
+- `/latest` and story links go to 404 until F2 and F3.
+- Found in R5-01 checkpoint 1 (outside its scope, tajmin decides): "prototype" for the current repo in `AGENTS.md:47` ("Not in the prototype runs", DR-88), in `.github/workflows/claude-code-review.yml:44` ("homepage prototype (run 3, fix run)"), and in `src/` comments and strings, one shown to readers: `src/i18n/en.ts:32` "This prototype does not show search results."

@@ -2,9 +2,9 @@
 
 The new website frontend for **Fact Lens**, a Bangladesh-first international news publisher. The site publishes in Bangla and English.
 
-> Status: homepage prototype run 4 (Milestone 1): a short fix run. It puts the run 3 review and design change decisions (`DR-345` to `DR-351`) in the code. Run 3 merged on 16 October 2026 (PR #5), run 2 finished on 11 October and run 1 on 8 October 2026. Mock data only.
+> Status: production frontend, run 5 (M2 stage F0): a short fix run. It puts the run 4 review decisions (`DR-355` to `DR-359`) in the code. Run 4 merged on 17 October 2026 (PR #6, `7430d53`), run 3 on 16 October (PR #5), run 2 finished on 11 October and run 1 on 8 October 2026. Mock data only.
 >
-> Live preview: [fact-lens-web-ashy.vercel.app](https://fact-lens-web-ashy.vercel.app/) (Vercel). It is a prototype, not the production site.
+> Live preview: [fact-lens-web-ashy.vercel.app](https://fact-lens-web-ashy.vercel.app/) (Vercel). Test and review only; not the final hosting.
 
 ## Stack
 
@@ -45,4 +45,4 @@ This repository is built with Claude Code, under rules that humans and agents sh
 - [`.claude/`](.claude): permissions, hooks that block raw design values, skills (`/ticket`, `/accept`, `/verify`, `/check-rules`) and review subagents
 - [`docs/SPRINT.md`](docs/SPRINT.md): the tickets, each with a goal, acceptance criteria and the original prompt
 - [`docs/PROGRESS.md`](docs/PROGRESS.md): the build log
-- [`docs/prototype-findings.md`](docs/prototype-findings.md): findings and gaps from runs 1 to 3, with the decided fix for each
+- [`docs/prototype-findings.md`](docs/prototype-findings.md): findings and gaps from runs 1 to 4, with the decided fix for each

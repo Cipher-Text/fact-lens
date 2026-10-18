@@ -21,8 +21,9 @@ type AnalysisSectionProps = {
  * content sits in the shell, so it aligns with the page gutter. Two
  * equal columns from 768px, analysis first (left), opinion second; stacked below 768px.
  * No rail. Both columns align to the top and end where their content ends. Sparse (7.3):
- * when one column is empty, the other spans the shell. From 768px Divider.column-inset sits in
- * the middle of the column gap; the gap does not change (DR-351).
+ * when one column is empty, the other spans the shell. From 768px the two columns are
+ * --space-analysis-gap apart (32 / 48 / 64px, DR-356) and Divider.column-inset sits in the
+ * middle of the gap (DR-351).
  * A panel band takes the block values of the panel inset only, 40px under 600px and 48px
  * from 600px, and no inline inset (LAY-20, DR-224, DR-264). Space before and after the
  * section is margin outside the background, set by the page (LAY-12, DR-205).
@@ -49,7 +50,10 @@ export function AnalysisSection({
           data-columns
           className={cn(
             "grid grid-cols-1 items-start gap-x-(--grid-column-gap) gap-y-(--grid-row-gap)",
-            both && ["md:grid-cols-2", dividerColumn.split],
+            both && [
+              "md:grid-cols-2 md:gap-x-(--space-analysis-gap)",
+              dividerColumn.split,
+            ],
           )}
         >
           {analysis.length > 0 ? (

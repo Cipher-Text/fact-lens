@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { columnRule, tokenBackground } from "./rules";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
@@ -466,5 +467,63 @@ test.describe("Latest MoreLink (C-03, C-10, DR-350)", () => {
         }
       }
     });
+  }
+});
+
+// R5-01 checkpoint 4: Divider.column-inset between the two Latest columns at 768 to 1023
+// (C-03, C-22, DR-355). Column-first: 1 to 3, then 4 and 5 (DR-125, LAY-14).
+test.describe("Latest column rule (C-03, C-22, DR-355)", () => {
+  for (const p of PAGES) {
+    for (const theme of ["light", "dark"] as const) {
+      test(`${p.path} ${theme}: rule between the columns at 768 to 1023 only`, async ({
+        page,
+      }) => {
+        await setTheme(page, theme);
+        const list = "[data-latest] [data-story-list]";
+        for (const width of [767, 768, 1000, 1023, 1024]) {
+          await page.setViewportSize({ width, height: 900 });
+          await page.goto(p.path);
+          const rule = await columnRule(
+            page,
+            list,
+            `${list} > li:nth-child(1)`,
+            `${list} > li:nth-child(4)`,
+          );
+          if (width < 768 || width >= 1024) {
+            expect(rule.shown, `rule at ${width}`).toBe(false);
+            continue;
+          }
+          expect(rule.shown, `rule at ${width}`).toBe(true);
+          expect(rule.width).toBe(1);
+          expect(rule.color).toBe(
+            await tokenBackground(page, "--color-border"),
+          );
+          // The gap stays --grid-column-gap (24px at 768 to 1023, DR-300).
+          expect(rule.gap).toBe("24px");
+          expect(
+            Math.abs(rule.offCenter),
+            `center at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.top - 16),
+            `top at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.bottom - 16),
+            `bottom at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          // Column order: items 1 to 3 in the first column, 4 and 5 in the second.
+          const xs = await page
+            .locator(`${list} > li`)
+            .evaluateAll((items) =>
+              items.map((li) => Math.round(li.getBoundingClientRect().left)),
+            );
+          expect(xs.length).toBe(5);
+          expect(new Set(xs.slice(0, 3)).size).toBe(1);
+          expect(new Set(xs.slice(3)).size).toBe(1);
+          expect(xs[3]).toBeGreaterThan(xs[0]);
+        }
+      });
+    }
   }
 });

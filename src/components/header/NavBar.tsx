@@ -26,7 +26,7 @@ type Props = {
  * NavBar.rules: the row keeps a 1px rule at its bottom. This component sets
  * `data-bar-stuck` on <html> once the page has scrolled past the row (its height); the
  * TopBar reads it and shows its own bottom rule, and the logo scales down (DR-173, DR-287).
- * Then the row slides up under the TopBar (`nav-row-slide`, 450ms ease-slide) and is inert,
+ * Then the row slides up under the TopBar (`nav-row-slide`, --duration-slide ease-slide) and is inert,
  * so it leaves the tab order. It shows again only at the page top (DR-349). Under 1280px the
  * row is hidden and the bar sticks alone, so the bar is stuck as soon as the page has
  * scrolled (DR-348).
@@ -93,18 +93,21 @@ export function NavBar({ items, label }: Props) {
 
   return (
     // The band is full width in the page color, so the page does not show beside the shell
-    // while it scrolls under the pinned row. The shell holds the items and the rule (C-18).
+    // while it scrolls under the pinned row. The shell holds the items and the rule (C-18,
+    // DR-357). The list is one row tall from the server HTML (max-height, overflow hidden):
+    // items that wrap are cut off whole until `fit` hides them, so the page does not move at
+    // hydration (LAY-17 exception, DR-359, IMP-90).
     <nav
       ref={navRef}
       aria-label={label}
       inert={stuck}
-      className="nav-row-slide bg-background max-xl:hidden"
+      className="header-focus nav-row-slide bg-background max-xl:hidden"
       data-nav-row
     >
       <div className="shell border-b border-border" data-nav-shell>
         <ul
           ref={listRef}
-          className="flex min-h-(--nav-row-height) flex-wrap items-center justify-center gap-x-7"
+          className="flex max-h-(--nav-row-height) min-h-(--nav-row-height) flex-wrap items-center justify-center gap-x-7 overflow-hidden"
         >
           {items.map((item) => (
             <li key={item.id}>

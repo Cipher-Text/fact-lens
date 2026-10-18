@@ -11,8 +11,10 @@
   --container-medium: 37.5rem;
   --container-wide: 55rem;
 
-  /* Motion (DR-227): color changes 200ms; slides 450ms with ease-slide (duration-450 ease-slide) */
+  /* Motion (DR-227, DR-357): color changes 200ms; every slide, fade and height change uses
+     --duration-slide with ease-slide */
   --default-transition-duration: 200ms;
+  --duration-slide: 450ms;
   --ease-slide: cubic-bezier(0.22, 1, 0.36, 1);
 
   --breakpoint-sm: 37.5rem; /* 600px */
@@ -78,6 +80,7 @@
   :root {
     --grid-columns: 8;
     --grid-column-gap: 1.5rem;
+    --space-analysis-gap: 2rem;
     --space-page-start: 2rem;
     --space-section: 4rem;
     --space-section-compact: 2.5rem;
@@ -92,6 +95,7 @@
 @media (min-width: 64rem) {
   :root {
     --grid-columns: 12;
+    --space-analysis-gap: 3rem;
     --space-page-start: 2.5rem;
     --space-section: 5rem;
     --space-section-compact: 3rem;
@@ -107,6 +111,7 @@
 @media (min-width: 80rem) {
   :root {
     --grid-column-gap: 2rem;
+    --space-analysis-gap: 4rem;
     --ad-inset-w: 728px;
     --ad-inset-h: 90px;
     --ad-rail-w: 300px;
