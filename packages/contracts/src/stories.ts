@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { tiptapBodySchema } from './body';
+import { publicMediaSchema } from './media';
 import { contributorSchema, mediaAssetSchema, storyRevisionSchema, storySchema, storyTranslationSchema } from './editorial';
 import { idSchema, localeCodeSchema, slugSchema, timestampSchema } from './common';
 import { contributorRoles, storyStatuses } from './enums';
@@ -115,5 +116,7 @@ export const publicStorySchema = z.object({
   contributors: z.array(z.object({ contributor: contributorSchema, role: z.enum(contributorRoles) })),
   alternates: z.array(z.object({ locale: localeCodeSchema, slug: slugSchema })),
   corrections: z.array(z.object({ approvedAt: timestampSchema, notice: z.string() })),
+  /** The images the body refers to, with what a reader's page needs to show them. */
+  media: z.array(publicMediaSchema),
 });
 export type PublicStory = z.infer<typeof publicStorySchema>;

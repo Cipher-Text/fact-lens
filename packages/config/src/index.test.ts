@@ -23,7 +23,7 @@ describe('loadApiEnv', () => {
 
   it('requires OIDC settings in production only', () => {
     expect(() => loadApiEnv({ ...base, NODE_ENV: 'production' })).toThrow(/OIDC_ISSUER/);
-    const ok = loadApiEnv({ ...base, NODE_ENV: 'production', OIDC_ISSUER: 'https://idp.example.com', OIDC_AUDIENCE: 'fact-lens-api', INTERNAL_API_TOKEN: 'x'.repeat(32) });
+    const ok = loadApiEnv({ ...base, NODE_ENV: 'production', OIDC_ISSUER: 'https://idp.example.com', OIDC_AUDIENCE: 'fact-lens-api', INTERNAL_API_TOKEN: 'x'.repeat(32), STORAGE_DRIVER: 's3', S3_BUCKET: 'media', S3_ACCESS_KEY_ID: 'k', S3_SECRET_ACCESS_KEY: 's' });
     expect(ok.OIDC_REQUIRE_MFA).toBe(true);
     expect(loadApiEnv({ ...base, OIDC_REQUIRE_MFA: 'false' }).OIDC_REQUIRE_MFA).toBe(false);
   });
@@ -42,5 +42,16 @@ describe('loadApiEnv', () => {
     expect(loaded.OIDC_CLIENT_SECRET).toBeUndefined();
     expect(() => loadNewsroomEnv({ ...env, SESSION_SECRET: 'short' })).toThrow(/SESSION_SECRET/);
     expect(() => loadNewsroomEnv({ ...env, OIDC_ISSUER: 'nope' })).toThrow(/OIDC_ISSUER/);
+  });
+
+  it('keeps media on local disk in development and requires a real bucket in production', () => {
+    const dev = loadApiEnv(base);
+    expect(dev.STORAGE_DRIVER).toBe('fs');
+    expect(dev.MAX_UPLOAD_MB).toBe(10);
+    expect(() => loadApiEnv({ ...base, STORAGE_DRIVER: 's3' })).toThrow(/S3_BUCKET/);
+    expect(() => loadApiEnv({ ...base, MAX_UPLOAD_MB: '99' })).toThrow(/MAX_UPLOAD_MB/);
+    const prodBase = { ...base, NODE_ENV: 'production', OIDC_ISSUER: 'https://idp.example.com', OIDC_AUDIENCE: 'api', INTERNAL_API_TOKEN: 'x'.repeat(32) };
+    expect(() => loadApiEnv(prodBase)).toThrow(/STORAGE_DRIVER/);
+    expect(loadApiEnv({ ...prodBase, STORAGE_DRIVER: 's3', S3_BUCKET: 'm', S3_ACCESS_KEY_ID: 'k', S3_SECRET_ACCESS_KEY: 's', S3_FORCE_PATH_STYLE: 'true' }).S3_FORCE_PATH_STYLE).toBe(true);
   });
 });

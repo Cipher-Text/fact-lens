@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { tiptapBodySchema } from '@fact-lens/contracts';
 import { isAllowedLink } from '@/lib/editor/extensions';
+import { mediaFileUrl } from '@/lib/media';
 
 interface Mark { type: string; attrs?: { href?: string } }
 interface Node { type: string; attrs?: Record<string, unknown>; content?: Node[]; text?: string; marks?: Mark[] }
@@ -43,13 +44,16 @@ function renderNode(node: Node, key: number): ReactNode {
     case 'listItem': return <li key={key}>{children}</li>;
     case 'blockquote': return <blockquote key={key} className="my-2 border-l-4 border-line pl-4 text-muted">{children}</blockquote>;
     case 'horizontalRule': return <hr key={key} className="my-4 border-line" />;
-    case 'image':
+    case 'image': {
+      const alt = typeof node.attrs?.alt === 'string' ? node.attrs.alt : '';
       return (
-        <figure key={key} className="image-reference my-2" aria-label="Image">
-          Image{node.attrs?.alt ? `: ${String(node.attrs.alt)}` : ''}
-          <span className="ml-2 text-xs text-muted">(shown once the media library exists)</span>
+        <figure key={key} className="my-3">
+          {/* The id is a validated UUID and the path is our own proxy, so the browser never loads an outside address. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={mediaFileUrl(String(node.attrs?.mediaAssetId), 'card')} alt={alt} loading="lazy" className="max-h-96 rounded border border-line" />
         </figure>
       );
+    }
     default: return null;
   }
 }

@@ -488,6 +488,7 @@ export class StoriesService {
            JOIN story_revision r ON r.id = c.revision_id
           WHERE c.story_id = $1 AND r.revision_no <= $3 ORDER BY c.approved_at`, [row.story_id, locale, m.revision_no]),
     ]);
+    const media = await this.publicMedia(bodyMediaAssetIds(m.body));
     return {
       story: {
         id: m.id, locale, slug, title: m.title, dek: m.dek, body: m.body, seoTitle: m.seo_title, seoDescription: m.seo_description,
@@ -497,8 +498,30 @@ export class StoriesService {
         })),
         alternates: alternates.rows.map((a) => ({ locale: a.locale, slug: a.slug })),
         corrections: corrections.rows.map((c) => ({ approvedAt: c.approved_at.toISOString(), notice: c.notice })),
+        media,
       },
     };
+  }
+
+  /** The images a published body shows, if their rights still allow the web. Rights are checked on every read. */
+  private async publicMedia(ids: string[]): Promise<PublicStory['media']> {
+    if (ids.length === 0) return [];
+    const { rows } = await this.pool.query(
+      `SELECT id, width, height, alt_text, attribution, license FROM media_asset
+        WHERE id = ANY ($1::uuid[]) AND processing_state = 'ready' AND 'web' = ANY (permitted_channels)
+          AND (rights_expires_at IS NULL OR rights_expires_at > now())`,
+      [ids],
+    );
+    const byId = new Map(rows.map((r) => [r.id as string, r]));
+    return ids.flatMap((id) => {
+      const r = byId.get(id);
+      return r
+        ? [{
+            id, width: r.width, height: r.height, alt: r.alt_text, attribution: r.attribution, license: r.license,
+            urls: { thumb: `/public/media/${id}/thumb`, card: `/public/media/${id}/card`, hero: `/public/media/${id}/hero` },
+          }]
+        : [];
+    });
   }
 
   // ---------------------------------------------------------------- helpers
@@ -584,14 +607,18 @@ export class StoriesService {
       db.query('SELECT locale, title, slug, body, translation_status FROM story_translation WHERE revision_id = $1 ORDER BY locale', [revision.id]),
       db.query<{ n: number }>(`SELECT count(*)::int AS n FROM story_contributor WHERE story_id = $1 AND role = 'author'`, [story.id]),
       db.query(
-        `SELECT m.id, m.license, m.attribution, m.processing_state FROM revision_media rm JOIN media_asset m ON m.id = rm.media_asset_id WHERE rm.revision_id = $1`,
+        `SELECT m.id, m.license, m.attribution, m.processing_state, m.rights_expires_at, m.permitted_channels
+           FROM revision_media rm JOIN media_asset m ON m.id = rm.media_asset_id WHERE rm.revision_id = $1`,
         [revision.id]),
     ]);
     return {
       deskId: story.desk_id,
       authorCount: authors.rows[0]!.n,
       translations: translations.rows.map((t) => ({ locale: t.locale, title: t.title, slug: t.slug, body: t.body, translationStatus: t.translation_status })),
-      media: media.rows.map((m) => ({ id: m.id, license: m.license, attribution: m.attribution, processingState: m.processing_state })),
+      media: media.rows.map((m) => ({
+        id: m.id, license: m.license, attribution: m.attribution, processingState: m.processing_state,
+        rightsExpiresAt: m.rights_expires_at, permittedChannels: m.permitted_channels,
+      })),
     };
   }
 

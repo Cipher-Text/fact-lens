@@ -6,6 +6,7 @@ import type { Editor } from '@tiptap/react';
 import { tiptapBodySchema, toCanonicalBody } from '@fact-lens/contracts';
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
+import { MediaPicker } from './MediaParts';
 import { RichTextEditor } from './RichTextEditor';
 import { buttonClass, Field, inputClass, Notice } from './ui';
 
@@ -58,6 +59,7 @@ export function TranslationEditor({ storyId, translation }: { storyId: string; t
   const router = useRouter();
   const [editor, setEditor] = useState<Editor | null>(null);
   const [dirty, setDirty] = useState(false);
+  const [picking, setPicking] = useState(false);
   const [message, setMessage] = useState<{ kind: 'error' | 'ok'; text: string; issues: string[] } | null>(null);
   const [pending, start] = useTransition();
   const onEditor = useCallback((e: Editor | null) => setEditor(e), []);
@@ -97,6 +99,7 @@ export function TranslationEditor({ storyId, translation }: { storyId: string; t
   }
 
   return (
+    <>
     <form onSubmit={submitWith((form) => save(form))} onChange={() => setDirty(true)} className="space-y-3" lang={translation.locale}>
       <Field label="Headline"><input name="title" defaultValue={translation.title} required maxLength={300} className={inputClass} /></Field>
       <Field label="Standfirst"><textarea name="dek" defaultValue={translation.dek ?? ''} maxLength={600} rows={2} className={inputClass} /></Field>
@@ -105,7 +108,7 @@ export function TranslationEditor({ storyId, translation }: { storyId: string; t
       </Field>
       <div>
         <span className="mb-1 block text-sm font-medium" id={`text-${translation.locale}`}>Text</span>
-        <RichTextEditor initialContent={translation.body} lang={translation.locale} label={`Story text (${translation.localeName})`} onEditor={onEditor} onChange={markDirty} />
+        <RichTextEditor initialContent={translation.body} lang={translation.locale} label={`Story text (${translation.localeName})`} onEditor={onEditor} onChange={markDirty} onPickImage={() => setPicking(true)} />
       </div>
       <details className="text-sm">
         <summary className="cursor-pointer text-muted">Search and sharing text</summary>
@@ -122,5 +125,12 @@ export function TranslationEditor({ storyId, translation }: { storyId: string; t
         {dirty && !pending ? <span className="text-xs text-muted">Unsaved changes</span> : null}
       </div>
     </form>
+    {/* Outside the form on purpose: the picker has its own buttons and fields, and Enter in them must not save the story. */}
+    <MediaPicker open={picking} onClose={() => setPicking(false)}
+      onChoose={({ mediaAssetId, alt }) => {
+        editor?.chain().focus().insertContent({ type: 'image', attrs: { mediaAssetId, alt } }).run();
+        setPicking(false);
+      }} />
+    </>
   );
 }

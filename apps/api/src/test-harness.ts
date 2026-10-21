@@ -12,6 +12,9 @@ import { createTokenVerifier, TOKEN_VERIFIER } from './auth/token-verifier';
 import { PG_POOL } from './db/pool';
 import { createTestDatabase } from './db/test-db';
 import { seedReferenceData } from './seed/seed';
+import { MediaController } from './media/media.controller';
+import { MEDIA_OPTIONS, MediaService } from './media/media.service';
+import { MemoryStorage, OBJECT_STORAGE } from './media/storage';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { AssignmentsService } from './stories/assignments.service';
@@ -39,7 +42,8 @@ export interface CallOptions {
 /** A real Nest app on a migrated, seeded throwaway database, signing its own test tokens. */
 export const TEST_INTERNAL_TOKEN = 'test-internal-token-0123456789abcdef';
 
-export async function startTestApp(adminUrl: string, opts: { internalToken?: string | null } = {}) {
+export async function startTestApp(adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number } = {}) {
+  const storage = new MemoryStorage();
   const db = await createTestDatabase(adminUrl);
   await seedReferenceData(db.pool);
 
@@ -52,11 +56,13 @@ export async function startTestApp(adminUrl: string, opts: { internalToken?: str
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController],
+    controllers: [StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController, MediaController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
-      StoriesService, CommentsService, AssignmentsService, SourcesService,
+      StoriesService, CommentsService, AssignmentsService, SourcesService, MediaService,
+      { provide: OBJECT_STORAGE, useValue: storage },
+      { provide: MEDIA_OPTIONS, useValue: { maxBytes: opts.maxUploadBytes ?? 10 * 1024 * 1024 } },
       { provide: TOKEN_VERIFIER, useValue: verifier },
       { provide: CAPABILITY_STORE, useValue: new PgCapabilityStore(db.pool) },
       { provide: AUTH_OPTIONS, useValue: { rolesClaim: 'roles', requireMfa: true } },
@@ -75,11 +81,27 @@ export async function startTestApp(adminUrl: string, opts: { internalToken?: str
     });
     return { status: res.statusCode, body: (res.body ? res.json() : null) as any, headers: res.headers };
   };
+  /** Posts the image itself as the body, as the newsroom does. */
+  const upload = async (
+    body: Buffer, { contentType = 'image/jpeg', filename, roles = ['reporter'], sub = 'user-1', mfa = true }: { contentType?: string; filename?: string; roles?: string[]; sub?: string; mfa?: boolean } = {},
+  ) => {
+    const res = await app.inject({
+      method: 'POST', url: `/media${filename ? `?filename=${encodeURIComponent(filename)}` : ''}`, payload: body,
+      headers: { authorization: `Bearer ${await sign(roles, sub, mfa)}`, 'content-type': contentType },
+    });
+    return { status: res.statusCode, body: (res.body ? res.json() : null) as any, headers: res.headers };
+  };
+  /** Raw bytes of a newsroom GET (an image), not JSON. */
+  const fetchFile = async (url: string, roles = ['reporter']) => {
+    const res = await app.inject({ method: 'GET', url, headers: { authorization: `Bearer ${await sign(roles, 'user-1', true)}` } });
+    return { status: res.statusCode, bytes: res.rawPayload, headers: res.headers };
+  };
   const anonymous = (method: 'GET' | 'POST', url: string, body?: unknown) =>
     app.inject({ method, url, payload: body as object | undefined });
 
   return {
-    db, app, call, anonymous,
+    db, app, call, anonymous, upload, fetchFile, storage,
+    token: (roles: string[], sub = 'user-1', mfa = true) => sign(roles, sub, mfa),
     async close() {
       await app.close();
       await db.drop();

@@ -11,7 +11,7 @@ export const navItems: readonly NavItem[] = [
   { href: '/', label: 'Desk queue', anyOf: editorialCapabilities },
   { href: '/stories/new', label: 'New story', anyOf: ['story.edit'] },
   { href: '/inbox', label: 'Source inbox', anyOf: ['story.edit', 'story.review'] },
-  { href: '/media', label: 'Media library', anyOf: ['media.manage'] },
+  { href: '/media', label: 'Media library', anyOf: ['media.manage', 'story.edit'] },
   { href: '/calendar', label: 'Publishing calendar', anyOf: ['story.publish'] },
   { href: '/config', label: 'Configuration', anyOf: ['config.manage'] },
 ];

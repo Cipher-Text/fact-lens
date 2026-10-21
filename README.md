@@ -21,7 +21,7 @@ pnpm install
 pnpm dev:web        # http://localhost:3000 (Bangla), /en (English)
 pnpm infra:up       # needs Docker
 cp apps/api/.env.example apps/api/.env
-pnpm dev:api        # http://localhost:4000/health/live
+pnpm dev:api        # http://localhost:4000/health/live (uploads go to .data/media; set STORAGE_DRIVER=s3 for MinIO or R2)
 pnpm dev:worker     # needs apps/worker/.env and the API running; health at :4100/health
 pnpm dev:idp        # fake sign-in provider on :4300 (development only)
 pnpm dev:newsroom   # http://localhost:3100; copy apps/newsroom/.env.example to .env first

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { MAX_MEDIA_BYTES, mediaUploadTypes } from '@fact-lens/contracts';
 import { isTrustedRequest } from '@/lib/csrf';
 import { getSession } from '@/lib/current';
 import { getEnv } from '@/lib/env';
@@ -22,9 +23,20 @@ async function handle(request: NextRequest, context: { params: Promise<{ path: s
   const session = await getSession();
   if (!session) return problem(401, 'unauthorized', 'Sign in again');
 
-  let body: string | undefined;
-  if (request.method !== 'GET') {
-    if (request.headers.get('content-type')?.split(';')[0]?.trim() !== 'application/json') return problem(415, 'unsupported_media_type', 'JSON only');
+  // Everything is JSON except an image upload, which is the image's own bytes.
+  const contentType = request.headers.get('content-type')?.split(';')[0]?.trim() ?? '';
+  const isUpload = request.method === 'POST' && path.length === 1 && path[0] === 'media';
+  let body: string | Uint8Array | undefined;
+  let upstreamType = 'application/json';
+  if (isUpload) {
+    if (!(mediaUploadTypes as readonly string[]).includes(contentType)) return problem(415, 'unsupported_media_type', 'Upload a JPEG, PNG or WebP image');
+    const declared = Number(request.headers.get('content-length') ?? 0);
+    if (declared > MAX_MEDIA_BYTES) return problem(413, 'payload_too_large', 'The image is too large');
+    body = new Uint8Array(await request.arrayBuffer());
+    if (body.length > MAX_MEDIA_BYTES) return problem(413, 'payload_too_large', 'The image is too large');
+    upstreamType = contentType;
+  } else if (request.method !== 'GET') {
+    if (contentType !== 'application/json') return problem(415, 'unsupported_media_type', 'JSON only');
     body = await request.text();
     if (body.length > MAX_BODY) return problem(413, 'payload_too_large', 'Request too large');
   }
@@ -35,10 +47,10 @@ async function handle(request: NextRequest, context: { params: Promise<{ path: s
       method: request.method,
       headers: {
         authorization: `Bearer ${session.accessToken}`, accept: 'application/json',
-        ...(body !== undefined ? { 'content-type': 'application/json' } : {}),
+        ...(body !== undefined ? { 'content-type': upstreamType } : {}),
         'x-request-id': crypto.randomUUID(),
       },
-      body, redirect: 'manual', cache: 'no-store', signal: AbortSignal.timeout(20_000),
+      body: body as BodyInit | undefined, redirect: 'manual', cache: 'no-store', signal: AbortSignal.timeout(20_000),
     });
   } catch {
     return problem(502, 'bad_gateway', 'The API did not answer');

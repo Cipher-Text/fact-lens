@@ -24,7 +24,7 @@ function ToolButton({ label, active, disabled, onClick, children }: {
   );
 }
 
-function Toolbar({ editor }: { editor: Editor }) {
+function Toolbar({ editor, onImage }: { editor: Editor; onImage: () => void }) {
   const [linkOpen, setLinkOpen] = useState(false);
   const [link, setLink] = useState('');
   const [linkError, setLinkError] = useState(false);
@@ -75,6 +75,7 @@ function Toolbar({ editor }: { editor: Editor }) {
         <ToolButton label="Numbered list" active={s.ordered} onClick={() => run().toggleOrderedList().run()}>1. List</ToolButton>
         <ToolButton label="Quote" active={s.quote} onClick={() => run().toggleBlockquote().run()}>“ ”</ToolButton>
         <ToolButton label="Divider" onClick={() => run().setHorizontalRule().run()}>―</ToolButton>
+        <ToolButton label="Insert image from the library" onClick={onImage}>Image</ToolButton>
         <span aria-hidden className="mx-1 h-5 w-px bg-line" />
         <ToolButton label="Undo" disabled={!s.canUndo} onClick={() => run().undo().run()}>↶</ToolButton>
         <ToolButton label="Redo" disabled={!s.canRedo} onClick={() => run().redo().run()}>↷</ToolButton>
@@ -98,8 +99,10 @@ function Toolbar({ editor }: { editor: Editor }) {
  * The story text editor. It can only make what the body contract allows. The parent receives the
  * editor so it can read the document when the form is saved, and `onChange` when it is edited.
  */
-export function RichTextEditor({ initialContent, lang, label, onEditor, onChange }: {
+export function RichTextEditor({ initialContent, lang, label, onEditor, onChange, onPickImage }: {
   initialContent: unknown; lang: string; label: string; onEditor: (editor: Editor | null) => void; onChange: () => void;
+  /** Opens the library picker. It lives outside the form, so it cannot submit the story. */
+  onPickImage: () => void;
 }) {
   const editor = useEditor({
     extensions: editorExtensions,
@@ -117,7 +120,7 @@ export function RichTextEditor({ initialContent, lang, label, onEditor, onChange
   if (!editor) return <div className="min-h-48 rounded border border-line bg-bg" aria-busy="true" />;
   return (
     <div className="rich-editor">
-      <Toolbar editor={editor} />
+      <Toolbar editor={editor} onImage={onPickImage} />
       <EditorContent editor={editor} />
     </div>
   );

@@ -174,3 +174,17 @@ export function bodyMediaAssetIds(body: unknown): string[] {
   visit(body);
   return [...ids];
 }
+
+/** Image nodes with their alt text, in document order. */
+export function bodyImages(body: unknown): Array<{ mediaAssetId: string; alt: string | null }> {
+  const out: Array<{ mediaAssetId: string; alt: string | null }> = [];
+  const visit = (n: unknown) => {
+    if (!isObj(n)) return;
+    if (n.type === 'image' && isObj(n.attrs) && typeof n.attrs.mediaAssetId === 'string') {
+      out.push({ mediaAssetId: n.attrs.mediaAssetId, alt: typeof n.attrs.alt === 'string' && n.attrs.alt.trim() ? n.attrs.alt : null });
+    }
+    if (Array.isArray(n.content)) n.content.forEach(visit);
+  };
+  visit(body);
+  return out;
+}

@@ -60,10 +60,38 @@ describe('readiness rules', () => {
     const s: RevisionSnapshot = {
       ...ready,
       translations: [{ ...ready.translations[0]!, translationStatus: 'machine_draft' }],
-      media: [{ id: 'm1', license: null, attribution: null, processingState: 'ready' }, { id: 'm2', license: 'CC-BY', attribution: null, processingState: 'pending' }],
+      media: [{ id: 'm1', license: null, attribution: null, processingState: 'ready', rightsExpiresAt: null, permittedChannels: ['web'] }, { id: 'm2', license: 'CC-BY', attribution: null, processingState: 'pending', rightsExpiresAt: null, permittedChannels: ['web'] }],
     };
     expect(reviewIssues(s)).toEqual([]);
     expect(publishIssues(s)).toEqual(['en: machine draft needs human review first.', 'Media m1: record a license or attribution.', 'Media m2: still pending.']);
+  });
+});
+
+describe('image rules', () => {
+  const id = '0b6c9a52-6f0c-4f3e-9a0c-7d1a2f6d5e11';
+  const withImage = (alt?: string): RevisionSnapshot => ({
+    ...ready,
+    translations: [{ ...ready.translations[0]!, body: { type: 'doc', content: [
+      { type: 'paragraph', content: [{ type: 'text', text: 'Hello' }] },
+      { type: 'image', attrs: { mediaAssetId: id, ...(alt !== undefined ? { alt } : {}) } },
+    ] } }],
+  });
+  const media = (over: Partial<RevisionSnapshot['media'][number]> = {}): RevisionSnapshot['media'][number] =>
+    ({ id, license: 'CC BY 4.0', attribution: null, processingState: 'ready', rightsExpiresAt: null, permittedChannels: ['web'], ...over });
+
+  it('asks for alt text on every image, before review', () => {
+    expect(reviewIssues(withImage())).toEqual(['en: add alt text to every image.']);
+    expect(reviewIssues(withImage('   '))).toEqual(['en: add alt text to every image.']);
+    expect(reviewIssues(withImage('A river bank'))).toEqual([]);
+  });
+
+  it('blocks publishing on expired rights and on assets not cleared for the web', () => {
+    const now = new Date('2026-10-21T00:00:00Z');
+    const base = withImage('A river bank');
+    expect(publishIssues({ ...base, media: [media()] }, now)).toEqual([]);
+    expect(publishIssues({ ...base, media: [media({ rightsExpiresAt: new Date('2026-10-20T00:00:00Z') })] }, now)).toEqual([`Media ${id}: rights have expired.`]);
+    expect(publishIssues({ ...base, media: [media({ rightsExpiresAt: new Date('2026-11-01T00:00:00Z') })] }, now)).toEqual([]);
+    expect(publishIssues({ ...base, media: [media({ permittedChannels: ['social'] })] }, now)).toEqual([`Media ${id}: not cleared for the web.`]);
   });
 });
 

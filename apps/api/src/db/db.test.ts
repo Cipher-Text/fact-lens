@@ -258,7 +258,7 @@ describe.skipIf(!adminUrl)('database schema', () => {
 
     const media = (key: string) =>
       pool.query(
-        `INSERT INTO media_asset (object_key, mime_type, byte_size, sha256) VALUES ($1, 'image/jpeg', 10, 'abc') RETURNING id`,
+        `INSERT INTO media_asset (object_key, mime_type, byte_size, sha256) VALUES ($1, 'image/jpeg', 10, md5(random()::text)) RETURNING id`,
         [key],
       );
     const photo = await media('photo.jpg');
@@ -288,7 +288,7 @@ describe.skipIf(!adminUrl)('database schema', () => {
         [`pl-${randomBytes(3).toString('hex')}`, allowed],
       );
       const media = await pool.query(
-        `INSERT INTO media_asset (object_key, mime_type, byte_size, sha256) VALUES ($1, 'image/png', 1, 'x') RETURNING id`,
+        `INSERT INTO media_asset (object_key, mime_type, byte_size, sha256) VALUES ($1, 'image/png', 1, md5(random()::text)) RETURNING id`,
         [`ad-${randomBytes(3).toString('hex')}.png`],
       );
       return { campaign: camp.rows[0].id as string, placement: place.rows[0].id as string, media: media.rows[0].id as string };
@@ -446,6 +446,22 @@ describe.skipIf(!adminUrl)('database schema', () => {
       if (r.key === 'rate_limit.search') continue; // edited by the previous test
       expect(() => c.parseConfigValue(r.key, r.value), r.key).not.toThrow();
     }
+  });
+
+  it('keeps one media asset per checksum', async () => {
+    const ins = (key: string) =>
+      pool.query(`INSERT INTO media_asset (object_key, mime_type, byte_size, sha256) VALUES ($1, 'image/png', 1, 'same-checksum')`, [key]);
+    await ins('originals/a.png');
+    await expectCode(ins('originals/b.png'), '23505');
+  });
+
+  it('limits media rights fields', async () => {
+    const ins = (extra: string, value: unknown) =>
+      pool.query(`INSERT INTO media_asset (object_key, mime_type, byte_size, sha256, ${extra}) VALUES ($1, 'image/png', 1, md5(random()::text), $2)`, [`originals/${extra}-${Math.random()}.png`, value]);
+    await expectCode(ins('source_url', 'javascript:alert(1)'), '23514');
+    await expectCode(ins('permitted_channels', ['web', 'fax']), '23514');
+    await ins('permitted_channels', ['web', 'print']);
+    await expectCode(ins('alt_text', 'a'.repeat(501)), '23514');
   });
 
   describe('withTransaction', () => {

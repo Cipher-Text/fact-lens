@@ -41,10 +41,17 @@ describe('RichBody', () => {
     expect(bad).not.toContain('javascript:');
   });
 
-  it('shows an image as a marker, never as an image from a URL', () => {
-    const out = html(doc({ type: 'image', attrs: { mediaAssetId: id, alt: 'River' } }));
-    expect(out).toContain('Image: River');
-    expect(out).not.toContain('<img');
+  it('shows an image from the newsroom proxy by id, with its alt text', () => {
+    const out = html(doc({ type: 'image', attrs: { mediaAssetId: id, alt: 'River <b>bank</b>' } }));
+    expect(out).toContain(`src="/api/media/${id}/file?variant=card"`);
+    expect(out).toContain('alt="River &lt;b&gt;bank&lt;/b&gt;"');
+    expect(out).toContain('loading="lazy"');
+  });
+
+  it('never loads an image from an address in the body', () => {
+    expect(html(doc({ type: 'image', attrs: { src: 'https://evil.example.com/x.png', mediaAssetId: id } }))).toContain('cannot be shown');
+    expect(html(doc({ type: 'image', attrs: { mediaAssetId: 'https://evil.example.com/x.png' } }))).toContain('cannot be shown');
+    expect(html(doc({ type: 'image', attrs: { mediaAssetId: id } }))).not.toContain('evil');
   });
 
   it('refuses a body that fails the contract, and says when there is no text', () => {

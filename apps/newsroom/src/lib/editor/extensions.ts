@@ -14,8 +14,8 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export const isAllowedLink = (url: string) => url.length <= 2048 && /^(https?:\/\/|mailto:)/i.test(url.trim());
 
 /**
- * An image is a reference to a media asset, not a URL. The media library does not exist yet, so
- * the editor cannot insert one, but a body that already has them keeps them, shown as a marker.
+ * An image is a reference to a media asset, never a URL; the picture is loaded from the media
+ * library by id. The toolbar inserts one from the library picker.
  */
 export const ImageReference = Node.create({
   name: 'image',
@@ -36,19 +36,17 @@ export const ImageReference = Node.create({
     };
   },
   parseHTML() {
-    return [{ tag: 'div[data-media-asset-id]' }];
+    return [{ tag: 'figure[data-media-asset-id]' }];
   },
   renderHTML({ node, HTMLAttributes }) {
     const id = String(node.attrs.mediaAssetId ?? '');
+    const alt = typeof node.attrs.alt === 'string' ? node.attrs.alt : '';
     return [
-      'div',
-      mergeAttributes(HTMLAttributes, {
-        'data-media-asset-id': id,
-        'data-alt': node.attrs.alt ?? undefined,
-        contenteditable: 'false',
-        class: 'image-reference',
-      }),
-      `Image${node.attrs.alt ? `: ${node.attrs.alt}` : ''} (${id.slice(0, 8)})`,
+      'figure',
+      mergeAttributes(HTMLAttributes, { 'data-media-asset-id': id, 'data-alt': alt || undefined, contenteditable: 'false', class: 'editor-image' }),
+      // The picture comes through the newsroom proxy, so only a person who is signed in can load it.
+      ['img', { src: UUID.test(id) ? `/api/media/${id}/file?variant=card` : '', alt, loading: 'lazy' }],
+      ['figcaption', {}, alt ? `Alt text: ${alt}` : 'No alt text yet. Add it before review.'],
     ];
   },
 });

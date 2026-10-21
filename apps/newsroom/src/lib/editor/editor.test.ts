@@ -80,3 +80,19 @@ describe('link policy', () => {
     }
   });
 });
+
+describe('image display in the editor', () => {
+  it('shows the picture from the newsroom proxy by id, never from an address in the body', () => {
+    const node = schema.nodeFromJSON(doc({ type: 'image', attrs: { mediaAssetId: id, alt: 'River' } })).firstChild!;
+    const [tag, attrs, img, caption] = node.type.spec.toDOM!(node) as unknown as [string, Record<string, string>, [string, Record<string, string>], [string, object, string]];
+    expect(tag).toBe('figure');
+    expect(attrs['data-media-asset-id']).toBe(id);
+    expect(img[1]).toMatchObject({ src: `/api/media/${id}/file?variant=card`, alt: 'River' });
+    expect(caption[2]).toContain('River');
+  });
+  it('reminds the writer when alt text is missing', () => {
+    const node = schema.nodeFromJSON(doc({ type: 'image', attrs: { mediaAssetId: id } })).firstChild!;
+    const out = node.type.spec.toDOM!(node) as unknown as unknown[];
+    expect((out[3] as [string, object, string])[2]).toContain('No alt text');
+  });
+});

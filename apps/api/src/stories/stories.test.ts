@@ -138,7 +138,7 @@ describe.skipIf(!adminUrl)('stories (database)', () => {
 
     const unknownImage = { type: 'doc', content: [{ type: 'image', attrs: { mediaAssetId: '0b6c9a52-6f0c-4f3e-9a0c-7d1a2f6d5e11' } }] };
     expect((await save(2, unknownImage)).status).toBe(400);
-    const media = await db.pool.query(`INSERT INTO media_asset (object_key, mime_type, byte_size, sha256) VALUES ('img.png', 'image/png', 1, 'x') RETURNING id`);
+    const media = await db.pool.query(`INSERT INTO media_asset (object_key, mime_type, byte_size, sha256) VALUES ('img.png', 'image/png', 1, md5(random()::text)) RETURNING id`);
     const withImage = await save(2, { type: 'doc', content: [{ type: 'image', attrs: { mediaAssetId: media.rows[0].id } }] });
     expect(withImage.status).toBe(200);
     expect(withImage.body.media).toHaveLength(1);

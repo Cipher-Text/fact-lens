@@ -3,6 +3,9 @@ import { loadApiEnv } from '@fact-lens/config';
 import { AuthModule } from './auth/auth.module';
 import { MeController } from './auth/me.controller';
 import { FeatureFlagsController } from './config/feature-flags.controller';
+import { MediaController } from './media/media.controller';
+import { MEDIA_OPTIONS, MediaService } from './media/media.service';
+import { createStorage, OBJECT_STORAGE } from './media/storage';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { AssignmentsService } from './stories/assignments.service';
@@ -20,9 +23,12 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [HealthController, MeController, FeatureFlagsController, StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController],
+  controllers: [HealthController, MeController, FeatureFlagsController, StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController, MediaController],
   providers: [
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
+    { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },
+    { provide: MEDIA_OPTIONS, useFactory: () => ({ maxBytes: loadApiEnv().MAX_UPLOAD_MB * 1024 * 1024 }) },
+    MediaService,
     StoriesService,
     CommentsService,
     AssignmentsService,

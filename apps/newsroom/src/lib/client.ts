@@ -1,6 +1,6 @@
 'use client';
 
-export type ApiResult<T> = { ok: true; data: T } | { ok: false; status: number; message: string; issues: string[]; reason?: string };
+export type ApiResult<T> = { ok: true; status: number; data: T } | { ok: false; status: number; message: string; issues: string[]; reason?: string };
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 interface ErrorBody { error?: { message?: string; details?: { issues?: unknown[]; reason?: string } } }
@@ -18,12 +18,21 @@ function describeIssue(issue: unknown): string {
 
 /** Calls the newsroom's own `/api` proxy and turns the API's error envelope into something showable. */
 export async function bff<T = unknown>(method: Method, path: string, body?: unknown): Promise<ApiResult<T>> {
+  return send<T>(method, path, body === undefined ? undefined : { type: 'application/json', body: JSON.stringify(body) });
+}
+
+/** Uploads an image file as its own bytes. The server reads the type from the bytes, not from this label. */
+export async function bffUpload<T = unknown>(file: File): Promise<ApiResult<T>> {
+  return send<T>('POST', `media?filename=${encodeURIComponent(file.name)}`, { type: file.type, body: file });
+}
+
+async function send<T>(method: Method, path: string, payload?: { type: string; body: BodyInit }): Promise<ApiResult<T>> {
   let res: Response;
   try {
     res = await fetch(`/api/${path.replace(/^\//, '')}`, {
       method,
-      headers: body === undefined ? undefined : { 'content-type': 'application/json' },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      headers: payload ? { 'content-type': payload.type } : undefined,
+      body: payload?.body,
       cache: 'no-store',
     });
   } catch {
@@ -36,7 +45,7 @@ export async function bff<T = unknown>(method: Method, path: string, body?: unkn
     return { ok: false, status: 401, message: 'Signing you in again…', issues: [] };
   }
   const json: unknown = await res.json().catch(() => null);
-  if (res.ok) return { ok: true, data: json as T };
+  if (res.ok) return { ok: true, status: res.status, data: json as T };
   const { error } = (json ?? {}) as ErrorBody;
   const raw = Array.isArray(error?.details?.issues) ? error.details.issues : [];
   return {

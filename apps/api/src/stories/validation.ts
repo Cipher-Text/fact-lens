@@ -1,4 +1,4 @@
-import { bodyPlainText } from '@fact-lens/contracts';
+import { bodyImages, bodyPlainText } from '@fact-lens/contracts';
 
 /** Facts about a revision that the readiness rules look at. Gathered by the service, judged here. */
 export interface RevisionSnapshot {
@@ -11,7 +11,14 @@ export interface RevisionSnapshot {
     body: unknown;
     translationStatus: string;
   }>;
-  media: Array<{ id: string; license: string | null; attribution: string | null; processingState: string }>;
+  media: Array<{
+    id: string;
+    license: string | null;
+    attribution: string | null;
+    processingState: string;
+    rightsExpiresAt: Date | null;
+    permittedChannels: string[];
+  }>;
 }
 
 /** docs/06: Draft -> Editor review needs title, body, author and desk. */
@@ -21,6 +28,7 @@ export function reviewIssues(s: RevisionSnapshot): string[] {
   for (const t of s.translations) {
     if (t.title.trim().length === 0) issues.push(`${t.locale}: title is empty.`);
     if (bodyPlainText(t.body).length === 0) issues.push(`${t.locale}: body is empty.`);
+    if (bodyImages(t.body).some((img) => img.alt === null)) issues.push(`${t.locale}: add alt text to every image.`);
   }
   if (s.authorCount === 0) issues.push('Credit at least one author.');
   if (!s.deskId) issues.push('Assign a desk.');
@@ -28,7 +36,7 @@ export function reviewIssues(s: RevisionSnapshot): string[] {
 }
 
 /** docs/06: Ready -> Published needs locale readiness and a media rights check, on top of review rules. */
-export function publishIssues(s: RevisionSnapshot): string[] {
+export function publishIssues(s: RevisionSnapshot, now: Date = new Date()): string[] {
   const issues = reviewIssues(s);
   for (const t of s.translations) {
     if (t.translationStatus === 'machine_draft') issues.push(`${t.locale}: machine draft needs human review first.`);
@@ -37,6 +45,8 @@ export function publishIssues(s: RevisionSnapshot): string[] {
   for (const m of s.media) {
     if (!m.license && !m.attribution) issues.push(`Media ${m.id}: record a license or attribution.`);
     if (m.processingState !== 'ready') issues.push(`Media ${m.id}: still ${m.processingState}.`);
+    if (m.rightsExpiresAt && m.rightsExpiresAt.getTime() <= now.getTime()) issues.push(`Media ${m.id}: rights have expired.`);
+    if (!m.permittedChannels.includes('web')) issues.push(`Media ${m.id}: not cleared for the web.`);
   }
   return issues;
 }

@@ -20,7 +20,26 @@ export const apiEnvSchema = z.object({
   OIDC_REQUIRE_MFA: z.stringbool().default(true),
   /** Shared secret for the worker's calls to /internal. Unset disables those endpoints. */
   INTERNAL_API_TOKEN: z.string().min(32).optional(),
+  // Object storage for media. `fs` writes to a local folder (development); `s3` is any S3-compatible
+  // store such as Cloudflare R2 or MinIO.
+  STORAGE_DRIVER: z.enum(['fs', 's3']).default('fs'),
+  FS_STORAGE_DIR: z.string().min(1).default('.data/media'),
+  S3_ENDPOINT: z.string().url().optional(),
+  S3_REGION: z.string().min(1).default('auto'),
+  S3_BUCKET: z.string().min(1).optional(),
+  S3_ACCESS_KEY_ID: z.string().min(1).optional(),
+  S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
+  S3_FORCE_PATH_STYLE: z.stringbool().default(false),
+  MAX_UPLOAD_MB: z.coerce.number().int().min(1).max(25).default(10),
 }).superRefine((env, ctx) => {
+  if (env.STORAGE_DRIVER === 's3') {
+    for (const key of ['S3_BUCKET', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const) {
+      if (!env[key]) ctx.addIssue({ code: 'custom', path: [key], message: 'required when STORAGE_DRIVER is s3' });
+    }
+  }
+  if (env.NODE_ENV === 'production' && env.STORAGE_DRIVER !== 's3') {
+    ctx.addIssue({ code: 'custom', path: ['STORAGE_DRIVER'], message: 'must be s3 in production' });
+  }
   if (env.NODE_ENV === 'production') {
     for (const key of ['OIDC_ISSUER', 'OIDC_AUDIENCE', 'INTERNAL_API_TOKEN'] as const) {
       if (!env[key]) ctx.addIssue({ code: 'custom', path: [key], message: 'required in production' });
