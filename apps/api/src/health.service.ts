@@ -1,18 +1,16 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import type { ReadinessResponse } from '@fact-lens/contracts';
 import { Redis } from 'ioredis';
-import { Pool } from 'pg';
+import type { Pool } from 'pg';
 
 export const HEALTH_PROBES = Symbol('HEALTH_PROBES');
 export type Probe = () => Promise<void>;
 export type HealthProbes = Record<string, Probe>;
 
-export function createProbes(databaseUrl: string, redisUrl: string): { probes: HealthProbes; close: () => Promise<void> } {
-  const pool = new Pool({ connectionString: databaseUrl, max: 2, connectionTimeoutMillis: 2000 });
+export function createProbes(pool: Pool, redisUrl: string): { probes: HealthProbes; close: () => Promise<void> } {
   const redis = new Redis(redisUrl, { lazyConnect: true, maxRetriesPerRequest: 1, connectTimeout: 2000 });
-  // Without listeners an 'error' event on either client is unhandled and can crash the process.
-  // Probe failures are reported through /health/ready, so these only need to swallow the event.
-  pool.on('error', () => {});
+  // Without a listener an 'error' event is unhandled and can crash the process.
+  // Probe failures are reported through /health/ready, so this only swallows the event.
   redis.on('error', () => {});
   return {
     probes: {
@@ -23,7 +21,6 @@ export function createProbes(databaseUrl: string, redisUrl: string): { probes: H
       },
     },
     close: async () => {
-      await pool.end();
       redis.disconnect();
     },
   };

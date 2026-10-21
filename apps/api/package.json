@@ -8,7 +8,9 @@
     "start": "node dist/main.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "migrate": "node-pg-migrate --migrations-dir migrations --envPath .env",
+    "migrate:create": "node-pg-migrate --migrations-dir migrations --migration-file-language sql create"
   },
   "devDependencies": {
     "@nestjs/testing": "^12.2.0",
@@ -28,6 +30,7 @@
     "@nestjs/platform-fastify": "^12.2.0",
     "fastify": "^5.12.7",
     "ioredis": "^6.0.0",
+    "node-pg-migrate": "^9.0.0",
     "pg": "^8.23.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2",
