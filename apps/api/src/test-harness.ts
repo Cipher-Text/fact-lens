@@ -12,6 +12,7 @@ import { createTokenVerifier, TOKEN_VERIFIER } from './auth/token-verifier';
 import { PG_POOL } from './db/pool';
 import { createTestDatabase } from './db/test-db';
 import { seedReferenceData } from './seed/seed';
+import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { AssignmentsService } from './stories/assignments.service';
 import { CollabController } from './stories/collab.controller';
 import { CommentsService } from './stories/comments.service';
@@ -35,7 +36,9 @@ export interface CallOptions {
 }
 
 /** A real Nest app on a migrated, seeded throwaway database, signing its own test tokens. */
-export async function startTestApp(adminUrl: string) {
+export const TEST_INTERNAL_TOKEN = 'test-internal-token-0123456789abcdef';
+
+export async function startTestApp(adminUrl: string, opts: { internalToken?: string | null } = {}) {
   const db = await createTestDatabase(adminUrl);
   await seedReferenceData(db.pool);
 
@@ -48,8 +51,9 @@ export async function startTestApp(adminUrl: string) {
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [StoriesController, PublicStoriesController, CollabController],
+    controllers: [StoriesController, PublicStoriesController, CollabController, InternalController],
     providers: [
+      { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
       StoriesService, CommentsService, AssignmentsService, SourcesService,
       { provide: TOKEN_VERIFIER, useValue: verifier },

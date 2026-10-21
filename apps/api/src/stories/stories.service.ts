@@ -1,12 +1,12 @@
 import { createHash, randomUUID } from 'node:crypto';
 import {
-  BadRequestException, ConflictException, Inject, Injectable, NotFoundException, UnprocessableEntityException,
+  BadRequestException, ConflictException, HttpException, Inject, Injectable, NotFoundException, UnprocessableEntityException,
 } from '@nestjs/common';
 import {
   bodyMediaAssetIds, defaultWorkflowPolicy, parseConfigValue,
   type CorrectionCreate, type PublicStory, type RevisionCreate, type StoryCreate, type StoryDetail,
   type StoryList, type StoryListQuery, type StoryMeta, type StoryStatus, type TransitionRequest,
-  type TimelineEntry, type TranslationSave, type WorkflowPolicy,
+  type ScheduledPublishResult, type TimelineEntry, type TranslationSave, type WorkflowPolicy,
 } from '@fact-lens/contracts';
 import type { Pool, PoolClient } from 'pg';
 import { AuditService } from '../audit/audit.service';
@@ -366,6 +366,69 @@ export class StoriesService {
       }
     });
     return this.detail(id);
+  }
+
+  // -------------------------------------------------------- scheduled publish
+
+  /**
+   * Called by the worker when a schedule falls due. It publishes under the authority of the human
+   * who scheduled it, re-checking every readiness rule now. If the story can no longer be
+   * published it goes back to READY and the schedule is marked failed, so an editor sees it.
+   * Repeating the call returns the first outcome.
+   */
+  async publishScheduled(scheduleId: string, requestId: string): Promise<ScheduledPublishResult> {
+    const by = 'system:scheduler';
+    return withTransaction(this.pool, async (db) => {
+      const found = await db.query<{ id: string; story_id: string; status: string; scheduled_for: Date; last_error: string | null }>(
+        'SELECT id, story_id, status, scheduled_for, last_error FROM publishing_schedule WHERE id = $1 FOR UPDATE', [scheduleId]);
+      const schedule = found.rows[0];
+      if (!schedule) throw new NotFoundException('Schedule not found');
+      const storyId = schedule.story_id;
+      if (schedule.status === 'published') return { result: 'already_published', storyId };
+      if (schedule.status === 'cancelled') return { result: 'cancelled', storyId };
+      if (schedule.status === 'failed') return { result: 'failed', storyId, detail: schedule.last_error ?? undefined };
+      if (schedule.scheduled_for.getTime() > Date.now()) return { result: 'not_due', storyId };
+
+      const story = await this.lockStory(db, storyId);
+      if (story.status !== 'SCHEDULED') {
+        await db.query(`UPDATE publishing_schedule SET status = 'cancelled', last_error = $2 WHERE id = $1`, [scheduleId, `story is ${story.status}, not scheduled`]);
+        return { result: 'cancelled', storyId, detail: `story is ${story.status}` };
+      }
+      const revision = await this.latestRevision(db, storyId);
+
+      await db.query('SAVEPOINT scheduled_publish');
+      try {
+        const event = await this.publish(db, story, revision, by);
+        await db.query(`UPDATE publishing_schedule SET status = 'published', executed_at = now(), last_error = NULL WHERE id = $1`, [scheduleId]);
+        await db.query(`UPDATE story SET status = 'PUBLISHED', updated_at = now() WHERE id = $1`, [storyId]);
+        await this.audit.record(
+          { actorType: 'system', actorId: by, action: 'story.transition', objectType: 'story', objectId: storyId, storyId,
+            revisionId: revision.id, previousState: 'SCHEDULED', newState: 'PUBLISHED', reason: 'scheduled publish', requestId,
+            metadata: { scheduleId } },
+          db,
+        );
+        await db.query(`INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload) VALUES ('story', $1, $2, $3)`,
+          [storyId, event.type, JSON.stringify(event.payload)]);
+        return { result: 'published', storyId };
+      } catch (err) {
+        if (!(err instanceof HttpException)) throw err; // unexpected: roll everything back so the worker retries
+        await db.query('ROLLBACK TO SAVEPOINT scheduled_publish');
+        const body = err.getResponse();
+        const issues = typeof body === 'object' && body !== null && 'issues' in body ? (body as { issues: string[] }).issues : [];
+        const reason = [err.message, ...issues].join(' ').slice(0, 500);
+        await db.query(`UPDATE publishing_schedule SET status = 'failed', executed_at = now(), last_error = $2 WHERE id = $1`, [scheduleId, reason]);
+        await db.query(`UPDATE story SET status = 'READY', updated_at = now() WHERE id = $1`, [storyId]);
+        await this.audit.record(
+          { actorType: 'system', actorId: by, action: 'story.transition', objectType: 'story', objectId: storyId, storyId,
+            revisionId: revision.id, previousState: 'SCHEDULED', newState: 'READY', reason: `scheduled publish failed: ${reason}`, requestId,
+            metadata: { scheduleId } },
+          db,
+        );
+        await db.query(`INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload) VALUES ('story', $1, 'story.schedule_failed', $2)`,
+          [storyId, JSON.stringify({ storyId, scheduleId, reason })]);
+        return { result: 'failed', storyId, detail: reason };
+      }
+    });
   }
 
   // ------------------------------------------------------------ public read

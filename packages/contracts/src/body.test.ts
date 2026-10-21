@@ -85,3 +85,22 @@ describe('collaboration contracts', () => {
     expect(commentCreateSchema.safeParse({ body: 'Check the figure' }).success).toBe(true);
   });
 });
+
+import { jobEnvelopeSchema, jobPayloadSchemas, jobQueue, jobTypes, outboxEventSchemas, queueNames } from './index';
+
+describe('job contracts', () => {
+  it('routes every job type to a known queue', () => {
+    for (const type of jobTypes) expect(queueNames).toContain(jobQueue[type]);
+    expect(Object.keys(jobPayloadSchemas).sort()).toEqual(Object.keys(jobQueue).sort());
+  });
+
+  it('validates outbox payloads and job envelopes', () => {
+    expect(outboxEventSchemas['story.published'].safeParse({ storyId: id, revisionId: id, locales: [] }).success).toBe(false);
+    expect(outboxEventSchemas['story.published'].safeParse({ storyId: id, revisionId: id, locales: [{ locale: 'en', slug: 'a' }] }).success).toBe(true);
+    const env = { id, type: 'cache.invalidate', version: 1, idempotencyKey: 'k', occurredAt: '2026-10-21T10:00:00Z', payload: {} };
+    expect(jobEnvelopeSchema.safeParse(env).success).toBe(true);
+    expect(jobEnvelopeSchema.safeParse({ ...env, type: 'made.up' }).success).toBe(false);
+    expect(jobEnvelopeSchema.safeParse({ ...env, version: 2 }).success).toBe(false);
+    expect(jobPayloadSchemas['cache.invalidate'].safeParse({ tags: [] }).success).toBe(false);
+  });
+});

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadApiEnv, loadDatabaseEnv } from './index';
+import { loadApiEnv, loadDatabaseEnv, loadWorkerEnv } from './index';
 
 const base = { DATABASE_URL: 'postgres://u:p@localhost:5432/db', REDIS_URL: 'redis://localhost:6379' };
 
@@ -23,8 +23,15 @@ describe('loadApiEnv', () => {
 
   it('requires OIDC settings in production only', () => {
     expect(() => loadApiEnv({ ...base, NODE_ENV: 'production' })).toThrow(/OIDC_ISSUER/);
-    const ok = loadApiEnv({ ...base, NODE_ENV: 'production', OIDC_ISSUER: 'https://idp.example.com', OIDC_AUDIENCE: 'fact-lens-api' });
+    const ok = loadApiEnv({ ...base, NODE_ENV: 'production', OIDC_ISSUER: 'https://idp.example.com', OIDC_AUDIENCE: 'fact-lens-api', INTERNAL_API_TOKEN: 'x'.repeat(32) });
     expect(ok.OIDC_REQUIRE_MFA).toBe(true);
     expect(loadApiEnv({ ...base, OIDC_REQUIRE_MFA: 'false' }).OIDC_REQUIRE_MFA).toBe(false);
+  });
+
+  it('loads worker config and rejects a short internal token', () => {
+    const worker = { ...base, API_BASE_URL: 'http://api.internal:4000', INTERNAL_API_TOKEN: 'y'.repeat(32) };
+    expect(loadWorkerEnv(worker)).toMatchObject({ OUTBOX_POLL_MS: 1000, JOB_CONCURRENCY: 5 });
+    expect(() => loadWorkerEnv({ ...worker, INTERNAL_API_TOKEN: 'short' })).toThrow(/INTERNAL_API_TOKEN/);
+    expect(() => loadApiEnv({ ...base, INTERNAL_API_TOKEN: 'short' })).toThrow(/INTERNAL_API_TOKEN/);
   });
 });

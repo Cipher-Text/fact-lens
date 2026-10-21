@@ -3,6 +3,7 @@ import { loadApiEnv } from '@fact-lens/config';
 import { AuthModule } from './auth/auth.module';
 import { MeController } from './auth/me.controller';
 import { FeatureFlagsController } from './config/feature-flags.controller';
+import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { AssignmentsService } from './stories/assignments.service';
 import { CollabController } from './stories/collab.controller';
 import { CommentsService } from './stories/comments.service';
@@ -18,8 +19,9 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [HealthController, MeController, FeatureFlagsController, StoriesController, PublicStoriesController, CollabController],
+  controllers: [HealthController, MeController, FeatureFlagsController, StoriesController, PublicStoriesController, CollabController, InternalController],
   providers: [
+    { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
     StoriesService,
     CommentsService,
     AssignmentsService,
