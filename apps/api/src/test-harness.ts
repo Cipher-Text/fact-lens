@@ -14,7 +14,7 @@ import { createTestDatabase } from './db/test-db';
 import { seedReferenceData } from './seed/seed';
 import { MediaController } from './media/media.controller';
 import { MEDIA_OPTIONS, MediaService } from './media/media.service';
-import { MemoryStorage, OBJECT_STORAGE } from './media/storage';
+import { MemoryStorage, OBJECT_STORAGE, type ObjectStorage } from './media/storage';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { AssignmentsService } from './stories/assignments.service';
@@ -42,8 +42,11 @@ export interface CallOptions {
 /** A real Nest app on a migrated, seeded throwaway database, signing its own test tokens. */
 export const TEST_INTERNAL_TOKEN = 'test-internal-token-0123456789abcdef';
 
-export async function startTestApp(adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number } = {}) {
-  const storage = new MemoryStorage();
+/** Pass `storage` to run the app on another store; the default is an in-memory one that tests can inspect. */
+export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
+  adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number; storage?: S } = {},
+) {
+  const storage = (opts.storage ?? new MemoryStorage()) as S;
   const db = await createTestDatabase(adminUrl);
   await seedReferenceData(db.pool);
 

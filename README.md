@@ -30,8 +30,22 @@ pnpm --filter @fact-lens/api seed         # desks, categories, default config, f
 pnpm check          # lint, typecheck, test, build for every workspace
 
 # Database tests are skipped unless TEST_DATABASE_URL points at a Postgres server
-# (worker queue tests also need TEST_REDIS_URL):
+# (worker queue tests also need TEST_REDIS_URL, and the storage tests TEST_S3_ENDPOINT):
 TEST_DATABASE_URL=postgres://factlens:factlens@localhost:5432/postgres TEST_REDIS_URL=redis://localhost:6379 pnpm check
 ```
 
 Agent and contributor rules: [`AGENTS.md`](AGENTS.md). `apps/web` has its own rules in `apps/web/AGENTS.md`.
+
+## Testing storage against MinIO
+
+CI runs the storage tests against a real MinIO server. To do the same locally (needs Docker):
+
+```bash
+pnpm infra:up
+TEST_S3_ENDPOINT=http://localhost:9000 TEST_S3_ACCESS_KEY=factlens TEST_S3_SECRET_KEY=factlens-local \
+  TEST_S3_VERIFIES_SIGNATURES=true TEST_DATABASE_URL=postgres://factlens:factlens@localhost:5432/postgres \
+  pnpm --filter @fact-lens/api test
+```
+
+Without `TEST_S3_ENDPOINT` those tests are skipped, and on CI a missing service fails a guard test instead of skipping silently.
+

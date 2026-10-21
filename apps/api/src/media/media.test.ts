@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import sharp from 'sharp';
 import { startTestApp } from '../test-harness';
+import type { MemoryStorage } from './storage';
 import { makeImage } from './test-images';
 
 const adminUrl = process.env.TEST_DATABASE_URL;
@@ -8,7 +9,7 @@ const doc = (...content: unknown[]) => ({ type: 'doc', content });
 const para = (text: string) => ({ type: 'paragraph', content: [{ type: 'text', text }] });
 
 describe.skipIf(!adminUrl)('media library (database)', () => {
-  let t: Awaited<ReturnType<typeof startTestApp>>;
+  let t: Awaited<ReturnType<typeof startTestApp<MemoryStorage>>>;
   let deskId: string;
   let authorId: string;
   let n = 0;

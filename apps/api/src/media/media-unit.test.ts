@@ -7,7 +7,8 @@ import { afterAll, describe, expect, it } from 'vitest';
 import { startFakeS3 } from './fake-s3';
 import { ImageRejected, processImage, sniffImage, VARIANT_WIDTHS } from './image';
 import { cleanFilename } from './media.service';
-import { assertKey, FsStorage, MemoryStorage, S3Storage, type ObjectStorage } from './storage';
+import { loadApiEnv } from '@fact-lens/config';
+import { assertKey, createStorage, FsStorage, MemoryStorage, S3Storage, type ObjectStorage } from './storage';
 import { makeImage } from './test-images';
 
 describe('image sniffing', () => {
@@ -127,6 +128,31 @@ describe('object storage drivers', () => {
         region: 'auto', endpoint: fake.endpoint, forcePathStyle: true, credentials: { accessKeyId: 'AKIATEST', secretAccessKey: 'secret' },
       });
       return { storage: new S3Storage(client, 'media-bucket'), done: async () => { expect(fake.unsigned).toBe(0); await fake.close(); } };
+    });
+
+    it('is built correctly from environment settings by the production factory', async () => {
+      const fake = await startFakeS3('media-bucket');
+      const env = loadApiEnv({
+        DATABASE_URL: 'postgres://u:p@localhost/db', REDIS_URL: 'redis://localhost:6379', STORAGE_DRIVER: 's3', S3_ENDPOINT: fake.endpoint,
+        S3_REGION: 'us-east-1', S3_BUCKET: 'media-bucket', S3_ACCESS_KEY_ID: 'AKIATEST', S3_SECRET_ACCESS_KEY: 'secret', S3_FORCE_PATH_STYLE: 'true',
+      });
+      const storage = createStorage(env);
+      await storage.put('originals/f.png', Buffer.from('through the factory'), 'image/png');
+      expect(fake.objects.get('originals/f.png')?.body.toString()).toBe('through the factory');
+      expect((await storage.get('originals/f.png'))?.contentType).toBe('image/png');
+      // No chunked or checksum-trailer upload: the stand-in would have stored the framing bytes too.
+      expect(fake.objects.get('originals/f.png')?.body.length).toBe('through the factory'.length);
+      expect(fake.unsigned).toBe(0);
+      await fake.close();
+    });
+
+    it('fails loudly when the bucket does not exist, instead of reporting a missing object', async () => {
+      const fake = await startFakeS3('media-bucket');
+      const client = new S3Client({ region: 'auto', endpoint: fake.endpoint, forcePathStyle: true, credentials: { accessKeyId: 'AKIATEST', secretAccessKey: 'secret' } });
+      const wrong = new S3Storage(client, 'no-such-bucket');
+      await expect(wrong.get('originals/a.png')).rejects.toThrow();
+      await expect(wrong.put('originals/a.png', Buffer.from('x'), 'image/png')).rejects.toThrow();
+      await fake.close();
     });
 
     it('sends the content type and the exact bytes to the bucket and key', async () => {

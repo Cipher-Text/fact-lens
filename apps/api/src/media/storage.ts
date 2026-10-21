@@ -70,7 +70,10 @@ export class S3Storage implements ObjectStorage {
       const res = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
       return { body: Buffer.from(await res.Body!.transformToByteArray()), contentType: res.ContentType ?? typeOf(key) };
     } catch (err) {
-      if ((err as { name?: string }).name === 'NoSuchKey' || (err as { $metadata?: { httpStatusCode?: number } }).$metadata?.httpStatusCode === 404) return null;
+      // Only a missing object is "not found". A missing bucket is also an HTTP 404, but it is a
+      // misconfiguration that must fail loudly, not look like every image having vanished.
+      const name = (err as { name?: string }).name;
+      if (name === 'NoSuchKey' || name === 'NotFound') return null;
       throw err;
     }
   }
@@ -102,6 +105,9 @@ export function createStorage(env: ApiEnv): ObjectStorage {
     return new S3Storage(
       new S3Client({
         region: env.S3_REGION, endpoint: env.S3_ENDPOINT, forcePathStyle: env.S3_FORCE_PATH_STYLE,
+        // Recent SDK versions add checksums and chunked uploads by default, which several S3-compatible
+        // stores reject. Ask for them only where the operation requires one.
+        requestChecksumCalculation: 'WHEN_REQUIRED', responseChecksumValidation: 'WHEN_REQUIRED',
         credentials: { accessKeyId: env.S3_ACCESS_KEY_ID!, secretAccessKey: env.S3_SECRET_ACCESS_KEY! },
       }),
       env.S3_BUCKET!,

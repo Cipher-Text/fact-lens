@@ -30,6 +30,13 @@ jobs:
     env:
       TEST_DATABASE_URL: postgres://factlens:factlens@localhost:5432/postgres
       TEST_REDIS_URL: redis://localhost:6379
+      # A real S3-compatible server (MinIO, started below). It checks request signatures, unlike the
+      # in-process stand-in used for the fast unit tests.
+      TEST_S3_ENDPOINT: http://localhost:9000
+      TEST_S3_ACCESS_KEY: minioadmin
+      TEST_S3_SECRET_KEY: minioadmin-secret
+      TEST_S3_REGION: us-east-1
+      TEST_S3_VERIFIES_SIGNATURES: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -37,5 +44,20 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
+      # GitHub service containers cannot take a command, and MinIO needs `server /data`, so it is started here.
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio -p 9000:9000 \
+            -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=minioadmin-secret \
+            minio/minio server /data
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:9000/minio/health/ready && exit 0
+            sleep 2
+          done
+          docker logs minio
+          exit 1
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
+      - name: MinIO log on failure
+        if: failure()
+        run: docker logs minio
