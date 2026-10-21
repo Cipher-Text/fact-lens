@@ -273,6 +273,99 @@ describe.skipIf(!adminUrl)('database schema', () => {
     await expectCode(ins(card.rows[0].id, photo.rows[0].id), '23505');
   });
 
+  describe('advertising', () => {
+    async function adSetup(allowed: string[] = ['image', 'html']) {
+      const adv = await pool.query(`INSERT INTO advertiser (name) VALUES ('Acme') RETURNING id`);
+      const camp = await pool.query(`INSERT INTO ad_campaign (advertiser_id, name) VALUES ($1, 'c') RETURNING id`, [
+        adv.rows[0].id,
+      ]);
+      const place = await pool.query(
+        `INSERT INTO ad_placement (key, name, allowed_formats) VALUES ($1, 'p', $2) RETURNING id`,
+        [`pl-${randomBytes(3).toString('hex')}`, allowed],
+      );
+      const media = await pool.query(
+        `INSERT INTO media_asset (object_key, mime_type, byte_size, sha256) VALUES ($1, 'image/png', 1, 'x') RETURNING id`,
+        [`ad-${randomBytes(3).toString('hex')}.png`],
+      );
+      return { campaign: camp.rows[0].id as string, placement: place.rows[0].id as string, media: media.rows[0].id as string };
+    }
+    const insertAd = (
+      s: { campaign: string; placement: string },
+      o: { format?: string; media?: string | null; html?: string | null; url?: string; weight?: number } = {},
+    ) =>
+      pool.query(
+        `INSERT INTO ad (campaign_id, placement_id, title, format, media_asset_id, html, target_url, weight)
+         VALUES ($1, $2, 't', $3, $4, $5, $6, $7) RETURNING id`,
+        [s.campaign, s.placement, o.format ?? 'html', o.media ?? null, o.html ?? '<b>hi</b>', o.url ?? 'https://example.com', o.weight ?? 1],
+      );
+
+    it('rejects a campaign that ends before it starts and a negative budget', async () => {
+      const adv = await pool.query(`INSERT INTO advertiser (name) VALUES ('A') RETURNING id`);
+      const ins = (start: string, end: string, budget = 100) =>
+        pool.query(
+          `INSERT INTO ad_campaign (advertiser_id, name, start_at, end_at, budget) VALUES ($1, 'c', $2, $3, $4)`,
+          [adv.rows[0].id, start, end, budget],
+        );
+      await ins('2026-01-01', '2026-02-01');
+      await expectCode(ins('2026-02-01', '2026-01-01'), '23514');
+      await expectCode(ins('2026-01-01', '2026-02-01', -1), '23514');
+    });
+
+    it('keeps placement keys unique and requires valid allowed formats', async () => {
+      await pool.query(`INSERT INTO ad_placement (key, name) VALUES ('home-top', 'Top')`);
+      await expectCode(pool.query(`INSERT INTO ad_placement (key, name) VALUES ('home-top', 'Dup')`), '23505');
+      await expectCode(pool.query(`INSERT INTO ad_placement (key, name, allowed_formats) VALUES ('k1', 'n', '{}')`), '23514');
+      await expectCode(pool.query(`INSERT INTO ad_placement (key, name, allowed_formats) VALUES ('k2', 'n', '{video}')`), '23514');
+    });
+
+    it('requires an image for image ads and markup for html ads', async () => {
+      const s = await adSetup();
+      await insertAd(s, { format: 'image', media: s.media, html: null });
+      await expectCode(insertAd(s, { format: 'image', media: null, html: null }), '23514');
+      await insertAd(s, { format: 'html', html: '<b>x</b>' });
+      await expectCode(insertAd(s, { format: 'html', html: '   ' }), '23514');
+    });
+
+    it('only allows formats the placement accepts', async () => {
+      const s = await adSetup(['image']);
+      await expectCode(insertAd(s, { format: 'html' }), '23514');
+      await insertAd(s, { format: 'image', media: s.media, html: null });
+    });
+
+    it('rejects non-http target URLs and non-positive weights', async () => {
+      const s = await adSetup();
+      await expectCode(insertAd(s, { url: 'javascript:alert(1)' }), '23514');
+      await expectCode(insertAd(s, { url: 'data:text/html,x' }), '23514');
+      await expectCode(insertAd(s, { weight: 0 }), '23514');
+    });
+
+    it('targets categories once per ad', async () => {
+      const s = await adSetup();
+      const ad = await insertAd(s);
+      const cat = await pool.query(`INSERT INTO category (key) VALUES ($1) RETURNING id`, [`c-${randomBytes(3).toString('hex')}`]);
+      const link = () =>
+        pool.query('INSERT INTO ad_category_target (ad_id, category_id) VALUES ($1, $2)', [ad.rows[0].id, cat.rows[0].id]);
+      await link();
+      await expectCode(link(), '23505');
+    });
+
+    it('records events, caps untrusted field lengths and blocks deleting an ad with events', async () => {
+      const s = await adSetup();
+      const ad = await insertAd(s);
+      const ev = (type: string, extra: Record<string, string> = {}) =>
+        pool.query(
+          `INSERT INTO ad_event (event_type, ad_id, path, user_agent) VALUES ($1, $2, $3, $4)`,
+          [type, ad.rows[0].id, extra.path ?? '/', extra.ua ?? 'ua'],
+        );
+      await ev('impression');
+      await ev('click');
+      await expectCode(ev('view'), '23514');
+      await expectCode(ev('click', { path: '/' + 'a'.repeat(3000) }), '23514');
+      await expectCode(ev('click', { ua: 'u'.repeat(600) }), '23514');
+      await expectCode(pool.query('DELETE FROM ad WHERE id = $1', [ad.rows[0].id]), '23503');
+    });
+  });
+
   describe('withTransaction', () => {
     it('commits the change, audit event and outbox event together', async () => {
       await withTransaction(pool, async (c) => {
