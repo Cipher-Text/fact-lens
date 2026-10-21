@@ -40,4 +40,4 @@ This set of documents plans a rebuild of FactLens as a digital newsroom platform
 
 ## Scope note
 
-No application code is implemented by this plan. `cipher-press` must remain unchanged until a separately approved migration or compatibility project begins.
+Application code is being built in this repository, following the plan. Phase 1 so far: `apps/web` (imported from `fact-lens-web`, mock data), `apps/api` (health, request IDs, error envelope), `packages/config` and `packages/contracts`. `cipher-press` must remain unchanged until a separately approved migration or compatibility project begins.

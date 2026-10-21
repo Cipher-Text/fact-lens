@@ -10,6 +10,10 @@ export type HealthProbes = Record<string, Probe>;
 export function createProbes(databaseUrl: string, redisUrl: string): { probes: HealthProbes; close: () => Promise<void> } {
   const pool = new Pool({ connectionString: databaseUrl, max: 2, connectionTimeoutMillis: 2000 });
   const redis = new Redis(redisUrl, { lazyConnect: true, maxRetriesPerRequest: 1, connectTimeout: 2000 });
+  // Without listeners an 'error' event on either client is unhandled and can crash the process.
+  // Probe failures are reported through /health/ready, so these only need to swallow the event.
+  pool.on('error', () => {});
+  redis.on('error', () => {});
   return {
     probes: {
       database: async () => void (await pool.query('select 1')),
@@ -25,6 +29,16 @@ export function createProbes(databaseUrl: string, redisUrl: string): { probes: H
   };
 }
 
+const PROBE_TIMEOUT_MS = 3000;
+
+function withTimeout(work: Promise<void>, ms: number): Promise<void> {
+  let timer: NodeJS.Timeout;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error('probe timed out')), ms);
+  });
+  return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
+}
+
 @Injectable()
 export class HealthService implements OnModuleDestroy {
   constructor(
@@ -36,7 +50,7 @@ export class HealthService implements OnModuleDestroy {
     const entries = await Promise.all(
       Object.entries(this.probes).map(async ([name, probe]) => {
         try {
-          await probe();
+          await withTimeout(probe(), PROBE_TIMEOUT_MS);
           return [name, 'up'] as const;
         } catch {
           return [name, 'down'] as const;

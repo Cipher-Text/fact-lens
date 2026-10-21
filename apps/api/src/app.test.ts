@@ -55,6 +55,16 @@ describe('api', () => {
     expect(res.json().error.details.checks.redis).toBe('down');
   });
 
+  it('reports a hung dependency as down instead of hanging', async () => {
+    const hung = await build({ database: async () => {}, redis: () => new Promise<void>(() => {}) });
+    await hung.init();
+    await hung.getHttpAdapter().getInstance().ready();
+    const res = await hung.inject({ method: 'GET', url: '/health/ready' });
+    expect(res.statusCode).toBe(503);
+    expect(res.json().error.details.checks.redis).toBe('down');
+    await hung.close();
+  }, 10000);
+
   it('generates a request id and echoes a valid incoming one', async () => {
     const a = await up.inject({ method: 'GET', url: '/health/live' });
     expect(a.headers['x-request-id']).toBeTruthy();
