@@ -1,0 +1,28 @@
+@import "tailwindcss";
+@import "shadcn/tailwind.css";
+@import "../styles/colors.css"; /* color-system.md Section 5 */
+@import "../styles/layout.css"; /* spacing-layout-system.md Sections 12.1 to 12.3 */
+@import "../styles/typography.css"; /* typography-system.md Section 8 */
+@import "../styles/components.css"; /* component-system.md Section 6 */
+
+@layer base {
+  /* Pointer on enabled buttons (Tailwind 4 uses the browser default) (DR-235) */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  /* Icons: square line ends and miter joins (BRD-03, DR-235) */
+  svg.lucide {
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+  }
+  /* Reduced motion: no transitions and no animations (DR-227) */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      transition-duration: 0s !important;
+      animation-duration: 0s !important;
+    }
+  }
+}

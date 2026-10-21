@@ -1,0 +1,14 @@
+# Kit files: they come from the project kit and must not change.
+AGENTS.md
+CLAUDE.md
+README.md
+.claude/
+docs/
+
+# Generated
+pnpm-lock.yaml
+.next/
+next-env.d.ts
+test-results/
+playwright-report/
+blob-report/
