@@ -5,3 +5,5 @@ packages:
 allowBuilds:
   sharp: false
   unrs-resolver: false
+  "@swc/core": true
+  esbuild: true

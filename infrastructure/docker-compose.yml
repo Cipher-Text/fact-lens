@@ -1,0 +1,33 @@
+# Local development dependencies only. No secrets: these are throwaway local values.
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: factlens
+      POSTGRES_PASSWORD: factlens
+      POSTGRES_DB: factlens
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U factlens"]
+      interval: 5s
+      retries: 10
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+  minio:
+    # R2-compatible object storage in S3-API mode
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: factlens
+      MINIO_ROOT_PASSWORD: factlens-local
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [miniodata:/data]
+volumes:
+  pgdata:
+  miniodata:

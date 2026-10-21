@@ -13,6 +13,9 @@
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "check": "pnpm --filter fact-lens-web check"
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "dev:api": "pnpm --filter @fact-lens/api dev",
+    "infra:up": "docker compose -f infrastructure/docker-compose.yml up -d",
+    "infra:down": "docker compose -f infrastructure/docker-compose.yml down"
   }
 }

@@ -8,7 +8,8 @@ Fact Lens is a Bangla and English news platform. This repository is the main pro
 | --- | --- |
 | `apps/web` | The public site. Imported from `fact-lens-web` with its history (git subtree). Mock data only. |
 | `docs/` | The rebuild plan (docs 01 to 21). `docs/15-repository-structure.md` is the target layout. |
-| `apps/{newsroom,api,worker}`, `packages/*` | Planned, not created yet. See Phase 1 in `docs/16-implementation-roadmap.md`. |
+| `apps/api`, `packages/{config,contracts}` | Phase 1 foundation: NestJS and Fastify API (health, request IDs, error envelope), typed env config, transport schemas. No database tables yet. |
+| `apps/{newsroom,worker}`, `packages/{ui,domain,shared}` | Planned, not created yet. See Phase 1 in `docs/16-implementation-roadmap.md`. |
 
 ## Rules
 
