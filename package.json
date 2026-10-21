@@ -21,6 +21,6 @@
     "dev:newsroom": "pnpm --filter @fact-lens/newsroom dev",
     "dev:idp": "pnpm --filter @fact-lens/dev-idp start",
     "env:init": "node scripts/init-env.mjs",
-    "test:scripts": "node --test scripts/init-env.test.mjs"
+    "test:scripts": "node --test scripts/init-env.test.mjs scripts/run-sh.test.mjs"
   }
 }

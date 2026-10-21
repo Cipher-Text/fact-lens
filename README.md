@@ -16,6 +16,16 @@ Bangla and English news platform. This is the main repository; the rebuild plan 
 
 ## Start
 
+The quickest way is one command. It checks the tools, creates `.env` if needed, starts PostgreSQL, Redis and MinIO with Docker if they are not already running, applies the migrations and seed, then starts the apps one after another (dev identity provider, API, worker, newsroom, web), each only after the previous one answers its health check:
+
+```bash
+pnpm install
+./run.sh            # Ctrl-C stops everything; ./run.sh -d runs in the background
+./run.sh status     # what is running      ./run.sh logs api   # follow a log      ./run.sh stop
+```
+
+Options: `--no-infra` (do not start Docker services), `--no-web`, `-d`/`--detach`. Logs and process ids are in `.run/`. If a service does not come up, `run.sh` prints its last log lines and stops the ones it started. To start the pieces yourself:
+
 ```bash
 pnpm install
 pnpm env:init       # creates the root .env from .env.example, with random secrets
@@ -34,7 +44,7 @@ pnpm check          # lint, typecheck, test, build for every workspace
 
 ## Configuration
 
-The API, the worker, the newsroom and the dev identity provider share **one** file: `.env` in the repository root. Copy `.env.example` (or run `pnpm env:init`) and edit it. Each app reads only its own variables, and the file is ignored by git. `pnpm env:init` never overwrites an existing `.env`.
+The API, the worker, the newsroom and the dev identity provider share **one** file: `.env` in the repository root. Copy `.env.example` (or run `pnpm env:init`) and edit it. Each app reads only its own variables, and the file is ignored by git. `pnpm env:init` never replaces a value in an existing `.env`; it only fills secrets that are still blank.
 
 - Variables that must agree across apps appear once: `DATABASE_URL`, `REDIS_URL`, `INTERNAL_API_TOKEN` (API and worker), `API_BASE_URL` (worker and newsroom), `OIDC_ISSUER` (API and newsroom).
 - A variable set in the shell or by a deployment wins over the file.
