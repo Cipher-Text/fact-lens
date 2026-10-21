@@ -1,10 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState, useTransition } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
+import type { Editor } from '@tiptap/react';
+import { tiptapBodySchema, toCanonicalBody } from '@fact-lens/contracts';
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
-import { bodyToPlainText, plainTextToBody } from '@/lib/body';
+import { RichTextEditor } from './RichTextEditor';
 import { buttonClass, Field, inputClass, Notice } from './ui';
 
 type Failure = { message: string; issues: string[] } | null;
@@ -51,45 +53,60 @@ export interface EditableTranslation {
   version: number | null;
 }
 
-/** Edits plain paragraphs. Rich content stays read-only until the full editor exists. */
+/** Edits one language of a story: headline, standfirst, address, rich text and search text. */
 export function TranslationEditor({ storyId, translation }: { storyId: string; translation: EditableTranslation }) {
   const router = useRouter();
-  const plain = translation.version === null ? '' : bodyToPlainText(translation.body);
+  const [editor, setEditor] = useState<Editor | null>(null);
+  const [dirty, setDirty] = useState(false);
   const [message, setMessage] = useState<{ kind: 'error' | 'ok'; text: string; issues: string[] } | null>(null);
   const [pending, start] = useTransition();
+  const onEditor = useCallback((e: Editor | null) => setEditor(e), []);
+  const markDirty = useCallback(() => setDirty(true), []);
+
+  // Closing the tab with unsaved changes would lose them; ask first.
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
 
   function save(form: FormData) {
     setMessage(null);
+    if (!editor) return setMessage({ kind: 'error', text: 'The editor is still loading.', issues: [] });
+    // The editor adds bookkeeping (link targets, empty values); strip it, then check the strict contract.
+    const body = toCanonicalBody(editor.getJSON());
+    const checked = tiptapBodySchema.safeParse(body);
+    if (!checked.success) {
+      return setMessage({ kind: 'error', text: 'The text has something that cannot be saved.', issues: checked.error.issues.map((i) => i.message) });
+    }
     start(async () => {
-      const text = (form.get('body') as string | null) ?? '';
       const res = await bff('PUT', `stories/${storyId}/translations/${translation.locale}`, {
         title: form.get('title'), dek: (form.get('dek') as string) || null, slug: form.get('slug'),
         seoTitle: (form.get('seoTitle') as string) || null, seoDescription: (form.get('seoDescription') as string) || null,
-        body: plain === null ? translation.body : plainTextToBody(text), expectedVersion: translation.version,
+        body: checked.data, expectedVersion: translation.version,
       });
       if (!res.ok) {
         const conflict = res.reason === 'version_conflict';
         return setMessage({ kind: 'error', text: conflict ? 'Someone else changed this translation. Reload to see their version before saving.' : res.message, issues: res.issues });
       }
+      setDirty(false);
       setMessage({ kind: 'ok', text: 'Saved', issues: [] });
       router.refresh();
     });
   }
 
   return (
-    <form onSubmit={submitWith((form) => save(form))} className="space-y-3" lang={translation.locale}>
+    <form onSubmit={submitWith((form) => save(form))} onChange={() => setDirty(true)} className="space-y-3" lang={translation.locale}>
       <Field label="Headline"><input name="title" defaultValue={translation.title} required maxLength={300} className={inputClass} /></Field>
       <Field label="Standfirst"><textarea name="dek" defaultValue={translation.dek ?? ''} maxLength={600} rows={2} className={inputClass} /></Field>
       <Field label="Web address" hint="Letters, digits and hyphens. Reserved when the story is published.">
         <input name="slug" defaultValue={translation.slug} required className={inputClass} />
       </Field>
-      {plain === null ? (
-        <Notice kind="ok" message="This text has formatting, links, lists or images. It cannot be edited here yet, and saving keeps it unchanged." />
-      ) : (
-        <Field label="Text" hint="Leave a blank line between paragraphs.">
-          <textarea name="body" defaultValue={plain} rows={10} className={inputClass} />
-        </Field>
-      )}
+      <div>
+        <span className="mb-1 block text-sm font-medium" id={`text-${translation.locale}`}>Text</span>
+        <RichTextEditor initialContent={translation.body} lang={translation.locale} label={`Story text (${translation.localeName})`} onEditor={onEditor} onChange={markDirty} />
+      </div>
       <details className="text-sm">
         <summary className="cursor-pointer text-muted">Search and sharing text</summary>
         <div className="mt-2 space-y-3">
@@ -98,9 +115,12 @@ export function TranslationEditor({ storyId, translation }: { storyId: string; t
         </div>
       </details>
       {message ? <Notice kind={message.kind} message={message.text} issues={message.issues} /> : null}
-      <button type="submit" disabled={pending} className={buttonClass('primary')}>
-        {pending ? 'Saving…' : translation.version === null ? `Add ${translation.localeName}` : 'Save'}
-      </button>
+      <div className="flex items-center gap-3">
+        <button type="submit" disabled={pending || !editor} className={buttonClass('primary')}>
+          {pending ? 'Saving…' : translation.version === null ? `Add ${translation.localeName}` : 'Save'}
+        </button>
+        {dirty && !pending ? <span className="text-xs text-muted">Unsaved changes</span> : null}
+      </div>
     </form>
   );
 }

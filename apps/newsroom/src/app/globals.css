@@ -46,3 +46,36 @@ body {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/* The rich text editor and the markers for images the editor cannot show yet. */
+.rich-editor .ProseMirror {
+  min-height: 14rem;
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-top: 0;
+  border-radius: 0 0 0.25rem 0.25rem;
+  background: var(--bg);
+  font-size: 0.95rem;
+}
+.rich-editor .ProseMirror:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+.rich-editor .ProseMirror > * + * { margin-top: 0.6rem; }
+.rich-editor .ProseMirror h1 { font-size: 1.5rem; font-weight: 600; }
+.rich-editor .ProseMirror h2 { font-size: 1.25rem; font-weight: 600; }
+.rich-editor .ProseMirror h3 { font-size: 1.1rem; font-weight: 600; }
+.rich-editor .ProseMirror h4 { font-size: 1rem; font-weight: 600; }
+.rich-editor .ProseMirror ul { list-style: disc; padding-left: 1.5rem; }
+.rich-editor .ProseMirror ol { list-style: decimal; padding-left: 1.5rem; }
+.rich-editor .ProseMirror blockquote { border-left: 4px solid var(--line); padding-left: 1rem; color: var(--muted); }
+.rich-editor .ProseMirror hr { border: 0; border-top: 1px solid var(--line); margin: 1rem 0; }
+.rich-editor .ProseMirror a { color: var(--accent); text-decoration: underline; }
+.rich-editor .ProseMirror code { font-family: ui-monospace, monospace; background: color-mix(in srgb, var(--line) 50%, transparent); padding: 0 0.25rem; border-radius: 0.2rem; }
+.rich-editor .ProseMirror .ProseMirror-selectednode { outline: 2px solid var(--accent); }
+
+.image-reference {
+  border: 1px dashed var(--line);
+  border-radius: 0.25rem;
+  padding: 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  user-select: none;
+}

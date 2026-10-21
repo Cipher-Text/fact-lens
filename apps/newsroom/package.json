@@ -13,6 +13,10 @@
   "dependencies": {
     "@fact-lens/config": "workspace:*",
     "@fact-lens/contracts": "workspace:*",
+    "@tiptap/core": "^3.32.0",
+    "@tiptap/pm": "^3.32.0",
+    "@tiptap/react": "^3.32.0",
+    "@tiptap/starter-kit": "^3.32.0",
     "jose": "^6.2.13",
     "next": "16.3.8",
     "openid-client": "^6.8.8",

@@ -12,6 +12,53 @@ const MAX_TEXT = 200_000;
 const BLOCKS = new Set(['paragraph', 'heading', 'bulletList', 'orderedList', 'blockquote', 'horizontalRule', 'image']);
 const INLINE = new Set(['text', 'hardBreak']);
 const MARKS = new Set(['bold', 'italic', 'underline', 'strike', 'code', 'link']);
+
+/** Every node type a body may contain (besides the root `doc`). Editors must offer exactly these. */
+export const bodyNodeTypes = [...BLOCKS, ...INLINE, 'listItem'] as const;
+/** Every mark type a body may carry. */
+export const bodyMarkTypes = [...MARKS] as const;
+/** The only attributes each node or mark may have. Anything else is rejected. */
+export const bodyAttrAllowlist: Record<string, readonly string[]> = {
+  heading: ['level'],
+  orderedList: ['start'],
+  image: ['mediaAssetId', 'alt'],
+  link: ['href'],
+};
+
+/**
+ * Drops the bookkeeping attributes an editor adds (a link's `target` and `rel`, empty values,
+ * empty content arrays) so a body it produced fits the strict schema. It never removes a node or
+ * a mark: content the schema forbids still fails validation instead of silently disappearing.
+ */
+export function toCanonicalBody(input: unknown): unknown {
+  const attrs = (type: string, raw: unknown) => {
+    if (typeof raw !== 'object' || raw === null) return undefined;
+    const allowed = bodyAttrAllowlist[type] ?? [];
+    const kept = Object.fromEntries(Object.entries(raw).filter(([k, v]) => allowed.includes(k) && v !== null && v !== undefined));
+    return Object.keys(kept).length > 0 ? kept : undefined;
+  };
+  const visit = (node: unknown, isRoot = false): unknown => {
+    if (typeof node !== 'object' || node === null || Array.isArray(node)) return node;
+    const n = node as Record<string, unknown>;
+    const type = n.type;
+    if (typeof type !== 'string') return node;
+    const out: Record<string, unknown> = { type };
+    const a = attrs(type, n.attrs);
+    if (a) out.attrs = a;
+    if (typeof n.text === 'string') out.text = n.text;
+    if (Array.isArray(n.marks) && n.marks.length > 0) {
+      out.marks = n.marks.map((m) => {
+        if (typeof m !== 'object' || m === null || typeof (m as { type?: unknown }).type !== 'string') return m;
+        const mark = m as { type: string; attrs?: unknown };
+        const ma = attrs(mark.type, mark.attrs);
+        return ma ? { type: mark.type, attrs: ma } : { type: mark.type };
+      });
+    }
+    if (Array.isArray(n.content) && (n.content.length > 0 || isRoot)) out.content = n.content.map((c) => visit(c));
+    return out;
+  };
+  return visit(input, true);
+}
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 interface Node {

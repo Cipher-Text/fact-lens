@@ -2,8 +2,9 @@ import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import {
   assignmentSchema, attachedSourceSchema, categorySchema, commentSchema, contributorSchema, deskSchema, localeSchema,
-  storyDetailSchema, timelineEntrySchema, bodyPlainText,
+  storyDetailSchema, timelineEntrySchema,
 } from '@fact-lens/contracts';
+import { RichBody } from '@/components/RichBody';
 import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, TransitionPanel, TranslationEditor } from '@/components';
 import { Badge, Empty, Panel, StatusBadge } from '@/components/ui';
 import { ApiError, api, getPrincipal } from '@/lib/current';
@@ -74,7 +75,7 @@ export default async function StoryPage({ params }: { params: Promise<{ id: stri
                   <h3 className="text-lg font-semibold">{t.title}</h3>
                   {t.dek ? <p className="text-muted">{t.dek}</p> : null}
                   <p className="text-xs text-muted">Web address: {t.slug}</p>
-                  <p className="whitespace-pre-line text-sm">{bodyPlainText(t.body) || 'No text yet.'}</p>
+                  <RichBody body={t.body} lang={t.locale} />
                 </article>
               )}
             </Panel>

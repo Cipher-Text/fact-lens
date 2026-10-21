@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { principalSchema } from '@fact-lens/contracts';
-import { bodyToPlainText, plainTextToBody } from './body';
 import { isTrustedRequest } from './csrf';
 import { formatDateTime, pickTitle, relativeTime, statusTone } from './format';
 import { visibleNav } from './nav';
@@ -91,27 +90,6 @@ describe('capability-aware navigation', () => {
     expect(labels(['config.manage'])).toEqual(['Configuration']);
     expect(labels([])).toEqual([]);
     expect(labels(['story.publish'])).toEqual(['Desk queue', 'Publishing calendar']);
-  });
-});
-
-describe('plain-text body editing', () => {
-  it('round-trips plain paragraphs', () => {
-    const text = 'First paragraph.\n\nSecond one,\nwrapped.';
-    const body = plainTextToBody(text);
-    expect(body.content).toHaveLength(2);
-    expect(bodyToPlainText(body)).toBe('First paragraph.\n\nSecond one, wrapped.');
-    expect(bodyToPlainText({ type: 'doc', content: [] })).toBe('');
-  });
-  it('refuses to flatten rich content, so nothing is lost silently', () => {
-    const rich = (node: unknown) => ({ type: 'doc', content: [node] });
-    expect(bodyToPlainText(rich({ type: 'paragraph', content: [{ type: 'text', text: 'x', marks: [{ type: 'bold' }] }] }))).toBeNull();
-    expect(bodyToPlainText(rich({ type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'H' }] }))).toBeNull();
-    expect(bodyToPlainText(rich({ type: 'bulletList', content: [] }))).toBeNull();
-    expect(bodyToPlainText(rich({ type: 'image', attrs: { mediaAssetId: '0b6c9a52-6f0c-4f3e-9a0c-7d1a2f6d5e11' } }))).toBeNull();
-    expect(bodyToPlainText({ nonsense: true })).toBeNull();
-  });
-  it('drops empty paragraphs and trims', () => {
-    expect(plainTextToBody('  \n\n  a  \n\n\n\n b ').content.map((p) => p.content[0]!.text)).toEqual(['a', 'b']);
   });
 });
 

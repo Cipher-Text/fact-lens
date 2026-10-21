@@ -104,3 +104,44 @@ describe('job contracts', () => {
     expect(jobPayloadSchemas['cache.invalidate'].safeParse({ tags: [] }).success).toBe(false);
   });
 });
+
+import { bodyAttrAllowlist, bodyMarkTypes, bodyNodeTypes, toCanonicalBody } from './index';
+
+describe('toCanonicalBody', () => {
+  it('strips editor bookkeeping so the strict schema accepts the result', () => {
+    const fromEditor = {
+      type: 'doc',
+      content: [
+        { type: 'paragraph', attrs: { class: null }, content: [
+          { type: 'text', text: 'see ', marks: [] },
+          { type: 'text', text: 'this', marks: [{ type: 'link', attrs: { href: 'https://example.com', target: '_blank', rel: 'noopener', class: null } }] },
+        ] },
+        { type: 'orderedList', attrs: { start: 1, type: null }, content: [{ type: 'listItem', content: [{ type: 'paragraph' }] }] },
+        { type: 'heading', attrs: { level: 2, id: null }, content: [{ type: 'text', text: 'H' }] },
+      ],
+    };
+    expect(ok(fromEditor)).toBe(false);
+    const clean = toCanonicalBody(fromEditor);
+    expect(ok(clean)).toBe(true);
+    expect(JSON.stringify(clean)).not.toContain('target');
+    expect(JSON.stringify(clean)).not.toContain('"marks":[]');
+  });
+
+  it('never hides content the schema forbids', () => {
+    expect(ok(toCanonicalBody(doc({ type: 'script' })))).toBe(false);
+    expect(ok(toCanonicalBody(doc(p(t('x', [{ type: 'highlight' }])))))).toBe(false);
+    expect(ok(toCanonicalBody(doc(p(t('x', [{ type: 'link', attrs: { href: 'javascript:alert(1)' } }])))))).toBe(false);
+  });
+
+  it('leaves an already-canonical body unchanged', () => {
+    const body = doc(p(t('a', [{ type: 'bold' }])), { type: 'heading', attrs: { level: 3 }, content: [t('h')] }, { type: 'image', attrs: { mediaAssetId: id, alt: 'x' } });
+    expect(toCanonicalBody(body)).toEqual(body);
+    expect(toCanonicalBody({ type: 'doc', content: [] })).toEqual({ type: 'doc', content: [] });
+  });
+
+  it('lists the allowed node and mark types the editor must match', () => {
+    expect([...bodyNodeTypes].sort()).toEqual(['blockquote', 'bulletList', 'hardBreak', 'heading', 'horizontalRule', 'image', 'listItem', 'orderedList', 'paragraph', 'text']);
+    expect([...bodyMarkTypes].sort()).toEqual(['bold', 'code', 'italic', 'link', 'strike', 'underline']);
+    expect(bodyAttrAllowlist.link).toEqual(['href']);
+  });
+});
