@@ -9,10 +9,24 @@
   --accent: #1d4ed8;
   --accent-fg: #ffffff;
   --danger: #b42318;
+  color-scheme: light dark;
 }
 
+/* The page script puts `light` or `dark` on <html> before the first paint (see lib/theme.ts). */
+:root.dark {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --fg: #e8eaee;
+  --muted: #9aa3b2;
+  --line: #2a2f3a;
+  --accent: #6c8cff;
+  --accent-fg: #0b0d12;
+  --danger: #ff8a80;
+}
+
+/* Without the script (or before it runs) the page follows the system. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light):not(.dark) {
     --bg: #0f1115;
     --panel: #171a21;
     --fg: #e8eaee;
@@ -23,6 +37,9 @@
     --danger: #ff8a80;
   }
 }
+
+/* Tailwind's `dark:` classes follow the same switch, not only the system setting. */
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-bg: var(--bg);

@@ -1,4 +1,5 @@
 import { NavLinks } from '@/components/NavLinks';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { getPrincipal, getSession } from '@/lib/current';
 import { visibleNav } from '@/lib/nav';
 
@@ -18,6 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <NavLinks items={items.map(({ href, label }) => ({ href, label }))} />
           </div>
           <div className="flex items-center gap-3 text-sm">
+            <ThemeToggle />
             <span title={principal.capabilities.join(', ') || 'No permissions'}>
               {session?.name ?? principal.subject}
               <span className="ml-2 text-muted">{principal.roles.join(', ') || 'no role'}</span>
