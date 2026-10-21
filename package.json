@@ -17,6 +17,8 @@
     "dev:api": "pnpm --filter @fact-lens/api dev",
     "infra:up": "docker compose -f infrastructure/docker-compose.yml up -d",
     "infra:down": "docker compose -f infrastructure/docker-compose.yml down",
-    "dev:worker": "pnpm --filter @fact-lens/worker dev"
+    "dev:worker": "pnpm --filter @fact-lens/worker dev",
+    "dev:newsroom": "pnpm --filter @fact-lens/newsroom dev",
+    "dev:idp": "pnpm --filter @fact-lens/dev-idp start"
   }
 }

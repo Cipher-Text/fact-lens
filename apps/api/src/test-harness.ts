@@ -12,6 +12,7 @@ import { createTokenVerifier, TOKEN_VERIFIER } from './auth/token-verifier';
 import { PG_POOL } from './db/pool';
 import { createTestDatabase } from './db/test-db';
 import { seedReferenceData } from './seed/seed';
+import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { AssignmentsService } from './stories/assignments.service';
 import { CollabController } from './stories/collab.controller';
@@ -51,7 +52,7 @@ export async function startTestApp(adminUrl: string, opts: { internalToken?: str
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [StoriesController, PublicStoriesController, CollabController, InternalController],
+    controllers: [StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,

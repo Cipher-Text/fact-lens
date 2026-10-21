@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import {
   bodyMediaAssetIds, defaultWorkflowPolicy, parseConfigValue,
-  type CorrectionCreate, type PublicStory, type RevisionCreate, type StoryCreate, type StoryDetail,
+  type AvailableTransition, type CorrectionCreate, type Principal, type PublicStory, type RevisionCreate, type StoryCreate, type StoryDetail,
   type StoryList, type StoryListQuery, type StoryMeta, type StoryStatus, type TransitionRequest,
   type ScheduledPublishResult, type TimelineEntry, type TranslationSave, type WorkflowPolicy,
 } from '@fact-lens/contracts';
@@ -107,7 +107,7 @@ export class StoriesService {
     };
   }
 
-  async detail(id: string, db: Db = this.pool): Promise<StoryDetail> {
+  async detail(id: string, principal: Principal, db: Db = this.pool): Promise<StoryDetail> {
     const story = await this.loadStory(db, id);
     const revision = await this.latestRevision(db, id);
     const [translations, contributors, media, count, openComments] = await Promise.all([
@@ -143,7 +143,21 @@ export class StoriesService {
       })),
       revisionCount: count.rows[0]!.n,
       openCommentCount: openComments.rows[0]!.n,
+      transitions: await this.availableTransitions(db, story, principal),
     };
+  }
+
+  private async availableTransitions(db: Db, story: StoryRow, principal: Principal): Promise<AvailableTransition[]> {
+    const policy = await this.policyFor(db, story.desk_id);
+    return movesFrom(story.status).flatMap((to) => {
+      const move = findTransition(story.status, to)!;
+      if (move.skipsFactCheck && policy.factCheckRequired) return [];
+      const capability = capabilityFor(move, policy);
+      return [{
+        to, capability, permitted: principal.capabilities.includes(capability),
+        reasonRequired: move.reasonRequired === true, needsSchedule: to === 'SCHEDULED',
+      }];
+    });
   }
 
   async revisions(id: string) {
@@ -203,7 +217,7 @@ export class StoriesService {
       );
       return storyId;
     });
-    return this.detail(id);
+    return this.detail(id, actor.principal);
   }
 
   async saveTranslation(id: string, locale: string, input: TranslationSave, actor: Actor): Promise<StoryDetail> {
@@ -243,7 +257,7 @@ export class StoriesService {
       await db.query('UPDATE story_revision SET changed_by = $2, changed_at = now() WHERE id = $1', [revision.id, actor.principal.subject]);
       await db.query('UPDATE story SET updated_at = now() WHERE id = $1', [id]);
     });
-    return this.detail(id);
+    return this.detail(id, actor.principal);
   }
 
   async updateMeta(id: string, input: StoryMeta, actor: Actor): Promise<StoryDetail> {
@@ -280,7 +294,7 @@ export class StoriesService {
         db,
       );
     });
-    return this.detail(id);
+    return this.detail(id, actor.principal);
   }
 
   /** Opens a new editable revision of a live story. The published revision stays live. */
@@ -299,7 +313,7 @@ export class StoriesService {
         db,
       );
     });
-    return this.detail(id);
+    return this.detail(id, actor.principal);
   }
 
   async createCorrection(id: string, input: CorrectionCreate, actor: Actor): Promise<StoryDetail> {
@@ -329,7 +343,7 @@ export class StoriesService {
         db,
       );
     });
-    return this.detail(id);
+    return this.detail(id, actor.principal);
   }
 
   async transition(id: string, req: TransitionRequest, actor: Actor): Promise<StoryDetail> {
@@ -365,7 +379,7 @@ export class StoriesService {
         );
       }
     });
-    return this.detail(id);
+    return this.detail(id, actor.principal);
   }
 
   // -------------------------------------------------------- scheduled publish

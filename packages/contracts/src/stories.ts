@@ -74,6 +74,17 @@ export type StorySummary = z.infer<typeof storySummarySchema>;
 export const storyListSchema = z.object({ items: z.array(storySummarySchema), nextCursor: z.string().nullable() });
 export type StoryList = z.infer<typeof storyListSchema>;
 
+/** A move the story could make from its current state, and whether the caller may make it. */
+export const availableTransitionSchema = z.object({
+  to: z.enum(storyStatuses),
+  /** The capability that gates this move for this story's desk. */
+  capability: z.string(),
+  permitted: z.boolean(),
+  reasonRequired: z.boolean(),
+  needsSchedule: z.boolean(),
+});
+export type AvailableTransition = z.infer<typeof availableTransitionSchema>;
+
 export const storyDetailSchema = z.object({
   story: storySchema,
   /** Latest revision: the one being edited, or the last one saved. */
@@ -85,6 +96,8 @@ export const storyDetailSchema = z.object({
   revisionCount: z.number().int().positive(),
   /** Open review comments. Visible at every hand-off so they are not missed (docs/06). */
   openCommentCount: z.number().int().nonnegative(),
+  /** What the caller can do next, so a client never repeats the workflow rules. */
+  transitions: z.array(availableTransitionSchema),
 });
 export type StoryDetail = z.infer<typeof storyDetailSchema>;
 

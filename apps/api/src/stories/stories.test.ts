@@ -166,6 +166,23 @@ describe.skipIf(!adminUrl)('stories (database)', () => {
     expect(locked.body.error.details.reason).toBe('revision_locked');
   });
 
+  it('tells the caller which moves are open to them', async () => {
+    const id = await draftStory('what-next');
+    const asReporter = await call({ method: 'GET', url: `/stories/${id}`, roles: ['reporter'] });
+    expect(asReporter.body.transitions).toEqual(expect.arrayContaining([
+      { to: 'EDITOR_REVIEW', capability: 'story.submit', permitted: true, reasonRequired: false, needsSchedule: false },
+      { to: 'ARCHIVED', capability: 'story.publish', permitted: false, reasonRequired: true, needsSchedule: false },
+    ]));
+    const asEditor = await call({ method: 'GET', url: `/stories/${id}`, roles: ['managing_editor'] });
+    expect(asEditor.body.transitions.find((t: any) => t.to === 'ARCHIVED').permitted).toBe(true);
+
+    await move(id, 'EDITOR_REVIEW', ['reporter']);
+    const review = await call({ method: 'GET', url: `/stories/${id}`, roles: ['desk_editor'] });
+    expect(review.body.transitions.map((t: any) => t.to)).toEqual(expect.arrayContaining(['DRAFT', 'FACT_CHECK', 'READY', 'ARCHIVED']));
+    expect(review.body.transitions.find((t: any) => t.to === 'DRAFT')).toMatchObject({ permitted: true, reasonRequired: true });
+    expect(review.body.transitions.find((t: any) => t.to === 'READY')).toMatchObject({ permitted: false, capability: 'story.fact_check' });
+  });
+
   it('checks the capability for each move from the workflow policy', async () => {
     const id = await draftStory('policy');
     expect((await move(id, 'PUBLISHED', ['admin'])).body.error.details.reason).toBe('invalid_transition');

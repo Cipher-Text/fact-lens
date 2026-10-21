@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadApiEnv, loadDatabaseEnv, loadWorkerEnv } from './index';
+import { loadApiEnv, loadDatabaseEnv, loadNewsroomEnv, loadWorkerEnv } from './index';
 
 const base = { DATABASE_URL: 'postgres://u:p@localhost:5432/db', REDIS_URL: 'redis://localhost:6379' };
 
@@ -33,5 +33,14 @@ describe('loadApiEnv', () => {
     expect(loadWorkerEnv(worker)).toMatchObject({ OUTBOX_POLL_MS: 1000, JOB_CONCURRENCY: 5 });
     expect(() => loadWorkerEnv({ ...worker, INTERNAL_API_TOKEN: 'short' })).toThrow(/INTERNAL_API_TOKEN/);
     expect(() => loadApiEnv({ ...base, INTERNAL_API_TOKEN: 'short' })).toThrow(/INTERNAL_API_TOKEN/);
+  });
+
+  it('loads newsroom config and rejects a short session secret', () => {
+    const env = { NEWSROOM_BASE_URL: 'http://localhost:3100', API_BASE_URL: 'http://localhost:4000', OIDC_ISSUER: 'http://idp.test', OIDC_CLIENT_ID: 'newsroom', SESSION_SECRET: 's'.repeat(32) };
+    const loaded = loadNewsroomEnv(env);
+    expect(loaded.OIDC_SCOPE).toBe('openid profile');
+    expect(loaded.OIDC_CLIENT_SECRET).toBeUndefined();
+    expect(() => loadNewsroomEnv({ ...env, SESSION_SECRET: 'short' })).toThrow(/SESSION_SECRET/);
+    expect(() => loadNewsroomEnv({ ...env, OIDC_ISSUER: 'nope' })).toThrow(/OIDC_ISSUER/);
   });
 });

@@ -230,3 +230,10 @@ export const auditEventSchema = z.object({
   requestId: z.string().nullable(),
 });
 export type AuditEvent = z.infer<typeof auditEventSchema>;
+
+export const contributorCreateSchema = z.object({
+  kind: z.enum(contributorKinds).default('person'),
+  displayName: z.string().trim().min(1).max(200),
+  bio: z.string().trim().max(2000).nullish(),
+});
+export type ContributorCreate = z.infer<typeof contributorCreateSchema>;

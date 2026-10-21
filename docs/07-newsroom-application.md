@@ -27,3 +27,12 @@ Start with optimistic saves, revision conflict detection and comments. Add SSE f
 ## Public/newsroom boundary
 
 The public app consumes only a read model/API that exposes published translations, approved media, SEO and redirect behavior. The newsroom can access drafts and audit data through authenticated endpoints. API DTOs should prevent accidental leakage of private source notes, contributor email or internal comments.
+
+## Implementation notes (apps/newsroom)
+
+- **Sign-in:** a server-side authorization code flow with PKCE, state and nonce against any OIDC provider (`OIDC_ISSUER`); the provider choice (open question 7) is still open, so nothing provider-specific is assumed. The access token is kept in an AES-GCM encrypted, HttpOnly, SameSite=Lax cookie that lives exactly as long as the token; there is no refresh yet, so an expired token sends the person through sign-in again. Locally, `pnpm dev:idp` provides a fake provider.
+- **API access:** the browser never sees the API or the token. `/api/*` adds the bearer token and forwards only newsroom routes (not `/internal`, `/public` or health), refuses writes whose `Origin` is not this site, and accepts JSON only. The API still decides every request.
+- **Screens built:** desk queue with status filter and "my assignments"; new story; story workspace (plain-text translation editing with version-conflict detection, workflow next steps, desk, section and credits, comments, sources, assignments, timeline, revision and correction forms); configuration (feature flags with a required reason). Source inbox, media library and publishing calendar are placeholders.
+- **Editing:** the full Tiptap editor is not built. The workspace edits plain paragraphs only and refuses to open any body that has formatting, links, lists or images, because saving that as plain text would destroy content.
+- **Not built:** Tiptap editor, media upload, source creation and validation screens, assignment creation screen, comment replies, audit search, configuration values (rate limits, AI budgets), Bangla interface text, automated browser tests.
+

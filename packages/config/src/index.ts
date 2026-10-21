@@ -75,3 +75,28 @@ export function loadWorkerEnv(source: Record<string, string | undefined> = proce
   }
   return parsed.data;
 }
+
+/** Settings for the newsroom's server side. Secrets stay on the server; nothing here reaches the browser. */
+export const newsroomEnvSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  /** The public origin of the newsroom, used for the OIDC redirect URI and the origin check on writes. */
+  NEWSROOM_BASE_URL: z.string().url(),
+  /** Where the browser's requests are forwarded to, over the private network. */
+  API_BASE_URL: z.string().url(),
+  OIDC_ISSUER: z.string().url(),
+  OIDC_CLIENT_ID: z.string().min(1),
+  /** Unset for a public client using PKCE only. */
+  OIDC_CLIENT_SECRET: z.string().min(1).optional(),
+  OIDC_SCOPE: z.string().min(1).default('openid profile'),
+  /** Encrypts the session cookie. 32+ characters, random, never reused across environments. */
+  SESSION_SECRET: z.string().min(32),
+});
+export type NewsroomEnv = z.infer<typeof newsroomEnvSchema>;
+
+export function loadNewsroomEnv(source: Record<string, string | undefined> = process.env): NewsroomEnv {
+  const parsed = newsroomEnvSchema.safeParse(source);
+  if (!parsed.success) {
+    throw new Error(`Invalid environment: ${parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ')}`);
+  }
+  return parsed.data;
+}

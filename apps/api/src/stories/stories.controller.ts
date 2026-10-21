@@ -21,8 +21,8 @@ export class StoriesController {
 
   @Get(':id')
   @RequireAnyCapability(...editorialCapabilities)
-  detail(@Param('id', ParseUUIDPipe) id: string): Promise<StoryDetail> {
-    return this.stories.detail(id);
+  detail(@Param('id', ParseUUIDPipe) id: string, @CurrentPrincipal() p: Principal): Promise<StoryDetail> {
+    return this.stories.detail(id, p);
   }
 
   @Get(':id/revisions')

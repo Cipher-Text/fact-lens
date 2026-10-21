@@ -6,7 +6,9 @@ Bangla and English news platform. This is the main repository; the rebuild plan 
 | --- | --- |
 | `apps/web` | Public site (Next.js 16), imported from `fact-lens-web` with its history. Mock data for now. |
 | `apps/api` | NestJS on Fastify API: health, request IDs, error envelope, PostgreSQL migrations (`apps/api/migrations`) for the core editorial schema. |
+| `apps/newsroom` | The editorial workspace (Next.js): sign-in with OIDC, desk queue, story workspace, configuration. Talks to the API only through its own server. |
 | `apps/worker` | BullMQ worker: transactional outbox dispatcher, scheduled publishing, job runtime. Changes story state only through the API. |
+| `tools/dev-idp` | A fake OpenID Connect provider for local sign-in. Development only. |
 | `packages/config` | Typed environment validation. |
 | `packages/contracts` | Transport schemas shared by apps. |
 | `infrastructure/` | Local Postgres, Redis and MinIO (`pnpm infra:up`). |
@@ -21,6 +23,8 @@ pnpm infra:up       # needs Docker
 cp apps/api/.env.example apps/api/.env
 pnpm dev:api        # http://localhost:4000/health/live
 pnpm dev:worker     # needs apps/worker/.env and the API running; health at :4100/health
+pnpm dev:idp        # fake sign-in provider on :4300 (development only)
+pnpm dev:newsroom   # http://localhost:3100; copy apps/newsroom/.env.example to .env first
 pnpm --filter @fact-lens/api migrate up   # apply migrations (DATABASE_URL in apps/api/.env)
 pnpm --filter @fact-lens/api seed         # desks, categories, default config, feature flags (idempotent)
 pnpm check          # lint, typecheck, test, build for every workspace

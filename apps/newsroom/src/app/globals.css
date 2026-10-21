@@ -1,0 +1,48 @@
+@import 'tailwindcss';
+
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --fg: #16181d;
+  --muted: #5a6270;
+  --line: #d9dde3;
+  --accent: #1d4ed8;
+  --accent-fg: #ffffff;
+  --danger: #b42318;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --fg: #e8eaee;
+    --muted: #9aa3b2;
+    --line: #2a2f3a;
+    --accent: #6c8cff;
+    --accent-fg: #0b0d12;
+    --danger: #ff8a80;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-danger: var(--danger);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, 'Segoe UI', 'Noto Sans', 'Noto Sans Bengali', 'Kohinoor Bangla', sans-serif;
+  line-height: 1.5;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
