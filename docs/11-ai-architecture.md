@@ -45,3 +45,7 @@ Record use-case, provider, model, prompt/template version, input document IDs/ha
 External source text is data, not instructions. Delimit and label it to resist prompt injection; strip hidden HTML/script content; avoid sending private contributor data unless policy permits; apply provider data-retention controls; rate-limit and budget per desk/use case; and flag low-confidence or failed safety outputs.
 
 Article rewrite carries a distinct risk from prompt injection: copyright and plagiarism exposure if the output is insufficiently transformed from the source. Always retain and display the source StorySource link and attribution alongside a rewrite draft; do not present rewrite output as ready-to-publish; and apply an editorial transformation-threshold policy (see [open questions](./19-open-questions.md)) before a rewritten story may be approved.
+
+## Status
+
+Not built. There is no AI Gateway, provider adapter or prompt template storage. What exists: six AI use-case configuration rows (provider `gemini`, no model, monthly budget zero, so AI stays off until an operator sets a budget), the `ai.assist` and `ai.rewrite` feature flags (both off), the `ai_assisted` marker on revisions, the `ai` audit actor type and a rate-limit row. See [implementation status](./22-implementation-status.md).

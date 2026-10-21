@@ -21,3 +21,16 @@
 | Unreviewed runtime configuration change (rate limit, AI budget, retention rule, feature flag) causes an outage or policy violation | Availability/compliance exposure | Narrow `config.manage` grant, server-side validation, audit trail, staged/canary rollout for high-risk flags (see [configuration and feature flags](./21-configuration-and-feature-flags.md)) |
 | Undefined data-retention policy (IP hashes, AI/rewrite logs, source snapshots) | Privacy/compliance exposure | Define retention/deletion policy before cutover (see [open questions](./19-open-questions.md) 4, 9, 10) |
 | Story-view/"most read" ranking manipulated by bot traffic or spam | Misleading editorial signal, reputational harm | Per-session/story/window de-duplication, rate limits on the beacon endpoint, bot/UA heuristics, anomaly monitoring |
+
+Added while implementing:
+
+| Risk | Impact | Mitigation |
+|---|---|---|
+| Only a fake identity provider has been used | Sign-in may fail against the real provider (claims, MFA claim name, token size, logout) | Provider-neutral code, claims names are configuration; test against the chosen provider before any launch (open question 7) |
+| The fake identity provider reaches a deployed environment | Anyone could sign in as an admin | It refuses to start with `NODE_ENV=production`, listens on loopback only, and is a dev dependency; keep it out of images |
+| Placeholder role capabilities are mistaken for policy | People can do more or less than the desks intend | Roles are data, marked provisional in the seed; settle open question 1 before launch |
+| Storage behaviour differs on the real object store | Uploads or serving fail in production | CI runs the storage tests against MinIO; run them against R2 in staging; the client avoids SDK defaults some stores reject |
+| No rate limits yet, though limits are seeded | Upload, sign-in and public-route abuse | Build Redis-backed enforcement before any public exposure; the upload size cap and image pixel cap exist now |
+| Synchronous image processing during upload | Slow requests, memory spikes on large images | 40-megapixel and configured size caps; move to the worker (`media.variant`) before heavy use |
+| Screens are hand-checked only | Regressions in the newsroom go unnoticed | Add browser tests (Playwright) before the newsroom has real users |
+| Rights fields complete on paper but wrong in fact | Unlicensed images published | Rights are required and checked at publish and on every public read; a person still has to enter true values |

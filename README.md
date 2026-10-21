@@ -1,18 +1,18 @@
 # Fact Lens
 
-Bangla and English news platform. This is the main repository; the rebuild plan is in [`docs/`](docs/README.md).
+Bangla and English news platform. This is the main repository; the rebuild plan is in [`docs/`](docs/README.md), and [what is built and what is not](docs/22-implementation-status.md) is kept next to it.
 
 | Path | What |
 | --- | --- |
-| `apps/web` | Public site (Next.js 16), imported from `fact-lens-web` with its history. Mock data for now. |
-| `apps/api` | NestJS on Fastify API: health, request IDs, error envelope, PostgreSQL migrations (`apps/api/migrations`) for the core editorial schema. |
-| `apps/newsroom` | The editorial workspace (Next.js): sign-in with OIDC, desk queue, story workspace, configuration. Talks to the API only through its own server. |
-| `apps/worker` | BullMQ worker: transactional outbox dispatcher, scheduled publishing, job runtime. Changes story state only through the API. |
+| `apps/web` | Public site (Next.js 16), imported from `fact-lens-web` with its history. Mock data for now; it does not call the API yet. |
+| `apps/api` | NestJS on Fastify API. Stories and the editorial workflow, comments, assignments, sources, the media library, a public read model, feature flags, audit. Owns the PostgreSQL schema (`apps/api/migrations`) and the seed. |
+| `apps/newsroom` | The editorial workspace (Next.js): OIDC sign-in, desk queue, story workspace with a rich-text editor, media library, configuration. Reaches the API only through its own server. |
+| `apps/worker` | BullMQ worker: outbox dispatcher, job runtime, scheduled publishing. Changes story state only through the API. |
 | `tools/dev-idp` | A fake OpenID Connect provider for local sign-in. Development only. |
-| `packages/config` | Typed environment validation. |
-| `packages/contracts` | Transport schemas shared by apps. |
-| `infrastructure/` | Local Postgres, Redis and MinIO (`pnpm infra:up`). |
-| `docs/` | The plan: architecture, domain model, roadmap, decisions. |
+| `packages/config` | Typed environment validation for each app. |
+| `packages/contracts` | Shared schemas, enums and the story body contract. |
+| `infrastructure/` | Local PostgreSQL, Redis and MinIO (`pnpm infra:up`). |
+| `docs/` | The plan and what is built: start at [`docs/README.md`](docs/README.md) and [`docs/22-implementation-status.md`](docs/22-implementation-status.md). |
 
 ## Start
 

@@ -34,3 +34,16 @@ FactLens should be configurable by editorial and ops staff wherever a value legi
 ## Where this lives technically
 
 `packages/config` holds typed environment/deployment config (tier 2) only. Editorial/runtime configuration and feature flags (tiers 3-4) are PostgreSQL-backed records owned by the API, edited through a newsroom Configuration screen (see [newsroom application](./07-newsroom-application.md)), gated by a `config.manage` capability, and audited like any other privileged action ([auth/security](./12-auth-security-and-audit.md)). A config change that bypasses code review is still a production change — validate it server-side, and prefer staged/canary rollout for anything that can cause an outage or a policy violation (see the risk register).
+
+## Status
+
+Built:
+
+- **Tables and validation:** `configuration` (one value per key and scope) and `feature_flag`; each configuration key has a value schema in `packages/contracts`, and the seed validates before it inserts.
+- **Seeded and used:** `workflow.transition_policy` (global, with a per-desk override that the workflow reads on every move).
+- **Seeded, not yet used:** nine `rate_limit.*` rows, six `ai.use_case.*` rows (budget zero). Nothing enforces or reads them yet. No `retention.*` rows exist because the policies are open ([19](./19-open-questions.md), 16).
+- **Locales** are rows in `locale`, as the plan asks.
+- **Feature flags:** 11, all off, with a screen to turn them on or off. Nothing reads a flag yet except that screen.
+- **Admin screen:** feature flags only, gated by `config.manage`, MFA-protected, with a required reason, an audit row and an outbox event on every change. Editing configuration values has no screen or endpoint.
+
+See [implementation status](./22-implementation-status.md).

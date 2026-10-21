@@ -54,3 +54,16 @@ Entity types can include PERSON, ORGANIZATION, COMPANY, GOVERNMENT_AGENCY, POLIT
 - Slugs are unique within locale and publication surface; old slugs become redirect records.
 - Every external source is untrusted input and has provenance, retrieval time and validation status.
 - Media object keys are not used as editorial truth; DB metadata controls rights and attachment.
+
+## Status
+
+Built as tables: everything in "Committed entities" except Topic, NewsletterSubscriber and StoryPerformanceDaily. Differences and additions:
+
+- **Slugs and redirects** are in `story_slug`, one row per locale and slug, with one current slug per story and locale. SEO fields are columns on the translation, not a separate table. There is no canonical-URL or legacy-redirect registry yet.
+- **Added tables:** `locale` (a row per supported locale, not an enum), `app_role` and `app_role_capability`, `story_contributor`, `revision_media`, `correction_notice` (notice text per locale), `ad_category_target`, `processed_job` (consumer idempotency). The outbox has lease and dead-letter columns.
+- **Revisions** are editable until submitted, then locked; "append-only to editors" is enforced in the API, not by a database trigger ([06](./06-editorial-workflow.md)). The audit table is append-only in the database.
+- **Media** has rights fields (owner, credit, licence, source, expiry, permitted channels) and a unique checksum ([10](./10-media-architecture.md)).
+- **Ads** have tables and constraints but no endpoints.
+- Entities, claims, AI runs, prompt templates and ingestion sources have no tables.
+
+See [implementation status](./22-implementation-status.md).

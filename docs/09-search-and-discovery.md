@@ -19,3 +19,7 @@ Introduce OpenSearch only when at least one is measured: complex faceting, autoc
 Start related stories with shared category/tag/entity/source signals plus recency. Later add entity co-occurrence, claim/evidence links and embeddings behind explicit editorial/privacy policy. Do not let similarity ranking imply factual equivalence.
 
 First-party story-view counts (see [target architecture](./03-target-architecture.md)) can also power "most read"/trending discovery surfaces once available in Phase 4. Treat popularity as a distinct, clearly labeled signal from editorial curation — do not let it silently override desk-selected placement.
+
+## Status
+
+Not built. The worker has a `search.index` job that logs and succeeds, and the outbox already sends it a publish or archive event for each story, so the projection can be added without changing the API. The newsroom list can filter by status only; there is no text search over stories. Media library search is a simple case-insensitive match on file name, alt text, credit and rights owner. See [implementation status](./22-implementation-status.md).

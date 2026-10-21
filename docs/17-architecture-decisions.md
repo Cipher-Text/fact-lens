@@ -14,6 +14,19 @@
 10. **ADR-010: Branded cards/posters are deterministic template compositing, not generative AI.** A `CardTemplate` plus a raw photo and story text are composited by a worker job; AI may only ever suggest an input to that pipeline (crop/focal point, caption copy), never generate the base image.
 11. **ADR-011: Editorial/runtime configuration is PostgreSQL-backed and admin-editable, separate from deployment config.** `packages/config` holds only environment/deployment values; policy that legitimately varies by desk, market or time (workflow rules, AI budgets, rate limits, retention, locales) is DB-backed, `config.manage`-gated, and audited. Feature flags gate risk-bearing modules independently of deploys. See [configuration and feature flags](./21-configuration-and-feature-flags.md).
 
+## Made while implementing
+
+These were not in the original plan. Each is built and tested; revisit one if its stated reason stops holding.
+
+12. **ADR-012: The newsroom signs in on its server, and the browser never holds the API token.** Authorization code with PKCE, state and nonce; the access token sits in an encrypted, HttpOnly, SameSite=Lax cookie; the browser reaches the API only through a proxy that checks `Origin` and an allowlist. Reason: no token in page scripts, one place for CSRF defence. Cost: no refresh yet, so an expired token means signing in again.
+13. **ADR-013: The worker changes domain state only through the API.** It reads the outbox and the due schedules from PostgreSQL, but publishing goes through `/internal/schedules/:id/publish`, which re-checks every rule and returns the first outcome when repeated. Reason: domain invariants stay in one place ([15](./15-repository-structure.md)). The internal surface is off without a shared secret and must stay off the public network.
+14. **ADR-014: A revision is editable until it is submitted.** Submitting locks it and stores a content hash; sending a story back, revising a published story or correcting it opens a new revision that copies the old one. Reason: reviewed text is never changed in place (ADR-005). See [06](./06-editorial-workflow.md).
+15. **ADR-015: Slugs are reserved at publish.** A slug owned by another story fails the publish with a conflict; replaced slugs stay in a registry and redirect. Reason: drafts cannot squat on addresses, and the invariant "unique per locale" is enforced by the database.
+16. **ADR-016: Uploads are untrusted bytes, and readers get only derivatives.** The type comes from the bytes, every image is re-encoded (metadata removed), variants are made during the upload, and the public route serves a derivative only for an image used by a live story whose rights still allow the web, checked on every read. See [10](./10-media-architecture.md). Cost: variant generation is synchronous until it moves to the worker.
+17. **ADR-017: SQL migrations, owned by the API.** `node-pg-migrate` with plain SQL files that have Up and Down sections; the worker's tests run the same files. Reason: the schema is the contract between apps and reads best as SQL. No ORM.
+18. **ADR-018: Contracts are Zod schemas, not OpenAPI-first.** `packages/contracts` holds transport schemas and enums shared by the API and the newsroom, and a test compares each enum with its database CHECK constraint. OpenAPI generation (doc 20, Epic A) is deferred until an external client needs it.
+19. **ADR-019: A fake identity provider for local work.** `tools/dev-idp` signs anyone in who clicks a name; it listens on loopback only and refuses to start when `NODE_ENV=production`. Reason: the real provider is an open question ([19](./19-open-questions.md), 7) and local work should not wait on it.
+
 ## Deferred with revisit triggers
 
 - **OpenSearch:** advanced faceting/autocomplete/semantic or measured scale/latency.

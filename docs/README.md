@@ -10,7 +10,7 @@ This set of documents plans a rebuild of FactLens as a digital newsroom platform
 
 **Major migration challenges:** preserve published URLs and timestamps; convert Strapi localization links and HTML into a revisioned bilingual story model; migrate media and attribution; reproduce SEO/sitemap/analytics behavior; replace Strapi Admin workflows without losing editorial continuity; and validate every imported relation and redirect.
 
-**Recommended first implementation milestone:** Phase 0/1 foundation with a migration inventory fixture, canonical URL registry, PostgreSQL schema for Story/Revision/Translation/Taxonomy/Media, API contracts, OIDC integration, audit events, and a minimal newsroom shell. Do not cut over public traffic yet.
+**Status:** the Phase 1 foundation and most of the editorial core are built and tested; migration, ingestion, AI, distribution, search and the public cutover are not. See [implementation status](./22-implementation-status.md). Do not cut over public traffic yet.
 
 **Intentionally deferred:** OpenSearch, Temporal, Kafka, Kubernetes, microservices, ClickHouse, generalized entity intelligence, and advanced distribution automation. Triggers are documented in [technology decisions](./04-technology-decisions.md) and [architecture decisions](./17-architecture-decisions.md).
 
@@ -37,7 +37,8 @@ This set of documents plans a rebuild of FactLens as a digital newsroom platform
 19. [Open questions](./19-open-questions.md)
 20. [Phase 1 backlog](./20-phase-1-backlog.md)
 21. [Configuration and feature flags](./21-configuration-and-feature-flags.md)
+22. [Implementation status](./22-implementation-status.md)
 
 ## Scope note
 
-Application code is being built in this repository, following the plan. Phase 1 so far: `apps/web` (imported from `fact-lens-web`, mock data), `apps/api` (health, request IDs, error envelope), `packages/config` and `packages/contracts`. `cipher-press` must remain unchanged until a separately approved migration or compatibility project begins.
+Application code is being built in this repository, following the plan. What exists and how far it has been checked is in [implementation status](./22-implementation-status.md); where an implementation chose differently from the plan, the choice is recorded in [architecture decisions](./17-architecture-decisions.md) (ADR-012 onward). `cipher-press` must remain unchanged until a separately approved migration or compatibility project begins.

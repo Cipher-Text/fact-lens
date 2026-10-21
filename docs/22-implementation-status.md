@@ -1,0 +1,73 @@
+# 22 — Implementation status
+
+What exists in this repository today, how much of it has been checked, and what is not built. The other documents describe the plan; this one describes reality. Last reviewed 21 October 2026.
+
+## How to read this
+
+- **Tested** means automated tests that run in CI against a real PostgreSQL and Redis.
+- **Hand-checked** means someone drove it in a browser and looked, with no automated test behind it.
+- **Not built** means nothing exists beyond, at most, a database table or a configuration row.
+- A **stand-in** is an in-process fake used in fast tests. The real service has not been used unless a line says so.
+
+## Phases
+
+| Phase | Status | What is there |
+|---|---|---|
+| 0. Inventory and migration prototypes | Not started | No inventory, importer, redirect registry prototype or HTML-to-editor spike. The locale and URL policy is open ([19](./19-open-questions.md), 2 and 14). |
+| 1. Foundation and newsroom shell | Mostly done | Monorepo, API, migrations, OIDC bearer auth, capability checks, audit and outbox, worker, contracts, newsroom shell. Missing: OpenAPI generation, Docker images, deployment skeleton, tracing and metrics. See [20](./20-phase-1-backlog.md). |
+| 2. Editorial core | Largely done | Story, revision and translation commands, workflow, Tiptap editor, sources, comments, assignments, corrections, timeline, scheduling and scheduled publishing, media library. Missing: branded card generation, taxonomy management screens, an assignment-creation screen, the advertising screens. |
+| 3. Migration tooling and rehearsal | Not started | |
+| 4. Public web and cutover | Early | `apps/web` is the new design on mock data. The API has a published-story read model with slug redirects and public media. There are no list, category, tag or search routes, no sitemap, legacy redirects, view beacon, newsletter or ad serving, and the web app does not call the API. |
+| 5. Ingestion and AI assistance | Not started | Feature flags and AI configuration rows exist and do nothing. The cache, search and notification jobs only log. |
+| 6. Distribution and analytics | Not started | |
+| 7. Advanced discovery | Not started | |
+
+## What exists
+
+**Applications**
+
+- `apps/api`: NestJS on Fastify. Default-deny authentication, capability checks, audit, 12 SQL migrations.
+- `apps/worker`: BullMQ worker with an outbox dispatcher, a job runtime, a due-schedule scanner and a health endpoint.
+- `apps/newsroom`: Next.js editorial workspace with server-side OIDC sign-in.
+- `apps/web`: the public site design, imported from `fact-lens-web`, on mock data.
+- `tools/dev-idp`: a fake sign-in provider for local use. It refuses to run in production.
+- `packages/config` (environment validation) and `packages/contracts` (shared schemas and enums).
+
+**API surface** (all require sign-in unless marked public)
+
+- Stories: list, detail, revisions, timeline, create, translation save with version check, desk/section/credits, new revision, workflow transitions, corrections.
+- Collaboration: comments (add, resolve, reopen), assignments (create, complete, cancel, "mine"), sources (create, validate, attach, detach).
+- Media: upload, list, detail, rights, file, delete. Public: story by locale and slug, media derivatives.
+- Reference data and administration: desks, categories, locales, contributors, feature flags, `/me`.
+- Internal (shared secret, for the worker): publish a due schedule.
+- Health: liveness and readiness.
+
+**Database**: locale, configuration, feature flag, desk, category, tag, contributor, media asset, story, revision, translation, slug registry, story tags and contributors, revision media, source, story source, assignment, comment, correction and notice, publishing schedule, card template, generated card, advertiser, campaign, placement, ad, ad category target, ad event, role, role capability, audit event, outbox event, processed job. Not yet created: newsletter subscriber, story performance, entities, claims, AI runs, prompt templates, ingestion sources.
+
+**Seeded reference data** (`pnpm seed`): 4 provisional desks, 9 categories with English and Bangla names, 8 provisional roles, default workflow policy, 9 rate limits, 6 AI use cases (budget zero), 11 feature flags (all off).
+
+**Worker jobs**: `story.publish_scheduled` and `schedule.scan` work. `cache.invalidate`, `search.index` and `notification.send` log and succeed. `media.variant` and `media.card_generate` fail on purpose as "not implemented".
+
+**Newsroom screens**: desk queue, new story, story workspace, media library and image page, configuration (feature flags). Source inbox and publishing calendar are placeholders.
+
+## How much is verified
+
+| Area | Verification |
+|---|---|
+| Workflow, readiness rules, slugs, corrections, scheduling | Tested (database tests, including concurrency) |
+| Authentication, capabilities, MFA rule, audit | Tested with signed test tokens; sign-in flow tested against the fake provider |
+| Outbox dispatcher, jobs, idempotency, scheduled publish | Tested against real PostgreSQL and Redis; a real API and worker run was also hand-checked |
+| Media upload, sanitizing, variants, rights, public serving | Tested. Storage tests run against a stand-in S3 server; the real MinIO run is added to CI and **has not yet been seen to pass** |
+| Newsroom screens and the editor | Libraries and renderer tested; the screens themselves are **hand-checked only**, there are no browser tests |
+| Public web | 251 tests in `apps/web`; it does not use the API |
+
+## Not built, in one place
+
+- **Delivery:** Docker images, deployment, secret scanning, dependency scanning, OpenAPI generation.
+- **Operations:** tracing, metrics, Sentry, dashboards, backups, rate limits (the numbers are seeded, nothing enforces them).
+- **Auth:** token refresh, desk-scoped roles, a real identity provider (only the fake one has been used).
+- **Media:** variant generation in the worker, malware scanning, crop and focal point, social cards, orphan sweep, cipher-press upload migration, CDN.
+- **Editorial:** HTML import fixture, autosave, side-by-side locales, comment replies in the UI, audit search, taxonomy and contributor management screens.
+- **Commercial:** ad serving, signed redirects, targeting logic, ad-event capture, advertising screens.
+- **Public:** list, category, tag and search routes, sitemap, legacy redirects, view beacon, newsletter, analytics tags.
+- **Later phases:** ingestion, AI gateway, distribution, search projection, entities and claims, migration from cipher-press.

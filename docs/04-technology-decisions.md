@@ -19,6 +19,22 @@
 | Infra | Docker, GitHub Actions, managed services | Fits current deployment skills and keeps operations small. Cloudflare is the confirmed edge/WAF/CDN and object storage provider (R2); choose managed PostgreSQL/Redis first. |
 | Web analytics/SEO tracking | Google Analytics 4 tag + Google Search Console site verification | Carries forward CipherPress's current tag-based approach (`GoogleTag.tsx`/GTM) onto the public site; GSC verification plus the existing sitemap satisfies indexing needs. Tag/verification only for now — pulling GSC/GA4 performance data back into the newsroom via their APIs is a later enhancement, not a Phase 1/4 dependency. |
 
+## Choices made while building
+
+| Area | Choice | Note |
+|---|---|---|
+| Migrations | `node-pg-migrate`, plain SQL files with Up and Down sections, in `apps/api/migrations` | No ORM; see ADR-017 |
+| Contracts | Zod 4 schemas in `packages/contracts` | Not OpenAPI-first; see ADR-018 |
+| Language | TypeScript 7 in the API, worker and packages; TypeScript 5 in the Next.js apps | `typescript-eslint` does not support 7 yet |
+| API runtime | NestJS 12 on Fastify 5, `pg` for queries | |
+| Token validation | `jose`, asymmetric algorithms only, issuer and audience checked | |
+| Browser sign-in | `openid-client` (authorization code with PKCE) in the newsroom server | See ADR-012 |
+| Queues | BullMQ 6 with ioredis | One queue per job family |
+| Editor | Tiptap 3 limited to the body contract | |
+| Images | `sharp` for decoding, re-encoding and variants; `@aws-sdk/client-s3` for storage | |
+| Frontends | Next.js 16, React 19, Tailwind 4 | `apps/web` follows its own design-system rules |
+| Tests | Vitest everywhere; real PostgreSQL, Redis and (in CI) MinIO for integration tests | No browser tests yet |
+
 ## Alternatives considered
 
 - **Strapi:** useful current migration source, but insufficient workflow/revision/source/audit semantics and would make the newsroom depend on generic Admin UX.

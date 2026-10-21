@@ -39,3 +39,7 @@ Compare counts by locale/state, slug sets, canonical URL sets, timestamps, autho
 ## Rollback
 
 Keep Strapi read-only and publicly available behind the old route for a defined window; preserve a reversible CDN/origin switch and redirect map. Roll back application traffic, not imported target data, unless a tested database restore is required. Record cutover version and reconciliation IDs.
+
+## Status
+
+Not started. The target tables exist, and so do some pieces the plan relies on: there are no legacy-identifier columns yet, the slug registry can hold redirects between a story's own slugs but not legacy URLs, contributors can be created, and the body schema defines what imported HTML must be converted into. The HTML-to-editor conversion fixture, the exporter, the media copier and the URL inventory are all still to do, and the locale and URL decision (open question 14) comes first. See [implementation status](./22-implementation-status.md).

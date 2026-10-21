@@ -50,3 +50,7 @@ The public site is a consumer of approved publication state. It must not become 
 - Editors can create, revise, submit, approve, schedule, publish and correct without Strapi.
 - Public pages remain cacheable and meet defined latency/error budgets.
 - Async failures are observable and retryable without duplicate publication or media generation.
+
+## Status
+
+The newsroom application and the editorial half of the automation platform (workflow, scheduling, media) are built to the extent described in [implementation status](./22-implementation-status.md). The public website exists as a design on mock data. Ingestion, AI, distribution, search and the advertising screens are not built. Open scope questions are in [open questions](./19-open-questions.md): fact-checking (15), public comments (12) and paid subscriptions (13).

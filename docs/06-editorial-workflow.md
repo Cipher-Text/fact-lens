@@ -64,5 +64,7 @@ How the first implementation reads this document. Change these deliberately; eac
 - **Assignments** are created by `story.review` holders, one open assignment per person and role. The assignee may complete their own; cancelling takes `story.review`. `GET /assignments/mine` is the desk queue.
 - **Sources** are created from the newsroom and deduplicated by canonical URL (tracking parameters and fragments removed). A source stays `unvalidated` until a `story.review` or `story.fact_check` holder accepts or rejects it with a reason; a rejected source cannot be attached. Nothing fetches the URL. Attach notes stay internal.
 - **Timeline** (`/stories/:id/timeline`) lists audit events and revision openings, newest first, without request ids or metadata.
-- **Not built yet:** HTML import fixture, the scheduled-publish worker, search projection, comment mentions and notifications.
+- **Scheduled publishing:** Ready to Scheduled records a `publishing_schedule` row (the time is stored with its time zone, in the future, one key per schedule). The worker finds due rows and calls the API, which publishes as `system:scheduler` after re-checking every readiness rule. If publishing is no longer possible (for example the slug was taken meanwhile), the story goes back to Ready, the schedule is marked failed and a `story.schedule_failed` event is queued. Moving a scheduled story back to Ready, or archiving it, cancels the schedule. See [08](./08-ingestion-and-automation.md).
+- **Images:** every image in a body needs alt text before review; publishing needs rights that are current and cover the web ([10](./10-media-architecture.md)).
+- **Not built yet:** HTML import fixture, search projection, comment mentions and notifications, a calendar of schedules.
 

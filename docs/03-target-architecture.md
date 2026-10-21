@@ -30,9 +30,9 @@ flowchart LR
 | Component | Responsibility | Boundary |
 |---|---|---|
 | Public web | Render approved stories, listing pages, metadata, sitemap, redirects and cache tags | No editorial writes; safe public API only |
-| Newsroom | Editor, source inbox, assignments, review, media and analytics screens | OIDC session; writes through API |
+| Newsroom | Editor, source inbox, assignments, review, media and analytics screens | Server-side OIDC session; the browser reaches the API only through the newsroom's own proxy |
 | API | Domain commands/queries, authz, REST contracts, transactions, outbox records | Stateless; no direct UI-specific database coupling |
-| Worker | Ingestion, media variants, search indexing, AI proposals, notifications, newsletter dispatch, distribution | Idempotent jobs with retry/backoff |
+| Worker | Ingestion, media variants, search indexing, AI proposals, notifications, newsletter dispatch, distribution | Idempotent jobs with retry/backoff; changes story state only through the API's internal endpoints |
 | PostgreSQL | Stories, revisions, translations, taxonomy, sources, media metadata, workflow, audit, outbox | Source of truth |
 | Redis | Queue state, short-lived cache, rate-limit counters, locks where needed | Rebuildable/ephemeral |
 | Object storage (Cloudflare R2) | Originals and derived media | Immutable-ish objects plus DB metadata |
@@ -75,3 +75,9 @@ FactLens tracks per-story reads with first-party telemetry rather than a third-p
 ## Availability and scaling posture
 
 Run multiple stateless API replicas behind a managed load balancer when traffic justifies it. Use PostgreSQL connection pooling, indexes on publication state/locale/slug/time, CDN caching for public reads, Redis for short-lived coordination, and independently scalable workers. Add read replicas only after measured read pressure. Queue backpressure and idempotency are more valuable than adding infrastructure early.
+
+## Status
+
+Built: the API, the PostgreSQL schema, the transactional outbox and its dispatcher, the worker runtime (scheduled publishing works; cache invalidation, search indexing and notifications are logging stubs), the newsroom, and object storage for media (a local folder or any S3-compatible store). Not built: the CDN and cache invalidation target, OpenSearch (deferred by design), the AI Gateway, ingestion connectors, story performance tracking (beacon, Redis counters, `analytics.rollup`) and the public site's use of the API. Details in [implementation status](./22-implementation-status.md).
+
+The sequence diagram above matches what is built up to "Claim StoryPublished outbox row": publishing writes state, audit and an outbox row in one transaction, and the worker turns the row into cache and search jobs. A scheduled publish adds one step in front: the worker calls the API to publish, and the API does the transaction.
