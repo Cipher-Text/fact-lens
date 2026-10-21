@@ -25,3 +25,15 @@ export function loadApiEnv(source: Record<string, string | undefined> = process.
   }
   return parsed.data;
 }
+
+/** For CLI tools (migrations, seed) that need the database but not Redis. */
+export const databaseEnvSchema = apiEnvSchema.pick({ DATABASE_URL: true });
+export type DatabaseEnv = z.infer<typeof databaseEnvSchema>;
+
+export function loadDatabaseEnv(source: Record<string, string | undefined> = process.env): DatabaseEnv {
+  const parsed = databaseEnvSchema.safeParse(source);
+  if (!parsed.success) {
+    throw new Error(`Invalid environment: ${parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ')}`);
+  }
+  return parsed.data;
+}

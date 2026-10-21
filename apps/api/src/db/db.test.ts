@@ -2,6 +2,8 @@ import { randomBytes } from 'node:crypto';
 import { resolve } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { Pool } from 'pg';
+import * as c from '@fact-lens/contracts';
+import { seedReferenceData } from '../seed/seed';
 import { withTransaction } from './transaction';
 
 // Needs a PostgreSQL server. Set TEST_DATABASE_URL to any database on it (for example the
@@ -108,8 +110,8 @@ describe.skipIf(!adminUrl)('database schema', () => {
   });
 
   it('keeps category and tag slugs unique per locale', async () => {
-    const c1 = await pool.query(`INSERT INTO category (key) VALUES ('politics') RETURNING id`);
-    const c2 = await pool.query(`INSERT INTO category (key) VALUES ('sports') RETURNING id`);
+    const c1 = await pool.query(`INSERT INTO category (key) VALUES ('test-cat-a') RETURNING id`);
+    const c2 = await pool.query(`INSERT INTO category (key) VALUES ('test-cat-b') RETURNING id`);
     const label = (id: string) =>
       pool.query(`INSERT INTO category_label (category_id, locale, name, slug) VALUES ($1, 'en', 'n', 'same')`, [id]);
     await label(c1.rows[0].id);
@@ -364,6 +366,82 @@ describe.skipIf(!adminUrl)('database schema', () => {
       await expectCode(ev('click', { ua: 'u'.repeat(600) }), '23514');
       await expectCode(pool.query('DELETE FROM ad WHERE id = $1', [ad.rows[0].id]), '23503');
     });
+  });
+
+  it('keeps contract enums in sync with the database CHECK constraints', async () => {
+    const pairs: Array<[string, string, readonly string[]]> = [
+      ['story', 'status', c.storyStatuses],
+      ['story_translation', 'translation_status', c.translationStatuses],
+      ['category', 'status', c.taxonomyStatuses],
+      ['tag', 'status', c.taxonomyStatuses],
+      ['contributor', 'kind', c.contributorKinds],
+      ['story_contributor', 'role', c.contributorRoles],
+      ['locale', 'direction', c.localeDirections],
+      ['media_asset', 'processing_state', c.mediaProcessingStates],
+      ['revision_media', 'role', c.revisionMediaRoles],
+      ['source', 'kind', c.sourceKinds],
+      ['source', 'validation_status', c.sourceValidationStatuses],
+      ['source', 'ingest_channel', c.ingestChannels],
+      ['story_source', 'relation', c.sourceRelations],
+      ['story_source', 'use_type', c.sourceUseTypes],
+      ['editorial_assignment', 'role', c.assignmentRoles],
+      ['editorial_assignment', 'status', c.assignmentStatuses],
+      ['editorial_comment', 'status', c.commentStatuses],
+      ['publishing_schedule', 'status', c.scheduleStatuses],
+      ['card_template', 'aspect_ratio', c.cardAspectRatios],
+      ['card_template', 'status', c.cardTemplateStatuses],
+      ['advertiser', 'status', c.advertiserStatuses],
+      ['ad_campaign', 'status', c.campaignStatuses],
+      ['ad', 'format', c.adFormats],
+      ['ad', 'device_target', c.adDeviceTargets],
+      ['ad_event', 'event_type', c.adEventTypes],
+      ['audit_event', 'actor_type', c.auditActorTypes],
+    ];
+    for (const [table, column, values] of pairs) {
+      const { rows } = await pool.query(
+        `SELECT pg_get_constraintdef(con.oid) AS def
+           FROM pg_constraint con
+           JOIN pg_class t ON t.oid = con.conrelid
+           JOIN pg_attribute a ON a.attrelid = t.oid AND a.attnum = ANY (con.conkey)
+          WHERE con.contype = 'c' AND t.relname = $1 AND a.attname = $2 AND cardinality(con.conkey) = 1`,
+        [table, column],
+      );
+      expect(rows.length, `${table}.${column} has a CHECK constraint`).toBeGreaterThan(0);
+      const inDb = [...rows[0].def.matchAll(/'([^']+)'::text/g)].map((m) => m[1]).sort();
+      expect(inDb, `${table}.${column}`).toEqual([...values].sort());
+    }
+  });
+
+  it('seeds reference data once and never overwrites later edits', async () => {
+    const first = await seedReferenceData(pool);
+    expect(first.categories).toBe(9);
+    expect(first.featureFlags).toBe(c.featureFlagKeys.length);
+    expect(first.desks).toBeGreaterThan(0);
+
+    await pool.query(`UPDATE feature_flag SET enabled = true WHERE key = 'ads.serving'`);
+    await pool.query(`UPDATE configuration SET value = '{"limit":1,"windowSeconds":1}' WHERE key = 'rate_limit.search'`);
+    await pool.query(`UPDATE category_label SET name = 'Edited' WHERE slug = 'local' AND locale = 'en'`);
+
+    const second = await seedReferenceData(pool);
+    expect(second).toEqual({ desks: 0, categories: 0, configuration: 0, featureFlags: 0 });
+
+    const flag = await pool.query(`SELECT enabled FROM feature_flag WHERE key = 'ads.serving'`);
+    expect(flag.rows[0].enabled).toBe(true);
+    const cfg = await pool.query(`SELECT value FROM configuration WHERE key = 'rate_limit.search'`);
+    expect(cfg.rows[0].value).toEqual({ limit: 1, windowSeconds: 1 });
+    const label = await pool.query(`SELECT name FROM category_label WHERE slug = 'local' AND locale = 'en'`);
+    expect(label.rows[0].name).toBe('Edited');
+    const bn = await pool.query(`SELECT count(*)::int AS n FROM category_label WHERE locale = 'bn-BD'`);
+    expect(bn.rows[0].n).toBe(9);
+  });
+
+  it('stores seeded configuration that passes its contract schema', async () => {
+    const { rows } = await pool.query("SELECT key, value FROM configuration WHERE updated_by = 'seed'");
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) {
+      if (r.key === 'rate_limit.search') continue; // edited by the previous test
+      expect(() => c.parseConfigValue(r.key, r.value), r.key).not.toThrow();
+    }
   });
 
   describe('withTransaction', () => {

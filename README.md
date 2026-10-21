@@ -20,6 +20,7 @@ pnpm infra:up       # needs Docker
 cp apps/api/.env.example apps/api/.env
 pnpm dev:api        # http://localhost:4000/health/live
 pnpm --filter @fact-lens/api migrate up   # apply migrations (DATABASE_URL in apps/api/.env)
+pnpm --filter @fact-lens/api seed         # desks, categories, default config, feature flags (idempotent)
 pnpm check          # lint, typecheck, test, build for every workspace
 
 # Database tests are skipped unless TEST_DATABASE_URL points at a Postgres server:

@@ -17,6 +17,7 @@ These require product, editorial or business input; they are not unresolved mere
 13. Should FactLens support a paid subscription/paywall alongside advertising? This is a monetization/business decision (pricing, payment provider, what content is gated) requiring explicit confirmation, the same way advertising scope required confirmation — not assumed in scope.
 14. What is the public URL scheme, and how do legacy URLs map to it? `apps/web` serves Bangla at `/` and English under `/en` with codes `bn` and `en`; the docs use `en` and `bn-BD`; cipher-press uses no locale prefix (cookie-based language) and slugs such as `/news/[slug]`. Needs one decision on locale codes, prefix policy and the legacy redirect map (see docs 14 and 16, Phase 0).
 15. Is fact-checking part of the product? `apps/web` rule `DR-18` says Fact Lens has no fact-checking product and forbids a fact-check label or verdict feature, while docs 02 and 05 list fact-checking in the newsroom workflow and a claims/evidence graph (Phase 7). Needs one decision; the docs or the web rule must change.
+16. Retention windows are unset. `pnpm seed` creates no `retention.*` configuration, because the policies behind questions 4, 9 and 10 are undecided. The desks it seeds are provisional (question 1).
 
 Resolved: advertising is confirmed part of the Phase 1 launch scope, carrying forward CipherPress's current Advertiser/Campaign/Placement/Ad/Event design as-is (see [product and platform scope](./02-product-and-platform-scope.md) and [domain model](./05-domain-model.md)).
 

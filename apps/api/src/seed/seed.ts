@@ -1,0 +1,59 @@
+import { featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
+import type { Pool } from 'pg';
+import { categories, configuration, desks, featureFlags } from './data';
+import { withTransaction } from '../db/transaction';
+
+export interface SeedResult {
+  desks: number;
+  categories: number;
+  configuration: number;
+  featureFlags: number;
+}
+
+/** Inserts reference data in one transaction. Existing rows are left as they are. */
+export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
+  // Validate before touching the database: a bad value must not half-seed.
+  for (const c of configuration) parseConfigValue(c.key, c.value);
+  for (const f of featureFlags) {
+    if (!featureFlagKeys.includes(f.key)) throw new Error(`Unknown feature flag: ${f.key}`);
+  }
+
+  return withTransaction(pool, async (db) => {
+    const count = async (sql: string, params: unknown[]) => (await db.query(sql, params)).rowCount ?? 0;
+    const result: SeedResult = { desks: 0, categories: 0, configuration: 0, featureFlags: 0 };
+
+    for (const d of desks) {
+      result.desks += await count('INSERT INTO desk (key, name) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING', [d.key, d.name]);
+    }
+
+    for (const [i, c] of categories.entries()) {
+      const inserted = await db.query(
+        'INSERT INTO category (key, position) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING RETURNING id',
+        [c.key, i + 1],
+      );
+      if (inserted.rowCount === 0) continue; // already seeded; keep any edited labels
+      result.categories += 1;
+      for (const [locale, name] of [['en', c.en], ['bn-BD', c.bn]] as const) {
+        await db.query('INSERT INTO category_label (category_id, locale, name, slug) VALUES ($1, $2, $3, $4)', [
+          inserted.rows[0].id, locale, name, c.key,
+        ]);
+      }
+    }
+
+    for (const c of configuration) {
+      result.configuration += await count(
+        'INSERT INTO configuration (key, scope, value, updated_by) VALUES ($1, $2, $3, $4) ON CONFLICT (key, scope) DO NOTHING',
+        [c.key, c.scope, JSON.stringify(c.value), 'seed'],
+      );
+    }
+
+    for (const f of featureFlags) {
+      result.featureFlags += await count(
+        'INSERT INTO feature_flag (key, enabled, description, updated_by) VALUES ($1, false, $2, $3) ON CONFLICT (key) DO NOTHING',
+        [f.key, f.description, 'seed'],
+      );
+    }
+
+    return result;
+  });
+}

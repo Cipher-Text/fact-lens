@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadApiEnv } from './index';
+import { loadApiEnv, loadDatabaseEnv } from './index';
 
 const base = { DATABASE_URL: 'postgres://u:p@localhost:5432/db', REDIS_URL: 'redis://localhost:6379' };
 
@@ -14,5 +14,10 @@ describe('loadApiEnv', () => {
   });
   it('rejects an out-of-range port', () => {
     expect(() => loadApiEnv({ ...base, API_PORT: '70000' })).toThrow(/API_PORT/);
+  });
+
+  it('loads database-only config without REDIS_URL', () => {
+    expect(loadDatabaseEnv({ DATABASE_URL: base.DATABASE_URL }).DATABASE_URL).toBe(base.DATABASE_URL);
+    expect(() => loadDatabaseEnv({})).toThrow(/DATABASE_URL/);
   });
 });

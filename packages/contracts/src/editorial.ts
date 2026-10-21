@@ -1,0 +1,231 @@
+import { z } from 'zod';
+import { httpUrlSchema, idSchema, localeCodeSchema, slugSchema, timestampSchema } from './common';
+import {
+  assignmentRoles, assignmentStatuses, auditActorTypes, cardAspectRatios, cardTemplateStatuses,
+  commentStatuses, contributorKinds, contributorRoles, ingestChannels, mediaProcessingStates,
+  revisionMediaRoles, scheduleStatuses, sourceKinds, sourceRelations, sourceUseTypes,
+  sourceValidationStatuses, storyStatuses, taxonomyStatuses, translationStatuses,
+} from './enums';
+
+/** Transport schemas for the editorial domain. They are not database rows. */
+
+export const storyStatusSchema = z.enum(storyStatuses);
+export type StoryStatus = z.infer<typeof storyStatusSchema>;
+
+export const deskSchema = z.object({ id: idSchema, key: z.string(), name: z.string(), active: z.boolean() });
+export type Desk = z.infer<typeof deskSchema>;
+
+const labelSchema = z.object({
+  locale: localeCodeSchema,
+  name: z.string(),
+  slug: slugSchema,
+  aliases: z.array(z.string()),
+});
+
+export const categorySchema = z.object({
+  id: idSchema,
+  key: z.string(),
+  parentId: idSchema.nullable(),
+  position: z.number().int(),
+  status: z.enum(taxonomyStatuses),
+  labels: z.array(labelSchema),
+});
+export type Category = z.infer<typeof categorySchema>;
+
+export const tagSchema = z.object({
+  id: idSchema,
+  key: z.string(),
+  status: z.enum(taxonomyStatuses),
+  labels: z.array(labelSchema),
+});
+export type Tag = z.infer<typeof tagSchema>;
+
+/** Public byline data. Contact details are never part of this schema. */
+export const contributorSchema = z.object({
+  id: idSchema,
+  kind: z.enum(contributorKinds),
+  displayName: z.string(),
+  bio: z.string().nullable(),
+});
+export type Contributor = z.infer<typeof contributorSchema>;
+
+/** Newsroom-only: adds the private contact email. */
+export const contributorAdminSchema = contributorSchema.extend({ contactEmail: z.string().nullable() });
+export type ContributorAdmin = z.infer<typeof contributorAdminSchema>;
+
+export const mediaAssetSchema = z.object({
+  id: idSchema,
+  mimeType: z.string(),
+  byteSize: z.number().int().nonnegative(),
+  width: z.number().int().positive().nullable(),
+  height: z.number().int().positive().nullable(),
+  sha256: z.string(),
+  license: z.string().nullable(),
+  attribution: z.string().nullable(),
+  processingState: z.enum(mediaProcessingStates),
+});
+export type MediaAsset = z.infer<typeof mediaAssetSchema>;
+
+export const storyTranslationSchema = z.object({
+  id: idSchema,
+  revisionId: idSchema,
+  locale: localeCodeSchema,
+  title: z.string().min(1),
+  dek: z.string().nullable(),
+  body: z.unknown(),
+  slug: slugSchema,
+  seoTitle: z.string().nullable(),
+  seoDescription: z.string().nullable(),
+  translationStatus: z.enum(translationStatuses),
+});
+export type StoryTranslation = z.infer<typeof storyTranslationSchema>;
+
+export const storyRevisionSchema = z.object({
+  id: idSchema,
+  storyId: idSchema,
+  revisionNo: z.number().int().positive(),
+  changedBy: z.string(),
+  changedAt: timestampSchema,
+  changeReason: z.string().nullable(),
+  submittedAt: timestampSchema.nullable(),
+  approvedAt: timestampSchema.nullable(),
+  isCorrection: z.boolean(),
+  aiAssisted: z.boolean(),
+});
+export type StoryRevision = z.infer<typeof storyRevisionSchema>;
+
+export const storySchema = z.object({
+  id: idSchema,
+  canonicalKey: z.string(),
+  status: storyStatusSchema,
+  categoryId: idSchema.nullable(),
+  deskId: idSchema.nullable(),
+  publishedRevisionId: idSchema.nullable(),
+  publishedAt: timestampSchema.nullable(),
+  createdAt: timestampSchema,
+  updatedAt: timestampSchema,
+});
+export type Story = z.infer<typeof storySchema>;
+
+export const storyContributorSchema = z.object({
+  contributorId: idSchema,
+  role: z.enum(contributorRoles),
+  position: z.number().int(),
+});
+
+export const revisionMediaSchema = z.object({
+  mediaAssetId: idSchema,
+  role: z.enum(revisionMediaRoles),
+  position: z.number().int(),
+  caption: z.record(z.string(), z.string()),
+});
+
+export const sourceSchema = z.object({
+  id: idSchema,
+  kind: z.enum(sourceKinds),
+  title: z.string(),
+  publisher: z.string().nullable(),
+  url: httpUrlSchema.nullable(),
+  canonicalUrl: httpUrlSchema.nullable(),
+  archiveUrl: httpUrlSchema.nullable(),
+  publishedAt: timestampSchema.nullable(),
+  retrievedAt: timestampSchema.nullable(),
+  ingestChannel: z.enum(ingestChannels).nullable(),
+  validationStatus: z.enum(sourceValidationStatuses),
+});
+export type Source = z.infer<typeof sourceSchema>;
+
+export const storySourceSchema = z.object({
+  sourceId: idSchema,
+  relation: z.enum(sourceRelations),
+  useType: z.enum(sourceUseTypes),
+  notes: z.string().nullable(),
+});
+
+export const assignmentSchema = z.object({
+  id: idSchema,
+  storyId: idSchema,
+  assignee: z.string(),
+  role: z.enum(assignmentRoles),
+  status: z.enum(assignmentStatuses),
+  dueAt: timestampSchema.nullable(),
+  completedAt: timestampSchema.nullable(),
+});
+export type Assignment = z.infer<typeof assignmentSchema>;
+
+export const commentSchema = z.object({
+  id: idSchema,
+  storyId: idSchema,
+  revisionId: idSchema.nullable(),
+  parentId: idSchema.nullable(),
+  author: z.string(),
+  body: z.string().min(1),
+  status: z.enum(commentStatuses),
+  createdAt: timestampSchema,
+  resolvedAt: timestampSchema.nullable(),
+});
+export type Comment = z.infer<typeof commentSchema>;
+
+export const correctionSchema = z.object({
+  id: idSchema,
+  storyId: idSchema,
+  revisionId: idSchema,
+  reason: z.string().min(1),
+  approvedBy: z.string(),
+  approvedAt: timestampSchema,
+  /** Public notice text keyed by locale code. */
+  notices: z.record(z.string(), z.string().min(1)),
+});
+export type Correction = z.infer<typeof correctionSchema>;
+
+export const publishingScheduleSchema = z.object({
+  id: idSchema,
+  storyId: idSchema,
+  locale: localeCodeSchema.nullable(),
+  channel: z.string(),
+  scheduledFor: timestampSchema,
+  timeZone: z.string(),
+  status: z.enum(scheduleStatuses),
+});
+export type PublishingSchedule = z.infer<typeof publishingScheduleSchema>;
+
+export const cardTemplateSchema = z.object({
+  id: idSchema,
+  key: z.string(),
+  version: z.number().int().positive(),
+  name: z.string(),
+  aspectRatio: z.enum(cardAspectRatios),
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+  status: z.enum(cardTemplateStatuses),
+});
+export type CardTemplate = z.infer<typeof cardTemplateSchema>;
+
+export const generatedCardSchema = z.object({
+  id: idSchema,
+  mediaAssetId: idSchema,
+  sourceMediaAssetId: idSchema,
+  templateId: idSchema,
+  storyId: idSchema,
+  revisionId: idSchema,
+  locale: localeCodeSchema.nullable(),
+  createdAt: timestampSchema,
+});
+export type GeneratedCard = z.infer<typeof generatedCardSchema>;
+
+export const auditEventSchema = z.object({
+  id: z.number().int().positive(),
+  occurredAt: timestampSchema,
+  actorType: z.enum(auditActorTypes),
+  actorId: z.string().nullable(),
+  action: z.string(),
+  objectType: z.string(),
+  objectId: z.string(),
+  storyId: idSchema.nullable(),
+  revisionId: idSchema.nullable(),
+  previousState: z.string().nullable(),
+  newState: z.string().nullable(),
+  reason: z.string().nullable(),
+  requestId: z.string().nullable(),
+});
+export type AuditEvent = z.infer<typeof auditEventSchema>;
