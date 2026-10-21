@@ -7,6 +7,7 @@ import type { Capability } from '@fact-lens/contracts';
 import { createApp } from '../app';
 import { AuditService } from '../audit/audit.service';
 import { AuthGuard } from './auth.guard';
+import { AuthorizationService } from './authorization.service';
 import { AUTH_OPTIONS, AuthService, CAPABILITY_STORE, readClaim, rolesFromClaim } from './auth.service';
 import { CurrentPrincipal, Public, RequireCapability } from './decorators';
 import { createTokenVerifier, TOKEN_VERIFIER } from './token-verifier';
@@ -60,6 +61,7 @@ describe('auth', () => {
         controllers: [TestController, MeController],
         providers: [
           AuthService,
+          AuthorizationService,
           { provide: AuditService, useValue: audit },
           { provide: TOKEN_VERIFIER, useValue: verifierImpl },
           { provide: CAPABILITY_STORE, useValue: store },
@@ -143,6 +145,7 @@ describe('auth', () => {
       controllers: [TestController],
       providers: [
         AuthService,
+          AuthorizationService,
         { provide: AuditService, useValue: { record: async () => {} } },
         { provide: TOKEN_VERIFIER, useValue: verifier },
         { provide: CAPABILITY_STORE, useValue: { capabilitiesFor: async () => ['config.manage', 'story.edit'] } },

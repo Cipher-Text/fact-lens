@@ -79,3 +79,16 @@ export const featureFlagSchema = z.object({
   updatedAt: timestampSchema,
 });
 export type FeatureFlag = z.infer<typeof featureFlagSchema>;
+
+/** Used when no `workflow.transition_policy` row exists. Matches the seeded global row. */
+export const defaultWorkflowPolicy: WorkflowPolicy = {
+  factCheckRequired: false,
+  requiredCapability: {
+    editor_review: 'story.submit',
+    fact_check: 'story.review',
+    ready: 'story.fact_check',
+    publish: 'story.publish',
+    correct: 'story.correct',
+    archive: 'story.publish',
+  },
+};

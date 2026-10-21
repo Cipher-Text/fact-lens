@@ -6,6 +6,7 @@ import { Pool } from 'pg';
 export async function createTestDatabase(adminUrl: string) {
   const name = `fl_test_${randomBytes(4).toString('hex')}`;
   const admin = new Pool({ connectionString: adminUrl });
+  admin.on('error', () => {});
   await admin.query(`CREATE DATABASE ${name}`);
   const url = new URL(adminUrl);
   url.pathname = `/${name}`;
@@ -18,6 +19,8 @@ export async function createTestDatabase(adminUrl: string) {
     log: () => {},
   });
   const pool = new Pool({ connectionString: url.toString() });
+  // The database is force-dropped at the end; late idle-connection errors are expected then.
+  pool.on('error', () => {});
   return {
     pool,
     async drop() {

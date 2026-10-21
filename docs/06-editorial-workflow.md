@@ -49,3 +49,16 @@ Record actor, action, object type/id, previous and new state, revision id, reaso
 ## AI rules
 
 AI can propose text (including a full rewrite of ingested source content), extract claims, classify, translate or suggest metadata. It cannot silently overwrite approved content or transition to Published. Store provider/model, prompt/template version, input references, output hash, token/cost/latency and reviewer decision. External source text must be treated as untrusted prompt content.
+
+## Implementation notes (apps/api)
+
+How the first implementation reads this document. Change these deliberately; each is a product-visible rule.
+
+- **A revision is editable until it is submitted.** Moving Draft to Editor review locks the working revision (and stores a content hash). Sending a story back opens a new revision that copies the reviewed one, so reviewed text is never edited in place. A published story is revised by creating a new revision (status Updated); the published revision stays live until the new one is published.
+- **Capability per move** comes from `workflow.transition_policy` (global, overridable per desk with scope `desk:<id>`). Moves back to Draft and the first steps (Ingested to Researching to Draft) use fixed capabilities. Editor review to Ready is allowed only when the desk does not require a fact check.
+- **Readiness rules** (`apps/api/src/stories/validation.ts`): review needs a title and body per translation, an author and a desk; publish adds no machine-draft translations and a license or attribution on every media asset that is processed.
+- **Slugs are reserved at publish**, not at draft time. Publishing a slug owned by another story fails with `slug_conflict`. A replaced slug stays in the registry and redirects to the current one.
+- **Corrections** require `story.correct`, create a flagged revision plus a correction record with a per-locale notice, and the notice appears on the public page only when the corrected revision is published.
+- **Updates and corrections skip review:** the publisher's capability is the approval.
+- **Not built yet:** HTML import fixture, source attachment and comment/assignment endpoints, the scheduled-publish worker, search projection.
+

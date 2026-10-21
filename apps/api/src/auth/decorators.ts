@@ -4,12 +4,16 @@ import type { FastifyRequest } from 'fastify';
 
 export const IS_PUBLIC = 'auth:public';
 export const REQUIRED_CAPABILITIES = 'auth:capabilities';
+export const REQUIRED_ANY_CAPABILITIES = 'auth:any-capabilities';
 
 /** Opts a route out of authentication. Every other route requires a valid bearer token. */
 export const Public = () => SetMetadata(IS_PUBLIC, true);
 
 /** The caller needs every listed capability. */
 export const RequireCapability = (...capabilities: Capability[]) => SetMetadata(REQUIRED_CAPABILITIES, capabilities);
+
+/** The caller needs at least one of the listed capabilities. */
+export const RequireAnyCapability = (...capabilities: Capability[]) => SetMetadata(REQUIRED_ANY_CAPABILITIES, capabilities);
 
 export type AuthedRequest = FastifyRequest & { principal?: Principal };
 

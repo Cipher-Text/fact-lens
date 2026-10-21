@@ -27,3 +27,5 @@ export * from './editorial';
 export * from './ads';
 export * from './configuration';
 export * from './auth';
+export * from './body';
+export * from './stories';

@@ -6,6 +6,7 @@ import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { createApp } from '../app';
 import { AuditService } from '../audit/audit.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { AuthorizationService } from '../auth/authorization.service';
 import { AUTH_OPTIONS, AuthService, CAPABILITY_STORE } from '../auth/auth.service';
 import { PgCapabilityStore } from '../auth/pg-capability-store';
 import { createTokenVerifier, TOKEN_VERIFIER } from '../auth/token-verifier';
@@ -41,6 +42,7 @@ describe.skipIf(!adminUrl)('feature flag endpoint (database)', () => {
         { provide: PG_POOL, useValue: db.pool },
         AuditService,
         AuthService,
+          AuthorizationService,
         { provide: TOKEN_VERIFIER, useValue: verifier },
         { provide: CAPABILITY_STORE, useValue: new PgCapabilityStore(db.pool) },
         { provide: AUTH_OPTIONS, useValue: { rolesClaim: 'roles', requireMfa: true } },

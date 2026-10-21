@@ -7,6 +7,7 @@ import { AuditService } from '../audit/audit.service';
 import { PG_POOL } from '../db/pool';
 import { AUTH_OPTIONS, AuthService, CAPABILITY_STORE } from './auth.service';
 import { AuthGuard } from './auth.guard';
+import { AuthorizationService } from './authorization.service';
 import { PgCapabilityStore } from './pg-capability-store';
 import { createTokenVerifier, TOKEN_VERIFIER } from './token-verifier';
 
@@ -15,6 +16,7 @@ import { createTokenVerifier, TOKEN_VERIFIER } from './token-verifier';
   providers: [
     AuditService,
     AuthService,
+    AuthorizationService,
     { provide: APP_GUARD, useClass: AuthGuard },
     { provide: CAPABILITY_STORE, inject: [PG_POOL], useFactory: (pool: Pool) => new PgCapabilityStore(pool) },
     {
@@ -41,6 +43,6 @@ import { createTokenVerifier, TOKEN_VERIFIER } from './token-verifier';
       },
     },
   ],
-  exports: [AuthService, AuditService],
+  exports: [AuthService, AuthorizationService, AuditService],
 })
 export class AuthModule {}

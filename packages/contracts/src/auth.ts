@@ -27,3 +27,8 @@ export const featureFlagUpdateSchema = z.object({
   reason: z.string().trim().min(3).max(500),
 });
 export type FeatureFlagUpdate = z.infer<typeof featureFlagUpdateSchema>;
+
+/** Holding any of these lets a caller read drafts in the newsroom. */
+export const editorialCapabilities = [
+  'story.edit', 'story.submit', 'story.review', 'story.fact_check', 'story.publish', 'story.correct',
+] as const satisfies readonly Capability[];

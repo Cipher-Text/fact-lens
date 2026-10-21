@@ -1,4 +1,4 @@
-import type { Capability, FeatureFlagKey } from '@fact-lens/contracts';
+import { defaultWorkflowPolicy, type Capability, type FeatureFlagKey } from '@fact-lens/contracts';
 
 /**
  * Reference data inserted by `pnpm seed`. Safe to re-run: existing rows are never overwritten,
@@ -39,21 +39,7 @@ export const categories = [
  * No retention rules are seeded: those policies are undecided (docs/19, questions 4, 9 and 10).
  */
 export const configuration: ReadonlyArray<{ key: string; scope: string; value: unknown }> = [
-  {
-    key: 'workflow.transition_policy',
-    scope: 'global',
-    value: {
-      factCheckRequired: false,
-      requiredCapability: {
-        editor_review: 'story.submit',
-        fact_check: 'story.review',
-        ready: 'story.fact_check',
-        publish: 'story.publish',
-        correct: 'story.correct',
-        archive: 'story.publish',
-      },
-    },
-  },
+  { key: 'workflow.transition_policy', scope: 'global', value: defaultWorkflowPolicy },
   { key: 'rate_limit.login', scope: 'global', value: { limit: 10, windowSeconds: 300 } },
   { key: 'rate_limit.search', scope: 'global', value: { limit: 60, windowSeconds: 60 } },
   { key: 'rate_limit.ingestion', scope: 'global', value: { limit: 120, windowSeconds: 60 } },

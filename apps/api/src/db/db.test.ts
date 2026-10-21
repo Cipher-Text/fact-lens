@@ -31,12 +31,14 @@ describe.skipIf(!adminUrl)('database schema', () => {
 
   beforeAll(async () => {
     admin = new Pool({ connectionString: adminUrl });
+    admin.on('error', () => {});
     await admin.query(`CREATE DATABASE ${dbName}`);
     const u = new URL(adminUrl!);
     u.pathname = `/${dbName}`;
     dbUrl = u.toString();
     await migrate('up', Infinity);
     pool = new Pool({ connectionString: dbUrl });
+    pool.on('error', () => {});
   });
 
   afterAll(async () => {
@@ -489,6 +491,7 @@ describe.skipIf(!adminUrl)('database schema', () => {
     await probe.end();
     await migrate('up', Infinity);
     pool = new Pool({ connectionString: dbUrl });
+    pool.on('error', () => {});
     const { rows: locales } = await pool.query('SELECT count(*)::int AS n FROM locale');
     expect(locales[0].n).toBe(2);
   });
