@@ -13,6 +13,7 @@
   "dependencies": {
     "@fact-lens/config": "workspace:*",
     "@fact-lens/contracts": "workspace:*",
+    "@next/env": "16.3.8",
     "@tiptap/core": "^3.32.0",
     "@tiptap/pm": "^3.32.0",
     "@tiptap/react": "^3.32.0",

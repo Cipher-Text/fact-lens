@@ -33,7 +33,7 @@ FactLens should be configurable by editorial and ops staff wherever a value legi
 
 ## Where this lives technically
 
-`packages/config` holds typed environment/deployment config (tier 2) only. Editorial/runtime configuration and feature flags (tiers 3-4) are PostgreSQL-backed records owned by the API, edited through a newsroom Configuration screen (see [newsroom application](./07-newsroom-application.md)), gated by a `config.manage` capability, and audited like any other privileged action ([auth/security](./12-auth-security-and-audit.md)). A config change that bypasses code review is still a production change — validate it server-side, and prefer staged/canary rollout for anything that can cause an outage or a policy violation (see the risk register).
+`packages/config` holds typed environment/deployment config (tier 2) only. Locally every app reads one root `.env` (template: `.env.example`); in a deployment each service receives only its own variables from the platform's secret store. Editorial/runtime configuration and feature flags (tiers 3-4) are PostgreSQL-backed records owned by the API, edited through a newsroom Configuration screen (see [newsroom application](./07-newsroom-application.md)), gated by a `config.manage` capability, and audited like any other privileged action ([auth/security](./12-auth-security-and-audit.md)). A config change that bypasses code review is still a production change — validate it server-side, and prefer staged/canary rollout for anything that can cause an outage or a policy violation (see the risk register).
 
 ## Status
 

@@ -18,17 +18,30 @@ Bangla and English news platform. This is the main repository; the rebuild plan 
 
 ```bash
 pnpm install
-pnpm dev:web        # http://localhost:3000 (Bangla), /en (English)
-pnpm infra:up       # needs Docker
-cp apps/api/.env.example apps/api/.env
-pnpm dev:api        # http://localhost:4000/health/live (uploads go to .data/media; set STORAGE_DRIVER=s3 for MinIO or R2)
-pnpm dev:worker     # needs apps/worker/.env and the API running; health at :4100/health
-pnpm dev:idp        # fake sign-in provider on :4300 (development only)
-pnpm dev:newsroom   # http://localhost:3100; copy apps/newsroom/.env.example to .env first
-pnpm --filter @fact-lens/api migrate up   # apply migrations (DATABASE_URL in apps/api/.env)
+pnpm env:init       # creates the root .env from .env.example, with random secrets
+pnpm infra:up       # PostgreSQL, Redis and MinIO; needs Docker
+pnpm --filter @fact-lens/api migrate up   # apply migrations
 pnpm --filter @fact-lens/api seed         # desks, categories, default config, feature flags (idempotent)
-pnpm check          # lint, typecheck, test, build for every workspace
 
+pnpm dev:idp        # fake sign-in provider on :4300 (development only)
+pnpm dev:api        # http://localhost:4000/health/live (uploads go to .data/media)
+pnpm dev:worker     # health at :4100/health; needs the API running
+pnpm dev:newsroom   # http://localhost:3100
+pnpm dev:web        # http://localhost:3000 (Bangla), /en (English); has its own setup
+
+pnpm check          # lint, typecheck, test, build for every workspace
+```
+
+## Configuration
+
+The API, the worker, the newsroom and the dev identity provider share **one** file: `.env` in the repository root. Copy `.env.example` (or run `pnpm env:init`) and edit it. Each app reads only its own variables, and the file is ignored by git. `pnpm env:init` never overwrites an existing `.env`.
+
+- Variables that must agree across apps appear once: `DATABASE_URL`, `REDIS_URL`, `INTERNAL_API_TOKEN` (API and worker), `API_BASE_URL` (worker and newsroom), `OIDC_ISSUER` (API and newsroom).
+- A variable set in the shell or by a deployment wins over the file.
+- The root `.env` is for development. In a deployment each service gets only its own variables from the platform's secret store; the newsroom, for example, should not be given the database password.
+- Test settings (`TEST_DATABASE_URL` and the others below) are not read from the file. Pass them in the shell.
+
+```bash
 # Database tests are skipped unless TEST_DATABASE_URL points at a Postgres server
 # (worker queue tests also need TEST_REDIS_URL, and the storage tests TEST_S3_ENDPOINT):
 TEST_DATABASE_URL=postgres://factlens:factlens@localhost:5432/postgres TEST_REDIS_URL=redis://localhost:6379 pnpm check

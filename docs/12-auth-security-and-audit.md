@@ -36,4 +36,6 @@ Built and tested:
 - **Input:** story bodies are checked against an allowlist (no unknown nodes, marks or attributes; links only to web and mail addresses); uploads are sniffed, size-capped, pixel-capped and re-encoded; source and ad URLs must be http or https; untrusted text lengths are capped in the database.
 - **Public data:** public routes return only published content and derivatives, never contact details, internal comments, source notes or originals.
 
+Secrets locally live in one root `.env`, which git ignores and `pnpm env:init` creates with `0600` permissions and random values for the session and internal secrets. That file is for development; a deployment must give each service only its own variables, so the newsroom never holds the database password.
+
 Not built: token refresh, rate limiting (limits are seeded, nothing enforces them), CSP for the public site, secret scanning, dependency and container scanning, malware scanning of uploads, a real identity provider, and CSRF protection beyond the origin check and SameSite. See [implementation status](./22-implementation-status.md).
