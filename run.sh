@@ -125,11 +125,22 @@ start_service() {
   fi
 }
 
+# The port answering is not enough: the login in DATABASE_URL must work. This only reads.
+check_login() {
+  local out
+  if out=$(DATABASE_URL="$(env_get DATABASE_URL postgres://factlens:factlens@localhost:5432/factlens)" node scripts/check-db.mjs 2>&1); then
+    ok "$out"
+  else
+    printf '%s\n' "$out" >&2
+    die "PostgreSQL is running, but DATABASE_URL in .env cannot be used (see above)."
+  fi
+}
+
 ensure_infra() {
   local db host port
   db=$(env_get DATABASE_URL postgres://factlens:factlens@localhost:5432/factlens)
   host=$(host_of "$db"); port=$(port_of "$db")
-  if port_open "$port" "$host"; then ok "PostgreSQL answers on $host:$port"; return; fi
+  if port_open "$port" "$host"; then ok "PostgreSQL answers on $host:$port"; check_login; return; fi
   [ "$SKIP_INFRA" = "1" ] && die "PostgreSQL is not answering on $host:$port and --no-infra was given."
   if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
     say "Starting PostgreSQL, Redis and MinIO with Docker"
@@ -138,6 +149,7 @@ ensure_infra() {
     for ((i = 0; i < 60; i++)); do port_open "$port" "$host" && break; sleep 1; done
     port_open "$port" "$host" || die "PostgreSQL did not come up on $host:$port."
     ok "PostgreSQL is up"
+    check_login
   else
     die "PostgreSQL is not answering on $host:$port, and Docker is not running. Start Docker and run again, or start your own PostgreSQL and set DATABASE_URL in .env."
   fi
@@ -187,9 +199,9 @@ cmd_start() {
   check_redis
 
   say "3/4 Database"
-  pnpm --filter @fact-lens/api migrate up >"$(log_file migrate)" 2>&1 || { tail -n 20 "$(log_file migrate)" >&2; die "migrations failed. Log: $(log_file migrate)"; }
+  pnpm --filter @fact-lens/api migrate up >"$(log_file migrate)" 2>&1 || { head -n 6 "$(log_file migrate)" >&2; die "migrations failed. Full log: $(log_file migrate)"; }
   ok "migrations applied"
-  pnpm --filter @fact-lens/api seed >"$(log_file seed)" 2>&1 || { tail -n 20 "$(log_file seed)" >&2; die "seed failed. Log: $(log_file seed)"; }
+  pnpm --filter @fact-lens/api seed >"$(log_file seed)" 2>&1 || { head -n 6 "$(log_file seed)" >&2; die "seed failed. Full log: $(log_file seed)"; }
   ok "reference data seeded"
 
   say "4/4 Apps, one at a time"

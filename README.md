@@ -24,6 +24,8 @@ pnpm install
 ./run.sh status     # what is running      ./run.sh logs api   # follow a log      ./run.sh stop
 ```
 
+If PostgreSQL is already running on the port in `DATABASE_URL`, `run.sh` uses it, but first checks that the login in `.env` works. When it does not (for example your own PostgreSQL has no `factlens` login), it prints the exact `psql` commands that create it, or you can point `DATABASE_URL` at a login you already have. It changes nothing in your database. A login that is used for the test suites also needs `CREATEDB`.
+
 Options: `--no-infra` (do not start Docker services), `--no-web`, `-d`/`--detach`. Logs and process ids are in `.run/`. If a service does not come up, `run.sh` prints its last log lines and stops the ones it started. To start the pieces yourself:
 
 ```bash
