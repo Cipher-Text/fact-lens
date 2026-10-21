@@ -19,6 +19,7 @@ const labelSchema = z.object({
   locale: localeCodeSchema,
   name: z.string(),
   slug: slugSchema,
+  description: z.string().nullable().default(null),
   aliases: z.array(z.string()),
 });
 
@@ -27,6 +28,7 @@ export const categorySchema = z.object({
   key: z.string(),
   parentId: idSchema.nullable(),
   position: z.number().int(),
+  showInMenu: z.boolean().default(true),
   status: z.enum(taxonomyStatuses),
   labels: z.array(labelSchema),
 });

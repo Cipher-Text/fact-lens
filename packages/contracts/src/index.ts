@@ -32,3 +32,4 @@ export * from './stories';
 export * from './collab';
 export * from './jobs';
 export * from './media';
+export * from './taxonomy';
