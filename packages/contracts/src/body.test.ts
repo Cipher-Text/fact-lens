@@ -63,3 +63,25 @@ describe('slugSchema and transitions', () => {
     expect(transitionRequestSchema.safeParse({ to: 'READY', schedule }).success).toBe(false);
   });
 });
+
+import { canonicalizeUrl, commentCreateSchema, sourceCreateSchema } from './index';
+
+describe('collaboration contracts', () => {
+  it('canonicalizes URLs so duplicates collapse', () => {
+    expect(canonicalizeUrl('HTTPS://Example.com:443/a/b/?utm_source=x&b=2&a=1#frag')).toBe('https://example.com/a/b?a=1&b=2');
+    expect(canonicalizeUrl('https://example.com/')).toBe('https://example.com');
+    expect(canonicalizeUrl('https://user:pw@example.com/p')).toBe('https://example.com/p');
+    expect(canonicalizeUrl('https://example.com/a?fbclid=1')).toBe('https://example.com/a');
+  });
+
+  it('rejects ingestion-only fields and non-http URLs on source creation', () => {
+    expect(sourceCreateSchema.safeParse({ title: 't', url: 'https://example.com' }).success).toBe(true);
+    expect(sourceCreateSchema.safeParse({ title: 't', url: 'javascript:alert(1)' }).success).toBe(false);
+    expect(sourceCreateSchema.safeParse({ title: 't', ingestChannel: 'telegram' }).success).toBe(false);
+  });
+
+  it('requires non-empty comment text', () => {
+    expect(commentCreateSchema.safeParse({ body: '   ' }).success).toBe(false);
+    expect(commentCreateSchema.safeParse({ body: 'Check the figure' }).success).toBe(true);
+  });
+});

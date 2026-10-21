@@ -5,7 +5,12 @@
     "rootDir": "src",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "declaration": false
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

@@ -29,3 +29,4 @@ export * from './configuration';
 export * from './auth';
 export * from './body';
 export * from './stories';
+export * from './collab';

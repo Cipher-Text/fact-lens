@@ -83,6 +83,8 @@ export const storyDetailSchema = z.object({
   contributors: z.array(z.object({ contributor: contributorSchema, role: z.enum(contributorRoles), position: z.number().int() })),
   media: z.array(mediaAssetSchema.extend({ role: z.string() })),
   revisionCount: z.number().int().positive(),
+  /** Open review comments. Visible at every hand-off so they are not missed (docs/06). */
+  openCommentCount: z.number().int().nonnegative(),
 });
 export type StoryDetail = z.infer<typeof storyDetailSchema>;
 

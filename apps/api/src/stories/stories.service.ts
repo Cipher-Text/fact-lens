@@ -4,13 +4,14 @@ import {
 } from '@nestjs/common';
 import {
   bodyMediaAssetIds, defaultWorkflowPolicy, parseConfigValue,
-  type CorrectionCreate, type Principal, type PublicStory, type RevisionCreate, type StoryCreate, type StoryDetail,
+  type CorrectionCreate, type PublicStory, type RevisionCreate, type StoryCreate, type StoryDetail,
   type StoryList, type StoryListQuery, type StoryMeta, type StoryStatus, type TransitionRequest,
-  type TranslationSave, type WorkflowPolicy,
+  type TimelineEntry, type TranslationSave, type WorkflowPolicy,
 } from '@fact-lens/contracts';
 import type { Pool, PoolClient } from 'pg';
 import { AuditService } from '../audit/audit.service';
 import { AuthorizationService } from '../auth/authorization.service';
+import { isPgError, type Actor } from '../common/http';
 import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
 import { publishIssues, reviewIssues, slugify, type RevisionSnapshot } from './validation';
@@ -18,17 +19,12 @@ import { capabilityFor, findTransition, LIVE_STATUSES, movesFrom } from './workf
 
 type Db = Pool | PoolClient;
 
-export interface Actor {
-  principal: Principal;
-  requestId: string;
-}
-
 interface StoryRow {
   id: string; canonical_key: string; status: StoryStatus; category_id: string | null; desk_id: string | null;
   published_revision_id: string | null; published_at: Date | null; created_at: Date; updated_at: Date;
 }
 interface RevisionRow {
-  id: string; story_id: string; revision_no: number; changed_by: string; changed_at: Date; change_reason: string | null;
+  id: string; story_id: string; revision_no: number; changed_by: string; created_at: Date; changed_at: Date; change_reason: string | null;
   submitted_at: Date | null; submitted_by: string | null; approved_at: Date | null; approved_by: string | null;
   is_correction: boolean; ai_assisted: boolean; content_hash: string | null;
 }
@@ -40,7 +36,7 @@ const toStory = (r: StoryRow) => ({
   createdAt: r.created_at.toISOString(), updatedAt: r.updated_at.toISOString(),
 });
 const toRevision = (r: RevisionRow) => ({
-  id: r.id, storyId: r.story_id, revisionNo: r.revision_no, changedBy: r.changed_by, changedAt: r.changed_at.toISOString(),
+  id: r.id, storyId: r.story_id, revisionNo: r.revision_no, changedBy: r.changed_by, createdAt: r.created_at.toISOString(), changedAt: r.changed_at.toISOString(),
   changeReason: r.change_reason, submittedAt: iso(r.submitted_at), approvedAt: iso(r.approved_at),
   isCorrection: r.is_correction, aiAssisted: r.ai_assisted,
 });
@@ -52,8 +48,6 @@ const fkMessage: Record<string, string> = {
   story_translation_locale_fkey: 'Unknown locale', story_contributor_contributor_id_fkey: 'Unknown contributor',
   revision_media_media_asset_id_fkey: 'Body references an unknown media asset', correction_notice_locale_fkey: 'Unknown locale',
 };
-const isPgError = (e: unknown): e is { code: string; constraint?: string } =>
-  typeof e === 'object' && e !== null && 'code' in e;
 
 /** Turns a foreign-key failure on user-supplied ids into a 400 instead of a 500. */
 function asBadRequest(err: unknown): never {
@@ -116,7 +110,7 @@ export class StoriesService {
   async detail(id: string, db: Db = this.pool): Promise<StoryDetail> {
     const story = await this.loadStory(db, id);
     const revision = await this.latestRevision(db, id);
-    const [translations, contributors, media, count] = await Promise.all([
+    const [translations, contributors, media, count, openComments] = await Promise.all([
       db.query(
         `SELECT * FROM story_translation WHERE revision_id = $1 ORDER BY locale`, [revision.id]),
       db.query(
@@ -129,6 +123,7 @@ export class StoriesService {
            FROM revision_media rm JOIN media_asset m ON m.id = rm.media_asset_id
           WHERE rm.revision_id = $1 ORDER BY rm.position`, [revision.id]),
       db.query<{ n: number }>('SELECT count(*)::int AS n FROM story_revision WHERE story_id = $1', [id]),
+      db.query<{ n: number }>(`SELECT count(*)::int AS n FROM editorial_comment WHERE story_id = $1 AND status = 'open' AND parent_id IS NULL`, [id]),
     ]);
     return {
       story: toStory(story),
@@ -147,6 +142,7 @@ export class StoriesService {
         license: m.license, attribution: m.attribution, processingState: m.processing_state, role: m.role,
       })),
       revisionCount: count.rows[0]!.n,
+      openCommentCount: openComments.rows[0]!.n,
     };
   }
 
@@ -155,6 +151,27 @@ export class StoriesService {
     const { rows } = await this.pool.query<RevisionRow>(
       'SELECT * FROM story_revision WHERE story_id = $1 ORDER BY revision_no DESC', [id]);
     return rows.map(toRevision);
+  }
+
+  /** Newest first: what happened to the story and its revisions, without request or metadata detail. */
+  async timeline(id: string): Promise<TimelineEntry[]> {
+    await this.loadStory(this.pool, id);
+    const { rows } = await this.pool.query(
+      `SELECT * FROM (
+         SELECT 'event' AS kind, a.occurred_at AS at, a.actor_id AS actor, a.action, r.revision_no,
+                a.previous_state AS "from", a.new_state AS "to", a.reason
+           FROM audit_event a LEFT JOIN story_revision r ON r.id = a.revision_id
+          WHERE a.story_id = $1 AND a.action <> 'authz.denied'
+         UNION ALL
+         SELECT 'revision', r.created_at, NULL, 'revision.created', r.revision_no, NULL, NULL, r.change_reason
+           FROM story_revision r WHERE r.story_id = $1
+       ) t ORDER BY at DESC, revision_no DESC NULLS LAST LIMIT 200`,
+      [id],
+    );
+    return rows.map((r) => ({
+      kind: r.kind, at: r.at.toISOString(), actor: r.actor, action: r.action, revisionNo: r.revision_no,
+      from: r.from, to: r.to, reason: r.reason,
+    }));
   }
 
   // --------------------------------------------------------------- commands

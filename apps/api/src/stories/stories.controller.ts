@@ -1,21 +1,13 @@
-import { BadRequestException, Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
 import {
   correctionCreateSchema, editorialCapabilities, localeCodeSchema, revisionCreateSchema, storyCreateSchema,
   storyListQuerySchema, storyMetaSchema, transitionRequestSchema, translationSaveSchema,
   type Principal, type StoryDetail, type StoryList,
 } from '@fact-lens/contracts';
 import type { FastifyRequest } from 'fastify';
-import type { ZodType } from 'zod';
+import { actorOf as actor, parse } from '../common/http';
 import { CurrentPrincipal, RequireAnyCapability, RequireCapability } from '../auth/decorators';
 import { StoriesService } from './stories.service';
-
-function parse<T>(schema: ZodType<T>, value: unknown): T {
-  const result = schema.safeParse(value);
-  if (!result.success) throw new BadRequestException({ message: 'Invalid request', issues: result.error.issues });
-  return result.data;
-}
-
-const actor = (principal: Principal, req: FastifyRequest) => ({ principal, requestId: String(req.id) });
 
 @Controller('stories')
 export class StoriesController {
@@ -37,6 +29,12 @@ export class StoriesController {
   @RequireAnyCapability(...editorialCapabilities)
   revisions(@Param('id', ParseUUIDPipe) id: string) {
     return this.stories.revisions(id);
+  }
+
+  @Get(':id/timeline')
+  @RequireAnyCapability(...editorialCapabilities)
+  timeline(@Param('id', ParseUUIDPipe) id: string) {
+    return this.stories.timeline(id);
   }
 
   @Post()

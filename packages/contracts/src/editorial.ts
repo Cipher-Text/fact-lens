@@ -85,6 +85,7 @@ export const storyRevisionSchema = z.object({
   storyId: idSchema,
   revisionNo: z.number().int().positive(),
   changedBy: z.string(),
+  createdAt: timestampSchema,
   changedAt: timestampSchema,
   changeReason: z.string().nullable(),
   submittedAt: timestampSchema.nullable(),

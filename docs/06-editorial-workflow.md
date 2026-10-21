@@ -60,5 +60,9 @@ How the first implementation reads this document. Change these deliberately; eac
 - **Slugs are reserved at publish**, not at draft time. Publishing a slug owned by another story fails with `slug_conflict`. A replaced slug stays in the registry and redirects to the current one.
 - **Corrections** require `story.correct`, create a flagged revision plus a correction record with a per-locale notice, and the notice appears on the public page only when the corrected revision is published.
 - **Updates and corrections skip review:** the publisher's capability is the approval.
-- **Not built yet:** HTML import fixture, source attachment and comment/assignment endpoints, the scheduled-publish worker, search projection.
+- **Comments** are internal and newsroom-only. They are not edited or deleted; the author or a `story.review` holder resolves or reopens a top-level comment, and replies are one level deep. The story detail carries the open-comment count so it is visible at every hand-off.
+- **Assignments** are created by `story.review` holders, one open assignment per person and role. The assignee may complete their own; cancelling takes `story.review`. `GET /assignments/mine` is the desk queue.
+- **Sources** are created from the newsroom and deduplicated by canonical URL (tracking parameters and fragments removed). A source stays `unvalidated` until a `story.review` or `story.fact_check` holder accepts or rejects it with a reason; a rejected source cannot be attached. Nothing fetches the URL. Attach notes stay internal.
+- **Timeline** (`/stories/:id/timeline`) lists audit events and revision openings, newest first, without request ids or metadata.
+- **Not built yet:** HTML import fixture, the scheduled-publish worker, search projection, comment mentions and notifications.
 
