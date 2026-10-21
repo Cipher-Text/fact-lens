@@ -5,7 +5,7 @@ Recommended starting shape:
 ```text
 fact-lens/
   apps/
-    web/                 # public Next.js
+    web/                 # public Next.js; imported from fact-lens-web via git subtree (history kept), mock data until Phase 4 wires the API
     newsroom/            # internal Next.js
     api/                 # NestJS + Fastify
     worker/              # BullMQ processors
@@ -20,6 +20,10 @@ fact-lens/
 ```
 
 This is a recommendation, not a requirement to create every package immediately. Start with `web`, `newsroom`, `api`, `worker`, `contracts`, `config`, `ui`; add `domain` when shared domain types are stable.
+
+## `apps/web` provenance
+
+`apps/web` is the `fact-lens-web` codebase, not a rebuild. It was added with `git subtree add --prefix=apps/web` so its history and the rule/decision IDs cited in its commits are preserved. It keeps its own `AGENTS.md`, `CLAUDE.md`, `.claude/` and read-only `docs/design-system/`. Until `fact-lens-web` is archived, design changes land there first and are pulled in with `git subtree pull`. Phase 4 replaces its mock data (`src/content/`) with API clients from `packages/contracts`.
 
 ## Ownership rules
 

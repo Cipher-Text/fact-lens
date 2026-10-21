@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "next-devtools": {
+      "command": "pnpm",
+      "args": ["exec", "next-devtools-mcp"]
+    },
+    "playwright": {
+      "command": "pnpm",
+      "args": ["dlx", "@playwright/mcp@0.0.83"]
+    }
+  }
+}

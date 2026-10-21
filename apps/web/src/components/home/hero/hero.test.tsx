@@ -1,0 +1,140 @@
+import { render, screen, within } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
+import { getHomepage, type HeroContent } from "@/content";
+import { getDictionary } from "@/i18n";
+
+import { HeroSection } from "./HeroSection";
+
+function renderHero(lang: "bn" | "en", hero: HeroContent) {
+  return render(
+    <HeroSection lang={lang} hero={hero} t={getDictionary(lang)} />,
+  );
+}
+
+const full = getHomepage("bn").hero!;
+const sparse = getHomepage("bn", { variant: "sparse" }).hero!;
+
+describe("HeroSection (P-1)", () => {
+  it("has the wrapper before the rail, with the lead, two top stories and Latest", () => {
+    const { container } = renderHero("bn", full);
+    const grid = container.querySelector(".with-rail")!;
+    const parts = [...grid.children].map((el) =>
+      el.hasAttribute("data-hero-wrapper") ? "wrapper" : "rail",
+    );
+    expect(parts).toEqual(["wrapper", "rail"]); // LAY-14
+    expect(
+      container.querySelectorAll("[data-top-stories] article"),
+    ).toHaveLength(2);
+    expect(
+      screen.getByRole("heading", { level: 2, name: "সর্বশেষ" }),
+    ).toBeInTheDocument();
+  });
+
+  it("shows two top-story cards at most (DR-44)", () => {
+    const extra = getHomepage("bn").featured.bangladesh!.lead;
+    const { container } = renderHero("bn", {
+      ...full,
+      top: [...full.top, extra],
+    });
+    expect(
+      container.querySelectorAll("[data-top-stories] article"),
+    ).toHaveLength(2);
+  });
+
+  it("uses the role mapping of typography-system.md 7.1", () => {
+    const { container } = renderHero("en", getHomepage("en").hero!);
+    expect(container.querySelector("[data-lead] h3")).toHaveClass(
+      "type-story-lead",
+    );
+    for (const h of container.querySelectorAll("[data-top-stories] h3"))
+      expect(h).toHaveClass("type-story-title");
+  });
+
+  it("lets one top story span the wrapper (7.3)", () => {
+    const { container } = renderHero("bn", sparse);
+    const row = container.querySelector("[data-top-stories]")!;
+    expect(row.querySelectorAll("article")).toHaveLength(1);
+    expect(row).toHaveClass("sm:grid-cols-1");
+    expect(row).not.toHaveClass("sm:grid-cols-2");
+  });
+
+  it("shows the placeholder image for a lead with no image, and the overlap stays (7.4, DR-338)", () => {
+    const { container } = renderHero("bn", sparse);
+    expect(sparse.lead.image).toBeUndefined();
+    expect(container.querySelector("[data-lead] img")).toBeNull();
+    expect(
+      container.querySelector("[data-lead] [data-placeholder]"),
+    ).not.toBeNull();
+    expect(container.querySelector("[data-lead-panel]")!.className).toContain(
+      "-mt-(--space-lead-overlap)",
+    );
+  });
+
+  it("overlaps the lead image by the C-01 tokens, on the page color, and grows down (LAY-17)", () => {
+    const { container } = renderHero("bn", full);
+    const panel = container.querySelector("[data-lead-panel]")!;
+    expect(panel.className).toContain("-mt-(--space-lead-overlap)");
+    expect(panel.className).toContain("bg-background");
+    expect(panel.className).not.toMatch(/\b(h|max-h)-/);
+  });
+
+  it("shows the Latest items that exist", () => {
+    renderHero("bn", sparse);
+    const latest = screen.getByRole("region", { name: "সর্বশেষ" });
+    expect(within(latest).getAllByRole("listitem")).toHaveLength(2);
+  });
+
+  it("lets the wrapper span the shell when Latest is empty", () => {
+    const { container } = renderHero("bn", { ...full, latest: [] });
+    expect(container.querySelector(".with-rail")).toBeNull();
+    expect(container.querySelector("[data-hero-rail]")).toBeNull();
+  });
+
+  it("shows five Latest items, then one more link to the Latest page (C-03, C-10, DR-350)", () => {
+    for (const [lang, name, text, href] of [
+      ["bn", "আরও দেখুন: সর্বশেষ", "আরও দেখুন", "/latest"],
+      ["en", "See more: Latest", "See more", "/en/latest"],
+    ] as const) {
+      const { container, unmount } = renderHero(lang, getHomepage(lang).hero!);
+      const latest = container.querySelector("[data-latest]") as HTMLElement;
+      expect(within(latest).getAllByRole("listitem")).toHaveLength(5);
+      const links = within(latest).getAllByRole("link", { name });
+      expect(links).toHaveLength(1);
+      expect(links[0]).toHaveTextContent(text);
+      expect(links[0]).toHaveAttribute("href", href);
+      // Below the list, at the end edge (CPT-15).
+      expect(latest.lastElementChild).toContainElement(links[0]);
+      expect(latest.lastElementChild).toHaveClass("text-end");
+      expect(latest.lastElementChild?.previousElementSibling?.tagName).toBe(
+        "UL",
+      );
+      unmount();
+    }
+  });
+
+  it("shows no Breaking or Live label (COL-11, DR-279)", () => {
+    const { container } = renderHero("bn", full);
+    expect(container.querySelector("[data-chip]")).toBeNull();
+    expect(screen.queryByText("সদ্যপ্রাপ্ত")).toBeNull();
+  });
+
+  it("formats time and reading time with Bangla digits (TYP-17)", () => {
+    const { container } = renderHero("bn", full);
+    const lead = container.querySelector("[data-lead]")!;
+    expect(lead.querySelector("time")).toHaveAttribute(
+      "datetime",
+      full.lead.publishedAt,
+    );
+    expect(lead.querySelector("time")).toHaveTextContent("৭ অক্টোবর, ০৯:১৫");
+    expect(lead.querySelector("[data-reading-time]")).toHaveTextContent(
+      "পড়তে ৬ মিনিট",
+    );
+    expect(container.textContent).not.toMatch(/[0-9]/);
+  });
+
+  it("has no English interface words on a Bangla page (T-27)", () => {
+    const { container } = renderHero("bn", full);
+    expect(container.textContent).not.toMatch(/[A-Za-z]/);
+  });
+});

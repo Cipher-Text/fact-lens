@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" aria-hidden="true">
+  <!-- Mock placeholder, 4:3. Neutral fill and the image ratio only. -->
+  <rect width="1200" height="900" fill="#9a9a9a"/>
+  <g fill="#b4b4b4">
+    <circle cx="860" cy="330" r="60"/>
+    <path d="M360 600 L520 420 L640 540 L720 470 L840 600 Z"/>
+  </g>
+</svg>

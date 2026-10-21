@@ -1,0 +1,192 @@
+@theme {
+  /* No rounded corners, no shadows (DR-202). These classes then give no CSS. */
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+
+  /* Container sizes (CPT-04): @medium: from 600px, @wide: from 880px */
+  --container-*: initial;
+  --container-medium: 37.5rem;
+  --container-wide: 55rem;
+
+  /* Motion (DR-227, DR-357): color changes 200ms; every slide, fade and height change uses
+     --duration-slide with ease-slide */
+  --default-transition-duration: 200ms;
+  --duration-slide: 450ms;
+  --ease-slide: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --breakpoint-sm: 37.5rem; /* 600px */
+  --breakpoint-md: 48rem; /* 768px */
+  --breakpoint-lg: 64rem; /* 1024px */
+  --breakpoint-xl: 80rem; /* 1280px */
+  --breakpoint-2xl: initial; /* no 2xl tier */
+}
+
+:root {
+  --measure-shell: 80rem;
+  --measure-rail: 19rem;
+  --measure-reading-en: 44rem;
+  --measure-reading-bn: 42rem;
+
+  --gutter-page: 1rem;
+  --grid-columns: 4;
+  --grid-column-gap: 1rem;
+  --grid-row-gap: 1.25rem;
+
+  --space-page-start: 1.5rem;
+  --space-section: 3rem;
+  --space-section-compact: 2rem;
+  --space-module: 1.5rem;
+  --space-rail-modules: 3rem;
+  --space-section-title-after: 1.25rem;
+
+  --space-section-rule-title: 0.75rem;
+  --space-story-media-text: 1rem;
+  --space-story-title-summary: 0.5rem;
+  --space-story-title-meta: 0.5rem;
+  --space-media-caption: 0.5rem;
+  --space-list-item: 1rem;
+  --space-more-link: 1rem;
+
+  --ad-label: 1.5rem;
+
+  /* Ad sizes in px (LAY-19, Section 9). Height = reserved creative height. */
+  --ad-top-w: 320px;
+  --ad-top-h: 100px;
+  --ad-band-h: 280px;
+  --ad-inset-w: 300px;
+  --ad-inset-h: 250px;
+
+  --bar-height: 3.5rem;
+  --nav-row-height: 2.75rem;
+  --scroll-offset: calc(var(--bar-height) + 1rem);
+  --drawer-width: min(20rem, 100% - 3rem);
+
+  --z-content: 0;
+  --z-bar: 30;
+  --z-overlay: 50;
+}
+
+@media (min-width: 37.5rem) {
+  :root {
+    --gutter-page: 1.5rem;
+    --grid-row-gap: 1.5rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --grid-columns: 8;
+    --grid-column-gap: 1.5rem;
+    --space-analysis-gap: 2rem;
+    --space-page-start: 2rem;
+    --space-section: 4rem;
+    --space-section-compact: 2.5rem;
+    --space-module: 2rem;
+    --space-section-title-after: 1.5rem;
+    --ad-top-w: 728px;
+    --ad-top-h: 90px;
+    --ad-band-h: 90px;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --grid-columns: 12;
+    --space-analysis-gap: 3rem;
+    --space-page-start: 2.5rem;
+    --space-section: 5rem;
+    --space-section-compact: 3rem;
+    --space-module: 2.5rem;
+    --space-rail-modules: 4rem;
+    --bar-height: 4rem;
+    --ad-top-w: 970px;
+    --ad-top-h: 250px;
+    --ad-band-h: 250px;
+  }
+}
+
+@media (min-width: 80rem) {
+  :root {
+    --grid-column-gap: 2rem;
+    --space-analysis-gap: 4rem;
+    --ad-inset-w: 728px;
+    --ad-inset-h: 90px;
+    --ad-rail-w: 300px;
+    --ad-rail-h: 600px;
+  }
+}
+
+/* Spacing tokens as Tailwind spacing names: p-module, py-section (DR-235).
+   The media queries above still change the values. */
+@theme inline {
+  --spacing-page-start: var(--space-page-start);
+  --spacing-section: var(--space-section);
+  --spacing-section-compact: var(--space-section-compact);
+  --spacing-module: var(--space-module);
+  --spacing-rail-modules: var(--space-rail-modules);
+  --spacing-section-title-after: var(--space-section-title-after);
+  --spacing-section-rule-title: var(--space-section-rule-title);
+  --spacing-story-media-text: var(--space-story-media-text);
+  --spacing-story-title-summary: var(--space-story-title-summary);
+  --spacing-story-title-meta: var(--space-story-title-meta);
+  --spacing-media-caption: var(--space-media-caption);
+  --spacing-list-item: var(--space-list-item);
+  --spacing-more-link: var(--space-more-link);
+}
+
+@utility shell {
+  width: min(100% - 2 * var(--gutter-page), var(--measure-shell));
+  margin-inline: auto;
+}
+
+@utility ad-row {
+  width: 100%;
+  display: grid;
+  justify-items: center;
+  /* Height = reserved creative height + var(--ad-label). No padding. */
+}
+
+@utility ad-inset {
+  display: grid;
+  justify-items: center;
+  /* Under 332px: full screen width, like an ad band (DR-207). */
+  @media (width < 20.75rem) {
+    margin-inline: calc(-1 * var(--gutter-page));
+  }
+}
+
+@utility editorial-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-column-gap);
+  row-gap: var(--grid-row-gap);
+}
+
+@utility with-rail {
+  display: grid;
+  gap: var(--space-module) var(--grid-column-gap);
+  @media (width >= 64rem) {
+    grid-template-columns: minmax(0, 1fr) var(--measure-rail);
+  }
+}
+
+@utility peer-card {
+  display: grid;
+  grid-row: span var(--card-parts, 4); /* one row per card part: media, eyebrow, title, (summary), meta */
+  grid-template-rows: subgrid;
+}
+
+/* LAY-20: 40 / 32 in a container under 600px, 48 / 40 from 600px (DR-224) */
+@utility panel-inset {
+  padding: --spacing(10) --spacing(8);
+  @container (width >= 37.5rem) {
+    padding: --spacing(12) --spacing(10);
+  }
+}
+
+html {
+  scroll-padding-top: var(--scroll-offset);
+}

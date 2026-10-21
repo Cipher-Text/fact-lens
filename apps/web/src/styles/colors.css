@@ -1,0 +1,160 @@
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Surfaces */
+  --background: #fff9ed;
+  --surface: #fffcf7;
+  --surface-alt: #f6eedf;
+  --surface-elevated: #ffffff;
+  /* Ink */
+  --ink: #1f1a17;
+  --ink-secondary: #342f2c;
+  --ink-muted: #6e6862;
+  --ink-disabled: #9a928a;
+  /* Brand and interactive */
+  --brand: #993314;
+  --interactive: #993314;
+  --interactive-hover: #7f2a11;
+  --interactive-pressed: #6a230e;
+  --on-interactive: #fff9ed;
+  /* Accent tints */
+  --accent-soft: #edcec4;
+  --accent-subtle: #f6e6e0;
+  /* Borders */
+  --border: #cec7bd;
+  --border-soft: #eae1d6;
+  --border-interactive: #7d7369;
+  /* Status */
+  --success: #1d7248;
+  --success-subtle: #e8f1ed;
+  --warning: #8d5a16;
+  --warning-subtle: #f4ece0;
+  --error: #b3261e;
+  --error-subtle: #f7e9e8;
+  --info: #2e5e87;
+  --info-subtle: #eaeff3;
+  --destructive: #b3261e;
+  --on-destructive: #fff9ed;
+  /* Utility */
+  --selection: #edcec4;
+  --overlay: rgb(31 26 23 / 0.48);
+  --skeleton: #eae1d6;
+  --fill-neutral: #7e7e7e;
+  /* Component colors */
+}
+
+.dark {
+  --background: #18191e;
+  --surface: #202126;
+  --surface-alt: #27292f;
+  --surface-elevated: #303239;
+  --ink: #f5f5f5;
+  --ink-secondary: #d0d0d0;
+  --ink-muted: #a3a3a3;
+  --ink-disabled: #5e666c;
+  --brand: #993314;
+  --interactive: #fc774f;
+  --interactive-hover: #fda287;
+  --interactive-pressed: #fec4b2;
+  --on-interactive: #18191e;
+  --accent-soft: #3a201a;
+  --accent-subtle: #281b18;
+  --border: #494d55;
+  --border-soft: #2d3036;
+  --border-interactive: #767e89;
+  --success: #60ae7c;
+  --success-subtle: #192a26;
+  --warning: #d59a42;
+  --warning-subtle: #2f261d;
+  --error: #e5827b;
+  --error-subtle: #341b1e;
+  --info: #6fa8dc;
+  --info-subtle: #1c2531;
+  --destructive: #e5827b;
+  --on-destructive: #18191e;
+  --selection: #5a2a1c;
+  --overlay: rgb(0 0 0 / 0.64);
+  --skeleton: #2d3036;
+  --fill-neutral: #7e7e7e;
+}
+
+@theme {
+  /* Remove the Tailwind default palette: only Fact Lens colors exist (DR-235) */
+  --color-*: initial;
+}
+
+@theme inline {
+  /* shadcn/ui names */
+  --color-background: var(--background);
+  --color-foreground: var(--ink);
+  --color-card: var(--surface);
+  --color-card-foreground: var(--ink);
+  --color-popover: var(--surface-elevated);
+  --color-popover-foreground: var(--ink);
+  --color-primary: var(--interactive);
+  --color-primary-foreground: var(--on-interactive);
+  --color-secondary: var(--surface-alt);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--surface-alt);
+  --color-muted-foreground: var(--ink-muted);
+  --color-accent: var(--accent-subtle);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--border-interactive);
+  --color-ring: var(--interactive);
+
+  /* Fact Lens names */
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-ink: var(--ink);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-disabled: var(--ink-disabled);
+  --color-brand: var(--brand);
+  --color-interactive: var(--interactive);
+  --color-interactive-hover: var(--interactive-hover);
+  --color-interactive-pressed: var(--interactive-pressed);
+  --color-on-interactive: var(--on-interactive);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-border-soft: var(--border-soft);
+  --color-border-interactive: var(--border-interactive);
+  --color-success: var(--success);
+  --color-success-subtle: var(--success-subtle);
+  --color-warning: var(--warning);
+  --color-warning-subtle: var(--warning-subtle);
+  --color-error: var(--error);
+  --color-error-subtle: var(--error-subtle);
+  --color-info: var(--info);
+  --color-info-subtle: var(--info-subtle);
+  --color-on-destructive: var(--on-destructive);
+  --color-skeleton: var(--skeleton);
+  --color-fill-neutral: var(--fill-neutral);
+  --color-overlay: var(--overlay);
+}
+
+::selection {
+  background: var(--selection);
+}
+
+@layer base {
+  /* COL-16, DR-232 */
+  * {
+    border-color: var(--color-border);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-ink);
+  }
+  /* COL-13, DR-225 */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+  /* COL-08, DR-235 */
+  ::placeholder {
+    color: var(--color-ink-muted);
+  }
+}

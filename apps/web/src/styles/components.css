@@ -1,0 +1,541 @@
+/* Component tokens: component-system.md Section 6. Imported after layout.css. */
+:root {
+  --bar-brand: 0.375rem;
+  --bar-section-width: 2.5rem;
+  --bar-section-height: 0.5rem;
+  --space-lead-inset-start: 0;
+  --space-lead-inset-end: 2rem;
+  --space-lead-panel: 1rem;
+  --space-lead-overlap: 2rem;
+  --space-lead-eyebrow-title: 0.5rem;
+  --space-lead-summary-meta: 1rem;
+  --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
+  --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
+  --color-bar: var(--brand);
+  --color-meta: var(--ink-muted);
+
+  /* LeadStory panel padding at the start side: 0 on narrow (text lines up with the image
+     edge), the panel padding from 600px. C-01 gives the values; Section 6 has no token
+     (CPT-07, DOC-30). */
+  --space-lead-panel-start: 0;
+
+  /* StoryCard split feature (C-24, P-2 featureStory): the image column is a share of the
+     free width, clamped. 50% from 768 to 1023, 60% from 1024 (DR-118, DR-119). Section 6 has
+     no tokens for it (DOC-30). */
+  --story-feature-media-min: 26.25rem;
+  --story-feature-media-max: 34.8125rem;
+  --story-feature-media-share: 0.5;
+
+  /* Buttons (Section 6 table, DR-208) */
+  --button-height: 3rem;
+  --button-padding: 1.25rem;
+  --icon-button-size: 2.75rem;
+  --icon-button-size-ghost: 2rem;
+  --icon-size: 1.25rem;
+  --button-icon-gap: 0.5rem;
+
+  /* Page chrome (component-system.md Section 6, DR-294, DR-349) */
+  --top-bar-inset: 0.625rem;
+}
+
+.dark {
+  --color-bar: var(--interactive);
+}
+
+/* Divider (C-22, DR-351). Section 6 has no tokens for these values (CPT-07): the rule
+   weight of Divider.item and Divider.column, the column-inset distance from the top and the
+   bottom, and the OpinionList quote mark width (C-06: 28 / 36 / 44px), which also sets where
+   the OpinionList item rule starts. */
+:root {
+  --divider-rule: 1px;
+  --divider-column-inset: 1rem;
+  --quote-mark-width: 1.75rem;
+}
+
+@media (min-width: 37.5rem) {
+  :root {
+    --top-bar-inset: 1.125rem;
+    --quote-mark-width: 2.25rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --top-bar-inset: 1rem;
+    --icon-button-size-ghost: 2.25rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --quote-mark-width: 2.75rem;
+  }
+}
+
+/* The NavBar sets data-bar-stuck on <html> once the page scrolls past it; the TopBar reads it
+   through this variant, not an arbitrary one (DR-287). */
+@custom-variant bar-stuck (html[data-bar-stuck] &);
+
+/* A focus in the stuck site header does not scroll the page (layout §6, DR-357, IMP-84).
+   scroll-padding-top on <html> keeps a target below the bar, so the browser scrolled a
+   header control out of that zone; the negative margin cancels the padding for the header. */
+@utility header-focus {
+  & :is(a, button, input, select, textarea, [tabindex]) {
+    scroll-margin-top: calc(-1 * var(--scroll-offset));
+  }
+}
+
+/* Site header hide (C-17, C-18, DR-349). The NavBar is sticky just below the TopBar:
+   --scroll-offset is the rendered bar height + 16px (layout §6). Past the row, html gets
+   data-bar-stuck: the NavBar slides up under the TopBar and is hidden. The clip-path moves
+   with the transform and cuts off the part that has passed the bar bottom, so the row goes
+   under the bar on the same layer. The logo scales down to 24px with a transform, so the bar
+   height and the page do not move (DR-295). */
+@utility nav-row-slide {
+  position: sticky;
+  top: calc(var(--scroll-offset) - 1rem);
+  z-index: var(--z-bar);
+  clip-path: inset(0);
+  transition:
+    transform var(--duration-slide) var(--ease-slide),
+    clip-path var(--duration-slide) var(--ease-slide),
+    visibility var(--duration-slide) var(--ease-slide);
+  html[data-bar-stuck] & {
+    transform: translateY(-100%);
+    clip-path: inset(100% 0 0 0);
+    visibility: hidden;
+  }
+}
+
+@utility logo-scale {
+  transition: transform var(--duration-slide) var(--ease-slide);
+  html[data-bar-stuck] & {
+    transform: scale(var(--logo-stuck-scale));
+  }
+}
+
+/* TopBar.logo when stuck: 24px; phones keep 20px (C-17). Each ratio is 24px over the
+   type-logo size of that tier (typography §3: 28px from 768, 32px from 1024). Change them
+   with those sizes; header.spec.ts checks the drawn 24px. A length / length calc would tie
+   them, but Safari does not support it yet. */
+:root {
+  --logo-stuck-scale: 1;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --logo-stuck-scale: calc(24 / 28);
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --logo-stuck-scale: calc(24 / 32);
+  }
+}
+
+/* Drawer.accordion (C-19, DR-349): the child group opens and closes with a height
+   animation; Base UI sets --collapsible-panel-height. The caret turns with it. */
+@utility accordion-panel {
+  height: var(--collapsible-panel-height);
+  overflow: hidden;
+  transition: height var(--duration-slide) var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    height: 0;
+  }
+}
+
+@utility accordion-caret {
+  & svg {
+    transition: transform var(--duration-slide) var(--ease-slide);
+  }
+  &[aria-expanded="true"] svg {
+    transform: rotate(180deg);
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --bar-section-width: 3rem;
+    --story-feature-media-share: 0.6;
+  }
+}
+
+/* LeadStory root: container-type: inline-size */
+@container (width >= 600px) {
+  .lead-story {
+    --bar-brand: 0.5rem;
+    --space-lead-inset-start: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-lead-inset-end: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-lead-panel: 1.5rem;
+    --space-lead-overlap: clamp(4rem, 10cqi, 6rem);
+  }
+}
+
+@container (width >= 880px) {
+  .lead-story {
+    --bar-brand: 0.625rem;
+    --space-lead-panel: 2rem;
+  }
+}
+
+@container (width >= 600px) {
+  .lead-story {
+    --space-lead-panel-start: var(--space-lead-panel);
+  }
+}
+
+/* StoryCard layout (C-24). The card root is the container (CPT-04); the grid inside it has
+   a media area and a body area (DR-267: the media is first in the markup, no `order`).
+   story-stacked puts the media above the body. story-split-third and story-split-feature put
+   the text at the start and the image at the end, with --grid-column-gap between them
+   (DR-300). A row stacks when the container is narrower than 17.5rem, which is what happens
+   at 200% text; the width is in rem so it grows with the text (DR-308, A11Y-18). Tracks use
+   minmax(0, ...) so a long word does not widen a column (P-2 checks). */
+@utility story-media {
+  grid-area: media;
+}
+
+@utility story-body {
+  grid-area: body;
+}
+
+@utility story-stacked {
+  grid-template-areas: "media" "body";
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 0;
+  row-gap: var(--space-story-media-text);
+}
+
+@utility story-split-third {
+  grid-template-areas: "body media";
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  column-gap: var(--grid-column-gap);
+  row-gap: 0;
+  @container (width < 17.5rem) {
+    grid-template-areas: "media" "body";
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: var(--space-story-media-text);
+  }
+}
+
+@utility story-split-feature {
+  grid-template-areas: "body media";
+  grid-template-columns:
+    minmax(0, 1fr)
+    clamp(
+      var(--story-feature-media-min),
+      calc((100% - var(--grid-column-gap)) * var(--story-feature-media-share)),
+      var(--story-feature-media-max)
+    );
+  column-gap: var(--grid-column-gap);
+  row-gap: 0;
+  @container (width < 17.5rem) {
+    grid-template-areas: "media" "body";
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: var(--space-story-media-text);
+  }
+}
+
+/* DailyPoll layout (C-26, DR-298): one column in a container under 600px (phones, the 304px
+   rail); from 600px two equal columns with the column gap: heading and question at the start,
+   options (or results) and the button at the end. The parts are marked data-poll-part and sit
+   in grid areas, so the source order stays the reading order (LAY-14). The choose parts and
+   the results share the area "cell", so the vote does not change the height (LAY-10). The
+   section is the container. Section 6 has no token for it (CPT-07, DOC-31). */
+@utility poll-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "heading" "question" "cell";
+  & [data-poll-part="heading"] {
+    grid-area: heading;
+  }
+  & [data-poll-part="question"] {
+    grid-area: question;
+    margin-block-start: --spacing(4);
+  }
+  & [data-poll-part="cell"] {
+    grid-area: cell;
+    margin-block-start: --spacing(6);
+  }
+  @container (width >= 37.5rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "heading cell" "question cell";
+    column-gap: var(--grid-column-gap);
+    & [data-poll-part="cell"] {
+      margin-block-start: 0;
+    }
+  }
+}
+
+/* RegionSlider row (C-15, P-3b): one column per region in a scroll-snap row. Columns in view:
+   1 under 600px (tabs, one panel shows), 2 from 600px, 3 from 1024px, 4 from 1280px (DR-140,
+   DR-141). Column width = (row - gaps) / in view, from the column gap token. The scrollbar is
+   hidden; swipe and the buttons move the row. p-1 / -m-1 on the row leave room for the focus
+   ring inside the scroll box (DOC-20). */
+@utility region-row {
+  --region-in-view: 1;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc(
+    (100% - (var(--region-in-view) - 1) * var(--grid-column-gap)) /
+      var(--region-in-view)
+  );
+  column-gap: var(--grid-column-gap);
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  @media (width >= 37.5rem) {
+    --region-in-view: 2;
+    margin: --spacing(-1);
+    padding: --spacing(1);
+    scroll-padding: --spacing(1);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  @media (width >= 64rem) {
+    --region-in-view: 3;
+  }
+  @media (width >= 80rem) {
+    --region-in-view: 4;
+  }
+}
+
+/* A row that scrolls by touch or keyboard focus and shows no scrollbar: the region tabs on
+   phones (C-15). */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* One motion (DR-346, DR-349): every slide, fade and height change uses --duration-slide with ease-slide (DR-357).
+   Button colors keep the 200ms theme default. The base rule in globals.css sets every
+   duration to 0 with reduced motion, so the end state shows at once.
+
+   shadcn Sheet and Drawer (CPT-16, DR-280): the Sheet slides in from the start edge and the
+   top Drawer slides in from above and follows a swipe up. */
+@utility sheet-overlay {
+  transition: opacity var(--duration-slide) var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+}
+
+@utility sheet-left {
+  transition: transform var(--duration-slide) var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: translateX(-100%);
+  }
+}
+
+@utility drawer-overlay {
+  transition: opacity var(--duration-slide) var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    opacity: 0;
+  }
+}
+
+@utility drawer-top {
+  transform: translateY(var(--drawer-swipe-movement-y, 0px));
+  transition: transform var(--duration-slide) var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: translateY(-100%);
+  }
+  &[data-swiping] {
+    transition-duration: 0s;
+  }
+}
+
+/* Divider.item (C-22, DR-262, DR-350, DR-351): a 1px dotted rule, square 1 x 1px dots with a
+   2px gap, drawn with a repeating gradient because border-style dotted differs between
+   browsers. space-list-item is on each side of the rule, measured to the ink (DR-350): the
+   list sets --list-ink-start (blank space above the first ink of an item) with a list-ink-*
+   utility and the padding takes it off; the item above ends at its ink because its meta line
+   is trimmed in place (rule below). The padding holds the rule, so the space below the rule
+   is the full space-list-item too. --list-ink-end is for RankedList only.
+   --divider-item-start moves the rule start (OpinionList: the text column only). The first
+   item has no rule (no rule before the first row, none after the last). */
+@utility divider-item {
+  /* Its own block context: the trimmed meta line margin stays inside the item and does not
+     collapse through it (WebKit carried it across the Latest column break). */
+  display: flow-root;
+  position: relative;
+  margin-block-start: calc(var(--space-list-item) - var(--list-ink-end, 0rem));
+  padding-block-start: calc(
+    var(--space-list-item) + var(--divider-rule) - var(--list-ink-start, 0rem)
+  );
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: var(--divider-item-start, 0rem) 0;
+    top: 0;
+    height: var(--divider-rule);
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border) 0 1px,
+      transparent 1px 3px
+    );
+  }
+  &:first-child {
+    margin-block-start: 0;
+    padding-block-start: 0;
+    &::before {
+      display: none;
+    }
+  }
+}
+
+/* Divider.item inside a multi-column grid list (RankedList): the rule runs within a column
+   only (DR-299, DR-300), so an item on the first grid row has no rule and the others have
+   one above them. Items per row: 1, 2 from 600, 3 from 1024, 4 from 1280 (DR-51, DR-145).
+   The list sets row-gap 0: the space above and below the rule is space-list-item, measured
+   to the ink as in divider-item. The rule is the ::after of the li, because the rank numeral
+   is its ::before. */
+@utility divider-item-grid {
+  position: relative;
+  margin-block-start: calc(var(--space-list-item) - var(--list-ink-end, 0rem));
+  padding-block-start: calc(
+    var(--space-list-item) + var(--divider-rule) - var(--list-ink-start, 0rem)
+  );
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: var(--divider-rule);
+    background-image: repeating-linear-gradient(
+      to right,
+      var(--color-border) 0 1px,
+      transparent 1px 3px
+    );
+  }
+  &:nth-child(-n + 1) {
+    margin-block-start: 0;
+    padding-block-start: 0;
+    &::after {
+      display: none;
+    }
+  }
+  @media (width >= 37.5rem) {
+    &:nth-child(-n + 2) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  @media (width >= 64rem) {
+    &:nth-child(-n + 3) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
+  }
+  @media (width >= 80rem) {
+    &:nth-child(-n + 4) {
+      margin-block-start: 0;
+      padding-block-start: 0;
+      &::after {
+        display: none;
+      }
+    }
+  }
+}
+
+/* An item or a card followed by a Divider.item row ends at the ink of its meta line: the
+   line takes its blank space below the ink off with a negative margin (DR-350). In a card
+   with the image at the end edge, the taller of the image and the text then sets the row.
+   The last item of a list keeps its line box: space-more-link is not measured to the ink. */
+@layer components {
+  :where(:has(+ .divider-item)) [data-meta-line] {
+    margin-block-end: calc(-1 * var(--type-metadata-ink-end));
+  }
+}
+
+/* The ink at the top of the items of a list (DR-350). Set it on the list (and on a
+   StoryList that is itself a row after a card). Items that start with a title: */
+@utility list-ink-title-meta {
+  --list-ink-start: var(--type-story-title-sm-ink-start);
+}
+
+/* Cards with an image at the top (the AnalysisSection rows): the image is the first ink. */
+@utility list-ink-media-meta {
+  --list-ink-start: 0rem;
+}
+
+/* RankedList: the title is the first and the last row. A row-first grid: the item below a
+   rule sits under the tallest item of the row above (C-07), so the list sets both edges. */
+@utility list-ink-title {
+  --list-ink-start: var(--type-story-title-sm-ink-start);
+  --list-ink-end: var(--type-story-title-sm-ink-end);
+}
+
+/* OpinionList: the item rule spans the text column only, not the quote mark (DR-351). */
+@utility opinion-rule-start {
+  --divider-item-start: calc(var(--quote-mark-width) + var(--grid-column-gap));
+}
+
+/* Divider.column-inset (C-22, DR-351): a 1px solid vertical rule in the border color,
+   centered in the column gap, --divider-column-inset from the top and the bottom. The rule
+   takes no space: P-4 sets its gap to --space-analysis-gap (DR-356), P-3 keeps the column gap. divider-column-split: two equal columns (P-4, from 768).
+   divider-column-rail: the wrapper and the rail (P-3, from 1024, --measure-rail). */
+@utility divider-column-split {
+  position: relative;
+  @media (width >= 48rem) {
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: var(--divider-column-inset);
+      inset-inline-start: calc(50% - var(--divider-rule) / 2);
+      width: var(--divider-rule);
+      background-color: var(--color-border);
+    }
+  }
+}
+
+/* divider-column-columns: the two CSS columns of a list, 768 to 1023 only (HeroSection.latest,
+   C-03, DR-355). Equal columns, so the middle of the gap is the middle of the list. */
+@utility divider-column-columns {
+  position: relative;
+  @media (width >= 48rem) and (width < 64rem) {
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: var(--divider-column-inset);
+      inset-inline-start: calc(50% - var(--divider-rule) / 2);
+      width: var(--divider-rule);
+      background-color: var(--color-border);
+    }
+  }
+}
+
+@utility divider-column-rail {
+  position: relative;
+  @media (width >= 64rem) {
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: var(--divider-column-inset);
+      inset-inline-end: calc(
+        var(--measure-rail) + var(--grid-column-gap) / 2 - var(--divider-rule) /
+          2
+      );
+      width: var(--divider-rule);
+      background-color: var(--color-border);
+    }
+  }
+}

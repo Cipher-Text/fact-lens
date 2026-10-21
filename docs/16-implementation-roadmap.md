@@ -26,7 +26,7 @@ Exit: staging import passes data/SEO/media/relation checks for a full source sna
 
 ## Phase 4 — Public web and cutover
 
-Deliverables: Next.js public site, article/category/tag/search routes, SEO/schema/sitemap/robots, cache tags, GA4 tag and GSC site verification with analytics consent, legacy redirects, performance tests, Cloudflare/CDN configuration, ad serving/signed-redirect endpoints with strict target-URL validation, first-party story-view tracking (beacon endpoint, Redis trending counters, `StoryPerformanceDaily` rollup) powering "most read"/trending surfaces, and newsletter subscription capture (double opt-in, unsubscribe, `newsletter.dispatch` job).
+Deliverables: Next.js public site (starts from `apps/web`, imported from `fact-lens-web`: homepage, design system and i18n already built on mock data; this phase adds article/category/tag/search routes and replaces mock content with the API), article/category/tag/search routes, SEO/schema/sitemap/robots, cache tags, GA4 tag and GSC site verification with analytics consent, legacy redirects, performance tests, Cloudflare/CDN configuration, ad serving/signed-redirect endpoints with strict target-URL validation, first-party story-view tracking (beacon endpoint, Redis trending counters, `StoryPerformanceDaily` rollup) powering "most read"/trending surfaces, and newsletter subscription capture (double opt-in, unsubscribe, `newsletter.dispatch` job).
 
 Exit: URL coverage and representative page parity are signed off; rollback switch and monitoring are tested; ad delivery and redirect abuse controls are verified; story-view tracking is abuse-resistant and rollups are accurate; only then cut over public traffic.
 

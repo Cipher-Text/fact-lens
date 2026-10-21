@@ -1,0 +1,74 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
+import { PeerCard, PeerRow } from "./PeerRow";
+import { Rail } from "./Rail";
+import { SectionHeading } from "./SectionHeading";
+import { Shell } from "./Shell";
+import { WithRail } from "./WithRail";
+import { Wrapper } from "./Wrapper";
+
+describe("Shell, WithRail, Wrapper and Rail", () => {
+  it("use the container classes from layout.css", () => {
+    render(
+      <Shell as="section" data-testid="shell">
+        <WithRail data-testid="grid">
+          <Wrapper data-testid="wrapper" />
+          <Rail as="aside" data-testid="rail" />
+        </WithRail>
+      </Shell>,
+    );
+    const shell = screen.getByTestId("shell");
+    expect(shell.tagName).toBe("SECTION");
+    expect(shell).toHaveClass("shell");
+    expect(screen.getByTestId("grid")).toHaveClass("with-rail");
+    expect(screen.getByTestId("rail").tagName).toBe("ASIDE");
+  });
+
+  it("keep the wrapper before the rail in the source (LAY-14)", () => {
+    render(
+      <WithRail data-testid="grid">
+        <Wrapper data-testid="wrapper" />
+        <Rail data-testid="rail" />
+      </WithRail>,
+    );
+    const children = [...screen.getByTestId("grid").children];
+    expect(children.map((el) => el.getAttribute("data-testid"))).toEqual([
+      "wrapper",
+      "rail",
+    ]);
+    for (const el of children) expect(el.className).not.toMatch(/\border-/);
+  });
+});
+
+describe("SectionHeading", () => {
+  it("renders the heading with its id and the section title role", () => {
+    render(<SectionHeading id="bd">বাংলাদেশ</SectionHeading>);
+    const heading = screen.getByRole("heading", { level: 2, name: "বাংলাদেশ" });
+    expect(heading).toHaveAttribute("id", "bd");
+    expect(heading).toHaveClass("type-section-title", "text-ink");
+  });
+
+  it("can be a level 3 heading", () => {
+    render(<SectionHeading as="h3">Latest</SectionHeading>);
+    expect(screen.getByRole("heading", { level: 3 })).toBeInTheDocument();
+  });
+});
+
+describe("PeerRow and PeerCard", () => {
+  it("has 1 column, and 2 from sm (LAY-07)", () => {
+    render(<PeerRow data-testid="row" />);
+    const classes = screen.getByTestId("row").className;
+    expect(classes).toContain("grid-cols-1");
+    expect(classes).toContain("sm:grid-cols-2");
+    expect(classes).not.toMatch(/grid-cols-[34]/);
+  });
+
+  it("sets --card-parts for the subgrid (LAY-08)", () => {
+    render(<PeerCard as="li" parts={5} data-testid="card" />);
+    const card = screen.getByTestId("card");
+    expect(card.tagName).toBe("LI");
+    expect(card).toHaveClass("peer-card");
+    expect(card.style.getPropertyValue("--card-parts")).toBe("5");
+  });
+});
