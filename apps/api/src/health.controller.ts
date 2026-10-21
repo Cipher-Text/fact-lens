@@ -1,7 +1,9 @@
 import { Controller, Get, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import type { LivenessResponse, ReadinessResponse } from '@fact-lens/contracts';
+import { Public } from './auth/decorators';
 import { HealthService } from './health.service';
 
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(@Inject(HealthService) private readonly health: HealthService) {}

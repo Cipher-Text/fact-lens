@@ -20,4 +20,11 @@ describe('loadApiEnv', () => {
     expect(loadDatabaseEnv({ DATABASE_URL: base.DATABASE_URL }).DATABASE_URL).toBe(base.DATABASE_URL);
     expect(() => loadDatabaseEnv({})).toThrow(/DATABASE_URL/);
   });
+
+  it('requires OIDC settings in production only', () => {
+    expect(() => loadApiEnv({ ...base, NODE_ENV: 'production' })).toThrow(/OIDC_ISSUER/);
+    const ok = loadApiEnv({ ...base, NODE_ENV: 'production', OIDC_ISSUER: 'https://idp.example.com', OIDC_AUDIENCE: 'fact-lens-api' });
+    expect(ok.OIDC_REQUIRE_MFA).toBe(true);
+    expect(loadApiEnv({ ...base, OIDC_REQUIRE_MFA: 'false' }).OIDC_REQUIRE_MFA).toBe(false);
+  });
 });

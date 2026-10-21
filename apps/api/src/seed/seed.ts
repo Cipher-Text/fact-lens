@@ -1,6 +1,6 @@
 import { featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
 import type { Pool } from 'pg';
-import { categories, configuration, desks, featureFlags } from './data';
+import { categories, configuration, desks, featureFlags, roles } from './data';
 import { withTransaction } from '../db/transaction';
 
 export interface SeedResult {
@@ -8,6 +8,7 @@ export interface SeedResult {
   categories: number;
   configuration: number;
   featureFlags: number;
+  roles: number;
 }
 
 /** Inserts reference data in one transaction. Existing rows are left as they are. */
@@ -20,7 +21,7 @@ export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
 
   return withTransaction(pool, async (db) => {
     const count = async (sql: string, params: unknown[]) => (await db.query(sql, params)).rowCount ?? 0;
-    const result: SeedResult = { desks: 0, categories: 0, configuration: 0, featureFlags: 0 };
+    const result: SeedResult = { desks: 0, categories: 0, configuration: 0, featureFlags: 0, roles: 0 };
 
     for (const d of desks) {
       result.desks += await count('INSERT INTO desk (key, name) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING', [d.key, d.name]);
@@ -52,6 +53,18 @@ export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
         'INSERT INTO feature_flag (key, enabled, description, updated_by) VALUES ($1, false, $2, $3) ON CONFLICT (key) DO NOTHING',
         [f.key, f.description, 'seed'],
       );
+    }
+
+    for (const r of roles) {
+      const inserted = await db.query(
+        'INSERT INTO app_role (key, name) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING',
+        [r.key, r.name],
+      );
+      if (inserted.rowCount === 0) continue; // already seeded; keep edited capabilities
+      result.roles += 1;
+      for (const capability of r.capabilities) {
+        await db.query('INSERT INTO app_role_capability (role_key, capability) VALUES ($1, $2)', [r.key, capability]);
+      }
     }
 
     return result;

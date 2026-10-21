@@ -26,3 +26,4 @@ export * from './common';
 export * from './editorial';
 export * from './ads';
 export * from './configuration';
+export * from './auth';

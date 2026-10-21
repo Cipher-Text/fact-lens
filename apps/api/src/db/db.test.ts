@@ -396,6 +396,7 @@ describe.skipIf(!adminUrl)('database schema', () => {
       ['ad', 'device_target', c.adDeviceTargets],
       ['ad_event', 'event_type', c.adEventTypes],
       ['audit_event', 'actor_type', c.auditActorTypes],
+      ['app_role_capability', 'capability', c.capabilities],
     ];
     for (const [table, column, values] of pairs) {
       const { rows } = await pool.query(
@@ -423,7 +424,8 @@ describe.skipIf(!adminUrl)('database schema', () => {
     await pool.query(`UPDATE category_label SET name = 'Edited' WHERE slug = 'local' AND locale = 'en'`);
 
     const second = await seedReferenceData(pool);
-    expect(second).toEqual({ desks: 0, categories: 0, configuration: 0, featureFlags: 0 });
+    expect(second).toEqual({ desks: 0, categories: 0, configuration: 0, featureFlags: 0, roles: 0 });
+    expect(first.roles).toBe(8);
 
     const flag = await pool.query(`SELECT enabled FROM feature_flag WHERE key = 'ads.serving'`);
     expect(flag.rows[0].enabled).toBe(true);

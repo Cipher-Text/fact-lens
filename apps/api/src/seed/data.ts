@@ -1,4 +1,4 @@
-import type { FeatureFlagKey } from '@fact-lens/contracts';
+import type { Capability, FeatureFlagKey } from '@fact-lens/contracts';
 
 /**
  * Reference data inserted by `pnpm seed`. Safe to re-run: existing rows are never overwritten,
@@ -85,4 +85,34 @@ export const featureFlags: ReadonlyArray<{ key: FeatureFlagKey; description: str
   { key: 'analytics.ga4', description: 'Google Analytics 4 tag. Gated by reader consent.' },
   { key: 'cards.generation', description: 'Branded photocard and poster generation worker.' },
   { key: 'distribution.facebook', description: 'Publish generated cards to the FactLens Facebook Page.' },
+];
+
+/**
+ * PROVISIONAL role definitions (docs/06 names the roles; who may approve what is open question 1).
+ * Authorization checks capabilities, so changing a role is a data edit, not a deploy.
+ * `analyst` has no capability yet: the plan defines no analytics capability.
+ */
+export const roles: ReadonlyArray<{ key: string; name: string; capabilities: readonly Capability[] }> = [
+  { key: 'reporter', name: 'Reporter', capabilities: ['story.edit', 'story.submit'] },
+  { key: 'desk_editor', name: 'Desk Editor', capabilities: ['story.edit', 'story.submit', 'story.review'] },
+  { key: 'copy_editor', name: 'Copy Editor', capabilities: ['story.edit', 'story.review'] },
+  { key: 'fact_checker', name: 'Fact Checker', capabilities: ['story.fact_check'] },
+  {
+    key: 'managing_editor',
+    name: 'Managing Editor',
+    capabilities: [
+      'story.edit', 'story.submit', 'story.review', 'story.fact_check', 'story.publish', 'story.correct',
+      'taxonomy.manage', 'audit.read',
+    ],
+  },
+  { key: 'media_editor', name: 'Media Editor', capabilities: ['media.manage'] },
+  { key: 'analyst', name: 'Analyst', capabilities: [] },
+  {
+    key: 'admin',
+    name: 'Admin',
+    capabilities: [
+      'story.edit', 'story.submit', 'story.review', 'story.fact_check', 'story.publish', 'story.correct',
+      'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage',
+    ],
+  },
 ];

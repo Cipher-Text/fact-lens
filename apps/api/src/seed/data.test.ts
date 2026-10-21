@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
-import { categories, configuration, desks, featureFlags } from './data';
+import { capabilities } from '@fact-lens/contracts';
+import { categories, configuration, desks, featureFlags, roles } from './data';
 
 describe('seed data', () => {
   it('has configuration values that satisfy their contract schemas', () => {
@@ -29,5 +30,14 @@ describe('seed data', () => {
     const ai = configuration.filter((c) => c.key.startsWith('ai.use_case.'));
     expect(ai.length).toBeGreaterThan(0);
     for (const c of ai) expect((c.value as { monthlyBudgetUsd: number }).monthlyBudgetUsd).toBe(0);
+  });
+
+  it('defines the eight documented roles, with config.manage held only by admin', () => {
+    expect(roles.map((r) => r.key).sort()).toEqual(
+      ['admin', 'analyst', 'copy_editor', 'desk_editor', 'fact_checker', 'managing_editor', 'media_editor', 'reporter'],
+    );
+    const holders = roles.filter((r) => r.capabilities.includes('config.manage')).map((r) => r.key);
+    expect(holders).toEqual(['admin']);
+    expect(new Set(roles.find((r) => r.key === 'admin')!.capabilities)).toEqual(new Set(capabilities));
   });
 });
