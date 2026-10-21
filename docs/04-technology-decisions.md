@@ -4,7 +4,7 @@
 
 | Decision | Recommendation | Reasoning and tradeoff |
 |---|---|---|
-| Public frontend | Next.js + TypeScript | Matches current public route needs and supports SSR/SSG/ISR, metadata, sitemap and CDN-friendly delivery. Avoids preserving Strapi coupling. |
+| Public frontend | Next.js 16 + TypeScript (React 19, Tailwind 4, shadcn/ui), imported from `fact-lens-web` as `apps/web` | Matches current public route needs and supports SSR/SSG/ISR, metadata, sitemap and CDN-friendly delivery. Avoids preserving Strapi coupling. |
 | Newsroom | Separate Next.js/React + TypeScript | Editorial UX has different navigation, permissions and interaction density from the public site. Shared UI/contracts may be reused; deployment can remain independently scalable. |
 | API | NestJS + Fastify adapter | Explicit modules, DI, validation, guards and OpenAPI fit a large domain while Fastify improves request overhead. NestJS adds conventions/indirection; keep modules domain-focused. |
 | API style | REST-first | Stable resource/command contracts are easier for public web, newsroom, workers and migration tooling. Use SSE/WebSocket only for live job/progress or collaborative signals that need it. |
