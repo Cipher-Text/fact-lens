@@ -32,7 +32,7 @@ export function ThemeToggle() {
 
   return (
     <select aria-label="Theme" value={choice} onChange={(e) => setChoice(parseChoice(e.target.value))}
-      className="rounded border border-line bg-panel px-1.5 py-1 text-sm">
+      className="rounded-lg border border-line bg-panel px-2 py-1.5 text-sm">
       {themeChoices.map((c) => <option key={c} value={c}>{labels[c]}</option>)}
     </select>
   );

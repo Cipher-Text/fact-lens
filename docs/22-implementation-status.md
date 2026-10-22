@@ -39,6 +39,7 @@ What exists in this repository today, how much of it has been checked, and what 
 - Collaboration: comments (add, resolve, reopen), assignments (create, complete, cancel, "mine"), sources (create, validate, attach, detach).
 - Media: upload, list, detail, rights, file, delete. Public: news item by locale and slug, media derivatives.
 - Reference data and administration: desks, categories, tags, locales, contributors, feature flags, `/me`.
+- Desk queue numbers: `GET /news/counts` (in progress, due today, stuck over 24 hours, published this week, and a count per stage); the list also carries each item's pending schedule time.
 - Taxonomy (`taxonomy.manage`): categories (create, rename per language, order, show or hide in the menu, archive, delete when unused), tags (the same, with search), news item tags (`PUT /news/:id/tags`), languages (`/config/locales`, `config.manage`). Public: `GET /public/navigation/:locale`, `GET /public/news/:locale?category=|tag=`; the public news item carries its category and tags in its own language.
 - Internal (shared secret, for the worker): publish a due schedule.
 - Health: liveness and readiness.
@@ -49,7 +50,7 @@ What exists in this repository today, how much of it has been checked, and what 
 
 **Worker jobs**: `news.publish_scheduled` and `schedule.scan` work. `cache.invalidate`, `search.index` and `notification.send` log and succeed. `media.variant` and `media.card_generate` fail on purpose as "not implemented".
 
-**Newsroom screens**: desk queue, new news item, news item workspace, media library and image page, configuration (languages, feature flags), sections and tags (menu, tags, per-language names), and a tag picker in the news item workspace. Source inbox and publishing calendar are placeholders.
+**Newsroom screens** (visual design from the Admin UI file: left sidebar, status pills, desk queue with numbers, stage tabs and a table, workflow steps on the news page; the design's fact-check verdict panel and checklist are not built, see open question 15): desk queue, new news item, news item workspace, media library and image page, configuration (languages, feature flags), sections and tags (menu, tags, per-language names), and a tag picker in the news item workspace. Source inbox and publishing calendar are placeholders.
 
 ## How much is verified
 

@@ -5,7 +5,7 @@ import {
 import {
   bodyMediaAssetIds, defaultWorkflowPolicy, parseConfigValue,
   type AvailableTransition, type CorrectionCreate, type Principal, type PublicNews, type RevisionCreate, type NewsCreate, type NewsDetail,
-  type NewsList, type NewsListQuery, type NewsMeta, type NewsStatus, type TransitionRequest,
+  type NewsCounts, type NewsList, type NewsListQuery, type NewsMeta, type NewsStatus, type TransitionRequest,
   type ScheduledPublishResult, type TimelineEntry, type TranslationSave, type WorkflowPolicy,
 } from '@fact-lens/contracts';
 import type { Pool, PoolClient } from 'pg';
@@ -69,6 +69,26 @@ export class NewsService {
 
   // ---------------------------------------------------------------- queries
 
+  /** What the desk queue shows above the list. One query, no per-row work. */
+  async counts(): Promise<NewsCounts> {
+    const { rows } = await this.pool.query<{ status: string; n: number; stuck: number; week: number }>(
+      `SELECT status, count(*)::int AS n,
+              count(*) FILTER (WHERE status IN ('EDITOR_REVIEW', 'FACT_CHECK', 'READY') AND updated_at < now() - interval '24 hours')::int AS stuck,
+              count(*) FILTER (WHERE published_at >= now() - interval '7 days')::int AS week
+         FROM news GROUP BY status`,
+    );
+    const due = await this.pool.query<{ n: number }>(
+      `SELECT count(*)::int AS n FROM publishing_schedule
+        WHERE status = 'pending' AND (scheduled_for AT TIME ZONE 'Asia/Dhaka')::date = (now() AT TIME ZONE 'Asia/Dhaka')::date`,
+    );
+    const byStatus = Object.fromEntries(rows.map((r) => [r.status, r.n]));
+    const inProgress = rows.filter((r) => ['DRAFT', 'EDITOR_REVIEW', 'FACT_CHECK', 'READY', 'SCHEDULED'].includes(r.status)).reduce((t, r) => t + r.n, 0);
+    return {
+      byStatus, inProgress, dueToday: due.rows[0]!.n,
+      stuck: rows.reduce((t, r) => t + r.stuck, 0), publishedThisWeek: rows.reduce((t, r) => t + r.week, 0),
+    };
+  }
+
   async list(q: NewsListQuery): Promise<NewsList> {
     let cursorAt: string | null = null;
     let cursorId: string | null = null;
@@ -81,9 +101,10 @@ export class NewsService {
       }
     }
     const { rows } = await this.pool
-      .query<NewsRow & { titles: Record<string, string>; cursor_at: string }>(
+      .query<NewsRow & { titles: Record<string, string>; cursor_at: string; scheduled_for: Date | null }>(
         `SELECT s.*, to_char(s.updated_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at,
-                COALESCE(t.titles, '{}'::jsonb) AS titles
+                COALESCE(t.titles, '{}'::jsonb) AS titles,
+                (SELECT min(p.scheduled_for) FROM publishing_schedule p WHERE p.news_id = s.id AND p.status = 'pending') AS scheduled_for
            FROM news s
            LEFT JOIN LATERAL (
              SELECT jsonb_object_agg(st.locale, st.title) AS titles
@@ -104,7 +125,7 @@ export class NewsService {
     const page = rows.slice(0, q.limit);
     const last = rows.length > q.limit ? page[page.length - 1] : undefined;
     return {
-      items: page.map((r) => ({ ...toNews(r), titles: r.titles })),
+      items: page.map((r) => ({ ...toNews(r), titles: r.titles, scheduledFor: r.scheduled_for ? r.scheduled_for.toISOString() : null })),
       nextCursor: last ? Buffer.from(JSON.stringify([last.cursor_at, last.id])).toString('base64url') : null,
     };
   }

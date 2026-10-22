@@ -333,6 +333,15 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     expect((await db.pool.query(`SELECT status FROM publishing_schedule WHERE news_id = $1`, [id])).rows).toEqual([{ status: 'pending' }]);
     expect((await pub('en', 'scheduled')).status).toBe(404);
 
+    const queue = await call({ method: 'GET', url: '/news?status=SCHEDULED', roles: ['reporter'] });
+    expect(queue.body.items.find((n: any) => n.id === id).scheduledFor).toBe(when);
+    const counts = await call({ method: 'GET', url: '/news/counts', roles: ['reporter'] });
+    expect(counts.status).toBe(200);
+    expect(counts.body.byStatus.SCHEDULED).toBeGreaterThanOrEqual(1);
+    expect(counts.body.inProgress).toBeGreaterThanOrEqual(counts.body.byStatus.SCHEDULED);
+    expect(counts.body).toMatchObject({ dueToday: expect.any(Number), stuck: expect.any(Number), publishedThisWeek: expect.any(Number) });
+    expect((await call({ method: 'GET', url: '/news/counts', roles: ['analyst'] })).status).toBe(403);
+
     expect((await move(id, 'READY', ['managing_editor'])).status).toBe(201);
     expect((await db.pool.query(`SELECT status FROM publishing_schedule WHERE news_id = $1`, [id])).rows).toEqual([{ status: 'cancelled' }]);
   });

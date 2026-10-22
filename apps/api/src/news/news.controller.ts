@@ -2,7 +2,7 @@ import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query, 
 import {
   correctionCreateSchema, editorialCapabilities, localeCodeSchema, revisionCreateSchema, newsCreateSchema,
   newsListQuerySchema, newsMetaSchema, transitionRequestSchema, translationSaveSchema,
-  type Principal, type NewsDetail, type NewsList,
+  type Principal, type NewsCounts, type NewsDetail, type NewsList,
 } from '@fact-lens/contracts';
 import type { FastifyRequest } from 'fastify';
 import { actorOf as actor, parse } from '../common/http';
@@ -17,6 +17,13 @@ export class NewsController {
   @RequireAnyCapability(...editorialCapabilities)
   list(@Query() query: unknown): Promise<NewsList> {
     return this.news.list(parse(newsListQuerySchema, query));
+  }
+
+  // Declared before `:id` so "counts" is never read as an id.
+  @Get('counts')
+  @RequireAnyCapability(...editorialCapabilities)
+  counts(): Promise<NewsCounts> {
+    return this.news.counts();
   }
 
   @Get(':id')

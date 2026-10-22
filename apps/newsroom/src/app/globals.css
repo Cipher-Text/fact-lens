@@ -1,11 +1,12 @@
 @import 'tailwindcss';
 
 :root {
+  /* The Admin UI design: neutral grey surfaces, one blue for actions, colour pills for state. */
   --bg: #f6f7f9;
   --panel: #ffffff;
-  --fg: #16181d;
-  --muted: #5a6270;
-  --line: #d9dde3;
+  --fg: #101828;
+  --muted: #475467;
+  --line: #e4e7ec;
   --accent: #1d4ed8;
   --accent-fg: #ffffff;
   --danger: #b42318;
@@ -55,7 +56,8 @@
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family: system-ui, -apple-system, 'Segoe UI', 'Noto Sans', 'Noto Sans Bengali', 'Kohinoor Bangla', sans-serif;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', 'Noto Sans', 'Noto Sans Bengali', 'Kohinoor Bangla', sans-serif;
+  font-size: 14px;
   line-height: 1.5;
 }
 
@@ -113,4 +115,20 @@ body {
 .grid > *,
 .rich-editor {
   min-width: 0;
+}
+
+/* Status pills: a dot and the word, so colour is never the only signal. */
+.pill { display: inline-flex; align-items: center; gap: 0.35rem; border-radius: 999px; padding: 0.1rem 0.55rem; font-size: 0.75rem; font-weight: 600; background: var(--pill-bg); color: var(--pill-fg); }
+.pill::before { content: ''; width: 0.4rem; height: 0.4rem; border-radius: 999px; background: var(--pill-dot); }
+.pill-draft { --pill-bg: #f2f4f7; --pill-fg: #344054; --pill-dot: #667085; }
+.pill-review { --pill-bg: #f4f3ff; --pill-fg: #5925dc; --pill-dot: #7a5af8; }
+.pill-check { --pill-bg: #fffaeb; --pill-fg: #b54708; --pill-dot: #f79009; }
+.pill-ready { --pill-bg: #ecfdf3; --pill-fg: #027a48; --pill-dot: #12b76a; }
+.pill-scheduled { --pill-bg: #eff8ff; --pill-fg: #175cd3; --pill-dot: #2e90fa; }
+.pill-published { --pill-bg: #eff8ff; --pill-fg: #1849a9; --pill-dot: #1d4ed8; }
+.pill-flag { --pill-bg: #fef3f2; --pill-fg: #b42318; --pill-dot: #d92d20; }
+.pill-archived { --pill-bg: #f2f4f7; --pill-fg: #475467; --pill-dot: #98a2b3; }
+:root.dark .pill { --pill-bg: color-mix(in srgb, var(--pill-dot) 18%, transparent); --pill-fg: color-mix(in srgb, var(--pill-dot) 55%, white); }
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) .pill { --pill-bg: color-mix(in srgb, var(--pill-dot) 18%, transparent); --pill-fg: color-mix(in srgb, var(--pill-dot) 55%, white); }
 }

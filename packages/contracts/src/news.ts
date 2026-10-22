@@ -73,7 +73,26 @@ export type NewsListQuery = z.infer<typeof newsListQuerySchema>;
 export const newsSummarySchema = newsSchema.extend({ titles: z.record(z.string(), z.string()) });
 export type NewsSummary = z.infer<typeof newsSummarySchema>;
 
-export const newsListSchema = z.object({ items: z.array(newsSummarySchema), nextCursor: z.string().nullable() });
+export const newsSummaryItemSchema = newsSummarySchema.extend({
+  /** When a pending schedule will publish it, if any. */
+  scheduledFor: timestampSchema.nullable().default(null),
+});
+export type NewsSummaryItem = z.infer<typeof newsSummaryItemSchema>;
+
+/** Numbers for the top of the desk queue. */
+export const newsCountsSchema = z.object({
+  byStatus: z.record(z.string(), z.number().int().nonnegative()),
+  /** Anywhere between a draft and a scheduled publish. */
+  inProgress: z.number().int().nonnegative(),
+  /** Scheduled to publish today, Dhaka time. */
+  dueToday: z.number().int().nonnegative(),
+  /** In review, fact check or ready for more than a day without a change. */
+  stuck: z.number().int().nonnegative(),
+  publishedThisWeek: z.number().int().nonnegative(),
+});
+export type NewsCounts = z.infer<typeof newsCountsSchema>;
+
+export const newsListSchema = z.object({ items: z.array(newsSummaryItemSchema), nextCursor: z.string().nullable() });
 export type NewsList = z.infer<typeof newsListSchema>;
 
 /** A move the news item could make from its current state, and whether the caller may make it. */

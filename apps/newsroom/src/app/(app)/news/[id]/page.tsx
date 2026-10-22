@@ -6,7 +6,7 @@ import {
 } from '@fact-lens/contracts';
 import { RichBody } from '@/components/RichBody';
 import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, NewsTagPicker, TransitionPanel, TranslationEditor } from '@/components';
-import { Badge, Empty, Panel, StatusBadge } from '@/components/ui';
+import { Badge, Empty, Panel, StatusBadge, WorkflowSteps } from '@/components/ui';
 import { ApiError, api, getPrincipal } from '@/lib/current';
 import { formatDateTime, pickTitle } from '@/lib/format';
 import { can } from '@/lib/nav';
@@ -111,7 +111,8 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
         </div>
 
         <div className="space-y-6">
-          <Panel title="Next steps" id="next-h">
+          <Panel title="Workflow" id="next-h">
+            <WorkflowSteps status={news.status} />
             <TransitionPanel newsId={id} transitions={detail.transitions} />
           </Panel>
 
