@@ -91,3 +91,26 @@ body {
 .rich-editor .editor-image { margin: 0.75rem 0; user-select: none; }
 .rich-editor .editor-image img { max-height: 18rem; max-width: 100%; border: 1px solid var(--line); border-radius: 0.25rem; }
 .rich-editor .editor-image figcaption { margin-top: 0.25rem; font-size: 0.8rem; color: var(--muted); }
+
+/* Fingers need bigger targets than a mouse: on touch screens and narrow windows, controls are at least 44px tall. */
+@media (pointer: coarse), (max-width: 40rem) {
+  button,
+  select,
+  summary,
+  input:not([type='checkbox']):not([type='radio']):not([type='hidden']),
+  nav a,
+  a.rounded-full {
+    min-height: 2.75rem;
+  }
+  nav a,
+  a.rounded-full {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+/* A grid cell may be narrower than its widest child; without this a scrolling toolbar widens the whole page. */
+.grid > *,
+.rich-editor {
+  min-width: 0;
+}

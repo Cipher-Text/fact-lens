@@ -53,8 +53,9 @@ function Toolbar({ editor, onImage }: { editor: Editor; onImage: () => void }) {
   }
 
   return (
-    <div role="toolbar" aria-label="Text formatting" className="rounded-t border border-line bg-panel p-1">
-      <div className="flex flex-wrap items-center gap-1">
+    <div role="toolbar" aria-label="Text formatting" className="sticky top-0 z-10 rounded-t border border-line bg-panel p-1">
+      <div className="flex items-center gap-x-3 gap-y-1 overflow-x-auto sm:flex-wrap sm:overflow-visible">
+        <div role="group" aria-label="Text style" className="flex shrink-0 items-center gap-1 sm:flex-wrap">
         <select aria-label="Block style" value={s.heading} className="rounded border border-line bg-bg px-1 py-1 text-sm"
           onChange={(e) => {
             const level = Number(e.target.value);
@@ -70,15 +71,18 @@ function Toolbar({ editor, onImage }: { editor: Editor; onImage: () => void }) {
         <ToolButton label="Strikethrough" active={s.strike} onClick={() => run().toggleStrike().run()}><s>S</s></ToolButton>
         <ToolButton label="Code" active={s.code} onClick={() => run().toggleCode().run()}><code>{'</>'}</code></ToolButton>
         <ToolButton label="Link" active={s.link} onClick={openLink}>Link</ToolButton>
-        <span aria-hidden className="mx-1 h-5 w-px bg-line" />
+        </div>
+        <div role="group" aria-label="Blocks" className="flex shrink-0 items-center gap-1 sm:flex-wrap">
         <ToolButton label="Bulleted list" active={s.bullet} onClick={() => run().toggleBulletList().run()}>• List</ToolButton>
         <ToolButton label="Numbered list" active={s.ordered} onClick={() => run().toggleOrderedList().run()}>1. List</ToolButton>
         <ToolButton label="Quote" active={s.quote} onClick={() => run().toggleBlockquote().run()}>“ ”</ToolButton>
         <ToolButton label="Divider" onClick={() => run().setHorizontalRule().run()}>―</ToolButton>
         <ToolButton label="Insert image from the library" onClick={onImage}>Image</ToolButton>
-        <span aria-hidden className="mx-1 h-5 w-px bg-line" />
+        </div>
+        <div role="group" aria-label="History" className="flex shrink-0 items-center gap-1">
         <ToolButton label="Undo" disabled={!s.canUndo} onClick={() => run().undo().run()}>↶</ToolButton>
         <ToolButton label="Redo" disabled={!s.canRedo} onClick={() => run().redo().run()}>↷</ToolButton>
+        </div>
       </div>
       {linkOpen ? (
         <div className="mt-2 flex flex-wrap items-center gap-2" role="group" aria-label="Link">
