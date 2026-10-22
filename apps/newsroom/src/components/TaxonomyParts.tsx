@@ -89,7 +89,7 @@ export function NewCategoryForm({ locales }: { locales: Locale[] }) {
       <div className="flex flex-wrap items-end gap-3">
         <Field label="Key" hint="Optional. Lowercase letters, digits and hyphens. Made from the English name when left empty."><input name="key" maxLength={60} className={inputClass} /></Field>
         <label className="flex items-center gap-2 pb-5 text-sm"><input type="checkbox" name="showInMenu" defaultChecked /> Show in the menu</label>
-        <button type="submit" disabled={pending} className={`${buttonClass('primary')} mb-5`}>Add category</button>
+        <button type="submit" disabled={pending} className={`${buttonClass('primary')} mb-5`}>Add section</button>
       </div>
       {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}
     </form>
