@@ -2,9 +2,13 @@ import { jobPayloadSchemas, type JobPayload, type JobType } from '@fact-lens/con
 import type { Pool } from 'pg';
 import type { ApiClient } from '../api-client';
 import { PermanentJobError } from '../errors';
+import { FeedFetchError } from '../feeds/safe-fetch';
 import type { Logger } from '../log';
 import type { Enqueue } from '../queues';
 import { scanDueSchedules } from '../scan';
+import { parseFeed } from '../feeds/parse';
+import { scanDueFeeds } from '../feeds/scan';
+import type { FeedFetcher } from '../feeds/safe-fetch';
 
 export interface Services {
   pool: Pool;
@@ -12,6 +16,8 @@ export interface Services {
   log: Logger;
   enqueue: Enqueue;
   cache: CacheInvalidator;
+  /** Fetches one approved feed address, safely. */
+  feeds: FeedFetcher;
 }
 
 /** Purges what the public site has cached. The real implementation arrives with the public cache. */
@@ -70,6 +76,36 @@ export const handlers: Handlers = {
   },
   'media.variant': notBuilt('media.variant'),
   'media.card_generate': notBuilt('media.card_generate'),
+  'feed.scan': {
+    receipt: false,
+    async run(_payload, { pool, enqueue, log }) {
+      await scanDueFeeds(pool, enqueue, log);
+    },
+  },
+  'feed.fetch': {
+    receipt: false, // storing an item is idempotent in the API: an item is kept once per feed
+    async run({ feedId }, { pool, api, feeds, log }) {
+      const { rows } = await pool.query<{ url: string; active: boolean; etag: string | null; last_modified: string | null }>(
+        'SELECT url, active, etag, last_modified FROM feed WHERE id = $1', [feedId]);
+      const feed = rows[0];
+      if (!feed?.active) return; // removed or paused since it was queued
+      // A feed that fails is reported, not retried at once: the next poll is its retry, and the editor sees the reason.
+      try {
+        const got = await feeds(feed.url, { etag: feed.etag, lastModified: feed.last_modified });
+        if (got.status === 304) {
+          await api.ingestFeed(feedId, { status: 'not_modified', items: [] });
+          return;
+        }
+        const items = parseFeed(got.body);
+        const res = await api.ingestFeed(feedId, { status: 'ok', etag: got.etag, lastModified: got.lastModified, items });
+        log.info('feed.fetch', { feedId, items: items.length, ...res });
+      } catch (e) {
+        if (!(e instanceof FeedFetchError)) throw e;
+        log.warn('feed.fetch_failed', { feedId, reason: e.message });
+        await api.ingestFeed(feedId, { status: 'error', error: e.message.slice(0, 300), items: [] });
+      }
+    },
+  },
   'schedule.scan': {
     receipt: false,
     async run(_payload, { pool, enqueue, log }) {

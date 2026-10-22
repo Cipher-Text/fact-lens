@@ -4,6 +4,8 @@ import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT } from 'jose';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { createApp } from './app';
 import { AiController } from './ai/ai.controller';
+import { InboxController } from './inbox/inbox.controller';
+import { InboxService } from './inbox/inbox.service';
 import { GEMINI_OPTIONS, GeminiService, type GeminiOptions } from './ai/gemini.service';
 import { AuditService } from './audit/audit.service';
 import { AuthGuard } from './auth/auth.guard';
@@ -65,12 +67,12 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+    controllers: [InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: GEMINI_OPTIONS, useValue: opts.gemini ?? { apiKey: null, model: 'test-model' } }, GeminiService,
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
-      NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, MediaService,
+      NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, InboxService, MediaService,
       { provide: OBJECT_STORAGE, useValue: storage },
       { provide: MEDIA_OPTIONS, useValue: { maxBytes: opts.maxUploadBytes ?? 10 * 1024 * 1024 } },
       { provide: TOKEN_VERIFIER, useValue: verifier },

@@ -35,7 +35,8 @@ async function handle(request: NextRequest, context: { params: Promise<{ path: s
     body = new Uint8Array(await request.arrayBuffer());
     if (body.length > MAX_MEDIA_BYTES) return problem(413, 'payload_too_large', 'The image is too large');
     upstreamType = contentType;
-  } else if (request.method !== 'GET') {
+  } else if (request.method === 'POST' || request.method === 'PUT') {
+    // A DELETE has no body, so it needs no content type either (the API rejects an empty JSON body).
     if (contentType !== 'application/json') return problem(415, 'unsupported_media_type', 'JSON only');
     body = await request.text();
     if (body.length > MAX_BODY) return problem(413, 'payload_too_large', 'Request too large');

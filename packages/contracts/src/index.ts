@@ -34,3 +34,4 @@ export * from './jobs';
 export * from './media';
 export * from './taxonomy';
 export * from './ai';
+export * from './inbox';

@@ -3,7 +3,7 @@
  * signed-in user's token, so this list is only a narrowing: it keeps the internal and public
  * surfaces and anything unknown out of reach. The API still decides every request.
  */
-const ROOTS = new Set(['news', 'comments', 'assignments', 'sources', 'contributors', 'reference', 'media', 'taxonomy', 'ai', 'me']);
+const ROOTS = new Set(['news', 'comments', 'assignments', 'sources', 'contributors', 'reference', 'media', 'taxonomy', 'ai', 'inbox', 'feeds', 'me']);
 const METHODS = new Set(['GET', 'POST', 'PUT', 'DELETE']);
 const SEGMENT = /^[A-Za-z0-9][A-Za-z0-9_.:-]*$/;
 

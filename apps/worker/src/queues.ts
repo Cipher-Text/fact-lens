@@ -18,6 +18,8 @@ export type Enqueue = (request: JobRequest) => Promise<void>;
 const retryPolicy: Partial<Record<JobType, { attempts: number; delay: number }>> = {
   'news.publish_scheduled': { attempts: 8, delay: 2000 },
   'schedule.scan': { attempts: 1, delay: 1000 },
+  'feed.scan': { attempts: 1, delay: 1000 },
+  'feed.fetch': { attempts: 3, delay: 5000 },
 };
 const defaultPolicy = { attempts: 5, delay: 1000 };
 

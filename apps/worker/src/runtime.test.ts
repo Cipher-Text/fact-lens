@@ -35,14 +35,18 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
       invalidated.push(tags);
     },
   };
-  const defaultApi: ApiClient = {
+  type PublishApi = Pick<ApiClient, 'publishSchedule'>;
+  const defaultApi: PublishApi = {
     async publishSchedule(scheduleId) {
       published.push(scheduleId);
       return apiResult;
     },
   };
-  let apiImpl: ApiClient = defaultApi;
-  const api: ApiClient = { publishSchedule: (scheduleId) => apiImpl.publishSchedule(scheduleId) };
+  let apiImpl: PublishApi = defaultApi;
+  const api: ApiClient = {
+    publishSchedule: (scheduleId) => apiImpl.publishSchedule(scheduleId),
+    ingestFeed: async () => ({ inserted: 0, duplicates: 0, skipped: 0 }),
+  };
 
   beforeAll(async () => {
     db = await createTestDb(adminUrl!);
@@ -58,7 +62,7 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
     apiResult = { result: 'published', newsId: id };
     apiImpl = defaultApi;
     queues = new QueueRegistry(redisOptionsFromUrl(redisUrl!), `t${randomBytes(4).toString('hex')}`);
-    const services: Services = { pool: db.pool, api, log: silentLogger, enqueue: queues.enqueue, cache };
+    const services: Services = { pool: db.pool, api, log: silentLogger, enqueue: queues.enqueue, cache, feeds: async () => { throw new Error('feeds are not used here'); } };
     workers = startWorkers(services, { connection: queues.connection, prefix: queues.prefix, concurrency: 3 });
     await Promise.all(workers.map((w) => w.waitUntilReady()));
     return async () => {

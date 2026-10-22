@@ -5,6 +5,7 @@ import { startHealthServer } from './health';
 import { createLogger, errorFields } from './log';
 import { startDispatcher } from './outbox/dispatcher';
 import { loggingCacheInvalidator } from './processors';
+import { createFeedFetcher } from './feeds/safe-fetch';
 import { QueueRegistry } from './queues';
 import { redisOptionsFromUrl } from './redis';
 import { startWorkers } from './runtime';
@@ -20,6 +21,7 @@ async function main() {
   const services = {
     pool, log, enqueue: queues.enqueue, cache: loggingCacheInvalidator(log),
     api: createApiClient(env.API_BASE_URL, env.INTERNAL_API_TOKEN),
+    feeds: createFeedFetcher({ allowPrivate: env.FEED_ALLOW_PRIVATE_HOSTS }),
   };
 
   const workers = startWorkers(services, { connection, prefix: queues.prefix, concurrency: env.JOB_CONCURRENCY });
@@ -28,6 +30,10 @@ async function main() {
   await queues.queue('maintenance').upsertJobScheduler(
     'schedule-scan', { every: env.SCHEDULE_SCAN_MS },
     { name: 'schedule.scan', data: { id: crypto.randomUUID(), type: 'schedule.scan', version: 1, idempotencyKey: 'schedule.scan', occurredAt: new Date().toISOString(), payload: {} } },
+  );
+  await queues.queue('maintenance').upsertJobScheduler(
+    'feed-scan', { every: env.FEED_SCAN_MS },
+    { name: 'feed.scan', data: { id: crypto.randomUUID(), type: 'feed.scan', version: 1, idempotencyKey: 'feed.scan', occurredAt: new Date().toISOString(), payload: {} } },
   );
   const health = startHealthServer(pool, queues, env.WORKER_HEALTH_PORT);
   log.info('worker.started', { queues: workers.map((w) => w.name), healthPort: env.WORKER_HEALTH_PORT });

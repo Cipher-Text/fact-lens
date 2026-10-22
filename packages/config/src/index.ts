@@ -87,6 +87,10 @@ export const workerEnvSchema = z.object({
   OUTBOX_POLL_MS: z.coerce.number().int().min(100).default(1000),
   SCHEDULE_SCAN_MS: z.coerce.number().int().min(1000).default(30000),
   JOB_CONCURRENCY: z.coerce.number().int().min(1).max(50).default(5),
+  /** How often the worker looks for RSS feeds that are due. Each feed has its own interval. */
+  FEED_SCAN_MS: z.coerce.number().int().min(10000).default(60000),
+  /** Development only: allow a feed on this machine or network. Off, a feed on a private address is refused. */
+  FEED_ALLOW_PRIVATE_HOSTS: z.stringbool().default(false),
 });
 export type WorkerEnv = z.infer<typeof workerEnvSchema>;
 

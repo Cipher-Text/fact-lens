@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { loadApiEnv } from '@fact-lens/config';
 import { AiController } from './ai/ai.controller';
+import { InboxController } from './inbox/inbox.controller';
+import { InboxService } from './inbox/inbox.service';
 import { GEMINI_OPTIONS, GeminiService } from './ai/gemini.service';
 import { AuthModule } from './auth/auth.module';
 import { MeController } from './auth/me.controller';
@@ -29,7 +31,7 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+  controllers: [InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
   providers: [
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
     { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },
@@ -42,6 +44,7 @@ import type { Pool } from 'pg';
     CommentsService,
     AssignmentsService,
     SourcesService,
+    InboxService,
     {
       provide: HealthService,
       inject: [PG_POOL],

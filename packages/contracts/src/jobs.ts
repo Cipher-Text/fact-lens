@@ -38,6 +38,8 @@ export const jobPayloadSchemas = {
   'media.variant': z.object({ mediaAssetId: idSchema }),
   'media.card_generate': z.object({ generatedCardId: idSchema }),
   'schedule.scan': z.object({}),
+  'feed.scan': z.object({}),
+  'feed.fetch': z.object({ feedId: idSchema }),
 } as const;
 
 export type JobType = keyof typeof jobPayloadSchemas;
@@ -45,7 +47,7 @@ export const jobTypes = Object.keys(jobPayloadSchemas) as JobType[];
 export type JobPayload<T extends JobType> = z.infer<(typeof jobPayloadSchemas)[T]>;
 
 /** One queue per job family, so concurrency and backlog are tuned and watched separately. */
-export const queueNames = ['publish', 'cache', 'search', 'notify', 'media', 'maintenance'] as const;
+export const queueNames = ['publish', 'cache', 'search', 'notify', 'media', 'maintenance', 'ingest'] as const;
 export type QueueName = (typeof queueNames)[number];
 
 export const jobQueue: Record<JobType, QueueName> = {
@@ -56,6 +58,8 @@ export const jobQueue: Record<JobType, QueueName> = {
   'media.variant': 'media',
   'media.card_generate': 'media',
   'schedule.scan': 'maintenance',
+  'feed.scan': 'maintenance',
+  'feed.fetch': 'ingest',
 };
 
 /**

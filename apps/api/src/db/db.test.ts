@@ -384,6 +384,8 @@ describe.skipIf(!adminUrl)('database schema', () => {
       ['source', 'kind', c.sourceKinds],
       ['source', 'validation_status', c.sourceValidationStatuses],
       ['source', 'ingest_channel', c.ingestChannels],
+      ['feed', 'last_status', c.feedStatuses],
+      ['inbox_item', 'status', c.inboxStatuses],
       ['news_source', 'relation', c.sourceRelations],
       ['news_source', 'use_type', c.sourceUseTypes],
       ['editorial_assignment', 'role', c.assignmentRoles],
