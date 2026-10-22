@@ -19,7 +19,7 @@ FactLens should be configurable by editorial and ops staff wherever a value legi
 - **Ingestion source allowlist** ([ingestion and automation](./08-ingestion-and-automation.md)): already a data-driven allowlist (RSS feeds, Telegram channels, approved URLs). Adding, pausing or removing a source is a reviewed configuration change, not a deploy.
 - **CardTemplate definitions** ([media architecture](./10-media-architecture.md)): already versioned, admin-editable design records.
 - **Ad targeting rules, campaigns and placements** ([domain model](./05-domain-model.md)): already fully data-driven through the newsroom Advertising screen.
-- **Rate limits and AI budgets per desk/use case** (doc 11, [auth/security](./12-auth-security-and-audit.md)): configurable thresholds, not hardcoded constants — ops should be able to tighten or loosen them without a deploy, especially given the number of abuse surfaces added this session (ad redirects, the news item-view beacon, the Telegram webhook, AI rewrite).
+- **Rate limits and AI budgets per desk/use case** (doc 11, [auth/security](./12-auth-security-and-audit.md)): configurable thresholds, not hardcoded constants — ops should be able to tighten or loosen them without a deploy, especially given the number of abuse surfaces added this session (ad redirects, the news view beacon, the Telegram webhook, AI rewrite).
 - **Retention policies** (open questions 4, 9, 10 in [open questions](./19-open-questions.md)): once each is answered, store the answer as a configurable retention rule (entity type → days), not a hardcoded constant — retention obligations can change with law or a provider's ToS, and shouldn't require a deploy to update.
 - **Supported locale set** (doc 05): canonical locales (`en`, `bn-BD` today) should be a configurable record (code, display name, direction, active/inactive), not a hardcoded enum, so adding a third language later is a configuration change, not a schema migration. This does not reopen the decision to launch with two locales — it only changes how a third would be added later.
 - **Distribution/ingestion connectors** (doc 08, [implementation roadmap](./16-implementation-roadmap.md) Phase 5/6): follow the same adapter-plus-configuration-record pattern as ingestion sources; each connector is independently enable/disable-able and credential-configurable per environment.
@@ -42,8 +42,8 @@ Built:
 - **Tables and validation:** `configuration` (one value per key and scope) and `feature_flag`; each configuration key has a value schema in `packages/contracts`, and the seed validates before it inserts.
 - **Seeded and used:** `workflow.transition_policy` (global, with a per-desk override that the workflow reads on every move).
 - **Seeded, not yet used:** nine `rate_limit.*` rows, six `ai.use_case.*` rows (budget zero). Nothing enforces or reads them yet. No `retention.*` rows exist because the policies are open ([19](./19-open-questions.md), 16).
-- **Locales** are rows in `locale`, as the plan asks.
+- **Locales** are rows in `locale`, as the plan asks. An admin adds one or switches one off on the Configuration screen (`/config/locales`, `config.manage`, audited); categories and tags can then be named in it and news translated into it.
 - **Feature flags:** 11, all off, with a screen to turn them on or off. Nothing reads a flag yet except that screen.
-- **Admin screen:** feature flags only, gated by `config.manage`, MFA-protected, with a required reason, an audit row and an outbox event on every change. Editing configuration values has no screen or endpoint.
+- **Admin screen:** feature flags and languages only, gated by `config.manage`, MFA-protected, with a required reason, an audit row and an outbox event on every change. Editing configuration values has no screen or endpoint.
 
 See [implementation status](./22-implementation-status.md).

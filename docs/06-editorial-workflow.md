@@ -2,7 +2,7 @@
 
 ## Proposed states
 
-Use a news item-level workflow with revision-level approval. `INGESTED` is for machine/source intake; human-owned states begin at `RESEARCHING`.
+Use a per-item workflow with revision-level approval. `INGESTED` is for machine/source intake; human-owned states begin at `RESEARCHING`.
 
 ```mermaid
 stateDiagram-v2

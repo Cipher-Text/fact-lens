@@ -65,7 +65,7 @@ Editorial transactions are tightly coupled: a publish command touches revision s
 
 ## News item performance tracking
 
-FactLens tracks per-news item reads with first-party telemetry rather than a third-party analytics API, so "most read"/"trending" rankings are low-latency and don't depend on GA4's reporting delay or query quotas (GA4/GSC remain the source for broader web analytics and SEO reporting; see [technology decisions](./04-technology-decisions.md)).
+FactLens tracks per-item reads with first-party telemetry rather than a third-party analytics API, so "most read"/"trending" rankings are low-latency and don't depend on GA4's reporting delay or query quotas (GA4/GSC remain the source for broader web analytics and SEO reporting; see [technology decisions](./04-technology-decisions.md)).
 
 1. The public web sends a lightweight view beacon once per news item render (news item id, locale, an anonymized session identifier, referrer) — no PII, no cross-site tracking.
 2. A public, rate-limited API endpoint accepts the beacon and increments Redis counters keyed by news item id and rolling time windows (e.g. 1h/24h/7d), de-duplicated per session per news item per window to resist inflation. These counters drive real-time "most read"/"trending" ranking directly.

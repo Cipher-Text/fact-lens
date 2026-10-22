@@ -34,7 +34,7 @@ Authoritative source files are Strapi schemas under `cipher-press/apps/cms/src/a
 
 ## Validation
 
-Compare counts by locale/state, slug sets, canonical URL sets, timestamps, author/category/tag relations, media checksums, HTML/text rendering, SEO metadata, sitemap entries, schema.org output, redirects and search results. Sample bilingual pairs manually. Fail the migration on unexplained published-news item loss, duplicate canonical URLs, broken media, missing attribution or redirect gaps.
+Compare counts by locale/state, slug sets, canonical URL sets, timestamps, author/category/tag relations, media checksums, HTML/text rendering, SEO metadata, sitemap entries, schema.org output, redirects and search results. Sample bilingual pairs manually. Fail the migration on unexplained published news item loss, duplicate canonical URLs, broken media, missing attribution or redirect gaps.
 
 ## Rollback
 

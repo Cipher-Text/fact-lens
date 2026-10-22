@@ -9,9 +9,9 @@ Map identity claims to capabilities, desk membership and scoped resources. Keep 
 ## Controls
 
 - Validate and sanitize Tiptap/HTML server-side and at rendering boundaries; apply CSP and safe link/image policies.
-- Rate-limit login, public search, ingestion, uploads, ad redirects, the news item-view tracking beacon, the newsletter subscribe endpoint, media/card-generation processing and expensive AI operations with shared Redis counters.
+- Rate-limit login, public search, ingestion, uploads, ad redirects, the news view tracking beacon, the newsletter subscribe endpoint, media/card-generation processing and expensive AI operations with shared Redis counters.
 - Newsletter subscription requires double opt-in and a working unsubscribe link in every send; treat the subscriber list as personal data under the same minimize/retain/delete policy as other personal data.
-- De-duplicate news item-view beacon hits per session per news item per time window to resist "most read"/trending manipulation; apply basic bot/UA heuristics on the beacon endpoint.
+- De-duplicate news view beacon hits per session per news item per time window to resist "most read"/trending manipulation; apply basic bot/UA heuristics on the beacon endpoint.
 - CSRF protection for cookie-authenticated state-changing requests; strict CORS and origin checks.
 - SSRF protection for source fetches: allowlists, private-IP blocking, DNS re-checks, redirects/size/time limits.
 - Upload controls: extension/MIME/content verification, size limits, malware-scanning option, isolated image processing and safe SVG policy.

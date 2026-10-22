@@ -17,7 +17,7 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 - Implement Source/NewsSource, Assignment, Comment, Correction, AuditEvent and Outbox tables. *Done.*
 - Implement CardTemplate and GeneratedCard tables. *Tables done; no endpoints or generation job.*
 - Implement Configuration and FeatureFlag tables (workflow-transition policy, AI provider/model/budget, rate limits, retention rules, supported locales; see [configuration and feature flags](./21-configuration-and-feature-flags.md)).
-- Add slug/canonical/redirect registry and publication read models. *Partial: the slug registry, redirects between a news item's own slugs and the published-news item read model are done; a registry of legacy URLs is not.*
+- Add slug/canonical/redirect registry and publication read models. *Partial: the slug registry, redirects between a news item's own slugs and the published news item read model are done; a registry of legacy URLs is not.*
 
 ## Epic C — Authentication and authorization
 
@@ -30,6 +30,7 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 - News item/revision/translation commands and queries. *Done.*
 - Tiptap document schema, sanitization and HTML import compatibility fixture. *Partial: schema, validation and the editor are done; the HTML import fixture is not.*
 - Workflow transition policy and publish/schedule validation. *Done.*
+- Categories and tags in every supported language (menu order, descriptions, tag pictures), language administration, and per-language public navigation and lists. *Done in the API and the newsroom; `apps/web` does not use them yet.*
 - Source attachment, comments, assignments, correction record and revision timeline. *Done in the API; the newsroom lacks screens to create assignments and sources.*
 
 ## Epic E — Async and operations
@@ -41,11 +42,11 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 
 ## Epic F — Newsroom shell
 
-- Desk queue and news item workspace. *Done.*
+- Desk queue (numbers, stage tabs, table) and news item workspace in the Admin UI design ([docs/design](./design/newsroom-admin-ui.html)). *Done; the design's fact-check panel is not built (open question 15).*
 - Revision/history and comments panels. *Partial: timeline and comments done; no revision list or comparison screen.*
 - Source inbox placeholder and media library, including branded photocard/poster generation from a photo using FactLens templates. *Partial: placeholder and media library done; card generation not.*
 - Publish/schedule review screen with capability-aware controls. *Partial: next steps (including scheduling) are on the news item page; no separate review screen or calendar.*
-- Configuration screen (workflow policy, AI budgets, rate limits, retention rules, feature flags), gated by `config.manage`. *Partial: feature flags only.*
+- Configuration screen (workflow policy, AI budgets, rate limits, retention rules, feature flags), gated by `config.manage`. *Partial: feature flags and supported languages only.*
 
 ## Epic G — Advertising module
 

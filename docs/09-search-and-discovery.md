@@ -18,7 +18,7 @@ Introduce OpenSearch only when at least one is measured: complex faceting, autoc
 
 Start related news items with shared category/tag/entity/source signals plus recency. Later add entity co-occurrence, claim/evidence links and embeddings behind explicit editorial/privacy policy. Do not let similarity ranking imply factual equivalence.
 
-First-party news item-view counts (see [target architecture](./03-target-architecture.md)) can also power "most read"/trending discovery surfaces once available in Phase 4. Treat popularity as a distinct, clearly labeled signal from editorial curation — do not let it silently override desk-selected placement.
+First-party news view counts (see [target architecture](./03-target-architecture.md)) can also power "most read"/trending discovery surfaces once available in Phase 4. Treat popularity as a distinct, clearly labeled signal from editorial curation — do not let it silently override desk-selected placement.
 
 ## Status
 

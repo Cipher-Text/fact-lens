@@ -1,6 +1,6 @@
 # 22 — Implementation status
 
-What exists in this repository today, how much of it has been checked, and what is not built. The other documents describe the plan; this one describes reality. Last reviewed 21 October 2026.
+What exists in this repository today, how much of it has been checked, and what is not built. The other documents describe the plan; this one describes reality. Last reviewed 22 October 2026.
 
 ## How to read this
 
@@ -17,7 +17,7 @@ What exists in this repository today, how much of it has been checked, and what 
 | 1. Foundation and newsroom shell | Mostly done | Monorepo, API, migrations, OIDC bearer auth, capability checks, audit and outbox, worker, contracts, newsroom shell. Missing: OpenAPI generation, Docker images, deployment skeleton, tracing and metrics. See [20](./20-phase-1-backlog.md). |
 | 2. Editorial core | Largely done | News item, revision and translation commands, workflow, Tiptap editor, sources, comments, assignments, corrections, timeline, scheduling and scheduled publishing, media library. Missing: branded card generation, taxonomy merge and impact preview, an assignment-creation screen, the advertising screens. |
 | 3. Migration tooling and rehearsal | Not started | |
-| 4. Public web and cutover | Early | `apps/web` is the new design on mock data. The API has a published-news item read model with slug redirects and public media. The API has public per-language navigation and category and tag news item lists, but `apps/web` does not call them, and there is no search route, no sitemap, legacy redirects, view beacon, newsletter or ad serving, and the web app does not call the API. |
+| 4. Public web and cutover | Early | `apps/web` is the new design on mock data. The API has a published-news read model with slug redirects and public media, plus public per-language navigation and category and tag lists. `apps/web` calls none of it. There is no search route, sitemap, legacy redirects, view beacon, newsletter or ad serving. |
 | 5. Ingestion and AI assistance | Not started | Feature flags and AI configuration rows exist and do nothing. The cache, search and notification jobs only log. |
 | 6. Distribution and analytics | Not started | |
 | 7. Advanced discovery | Not started | |
@@ -40,11 +40,11 @@ What exists in this repository today, how much of it has been checked, and what 
 - Media: upload, list, detail, rights, file, delete. Public: news item by locale and slug, media derivatives.
 - Reference data and administration: desks, categories, tags, locales, contributors, feature flags, `/me`.
 - Desk queue numbers: `GET /news/counts` (in progress, due today, stuck over 24 hours, published this week, and a count per stage); the list also carries each item's pending schedule time.
-- Taxonomy (`taxonomy.manage`): categories (create, rename per language, order, show or hide in the menu, archive, delete when unused), tags (the same, with search), news item tags (`PUT /news/:id/tags`), languages (`/config/locales`, `config.manage`). Tags carry a description per language and one picture. Public: `GET /public/navigation/:locale`, `GET /public/news/:locale?category=|tag=`; the public news item carries its category and tags in its own language.
+- Taxonomy (`taxonomy.manage`): categories (create, rename per language, order, show or hide in the menu, archive, delete when unused), tags (the same, with search), tags on a news item (`PUT /news/:id/tags`), languages (`/config/locales`, `config.manage`). Tags carry a description per language and one picture. Public: `GET /public/navigation/:locale`, `GET /public/news/:locale?category=|tag=`; the public news item carries its category and tags in its own language, and an item with no name in a language is left out of that language.
 - Internal (shared secret, for the worker): publish a due schedule.
 - Health: liveness and readiness.
 
-**Database**: locale, configuration, feature flag, desk, category, tag, contributor, media asset, news item, revision, translation, slug registry, news item tags and contributors, revision media, source, news item source, assignment, comment, correction and notice, publishing schedule, card template, generated card, advertiser, campaign, placement, ad, ad category target, ad event, role, role capability, audit event, outbox event, processed job. Not yet created: newsletter subscriber, news item performance, entities, claims, AI runs, prompt templates, ingestion sources.
+**Database**: locale, configuration, feature flag, desk, category, tag (with labels per language), contributor, media asset, news item, revision, translation, slug registry, news tags and contributors, revision media, source, news item source, assignment, comment, correction and notice, publishing schedule, card template, generated card, advertiser, campaign, placement, ad, ad category target, ad event, role, role capability, audit event, outbox event, processed job. Not yet created: newsletter subscriber, news item performance, entities, claims, AI runs, prompt templates, ingestion sources.
 
 **Seeded reference data** (`pnpm seed`): 4 provisional desks, 9 categories with English and Bangla names and descriptions, 146 tags with English and Bangla names (from cipher-press), 8 provisional roles, default workflow policy, 9 rate limits, 6 AI use cases (budget zero), 11 feature flags (all off).
 
@@ -56,11 +56,12 @@ What exists in this repository today, how much of it has been checked, and what 
 
 | Area | Verification |
 |---|---|
+| Taxonomy: menu, tags, per-language names and addresses, public navigation and lists, tag description and picture, adding a third language | Tested (database tests) |
 | Workflow, readiness rules, slugs, corrections, scheduling | Tested (database tests, including concurrency) |
 | Authentication, capabilities, MFA rule, audit | Tested with signed test tokens; sign-in flow tested against the fake provider |
 | Outbox dispatcher, jobs, idempotency, scheduled publish | Tested against real PostgreSQL and Redis; a real API and worker run was also hand-checked |
 | Media upload, sanitizing, variants, rights, public serving | Tested. Storage tests run against a stand-in S3 server; the real MinIO run is added to CI and **has not yet been seen to pass** |
-| Newsroom screens and the editor | Libraries and renderer tested; the screens themselves are **hand-checked only**, there are no browser tests |
+| Newsroom screens and the editor | Libraries, renderer and proxy rules tested; the screens themselves are **hand-checked only**, there are no browser tests. The tag picture chooser has not been hand-checked |
 | Public web | 251 tests in `apps/web`; it does not use the API |
 
 ## Not built, in one place

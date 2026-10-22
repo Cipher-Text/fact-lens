@@ -32,7 +32,7 @@ Each use case references a **saved prompt template** by id and version, not a li
 - claim and named-entity extraction;
 - taxonomy suggestions: proposed category, tags/topics and desk, alongside the rewrite draft;
 - alt-text and social-card caption copy (text only — the branded card/poster image itself is deterministic template compositing, not AI-generated; see [media architecture](./10-media-architecture.md));
-- duplicate-news item similarity signal.
+- duplicate news item similarity signal.
 
 These produce drafts/proposals. AI must not publish, overwrite an approved revision, or change workflow state without an explicit authorized human command. A rewrite proposal lands in the news item's `DRAFT` state marked AI-proposed (per doc 07's field-provenance UI) and requires a human editor to rewrite/edit it before it can move to review — it is a starting point, not publishable content.
 
