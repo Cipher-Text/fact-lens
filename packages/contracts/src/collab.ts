@@ -3,13 +3,13 @@ import { httpUrlSchema, idSchema, timestampSchema } from './common';
 import { assignmentRoles, assignmentStatuses, commentStatuses, sourceKinds, sourceRelations, sourceUseTypes, sourceValidationStatuses } from './enums';
 import { assignmentSchema, commentSchema, sourceSchema } from './editorial';
 
-/** Comments, assignments, sources and the story timeline (Epic D). All are newsroom-only. */
+/** Comments, assignments, sources and the news item timeline (Epic D). All are newsroom-only. */
 
 export const commentCreateSchema = z.object({
   body: z.string().trim().min(1).max(5000),
-  /** Defaults to the story's latest revision. */
+  /** Defaults to the news item's latest revision. */
   revisionId: idSchema.optional(),
-  /** Replies are one level deep: the parent must be a top-level comment of the same story. */
+  /** Replies are one level deep: the parent must be a top-level comment of the same news. */
   parentId: idSchema.optional(),
 });
 export type CommentCreate = z.infer<typeof commentCreateSchema>;
@@ -29,11 +29,11 @@ export const assignmentQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
 
-export const assignmentWithStorySchema = assignmentSchema.extend({
+export const assignmentWithNewsSchema = assignmentSchema.extend({
   assignedBy: z.string().nullable(),
-  storyTitles: z.record(z.string(), z.string()),
+  newsTitles: z.record(z.string(), z.string()),
 });
-export type AssignmentWithStory = z.infer<typeof assignmentWithStorySchema>;
+export type AssignmentWithNews = z.infer<typeof assignmentWithNewsSchema>;
 
 /** Sources are created from the newsroom. Ingestion fields are set only by connectors. */
 export const sourceCreateSchema = z
@@ -57,12 +57,12 @@ export const sourceValidationSchema = z.object({
 });
 export type SourceValidation = z.infer<typeof sourceValidationSchema>;
 
-export const storySourceAttachSchema = z.object({
+export const newsSourceAttachSchema = z.object({
   relation: z.enum(sourceRelations).default('primary'),
   useType: z.enum(sourceUseTypes).default('background'),
   notes: z.string().trim().max(2000).optional(),
 });
-export type StorySourceAttach = z.infer<typeof storySourceAttachSchema>;
+export type NewsSourceAttach = z.infer<typeof newsSourceAttachSchema>;
 
 export const attachedSourceSchema = sourceSchema.extend({
   relation: z.enum(sourceRelations),

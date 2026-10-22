@@ -33,7 +33,7 @@ export default async function TaxonomyPage({ searchParams }: { searchParams: Pro
       <header>
         <h1 className="text-xl font-semibold">Sections and tags</h1>
         <p className="mt-1 text-sm text-muted">
-          Sections make up the news menu; a story has one. Tags describe a story; it can have many. Each is named once per language ({locales.map((l) => l.displayName).join(', ')}).
+          Sections make up the news menu; a news item has one. Tags describe a news item; it can have many. Each is named once per language ({locales.map((l) => l.displayName).join(', ')}).
           Something with no name in a language is left out of that language&apos;s site. Add languages under <Link href="/config" className="underline">Configuration</Link>.
         </p>
       </header>

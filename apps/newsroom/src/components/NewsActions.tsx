@@ -31,24 +31,24 @@ function useCommand() {
 /** Datetime-local has no zone; the desk works in Dhaka time (UTC+6, no daylight saving). */
 const dhakaToIso = (local: string) => new Date(`${local}:00+06:00`).toISOString();
 
-export function TransitionPanel({ storyId, transitions }: { storyId: string; transitions: AvailableTransition[] }) {
+export function TransitionPanel({ newsId, transitions }: { newsId: string; transitions: AvailableTransition[] }) {
   const { error, pending, run } = useCommand();
   if (transitions.length === 0) return <Empty>No further steps from here.</Empty>;
   const open = transitions.filter((t) => t.permitted);
   const closed = transitions.filter((t) => !t.permitted);
   return (
     <div className="space-y-3">
-      {open.length === 0 ? <Empty>You cannot move this story from its current state.</Empty> : null}
+      {open.length === 0 ? <Empty>You cannot move this news item from its current state.</Empty> : null}
       {open.map((t, i) => {
         const needsInput = t.reasonRequired || t.needsSchedule;
         const form = (
           <form key={t.to} className="space-y-2"
-            onSubmit={submitWith((form) => run('POST', `stories/${storyId}/transitions`, {
+            onSubmit={submitWith((form) => run('POST', `news/${newsId}/transitions`, {
               to: t.to,
               ...(t.reasonRequired ? { reason: form.get('reason') } : {}),
               ...(t.needsSchedule ? { schedule: { scheduledFor: dhakaToIso(form.get('when') as string), timeZone: 'Asia/Dhaka' } } : {}),
             }))}>
-            {t.reasonRequired ? <Field label={t.to === 'ARCHIVED' ? 'Why archive this story?' : t.to === 'DRAFT' ? 'What needs to change?' : 'Reason'}><input name="reason" required minLength={3} maxLength={500} className={inputClass} /></Field> : null}
+            {t.reasonRequired ? <Field label={t.to === 'ARCHIVED' ? 'Why archive this news item?' : t.to === 'DRAFT' ? 'What needs to change?' : 'Reason'}><input name="reason" required minLength={3} maxLength={500} className={inputClass} /></Field> : null}
             {t.needsSchedule ? <Field label="Publish at (Dhaka time)"><input type="datetime-local" name="when" required className={inputClass} /></Field> : null}
             <button type="submit" disabled={pending} className={buttonClass(t.to === 'ARCHIVED' ? 'danger' : i === 0 && !needsInput ? 'primary' : 'secondary')}>
               Move to {statusLabel(t.to).toLowerCase()}
@@ -59,7 +59,7 @@ export function TransitionPanel({ storyId, transitions }: { storyId: string; tra
         return needsInput ? (
           <details key={t.to} className="border-t border-line pt-2 first:border-0 first:pt-0">
             <summary className={`cursor-pointer text-sm font-medium ${t.to === 'ARCHIVED' ? 'text-danger' : ''}`}>
-              {t.to === 'ARCHIVED' ? 'Archive this story…' : t.to === 'DRAFT' ? 'Send back for changes…' : `Move to ${statusLabel(t.to).toLowerCase()}…`}
+              {t.to === 'ARCHIVED' ? 'Archive this news item…' : t.to === 'DRAFT' ? 'Send back for changes…' : `Move to ${statusLabel(t.to).toLowerCase()}…`}
             </summary>
             <div className="mt-2">{form}</div>
           </details>
@@ -78,10 +78,10 @@ export function TransitionPanel({ storyId, transitions }: { storyId: string; tra
   );
 }
 
-export function ReviseForm({ storyId }: { storyId: string }) {
+export function ReviseForm({ newsId }: { newsId: string }) {
   const { error, pending, run } = useCommand();
   return (
-    <form className="space-y-2" onSubmit={submitWith((form) => run('POST', `stories/${storyId}/revisions`, { reason: form.get('reason') }))}>
+    <form className="space-y-2" onSubmit={submitWith((form) => run('POST', `news/${newsId}/revisions`, { reason: form.get('reason') }))}>
       <Field label="Why open a new revision?" hint="The published version stays live while you edit."><input name="reason" required minLength={3} maxLength={500} className={inputClass} /></Field>
       <button type="submit" disabled={pending} className={buttonClass()}>Open new revision</button>
       {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}
@@ -89,11 +89,11 @@ export function ReviseForm({ storyId }: { storyId: string }) {
   );
 }
 
-export function CorrectionForm({ storyId, locales }: { storyId: string; locales: string[] }) {
+export function CorrectionForm({ newsId, locales }: { newsId: string; locales: string[] }) {
   const { error, pending, run } = useCommand();
   return (
     <form className="space-y-2"
-      onSubmit={submitWith((form) => run('POST', `stories/${storyId}/corrections`, {
+      onSubmit={submitWith((form) => run('POST', `news/${newsId}/corrections`, {
         reason: form.get('reason'),
         notices: Object.fromEntries(locales.map((l) => [l, ((form.get(`notice-${l}`) as string) ?? '').trim()]).filter(([, v]) => v)),
       }))}>
@@ -107,8 +107,8 @@ export function CorrectionForm({ storyId, locales }: { storyId: string; locales:
   );
 }
 
-export function MetaForm({ storyId, desks, categories, deskId, categoryId, contributors, people }: {
-  storyId: string;
+export function MetaForm({ newsId, desks, categories, deskId, categoryId, contributors, people }: {
+  newsId: string;
   desks: Array<{ id: string; name: string }>;
   categories: Array<{ id: string; name: string }>;
   deskId: string | null;
@@ -121,7 +121,7 @@ export function MetaForm({ storyId, desks, categories, deskId, categoryId, contr
 
   return (
     <form className="space-y-3"
-      onSubmit={submitWith((form) => run('PUT', `stories/${storyId}/meta`, {
+      onSubmit={submitWith((form) => run('PUT', `news/${newsId}/meta`, {
         deskId: (form.get('deskId') as string) || null, categoryId: (form.get('categoryId') as string) || null,
         contributors: added.map((c, i) => ({ contributorId: c.id, role: c.role, position: i })),
       }))}>
@@ -136,7 +136,7 @@ export function MetaForm({ storyId, desks, categories, deskId, categoryId, contr
               <button type="button" className="text-xs text-danger underline" onClick={() => setAdded(added.filter((x) => !(x.id === c.id && x.role === c.role)))}>Remove</button>
             </li>
           ))}
-          {added.length === 0 ? <li className="text-muted">Nobody credited yet. A story needs an author for review.</li> : null}
+          {added.length === 0 ? <li className="text-muted">Nobody credited yet. A news item needs an author for review.</li> : null}
         </ul>
         <div className="flex gap-2">
           <select aria-label="Person" id="person" className={inputClass} defaultValue="">
@@ -181,10 +181,10 @@ export function NewPersonForm() {
   );
 }
 
-export function CommentBox({ storyId }: { storyId: string }) {
+export function CommentBox({ newsId }: { newsId: string }) {
   const { error, pending, run } = useCommand();
   return (
-    <form className="space-y-2" onSubmit={submitWith((form, el) => run('POST', `stories/${storyId}/comments`, { body: form.get('body') }, () => el.reset()))}>
+    <form className="space-y-2" onSubmit={submitWith((form, el) => run('POST', `news/${newsId}/comments`, { body: form.get('body') }, () => el.reset()))}>
       <Field label="Add a comment"><textarea name="body" required rows={2} maxLength={5000} className={inputClass} /></Field>
       <button type="submit" disabled={pending} className={buttonClass()}>Comment</button>
       {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}

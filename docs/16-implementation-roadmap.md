@@ -6,7 +6,7 @@
 
 Deliverables: frozen Strapi schema/URL/media inventory; canonical locale policy; domain/event contracts; HTML-to-editor conversion spike; importer dry-run; redirect registry prototype; benchmark baseline.
 
-Exit: representative bilingual stories round-trip, every current route class is accounted for, unresolved product choices are listed, and no write is made to `cipher-press`.
+Exit: representative bilingual news items round-trip, every current route class is accounted for, unresolved product choices are listed, and no write is made to `cipher-press`.
 
 ## Phase 1 — Foundation and newsroom shell
 
@@ -14,7 +14,7 @@ Exit: representative bilingual stories round-trip, every current route class is 
 
 Deliverables: monorepo/tooling, NestJS/Fastify API, PostgreSQL migrations, OIDC, capability checks, audit/outbox, Redis/BullMQ skeleton, media abstraction, contracts package, newsroom shell and health/observability baseline.
 
-Exit: authenticated users can create a draft story/revision/translation through the API; tests cover authorization, audit and transaction/outbox behavior.
+Exit: authenticated users can create a draft news item/revision/translation through the API; tests cover authorization, audit and transaction/outbox behavior.
 
 ## Phase 2 — Editorial core
 
@@ -22,7 +22,7 @@ Exit: authenticated users can create a draft story/revision/translation through 
 
 Deliverables: taxonomy/contributors, source records, Tiptap editor, revision timeline, comments/assignments, workflow transitions, corrections, media library, scheduling primitives, and branded photocard/poster generation (CardTemplate/GeneratedCard, deterministic template compositing). In parallel, build the advertising module (Advertiser/Campaign/Placement/Ad/AdEvent tables, targeting rules, admin screens) as a separate commercial domain module — it does not block or extend the editorial workflow.
 
-Exit: a human can draft, review, fact-check, approve, schedule, publish and correct a bilingual story with complete audit history; campaigns/placements can be created and targeted in the newsroom; an editor can generate a branded photocard/poster from a photo.
+Exit: a human can draft, review, fact-check, approve, schedule, publish and correct a bilingual news item with complete audit history; campaigns/placements can be created and targeted in the newsroom; an editor can generate a branded photocard/poster from a photo.
 
 ## Phase 3 — Migration tooling and rehearsal
 
@@ -34,11 +34,11 @@ Exit: staging import passes data/SEO/media/relation checks for a full source sna
 
 ## Phase 4 — Public web and cutover
 
-**Status:** early. The design exists in `apps/web` on mock data; the API serves a published story by locale and slug and its derivatives. Everything else in this phase is not built.
+**Status:** early. The design exists in `apps/web` on mock data; the API serves a published news item by locale and slug and its derivatives. Everything else in this phase is not built.
 
-Deliverables: Next.js public site (starts from `apps/web`, imported from `fact-lens-web`: homepage, design system and i18n already built on mock data; this phase adds article/category/tag/search routes and replaces mock content with the API), article/category/tag/search routes, SEO/schema/sitemap/robots, cache tags, GA4 tag and GSC site verification with analytics consent, legacy redirects, performance tests, Cloudflare/CDN configuration, ad serving/signed-redirect endpoints with strict target-URL validation, first-party story-view tracking (beacon endpoint, Redis trending counters, `StoryPerformanceDaily` rollup) powering "most read"/trending surfaces, and newsletter subscription capture (double opt-in, unsubscribe, `newsletter.dispatch` job).
+Deliverables: Next.js public site (starts from `apps/web`, imported from `fact-lens-web`: homepage, design system and i18n already built on mock data; this phase adds article/category/tag/search routes and replaces mock content with the API), article/category/tag/search routes, SEO/schema/sitemap/robots, cache tags, GA4 tag and GSC site verification with analytics consent, legacy redirects, performance tests, Cloudflare/CDN configuration, ad serving/signed-redirect endpoints with strict target-URL validation, first-party news item-view tracking (beacon endpoint, Redis trending counters, `NewsPerformanceDaily` rollup) powering "most read"/trending surfaces, and newsletter subscription capture (double opt-in, unsubscribe, `newsletter.dispatch` job).
 
-Exit: URL coverage and representative page parity are signed off; rollback switch and monitoring are tested; ad delivery and redirect abuse controls are verified; story-view tracking is abuse-resistant and rollups are accurate; only then cut over public traffic.
+Exit: URL coverage and representative page parity are signed off; rollback switch and monitoring are tested; ad delivery and redirect abuse controls are verified; news item-view tracking is abuse-resistant and rollups are accurate; only then cut over public traffic.
 
 ## Phase 5 — Ingestion and AI assistance
 
@@ -52,9 +52,9 @@ Exit: ingestion is rate-limited/idempotent, AI cannot publish silently, failures
 
 **Status:** not started.
 
-Deliverables: automated distribution of already-generated photocards/posters to social channels, distribution jobs/connectors, publication analytics, advanced campaign analytics/optimization and operational dashboards. Facebook Page connector: a `distribution.social_post` job publishes already-generated photocards/posters to FactLens's own Facebook Page via the Graph API using a Business Manager System User access token (managed secret, not env-committed, per [configuration and feature flags](./21-configuration-and-feature-flags.md)); a companion `analytics.facebook_sync` job pulls Page- and post-level Insights (reach, reactions, clicks) back for posts FactLens published, checkpointed by post ID/since-timestamp, and rolls them up against the originating Story/GeneratedCard alongside `StoryPerformanceDaily`.
+Deliverables: automated distribution of already-generated photocards/posters to social channels, distribution jobs/connectors, publication analytics, advanced campaign analytics/optimization and operational dashboards. Facebook Page connector: a `distribution.social_post` job publishes already-generated photocards/posters to FactLens's own Facebook Page via the Graph API using a Business Manager System User access token (managed secret, not env-committed, per [configuration and feature flags](./21-configuration-and-feature-flags.md)); a companion `analytics.facebook_sync` job pulls Page- and post-level Insights (reach, reactions, clicks) back for posts FactLens published, checkpointed by post ID/since-timestamp, and rolls them up against the originating News item/GeneratedCard alongside `NewsPerformanceDaily`.
 
-Exit: distribution retries are idempotent and attribution/consent boundaries are documented; Facebook Insights rollups are linked to their originating Story and gated by the same retention/consent policy as other performance data (open question 9 in [open questions](./19-open-questions.md)).
+Exit: distribution retries are idempotent and attribution/consent boundaries are documented; Facebook Insights rollups are linked to their originating News item and gated by the same retention/consent policy as other performance data (open question 9 in [open questions](./19-open-questions.md)).
 
 ## Phase 7 — Advanced discovery
 

@@ -2,7 +2,7 @@ import {
   BadRequestException, ConflictException, Inject, Injectable, NotFoundException,
 } from '@nestjs/common';
 import type {
-  CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, PublicStoryList, PublicTaxonomyRef, TagCreate, TagUpdate,
+  CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, PublicNewsList, PublicTaxonomyRef, TagCreate, TagUpdate,
   TaxonomyCategory, TaxonomyTag, TaxonomyTagList,
 } from '@fact-lens/contracts';
 import { taxonomyTagQuerySchema } from '@fact-lens/contracts';
@@ -12,8 +12,8 @@ import { AuditService } from '../audit/audit.service';
 import { isPgError, type Actor } from '../common/http';
 import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
-import { slugify } from '../stories/validation';
-import { LIVE_STATUSES } from '../stories/workflow';
+import { slugify } from '../news/validation';
+import { LIVE_STATUSES } from '../news/workflow';
 
 type Kind = 'category' | 'tag';
 type Db = Pool | PoolClient;
@@ -180,38 +180,38 @@ export class TaxonomyService {
     await this.remove('tag', id, actor);
   }
 
-  /** The tags of one story, replaced as a whole. Tags belong to the story, not to a revision. */
-  async setStoryTags(storyId: string, tagIds: string[], actor: Actor): Promise<TaxonomyTag[]> {
+  /** The tags of one news item, replaced as a whole. Tags belong to the news item, not to a revision. */
+  async setNewsTags(newsId: string, tagIds: string[], actor: Actor): Promise<TaxonomyTag[]> {
     await withTransaction(this.pool, async (db) => {
-      const story = await db.query<{ status: string }>('SELECT status FROM story WHERE id = $1 FOR UPDATE', [storyId]);
-      if (!story.rows[0]) throw new NotFoundException('Story not found');
-      if (story.rows[0].status === 'ARCHIVED') throw new ConflictException({ message: 'Archived stories cannot be edited', reason: 'story_archived' });
+      const news = await db.query<{ status: string }>('SELECT status FROM news WHERE id = $1 FOR UPDATE', [newsId]);
+      if (!news.rows[0]) throw new NotFoundException('News not found');
+      if (news.rows[0].status === 'ARCHIVED') throw new ConflictException({ message: 'Archived news cannot be edited', reason: 'news_archived' });
       if (tagIds.length > 0) {
         const usable = await db.query(`SELECT 1 FROM tag WHERE id = ANY ($1::uuid[]) AND status <> 'archived'`, [tagIds]);
         if (usable.rowCount !== tagIds.length) throw new BadRequestException('Some of those tags do not exist or are archived');
       }
-      const current = await db.query<{ tag_id: string }>('SELECT tag_id FROM story_tag WHERE story_id = $1', [storyId]);
+      const current = await db.query<{ tag_id: string }>('SELECT tag_id FROM news_tag WHERE news_id = $1', [newsId]);
       const had = new Set(current.rows.map((r) => r.tag_id));
       const want = new Set(tagIds);
       const added = tagIds.filter((t) => !had.has(t));
       const removed = [...had].filter((t) => !want.has(t));
-      if (removed.length > 0) await db.query('DELETE FROM story_tag WHERE story_id = $1 AND tag_id = ANY ($2::uuid[])', [storyId, removed]);
-      if (added.length > 0) await db.query('INSERT INTO story_tag (story_id, tag_id) SELECT $1, unnest($2::uuid[])', [storyId, added]);
+      if (removed.length > 0) await db.query('DELETE FROM news_tag WHERE news_id = $1 AND tag_id = ANY ($2::uuid[])', [newsId, removed]);
+      if (added.length > 0) await db.query('INSERT INTO news_tag (news_id, tag_id) SELECT $1, unnest($2::uuid[])', [newsId, added]);
       if (added.length > 0 || removed.length > 0) {
-        await db.query('UPDATE story SET updated_at = now() WHERE id = $1', [storyId]);
+        await db.query('UPDATE news SET updated_at = now() WHERE id = $1', [newsId]);
         await this.audit.record(
-          { actorType: 'human', actorId: actor.principal.subject, action: 'story.tags_update', objectType: 'story', objectId: storyId, storyId,
+          { actorType: 'human', actorId: actor.principal.subject, action: 'news.tags_update', objectType: 'news', objectId: newsId, newsId,
             requestId: actor.requestId, metadata: { added, removed } },
           db,
         );
       }
     });
-    return this.tagsOfStory(storyId);
+    return this.tagsOfNews(newsId);
   }
 
-  async tagsOfStory(storyId: string, db: Db = this.pool): Promise<TaxonomyTag[]> {
+  async tagsOfNews(newsId: string, db: Db = this.pool): Promise<TaxonomyTag[]> {
     const { rows } = await db.query<Row>(
-      `${this.select('tag')} WHERE c.id IN (SELECT tag_id FROM story_tag WHERE story_id = $1) ORDER BY c.key`, [storyId]);
+      `${this.select('tag')} WHERE c.id IN (SELECT tag_id FROM news_tag WHERE news_id = $1) ORDER BY c.key`, [newsId]);
     return rows.map(toTag);
   }
 
@@ -228,11 +228,11 @@ export class TaxonomyService {
     return rows;
   }
 
-  /** Published stories in one language, newest first, optionally of one category or tag. */
-  async publicStories(locale: string, q: { category?: string; tag?: string; limit: number; cursor?: string }): Promise<PublicStoryList> {
+  /** Published news in one language, newest first, optionally of one category or tag. */
+  async publicNews(locale: string, q: { category?: string; tag?: string; limit: number; cursor?: string }): Promise<PublicNewsList> {
     await this.requireActiveLocale(locale);
     if (q.category && q.tag) throw new BadRequestException('Filter by a category or a tag, not both');
-    let filter: PublicStoryList['filter'] = null;
+    let filter: PublicNewsList['filter'] = null;
     let categoryId: string | null = null;
     let tagId: string | null = null;
     if (q.category) {
@@ -266,14 +266,14 @@ export class TaxonomyService {
         `SELECT s.id, ss.slug, st.title, st.dek, s.published_at,
                 to_char(s.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at,
                 cl.name AS category_name, cl.slug AS category_slug, c.key AS category_key
-           FROM story s
-           JOIN story_translation st ON st.revision_id = s.published_revision_id AND st.locale = $1
-           JOIN story_slug ss ON ss.story_id = s.id AND ss.locale = $1 AND ss.is_current
+           FROM news s
+           JOIN news_translation st ON st.revision_id = s.published_revision_id AND st.locale = $1
+           JOIN news_slug ss ON ss.news_id = s.id AND ss.locale = $1 AND ss.is_current
            LEFT JOIN category c ON c.id = s.category_id AND c.status <> 'archived'
            LEFT JOIN category_label cl ON cl.category_id = c.id AND cl.locale = $1
           WHERE s.status = ANY ($2) AND s.published_revision_id IS NOT NULL
             AND ($3::uuid IS NULL OR s.category_id = $3)
-            AND ($4::uuid IS NULL OR EXISTS (SELECT 1 FROM story_tag x WHERE x.story_id = s.id AND x.tag_id = $4))
+            AND ($4::uuid IS NULL OR EXISTS (SELECT 1 FROM news_tag x WHERE x.news_id = s.id AND x.tag_id = $4))
             AND ($5::timestamptz IS NULL OR (s.published_at, s.id) < ($5::timestamptz, $6::uuid))
           ORDER BY s.published_at DESC, s.id DESC LIMIT $7`,
         [locale, LIVE_STATUSES, categoryId, tagId, cursorAt, cursorId, q.limit + 1],
@@ -293,8 +293,8 @@ export class TaxonomyService {
     };
   }
 
-  /** The category and tags of a story as a reader of this language sees them. An item with no label here is left out. */
-  async publicRefs(storyId: string, categoryId: string | null, locale: string): Promise<{ category: PublicTaxonomyRef | null; tags: PublicTaxonomyRef[] }> {
+  /** The category and tags of a news item as a reader of this language sees them. An item with no label here is left out. */
+  async publicRefs(newsId: string, categoryId: string | null, locale: string): Promise<{ category: PublicTaxonomyRef | null; tags: PublicTaxonomyRef[] }> {
     const [category, tags] = await Promise.all([
       categoryId
         ? this.pool.query<PublicTaxonomyRef>(
@@ -302,9 +302,9 @@ export class TaxonomyService {
               WHERE c.id = $1 AND c.status <> 'archived'`, [categoryId, locale])
         : Promise.resolve({ rows: [] as PublicTaxonomyRef[] }),
       this.pool.query<PublicTaxonomyRef>(
-        `SELECT t.key, l.name, l.slug FROM story_tag st JOIN tag t ON t.id = st.tag_id AND t.status <> 'archived'
+        `SELECT t.key, l.name, l.slug FROM news_tag st JOIN tag t ON t.id = st.tag_id AND t.status <> 'archived'
            JOIN tag_label l ON l.tag_id = t.id AND l.locale = $2
-          WHERE st.story_id = $1 ORDER BY l.name`, [storyId, locale]),
+          WHERE st.news_id = $1 ORDER BY l.name`, [newsId, locale]),
     ]);
     return { category: category.rows[0] ?? null, tags: tags.rows };
   }
@@ -313,7 +313,7 @@ export class TaxonomyService {
 
   private select(kind: Kind): string {
     const k = KIND[kind];
-    const usage = kind === 'category' ? 'SELECT count(*) FROM story s WHERE s.category_id = c.id' : 'SELECT count(*) FROM story_tag x WHERE x.tag_id = c.id';
+    const usage = kind === 'category' ? 'SELECT count(*) FROM news s WHERE s.category_id = c.id' : 'SELECT count(*) FROM news_tag x WHERE x.tag_id = c.id';
     const description = k.hasDescription ? 'l.description' : 'NULL::text';
     return `SELECT c.id, c.key, ${kind === 'category' ? 'c.show_in_menu, c.position,' : ''} c.status,
                    (${usage})::int AS usage_count,
@@ -387,7 +387,7 @@ export class TaxonomyService {
         if (res.rowCount === 0) throw new NotFoundException(`${kind === 'tag' ? 'Tag' : 'Category'} not found`);
       } catch (err) {
         if (isPgError(err) && err.code === '23503') {
-          throw new ConflictException({ message: `This ${kind} is used by stories. Archive it instead.`, reason: 'in_use' });
+          throw new ConflictException({ message: `This ${kind} is used by news. Archive it instead.`, reason: 'in_use' });
         }
         throw err;
       }

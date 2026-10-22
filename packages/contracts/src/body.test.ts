@@ -95,8 +95,8 @@ describe('job contracts', () => {
   });
 
   it('validates outbox payloads and job envelopes', () => {
-    expect(outboxEventSchemas['story.published'].safeParse({ storyId: id, revisionId: id, locales: [] }).success).toBe(false);
-    expect(outboxEventSchemas['story.published'].safeParse({ storyId: id, revisionId: id, locales: [{ locale: 'en', slug: 'a' }] }).success).toBe(true);
+    expect(outboxEventSchemas['news.published'].safeParse({ newsId: id, revisionId: id, locales: [] }).success).toBe(false);
+    expect(outboxEventSchemas['news.published'].safeParse({ newsId: id, revisionId: id, locales: [{ locale: 'en', slug: 'a' }] }).success).toBe(true);
     const env = { id, type: 'cache.invalidate', version: 1, idempotencyKey: 'k', occurredAt: '2026-10-21T10:00:00Z', payload: {} };
     expect(jobEnvelopeSchema.safeParse(env).success).toBe(true);
     expect(jobEnvelopeSchema.safeParse({ ...env, type: 'made.up' }).success).toBe(false);

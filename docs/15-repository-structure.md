@@ -18,7 +18,7 @@ fact-lens/
   docs/
 ```
 
-Not created yet, and only to be added when something needs them: `packages/ui` (accessible shared primitives), `packages/domain` (portable value objects and policy types) and `packages/shared` (small framework-neutral utilities). The workflow rules and readiness checks that `domain` was meant for live in `apps/api/src/stories/` for now, because only the API uses them.
+Not created yet, and only to be added when something needs them: `packages/ui` (accessible shared primitives), `packages/domain` (portable value objects and policy types) and `packages/shared` (small framework-neutral utilities). The workflow rules and readiness checks that `domain` was meant for live in `apps/api/src/news/` for now, because only the API uses them.
 
 Migrations are in `apps/api/migrations`, not in `infrastructure/`: the API owns the schema, and the worker's tests run the API's migrations. `docs/22-implementation-status.md` says what is built.
 
@@ -40,4 +40,4 @@ Use pnpm workspaces. Add Turborepo task caching after the build graph is real; d
 
 ## Dependency direction as built
 
-`apps/newsroom` and `apps/api` and `apps/worker` depend on `packages/contracts` and `packages/config`. The newsroom reaches the API over HTTP only, through its own server. The worker reads the outbox and schedules from PostgreSQL but changes story state only through the API's internal endpoints. `tools/dev-idp` is a dev dependency of the newsroom (for tests) and is never imported by application code.
+`apps/newsroom` and `apps/api` and `apps/worker` depend on `packages/contracts` and `packages/config`. The newsroom reaches the API over HTTP only, through its own server. The worker reads the outbox and schedules from PostgreSQL but changes news item state only through the API's internal endpoints. `tools/dev-idp` is a dev dependency of the newsroom (for tests) and is never imported by application code.

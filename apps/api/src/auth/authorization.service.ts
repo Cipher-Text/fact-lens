@@ -7,7 +7,7 @@ const privileged = new Set<string>(privilegedCapabilities);
 
 export interface AuthzContext {
   requestId: string;
-  /** What the caller tried to reach, for the audit trail (a route or a story id). */
+  /** What the caller tried to reach, for the audit trail (a route or a news item id). */
   objectType: string;
   objectId: string;
 }

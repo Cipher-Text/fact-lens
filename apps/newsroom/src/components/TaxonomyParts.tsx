@@ -117,7 +117,7 @@ export function CategoryRow({ category, order, locales }: { category: TaxonomyCa
         <code className="text-xs text-muted">{category.key}</code>
         {archived ? <Badge>Archived</Badge> : null}
         {!category.showInMenu ? <Badge>Not in menu</Badge> : null}
-        <Badge tone="info">{`${category.usageCount} ${category.usageCount === 1 ? 'story' : 'stories'}`}</Badge>
+        <Badge tone="info">{`${category.usageCount} ${category.usageCount === 1 ? 'news item' : 'news items'}`}</Badge>
         <Missing item={category} locales={locales} />
         <span className="ml-auto flex flex-wrap gap-1">
           <button type="button" aria-label={`Move ${displayName(category)} up`} disabled={pending || at <= 0} onClick={() => move(-1)} className={buttonClass()}>↑</button>
@@ -137,7 +137,7 @@ export function CategoryRow({ category, order, locales }: { category: TaxonomyCa
             <button type="button" disabled={pending} onClick={() => run('PUT', `taxonomy/categories/${category.id}`, { status: archived ? 'active' : 'archived' })} className={buttonClass()}>
               {archived ? 'Restore' : 'Archive'}
             </button>
-            <button type="button" disabled={pending || category.usageCount > 0} title={category.usageCount > 0 ? 'Used by stories: archive it instead' : undefined}
+            <button type="button" disabled={pending || category.usageCount > 0} title={category.usageCount > 0 ? 'Used by news items: archive it instead' : undefined}
               onClick={() => { if (window.confirm(`Delete ${displayName(category)}?`)) run('DELETE', `taxonomy/categories/${category.id}`); }} className={buttonClass('danger')}>Delete</button>
           </div>
         </form>
@@ -168,7 +168,7 @@ export function TagRow({ tag, locales }: { tag: TaxonomyTag; locales: Locale[] }
         <strong>{displayName(tag)}</strong>
         {tag.labels.filter((l) => l.locale !== 'en').map((l) => <span key={l.locale} lang={l.locale} className="text-sm text-muted">{l.name}</span>)}
         {archived ? <Badge>Archived</Badge> : null}
-        <Badge tone="info">{`${tag.usageCount} ${tag.usageCount === 1 ? 'story' : 'stories'}`}</Badge>
+        <Badge tone="info">{`${tag.usageCount} ${tag.usageCount === 1 ? 'news item' : 'news items'}`}</Badge>
         <Missing item={tag} locales={locales} />
         <button type="button" onClick={() => setEditing(!editing)} aria-expanded={editing} className={`${buttonClass()} ml-auto`}>{editing ? 'Close' : 'Edit'}</button>
       </div>
@@ -178,7 +178,7 @@ export function TagRow({ tag, locales }: { tag: TaxonomyTag; locales: Locale[] }
           <div className="flex flex-wrap gap-2">
             <button type="submit" disabled={pending} className={buttonClass('primary')}>Save names</button>
             <button type="button" disabled={pending} onClick={() => run('PUT', `taxonomy/tags/${tag.id}`, { status: archived ? 'active' : 'archived' })} className={buttonClass()}>{archived ? 'Restore' : 'Archive'}</button>
-            <button type="button" disabled={pending || tag.usageCount > 0} title={tag.usageCount > 0 ? 'Used by stories: archive it instead' : undefined}
+            <button type="button" disabled={pending || tag.usageCount > 0} title={tag.usageCount > 0 ? 'Used by news items: archive it instead' : undefined}
               onClick={() => { if (window.confirm(`Delete ${displayName(tag)}?`)) run('DELETE', `taxonomy/tags/${tag.id}`); }} className={buttonClass('danger')}>Delete</button>
           </div>
         </form>
@@ -188,14 +188,14 @@ export function TagRow({ tag, locales }: { tag: TaxonomyTag; locales: Locale[] }
   );
 }
 
-/** Tags of one story: shows the current set and searches the active tags to add more. */
-export function StoryTagPicker({ storyId, tags, locales }: { storyId: string; tags: TaxonomyTag[]; locales: Locale[] }) {
+/** Tags of one news: shows the current set and searches the active tags to add more. */
+export function NewsTagPicker({ newsId, tags, locales }: { newsId: string; tags: TaxonomyTag[]; locales: Locale[] }) {
   const { error, pending, run } = useCommand();
   const [found, setFound] = useState<TaxonomyTag[]>([]);
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const ids = tags.map((t) => t.id);
-  const set = (next: string[]) => run('PUT', `stories/${storyId}/tags`, { tagIds: next }, () => setFound([]));
+  const set = (next: string[]) => run('PUT', `news/${newsId}/tags`, { tagIds: next }, () => setFound([]));
 
   const search = async (query: string) => {
     setSearching(true);

@@ -20,14 +20,14 @@ const AUDIENCE = 'fact-lens-api';
 class TestController {
   @Public() @Get('open') open() { return { ok: true }; }
   @Get('authed') authed() { return { ok: true }; }
-  @RequireCapability('story.edit') @Get('edit') edit() { return { ok: true }; }
+  @RequireCapability('news.edit') @Get('edit') edit() { return { ok: true }; }
   @RequireCapability('config.manage') @Get('config') config() { return { ok: true }; }
   @Get('who') who(@CurrentPrincipal() p: { subject: string }) { return { sub: p.subject }; }
 }
 
 const roleCapabilities: Record<string, Capability[]> = {
-  reporter: ['story.edit'],
-  admin: ['story.edit', 'config.manage'],
+  reporter: ['news.edit'],
+  admin: ['news.edit', 'config.manage'],
 };
 
 describe('auth', () => {
@@ -94,7 +94,7 @@ describe('auth', () => {
   it('accepts a valid token and exposes the principal', async () => {
     const res = await get(app, '/me', await sign({ amr: ['pwd', 'otp'] }));
     expect(res.statusCode).toBe(200);
-    expect(res.json()).toEqual({ subject: 'user-1', roles: ['reporter'], capabilities: ['story.edit'], mfa: true });
+    expect(res.json()).toEqual({ subject: 'user-1', roles: ['reporter'], capabilities: ['news.edit'], mfa: true });
   });
 
   it('rejects wrong issuer, wrong audience, expired, bad signature and non-bearer headers', async () => {
@@ -148,7 +148,7 @@ describe('auth', () => {
           AuthorizationService,
         { provide: AuditService, useValue: { record: async () => {} } },
         { provide: TOKEN_VERIFIER, useValue: verifier },
-        { provide: CAPABILITY_STORE, useValue: { capabilitiesFor: async () => ['config.manage', 'story.edit'] } },
+        { provide: CAPABILITY_STORE, useValue: { capabilitiesFor: async () => ['config.manage', 'news.edit'] } },
         { provide: AUTH_OPTIONS, useValue: { rolesClaim: 'roles', requireMfa: true } },
         { provide: APP_GUARD, useClass: AuthGuard },
       ],

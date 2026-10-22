@@ -17,7 +17,7 @@ export async function scanDueSchedules(pool: Pool, enqueue: Enqueue, log: Logger
   );
   const window = Math.floor(now.getTime() / RETRY_WINDOW_MS);
   for (const { id } of rows) {
-    await enqueue({ type: 'story.publish_scheduled', payload: { scheduleId: id }, idempotencyKey: `publish:${id}:${window}` });
+    await enqueue({ type: 'news.publish_scheduled', payload: { scheduleId: id }, idempotencyKey: `publish:${id}:${window}` });
   }
   if (rows.length > 0) log.info('schedule.scan', { due: rows.length });
   return rows.length;

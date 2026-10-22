@@ -4,13 +4,13 @@ import {
   assignmentRoles, assignmentStatuses, auditActorTypes, cardAspectRatios, cardTemplateStatuses,
   commentStatuses, contributorKinds, contributorRoles, ingestChannels, mediaProcessingStates,
   revisionMediaRoles, scheduleStatuses, sourceKinds, sourceRelations, sourceUseTypes,
-  sourceValidationStatuses, storyStatuses, taxonomyStatuses, translationStatuses,
+  sourceValidationStatuses, newsStatuses, taxonomyStatuses, translationStatuses,
 } from './enums';
 
 /** Transport schemas for the editorial domain. They are not database rows. */
 
-export const storyStatusSchema = z.enum(storyStatuses);
-export type StoryStatus = z.infer<typeof storyStatusSchema>;
+export const newsStatusSchema = z.enum(newsStatuses);
+export type NewsStatus = z.infer<typeof newsStatusSchema>;
 
 export const deskSchema = z.object({ id: idSchema, key: z.string(), name: z.string(), active: z.boolean() });
 export type Desk = z.infer<typeof deskSchema>;
@@ -68,7 +68,7 @@ export const mediaAssetSchema = z.object({
 });
 export type MediaAsset = z.infer<typeof mediaAssetSchema>;
 
-export const storyTranslationSchema = z.object({
+export const newsTranslationSchema = z.object({
   id: idSchema,
   revisionId: idSchema,
   locale: localeCodeSchema,
@@ -80,11 +80,11 @@ export const storyTranslationSchema = z.object({
   seoDescription: z.string().nullable(),
   translationStatus: z.enum(translationStatuses),
 });
-export type StoryTranslation = z.infer<typeof storyTranslationSchema>;
+export type NewsTranslation = z.infer<typeof newsTranslationSchema>;
 
-export const storyRevisionSchema = z.object({
+export const newsRevisionSchema = z.object({
   id: idSchema,
-  storyId: idSchema,
+  newsId: idSchema,
   revisionNo: z.number().int().positive(),
   changedBy: z.string(),
   createdAt: timestampSchema,
@@ -95,12 +95,12 @@ export const storyRevisionSchema = z.object({
   isCorrection: z.boolean(),
   aiAssisted: z.boolean(),
 });
-export type StoryRevision = z.infer<typeof storyRevisionSchema>;
+export type NewsRevision = z.infer<typeof newsRevisionSchema>;
 
-export const storySchema = z.object({
+export const newsSchema = z.object({
   id: idSchema,
   canonicalKey: z.string(),
-  status: storyStatusSchema,
+  status: newsStatusSchema,
   categoryId: idSchema.nullable(),
   deskId: idSchema.nullable(),
   publishedRevisionId: idSchema.nullable(),
@@ -108,9 +108,9 @@ export const storySchema = z.object({
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });
-export type Story = z.infer<typeof storySchema>;
+export type News = z.infer<typeof newsSchema>;
 
-export const storyContributorSchema = z.object({
+export const newsContributorSchema = z.object({
   contributorId: idSchema,
   role: z.enum(contributorRoles),
   position: z.number().int(),
@@ -138,7 +138,7 @@ export const sourceSchema = z.object({
 });
 export type Source = z.infer<typeof sourceSchema>;
 
-export const storySourceSchema = z.object({
+export const newsSourceSchema = z.object({
   sourceId: idSchema,
   relation: z.enum(sourceRelations),
   useType: z.enum(sourceUseTypes),
@@ -147,7 +147,7 @@ export const storySourceSchema = z.object({
 
 export const assignmentSchema = z.object({
   id: idSchema,
-  storyId: idSchema,
+  newsId: idSchema,
   assignee: z.string(),
   role: z.enum(assignmentRoles),
   status: z.enum(assignmentStatuses),
@@ -158,7 +158,7 @@ export type Assignment = z.infer<typeof assignmentSchema>;
 
 export const commentSchema = z.object({
   id: idSchema,
-  storyId: idSchema,
+  newsId: idSchema,
   revisionId: idSchema.nullable(),
   parentId: idSchema.nullable(),
   author: z.string(),
@@ -171,7 +171,7 @@ export type Comment = z.infer<typeof commentSchema>;
 
 export const correctionSchema = z.object({
   id: idSchema,
-  storyId: idSchema,
+  newsId: idSchema,
   revisionId: idSchema,
   reason: z.string().min(1),
   approvedBy: z.string(),
@@ -183,7 +183,7 @@ export type Correction = z.infer<typeof correctionSchema>;
 
 export const publishingScheduleSchema = z.object({
   id: idSchema,
-  storyId: idSchema,
+  newsId: idSchema,
   locale: localeCodeSchema.nullable(),
   channel: z.string(),
   scheduledFor: timestampSchema,
@@ -209,7 +209,7 @@ export const generatedCardSchema = z.object({
   mediaAssetId: idSchema,
   sourceMediaAssetId: idSchema,
   templateId: idSchema,
-  storyId: idSchema,
+  newsId: idSchema,
   revisionId: idSchema,
   locale: localeCodeSchema.nullable(),
   createdAt: timestampSchema,
@@ -224,7 +224,7 @@ export const auditEventSchema = z.object({
   action: z.string(),
   objectType: z.string(),
   objectId: z.string(),
-  storyId: idSchema.nullable(),
+  newsId: idSchema.nullable(),
   revisionId: idSchema.nullable(),
   previousState: z.string().nullable(),
   newState: z.string().nullable(),

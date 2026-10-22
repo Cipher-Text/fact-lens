@@ -5,12 +5,12 @@ Bangla and English news platform. This is the main repository; the rebuild plan 
 | Path | What |
 | --- | --- |
 | `apps/web` | Public site (Next.js 16), imported from `fact-lens-web` with its history. Mock data for now; it does not call the API yet. |
-| `apps/api` | NestJS on Fastify API. Stories and the editorial workflow, comments, assignments, sources, the media library, a public read model, feature flags, audit. Owns the PostgreSQL schema (`apps/api/migrations`) and the seed. |
-| `apps/newsroom` | The editorial workspace (Next.js): OIDC sign-in, desk queue, story workspace with a rich-text editor, media library, configuration. Reaches the API only through its own server. |
-| `apps/worker` | BullMQ worker: outbox dispatcher, job runtime, scheduled publishing. Changes story state only through the API. |
+| `apps/api` | NestJS on Fastify API. News items and the editorial workflow, comments, assignments, sources, the media library, a public read model, feature flags, audit. Owns the PostgreSQL schema (`apps/api/migrations`) and the seed. |
+| `apps/newsroom` | The editorial workspace (Next.js): OIDC sign-in, desk queue, news item workspace with a rich-text editor, media library, configuration. Reaches the API only through its own server. |
+| `apps/worker` | BullMQ worker: outbox dispatcher, job runtime, scheduled publishing. Changes news item state only through the API. |
 | `tools/dev-idp` | A fake OpenID Connect provider for local sign-in. Development only. |
 | `packages/config` | Typed environment validation for each app. |
-| `packages/contracts` | Shared schemas, enums and the story body contract. |
+| `packages/contracts` | Shared schemas, enums and the news item body contract. |
 | `infrastructure/` | Local PostgreSQL, Redis and MinIO (`pnpm infra:up`). |
 | `docs/` | The plan and what is built: start at [`docs/README.md`](docs/README.md) and [`docs/22-implementation-status.md`](docs/22-implementation-status.md). |
 

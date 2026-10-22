@@ -14,7 +14,7 @@ flowchart LR
   G --> LOG[(AI provenance/cost log)]
   G --> PROP[AI proposal]
   PROP --> REVIEW[Human review]
-  REVIEW -->|accept/edit| REV[Story revision]
+  REVIEW -->|accept/edit| REV[News item revision]
 ```
 
 Gemini (Google) is the initial provider, reached through a dedicated adapter — never called directly from domain modules. The adapter pattern keeps the Gateway able to add or swap providers later without changing use-case call sites. Which provider/model/budget serves each use case is admin-editable runtime configuration, not a code constant — see [configuration and feature flags](./21-configuration-and-feature-flags.md).
@@ -28,13 +28,13 @@ Each use case references a **saved prompt template** by id and version, not a li
 - headline/dek/SEO suggestions;
 - translation proposal between `en` and `bn-BD`;
 - source/article summary for research;
-- **article rewrite: draft an original-language rewrite of one or more ingested source articles as a starting StoryRevision body, clearly not a verbatim reproduction of the source;**
+- **article rewrite: draft an original-language rewrite of one or more ingested source articles as a starting NewsRevision body, clearly not a verbatim reproduction of the source;**
 - claim and named-entity extraction;
 - taxonomy suggestions: proposed category, tags/topics and desk, alongside the rewrite draft;
 - alt-text and social-card caption copy (text only — the branded card/poster image itself is deterministic template compositing, not AI-generated; see [media architecture](./10-media-architecture.md));
-- duplicate-story similarity signal.
+- duplicate-news item similarity signal.
 
-These produce drafts/proposals. AI must not publish, overwrite an approved revision, or change workflow state without an explicit authorized human command. A rewrite proposal lands in the story's `DRAFT` state marked AI-proposed (per doc 07's field-provenance UI) and requires a human editor to rewrite/edit it before it can move to review — it is a starting point, not publishable content.
+These produce drafts/proposals. AI must not publish, overwrite an approved revision, or change workflow state without an explicit authorized human command. A rewrite proposal lands in the news item's `DRAFT` state marked AI-proposed (per doc 07's field-provenance UI) and requires a human editor to rewrite/edit it before it can move to review — it is a starting point, not publishable content.
 
 ## Provenance and cost
 
@@ -44,7 +44,7 @@ Record use-case, provider, model, prompt/template version, input document IDs/ha
 
 External source text is data, not instructions. Delimit and label it to resist prompt injection; strip hidden HTML/script content; avoid sending private contributor data unless policy permits; apply provider data-retention controls; rate-limit and budget per desk/use case; and flag low-confidence or failed safety outputs.
 
-Article rewrite carries a distinct risk from prompt injection: copyright and plagiarism exposure if the output is insufficiently transformed from the source. Always retain and display the source StorySource link and attribution alongside a rewrite draft; do not present rewrite output as ready-to-publish; and apply an editorial transformation-threshold policy (see [open questions](./19-open-questions.md)) before a rewritten story may be approved.
+Article rewrite carries a distinct risk from prompt injection: copyright and plagiarism exposure if the output is insufficiently transformed from the source. Always retain and display the source NewsSource link and attribution alongside a rewrite draft; do not present rewrite output as ready-to-publish; and apply an editorial transformation-threshold policy (see [open questions](./19-open-questions.md)) before a rewritten news item may be approved.
 
 ## Status
 

@@ -14,7 +14,7 @@ Alert on sustained 5xx/latency, DB connection exhaustion, queue age/backlog, rep
 
 ## Backups and recovery
 
-Use managed PostgreSQL PITR plus scheduled snapshots, object-storage versioning/lifecycle and encrypted off-site backup where required. Test a restore into an isolated environment on a schedule and record RPO/RTO results. Redis can be rebuilt; outbox/audit/story data cannot.
+Use managed PostgreSQL PITR plus scheduled snapshots, object-storage versioning/lifecycle and encrypted off-site backup where required. Test a restore into an isolated environment on a schedule and record RPO/RTO results. Redis can be rebuilt; outbox/audit/news item data cannot.
 
 ## Operations
 

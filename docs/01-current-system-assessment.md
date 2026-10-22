@@ -20,13 +20,13 @@ The committed generated `apps/cms/dist` and `.strapi` material should be treated
 
 | CURRENT content type | Evidence | Migration significance |
 |---|---|---|
-| Article | `apps/cms/src/api/article/content-types/article/schema.json` | Core source for Story, revision 1, translations, SEO, media and relations. Has title, UID slug, excerpt, richtext HTML, cover image, category, tags, author, feature/breaking flags, SEO fields, reading time. Draft/publish enabled. |
+| Article | `apps/cms/src/api/article/content-types/article/schema.json` | Core source for News item, revision 1, translations, SEO, media and relations. Has title, UID slug, excerpt, richtext HTML, cover image, category, tags, author, feature/breaking flags, SEO fields, reading time. Draft/publish enabled. |
 | Author | `.../author/.../schema.json` | Maps to Contributor; localized name/designation/bio/avatar/social links, but email is personal data and needs policy review. |
 | Category | `.../category/.../schema.json` | Maps to Category/Desk candidate; localized, ordered, menu-visible, sync-key linked. |
 | Tag | `.../tag/.../schema.json` | Maps to Tag; localized and sync-key linked. |
 | Site Setting | `.../site-setting/.../schema.json` | Maps to localized publication settings/branding, not newsroom domain data. |
 | Meta Data | `.../meta-data/.../schema.json` | Tracking IDs and social/contact settings; move secrets/configuration out of content data. |
-| Advertiser, Ad Campaign, Ad Placement, Ad, Ad Event | corresponding `apps/cms/src/api/**` schemas/controllers | Preserve only if advertising remains in scope; model as commercial/distribution capability, not editorial Story. |
+| Advertiser, Ad Campaign, Ad Placement, Ad, Ad Event | corresponding `apps/cms/src/api/**` schemas/controllers | Preserve only if advertising remains in scope; model as commercial/distribution capability, not editorial News item. |
 
 The existing API documentation describes `GET /articles`, categories, tags, authors, settings and metadata, with locale and `publicationState=live` parameters. Ads add `/api/ads/serve` and `/api/ads/r/:token` custom routes.
 
@@ -72,7 +72,7 @@ Analytics/tracking fields live in `Meta Data`; components include `GoogleTag.tsx
 ## Constraints and technical debt
 
 - Strapi Admin is the only editorial UI; no newsroom-specific assignment, review, fact-check, correction, or audit workflow exists.
-- Article updates overwrite the current record; Strapi timestamps are not a story revision history.
+- Article updates overwrite the current record; Strapi timestamps are not a news item revision history.
 - HTML richtext is not a structured editor document; conversion to Tiptap needs a parser/validation pass.
 - `syncKey` localization linking is operationally separate and can fail or hang; `link-localizations-direct.js` performs direct SQL and uses development-like defaults if env vars are absent.
 - Locale identity is partly implicit: cookies/UI use `en`/`bn`, CMS uses `en`/`bn-BD`, and localized slugs may differ.

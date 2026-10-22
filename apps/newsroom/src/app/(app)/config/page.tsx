@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { featureFlagSchema, localeSchema } from '@fact-lens/contracts';
-import { FlagToggle } from '@/components/StoryActions';
+import { FlagToggle } from '@/components/NewsActions';
 import { LanguageManager } from '@/components/TaxonomyParts';
 import { AccessProblem, Badge, Empty, Panel } from '@/components/ui';
 import { ApiError, api, getPrincipal, isMfaRequired } from '@/lib/current';
@@ -28,7 +28,7 @@ export default async function ConfigPage() {
     <div className="max-w-3xl space-y-6">
       <h1 className="text-xl font-semibold">Configuration</h1>
       <Panel title="Languages" id="languages-h">
-        <p className="mb-3 text-sm text-muted">The languages the site can be published in. A new language can be used straight away for names of sections and tags and for story translations; the public site needs its own interface text added separately.</p>
+        <p className="mb-3 text-sm text-muted">The languages the site can be published in. A new language can be used straight away for names of sections and tags and for news translations; the public site needs its own interface text added separately.</p>
         <LanguageManager locales={locales} />
       </Panel>
       <section aria-labelledby="flags-h">

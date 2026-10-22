@@ -25,7 +25,7 @@ describe('RichBody', () => {
     expect(out).toContain('<hr');
   });
 
-  it('escapes text, so a story cannot inject markup', () => {
+  it('escapes text, so a news item cannot inject markup', () => {
     const out = html(doc({ type: 'paragraph', content: [t('<script>alert(1)</script> & <img src=x onerror=alert(1)>')] }));
     expect(out).not.toContain('<script');
     expect(out).not.toContain('<img');

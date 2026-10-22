@@ -55,7 +55,7 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
       expect(audit.rows).toEqual([{ actor_id: 'rep-1' }]);
     });
 
-    it('needs sign-in and the right to edit stories or manage media', async () => {
+    it('needs sign-in and the right to edit news or manage media', async () => {
       const bytes = await fresh();
       expect((await t.upload(bytes, { roles: ['analyst'] })).status).toBe(403);
       expect((await t.upload(bytes, { roles: ['fact_checker'] })).status).toBe(403);
@@ -221,28 +221,28 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
     });
   });
 
-  describe('using an image in a story', () => {
-    async function storyWithImage(slug: string, alt: string | undefined, assetId: string) {
-      const created = await t.call({ method: 'POST', url: '/stories', roles: ['reporter'], body: { locale: 'en', title: slug, slug, deskId } });
-      const id = created.body.story.id as string;
+  describe('using an image in a news item', () => {
+    async function newsWithImage(slug: string, alt: string | undefined, assetId: string) {
+      const created = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: slug, slug, deskId } });
+      const id = created.body.news.id as string;
       const image = { type: 'image', attrs: { mediaAssetId: assetId, ...(alt !== undefined ? { alt } : {}) } };
-      const saved = await t.call({ method: 'PUT', url: `/stories/${id}/translations/en`, roles: ['reporter'], body: { title: slug, body: doc(para('Text'), image), slug, expectedVersion: 1 } });
+      const saved = await t.call({ method: 'PUT', url: `/news/${id}/translations/en`, roles: ['reporter'], body: { title: slug, body: doc(para('Text'), image), slug, expectedVersion: 1 } });
       expect(saved.status).toBe(200);
-      await t.call({ method: 'PUT', url: `/stories/${id}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } });
+      await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } });
       return id;
     }
-    const move = (id: string, to: string, roles: string[]) => t.call({ method: 'POST', url: `/stories/${id}/transitions`, roles, body: { to } });
-    const publicStory = (slug: string) => t.anonymous('GET', `/public/stories/en/${slug}`);
+    const move = (id: string, to: string, roles: string[]) => t.call({ method: 'POST', url: `/news/${id}/transitions`, roles, body: { to } });
+    const publicNews = (slug: string) => t.anonymous('GET', `/public/news/en/${slug}`);
     const publicImage = (id: string, variant: string) => t.anonymous('GET', `/public/media/${id}/${variant}`);
 
     it('blocks review without alt text and publishing without rights, then publishes once both are fixed', async () => {
       const a = await asset('lead.jpg');
-      const noAlt = await storyWithImage('no-alt-story', undefined, a.id);
+      const noAlt = await newsWithImage('no-alt-news', undefined, a.id);
       const blocked = await move(noAlt, 'EDITOR_REVIEW', ['reporter']);
       expect(blocked.status).toBe(422);
       expect(blocked.body.error.details.issues).toContain('en: add alt text to every image.');
 
-      const id = await storyWithImage('lead-image-story', 'A river bank at dawn', a.id);
+      const id = await newsWithImage('lead-image-news', 'A river bank at dawn', a.id);
       expect((await move(id, 'EDITOR_REVIEW', ['reporter'])).status).toBe(201);
       expect((await move(id, 'READY', ['fact_checker'])).status).toBe(201);
       const unlicensed = await move(id, 'PUBLISHED', ['managing_editor']);
@@ -255,18 +255,18 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
       expect((await t.call({ method: 'GET', url: `/media/${a.id}`, roles: ['reporter'] })).body.usageCount).toBe(2);
     });
 
-    it('gives readers the image through the public story and public media routes, derivatives only', async () => {
+    it('gives readers the image through the public news and public media routes, derivatives only', async () => {
       const a = await asset('public.jpg');
       await t.call({ method: 'PUT', url: `/media/${a.id}/rights`, roles: ['media_editor'], body: { attribution: 'Photo: Karim Hossain', license: 'CC BY 4.0', altText: 'Default alt' } });
-      const id = await storyWithImage('public-image-story', 'Boats at dawn', a.id);
+      const id = await newsWithImage('public-image-news', 'Boats at dawn', a.id);
       expect((await publicImage(a.id, 'card')).statusCode).toBe(404);
       await move(id, 'EDITOR_REVIEW', ['reporter']);
       await move(id, 'READY', ['fact_checker']);
       await move(id, 'PUBLISHED', ['managing_editor']);
 
-      const story = await publicStory('public-image-story');
-      expect(story.statusCode).toBe(200);
-      expect(story.json().media).toEqual([{
+      const news = await publicNews('public-image-news');
+      expect(news.statusCode).toBe(200);
+      expect(news.json().media).toEqual([{
         id: a.id, width: expect.any(Number), height: 600, alt: 'Default alt', attribution: 'Photo: Karim Hossain', license: 'CC BY 4.0',
         urls: { thumb: `/public/media/${a.id}/thumb`, card: `/public/media/${a.id}/card`, hero: `/public/media/${a.id}/hero` },
       }]);
@@ -283,7 +283,7 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
     it('withdraws the image when its rights expire or no longer cover the web', async () => {
       const a = await asset('expiring.jpg');
       await t.call({ method: 'PUT', url: `/media/${a.id}/rights`, roles: ['media_editor'], body: { license: 'Licensed', permittedChannels: ['web'] } });
-      const id = await storyWithImage('expiring-image-story', 'Alt', a.id);
+      const id = await newsWithImage('expiring-image-news', 'Alt', a.id);
       await move(id, 'EDITOR_REVIEW', ['reporter']);
       await move(id, 'READY', ['fact_checker']);
       await move(id, 'PUBLISHED', ['managing_editor']);
@@ -291,7 +291,7 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
 
       await t.db.pool.query(`UPDATE media_asset SET rights_expires_at = now() - interval '1 day' WHERE id = $1`, [a.id]);
       expect((await publicImage(a.id, 'thumb')).statusCode).toBe(404);
-      expect((await publicStory('expiring-image-story')).json().media).toEqual([]);
+      expect((await publicNews('expiring-image-news')).json().media).toEqual([]);
 
       await t.db.pool.query(`UPDATE media_asset SET rights_expires_at = NULL, permitted_channels = '{social}' WHERE id = $1`, [a.id]);
       expect((await publicImage(a.id, 'thumb')).statusCode).toBe(404);
@@ -299,10 +299,10 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
       expect((await publicImage(a.id, 'thumb')).statusCode).toBe(200);
     });
 
-    it('refuses to delete an image a story uses, and stops serving it when the story is archived', async () => {
+    it('refuses to delete an image a news item uses, and stops serving it when the news item is archived', async () => {
       const a = await asset('in-use.jpg');
       await t.call({ method: 'PUT', url: `/media/${a.id}/rights`, roles: ['media_editor'], body: { license: 'CC0' } });
-      const id = await storyWithImage('archived-image-story', 'Alt', a.id);
+      const id = await newsWithImage('archived-image-news', 'Alt', a.id);
       await move(id, 'EDITOR_REVIEW', ['reporter']);
       await move(id, 'READY', ['fact_checker']);
       await move(id, 'PUBLISHED', ['managing_editor']);
@@ -312,7 +312,7 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
       expect(del.body.error.details.reason).toBe('in_use');
       expect(t.storage.objects.has(`originals/${a.id}.jpg`)).toBe(true);
 
-      await t.call({ method: 'POST', url: `/stories/${id}/transitions`, roles: ['managing_editor'], body: { to: 'ARCHIVED', reason: 'Withdrawn' } });
+      await t.call({ method: 'POST', url: `/news/${id}/transitions`, roles: ['managing_editor'], body: { to: 'ARCHIVED', reason: 'Withdrawn' } });
       expect((await publicImage(a.id, 'thumb')).statusCode).toBe(404);
     });
   });

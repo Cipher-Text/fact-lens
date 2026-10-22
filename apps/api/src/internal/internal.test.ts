@@ -23,19 +23,19 @@ describe.skipIf(!adminUrl)('internal scheduled publish (database)', () => {
   });
 
   const move = (id: string, to: string, roles: string[], extra: object = {}) =>
-    t.call({ method: 'POST', url: `/stories/${id}/transitions`, roles, body: { to, ...extra } });
+    t.call({ method: 'POST', url: `/news/${id}/transitions`, roles, body: { to, ...extra } });
 
-  /** A story moved to SCHEDULED, with its schedule forced to be due (or not). */
+  /** A news item moved to SCHEDULED, with its schedule forced to be due (or not). */
   async function scheduled(slug: string, due = true) {
-    const id = (await t.call({ method: 'POST', url: '/stories', roles: ['reporter'], body: { locale: 'en', title: slug, slug, deskId } })).body.story.id as string;
-    await t.call({ method: 'PUT', url: `/stories/${id}/translations/en`, roles: ['reporter'], body: { title: slug, body: doc('text'), slug, expectedVersion: 1 } });
-    await t.call({ method: 'PUT', url: `/stories/${id}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } });
+    const id = (await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: slug, slug, deskId } })).body.news.id as string;
+    await t.call({ method: 'PUT', url: `/news/${id}/translations/en`, roles: ['reporter'], body: { title: slug, body: doc('text'), slug, expectedVersion: 1 } });
+    await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } });
     await move(id, 'EDITOR_REVIEW', ['reporter']);
     await move(id, 'READY', ['fact_checker']);
     const when = new Date(Date.now() + 3600_000).toISOString();
     const res = await move(id, 'SCHEDULED', ['managing_editor'], { schedule: { scheduledFor: when, timeZone: 'Asia/Dhaka' } });
     expect(res.status).toBe(201);
-    const row = await t.db.pool.query(`SELECT id FROM publishing_schedule WHERE story_id = $1 AND status = 'pending'`, [id]);
+    const row = await t.db.pool.query(`SELECT id FROM publishing_schedule WHERE news_id = $1 AND status = 'pending'`, [id]);
     const scheduleId = row.rows[0].id as string;
     if (due) await t.db.pool.query(`UPDATE publishing_schedule SET scheduled_for = now() - interval '1 minute' WHERE id = $1`, [scheduleId]);
     return { id, scheduleId, slug };
@@ -46,7 +46,7 @@ describe.skipIf(!adminUrl)('internal scheduled publish (database)', () => {
       method: 'POST', url: `/internal/schedules/${scheduleId}/publish`,
       headers: token === null ? {} : { [INTERNAL_TOKEN_HEADER]: token },
     });
-  const status = async (id: string) => (await t.db.pool.query('SELECT status FROM story WHERE id = $1', [id])).rows[0].status;
+  const status = async (id: string) => (await t.db.pool.query('SELECT status FROM news WHERE id = $1', [id])).rows[0].status;
   const outbox = async (id: string) =>
     (await t.db.pool.query(`SELECT event_type FROM outbox_event WHERE aggregate_id = $1 ORDER BY id`, [id])).rows.map((r) => r.event_type);
 
@@ -64,52 +64,52 @@ describe.skipIf(!adminUrl)('internal scheduled publish (database)', () => {
 
   it('publishes a due schedule once, as the system, and records audit and outbox', async () => {
     const { id, scheduleId, slug } = await scheduled('goes-live');
-    expect((await t.anonymous('GET', `/public/stories/en/${slug}`)).statusCode).toBe(404);
+    expect((await t.anonymous('GET', `/public/news/en/${slug}`)).statusCode).toBe(404);
 
     const first = await publish(scheduleId);
     expect(first.statusCode).toBe(200);
-    expect(first.json()).toEqual({ result: 'published', storyId: id });
+    expect(first.json()).toEqual({ result: 'published', newsId: id });
     expect(await status(id)).toBe('PUBLISHED');
-    expect((await t.anonymous('GET', `/public/stories/en/${slug}`)).statusCode).toBe(200);
+    expect((await t.anonymous('GET', `/public/news/en/${slug}`)).statusCode).toBe(200);
     expect((await t.db.pool.query(`SELECT status, executed_at FROM publishing_schedule WHERE id = $1`, [scheduleId])).rows[0]).toMatchObject({ status: 'published' });
 
-    const trail = await t.db.pool.query(`SELECT actor_type, actor_id, previous_state, new_state, reason FROM audit_event WHERE story_id = $1 AND new_state = 'PUBLISHED'`, [id]);
+    const trail = await t.db.pool.query(`SELECT actor_type, actor_id, previous_state, new_state, reason FROM audit_event WHERE news_id = $1 AND new_state = 'PUBLISHED'`, [id]);
     expect(trail.rows).toEqual([{ actor_type: 'system', actor_id: 'system:scheduler', previous_state: 'SCHEDULED', new_state: 'PUBLISHED', reason: 'scheduled publish' }]);
-    expect(await outbox(id)).toEqual(['story.published']);
+    expect(await outbox(id)).toEqual(['news.published']);
 
     const again = await publish(scheduleId);
-    expect(again.json()).toEqual({ result: 'already_published', storyId: id });
-    expect(await outbox(id)).toEqual(['story.published']);
+    expect(again.json()).toEqual({ result: 'already_published', newsId: id });
+    expect(await outbox(id)).toEqual(['news.published']);
   });
 
   it('does nothing before the schedule is due', async () => {
     const { id, scheduleId } = await scheduled('too-early', false);
-    expect((await publish(scheduleId)).json()).toMatchObject({ result: 'not_due', storyId: id });
+    expect((await publish(scheduleId)).json()).toMatchObject({ result: 'not_due', newsId: id });
     expect(await status(id)).toBe('SCHEDULED');
   });
 
-  it('sends the story back to READY and reports it when publishing fails', async () => {
+  it('sends the news item back to READY and reports it when publishing fails', async () => {
     const a = await scheduled('contested');
-    const other = (await t.call({ method: 'POST', url: '/stories', roles: ['reporter'], body: { locale: 'en', title: 'B', slug: 'contested-b', deskId } })).body.story.id as string;
-    await t.call({ method: 'PUT', url: `/stories/${other}/translations/en`, roles: ['reporter'], body: { title: 'B', body: doc('b'), slug: 'contested', expectedVersion: 1 } });
-    await t.call({ method: 'PUT', url: `/stories/${other}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } });
+    const other = (await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'B', slug: 'contested-b', deskId } })).body.news.id as string;
+    await t.call({ method: 'PUT', url: `/news/${other}/translations/en`, roles: ['reporter'], body: { title: 'B', body: doc('b'), slug: 'contested', expectedVersion: 1 } });
+    await t.call({ method: 'PUT', url: `/news/${other}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } });
     await move(other, 'EDITOR_REVIEW', ['reporter']);
     await move(other, 'READY', ['fact_checker']);
     expect((await move(other, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
 
     const res = await publish(a.scheduleId);
     expect(res.statusCode).toBe(200);
-    expect(res.json()).toMatchObject({ result: 'failed', storyId: a.id });
+    expect(res.json()).toMatchObject({ result: 'failed', newsId: a.id });
     expect(res.json().detail).toContain('slug');
     expect(await status(a.id)).toBe('READY');
     expect((await t.db.pool.query(`SELECT status, last_error FROM publishing_schedule WHERE id = $1`, [a.scheduleId])).rows[0]).toMatchObject({ status: 'failed' });
-    expect(await outbox(a.id)).toEqual(['story.schedule_failed']);
-    expect((await t.db.pool.query(`SELECT count(*)::int AS n FROM story_slug WHERE story_id = $1`, [a.id])).rows[0].n).toBe(0);
-    expect((await t.anonymous('GET', '/public/stories/en/contested')).json().id).toBe(other);
+    expect(await outbox(a.id)).toEqual(['news.schedule_failed']);
+    expect((await t.db.pool.query(`SELECT count(*)::int AS n FROM news_slug WHERE news_id = $1`, [a.id])).rows[0].n).toBe(0);
+    expect((await t.anonymous('GET', '/public/news/en/contested')).json().id).toBe(other);
     expect((await publish(a.scheduleId)).json()).toMatchObject({ result: 'failed' });
   });
 
-  it('skips a cancelled schedule and a story that is no longer scheduled', async () => {
+  it('skips a cancelled schedule and a news item that is no longer scheduled', async () => {
     const a = await scheduled('changed-mind');
     expect((await move(a.id, 'READY', ['managing_editor'])).status).toBe(201);
     expect((await publish(a.scheduleId)).json()).toMatchObject({ result: 'cancelled' });
@@ -121,16 +121,16 @@ describe.skipIf(!adminUrl)('internal scheduled publish (database)', () => {
     expect(await status(b.id)).toBe('ARCHIVED');
 
     const c = await scheduled('drifted');
-    await t.db.pool.query(`UPDATE story SET status = 'READY' WHERE id = $1`, [c.id]);
+    await t.db.pool.query(`UPDATE news SET status = 'READY' WHERE id = $1`, [c.id]);
     const res = await publish(c.scheduleId);
-    expect(res.json()).toMatchObject({ result: 'cancelled', detail: 'story is READY' });
+    expect(res.json()).toMatchObject({ result: 'cancelled', detail: 'news is READY' });
   });
 
   it('publishes exactly once when called twice at the same time', async () => {
     const { id, scheduleId } = await scheduled('double-tap');
     const results = await Promise.all([publish(scheduleId), publish(scheduleId)]);
     expect(results.map((r) => r.json().result).sort()).toEqual(['already_published', 'published']);
-    expect(await outbox(id)).toEqual(['story.published']);
+    expect(await outbox(id)).toEqual(['news.published']);
   });
 
   it('answers 404 for an unknown schedule and 400 for a malformed id', async () => {

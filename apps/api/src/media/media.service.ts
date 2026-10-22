@@ -39,7 +39,7 @@ interface Row {
   usage_count: number; cursor_at?: string; sha256?: string;
 }
 
-const SELECT = `SELECT m.*, (SELECT count(DISTINCT sr.story_id) FROM revision_media rm JOIN story_revision sr ON sr.id = rm.revision_id
+const SELECT = `SELECT m.*, (SELECT count(DISTINCT sr.news_id) FROM revision_media rm JOIN news_revision sr ON sr.id = rm.revision_id
                   WHERE rm.media_asset_id = m.id)::int AS usage_count,
                 to_char(m.created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at
            FROM media_asset m`;
@@ -195,7 +195,7 @@ export class MediaService {
   }
 
   /**
-   * Bytes for readers. Only a derivative of an image that a live story uses, whose rights still
+   * Bytes for readers. Only a derivative of an image that a live news uses, whose rights still
    * allow the web. Anything else answers 404, whether it exists or not.
    */
   async publicFile(id: string, variant: string, liveStatuses: readonly string[]): Promise<{ body: Buffer; contentType: string }> {
@@ -204,7 +204,7 @@ export class MediaService {
       `SELECT m.variants FROM media_asset m
         WHERE m.id = $1 AND m.processing_state = 'ready' AND 'web' = ANY (m.permitted_channels)
           AND (m.rights_expires_at IS NULL OR m.rights_expires_at > now())
-          AND EXISTS (SELECT 1 FROM revision_media rm JOIN story s ON s.published_revision_id = rm.revision_id
+          AND EXISTS (SELECT 1 FROM revision_media rm JOIN news s ON s.published_revision_id = rm.revision_id
                        WHERE rm.media_asset_id = m.id AND s.status = ANY ($2))`,
       [id, liveStatuses],
     );
@@ -219,7 +219,7 @@ export class MediaService {
         await db.query('DELETE FROM media_asset WHERE id = $1', [id]);
       } catch (err) {
         if (isPgError(err) && err.code === '23503') {
-          throw new ConflictException({ message: 'This image is used by a story, an ad or a card. Remove it there first.', reason: 'in_use' });
+          throw new ConflictException({ message: 'This image is used by a news item, an ad or a card. Remove it there first.', reason: 'in_use' });
         }
         throw err;
       }

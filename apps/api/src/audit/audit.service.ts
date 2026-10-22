@@ -8,7 +8,7 @@ export interface AuditInput {
   action: string;
   objectType: string;
   objectId: string;
-  storyId?: string | null;
+  newsId?: string | null;
   revisionId?: string | null;
   previousState?: string | null;
   newState?: string | null;
@@ -26,12 +26,12 @@ export class AuditService {
   async record(event: AuditInput, db: Pool | PoolClient = this.pool): Promise<void> {
     await db.query(
       `INSERT INTO audit_event
-         (actor_type, actor_id, action, object_type, object_id, story_id, revision_id,
+         (actor_type, actor_id, action, object_type, object_id, news_id, revision_id,
           previous_state, new_state, reason, request_id, metadata)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         event.actorType, event.actorId ?? null, event.action, event.objectType, event.objectId,
-        event.storyId ?? null, event.revisionId ?? null, event.previousState ?? null, event.newState ?? null,
+        event.newsId ?? null, event.revisionId ?? null, event.previousState ?? null, event.newState ?? null,
         event.reason ?? null, event.requestId ?? null, JSON.stringify(event.metadata ?? {}),
       ],
     );

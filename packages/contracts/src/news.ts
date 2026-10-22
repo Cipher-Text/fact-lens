@@ -1,12 +1,12 @@
 import { z } from 'zod';
 import { tiptapBodySchema } from './body';
 import { publicMediaSchema } from './media';
-import { contributorSchema, mediaAssetSchema, storyRevisionSchema, storySchema, storyTranslationSchema } from './editorial';
+import { contributorSchema, mediaAssetSchema, newsRevisionSchema, newsSchema, newsTranslationSchema } from './editorial';
 import { idSchema, localeCodeSchema, slugSchema, timestampSchema } from './common';
-import { contributorRoles, storyStatuses } from './enums';
+import { contributorRoles, newsStatuses } from './enums';
 import { publicTaxonomyRefSchema, taxonomyTagSchema } from './taxonomy';
 
-export const storyCreateSchema = z.object({
+export const newsCreateSchema = z.object({
   locale: localeCodeSchema,
   title: z.string().trim().min(1).max(300),
   /** Derived from the title when omitted. */
@@ -14,7 +14,7 @@ export const storyCreateSchema = z.object({
   deskId: idSchema.nullish(),
   categoryId: idSchema.nullish(),
 });
-export type StoryCreate = z.infer<typeof storyCreateSchema>;
+export type NewsCreate = z.infer<typeof newsCreateSchema>;
 
 export const translationSaveSchema = z.object({
   title: z.string().trim().min(1).max(300),
@@ -28,7 +28,7 @@ export const translationSaveSchema = z.object({
 });
 export type TranslationSave = z.infer<typeof translationSaveSchema>;
 
-export const storyMetaSchema = z
+export const newsMetaSchema = z
   .object({
     deskId: idSchema.nullable(),
     categoryId: idSchema.nullable(),
@@ -38,14 +38,14 @@ export const storyMetaSchema = z
   })
   .partial()
   .refine((m) => Object.keys(m).length > 0, { message: 'nothing to change' });
-export type StoryMeta = z.infer<typeof storyMetaSchema>;
+export type NewsMeta = z.infer<typeof newsMetaSchema>;
 
 export const revisionCreateSchema = z.object({ reason: z.string().trim().min(3).max(500) });
 export type RevisionCreate = z.infer<typeof revisionCreateSchema>;
 
 export const transitionRequestSchema = z
   .object({
-    to: z.enum(storyStatuses),
+    to: z.enum(newsStatuses),
     reason: z.string().trim().min(3).max(500).optional(),
     schedule: z.object({ scheduledFor: timestampSchema, timeZone: z.string().min(1).max(64) }).optional(),
   })
@@ -62,24 +62,24 @@ export const correctionCreateSchema = z.object({
 });
 export type CorrectionCreate = z.infer<typeof correctionCreateSchema>;
 
-export const storyListQuerySchema = z.object({
-  status: z.enum(storyStatuses).optional(),
+export const newsListQuerySchema = z.object({
+  status: z.enum(newsStatuses).optional(),
   deskId: idSchema.optional(),
   limit: z.coerce.number().int().min(1).max(100).default(25),
   cursor: z.string().max(300).optional(),
 });
-export type StoryListQuery = z.infer<typeof storyListQuerySchema>;
+export type NewsListQuery = z.infer<typeof newsListQuerySchema>;
 
-export const storySummarySchema = storySchema.extend({ titles: z.record(z.string(), z.string()) });
-export type StorySummary = z.infer<typeof storySummarySchema>;
+export const newsSummarySchema = newsSchema.extend({ titles: z.record(z.string(), z.string()) });
+export type NewsSummary = z.infer<typeof newsSummarySchema>;
 
-export const storyListSchema = z.object({ items: z.array(storySummarySchema), nextCursor: z.string().nullable() });
-export type StoryList = z.infer<typeof storyListSchema>;
+export const newsListSchema = z.object({ items: z.array(newsSummarySchema), nextCursor: z.string().nullable() });
+export type NewsList = z.infer<typeof newsListSchema>;
 
-/** A move the story could make from its current state, and whether the caller may make it. */
+/** A move the news item could make from its current state, and whether the caller may make it. */
 export const availableTransitionSchema = z.object({
-  to: z.enum(storyStatuses),
-  /** The capability that gates this move for this story's desk. */
+  to: z.enum(newsStatuses),
+  /** The capability that gates this move for this news item's desk. */
   capability: z.string(),
   permitted: z.boolean(),
   reasonRequired: z.boolean(),
@@ -87,15 +87,15 @@ export const availableTransitionSchema = z.object({
 });
 export type AvailableTransition = z.infer<typeof availableTransitionSchema>;
 
-export const storyDetailSchema = z.object({
-  story: storySchema,
+export const newsDetailSchema = z.object({
+  news: newsSchema,
   /** Latest revision: the one being edited, or the last one saved. */
-  revision: storyRevisionSchema,
+  revision: newsRevisionSchema,
   editable: z.boolean(),
-  translations: z.array(storyTranslationSchema.extend({ version: z.number().int().positive(), updatedAt: timestampSchema })),
+  translations: z.array(newsTranslationSchema.extend({ version: z.number().int().positive(), updatedAt: timestampSchema })),
   contributors: z.array(z.object({ contributor: contributorSchema, role: z.enum(contributorRoles), position: z.number().int() })),
   media: z.array(mediaAssetSchema.extend({ role: z.string() })),
-  /** Tags belong to the story, in every language. A label per language, so the editor can show what is missing. */
+  /** Tags belong to the news item, in every language. A label per language, so the editor can show what is missing. */
   tags: z.array(taxonomyTagSchema),
   revisionCount: z.number().int().positive(),
   /** Open review comments. Visible at every hand-off so they are not missed (docs/06). */
@@ -103,9 +103,9 @@ export const storyDetailSchema = z.object({
   /** What the caller can do next, so a client never repeats the workflow rules. */
   transitions: z.array(availableTransitionSchema),
 });
-export type StoryDetail = z.infer<typeof storyDetailSchema>;
+export type NewsDetail = z.infer<typeof newsDetailSchema>;
 
-export const publicStorySchema = z.object({
+export const publicNewsSchema = z.object({
   id: idSchema,
   locale: localeCodeSchema,
   slug: slugSchema,
@@ -121,8 +121,8 @@ export const publicStorySchema = z.object({
   corrections: z.array(z.object({ approvedAt: timestampSchema, notice: z.string() })),
   /** The images the body refers to, with what a reader's page needs to show them. */
   media: z.array(publicMediaSchema),
-  /** In this story's language only; null / left out when it has no name in that language. */
+  /** In this news item's language only; null / left out when it has no name in that language. */
   category: publicTaxonomyRefSchema.nullable(),
   tags: z.array(publicTaxonomyRefSchema),
 });
-export type PublicStory = z.infer<typeof publicStorySchema>;
+export type PublicNews = z.infer<typeof publicNewsSchema>;

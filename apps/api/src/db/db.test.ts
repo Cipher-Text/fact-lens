@@ -50,8 +50,8 @@ describe.skipIf(!adminUrl)('database schema', () => {
   const expectCode = async (p: Promise<unknown>, code: string) =>
     expect(p).rejects.toMatchObject({ code });
 
-  async function newStory(key = `k-${randomBytes(3).toString('hex')}`) {
-    const { rows } = await pool.query('INSERT INTO story (canonical_key) VALUES ($1) RETURNING id', [key]);
+  async function newNews(key = `k-${randomBytes(3).toString('hex')}`) {
+    const { rows } = await pool.query('INSERT INTO news (canonical_key) VALUES ($1) RETURNING id', [key]);
     return rows[0].id as string;
   }
 
@@ -60,24 +60,24 @@ describe.skipIf(!adminUrl)('database schema', () => {
     expect(rows.map((r) => r.code)).toEqual(['bn-BD', 'en']);
   });
 
-  it('rejects an invalid story status and a duplicate canonical key', async () => {
-    await expectCode(pool.query(`INSERT INTO story (canonical_key, status) VALUES ('s1', 'NOPE')`), '23514');
-    await pool.query(`INSERT INTO story (canonical_key) VALUES ('dup')`);
-    await expectCode(pool.query(`INSERT INTO story (canonical_key) VALUES ('dup')`), '23505');
+  it('rejects an invalid news status and a duplicate canonical key', async () => {
+    await expectCode(pool.query(`INSERT INTO news (canonical_key, status) VALUES ('s1', 'NOPE')`), '23514');
+    await pool.query(`INSERT INTO news (canonical_key) VALUES ('dup')`);
+    await expectCode(pool.query(`INSERT INTO news (canonical_key) VALUES ('dup')`), '23505');
   });
 
-  it('keeps revision numbers unique per story and translations unique per locale', async () => {
-    const storyId = await newStory();
+  it('keeps revision numbers unique per news and translations unique per locale', async () => {
+    const newsId = await newNews();
     const rev = await pool.query(
-      `INSERT INTO story_revision (story_id, revision_no, changed_by) VALUES ($1, 1, 'u1') RETURNING id`,
-      [storyId],
+      `INSERT INTO news_revision (news_id, revision_no, changed_by) VALUES ($1, 1, 'u1') RETURNING id`,
+      [newsId],
     );
     await expectCode(
-      pool.query(`INSERT INTO story_revision (story_id, revision_no, changed_by) VALUES ($1, 1, 'u1')`, [storyId]),
+      pool.query(`INSERT INTO news_revision (news_id, revision_no, changed_by) VALUES ($1, 1, 'u1')`, [newsId]),
       '23505',
     );
     const insertT = (locale: string) =>
-      pool.query(`INSERT INTO story_translation (revision_id, locale, title, slug) VALUES ($1, $2, 't', 's')`, [
+      pool.query(`INSERT INTO news_translation (revision_id, locale, title, slug) VALUES ($1, $2, 't', 's')`, [
         rev.rows[0].id,
         locale,
       ]);
@@ -86,23 +86,23 @@ describe.skipIf(!adminUrl)('database schema', () => {
     await expectCode(insertT('fr'), '23503');
   });
 
-  it('only lets a story publish one of its own revisions', async () => {
-    const a = await newStory();
-    const b = await newStory();
+  it('only lets a news item publish one of its own revisions', async () => {
+    const a = await newNews();
+    const b = await newNews();
     const revB = await pool.query(
-      `INSERT INTO story_revision (story_id, revision_no, changed_by) VALUES ($1, 1, 'u1') RETURNING id`,
+      `INSERT INTO news_revision (news_id, revision_no, changed_by) VALUES ($1, 1, 'u1') RETURNING id`,
       [b],
     );
-    await expectCode(pool.query('UPDATE story SET published_revision_id = $1 WHERE id = $2', [revB.rows[0].id, a]), '23503');
-    await pool.query('UPDATE story SET published_revision_id = $1 WHERE id = $2', [revB.rows[0].id, b]);
+    await expectCode(pool.query('UPDATE news SET published_revision_id = $1 WHERE id = $2', [revB.rows[0].id, a]), '23503');
+    await pool.query('UPDATE news SET published_revision_id = $1 WHERE id = $2', [revB.rows[0].id, b]);
   });
 
-  it('enforces slug uniqueness per locale and one current slug per story and locale', async () => {
-    const a = await newStory();
-    const b = await newStory();
-    const ins = (story: string, locale: string, slug: string, current = true) =>
-      pool.query('INSERT INTO story_slug (story_id, locale, slug, is_current) VALUES ($1, $2, $3, $4)', [
-        story, locale, slug, current,
+  it('enforces slug uniqueness per locale and one current slug per news and locale', async () => {
+    const a = await newNews();
+    const b = await newNews();
+    const ins = (news: string, locale: string, slug: string, current = true) =>
+      pool.query('INSERT INTO news_slug (news_id, locale, slug, is_current) VALUES ($1, $2, $3, $4)', [
+        news, locale, slug, current,
       ]);
     await ins(a, 'en', 'hello');
     await expectCode(ins(b, 'en', 'hello'), '23505');
@@ -131,7 +131,7 @@ describe.skipIf(!adminUrl)('database schema', () => {
 
   it('makes audit_event append-only', async () => {
     const { rows } = await pool.query(
-      `INSERT INTO audit_event (actor_type, action, object_type, object_id) VALUES ('human', 'story.create', 'story', '1') RETURNING id`,
+      `INSERT INTO audit_event (actor_type, action, object_type, object_id) VALUES ('human', 'news.create', 'news', '1') RETURNING id`,
     );
     await expectCode(pool.query('UPDATE audit_event SET action = $1 WHERE id = $2', ['x', rows[0].id]), '23001');
     await expectCode(pool.query('DELETE FROM audit_event WHERE id = $1', [rows[0].id]), '23001');
@@ -142,10 +142,10 @@ describe.skipIf(!adminUrl)('database schema', () => {
     );
   });
 
-  async function newRevision(storyId: string, no = 1, isCorrection = false) {
+  async function newRevision(newsId: string, no = 1, isCorrection = false) {
     const { rows } = await pool.query(
-      `INSERT INTO story_revision (story_id, revision_no, changed_by, is_correction) VALUES ($1, $2, 'u1', $3) RETURNING id`,
-      [storyId, no, isCorrection],
+      `INSERT INTO news_revision (news_id, revision_no, changed_by, is_correction) VALUES ($1, $2, 'u1', $3) RETURNING id`,
+      [newsId, no, isCorrection],
     );
     return rows[0].id as string;
   }
@@ -171,21 +171,21 @@ describe.skipIf(!adminUrl)('database schema', () => {
     );
   });
 
-  it('links a story to a source once', async () => {
-    const storyId = await newStory();
+  it('links a news item to a source once', async () => {
+    const newsId = await newNews();
     const src = await pool.query(`INSERT INTO source (title) VALUES ('t') RETURNING id`);
     const link = () =>
-      pool.query('INSERT INTO story_source (story_id, source_id) VALUES ($1, $2)', [storyId, src.rows[0].id]);
+      pool.query('INSERT INTO news_source (news_id, source_id) VALUES ($1, $2)', [newsId, src.rows[0].id]);
     await link();
     await expectCode(link(), '23505');
   });
 
   it('requires completed_at exactly when an assignment is done', async () => {
-    const storyId = await newStory();
+    const newsId = await newNews();
     const ins = (status: string, completed: string | null) =>
       pool.query(
-        `INSERT INTO editorial_assignment (story_id, assignee, role, status, completed_at) VALUES ($1, 'u1', 'editor', $2, $3)`,
-        [storyId, status, completed],
+        `INSERT INTO editorial_assignment (news_id, assignee, role, status, completed_at) VALUES ($1, 'u1', 'editor', $2, $3)`,
+        [newsId, status, completed],
       );
     await ins('open', null);
     await ins('done', new Date().toISOString());
@@ -193,35 +193,35 @@ describe.skipIf(!adminUrl)('database schema', () => {
     await expectCode(ins('open', new Date().toISOString()), '23514');
   });
 
-  it('keeps comments on revisions of their own story and requires resolved_at when resolved', async () => {
-    const a = await newStory();
-    const b = await newStory();
+  it('keeps comments on revisions of their own news and requires resolved_at when resolved', async () => {
+    const a = await newNews();
+    const b = await newNews();
     const revB = await newRevision(b);
-    const ins = (story: string, rev: string | null, status = 'open', resolvedAt: string | null = null) =>
+    const ins = (news: string, rev: string | null, status = 'open', resolvedAt: string | null = null) =>
       pool.query(
-        `INSERT INTO editorial_comment (story_id, revision_id, author, body, status, resolved_at) VALUES ($1, $2, 'u1', 'note', $3, $4)`,
-        [story, rev, status, resolvedAt],
+        `INSERT INTO editorial_comment (news_id, revision_id, author, body, status, resolved_at) VALUES ($1, $2, 'u1', 'note', $3, $4)`,
+        [news, rev, status, resolvedAt],
       );
     await ins(a, null);
     await ins(b, revB);
     await expectCode(ins(a, revB), '23503');
     await expectCode(ins(a, null, 'resolved'), '23514');
     await expectCode(
-      pool.query(`INSERT INTO editorial_comment (story_id, author, body) VALUES ($1, 'u1', '   ')`, [a]),
+      pool.query(`INSERT INTO editorial_comment (news_id, author, body) VALUES ($1, 'u1', '   ')`, [a]),
       '23514',
     );
   });
 
-  it('only records a correction against a correction revision of the same story', async () => {
-    const a = await newStory();
-    const b = await newStory();
+  it('only records a correction against a correction revision of the same news', async () => {
+    const a = await newNews();
+    const b = await newNews();
     const plain = await newRevision(a, 1, false);
     const fix = await newRevision(a, 2, true);
     const otherFix = await newRevision(b, 1, true);
-    const ins = (story: string, rev: string) =>
+    const ins = (news: string, rev: string) =>
       pool.query(
-        `INSERT INTO correction (story_id, revision_id, reason, requested_by, approved_by) VALUES ($1, $2, 'typo', 'u1', 'u2') RETURNING id`,
-        [story, rev],
+        `INSERT INTO correction (news_id, revision_id, reason, requested_by, approved_by) VALUES ($1, $2, 'typo', 'u1', 'u2') RETURNING id`,
+        [news, rev],
       );
     await expectCode(ins(a, plain), '23514');
     await expectCode(ins(a, otherFix), '23503');
@@ -233,11 +233,11 @@ describe.skipIf(!adminUrl)('database schema', () => {
   });
 
   it('keeps publishing schedule idempotency keys unique', async () => {
-    const storyId = await newStory();
+    const newsId = await newNews();
     const ins = (key: string) =>
       pool.query(
-        `INSERT INTO publishing_schedule (story_id, scheduled_for, time_zone, idempotency_key, created_by) VALUES ($1, now(), 'Asia/Dhaka', $2, 'u1')`,
-        [storyId, key],
+        `INSERT INTO publishing_schedule (news_id, scheduled_for, time_zone, idempotency_key, created_by) VALUES ($1, now(), 'Asia/Dhaka', $2, 'u1')`,
+        [newsId, key],
       );
     await ins('k1');
     await expectCode(ins('k1'), '23505');
@@ -263,16 +263,16 @@ describe.skipIf(!adminUrl)('database schema', () => {
       );
     const photo = await media('photo.jpg');
     const card = await media('card.jpg');
-    const storyId = await newStory();
-    const rev = await newRevision(storyId);
-    const ins = (output: string, source: string, story = storyId, revision = rev) =>
+    const newsId = await newNews();
+    const rev = await newRevision(newsId);
+    const ins = (output: string, source: string, news = newsId, revision = rev) =>
       pool.query(
-        `INSERT INTO generated_card (media_asset_id, source_media_asset_id, template_id, story_id, revision_id, created_by) VALUES ($1, $2, $3, $4, $5, 'u1')`,
-        [output, source, t1.rows[0].id, story, revision],
+        `INSERT INTO generated_card (media_asset_id, source_media_asset_id, template_id, news_id, revision_id, created_by) VALUES ($1, $2, $3, $4, $5, 'u1')`,
+        [output, source, t1.rows[0].id, news, revision],
       );
     await expectCode(ins(photo.rows[0].id, photo.rows[0].id), '23514');
-    const otherStory = await newStory();
-    await expectCode(ins(card.rows[0].id, photo.rows[0].id, otherStory, rev), '23503');
+    const otherNews = await newNews();
+    await expectCode(ins(card.rows[0].id, photo.rows[0].id, otherNews, rev), '23503');
     await ins(card.rows[0].id, photo.rows[0].id);
     await expectCode(ins(card.rows[0].id, photo.rows[0].id), '23505');
   });
@@ -372,20 +372,20 @@ describe.skipIf(!adminUrl)('database schema', () => {
 
   it('keeps contract enums in sync with the database CHECK constraints', async () => {
     const pairs: Array<[string, string, readonly string[]]> = [
-      ['story', 'status', c.storyStatuses],
-      ['story_translation', 'translation_status', c.translationStatuses],
+      ['news', 'status', c.newsStatuses],
+      ['news_translation', 'translation_status', c.translationStatuses],
       ['category', 'status', c.taxonomyStatuses],
       ['tag', 'status', c.taxonomyStatuses],
       ['contributor', 'kind', c.contributorKinds],
-      ['story_contributor', 'role', c.contributorRoles],
+      ['news_contributor', 'role', c.contributorRoles],
       ['locale', 'direction', c.localeDirections],
       ['media_asset', 'processing_state', c.mediaProcessingStates],
       ['revision_media', 'role', c.revisionMediaRoles],
       ['source', 'kind', c.sourceKinds],
       ['source', 'validation_status', c.sourceValidationStatuses],
       ['source', 'ingest_channel', c.ingestChannels],
-      ['story_source', 'relation', c.sourceRelations],
-      ['story_source', 'use_type', c.sourceUseTypes],
+      ['news_source', 'relation', c.sourceRelations],
+      ['news_source', 'use_type', c.sourceUseTypes],
       ['editorial_assignment', 'role', c.assignmentRoles],
       ['editorial_assignment', 'status', c.assignmentStatuses],
       ['editorial_comment', 'status', c.commentStatuses],
@@ -470,12 +470,12 @@ describe.skipIf(!adminUrl)('database schema', () => {
   describe('withTransaction', () => {
     it('commits the change, audit event and outbox event together', async () => {
       await withTransaction(pool, async (c) => {
-        await c.query(`INSERT INTO story (canonical_key) VALUES ('tx-ok')`);
-        await c.query(`INSERT INTO audit_event (actor_type, action, object_type, object_id) VALUES ('system', 'story.create', 'story', 'tx-ok')`);
-        await c.query(`INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type) VALUES ('story', 'tx-ok', 'story.created')`);
+        await c.query(`INSERT INTO news (canonical_key) VALUES ('tx-ok')`);
+        await c.query(`INSERT INTO audit_event (actor_type, action, object_type, object_id) VALUES ('system', 'news.create', 'news', 'tx-ok')`);
+        await c.query(`INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type) VALUES ('news', 'tx-ok', 'news.created')`);
       });
       const counts = await pool.query(
-        `SELECT (SELECT count(*) FROM story WHERE canonical_key = 'tx-ok')::int AS s,
+        `SELECT (SELECT count(*) FROM news WHERE canonical_key = 'tx-ok')::int AS s,
                 (SELECT count(*) FROM audit_event WHERE object_id = 'tx-ok')::int AS a,
                 (SELECT count(*) FROM outbox_event WHERE aggregate_id = 'tx-ok')::int AS o`,
       );
@@ -485,13 +485,13 @@ describe.skipIf(!adminUrl)('database schema', () => {
     it('rolls everything back on error and releases the client', async () => {
       await expect(
         withTransaction(pool, async (c) => {
-          await c.query(`INSERT INTO story (canonical_key) VALUES ('tx-bad')`);
-          await c.query(`INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type) VALUES ('story', 'tx-bad', 'story.created')`);
+          await c.query(`INSERT INTO news (canonical_key) VALUES ('tx-bad')`);
+          await c.query(`INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type) VALUES ('news', 'tx-bad', 'news.created')`);
           throw new Error('boom');
         }),
       ).rejects.toThrow('boom');
       const counts = await pool.query(
-        `SELECT (SELECT count(*) FROM story WHERE canonical_key = 'tx-bad')::int AS s,
+        `SELECT (SELECT count(*) FROM news WHERE canonical_key = 'tx-bad')::int AS s,
                 (SELECT count(*) FROM outbox_event WHERE aggregate_id = 'tx-bad')::int AS o`,
       );
       expect(counts.rows[0]).toEqual({ s: 0, o: 0 });

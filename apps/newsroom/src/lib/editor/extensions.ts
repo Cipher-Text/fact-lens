@@ -2,7 +2,7 @@ import { mergeAttributes, Node } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 
 /**
- * The editor's schema. It must offer exactly what the story body contract allows (the contract
+ * The editor's schema. It must offer exactly what the news item body contract allows (the contract
  * lists it in `bodyNodeTypes` and `bodyMarkTypes`; a test compares them), so nothing the editor
  * can make is ever rejected at save, and nothing in a saved body is dropped when it is opened.
  * Free of React and the DOM, so tests can build the schema without a browser.

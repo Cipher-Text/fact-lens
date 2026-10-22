@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
 import {
   assignmentCreateSchema, assignmentQuerySchema, commentCreateSchema, commentListQuerySchema, editorialCapabilities,
-  sourceCreateSchema, sourceValidationSchema, storySourceAttachSchema, type Principal,
+  sourceCreateSchema, sourceValidationSchema, newsSourceAttachSchema, type Principal,
 } from '@fact-lens/contracts';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Res } from '@nestjs/common';
@@ -22,12 +22,12 @@ export class CollabController {
   ) {}
 
   // ---- comments
-  @Get('stories/:id/comments')
+  @Get('news/:id/comments')
   listComments(@Param('id', ParseUUIDPipe) id: string, @Query() query: unknown) {
     return this.comments.list(id, parse(commentListQuerySchema, query).status);
   }
 
-  @Post('stories/:id/comments')
+  @Post('news/:id/comments')
   addComment(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
     return this.comments.create(id, parse(commentCreateSchema, body), actorOf(p, req));
   }
@@ -49,12 +49,12 @@ export class CollabController {
     return this.assignments.mine(p.subject, q.status, q.limit);
   }
 
-  @Get('stories/:id/assignments')
-  storyAssignments(@Param('id', ParseUUIDPipe) id: string) {
-    return this.assignments.forStory(id);
+  @Get('news/:id/assignments')
+  newsAssignments(@Param('id', ParseUUIDPipe) id: string) {
+    return this.assignments.forNews(id);
   }
 
-  @Post('stories/:id/assignments')
+  @Post('news/:id/assignments')
   assign(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
     return this.assignments.create(id, parse(assignmentCreateSchema, body), actorOf(p, req));
   }
@@ -71,7 +71,7 @@ export class CollabController {
 
   // ---- sources
   @Post('sources')
-  @RequireCapability('story.edit')
+  @RequireCapability('news.edit')
   async createSource(@Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply) {
     const { source, created } = await this.sources.create(parse(sourceCreateSchema, body), actorOf(p, req));
     void reply.status(created ? 201 : 200);
@@ -88,22 +88,22 @@ export class CollabController {
     return this.sources.validate(id, parse(sourceValidationSchema, body), actorOf(p, req));
   }
 
-  @Get('stories/:id/sources')
-  storySources(@Param('id', ParseUUIDPipe) id: string) {
-    return this.sources.forStory(id);
+  @Get('news/:id/sources')
+  newsSources(@Param('id', ParseUUIDPipe) id: string) {
+    return this.sources.forNews(id);
   }
 
-  @Put('stories/:id/sources/:sourceId')
-  @RequireCapability('story.edit')
+  @Put('news/:id/sources/:sourceId')
+  @RequireCapability('news.edit')
   attach(
     @Param('id', ParseUUIDPipe) id: string, @Param('sourceId', ParseUUIDPipe) sourceId: string, @Body() body: unknown,
     @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest,
   ) {
-    return this.sources.attach(id, sourceId, parse(storySourceAttachSchema, body), actorOf(p, req));
+    return this.sources.attach(id, sourceId, parse(newsSourceAttachSchema, body), actorOf(p, req));
   }
 
-  @Delete('stories/:id/sources/:sourceId')
-  @RequireCapability('story.edit')
+  @Delete('news/:id/sources/:sourceId')
+  @RequireCapability('news.edit')
   detach(
     @Param('id', ParseUUIDPipe) id: string, @Param('sourceId', ParseUUIDPipe) sourceId: string,
     @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest,

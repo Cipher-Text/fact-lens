@@ -32,10 +32,10 @@ describe('OIDC sign-in against the dev identity provider', () => {
   }
 
   it('signs a user in and returns their access token and identity', async () => {
-    const { url, flow } = await startLogin(env, '/stories/abc');
+    const { url, flow } = await startLogin(env, '/news/abc');
     expect(url.searchParams.get('code_challenge_method')).toBe('S256');
     expect(url.searchParams.get('redirect_uri')).toBe('http://localhost:3100/auth/callback');
-    expect(flow.returnTo).toBe('/stories/abc');
+    expect(flow.returnTo).toBe('/news/abc');
 
     const callback = await signInAs(url, 4); // managing_editor
     const session = await finishLogin(env, flow, callback.search);

@@ -38,7 +38,7 @@ export const retentionRuleSchema = z.object({ days: z.number().int().positive() 
 export type RetentionRule = z.infer<typeof retentionRuleSchema>;
 
 export const rateLimitNames = [
-  'login', 'search', 'ingestion', 'upload', 'ad_redirect', 'story_view_beacon',
+  'login', 'search', 'ingestion', 'upload', 'ad_redirect', 'news_view_beacon',
   'newsletter_subscribe', 'card_generation', 'ai',
 ] as const;
 
@@ -68,7 +68,7 @@ export type Configuration = z.infer<typeof configurationSchema>;
 
 export const featureFlagKeys = [
   'ai.assist', 'ai.rewrite', 'ingestion.rss', 'ingestion.telegram', 'ads.serving', 'ads.redirect',
-  'newsletter.subscribe', 'analytics.story_views', 'analytics.ga4', 'cards.generation', 'distribution.facebook',
+  'newsletter.subscribe', 'analytics.news_views', 'analytics.ga4', 'cards.generation', 'distribution.facebook',
 ] as const;
 export type FeatureFlagKey = (typeof featureFlagKeys)[number];
 
@@ -84,11 +84,11 @@ export type FeatureFlag = z.infer<typeof featureFlagSchema>;
 export const defaultWorkflowPolicy: WorkflowPolicy = {
   factCheckRequired: false,
   requiredCapability: {
-    editor_review: 'story.submit',
-    fact_check: 'story.review',
-    ready: 'story.fact_check',
-    publish: 'story.publish',
-    correct: 'story.correct',
-    archive: 'story.publish',
+    editor_review: 'news.submit',
+    fact_check: 'news.review',
+    ready: 'news.fact_check',
+    publish: 'news.publish',
+    correct: 'news.correct',
+    archive: 'news.publish',
   },
 };

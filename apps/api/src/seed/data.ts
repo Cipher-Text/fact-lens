@@ -45,7 +45,7 @@ export const configuration: ReadonlyArray<{ key: string; scope: string; value: u
   { key: 'rate_limit.ingestion', scope: 'global', value: { limit: 120, windowSeconds: 60 } },
   { key: 'rate_limit.upload', scope: 'global', value: { limit: 30, windowSeconds: 60 } },
   { key: 'rate_limit.ad_redirect', scope: 'global', value: { limit: 30, windowSeconds: 60 } },
-  { key: 'rate_limit.story_view_beacon', scope: 'global', value: { limit: 60, windowSeconds: 60 } },
+  { key: 'rate_limit.news_view_beacon', scope: 'global', value: { limit: 60, windowSeconds: 60 } },
   { key: 'rate_limit.newsletter_subscribe', scope: 'global', value: { limit: 5, windowSeconds: 3600 } },
   { key: 'rate_limit.card_generation', scope: 'global', value: { limit: 20, windowSeconds: 60 } },
   { key: 'rate_limit.ai', scope: 'global', value: { limit: 20, windowSeconds: 60 } },
@@ -67,7 +67,7 @@ export const featureFlags: ReadonlyArray<{ key: FeatureFlagKey; description: str
   { key: 'ads.serving', description: 'Serve ads on the public site.' },
   { key: 'ads.redirect', description: 'Signed ad click-redirect endpoint. Open-redirect and abuse surface.' },
   { key: 'newsletter.subscribe', description: 'Public newsletter subscription with double opt-in.' },
-  { key: 'analytics.story_views', description: 'First-party story view beacon behind most-read and trending.' },
+  { key: 'analytics.news_views', description: 'First-party news view beacon behind most-read and trending.' },
   { key: 'analytics.ga4', description: 'Google Analytics 4 tag. Gated by reader consent.' },
   { key: 'cards.generation', description: 'Branded photocard and poster generation worker.' },
   { key: 'distribution.facebook', description: 'Publish generated cards to the FactLens Facebook Page.' },
@@ -79,15 +79,15 @@ export const featureFlags: ReadonlyArray<{ key: FeatureFlagKey; description: str
  * `analyst` has no capability yet: the plan defines no analytics capability.
  */
 export const roles: ReadonlyArray<{ key: string; name: string; capabilities: readonly Capability[] }> = [
-  { key: 'reporter', name: 'Reporter', capabilities: ['story.edit', 'story.submit'] },
-  { key: 'desk_editor', name: 'Desk Editor', capabilities: ['story.edit', 'story.submit', 'story.review'] },
-  { key: 'copy_editor', name: 'Copy Editor', capabilities: ['story.edit', 'story.review'] },
-  { key: 'fact_checker', name: 'Fact Checker', capabilities: ['story.fact_check'] },
+  { key: 'reporter', name: 'Reporter', capabilities: ['news.edit', 'news.submit'] },
+  { key: 'desk_editor', name: 'Desk Editor', capabilities: ['news.edit', 'news.submit', 'news.review'] },
+  { key: 'copy_editor', name: 'Copy Editor', capabilities: ['news.edit', 'news.review'] },
+  { key: 'fact_checker', name: 'Fact Checker', capabilities: ['news.fact_check'] },
   {
     key: 'managing_editor',
     name: 'Managing Editor',
     capabilities: [
-      'story.edit', 'story.submit', 'story.review', 'story.fact_check', 'story.publish', 'story.correct',
+      'news.edit', 'news.submit', 'news.review', 'news.fact_check', 'news.publish', 'news.correct',
       'taxonomy.manage', 'audit.read',
     ],
   },
@@ -97,7 +97,7 @@ export const roles: ReadonlyArray<{ key: string; name: string; capabilities: rea
     key: 'admin',
     name: 'Admin',
     capabilities: [
-      'story.edit', 'story.submit', 'story.review', 'story.fact_check', 'story.publish', 'story.correct',
+      'news.edit', 'news.submit', 'news.review', 'news.fact_check', 'news.publish', 'news.correct',
       'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage',
     ],
   },

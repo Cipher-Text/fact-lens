@@ -23,9 +23,9 @@ describe('api client', () => {
   const id = '0b6c9a52-6f0c-4f3e-9a0c-7d1a2f6d5e11';
 
   it('sends the internal token and returns the parsed outcome', async () => {
-    reply = { status: 200, body: { result: 'published', storyId: id } };
+    reply = { status: 200, body: { result: 'published', newsId: id } };
     const res = await createApiClient(base, 'secret-token', 2000).publishSchedule(id);
-    expect(res).toEqual({ result: 'published', storyId: id });
+    expect(res).toEqual({ result: 'published', newsId: id });
     expect(seen).toEqual({ url: `/internal/schedules/${id}/publish`, token: 'secret-token' });
   });
 

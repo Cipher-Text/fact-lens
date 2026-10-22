@@ -1,4 +1,4 @@
-import type { StoryStatus } from '@fact-lens/contracts';
+import type { NewsStatus } from '@fact-lens/contracts';
 
 const dateTime = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Dhaka' });
 
@@ -19,15 +19,15 @@ export function relativeTime(iso: string, now = Date.now()): string {
   return `${Math.floor(seconds / 60)} minutes ago`;
 }
 
-/** A story's title for lists: English if there is one, otherwise whichever locale exists. */
+/** A news item's title for lists: English if there is one, otherwise whichever locale exists. */
 export function pickTitle(titles: Record<string, string>): { text: string; locale: string } | null {
   const locale = titles.en ? 'en' : Object.keys(titles).sort()[0];
   return locale ? { text: titles[locale]!, locale } : null;
 }
 
-export const statusLabel = (s: StoryStatus) => s.replace(/_/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase());
+export const statusLabel = (s: NewsStatus) => s.replace(/_/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase());
 
 export type Tone = 'neutral' | 'info' | 'warn' | 'good' | 'bad';
-export const statusTone = (s: StoryStatus): Tone =>
+export const statusTone = (s: NewsStatus): Tone =>
   ({ INGESTED: 'neutral', RESEARCHING: 'neutral', DRAFT: 'neutral', EDITOR_REVIEW: 'info', FACT_CHECK: 'info', READY: 'warn',
      SCHEDULED: 'warn', PUBLISHED: 'good', UPDATED: 'warn', CORRECTED: 'warn', ARCHIVED: 'bad' } as const)[s];

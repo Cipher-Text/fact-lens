@@ -6,19 +6,19 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { CurrentPrincipal, Public, RequireAnyCapability, RequireCapability } from '../auth/decorators';
 import { actorOf, parse } from '../common/http';
-import { LIVE_STATUSES } from '../stories/workflow';
+import { LIVE_STATUSES } from '../news/workflow';
 import { MediaService } from './media.service';
 
 const variantSchema = z.string().max(20).default('card');
 
-/** The media library. Newsroom-only except for the last route, which serves what a live story shows. */
+/** The media library. Newsroom-only except for the last route, which serves what a live news shows. */
 @Controller()
 export class MediaController {
   constructor(@Inject(MediaService) private readonly media: MediaService) {}
 
   /** The image is the request body (image/jpeg, image/png or image/webp); the filename is a label only. */
   @Post('media')
-  @RequireAnyCapability('story.edit', 'media.manage')
+  @RequireAnyCapability('news.edit', 'media.manage')
   async upload(
     @Body() body: unknown, @Query('filename') filename: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest,
     @Res({ passthrough: true }) reply: FastifyReply,
@@ -42,7 +42,7 @@ export class MediaController {
   }
 
   @Put('media/:id/rights')
-  @RequireAnyCapability('story.edit', 'media.manage')
+  @RequireAnyCapability('news.edit', 'media.manage')
   rights(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
     return this.media.updateRights(id, parse(mediaRightsUpdateSchema, body), actorOf(p, req));
   }

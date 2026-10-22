@@ -55,7 +55,7 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
     invalidated = [];
     published = [];
     cacheFailures = 0;
-    apiResult = { result: 'published', storyId: id };
+    apiResult = { result: 'published', newsId: id };
     apiImpl = defaultApi;
     queues = new QueueRegistry(redisOptionsFromUrl(redisUrl!), `t${randomBytes(4).toString('hex')}`);
     const services: Services = { pool: db.pool, api, log: silentLogger, enqueue: queues.enqueue, cache };
@@ -70,16 +70,16 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
 
   const outboxRow = async (type: string, payload: unknown) =>
     (await db.pool.query<{ id: string }>(
-      `INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload) VALUES ('story', 'x', $1, $2) RETURNING id::text`,
+      `INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload) VALUES ('news', 'x', $1, $2) RETURNING id::text`,
       [type, JSON.stringify(payload)])).rows[0]!.id;
   const receipts = async (key: string) => (await db.pool.query('SELECT 1 FROM processed_job WHERE idempotency_key = $1', [key])).rowCount;
 
   it('carries an outbox row through BullMQ to its handlers', async () => {
-    const eventId = await outboxRow('story.published', { storyId: id, revisionId: id, locales: [{ locale: 'en', slug: 'a' }] });
+    const eventId = await outboxRow('news.published', { newsId: id, revisionId: id, locales: [{ locale: 'en', slug: 'a' }] });
     expect((await dispatchOnce(db.pool, queues.enqueue, silentLogger)).dispatched).toBe(1);
 
     await until(() => invalidated.length === 1);
-    expect(invalidated[0]).toEqual([`story:${id}`, 'locale:en', 'home']);
+    expect(invalidated[0]).toEqual([`news:${id}`, 'locale:en', 'home']);
     await until(async () => (await receipts(`outbox:${eventId}:search.index`)) === 1);
     expect(await receipts(`outbox:${eventId}:cache.invalidate`)).toBe(1);
   });
@@ -134,10 +134,10 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
   });
 
   it('turns a due schedule into one API call and logs the outcome', async () => {
-    const storyId = (await db.pool.query(`INSERT INTO story (canonical_key) VALUES ('sched-story') RETURNING id`)).rows[0].id;
+    const newsId = (await db.pool.query(`INSERT INTO news (canonical_key) VALUES ('sched-news') RETURNING id`)).rows[0].id;
     const scheduleId = (await db.pool.query(
-      `INSERT INTO publishing_schedule (story_id, scheduled_for, time_zone, idempotency_key, created_by)
-       VALUES ($1, now() - interval '1 minute', 'UTC', gen_random_uuid()::text, 'u') RETURNING id`, [storyId])).rows[0].id as string;
+      `INSERT INTO publishing_schedule (news_id, scheduled_for, time_zone, idempotency_key, created_by)
+       VALUES ($1, now() - interval '1 minute', 'UTC', gen_random_uuid()::text, 'u') RETURNING id`, [newsId])).rows[0].id as string;
 
     await scanDueSchedules(db.pool, queues.enqueue, silentLogger);
     await scanDueSchedules(db.pool, queues.enqueue, silentLogger);
@@ -153,10 +153,10 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
       async publishSchedule() {
         calls++;
         if (calls === 1) throw new Error('API answered 503');
-        return { result: 'published', storyId: id };
+        return { result: 'published', newsId: id };
       },
     };
-    await queues.enqueue({ type: 'story.publish_scheduled', payload: { scheduleId: id }, idempotencyKey: 'publish:flaky:1' });
+    await queues.enqueue({ type: 'news.publish_scheduled', payload: { scheduleId: id }, idempotencyKey: 'publish:flaky:1' });
     await until(() => calls >= 2, 12_000);
     expect(calls).toBe(2);
     expect((await queues.queue('publish').getFailed()).length).toBe(0);
@@ -170,7 +170,7 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
         throw new PermanentJobError('The API rejected the internal token');
       },
     };
-    await queues.enqueue({ type: 'story.publish_scheduled', payload: { scheduleId: id }, idempotencyKey: 'publish:wrong:1' });
+    await queues.enqueue({ type: 'news.publish_scheduled', payload: { scheduleId: id }, idempotencyKey: 'publish:wrong:1' });
     const failed = await until(async () => (await queues.queue('publish').getFailed())[0]);
     expect(failed.attemptsMade).toBe(1);
     expect(calls).toBe(1);

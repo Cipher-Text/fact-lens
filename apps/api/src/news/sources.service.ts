@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { canonicalizeUrl, type AttachedSource, type Source, type SourceCreate, type SourceValidation, type StorySourceAttach } from '@fact-lens/contracts';
+import { canonicalizeUrl, type AttachedSource, type Source, type SourceCreate, type SourceValidation, type NewsSourceAttach } from '@fact-lens/contracts';
 import type { Pool } from 'pg';
 import { AuditService } from '../audit/audit.service';
 import { AuthorizationService } from '../auth/authorization.service';
@@ -71,7 +71,7 @@ export class SourcesService {
   }
 
   async validate(id: string, input: SourceValidation, actor: Actor): Promise<Source> {
-    await this.authz.requireAny(actor.principal, ['story.review', 'story.fact_check'], { requestId: actor.requestId, objectType: 'source', objectId: id });
+    await this.authz.requireAny(actor.principal, ['news.review', 'news.fact_check'], { requestId: actor.requestId, objectType: 'source', objectId: id });
     return withTransaction(this.pool, async (db) => {
       const cur = await db.query<Row>('SELECT * FROM source WHERE id = $1 FOR UPDATE', [id]);
       if (!cur.rows[0]) throw new NotFoundException('Source not found');
@@ -86,61 +86,61 @@ export class SourcesService {
     });
   }
 
-  async forStory(storyId: string): Promise<AttachedSource[]> {
-    await this.requireStory(this.pool, storyId);
+  async forNews(newsId: string): Promise<AttachedSource[]> {
+    await this.requireNews(this.pool, newsId);
     const { rows } = await this.pool.query<Row & { relation: AttachedSource['relation']; use_type: AttachedSource['useType']; link_notes: string | null }>(
-      `SELECT s.*, ss.relation, ss.use_type, ss.notes AS link_notes FROM story_source ss JOIN source s ON s.id = ss.source_id
-        WHERE ss.story_id = $1 ORDER BY (ss.relation = 'primary') DESC, s.title`,
-      [storyId],
+      `SELECT s.*, ss.relation, ss.use_type, ss.notes AS link_notes FROM news_source ss JOIN source s ON s.id = ss.source_id
+        WHERE ss.news_id = $1 ORDER BY (ss.relation = 'primary') DESC, s.title`,
+      [newsId],
     );
     return rows.map((r) => ({ ...toSource(r), relation: r.relation, useType: r.use_type, notes: r.link_notes }));
   }
 
-  async attach(storyId: string, sourceId: string, input: StorySourceAttach, actor: Actor): Promise<AttachedSource[]> {
+  async attach(newsId: string, sourceId: string, input: NewsSourceAttach, actor: Actor): Promise<AttachedSource[]> {
     await withTransaction(this.pool, async (db) => {
-      const story = await this.requireStory(db, storyId);
-      if (story.status === 'ARCHIVED') throw new ConflictException({ message: 'Archived stories cannot be edited', reason: 'story_archived' });
+      const news = await this.requireNews(db, newsId);
+      if (news.status === 'ARCHIVED') throw new ConflictException({ message: 'Archived news cannot be edited', reason: 'news_archived' });
       const src = await db.query<Row>('SELECT * FROM source WHERE id = $1', [sourceId]);
       if (!src.rows[0]) throw new NotFoundException('Source not found');
       if (src.rows[0].validation_status === 'rejected') {
         throw new ConflictException({ message: 'A rejected source cannot be attached', reason: 'source_rejected' });
       }
       const res = await db.query(
-        `INSERT INTO story_source (story_id, source_id, relation, use_type, notes) VALUES ($1, $2, $3, $4, $5)
-         ON CONFLICT (story_id, source_id) DO UPDATE SET relation = EXCLUDED.relation, use_type = EXCLUDED.use_type, notes = EXCLUDED.notes
+        `INSERT INTO news_source (news_id, source_id, relation, use_type, notes) VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (news_id, source_id) DO UPDATE SET relation = EXCLUDED.relation, use_type = EXCLUDED.use_type, notes = EXCLUDED.notes
          RETURNING (xmax = 0) AS inserted`,
-        [storyId, sourceId, input.relation, input.useType, input.notes ?? null],
+        [newsId, sourceId, input.relation, input.useType, input.notes ?? null],
       );
       await this.audit.record(
-        { actorType: 'human', actorId: actor.principal.subject, action: res.rows[0].inserted ? 'story.source_attach' : 'story.source_update',
-          objectType: 'story', objectId: storyId, storyId, requestId: actor.requestId,
+        { actorType: 'human', actorId: actor.principal.subject, action: res.rows[0].inserted ? 'news.source_attach' : 'news.source_update',
+          objectType: 'news', objectId: newsId, newsId, requestId: actor.requestId,
           metadata: { sourceId, relation: input.relation, useType: input.useType } },
         db,
       );
-      await db.query('UPDATE story SET updated_at = now() WHERE id = $1', [storyId]);
+      await db.query('UPDATE news SET updated_at = now() WHERE id = $1', [newsId]);
     });
-    return this.forStory(storyId);
+    return this.forNews(newsId);
   }
 
-  async detach(storyId: string, sourceId: string, actor: Actor): Promise<AttachedSource[]> {
+  async detach(newsId: string, sourceId: string, actor: Actor): Promise<AttachedSource[]> {
     await withTransaction(this.pool, async (db) => {
-      const story = await this.requireStory(db, storyId);
-      if (story.status === 'ARCHIVED') throw new ConflictException({ message: 'Archived stories cannot be edited', reason: 'story_archived' });
-      const res = await db.query('DELETE FROM story_source WHERE story_id = $1 AND source_id = $2', [storyId, sourceId]);
-      if (res.rowCount === 0) throw new NotFoundException('That source is not attached to this story');
+      const news = await this.requireNews(db, newsId);
+      if (news.status === 'ARCHIVED') throw new ConflictException({ message: 'Archived news cannot be edited', reason: 'news_archived' });
+      const res = await db.query('DELETE FROM news_source WHERE news_id = $1 AND source_id = $2', [newsId, sourceId]);
+      if (res.rowCount === 0) throw new NotFoundException('That source is not attached to this news item');
       await this.audit.record(
-        { actorType: 'human', actorId: actor.principal.subject, action: 'story.source_detach', objectType: 'story', objectId: storyId,
-          storyId, requestId: actor.requestId, metadata: { sourceId } },
+        { actorType: 'human', actorId: actor.principal.subject, action: 'news.source_detach', objectType: 'news', objectId: newsId,
+          newsId, requestId: actor.requestId, metadata: { sourceId } },
         db,
       );
-      await db.query('UPDATE story SET updated_at = now() WHERE id = $1', [storyId]);
+      await db.query('UPDATE news SET updated_at = now() WHERE id = $1', [newsId]);
     });
-    return this.forStory(storyId);
+    return this.forNews(newsId);
   }
 
-  private async requireStory(db: Pool | import('pg').PoolClient, id: string) {
-    const { rows } = await db.query<{ status: string }>('SELECT status FROM story WHERE id = $1', [id]);
-    if (!rows[0]) throw new NotFoundException('Story not found');
+  private async requireNews(db: Pool | import('pg').PoolClient, id: string) {
+    const { rows } = await db.query<{ status: string }>('SELECT status FROM news WHERE id = $1', [id]);
+    if (!rows[0]) throw new NotFoundException('News not found');
     return rows[0];
   }
 }

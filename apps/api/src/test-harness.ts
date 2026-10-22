@@ -17,13 +17,13 @@ import { MEDIA_OPTIONS, MediaService } from './media/media.service';
 import { MemoryStorage, OBJECT_STORAGE, type ObjectStorage } from './media/storage';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
-import { AssignmentsService } from './stories/assignments.service';
-import { CollabController } from './stories/collab.controller';
-import { CommentsService } from './stories/comments.service';
-import { PublicStoriesController } from './stories/public.controller';
-import { SourcesService } from './stories/sources.service';
-import { StoriesController } from './stories/stories.controller';
-import { StoriesService } from './stories/stories.service';
+import { AssignmentsService } from './news/assignments.service';
+import { CollabController } from './news/collab.controller';
+import { CommentsService } from './news/comments.service';
+import { PublicNewsController } from './news/public.controller';
+import { SourcesService } from './news/sources.service';
+import { NewsController } from './news/news.controller';
+import { NewsService } from './news/news.service';
 import { LocalesController } from './config/locales.controller';
 import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller';
 import { TaxonomyController } from './taxonomy/taxonomy.controller';
@@ -63,11 +63,11 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+    controllers: [NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
-      StoriesService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, MediaService,
+      NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, MediaService,
       { provide: OBJECT_STORAGE, useValue: storage },
       { provide: MEDIA_OPTIONS, useValue: { maxBytes: opts.maxUploadBytes ?? 10 * 1024 * 1024 } },
       { provide: TOKEN_VERIFIER, useValue: verifier },

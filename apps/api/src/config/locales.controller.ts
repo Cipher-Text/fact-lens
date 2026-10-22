@@ -12,7 +12,7 @@ const toLocale = (r: Row): Locale => ({ code: r.code, displayName: r.display_nam
 
 /**
  * The languages the platform can publish in. Adding one is data, not a release: categories and tags
- * can then be named in it, and stories translated into it.
+ * can then be named in it, and news translated into it.
  */
 @Controller('config/locales')
 @RequireCapability('config.manage')

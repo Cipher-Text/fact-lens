@@ -30,7 +30,7 @@ export default async function MediaPage({ params }: { params: Promise<{ id: stri
               <dt className="text-muted">Size</dt><dd>{asset.width} × {asset.height} px · {formatBytes(asset.byteSize)}</dd>
               <dt className="text-muted">Type</dt><dd>{asset.mimeType}</dd>
               <dt className="text-muted">Copies</dt><dd>{asset.variants.map((v) => `${v.name} ${v.width}px`).join(', ')}</dd>
-              <dt className="text-muted">Used in</dt><dd>{asset.usageCount} {asset.usageCount === 1 ? 'story' : 'stories'}</dd>
+              <dt className="text-muted">Used in</dt><dd>{asset.usageCount} {asset.usageCount === 1 ? 'news item' : 'news items'}</dd>
             </dl>
           </Panel>
           {can(principal, 'media.manage') ? <Panel title="Delete" id="del"><DeleteMedia id={asset.id} usageCount={asset.usageCount} /></Panel> : null}

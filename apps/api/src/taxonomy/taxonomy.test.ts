@@ -19,20 +19,20 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
   const cats = async () => (await t.call({ method: 'GET', url: '/taxonomy/categories' })).body as any[];
   const nav = async (locale: string) => (await t.anonymous('GET', `/public/navigation/${locale}`)).json() as any[];
 
-  /** A story with a Bangla and an English version, published with the given category and tags. */
+  /** A news item with a Bangla and an English version, published with the given category and tags. */
   async function publish(slug: string, categoryId: string | null, tagIds: string[], withBangla = true) {
-    const created = await t.call({ method: 'POST', url: '/stories', roles: ['reporter'], body: { locale: 'en', title: `T ${slug}`, slug, deskId, categoryId } });
+    const created = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: `T ${slug}`, slug, deskId, categoryId } });
     expect(created.status).toBe(201);
-    const id = created.body.story.id as string;
-    expect((await t.call({ method: 'PUT', url: `/stories/${id}/translations/en`, roles: ['reporter'], body: { title: `T ${slug}`, body: doc('x'), slug, expectedVersion: 1 } })).status).toBe(200);
+    const id = created.body.news.id as string;
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/translations/en`, roles: ['reporter'], body: { title: `T ${slug}`, body: doc('x'), slug, expectedVersion: 1 } })).status).toBe(200);
     if (withBangla) {
-      const bn = await t.call({ method: 'PUT', url: `/stories/${id}/translations/bn-BD`, roles: ['reporter'], body: { title: `শিরোনাম ${slug}`, body: doc('লেখা'), slug: `bn-${slug}`, expectedVersion: null } });
+      const bn = await t.call({ method: 'PUT', url: `/news/${id}/translations/bn-BD`, roles: ['reporter'], body: { title: `শিরোনাম ${slug}`, body: doc('লেখা'), slug: `bn-${slug}`, expectedVersion: null } });
       expect(bn.status, JSON.stringify(bn.body)).toBeLessThan(300);
     }
-    expect((await t.call({ method: 'PUT', url: `/stories/${id}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } })).status).toBe(200);
-    if (tagIds.length) expect((await t.call({ method: 'PUT', url: `/stories/${id}/tags`, roles: ['reporter'], body: { tagIds } })).status).toBe(200);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } })).status).toBe(200);
+    if (tagIds.length) expect((await t.call({ method: 'PUT', url: `/news/${id}/tags`, roles: ['reporter'], body: { tagIds } })).status).toBe(200);
     for (const [to, role] of [['EDITOR_REVIEW', 'reporter'], ['READY', 'fact_checker'], ['PUBLISHED', 'managing_editor']] as const) {
-      const r = await t.call({ method: 'POST', url: `/stories/${id}/transitions`, roles: [role], body: { to } });
+      const r = await t.call({ method: 'POST', url: `/news/${id}/transitions`, roles: [role], body: { to } });
       expect(r.status, JSON.stringify(r.body)).toBe(201);
     }
     return id;
@@ -116,60 +116,60 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     const local = (await cats()).find((c) => c.key === 'local');
     const id = await publish('flood-report', local.id, tagIds);
 
-    const en = (await t.anonymous('GET', '/public/stories/en/flood-report')).json() as any;
+    const en = (await t.anonymous('GET', '/public/news/en/flood-report')).json() as any;
     expect(en.category).toEqual({ key: 'local', name: 'Local', slug: 'local' });
     expect(en.tags.map((x: any) => x.name)).toEqual(['India', 'United States']);
-    const bn = (await t.anonymous('GET', '/public/stories/bn-BD/bn-flood-report')).json() as any;
+    const bn = (await t.anonymous('GET', '/public/news/bn-BD/bn-flood-report')).json() as any;
     expect(bn.category.name).toBe('স্থানীয়');
     expect(bn.tags.map((x: any) => x.name).sort()).toEqual(['ভারত', 'যুক্তরাষ্ট্র'].sort());
 
-    const byCategory = (await t.anonymous('GET', '/public/stories/en?category=local')).json() as any;
+    const byCategory = (await t.anonymous('GET', '/public/news/en?category=local')).json() as any;
     expect(byCategory.filter).toMatchObject({ type: 'category', name: 'Local' });
     expect(byCategory.items.map((i: any) => i.id)).toEqual([id]);
-    const byTagBn = (await t.anonymous('GET', '/public/stories/bn-BD?tag=india')).json() as any;
+    const byTagBn = (await t.anonymous('GET', '/public/news/bn-BD?tag=india')).json() as any;
     expect(byTagBn.items.map((i: any) => i.slug)).toEqual(['bn-flood-report']);
-    expect((await t.anonymous('GET', '/public/stories/en?category=no-such')).statusCode).toBe(404);
-    expect((await t.anonymous('GET', '/public/stories/en?category=local&tag=india')).statusCode).toBe(400);
+    expect((await t.anonymous('GET', '/public/news/en?category=no-such')).statusCode).toBe(404);
+    expect((await t.anonymous('GET', '/public/news/en?category=local&tag=india')).statusCode).toBe(400);
   });
 
-  it('leaves a story out of a language it was never translated into', async () => {
+  it('leaves a news item out of a language it was never translated into', async () => {
     const national = (await cats()).find((c) => c.key === 'national');
     await publish('english-only', national.id, [], false);
-    expect(((await t.anonymous('GET', '/public/stories/bn-BD?category=national')).json() as any).items).toEqual([]);
-    expect(((await t.anonymous('GET', '/public/stories/en?category=national')).json() as any).items).toHaveLength(1);
+    expect(((await t.anonymous('GET', '/public/news/bn-BD?category=national')).json() as any).items).toEqual([]);
+    expect(((await t.anonymous('GET', '/public/news/en?category=national')).json() as any).items).toHaveLength(1);
   });
 
-  it('does not list unpublished stories, and pages with a cursor', async () => {
-    const draft = await t.call({ method: 'POST', url: '/stories', roles: ['reporter'], body: { locale: 'en', title: 'Hidden', slug: 'hidden', deskId } });
+  it('does not list unpublished news, and pages with a cursor', async () => {
+    const draft = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Hidden', slug: 'hidden', deskId } });
     expect(draft.status).toBe(201);
-    const all = (await t.anonymous('GET', '/public/stories/en?limit=1')).json() as any;
+    const all = (await t.anonymous('GET', '/public/news/en?limit=1')).json() as any;
     expect(all.items).toHaveLength(1);
     expect(all.nextCursor).toBeTruthy();
-    const next = (await t.anonymous('GET', `/public/stories/en?limit=5&cursor=${all.nextCursor}`)).json() as any;
+    const next = (await t.anonymous('GET', `/public/news/en?limit=5&cursor=${all.nextCursor}`)).json() as any;
     expect(next.items.map((i: any) => i.slug)).not.toContain(all.items[0].slug);
     expect([...all.items, ...next.items].map((i: any) => i.slug)).not.toContain('hidden');
-    expect((await t.anonymous('GET', '/public/stories/en?cursor=%21%21')).statusCode).toBe(400);
+    expect((await t.anonymous('GET', '/public/news/en?cursor=%21%21')).statusCode).toBe(400);
   });
 
-  it('replaces the tags of a story, limits them, and refuses archived or unknown ones', async () => {
-    const created = await t.call({ method: 'POST', url: '/stories', roles: ['reporter'], body: { locale: 'en', title: 'Tagged', slug: 'tagged', deskId } });
-    const id = created.body.story.id;
+  it('replaces the tags of a news item, limits them, and refuses archived or unknown ones', async () => {
+    const created = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Tagged', slug: 'tagged', deskId } });
+    const id = created.body.news.id;
     const items = (await t.call({ method: 'GET', url: '/reference/tags?limit=40', roles: ['reporter'] })).body.items as any[];
     expect(items).toHaveLength(40);
-    const set = await t.call({ method: 'PUT', url: `/stories/${id}/tags`, roles: ['reporter'], body: { tagIds: items.slice(0, 3).map((x) => x.id) } });
+    const set = await t.call({ method: 'PUT', url: `/news/${id}/tags`, roles: ['reporter'], body: { tagIds: items.slice(0, 3).map((x) => x.id) } });
     expect(set.body).toHaveLength(3);
-    const swap = await t.call({ method: 'PUT', url: `/stories/${id}/tags`, roles: ['reporter'], body: { tagIds: [items[5]!.id] } });
+    const swap = await t.call({ method: 'PUT', url: `/news/${id}/tags`, roles: ['reporter'], body: { tagIds: [items[5]!.id] } });
     expect(swap.body.map((x: any) => x.id)).toEqual([items[5]!.id]);
-    expect((await t.call({ method: 'GET', url: `/stories/${id}`, roles: ['reporter'] })).body.tags).toHaveLength(1);
-    expect((await t.call({ method: 'PUT', url: `/stories/${id}/tags`, roles: ['reporter'], body: { tagIds: items.map((x) => x.id) } })).status).toBe(400);
-    expect((await t.call({ method: 'PUT', url: `/stories/${id}/tags`, roles: ['reporter'], body: { tagIds: ['00000000-0000-4000-8000-000000000000'] } })).status).toBe(400);
+    expect((await t.call({ method: 'GET', url: `/news/${id}`, roles: ['reporter'] })).body.tags).toHaveLength(1);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/tags`, roles: ['reporter'], body: { tagIds: items.map((x) => x.id) } })).status).toBe(400);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/tags`, roles: ['reporter'], body: { tagIds: ['00000000-0000-4000-8000-000000000000'] } })).status).toBe(400);
     await t.call({ method: 'PUT', url: `/taxonomy/tags/${items[7]!.id}`, body: { status: 'archived' } });
-    expect((await t.call({ method: 'PUT', url: `/stories/${id}/tags`, roles: ['reporter'], body: { tagIds: [items[7]!.id] } })).status).toBe(400);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/tags`, roles: ['reporter'], body: { tagIds: [items[7]!.id] } })).status).toBe(400);
     expect((await t.call({ method: 'GET', url: '/reference/tags?limit=500', roles: ['reporter'] })).body.items.some((x: any) => x.id === items[7]!.id)).toBe(false);
-    expect((await t.call({ method: 'PUT', url: `/stories/${id}/tags`, roles: ['analyst'], body: { tagIds: [] } })).status).toBe(403);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/tags`, roles: ['analyst'], body: { tagIds: [] } })).status).toBe(403);
   });
 
-  it('refuses to delete what stories use, and deletes what nobody uses', async () => {
+  it('refuses to delete what news use, and deletes what nobody uses', async () => {
     const used = (await t.call({ method: 'GET', url: '/taxonomy/tags?query=india' })).body.items.find((x: any) => x.key === 'india');
     expect(used.usageCount).toBeGreaterThan(0);
     const refused = await t.call({ method: 'DELETE', url: `/taxonomy/tags/${used.id}` });

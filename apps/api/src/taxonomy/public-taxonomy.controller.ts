@@ -1,11 +1,11 @@
 import { Controller, Get, Inject, NotFoundException, Param, Query, Res } from '@nestjs/common';
-import { localeCodeSchema, publicStoryListQuerySchema, type PublicStoryList, type PublicTaxonomyRef } from '@fact-lens/contracts';
+import { localeCodeSchema, publicNewsListQuerySchema, type PublicNewsList, type PublicTaxonomyRef } from '@fact-lens/contracts';
 import type { FastifyReply } from 'fastify';
 import { Public } from '../auth/decorators';
 import { parse } from '../common/http';
 import { TaxonomyService } from './taxonomy.service';
 
-/** What readers get: the menu and the lists, per language, from published stories only. */
+/** What readers get: the menu and the lists, per language, from published news only. */
 @Public()
 @Controller('public')
 export class PublicTaxonomyController {
@@ -24,9 +24,9 @@ export class PublicTaxonomyController {
     return items;
   }
 
-  @Get('stories/:locale')
-  async stories(@Param('locale') locale: string, @Query() query: unknown, @Res({ passthrough: true }) reply: FastifyReply): Promise<PublicStoryList> {
-    const list = await this.taxonomy.publicStories(this.locale(locale), parse(publicStoryListQuerySchema, query));
+  @Get('news/:locale')
+  async news(@Param('locale') locale: string, @Query() query: unknown, @Res({ passthrough: true }) reply: FastifyReply): Promise<PublicNewsList> {
+    const list = await this.taxonomy.publicNews(this.locale(locale), parse(publicNewsListQuerySchema, query));
     void reply.header('cache-control', 'public, max-age=30, stale-while-revalidate=120');
     return list;
   }

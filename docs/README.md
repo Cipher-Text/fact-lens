@@ -8,7 +8,7 @@ This set of documents plans a rebuild of FactLens as a digital newsroom platform
 
 **TARGET:** FactLens should be a TypeScript platform with separate public web and purpose-built newsroom apps, a NestJS/Fastify modular-monolith API, PostgreSQL as source of truth, Redis plus BullMQ for asynchronous work, Cloudflare R2 media storage, OIDC and capability-based authorization, and a centralized AI Gateway. The public site remains Next.js and CDN/cache-first. Advertising (Advertiser/Campaign/Placement/Ad/AdEvent) is confirmed in Phase 1 launch scope, carried forward from CipherPress's current design as a separate commercial module.
 
-**Major migration challenges:** preserve published URLs and timestamps; convert Strapi localization links and HTML into a revisioned bilingual story model; migrate media and attribution; reproduce SEO/sitemap/analytics behavior; replace Strapi Admin workflows without losing editorial continuity; and validate every imported relation and redirect.
+**Major migration challenges:** preserve published URLs and timestamps; convert Strapi localization links and HTML into a revisioned bilingual news item model; migrate media and attribution; reproduce SEO/sitemap/analytics behavior; replace Strapi Admin workflows without losing editorial continuity; and validate every imported relation and redirect.
 
 **Status:** the Phase 1 foundation and most of the editorial core are built and tested; migration, ingestion, AI, distribution, search and the public cutover are not. See [implementation status](./22-implementation-status.md). Do not cut over public traffic yet.
 

@@ -10,7 +10,7 @@ export const licenseSuggestions = [
 export interface RightsStatus {
   label: string;
   tone: 'good' | 'warn' | 'bad';
-  /** True when a story using the image can be published. */
+  /** True when a news item using the image can be published. */
   ready: boolean;
 }
 

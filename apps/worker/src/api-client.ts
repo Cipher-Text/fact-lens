@@ -6,7 +6,7 @@ export interface ApiClient {
 }
 
 /**
- * The worker changes story state only through the API, which owns the domain rules (docs/15).
+ * The worker changes news state only through the API, which owns the domain rules (docs/15).
  * Network errors and 5xx are thrown as ordinary errors so the job retries; a response that
  * retrying cannot change is a permanent failure.
  */

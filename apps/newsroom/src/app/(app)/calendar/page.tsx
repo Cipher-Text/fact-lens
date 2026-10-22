@@ -7,7 +7,7 @@ export default function Page() {
     <div>
       <h1 className="mb-4 text-xl font-semibold">Publishing calendar</h1>
       <Panel title="Not built yet" id="nb">
-        <p className="text-sm text-muted">Schedules, locale readiness and failed publish jobs will appear here. Scheduling already works from the story page.</p>
+        <p className="text-sm text-muted">Schedules, locale readiness and failed publish jobs will appear here. Scheduling already works from the news item page.</p>
       </Panel>
     </div>
   );

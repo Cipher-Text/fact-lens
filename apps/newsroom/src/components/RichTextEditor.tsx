@@ -79,7 +79,7 @@ function Toolbar({ editor, onImage }: { editor: Editor; onImage: () => void }) {
         <ToolButton label="Divider" onClick={() => run().setHorizontalRule().run()}>―</ToolButton>
         <ToolButton label="Insert image from the library" onClick={onImage}>Image</ToolButton>
         </div>
-        <div role="group" aria-label="History" className="flex shrink-0 items-center gap-1">
+        <div role="group" aria-label="Hinews" className="flex shrink-0 items-center gap-1">
         <ToolButton label="Undo" disabled={!s.canUndo} onClick={() => run().undo().run()}>↶</ToolButton>
         <ToolButton label="Redo" disabled={!s.canRedo} onClick={() => run().redo().run()}>↷</ToolButton>
         </div>
@@ -100,12 +100,12 @@ function Toolbar({ editor, onImage }: { editor: Editor; onImage: () => void }) {
 }
 
 /**
- * The story text editor. It can only make what the body contract allows. The parent receives the
+ * The news item text editor. It can only make what the body contract allows. The parent receives the
  * editor so it can read the document when the form is saved, and `onChange` when it is edited.
  */
 export function RichTextEditor({ initialContent, lang, label, onEditor, onChange, onPickImage }: {
   initialContent: unknown; lang: string; label: string; onEditor: (editor: Editor | null) => void; onChange: () => void;
-  /** Opens the library picker. It lives outside the form, so it cannot submit the story. */
+  /** Opens the library picker. It lives outside the form, so it cannot submit the news item. */
   onPickImage: () => void;
 }) {
   const editor = useEditor({

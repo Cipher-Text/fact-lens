@@ -42,11 +42,11 @@ const notBuilt = (name: string): Handler<never> => ({
 });
 
 export const handlers: Handlers = {
-  'story.publish_scheduled': {
+  'news.publish_scheduled': {
     receipt: false, // the API makes this idempotent: a second call returns the first outcome
     async run({ scheduleId }, { api, log }) {
       const res = await api.publishSchedule(scheduleId);
-      log.info('story.publish_scheduled', { scheduleId, ...res });
+      log.info('news.publish_scheduled', { scheduleId, ...res });
     },
   },
   'cache.invalidate': {

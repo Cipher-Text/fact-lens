@@ -1,79 +1,79 @@
 import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
 import {
-  correctionCreateSchema, editorialCapabilities, localeCodeSchema, revisionCreateSchema, storyCreateSchema,
-  storyListQuerySchema, storyMetaSchema, transitionRequestSchema, translationSaveSchema,
-  type Principal, type StoryDetail, type StoryList,
+  correctionCreateSchema, editorialCapabilities, localeCodeSchema, revisionCreateSchema, newsCreateSchema,
+  newsListQuerySchema, newsMetaSchema, transitionRequestSchema, translationSaveSchema,
+  type Principal, type NewsDetail, type NewsList,
 } from '@fact-lens/contracts';
 import type { FastifyRequest } from 'fastify';
 import { actorOf as actor, parse } from '../common/http';
 import { CurrentPrincipal, RequireAnyCapability, RequireCapability } from '../auth/decorators';
-import { StoriesService } from './stories.service';
+import { NewsService } from './news.service';
 
-@Controller('stories')
-export class StoriesController {
-  constructor(@Inject(StoriesService) private readonly stories: StoriesService) {}
+@Controller('news')
+export class NewsController {
+  constructor(@Inject(NewsService) private readonly news: NewsService) {}
 
   @Get()
   @RequireAnyCapability(...editorialCapabilities)
-  list(@Query() query: unknown): Promise<StoryList> {
-    return this.stories.list(parse(storyListQuerySchema, query));
+  list(@Query() query: unknown): Promise<NewsList> {
+    return this.news.list(parse(newsListQuerySchema, query));
   }
 
   @Get(':id')
   @RequireAnyCapability(...editorialCapabilities)
-  detail(@Param('id', ParseUUIDPipe) id: string, @CurrentPrincipal() p: Principal): Promise<StoryDetail> {
-    return this.stories.detail(id, p);
+  detail(@Param('id', ParseUUIDPipe) id: string, @CurrentPrincipal() p: Principal): Promise<NewsDetail> {
+    return this.news.detail(id, p);
   }
 
   @Get(':id/revisions')
   @RequireAnyCapability(...editorialCapabilities)
   revisions(@Param('id', ParseUUIDPipe) id: string) {
-    return this.stories.revisions(id);
+    return this.news.revisions(id);
   }
 
   @Get(':id/timeline')
   @RequireAnyCapability(...editorialCapabilities)
   timeline(@Param('id', ParseUUIDPipe) id: string) {
-    return this.stories.timeline(id);
+    return this.news.timeline(id);
   }
 
   @Post()
-  @RequireCapability('story.edit')
+  @RequireCapability('news.edit')
   create(@Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
-    return this.stories.create(parse(storyCreateSchema, body), actor(p, req));
+    return this.news.create(parse(newsCreateSchema, body), actor(p, req));
   }
 
   @Put(':id/meta')
-  @RequireCapability('story.edit')
+  @RequireCapability('news.edit')
   meta(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
-    return this.stories.updateMeta(id, parse(storyMetaSchema, body), actor(p, req));
+    return this.news.updateMeta(id, parse(newsMetaSchema, body), actor(p, req));
   }
 
   @Put(':id/translations/:locale')
-  @RequireCapability('story.edit')
+  @RequireCapability('news.edit')
   saveTranslation(
     @Param('id', ParseUUIDPipe) id: string, @Param('locale') locale: string, @Body() body: unknown,
     @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest,
   ) {
-    return this.stories.saveTranslation(id, parse(localeCodeSchema, locale), parse(translationSaveSchema, body), actor(p, req));
+    return this.news.saveTranslation(id, parse(localeCodeSchema, locale), parse(translationSaveSchema, body), actor(p, req));
   }
 
   @Post(':id/revisions')
-  @RequireCapability('story.edit')
+  @RequireCapability('news.edit')
   createRevision(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
-    return this.stories.createRevision(id, parse(revisionCreateSchema, body), actor(p, req));
+    return this.news.createRevision(id, parse(revisionCreateSchema, body), actor(p, req));
   }
 
   /** The capability is checked in the service: it depends on the move and the desk's policy. */
   @Post(':id/transitions')
   @RequireAnyCapability(...editorialCapabilities)
   transition(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
-    return this.stories.transition(id, parse(transitionRequestSchema, body), actor(p, req));
+    return this.news.transition(id, parse(transitionRequestSchema, body), actor(p, req));
   }
 
   @Post(':id/corrections')
-  @RequireCapability('story.correct')
+  @RequireCapability('news.correct')
   correct(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
-    return this.stories.createCorrection(id, parse(correctionCreateSchema, body), actor(p, req));
+    return this.news.createCorrection(id, parse(correctionCreateSchema, body), actor(p, req));
   }
 }

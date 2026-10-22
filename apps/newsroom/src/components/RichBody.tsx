@@ -59,8 +59,8 @@ function renderNode(node: Node, key: number): ReactNode {
 }
 
 /**
- * Renders a story body as read-only HTML. It builds elements from the validated JSON and never
- * injects markup, so text from a story cannot become a script. A body that fails the schema is
+ * Renders a news item body as read-only HTML. It builds elements from the validated JSON and never
+ * injects markup, so text from a news item cannot become a script. A body that fails the schema is
  * not rendered at all.
  */
 export function RichBody({ body, lang }: { body: unknown; lang?: string }) {

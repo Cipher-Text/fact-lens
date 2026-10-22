@@ -8,14 +8,14 @@ import { planJobs, UnroutableEventError } from './routes';
 
 const adminUrl = process.env.TEST_DATABASE_URL;
 const id = '0b6c9a52-6f0c-4f3e-9a0c-7d1a2f6d5e11';
-const published = (storyId = id) => ({ storyId, revisionId: id, locales: [{ locale: 'en', slug: 'a' }, { locale: 'bn-BD', slug: 'খ' }] });
+const published = (newsId = id) => ({ newsId, revisionId: id, locales: [{ locale: 'en', slug: 'a' }, { locale: 'bn-BD', slug: 'খ' }] });
 
 describe('event routes', () => {
   it('route every outbox event type the API can write', () => {
     const samples: Record<string, unknown> = {
-      'story.published': published(),
-      'story.archived': { storyId: id },
-      'story.schedule_failed': { storyId: id, scheduleId: id, reason: 'x' },
+      'news.published': published(),
+      'news.archived': { newsId: id },
+      'news.schedule_failed': { newsId: id, scheduleId: id, reason: 'x' },
       'config.flag_changed': { key: 'ads.serving', enabled: true },
     };
     expect(Object.keys(samples).sort()).toEqual([...outboxEventTypes].sort());
@@ -26,11 +26,11 @@ describe('event routes', () => {
   });
 
   it('fans a publication out to cache and search, and rejects unknown or malformed events', () => {
-    const jobs = planJobs('story.published', published());
+    const jobs = planJobs('news.published', published());
     expect(jobs.map((j) => j.type)).toEqual(['cache.invalidate', 'search.index']);
-    expect(jobs[0]!.payload).toEqual({ tags: [`story:${id}`, 'locale:en', 'locale:bn-BD', 'home'] });
-    expect(() => planJobs('story.exploded', {})).toThrow(UnroutableEventError);
-    expect(() => planJobs('story.published', { storyId: 'nope' })).toThrow(UnroutableEventError);
+    expect(jobs[0]!.payload).toEqual({ tags: [`news:${id}`, 'locale:en', 'locale:bn-BD', 'home'] });
+    expect(() => planJobs('news.exploded', {})).toThrow(UnroutableEventError);
+    expect(() => planJobs('news.published', { newsId: 'nope' })).toThrow(UnroutableEventError);
   });
 });
 
@@ -43,9 +43,9 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
   });
   afterAll(() => db?.drop());
 
-  const insert = async (type: string, payload: unknown = { storyId: id }) =>
+  const insert = async (type: string, payload: unknown = { newsId: id }) =>
     (await db.pool.query<{ id: string }>(
-      `INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload) VALUES ('story', 'x', $1, $2) RETURNING id::text`,
+      `INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload) VALUES ('news', 'x', $1, $2) RETURNING id::text`,
       [type, JSON.stringify(payload)])).rows[0]!.id;
   const row = async (eventId: string) =>
     (await db.pool.query(`SELECT * FROM outbox_event WHERE id = $1`, [eventId])).rows[0];
@@ -55,7 +55,7 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
   };
 
   it('turns a row into jobs keyed by the outbox id and marks it dispatched', async () => {
-    const eventId = await insert('story.published', published());
+    const eventId = await insert('news.published', published());
     const { calls, enqueue } = recorder();
     const result = await dispatchOnce(db.pool, enqueue, silentLogger);
     expect(result).toMatchObject({ claimed: 1, dispatched: 1, retried: 0, parked: 0 });
@@ -66,7 +66,7 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
   });
 
   it('retries a failed enqueue later with the same keys', async () => {
-    const eventId = await insert('story.archived');
+    const eventId = await insert('news.archived');
     let fail = true;
     const calls: JobRequest[] = [];
     const enqueue = async (r: JobRequest) => {
@@ -88,7 +88,7 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
   });
 
   it('parks a row after the maximum attempts and keeps it for inspection', async () => {
-    const eventId = await insert('story.archived');
+    const eventId = await insert('news.archived');
     const enqueue = async () => {
       throw new Error('still down');
     };
@@ -103,8 +103,8 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
   });
 
   it('parks an unknown event type or a malformed payload at once, without enqueuing', async () => {
-    const unknown = await insert('story.exploded', {});
-    const bad = await insert('story.published', { storyId: 'nope' });
+    const unknown = await insert('news.exploded', {});
+    const bad = await insert('news.published', { newsId: 'nope' });
     const { calls, enqueue } = recorder();
     const result = await dispatchOnce(db.pool, enqueue, silentLogger);
     expect(result).toMatchObject({ parked: 2, retried: 0 });
@@ -114,7 +114,7 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
   });
 
   it('never hands one row to two dispatchers at the same time', async () => {
-    const ids = await Promise.all(Array.from({ length: 30 }, () => insert('story.archived')));
+    const ids = await Promise.all(Array.from({ length: 30 }, () => insert('news.archived')));
     const seen = new Map<string, number>();
     const enqueue = async (r: JobRequest) => {
       await new Promise((res) => setTimeout(res, 5));
@@ -129,8 +129,8 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
   });
 
   it('reclaims a row whose lease expired, but not one still leased', async () => {
-    const stuck = await insert('story.archived');
-    const live = await insert('story.archived');
+    const stuck = await insert('news.archived');
+    const live = await insert('news.archived');
     await db.pool.query(`UPDATE outbox_event SET lease_until = now() - interval '1 minute', attempts = 1 WHERE id = $1`, [stuck]);
     await db.pool.query(`UPDATE outbox_event SET lease_until = now() + interval '1 minute', attempts = 1 WHERE id = $1`, [live]);
     const { calls, enqueue } = recorder();
@@ -143,7 +143,7 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
 
   it('reports pending depth, dead letters and lag', async () => {
     await db.pool.query(`DELETE FROM outbox_event WHERE dispatched_at IS NOT NULL`);
-    const eventId = await insert('story.archived');
+    const eventId = await insert('news.archived');
     await db.pool.query(`UPDATE outbox_event SET created_at = now() - interval '90 seconds' WHERE id = $1`, [eventId]);
     const stats = await outboxStats(db.pool);
     expect(stats.pending).toBeGreaterThanOrEqual(1);

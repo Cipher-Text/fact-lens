@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
 import {
-  categoryCreateSchema, categoryOrderSchema, categoryUpdateSchema, editorialCapabilities, storyTagsSchema, tagCreateSchema,
+  categoryCreateSchema, categoryOrderSchema, categoryUpdateSchema, editorialCapabilities, newsTagsSchema, tagCreateSchema,
   tagUpdateSchema, taxonomyTagQuerySchema, type Principal,
 } from '@fact-lens/contracts';
 import type { FastifyRequest } from 'fastify';
@@ -8,7 +8,7 @@ import { CurrentPrincipal, RequireAnyCapability, RequireCapability } from '../au
 import { actorOf, parse } from '../common/http';
 import { TaxonomyService } from './taxonomy.service';
 
-/** Managing the menu and the tags needs `taxonomy.manage`; reading them to fill in a story needs only an editorial role. */
+/** Managing the menu and the tags needs `taxonomy.manage`; reading them to fill in a news item needs only an editorial role. */
 @Controller()
 export class TaxonomyController {
   constructor(@Inject(TaxonomyService) private readonly taxonomy: TaxonomyService) {}
@@ -72,7 +72,7 @@ export class TaxonomyController {
     await this.taxonomy.deleteTag(id, actorOf(p, req));
   }
 
-  // ---- for editors filling in a story
+  // ---- for editors filling in a news item
   /** Active tags for the picker. Archived tags are not offered. */
   @Get('reference/tags')
   @RequireAnyCapability(...editorialCapabilities)
@@ -81,15 +81,15 @@ export class TaxonomyController {
     return this.taxonomy.listTags({ ...q, status: 'active' });
   }
 
-  @Get('stories/:id/tags')
+  @Get('news/:id/tags')
   @RequireAnyCapability(...editorialCapabilities)
-  storyTags(@Param('id', ParseUUIDPipe) id: string) {
-    return this.taxonomy.tagsOfStory(id);
+  newsTags(@Param('id', ParseUUIDPipe) id: string) {
+    return this.taxonomy.tagsOfNews(id);
   }
 
-  @Put('stories/:id/tags')
-  @RequireCapability('story.edit')
-  setStoryTags(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
-    return this.taxonomy.setStoryTags(id, parse(storyTagsSchema, body).tagIds, actorOf(p, req));
+  @Put('news/:id/tags')
+  @RequireCapability('news.edit')
+  setNewsTags(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
+    return this.taxonomy.setNewsTags(id, parse(newsTagsSchema, body).tagIds, actorOf(p, req));
   }
 }

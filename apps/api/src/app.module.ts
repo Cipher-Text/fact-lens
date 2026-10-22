@@ -8,13 +8,13 @@ import { MEDIA_OPTIONS, MediaService } from './media/media.service';
 import { createStorage, OBJECT_STORAGE } from './media/storage';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
-import { AssignmentsService } from './stories/assignments.service';
-import { CollabController } from './stories/collab.controller';
-import { CommentsService } from './stories/comments.service';
-import { SourcesService } from './stories/sources.service';
-import { PublicStoriesController } from './stories/public.controller';
-import { StoriesController } from './stories/stories.controller';
-import { StoriesService } from './stories/stories.service';
+import { AssignmentsService } from './news/assignments.service';
+import { CollabController } from './news/collab.controller';
+import { CommentsService } from './news/comments.service';
+import { SourcesService } from './news/sources.service';
+import { PublicNewsController } from './news/public.controller';
+import { NewsController } from './news/news.controller';
+import { NewsService } from './news/news.service';
 import { LocalesController } from './config/locales.controller';
 import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller';
 import { TaxonomyController } from './taxonomy/taxonomy.controller';
@@ -27,13 +27,13 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [HealthController, MeController, FeatureFlagsController, StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+  controllers: [HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
   providers: [
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
     { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },
     { provide: MEDIA_OPTIONS, useFactory: () => ({ maxBytes: loadApiEnv().MAX_UPLOAD_MB * 1024 * 1024 }) },
     MediaService,
-    StoriesService,
+    NewsService,
     TaxonomyService,
     CommentsService,
     AssignmentsService,

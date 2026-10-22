@@ -15,16 +15,16 @@ const job = <T extends JobType>(type: T, payload: JobPayload<T>): PlannedJob => 
  * an unlisted one is parked in the dead-letter set rather than silently dropped.
  */
 const routes: { [K in OutboxEventType]: (p: import('@fact-lens/contracts').OutboxEventPayload<K>) => PlannedJob[] } = {
-  'story.published': (p) => [
-    job('cache.invalidate', { tags: [`story:${p.storyId}`, ...p.locales.map((l) => `locale:${l.locale}`), 'home'] }),
-    job('search.index', { storyId: p.storyId, operation: 'upsert' }),
+  'news.published': (p) => [
+    job('cache.invalidate', { tags: [`news:${p.newsId}`, ...p.locales.map((l) => `locale:${l.locale}`), 'home'] }),
+    job('search.index', { newsId: p.newsId, operation: 'upsert' }),
   ],
-  'story.archived': (p) => [
-    job('cache.invalidate', { tags: [`story:${p.storyId}`, 'home'] }),
-    job('search.index', { storyId: p.storyId, operation: 'delete' }),
+  'news.archived': (p) => [
+    job('cache.invalidate', { tags: [`news:${p.newsId}`, 'home'] }),
+    job('search.index', { newsId: p.newsId, operation: 'delete' }),
   ],
-  'story.schedule_failed': (p) => [
-    job('notification.send', { kind: 'schedule_failed', storyId: p.storyId, scheduleId: p.scheduleId, reason: p.reason }),
+  'news.schedule_failed': (p) => [
+    job('notification.send', { kind: 'schedule_failed', newsId: p.newsId, scheduleId: p.scheduleId, reason: p.reason }),
   ],
   'config.flag_changed': () => [job('cache.invalidate', { tags: ['config'] })],
 };

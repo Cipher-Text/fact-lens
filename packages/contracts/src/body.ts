@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /**
- * Story body: ProseMirror/Tiptap JSON checked against an allowlist. Anything else is rejected
+ * News body: ProseMirror/Tiptap JSON checked against an allowlist. Anything else is rejected
  * rather than stripped, so stored content is always renderable by the public site. Images are
  * references to media assets, never URLs. (docs/07, docs/12)
  */

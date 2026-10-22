@@ -6,7 +6,7 @@ import { INTERNAL_TOKEN_HEADER, type ScheduledPublishResult } from '@fact-lens/c
 import { createHash, timingSafeEqual } from 'node:crypto';
 import type { FastifyRequest } from 'fastify';
 import { Public } from '../auth/decorators';
-import { StoriesService } from '../stories/stories.service';
+import { NewsService } from '../news/news.service';
 
 export const INTERNAL_TOKEN = Symbol('INTERNAL_TOKEN');
 
@@ -35,12 +35,12 @@ export class InternalTokenGuard implements CanActivate {
 @UseGuards(InternalTokenGuard)
 @Controller('internal')
 export class InternalController {
-  constructor(@Inject(StoriesService) private readonly stories: StoriesService) {}
+  constructor(@Inject(NewsService) private readonly news: NewsService) {}
 
   /** Publishes a due schedule. Safe to call again: the outcome of the first call is returned. */
   @Post('schedules/:id/publish')
   @HttpCode(200)
   publishScheduled(@Param('id', ParseUUIDPipe) id: string, @Req() req: FastifyRequest): Promise<ScheduledPublishResult> {
-    return this.stories.publishScheduled(id, String(req.id));
+    return this.news.publishScheduled(id, String(req.id));
   }
 }

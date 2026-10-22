@@ -28,7 +28,7 @@ export * from './ads';
 export * from './configuration';
 export * from './auth';
 export * from './body';
-export * from './stories';
+export * from './news';
 export * from './collab';
 export * from './jobs';
 export * from './media';

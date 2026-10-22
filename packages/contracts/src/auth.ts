@@ -2,15 +2,15 @@ import { z } from 'zod';
 
 /** Capabilities gate actions; roles are only named sets of them (docs/06, docs/12). */
 export const capabilities = [
-  'story.edit', 'story.submit', 'story.review', 'story.fact_check', 'story.publish',
-  'story.correct', 'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage',
+  'news.edit', 'news.submit', 'news.review', 'news.fact_check', 'news.publish',
+  'news.correct', 'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage',
 ] as const;
 export const capabilitySchema = z.enum(capabilities);
 export type Capability = z.infer<typeof capabilitySchema>;
 
 /** Capabilities that need a multi-factor sign-in when the deployment requires MFA. */
 export const privilegedCapabilities = [
-  'story.publish', 'story.correct', 'audit.read', 'ads.manage', 'config.manage',
+  'news.publish', 'news.correct', 'audit.read', 'ads.manage', 'config.manage',
 ] as const satisfies readonly Capability[];
 
 export const principalSchema = z.object({
@@ -30,5 +30,5 @@ export type FeatureFlagUpdate = z.infer<typeof featureFlagUpdateSchema>;
 
 /** Holding any of these lets a caller read drafts in the newsroom. */
 export const editorialCapabilities = [
-  'story.edit', 'story.submit', 'story.review', 'story.fact_check', 'story.publish', 'story.correct',
+  'news.edit', 'news.submit', 'news.review', 'news.fact_check', 'news.publish', 'news.correct',
 ] as const satisfies readonly Capability[];

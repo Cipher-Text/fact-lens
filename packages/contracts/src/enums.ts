@@ -3,7 +3,7 @@
  * in `apps/api/migrations`; a database test fails if the two drift apart.
  */
 
-export const storyStatuses = [
+export const newsStatuses = [
   'INGESTED', 'RESEARCHING', 'DRAFT', 'EDITOR_REVIEW', 'FACT_CHECK', 'READY',
   'SCHEDULED', 'PUBLISHED', 'UPDATED', 'CORRECTED', 'ARCHIVED',
 ] as const;

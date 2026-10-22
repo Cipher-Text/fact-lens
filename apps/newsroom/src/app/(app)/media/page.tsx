@@ -18,7 +18,7 @@ export default async function MediaLibrary({ searchParams }: { searchParams: Pro
       <div className="mb-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-semibold">Media library</h1>
-          <p className="text-sm text-muted">Pictures for stories. Add the credit and licence here so a story can be published.</p>
+          <p className="text-sm text-muted">Pictures for news. Add the credit and licence here so a news item can be published.</p>
         </div>
         <UploadAndOpen />
       </div>

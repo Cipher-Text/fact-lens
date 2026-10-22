@@ -13,11 +13,11 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 
 - Bootstrap NestJS with Fastify, request IDs, error envelope and health endpoints. *Done.*
 - Add PostgreSQL migrations, connection pooling and transaction helpers. *Done.*
-- Implement Story, StoryRevision, StoryTranslation, Contributor, Category, Tag, Desk and MediaAsset tables. *Done.*
-- Implement Source/StorySource, Assignment, Comment, Correction, AuditEvent and Outbox tables. *Done.*
+- Implement News item, NewsRevision, NewsTranslation, Contributor, Category, Tag, Desk and MediaAsset tables. *Done.*
+- Implement Source/NewsSource, Assignment, Comment, Correction, AuditEvent and Outbox tables. *Done.*
 - Implement CardTemplate and GeneratedCard tables. *Tables done; no endpoints or generation job.*
 - Implement Configuration and FeatureFlag tables (workflow-transition policy, AI provider/model/budget, rate limits, retention rules, supported locales; see [configuration and feature flags](./21-configuration-and-feature-flags.md)).
-- Add slug/canonical/redirect registry and publication read models. *Partial: the slug registry, redirects between a story's own slugs and the published-story read model are done; a registry of legacy URLs is not.*
+- Add slug/canonical/redirect registry and publication read models. *Partial: the slug registry, redirects between a news item's own slugs and the published-news item read model are done; a registry of legacy URLs is not.*
 
 ## Epic C — Authentication and authorization
 
@@ -27,7 +27,7 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 
 ## Epic D — Editorial core
 
-- Story/revision/translation commands and queries. *Done.*
+- News item/revision/translation commands and queries. *Done.*
 - Tiptap document schema, sanitization and HTML import compatibility fixture. *Partial: schema, validation and the editor are done; the HTML import fixture is not.*
 - Workflow transition policy and publish/schedule validation. *Done.*
 - Source attachment, comments, assignments, correction record and revision timeline. *Done in the API; the newsroom lacks screens to create assignments and sources.*
@@ -41,10 +41,10 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 
 ## Epic F — Newsroom shell
 
-- Desk queue and story workspace. *Done.*
+- Desk queue and news item workspace. *Done.*
 - Revision/history and comments panels. *Partial: timeline and comments done; no revision list or comparison screen.*
 - Source inbox placeholder and media library, including branded photocard/poster generation from a photo using FactLens templates. *Partial: placeholder and media library done; card generation not.*
-- Publish/schedule review screen with capability-aware controls. *Partial: next steps (including scheduling) are on the story page; no separate review screen or calendar.*
+- Publish/schedule review screen with capability-aware controls. *Partial: next steps (including scheduling) are on the news item page; no separate review screen or calendar.*
 - Configuration screen (workflow policy, AI budgets, rate limits, retention rules, feature flags), gated by `config.manage`. *Partial: feature flags only.*
 
 ## Epic G — Advertising module
@@ -57,4 +57,4 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 
 ## Recommended sequence
 
-A → B → C → D → E → F, with contract tests and migration fixtures introduced during B rather than postponed. Configuration/FeatureFlag tables (part of B) land before D, since D's workflow-transition policy and E's rate limits/budgets read from them rather than hardcoding values. Epic G is an independent commercial domain module; it can proceed in parallel with D/E once B and C land, since it does not extend the editorial workflow. Do not begin public cutover work until D can publish a complete bilingual story, E can invalidate/update derived projections safely, and G's ad-serving/redirect endpoints pass abuse-control review.
+A → B → C → D → E → F, with contract tests and migration fixtures introduced during B rather than postponed. Configuration/FeatureFlag tables (part of B) land before D, since D's workflow-transition policy and E's rate limits/budgets read from them rather than hardcoding values. Epic G is an independent commercial domain module; it can proceed in parallel with D/E once B and C land, since it does not extend the editorial workflow. Do not begin public cutover work until D can publish a complete bilingual news item, E can invalidate/update derived projections safely, and G's ad-serving/redirect endpoints pass abuse-control review.

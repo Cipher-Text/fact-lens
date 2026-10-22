@@ -1,4 +1,4 @@
-import type { StoryStatus } from '@fact-lens/contracts';
+import type { NewsStatus } from '@fact-lens/contracts';
 import { statusLabel, statusTone, type Tone } from '@/lib/format';
 
 const tones: Record<Tone, string> = {
@@ -13,7 +13,7 @@ export function Badge({ tone = 'neutral', children }: { tone?: Tone; children: R
   return <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${tones[tone]}`}>{children}</span>;
 }
 
-export const StatusBadge = ({ status }: { status: StoryStatus }) => <Badge tone={statusTone(status)}>{statusLabel(status)}</Badge>;
+export const StatusBadge = ({ status }: { status: NewsStatus }) => <Badge tone={statusTone(status)}>{statusLabel(status)}</Badge>;
 
 export function Panel({ title, children, actions, id }: { title: string; children: React.ReactNode; actions?: React.ReactNode; id?: string }) {
   return (

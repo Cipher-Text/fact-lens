@@ -89,7 +89,7 @@ export function RightsForm({ asset }: { asset: MediaDetail }) {
       <Field label="Credit line" hint="Shown with the picture, for example “Photo: Karim Hossain”.">
         <input name="attribution" maxLength={300} defaultValue={asset.attribution ?? ''} className={inputClass} />
       </Field>
-      <Field label="Licence" hint="A story with this picture cannot be published until it has a licence or a credit line.">
+      <Field label="Licence" hint="A news item with this picture cannot be published until it has a licence or a credit line.">
         <input name="license" list="licences" maxLength={200} defaultValue={asset.license ?? ''} className={inputClass} />
         <datalist id="licences">{licenseSuggestions.map((l) => <option key={l} value={l} />)}</datalist>
       </Field>
@@ -117,7 +117,7 @@ export function DeleteMedia({ id, usageCount }: { id: string; usageCount: number
   const router = useRouter();
   const [error, setError] = useState<Failure>(null);
   const [pending, start] = useTransition();
-  if (usageCount > 0) return <p className="text-sm text-muted">Used in {usageCount} {usageCount === 1 ? 'story' : 'stories'}, so it cannot be deleted.</p>;
+  if (usageCount > 0) return <p className="text-sm text-muted">Used in {usageCount} {usageCount === 1 ? 'news item' : 'news items'}, so it cannot be deleted.</p>;
   return (
     <div>
       <button type="button" disabled={pending} className={buttonClass('danger')} onClick={() => {
@@ -197,7 +197,7 @@ export function MediaPicker({ open, onClose, onChoose }: {
             <textarea autoFocus value={alt} onChange={(e) => { setAlt(e.target.value); setError(null); }} rows={2} maxLength={500} className={inputClass} />
           </Field>
           {!rightsStatus(chosen).ready ? (
-            <Notice kind="ok" message={`${rightsStatus(chosen).label}. You can insert it now, but the story cannot be published until this is fixed in the media library.`} />
+            <Notice kind="ok" message={`${rightsStatus(chosen).label}. You can insert it now, but the news item cannot be published until this is fixed in the media library.`} />
           ) : null}
           {error ? <Notice kind="error" message={error} /> : null}
           <div className="flex gap-2">

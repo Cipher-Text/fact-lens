@@ -16,7 +16,7 @@ export type Enqueue = (request: JobRequest) => Promise<void>;
 
 /** Retry policy per job type: transient failures back off exponentially with jitter. */
 const retryPolicy: Partial<Record<JobType, { attempts: number; delay: number }>> = {
-  'story.publish_scheduled': { attempts: 8, delay: 2000 },
+  'news.publish_scheduled': { attempts: 8, delay: 2000 },
   'schedule.scan': { attempts: 1, delay: 1000 },
 };
 const defaultPolicy = { attempts: 5, delay: 1000 };

@@ -304,7 +304,7 @@
           <!-- Data layer -->
           <g class="node"><rect x="190" y="570" width="300" height="110" rx="4"/>
             <text class="t-title" x="340" y="596" text-anchor="middle">PostgreSQL — source of truth</text>
-            <text class="t-sub" x="340" y="614" text-anchor="middle">stories · revisions · translations</text>
+            <text class="t-sub" x="340" y="614" text-anchor="middle">news items · revisions · translations</text>
             <text class="t-sub" x="340" y="630" text-anchor="middle">taxonomy · ads · config · audit</text>
             <g class="node-outbox"><rect x="240" y="648" width="200" height="24" rx="3"/>
               <text class="t-mono-accent" x="340" y="664" text-anchor="middle">outbox rows</text></g>
@@ -431,7 +431,7 @@
             <text class="t-sub" x="120" y="254" text-anchor="middle">canonical URL / GUID</text>
             <text class="t-sub" x="120" y="268" text-anchor="middle">then title / time / content</text>
             <text class="t-sub" x="120" y="292" text-anchor="middle">human triage before</text>
-            <text class="t-sub" x="120" y="306" text-anchor="middle">any story is created</text></g>
+            <text class="t-sub" x="120" y="306" text-anchor="middle">any news item is created</text></g>
 
           <!-- Domain 2: AI Gateway -->
           <g class="node"><rect x="245" y="150" width="210" height="180" rx="4"/>
@@ -470,7 +470,7 @@
             <text class="t-title-sm" x="1040" y="174" text-anchor="middle">Analytics</text>
             <text class="t-mono" x="1040" y="196" text-anchor="middle">analytics.rollup</text>
             <text class="t-sub" x="1040" y="222" text-anchor="middle">Redis view counters →</text>
-            <text class="t-sub" x="1040" y="236" text-anchor="middle">StoryPerformanceDaily</text>
+            <text class="t-sub" x="1040" y="236" text-anchor="middle">NewsPerformanceDaily</text>
             <text class="t-sub" x="1040" y="262" text-anchor="middle">powers "most read" /</text>
             <text class="t-sub" x="1040" y="276" text-anchor="middle">trending — first-party,</text>
             <text class="t-sub" x="1040" y="290" text-anchor="middle">not GA4-derived</text></g>
@@ -523,11 +523,11 @@
       <table class="ref">
         <thead><tr><th>Component</th><th>Responsibility</th><th>Boundary</th></tr></thead>
         <tbody>
-          <tr><td>Public web</td><td>Render approved stories, listing pages, metadata, sitemap, redirects, cache tags</td><td>No editorial writes; safe public API only</td></tr>
+          <tr><td>Public web</td><td>Render approved news items, listing pages, metadata, sitemap, redirects, cache tags</td><td>No editorial writes; safe public API only</td></tr>
           <tr><td>Newsroom</td><td>Editor, source inbox, assignments, review, media, ads, configuration, analytics screens</td><td>OIDC session; writes through API</td></tr>
           <tr><td>API</td><td>Domain commands/queries, authz, REST contracts, transactions, outbox records</td><td>Stateless; no direct UI-specific DB coupling</td></tr>
           <tr><td>Worker</td><td>Ingestion, media variants, search indexing, AI proposals, analytics rollups, newsletter, distribution</td><td>Idempotent jobs with retry / backoff</td></tr>
-          <tr><td>PostgreSQL</td><td>Stories, revisions, translations, taxonomy, sources, media metadata, ads, config, workflow, audit, outbox</td><td>Source of truth</td></tr>
+          <tr><td>PostgreSQL</td><td>News items, revisions, translations, taxonomy, sources, media metadata, ads, config, workflow, audit, outbox</td><td>Source of truth</td></tr>
           <tr><td>Redis</td><td>Queue state, short-lived cache, rate-limit counters, trending counters</td><td>Rebuildable / ephemeral</td></tr>
           <tr><td>Cloudflare R2</td><td>Originals and derived media, including generated cards</td><td>Immutable-ish objects plus DB metadata</td></tr>
         </tbody>

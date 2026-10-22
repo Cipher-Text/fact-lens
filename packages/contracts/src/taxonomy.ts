@@ -3,7 +3,7 @@ import { idSchema, localeCodeSchema, slugSchema, timestampSchema } from './commo
 import { localeDirections, taxonomyStatuses } from './enums';
 
 /**
- * Categories (the news menu) and tags (many per story), in any number of languages. A category or
+ * Categories (the news menu) and tags (many per news), in any number of languages. A category or
  * tag is one record with a label per language; the languages are the `locale` list, never a fixed
  * set in code. An item with no label in a language is simply absent from that language's pages.
  */
@@ -74,7 +74,7 @@ export const taxonomyCategorySchema = z.object({
   showInMenu: z.boolean(),
   position: z.number().int(),
   status: z.enum(taxonomyStatuses),
-  /** Stories in this category. A category in use cannot be deleted, only archived. */
+  /** News in this category. A category in use cannot be deleted, only archived. */
   usageCount: z.number().int().nonnegative(),
   labels: z.array(taxonomyLabelSchema),
 });
@@ -99,11 +99,11 @@ export const taxonomyTagQuerySchema = z.object({
 export const taxonomyTagListSchema = z.object({ items: z.array(taxonomyTagSchema), nextCursor: z.string().nullable() });
 export type TaxonomyTagList = z.infer<typeof taxonomyTagListSchema>;
 
-/** The tags of one story. A story's tag set is replaced as a whole. */
-export const storyTagsSchema = z.object({
+/** The tags of one news. A news item's tag set is replaced as a whole. */
+export const newsTagsSchema = z.object({
   tagIds: z.array(idSchema).max(30).refine((ids) => new Set(ids).size === ids.length, 'each tag once'),
 });
-export type StoryTags = z.infer<typeof storyTagsSchema>;
+export type NewsTags = z.infer<typeof newsTagsSchema>;
 
 // ---- languages
 
@@ -132,14 +132,14 @@ export type PublicTaxonomyRef = z.infer<typeof publicTaxonomyRefSchema>;
 
 export const navigationSchema = z.array(publicTaxonomyRefSchema);
 
-export const publicStoryListQuerySchema = z.object({
+export const publicNewsListQuerySchema = z.object({
   category: slugSchema.optional(),
   tag: slugSchema.optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
   cursor: z.string().max(300).optional(),
 });
 
-export const publicStoryListItemSchema = z.object({
+export const publicNewsListItemSchema = z.object({
   id: idSchema,
   slug: slugSchema,
   title: z.string(),
@@ -148,10 +148,10 @@ export const publicStoryListItemSchema = z.object({
   category: publicTaxonomyRefSchema.nullable(),
 });
 
-export const publicStoryListSchema = z.object({
+export const publicNewsListSchema = z.object({
   /** The category or tag the list was filtered by, with its heading and description in this language. */
   filter: z.object({ type: z.enum(['category', 'tag']), name: z.string(), slug: slugSchema, description: z.string().nullable() }).nullable(),
-  items: z.array(publicStoryListItemSchema),
+  items: z.array(publicNewsListItemSchema),
   nextCursor: z.string().nullable(),
 });
-export type PublicStoryList = z.infer<typeof publicStoryListSchema>;
+export type PublicNewsList = z.infer<typeof publicNewsListSchema>;

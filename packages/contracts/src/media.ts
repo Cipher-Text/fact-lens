@@ -41,7 +41,7 @@ export const mediaDetailSchema = z.object({
   variants: z.array(mediaVariantSchema),
   uploadedBy: z.string().nullable(),
   createdAt: timestampSchema,
-  /** How many stories use it. A used asset cannot be deleted. */
+  /** How many news use it. A used asset cannot be deleted. */
   usageCount: z.number().int().nonnegative(),
 });
 export type MediaDetail = z.infer<typeof mediaDetailSchema>;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { defaultWorkflowPolicy, storyStatuses } from '@fact-lens/contracts';
+import { defaultWorkflowPolicy, newsStatuses } from '@fact-lens/contracts';
 import { capabilityFor, findTransition, movesFrom, transitions } from './workflow';
 import { publishIssues, reviewIssues, slugify, type RevisionSnapshot } from './validation';
 
@@ -17,17 +17,17 @@ describe('workflow', () => {
   it('never moves a status to itself and only uses known statuses', () => {
     for (const t of transitions) {
       expect(t.from).not.toBe(t.to);
-      expect(storyStatuses).toContain(t.from);
-      expect(storyStatuses).toContain(t.to);
+      expect(newsStatuses).toContain(t.from);
+      expect(newsStatuses).toContain(t.to);
     }
   });
 
   it('reads the gating capability from policy, or a fixed one', () => {
-    const policy = { ...defaultWorkflowPolicy, requiredCapability: { ...defaultWorkflowPolicy.requiredCapability, ready: 'story.review' } };
-    expect(capabilityFor(findTransition('FACT_CHECK', 'READY')!, defaultWorkflowPolicy)).toBe('story.fact_check');
-    expect(capabilityFor(findTransition('FACT_CHECK', 'READY')!, policy)).toBe('story.review');
-    expect(capabilityFor(findTransition('EDITOR_REVIEW', 'DRAFT')!, policy)).toBe('story.review');
-    expect(capabilityFor(findTransition('CORRECTED', 'PUBLISHED')!, policy)).toBe('story.correct');
+    const policy = { ...defaultWorkflowPolicy, requiredCapability: { ...defaultWorkflowPolicy.requiredCapability, ready: 'news.review' } };
+    expect(capabilityFor(findTransition('FACT_CHECK', 'READY')!, defaultWorkflowPolicy)).toBe('news.fact_check');
+    expect(capabilityFor(findTransition('FACT_CHECK', 'READY')!, policy)).toBe('news.review');
+    expect(capabilityFor(findTransition('EDITOR_REVIEW', 'DRAFT')!, policy)).toBe('news.review');
+    expect(capabilityFor(findTransition('CORRECTED', 'PUBLISHED')!, policy)).toBe('news.correct');
   });
 
   it('requires a reason to send back or archive', () => {
@@ -101,6 +101,6 @@ describe('slugify', () => {
     expect(slugify('বাংলাদেশের খবর', 'x')).toBe('বাংলাদেশের-খবর');
   });
   it('falls back when nothing usable remains', () => {
-    expect(slugify('!!!', 'story-1')).toBe('story-1');
+    expect(slugify('!!!', 'news-1')).toBe('news-1');
   });
 });

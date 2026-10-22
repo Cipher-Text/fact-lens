@@ -44,7 +44,7 @@ describe('session cookies', () => {
 
 describe('safeReturnTo', () => {
   it('keeps in-app paths and drops everything else', () => {
-    expect(safeReturnTo('/stories/abc?x=1')).toBe('/stories/abc?x=1');
+    expect(safeReturnTo('/news/abc?x=1')).toBe('/news/abc?x=1');
     for (const bad of ['//evil.com', 'https://evil.com', '/\\evil.com', 'javascript:alert(1)', '', null, undefined, '/auth/login', '/api/me', '/a\nb']) {
       expect(safeReturnTo(bad)).toBe('/');
     }
@@ -65,9 +65,9 @@ describe('origin check', () => {
 
 describe('API proxy allowlist', () => {
   it('allows the newsroom surface and nothing else', () => {
-    expect(isAllowedApiRequest('GET', ['stories'])).toBe(true);
-    expect(isAllowedApiRequest('POST', ['stories', 'abc', 'transitions'])).toBe(true);
-    expect(isAllowedApiRequest('DELETE', ['stories', 'a', 'sources', 'b'])).toBe(true);
+    expect(isAllowedApiRequest('GET', ['news'])).toBe(true);
+    expect(isAllowedApiRequest('POST', ['news', 'abc', 'transitions'])).toBe(true);
+    expect(isAllowedApiRequest('DELETE', ['news', 'a', 'sources', 'b'])).toBe(true);
     expect(isAllowedApiRequest('GET', ['config', 'flags'])).toBe(true);
     expect(isAllowedApiRequest('PUT', ['config', 'flags', 'ads.serving'])).toBe(true);
     expect(isAllowedApiRequest('POST', ['config', 'locales'])).toBe(true);
@@ -84,14 +84,14 @@ describe('API proxy allowlist', () => {
     expect(isAllowedApiRequest('GET', ['public', 'media', 'abc', 'card'])).toBe(false);
   });
   it('keeps internal, public, health and unknown paths out, and rejects traversal', () => {
-    for (const path of [['internal', 'schedules', 'x', 'publish'], ['public', 'stories'], ['health', 'ready'], ['config'], ['config', 'secrets'], [], ['stories', '..', 'internal'], ['stories', '.%2e'], ['stories', 'a/b'], ['stories', 'a b'], ['x', 'y']]) {
+    for (const path of [['internal', 'schedules', 'x', 'publish'], ['public', 'news'], ['health', 'ready'], ['config'], ['config', 'secrets'], [], ['news', '..', 'internal'], ['news', '.%2e'], ['news', 'a/b'], ['news', 'a b'], ['x', 'y']]) {
       expect(isAllowedApiRequest('GET', path), JSON.stringify(path)).toBe(false);
     }
-    expect(isAllowedApiRequest('PATCH', ['stories'])).toBe(false);
-    expect(isAllowedApiRequest('GET', ['stories', 'a', 'b', 'c', 'd', 'e', 'f'])).toBe(false);
+    expect(isAllowedApiRequest('PATCH', ['news'])).toBe(false);
+    expect(isAllowedApiRequest('GET', ['news', 'a', 'b', 'c', 'd', 'e', 'f'])).toBe(false);
   });
   it('builds the upstream URL from encoded segments', () => {
-    expect(apiUrl('http://api:4000/', ['stories', 'a'], '?status=DRAFT')).toBe('http://api:4000/stories/a?status=DRAFT');
+    expect(apiUrl('http://api:4000/', ['news', 'a'], '?status=DRAFT')).toBe('http://api:4000/news/a?status=DRAFT');
   });
 });
 
@@ -99,11 +99,11 @@ describe('capability-aware navigation', () => {
   const principal = (capabilities: string[]) => principalSchema.parse({ subject: 'u', roles: [], capabilities, mfa: true });
   const labels = (caps: string[]) => visibleNav(principal(caps)).map((n) => n.label);
   it('shows only what the person can use', () => {
-    expect(labels(['story.edit', 'story.submit'])).toEqual(['Desk queue', 'New story', 'Source inbox', 'Media library']);
+    expect(labels(['news.edit', 'news.submit'])).toEqual(['Desk queue', 'New news item', 'Source inbox', 'Media library']);
     expect(labels(['media.manage'])).toEqual(['Media library']);
     expect(labels(['config.manage'])).toEqual(['Configuration']);
     expect(labels([])).toEqual([]);
-    expect(labels(['story.publish'])).toEqual(['Desk queue', 'Publishing calendar']);
+    expect(labels(['news.publish'])).toEqual(['Desk queue', 'Publishing calendar']);
   });
 });
 

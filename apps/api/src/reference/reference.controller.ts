@@ -60,7 +60,7 @@ export class ReferenceController {
 
   @Post('contributors')
   @HttpCode(201)
-  @RequireCapability('story.edit')
+  @RequireCapability('news.edit')
   async createContributor(@Body() body: unknown, @CurrentPrincipal() principal: Principal, @Req() req: FastifyRequest): Promise<Contributor> {
     const input = parse(contributorCreateSchema, body);
     const { rows } = await this.pool.query(

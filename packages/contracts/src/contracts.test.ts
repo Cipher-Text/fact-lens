@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest';
 import {
   adCampaignSchema, adEventInputSchema, adSchema, advertiserSchema, configValueSchema, contributorSchema,
-  correctionSchema, parseConfigValue, storySchema, storyStatuses,
+  correctionSchema, parseConfigValue, newsSchema, newsStatuses,
 } from './index';
 
 const id = '0b6c9a52-6f0c-4f3e-9a0c-7d1a2f6d5e11';
 const now = '2026-10-21T10:00:00Z';
 
 describe('contracts', () => {
-  it('accepts a story and rejects an unknown status', () => {
-    const story = { id, canonicalKey: 'k', status: 'DRAFT', categoryId: null, deskId: null, publishedRevisionId: null, publishedAt: null, createdAt: now, updatedAt: now };
-    expect(storySchema.safeParse(story).success).toBe(true);
-    expect(storySchema.safeParse({ ...story, status: 'NOPE' }).success).toBe(false);
-    expect(storyStatuses).toContain('FACT_CHECK');
+  it('accepts a news item and rejects an unknown status', () => {
+    const news = { id, canonicalKey: 'k', status: 'DRAFT', categoryId: null, deskId: null, publishedRevisionId: null, publishedAt: null, createdAt: now, updatedAt: now };
+    expect(newsSchema.safeParse(news).success).toBe(true);
+    expect(newsSchema.safeParse({ ...news, status: 'NOPE' }).success).toBe(false);
+    expect(newsStatuses).toContain('FACT_CHECK');
   });
 
   it('keeps private contact data out of public schemas', () => {
@@ -39,7 +39,7 @@ describe('contracts', () => {
   });
 
   it('requires a notice for every correction locale', () => {
-    const base = { id, storyId: id, revisionId: id, reason: 'typo', approvedBy: 'u', approvedAt: now };
+    const base = { id, newsId: id, revisionId: id, reason: 'typo', approvedBy: 'u', approvedAt: now };
     expect(correctionSchema.safeParse({ ...base, notices: { en: 'Fixed' } }).success).toBe(true);
     expect(correctionSchema.safeParse({ ...base, notices: { en: '' } }).success).toBe(false);
   });
