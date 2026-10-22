@@ -6,6 +6,8 @@ import type { Locale, TaxonomyCategory, TaxonomyTag } from '@fact-lens/contracts
 import { announce } from '@/lib/announce';
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
+import { mediaFileUrl } from '@/lib/media';
+import { MediaPicker } from './MediaParts';
 import { Badge, buttonClass, Field, inputClass, Notice } from './ui';
 
 type Failure = { message: string; issues: string[] } | null;
@@ -147,20 +149,50 @@ export function CategoryRow({ category, order, locales }: { category: TaxonomyCa
   );
 }
 
+/** The picture of a tag: a thumbnail, and buttons to choose one from the media library or remove it. */
+function TagImage({ imageId, onChoose, onRemove }: { imageId: string | null; onChoose: () => void; onRemove: () => void }) {
+  return (
+    <div className="flex items-center gap-3">
+      {imageId ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={mediaFileUrl(imageId, 'thumb')} alt="" width={96} height={64} className="h-16 w-24 rounded-lg border border-line object-cover" />
+      ) : (
+        <span className="grid h-16 w-24 place-items-center rounded-lg border border-dashed border-line text-xs text-muted">No picture</span>
+      )}
+      <div className="space-y-1">
+        <p className="text-sm font-medium">Picture</p>
+        <div className="flex gap-2">
+          <button type="button" className={buttonClass()} onClick={onChoose}>{imageId ? 'Change' : 'Choose from library'}</button>
+          {imageId ? <button type="button" className={buttonClass()} onClick={onRemove}>Remove</button> : null}
+        </div>
+        <p className="text-xs text-muted">Shown on the tag page once it has a credit or licence.</p>
+      </div>
+    </div>
+  );
+}
+
 export function NewTagForm({ locales }: { locales: Locale[] }) {
   const { error, pending, run } = useCommand();
+  const [imageId, setImageId] = useState<string | null>(null);
+  const [picking, setPicking] = useState(false);
   return (
-    <form className="space-y-3" onSubmit={submitWith((form, el) => run('POST', 'taxonomy/tags', { labels: readLabels(form, locales, undefined, false) }, () => el.reset()))}>
-      <LabelFields locales={locales} withDescription={false} />
-      <button type="submit" disabled={pending} className={buttonClass('primary')}>Add tag</button>
-      {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}
-    </form>
+    <>
+      <form className="space-y-3" onSubmit={submitWith((form, el) => run('POST', 'taxonomy/tags', { imageId, labels: readLabels(form, locales, undefined, true) }, () => { el.reset(); setImageId(null); }))}>
+        <LabelFields locales={locales} withDescription />
+        <TagImage imageId={imageId} onChoose={() => setPicking(true)} onRemove={() => setImageId(null)} />
+        <button type="submit" disabled={pending} className={buttonClass('primary')}>Add tag</button>
+        {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}
+      </form>
+      <MediaPicker open={picking} onClose={() => setPicking(false)} onChoose={(c) => { setImageId(c.mediaAssetId); setPicking(false); }} />
+    </>
   );
 }
 
 export function TagRow({ tag, locales }: { tag: TaxonomyTag; locales: Locale[] }) {
   const { error, pending, run } = useCommand();
   const [editing, setEditing] = useState(false);
+  const [imageId, setImageId] = useState<string | null>(tag.imageId);
+  const [picking, setPicking] = useState(false);
   const archived = tag.status === 'archived';
   return (
     <li className="rounded-lg border border-line bg-panel p-3">
@@ -173,8 +205,9 @@ export function TagRow({ tag, locales }: { tag: TaxonomyTag; locales: Locale[] }
         <button type="button" onClick={() => setEditing(!editing)} aria-expanded={editing} className={`${buttonClass()} ml-auto`}>{editing ? 'Close' : 'Edit'}</button>
       </div>
       {editing ? (
-        <form className="mt-3 space-y-3" onSubmit={submitWith((form) => run('PUT', `taxonomy/tags/${tag.id}`, { labels: readLabels(form, locales, tag, false) }, () => setEditing(false)))}>
-          <LabelFields item={tag} locales={locales} withDescription={false} />
+        <form className="mt-3 space-y-3" onSubmit={submitWith((form) => run('PUT', `taxonomy/tags/${tag.id}`, { imageId, labels: readLabels(form, locales, tag, true) }, () => setEditing(false)))}>
+          <LabelFields item={tag} locales={locales} withDescription />
+          <TagImage imageId={imageId} onChoose={() => setPicking(true)} onRemove={() => setImageId(null)} />
           <div className="flex flex-wrap gap-2">
             <button type="submit" disabled={pending} className={buttonClass('primary')}>Save names</button>
             <button type="button" disabled={pending} onClick={() => run('PUT', `taxonomy/tags/${tag.id}`, { status: archived ? 'active' : 'archived' })} className={buttonClass()}>{archived ? 'Restore' : 'Archive'}</button>
@@ -183,6 +216,7 @@ export function TagRow({ tag, locales }: { tag: TaxonomyTag; locales: Locale[] }
           </div>
         </form>
       ) : null}
+      <MediaPicker open={picking} onClose={() => setPicking(false)} onChoose={(c) => { setImageId(c.mediaAssetId); setPicking(false); }} />
       {error ? <div className="mt-2"><Notice kind="error" message={error.message} issues={error.issues} /></div> : null}
     </li>
   );

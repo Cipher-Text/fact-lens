@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import sharp from 'sharp';
 import { startTestApp } from '../test-harness';
 
 const adminUrl = process.env.TEST_DATABASE_URL;
@@ -207,5 +208,42 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     const res = await t.call({ method: 'PUT', url: `/taxonomy/categories/${business.id}`, body: { labels: { en: null, 'bn-BD': null } } });
     expect(res.status).toBe(400);
     expect((await cats()).find((c) => c.key === 'business').labels).toHaveLength(2);
+  });
+
+  it('gives a tag a description per language and one picture, shown publicly only while its rights allow the web', async () => {
+    const jpeg = await sharp({ create: { width: 900, height: 500, channels: 3, background: '#3366aa' } }).jpeg().toBuffer();
+    const up = await t.upload(jpeg, { roles: ['media_editor'] });
+    expect(up.status).toBe(201);
+    const imageId = up.body.id as string;
+
+    const made = await t.call({
+      method: 'POST', url: '/taxonomy/tags',
+      body: { key: 'monsoon', imageId, labels: { en: { name: 'Monsoon', description: 'Rain, floods and the season.' }, 'bn-BD': { name: 'বর্ষা', description: 'বৃষ্টি ও বন্যা।' } } },
+    });
+    expect(made.status, JSON.stringify(made.body)).toBe(201);
+    expect(made.body.imageId).toBe(imageId);
+    expect(made.body.labels.find((l: any) => l.locale === 'bn-BD').description).toBe('বৃষ্টি ও বন্যা।');
+    expect((await t.call({ method: 'POST', url: '/taxonomy/tags', body: { key: 'bad-img', imageId: '00000000-0000-4000-8000-000000000000', labels: { en: { name: 'Bad' } } } })).status).toBe(400);
+
+    // No credit or licence yet: the page has its text but no picture, and the bytes are refused.
+    const listUrl = '/public/news/en?tag=monsoon';
+    const before = (await t.anonymous('GET', listUrl)).json() as any;
+    expect(before.filter).toMatchObject({ type: 'tag', name: 'Monsoon', description: 'Rain, floods and the season.', image: null });
+    expect((await t.anonymous('GET', `/public/media/${imageId}/card`)).statusCode).toBe(404);
+
+    await t.call({ method: 'PUT', url: `/media/${imageId}/rights`, roles: ['media_editor'], body: { attribution: 'Photo: A. Photographer', altText: 'Rain over a river', permittedChannels: ['web'] } });
+    const after = (await t.anonymous('GET', listUrl)).json() as any;
+    expect(after.filter.image).toMatchObject({ id: imageId, alt: 'Rain over a river', urls: { card: `/public/media/${imageId}/card` } });
+    expect((await t.anonymous('GET', `/public/media/${imageId}/card`)).statusCode).toBe(200);
+    expect((await t.anonymous('GET', '/public/news/bn-BD?tag=' + encodeURIComponent('বর্ষা'))).statusCode).toBe(200);
+
+    // In use as a tag picture, so the image cannot be deleted; removing the picture frees it and stops serving it.
+    expect((await t.call({ method: 'DELETE', url: `/media/${imageId}`, roles: ['media_editor'] })).status).toBe(409);
+    const cleared = await t.call({ method: 'PUT', url: `/taxonomy/tags/${made.body.id}`, body: { imageId: null } });
+    expect(cleared.body.imageId).toBeNull();
+    expect((await t.anonymous('GET', `/public/media/${imageId}/card`)).statusCode).toBe(404);
+
+    const edited = await t.call({ method: 'PUT', url: `/taxonomy/tags/${made.body.id}`, body: { labels: { en: { name: 'Monsoon', description: null } } } });
+    expect(edited.body.labels.find((l: any) => l.locale === 'en').description).toBeNull();
   });
 });

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { idSchema, localeCodeSchema, slugSchema, timestampSchema } from './common';
+import { publicMediaSchema } from './media';
 import { localeDirections, taxonomyStatuses } from './enums';
 
 /**
@@ -57,12 +58,14 @@ export type CategoryOrder = z.infer<typeof categoryOrderSchema>;
 
 export const tagCreateSchema = z.object({
   key: taxonomyKeySchema.optional(),
+  /** A picture from the media library. Shown on the tag's page only when its rights allow the web. */
+  imageId: idSchema.nullable().optional(),
   labels: labelsByLocale.refine((l) => Object.keys(l).length > 0, 'give the name in at least one language'),
 });
 export type TagCreate = z.infer<typeof tagCreateSchema>;
 
 export const tagUpdateSchema = z
-  .object({ status: z.enum(taxonomyStatuses), labels: z.record(localeCodeSchema, labelInputSchema.nullable()) })
+  .object({ status: z.enum(taxonomyStatuses), imageId: idSchema.nullable(), labels: z.record(localeCodeSchema, labelInputSchema.nullable()) })
   .partial()
   .strict()
   .refine((u) => Object.keys(u).length > 0, 'nothing to change');
@@ -85,6 +88,7 @@ export const taxonomyTagSchema = z.object({
   key: z.string(),
   status: z.enum(taxonomyStatuses),
   usageCount: z.number().int().nonnegative(),
+  imageId: idSchema.nullable(),
   labels: z.array(taxonomyLabelSchema),
 });
 export type TaxonomyTag = z.infer<typeof taxonomyTagSchema>;
@@ -150,7 +154,7 @@ export const publicNewsListItemSchema = z.object({
 
 export const publicNewsListSchema = z.object({
   /** The category or tag the list was filtered by, with its heading and description in this language. */
-  filter: z.object({ type: z.enum(['category', 'tag']), name: z.string(), slug: slugSchema, description: z.string().nullable() }).nullable(),
+  filter: z.object({ type: z.enum(['category', 'tag']), name: z.string(), slug: slugSchema, description: z.string().nullable(), image: publicMediaSchema.nullable().default(null) }).nullable(),
   items: z.array(publicNewsListItemSchema),
   nextCursor: z.string().nullable(),
 });

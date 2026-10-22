@@ -26,7 +26,7 @@ What exists in this repository today, how much of it has been checked, and what 
 
 **Applications**
 
-- `apps/api`: NestJS on Fastify. Default-deny authentication, capability checks, audit, 13 SQL migrations.
+- `apps/api`: NestJS on Fastify. Default-deny authentication, capability checks, audit, 15 SQL migrations.
 - `apps/worker`: BullMQ worker with an outbox dispatcher, a job runtime, a due-schedule scanner and a health endpoint.
 - `apps/newsroom`: Next.js editorial workspace with server-side OIDC sign-in.
 - `apps/web`: the public site design, imported from `fact-lens-web`, on mock data.
@@ -40,7 +40,7 @@ What exists in this repository today, how much of it has been checked, and what 
 - Media: upload, list, detail, rights, file, delete. Public: news item by locale and slug, media derivatives.
 - Reference data and administration: desks, categories, tags, locales, contributors, feature flags, `/me`.
 - Desk queue numbers: `GET /news/counts` (in progress, due today, stuck over 24 hours, published this week, and a count per stage); the list also carries each item's pending schedule time.
-- Taxonomy (`taxonomy.manage`): categories (create, rename per language, order, show or hide in the menu, archive, delete when unused), tags (the same, with search), news item tags (`PUT /news/:id/tags`), languages (`/config/locales`, `config.manage`). Public: `GET /public/navigation/:locale`, `GET /public/news/:locale?category=|tag=`; the public news item carries its category and tags in its own language.
+- Taxonomy (`taxonomy.manage`): categories (create, rename per language, order, show or hide in the menu, archive, delete when unused), tags (the same, with search), news item tags (`PUT /news/:id/tags`), languages (`/config/locales`, `config.manage`). Tags carry a description per language and one picture. Public: `GET /public/navigation/:locale`, `GET /public/news/:locale?category=|tag=`; the public news item carries its category and tags in its own language.
 - Internal (shared secret, for the worker): publish a due schedule.
 - Health: liveness and readiness.
 

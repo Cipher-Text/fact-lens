@@ -204,8 +204,10 @@ export class MediaService {
       `SELECT m.variants FROM media_asset m
         WHERE m.id = $1 AND m.processing_state = 'ready' AND 'web' = ANY (m.permitted_channels)
           AND (m.rights_expires_at IS NULL OR m.rights_expires_at > now())
-          AND EXISTS (SELECT 1 FROM revision_media rm JOIN news s ON s.published_revision_id = rm.revision_id
-                       WHERE rm.media_asset_id = m.id AND s.status = ANY ($2))`,
+          AND (EXISTS (SELECT 1 FROM revision_media rm JOIN news s ON s.published_revision_id = rm.revision_id
+                       WHERE rm.media_asset_id = m.id AND s.status = ANY ($2))
+             OR (EXISTS (SELECT 1 FROM tag t WHERE t.image_id = m.id AND t.status = 'active')
+                 AND (btrim(coalesce(m.license, '')) <> '' OR btrim(coalesce(m.attribution, '')) <> '')))`,
       [id, liveStatuses],
     );
     return this.read(rows[0]?.variants, variant);
@@ -219,7 +221,7 @@ export class MediaService {
         await db.query('DELETE FROM media_asset WHERE id = $1', [id]);
       } catch (err) {
         if (isPgError(err) && err.code === '23503') {
-          throw new ConflictException({ message: 'This image is used by a news item, an ad or a card. Remove it there first.', reason: 'in_use' });
+          throw new ConflictException({ message: 'This image is used by a news item, a tag, an ad or a card. Remove it there first.', reason: 'in_use' });
         }
         throw err;
       }

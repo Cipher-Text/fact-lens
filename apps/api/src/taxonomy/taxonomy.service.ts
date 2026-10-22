@@ -2,7 +2,7 @@ import {
   BadRequestException, ConflictException, Inject, Injectable, NotFoundException,
 } from '@nestjs/common';
 import type {
-  CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, PublicNewsList, PublicTaxonomyRef, TagCreate, TagUpdate,
+  CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, PublicMedia, PublicNewsList, PublicTaxonomyRef, TagCreate, TagUpdate,
   TaxonomyCategory, TaxonomyTag, TaxonomyTagList,
 } from '@fact-lens/contracts';
 import { taxonomyTagQuerySchema } from '@fact-lens/contracts';
@@ -21,11 +21,11 @@ type Db = Pool | PoolClient;
 // Fixed names, never built from input: the SQL below interpolates only these.
 const KIND = {
   category: { table: 'category', labels: 'category_label', fk: 'category_id', hasDescription: true },
-  tag: { table: 'tag', labels: 'tag_label', fk: 'tag_id', hasDescription: false },
+  tag: { table: 'tag', labels: 'tag_label', fk: 'tag_id', hasDescription: true },
 } as const;
 
 interface Row {
-  id: string; key: string; show_in_menu?: boolean; position?: number; status: TaxonomyTag['status'];
+  id: string; key: string; show_in_menu?: boolean; position?: number; image_id?: string | null; status: TaxonomyTag['status'];
   usage_count: number; labels: TaxonomyTag['labels'];
 }
 
@@ -148,7 +148,8 @@ export class TaxonomyService {
     const id = await withTransaction(this.pool, async (db) => {
       await this.requireLocales(db, Object.keys(input.labels));
       const key = this.keyFor(input.key, input.labels);
-      const created = await this.guard(() => db.query<{ id: string }>('INSERT INTO tag (key) VALUES ($1) RETURNING id', [key]));
+      await this.requireImage(db, input.imageId);
+      const created = await this.guard(() => db.query<{ id: string }>('INSERT INTO tag (key, image_id) VALUES ($1, $2) RETURNING id', [key, input.imageId ?? null]));
       const tagId = created.rows[0]!.id;
       await this.writeLabels(db, 'tag', tagId, key, input.labels);
       await this.audit.record(
@@ -166,6 +167,10 @@ export class TaxonomyService {
       const found = await db.query<{ key: string }>('SELECT key FROM tag WHERE id = $1 FOR UPDATE', [id]);
       if (!found.rows[0]) throw new NotFoundException('Tag not found');
       if (input.status !== undefined) await db.query('UPDATE tag SET status = $2 WHERE id = $1', [id, input.status]);
+      if (input.imageId !== undefined) {
+        await this.requireImage(db, input.imageId);
+        await db.query('UPDATE tag SET image_id = $2 WHERE id = $1', [id, input.imageId]);
+      }
       if (input.labels) await this.applyLabels(db, 'tag', id, found.rows[0].key, input.labels);
       await this.audit.record(
         { actorType: 'human', actorId: actor.principal.subject, action: 'taxonomy.tag_update', objectType: 'tag', objectId: id,
@@ -241,14 +246,14 @@ export class TaxonomyService {
           WHERE l.locale = $1 AND l.slug = $2 AND c.status <> 'archived'`, [locale, q.category]);
       if (!rows[0]) throw new NotFoundException('Not found');
       categoryId = rows[0].id;
-      filter = { type: 'category', name: rows[0].name, slug: rows[0].slug, description: rows[0].description };
+      filter = { type: 'category', name: rows[0].name, slug: rows[0].slug, description: rows[0].description, image: null };
     } else if (q.tag) {
       const { rows } = await this.pool.query(
-        `SELECT t.id, l.name, l.slug FROM tag t JOIN tag_label l ON l.tag_id = t.id
+        `SELECT t.id, t.image_id, l.name, l.slug, l.description FROM tag t JOIN tag_label l ON l.tag_id = t.id
           WHERE l.locale = $1 AND l.slug = $2 AND t.status <> 'archived'`, [locale, q.tag]);
       if (!rows[0]) throw new NotFoundException('Not found');
       tagId = rows[0].id;
-      filter = { type: 'tag', name: rows[0].name, slug: rows[0].slug, description: null };
+      filter = { type: 'tag', name: rows[0].name, slug: rows[0].slug, description: rows[0].description, image: await this.publicImage(rows[0].image_id) };
     }
 
     let cursorAt: string | null = null;
@@ -293,6 +298,21 @@ export class TaxonomyService {
     };
   }
 
+  /** A tag's picture as readers may see it: ready, allowed on the web, rights not expired, and credited or licensed. Otherwise none. */
+  private async publicImage(imageId: string | null): Promise<PublicMedia | null> {
+    if (!imageId) return null;
+    const { rows } = await this.pool.query(
+      `SELECT id, width, height, alt_text, attribution, license FROM media_asset
+        WHERE id = $1 AND processing_state = 'ready' AND 'web' = ANY (permitted_channels)
+          AND (rights_expires_at IS NULL OR rights_expires_at > now())
+          AND (btrim(coalesce(license, '')) <> '' OR btrim(coalesce(attribution, '')) <> '')`, [imageId]);
+    const r = rows[0];
+    return r ? {
+      id: r.id, width: r.width, height: r.height, alt: r.alt_text, attribution: r.attribution, license: r.license,
+      urls: { thumb: `/public/media/${r.id}/thumb`, card: `/public/media/${r.id}/card`, hero: `/public/media/${r.id}/hero` },
+    } : null;
+  }
+
   /** The category and tags of a news item as a reader of this language sees them. An item with no label here is left out. */
   async publicRefs(newsId: string, categoryId: string | null, locale: string): Promise<{ category: PublicTaxonomyRef | null; tags: PublicTaxonomyRef[] }> {
     const [category, tags] = await Promise.all([
@@ -315,7 +335,7 @@ export class TaxonomyService {
     const k = KIND[kind];
     const usage = kind === 'category' ? 'SELECT count(*) FROM news s WHERE s.category_id = c.id' : 'SELECT count(*) FROM news_tag x WHERE x.tag_id = c.id';
     const description = k.hasDescription ? 'l.description' : 'NULL::text';
-    return `SELECT c.id, c.key, ${kind === 'category' ? 'c.show_in_menu, c.position,' : ''} c.status,
+    return `SELECT c.id, c.key, ${kind === 'category' ? 'c.show_in_menu, c.position,' : 'c.image_id,'} c.status,
                    (${usage})::int AS usage_count,
                    COALESCE((SELECT jsonb_agg(jsonb_build_object('locale', l.locale, 'name', l.name, 'slug', l.slug, 'description', ${description}, 'aliases', l.aliases) ORDER BY l.locale)
                                FROM ${k.labels} l WHERE l.${k.fk} = c.id), '[]'::jsonb) AS labels
@@ -331,6 +351,12 @@ export class TaxonomyService {
       void locale;
     }
     throw new BadRequestException('Give a key (lowercase letters, digits and hyphens): it cannot be made from names that are not in Latin letters.');
+  }
+
+  private async requireImage(db: Db, imageId: string | null | undefined): Promise<void> {
+    if (!imageId) return;
+    const { rowCount } = await db.query('SELECT 1 FROM media_asset WHERE id = $1', [imageId]);
+    if (rowCount === 0) throw new BadRequestException('That image is not in the media library');
   }
 
   private async requireLocales(db: Db, codes: string[]): Promise<void> {
@@ -417,4 +443,4 @@ export class TaxonomyService {
 const toCategory = (r: Row): TaxonomyCategory => ({
   id: r.id, key: r.key, showInMenu: r.show_in_menu ?? true, position: r.position ?? 0, status: r.status, usageCount: r.usage_count, labels: r.labels,
 });
-const toTag = (r: Row): TaxonomyTag => ({ id: r.id, key: r.key, status: r.status, usageCount: r.usage_count, labels: r.labels });
+const toTag = (r: Row): TaxonomyTag => ({ id: r.id, key: r.key, imageId: r.image_id ?? null, status: r.status, usageCount: r.usage_count, labels: r.labels });
