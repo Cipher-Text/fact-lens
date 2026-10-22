@@ -36,13 +36,13 @@ export class ReferenceController {
   @RequireAnyCapability(...editorialCapabilities)
   async categories(): Promise<Category[]> {
     const { rows } = await this.pool.query(
-      `SELECT c.id, c.key, c.parent_id, c.position, c.status,
-              COALESCE(jsonb_agg(jsonb_build_object('locale', l.locale, 'name', l.name, 'slug', l.slug, 'aliases', l.aliases) ORDER BY l.locale)
+      `SELECT c.id, c.key, c.parent_id, c.show_in_menu, c.position, c.status,
+              COALESCE(jsonb_agg(jsonb_build_object('locale', l.locale, 'name', l.name, 'slug', l.slug, 'description', l.description, 'aliases', l.aliases) ORDER BY l.locale)
                        FILTER (WHERE l.locale IS NOT NULL), '[]'::jsonb) AS labels
          FROM category c LEFT JOIN category_label l ON l.category_id = c.id
         WHERE c.status = 'active' GROUP BY c.id ORDER BY c.position, c.key`,
     );
-    return rows.map((r) => ({ id: r.id, key: r.key, parentId: r.parent_id, position: r.position, status: r.status, labels: r.labels }));
+    return rows.map((r) => ({ id: r.id, key: r.key, parentId: r.parent_id, showInMenu: r.show_in_menu, position: r.position, status: r.status, labels: r.labels }));
   }
 
   @Get('contributors')

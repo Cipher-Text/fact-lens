@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
 import { capabilities } from '@fact-lens/contracts';
+import { tags } from './tags';
 import { categories, configuration, desks, featureFlags, roles } from './data';
 
 describe('seed data', () => {
@@ -23,6 +24,16 @@ describe('seed data', () => {
     for (const c of categories) {
       expect(c.en.length).toBeGreaterThan(0);
       expect(c.bn).toMatch(/[ঀ-৿]/);
+    }
+  });
+
+  it('has tags with unique keys, an English name and a Bangla name', () => {
+    expect(tags).toHaveLength(146);
+    expect(new Set(tags.map((x) => x.key)).size).toBe(tags.length);
+    expect(new Set(tags.map((x) => x.bnSlug)).size).toBe(tags.length);
+    for (const x of tags) {
+      expect(x.key).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+      expect(x.bn).toMatch(/[ঀ-৿]/);
     }
   });
 

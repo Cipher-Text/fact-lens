@@ -22,15 +22,15 @@ export const desks = [
  * legacy URL map still has to be built (docs/19, question 14).
  */
 export const categories = [
-  { key: 'local', en: 'Local', bn: 'স্থানীয়' },
-  { key: 'national', en: 'National', bn: 'জাতীয়' },
-  { key: 'politics', en: 'Politics', bn: 'রাজনীতি' },
-  { key: 'economy', en: 'Economy', bn: 'অর্থনীতি' },
-  { key: 'business', en: 'Business', bn: 'ব্যবসা' },
-  { key: 'international', en: 'International', bn: 'আন্তর্জাতিক' },
-  { key: 'sports', en: 'Sports', bn: 'খেলা' },
-  { key: 'technology', en: 'Technology', bn: 'প্রযুক্তি' },
-  { key: 'health', en: 'Health', bn: 'স্বাস্থ্য' },
+  { key: 'local', en: 'Local', bn: 'স্থানীয়', enDescription: "Local news from Jessore and other districts covering administration, community affairs and public life.", bnDescription: "যশোরসহ বিভিন্ন জেলার স্থানীয় খবর, প্রশাসন, জনজীবন ও সামাজিক ঘটনা।" },
+  { key: 'national', en: 'National', bn: 'জাতীয়', enDescription: "Major national news of Bangladesh including government, administration and public affairs.", bnDescription: "বাংলাদেশের জাতীয় গুরুত্বপূর্ণ খবর—সরকার, প্রশাসন ও জনজীবনের আপডেট।" },
+  { key: 'politics', en: 'Politics', bn: 'রাজনীতি', enDescription: "Political developments, elections, parliament updates and policy debates.", bnDescription: "নির্বাচন, সংসদ, রাজনৈতিক দল ও নীতিগত সিদ্ধান্তের খবর।" },
+  { key: 'economy', en: 'Economy', bn: 'অর্থনীতি', enDescription: "Economic trends including inflation, trade, remittance and fiscal policy.", bnDescription: "বাংলাদেশের অর্থনীতি, বাজেট, মূল্যস্ফীতি ও বাজার বিশ্লেষণ।" },
+  { key: 'business', en: 'Business', bn: 'ব্যবসা', enDescription: "Corporate news, startups, investments, industries and trade.", bnDescription: "কোম্পানি, বিনিয়োগ, শিল্প ও বাণিজ্য সংক্রান্ত খবর।" },
+  { key: 'international', en: 'International', bn: 'আন্তর্জাতিক', enDescription: "Global politics, diplomacy and world events relevant to Bangladesh.", bnDescription: "বিশ্ব রাজনীতি, কূটনীতি ও আন্তর্জাতিক গুরুত্বপূর্ণ ঘটনা।" },
+  { key: 'sports', en: 'Sports', bn: 'খেলা', enDescription: "Cricket, football, tournaments, match reports and athlete updates.", bnDescription: "ক্রিকেট, ফুটবলসহ জাতীয় ও আন্তর্জাতিক ক্রীড়া সংবাদ।" },
+  { key: 'technology', en: 'Technology', bn: 'প্রযুক্তি', enDescription: "AI, software, gadgets, startups and cybersecurity.", bnDescription: "এআই, সফটওয়্যার, গ্যাজেট ও ডিজিটাল নিরাপত্তা।" },
+  { key: 'health', en: 'Health', bn: 'স্বাস্থ্য', enDescription: "Public health, hospitals, medical research and healthcare awareness.", bnDescription: "জনস্বাস্থ্য, চিকিৎসা, হাসপাতাল ও স্বাস্থ্য সচেতনতা।" },
 ] as const;
 
 /**

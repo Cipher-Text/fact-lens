@@ -70,6 +70,11 @@ describe('API proxy allowlist', () => {
     expect(isAllowedApiRequest('DELETE', ['stories', 'a', 'sources', 'b'])).toBe(true);
     expect(isAllowedApiRequest('GET', ['config', 'flags'])).toBe(true);
     expect(isAllowedApiRequest('PUT', ['config', 'flags', 'ads.serving'])).toBe(true);
+    expect(isAllowedApiRequest('POST', ['config', 'locales'])).toBe(true);
+    expect(isAllowedApiRequest('PUT', ['config', 'locales', 'hi'])).toBe(true);
+    expect(isAllowedApiRequest('PUT', ['taxonomy', 'categories', 'order'])).toBe(true);
+    expect(isAllowedApiRequest('GET', ['taxonomy', 'tags'])).toBe(true);
+    expect(isAllowedApiRequest('GET', ['public', 'navigation', 'en'])).toBe(false);
   });
   it('lets the media library through, but not its internals', () => {
     expect(isAllowedApiRequest('POST', ['media'])).toBe(true);

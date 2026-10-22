@@ -4,6 +4,7 @@ import { publicMediaSchema } from './media';
 import { contributorSchema, mediaAssetSchema, storyRevisionSchema, storySchema, storyTranslationSchema } from './editorial';
 import { idSchema, localeCodeSchema, slugSchema, timestampSchema } from './common';
 import { contributorRoles, storyStatuses } from './enums';
+import { publicTaxonomyRefSchema, taxonomyTagSchema } from './taxonomy';
 
 export const storyCreateSchema = z.object({
   locale: localeCodeSchema,
@@ -94,6 +95,8 @@ export const storyDetailSchema = z.object({
   translations: z.array(storyTranslationSchema.extend({ version: z.number().int().positive(), updatedAt: timestampSchema })),
   contributors: z.array(z.object({ contributor: contributorSchema, role: z.enum(contributorRoles), position: z.number().int() })),
   media: z.array(mediaAssetSchema.extend({ role: z.string() })),
+  /** Tags belong to the story, in every language. A label per language, so the editor can show what is missing. */
+  tags: z.array(taxonomyTagSchema),
   revisionCount: z.number().int().positive(),
   /** Open review comments. Visible at every hand-off so they are not missed (docs/06). */
   openCommentCount: z.number().int().nonnegative(),
@@ -118,5 +121,8 @@ export const publicStorySchema = z.object({
   corrections: z.array(z.object({ approvedAt: timestampSchema, notice: z.string() })),
   /** The images the body refers to, with what a reader's page needs to show them. */
   media: z.array(publicMediaSchema),
+  /** In this story's language only; null / left out when it has no name in that language. */
+  category: publicTaxonomyRefSchema.nullable(),
+  tags: z.array(publicTaxonomyRefSchema),
 });
 export type PublicStory = z.infer<typeof publicStorySchema>;

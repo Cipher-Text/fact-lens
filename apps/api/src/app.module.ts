@@ -15,6 +15,10 @@ import { SourcesService } from './stories/sources.service';
 import { PublicStoriesController } from './stories/public.controller';
 import { StoriesController } from './stories/stories.controller';
 import { StoriesService } from './stories/stories.service';
+import { LocalesController } from './config/locales.controller';
+import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller';
+import { TaxonomyController } from './taxonomy/taxonomy.controller';
+import { TaxonomyService } from './taxonomy/taxonomy.service';
 import { HealthController } from './health.controller';
 import { PG_POOL } from './db/pool';
 import { DatabaseModule } from './db/database.module';
@@ -23,13 +27,14 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [HealthController, MeController, FeatureFlagsController, StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController, MediaController],
+  controllers: [HealthController, MeController, FeatureFlagsController, StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
   providers: [
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
     { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },
     { provide: MEDIA_OPTIONS, useFactory: () => ({ maxBytes: loadApiEnv().MAX_UPLOAD_MB * 1024 * 1024 }) },
     MediaService,
     StoriesService,
+    TaxonomyService,
     CommentsService,
     AssignmentsService,
     SourcesService,

@@ -29,6 +29,10 @@ erDiagram
 - **Contributor:** person/org credited for reporting/editing; imported Author maps here. Keep contact email private.
 - **Desk:** editorial ownership and assignment boundary; seed from product decisions, not inferred blindly from categories.
 - **Category, Topic, Tag:** controlled taxonomy with slugs, locale labels, aliases and status. Category is navigational; Topic/Tag are discovery labels.
+  - **Multilingual by data.** A category or tag is one record with one label row per language (`category_label`, `tag_label`: name, address, aliases, and a description for categories). Which languages exist is the `locale` table, not code, so adding a language (for example `hi`) needs no release: it is added under Configuration, then categories and tags can be named in it and stories translated into it.
+  - **Category** is the news menu: a story has one; `position` orders the menu and `show_in_menu` hides a category from it without deleting it. The menu is flat for now (`parent_id` is unused). **Tag**: a story has many (at most 30). Addresses are unique per language, so `/bn-BD/…/india` and `/en/…/india` do not collide.
+  - **Missing translations.** A category or tag with no label in a language is left out of that language's menu, story and lists; languages are never mixed on a page. The newsroom shows what is missing (open question 21).
+  - **Delete.** Something used by stories is archived, not deleted. Changing a name keeps its address so live links keep working.
 - **Source, StorySource:** structured source identity, URL/canonical URL, publisher/type, published/retrieved times, archive URL, notes, primary/secondary and use type.
 - **MediaAsset:** object-storage key, dimensions, MIME, hash, variants, rights/license, source attribution and processing state.
 - **SEO metadata:** per translation plus canonical/redirect records; do not bury all SEO in arbitrary JSON.

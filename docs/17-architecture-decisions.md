@@ -26,6 +26,7 @@ These were not in the original plan. Each is built and tested; revisit one if it
 17. **ADR-017: SQL migrations, owned by the API.** `node-pg-migrate` with plain SQL files that have Up and Down sections; the worker's tests run the same files. Reason: the schema is the contract between apps and reads best as SQL. No ORM.
 18. **ADR-018: Contracts are Zod schemas, not OpenAPI-first.** `packages/contracts` holds transport schemas and enums shared by the API and the newsroom, and a test compares each enum with its database CHECK constraint. OpenAPI generation (doc 20, Epic A) is deferred until an external client needs it.
 19. **ADR-019: A fake identity provider for local work.** `tools/dev-idp` signs anyone in who clicks a name; it listens on loopback only and refuses to start when `NODE_ENV=production`. Reason: the real provider is an open question ([19](./19-open-questions.md), 7) and local work should not wait on it.
+20. **ADR-020: Languages are rows, taxonomy names are label rows.** Categories and tags are single records with a label per language (`category_label`, `tag_label`), and the supported languages are the `locale` table. Reason: the site starts in English and Bangla and more are coming; a new language must be a data change, not a schema or code change. Consequence: no language is named in the taxonomy code, and a missing label hides the item in that language ([19](./19-open-questions.md), 21).
 
 ## Deferred with revisit triggers
 

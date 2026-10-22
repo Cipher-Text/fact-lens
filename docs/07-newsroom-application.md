@@ -10,10 +10,10 @@ The newsroom is a separate Next.js app using the same contracts and design primi
 - **Review/fact-check:** comments, claims/evidence checklist, unresolved issues and approval history.
 - **Media library:** search, upload, rights/attribution, crops/variants, attachment context, and branded photocard/poster generation from a photo using FactLens templates.
 - **Publishing calendar:** schedules, locale/channel readiness, conflicts, failed jobs and cancellation.
-- **Taxonomy/entities:** controlled vocabulary, aliases, merge/archive workflows and impact preview.
+- **Taxonomy/entities:** controlled vocabulary, aliases, merge/archive workflows and impact preview. Built so far (`/taxonomy`, gated by `taxonomy.manage`): the menu sections (order, show or hide, a name and description per language), tags (search in any language, a name per language), archive, and a warning where a language has no name. Tags are picked per story in the Details panel. Merge and impact preview are not built.
 - **Analytics:** per-story performance (first-party view counts, "most read"/trending rankings), publication and distribution metrics with access controls; operational metrics remain in observability tooling.
 - **Advertising:** advertiser/campaign/placement management, targeting rules, redirect-token health and ad-event delivery status; gated by `ads.manage`.
-- **Configuration:** workflow-transition policy per desk, AI provider/model/budget per use case, rate limits, retention rules, supported locales, and module feature flags; gated by `config.manage` and audited like any other privileged action (see [configuration and feature flags](./21-configuration-and-feature-flags.md)).
+- **Configuration:** workflow-transition policy per desk, AI provider/model/budget per use case, rate limits, retention rules, supported locales (add or switch off a language), and module feature flags; gated by `config.manage` and audited like any other privileged action (see [configuration and feature flags](./21-configuration-and-feature-flags.md)).
 - **Audit/admin:** capability assignments, audit search, redirect registry, provider/config health.
 
 ## Editor behavior

@@ -1,11 +1,13 @@
 import { featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
 import type { Pool } from 'pg';
+import { tags } from './tags';
 import { categories, configuration, desks, featureFlags, roles } from './data';
 import { withTransaction } from '../db/transaction';
 
 export interface SeedResult {
   desks: number;
   categories: number;
+  tags: number;
   configuration: number;
   featureFlags: number;
   roles: number;
@@ -21,7 +23,7 @@ export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
 
   return withTransaction(pool, async (db) => {
     const count = async (sql: string, params: unknown[]) => (await db.query(sql, params)).rowCount ?? 0;
-    const result: SeedResult = { desks: 0, categories: 0, configuration: 0, featureFlags: 0, roles: 0 };
+    const result: SeedResult = { desks: 0, categories: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0 };
 
     for (const d of desks) {
       result.desks += await count('INSERT INTO desk (key, name) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING', [d.key, d.name]);
@@ -34,10 +36,20 @@ export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
       );
       if (inserted.rowCount === 0) continue; // already seeded; keep any edited labels
       result.categories += 1;
-      for (const [locale, name] of [['en', c.en], ['bn-BD', c.bn]] as const) {
-        await db.query('INSERT INTO category_label (category_id, locale, name, slug) VALUES ($1, $2, $3, $4)', [
-          inserted.rows[0].id, locale, name, c.key,
+      for (const [locale, name, description] of [['en', c.en, c.enDescription], ['bn-BD', c.bn, c.bnDescription]] as const) {
+        await db.query('INSERT INTO category_label (category_id, locale, name, slug, description) VALUES ($1, $2, $3, $4, $5)', [
+          inserted.rows[0].id, locale, name, c.key, description,
         ]);
+      }
+    }
+
+    for (const t of tags) {
+      const inserted = await db.query('INSERT INTO tag (key) VALUES ($1) ON CONFLICT (key) DO NOTHING RETURNING id', [t.key]);
+      if (inserted.rowCount === 0) continue; // already seeded; keep any edited labels
+      result.tags += 1;
+      await db.query('INSERT INTO tag_label (tag_id, locale, name, slug) VALUES ($1, $2, $3, $4)', [inserted.rows[0].id, 'en', t.en, t.key]);
+      if (t.bn && t.bnSlug) {
+        await db.query('INSERT INTO tag_label (tag_id, locale, name, slug) VALUES ($1, $2, $3, $4)', [inserted.rows[0].id, 'bn-BD', t.bn, t.bnSlug]);
       }
     }
 

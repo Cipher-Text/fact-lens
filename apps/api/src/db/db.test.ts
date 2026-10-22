@@ -418,6 +418,7 @@ describe.skipIf(!adminUrl)('database schema', () => {
   it('seeds reference data once and never overwrites later edits', async () => {
     const first = await seedReferenceData(pool);
     expect(first.categories).toBe(9);
+    expect(first.tags).toBe(146);
     expect(first.featureFlags).toBe(c.featureFlagKeys.length);
     expect(first.desks).toBeGreaterThan(0);
 
@@ -426,7 +427,7 @@ describe.skipIf(!adminUrl)('database schema', () => {
     await pool.query(`UPDATE category_label SET name = 'Edited' WHERE slug = 'local' AND locale = 'en'`);
 
     const second = await seedReferenceData(pool);
-    expect(second).toEqual({ desks: 0, categories: 0, configuration: 0, featureFlags: 0, roles: 0 });
+    expect(second).toEqual({ desks: 0, categories: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0 });
     expect(first.roles).toBe(8);
 
     const flag = await pool.query(`SELECT enabled FROM feature_flag WHERE key = 'ads.serving'`);
@@ -437,6 +438,8 @@ describe.skipIf(!adminUrl)('database schema', () => {
     expect(label.rows[0].name).toBe('Edited');
     const bn = await pool.query(`SELECT count(*)::int AS n FROM category_label WHERE locale = 'bn-BD'`);
     expect(bn.rows[0].n).toBe(9);
+    const tagNames = await pool.query(`SELECT count(*)::int AS n FROM tag_label`);
+    expect(tagNames.rows[0].n).toBe(292);
   });
 
   it('stores seeded configuration that passes its contract schema', async () => {

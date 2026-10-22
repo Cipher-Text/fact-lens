@@ -5,7 +5,7 @@ import {
   storyDetailSchema, timelineEntrySchema,
 } from '@fact-lens/contracts';
 import { RichBody } from '@/components/RichBody';
-import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, TransitionPanel, TranslationEditor } from '@/components';
+import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, StoryTagPicker, TransitionPanel, TranslationEditor } from '@/components';
 import { Badge, Empty, Panel, StatusBadge } from '@/components/ui';
 import { ApiError, api, getPrincipal } from '@/lib/current';
 import { formatDateTime, pickTitle } from '@/lib/format';
@@ -125,11 +125,13 @@ export default async function StoryPage({ params }: { params: Promise<{ id: stri
                   desks={desks.map((d) => ({ id: d.id, name: d.name }))} categories={categories.map((c) => ({ id: c.id, name: sectionName(c) }))}
                   contributors={detail.contributors.map((c) => ({ id: c.contributor.id, name: c.contributor.displayName, role: c.role }))}
                   people={people.map((p) => ({ id: p.id, name: p.displayName }))} />
+                <StoryTagPicker storyId={id} tags={detail.tags} locales={locales} />
                 <NewPersonForm />
               </div>
             ) : (
               <dl className="space-y-1 text-sm">
                 <div><dt className="inline text-muted">Desk: </dt><dd className="inline">{desks.find((d) => d.id === story.deskId)?.name ?? '—'}</dd></div>
+                <div><dt className="inline text-muted">Tags: </dt><dd className="inline">{detail.tags.map((t) => t.labels.find((l) => l.locale === 'en')?.name ?? t.key).join(', ') || '—'}</dd></div>
                 <div><dt className="inline text-muted">Credits: </dt><dd className="inline">{detail.contributors.map((c) => `${c.contributor.displayName} (${c.role})`).join(', ') || '—'}</dd></div>
               </dl>
             )}

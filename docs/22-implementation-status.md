@@ -15,9 +15,9 @@ What exists in this repository today, how much of it has been checked, and what 
 |---|---|---|
 | 0. Inventory and migration prototypes | Not started | No inventory, importer, redirect registry prototype or HTML-to-editor spike. The locale and URL policy is open ([19](./19-open-questions.md), 2 and 14). |
 | 1. Foundation and newsroom shell | Mostly done | Monorepo, API, migrations, OIDC bearer auth, capability checks, audit and outbox, worker, contracts, newsroom shell. Missing: OpenAPI generation, Docker images, deployment skeleton, tracing and metrics. See [20](./20-phase-1-backlog.md). |
-| 2. Editorial core | Largely done | Story, revision and translation commands, workflow, Tiptap editor, sources, comments, assignments, corrections, timeline, scheduling and scheduled publishing, media library. Missing: branded card generation, taxonomy management screens, an assignment-creation screen, the advertising screens. |
+| 2. Editorial core | Largely done | Story, revision and translation commands, workflow, Tiptap editor, sources, comments, assignments, corrections, timeline, scheduling and scheduled publishing, media library. Missing: branded card generation, taxonomy merge and impact preview, an assignment-creation screen, the advertising screens. |
 | 3. Migration tooling and rehearsal | Not started | |
-| 4. Public web and cutover | Early | `apps/web` is the new design on mock data. The API has a published-story read model with slug redirects and public media. There are no list, category, tag or search routes, no sitemap, legacy redirects, view beacon, newsletter or ad serving, and the web app does not call the API. |
+| 4. Public web and cutover | Early | `apps/web` is the new design on mock data. The API has a published-story read model with slug redirects and public media. The API has public per-language navigation and category and tag story lists, but `apps/web` does not call them, and there is no search route, no sitemap, legacy redirects, view beacon, newsletter or ad serving, and the web app does not call the API. |
 | 5. Ingestion and AI assistance | Not started | Feature flags and AI configuration rows exist and do nothing. The cache, search and notification jobs only log. |
 | 6. Distribution and analytics | Not started | |
 | 7. Advanced discovery | Not started | |
@@ -26,7 +26,7 @@ What exists in this repository today, how much of it has been checked, and what 
 
 **Applications**
 
-- `apps/api`: NestJS on Fastify. Default-deny authentication, capability checks, audit, 12 SQL migrations.
+- `apps/api`: NestJS on Fastify. Default-deny authentication, capability checks, audit, 13 SQL migrations.
 - `apps/worker`: BullMQ worker with an outbox dispatcher, a job runtime, a due-schedule scanner and a health endpoint.
 - `apps/newsroom`: Next.js editorial workspace with server-side OIDC sign-in.
 - `apps/web`: the public site design, imported from `fact-lens-web`, on mock data.
@@ -38,17 +38,18 @@ What exists in this repository today, how much of it has been checked, and what 
 - Stories: list, detail, revisions, timeline, create, translation save with version check, desk/section/credits, new revision, workflow transitions, corrections.
 - Collaboration: comments (add, resolve, reopen), assignments (create, complete, cancel, "mine"), sources (create, validate, attach, detach).
 - Media: upload, list, detail, rights, file, delete. Public: story by locale and slug, media derivatives.
-- Reference data and administration: desks, categories, locales, contributors, feature flags, `/me`.
+- Reference data and administration: desks, categories, tags, locales, contributors, feature flags, `/me`.
+- Taxonomy (`taxonomy.manage`): categories (create, rename per language, order, show or hide in the menu, archive, delete when unused), tags (the same, with search), story tags (`PUT /stories/:id/tags`), languages (`/config/locales`, `config.manage`). Public: `GET /public/navigation/:locale`, `GET /public/stories/:locale?category=|tag=`; the public story carries its category and tags in its own language.
 - Internal (shared secret, for the worker): publish a due schedule.
 - Health: liveness and readiness.
 
 **Database**: locale, configuration, feature flag, desk, category, tag, contributor, media asset, story, revision, translation, slug registry, story tags and contributors, revision media, source, story source, assignment, comment, correction and notice, publishing schedule, card template, generated card, advertiser, campaign, placement, ad, ad category target, ad event, role, role capability, audit event, outbox event, processed job. Not yet created: newsletter subscriber, story performance, entities, claims, AI runs, prompt templates, ingestion sources.
 
-**Seeded reference data** (`pnpm seed`): 4 provisional desks, 9 categories with English and Bangla names, 8 provisional roles, default workflow policy, 9 rate limits, 6 AI use cases (budget zero), 11 feature flags (all off).
+**Seeded reference data** (`pnpm seed`): 4 provisional desks, 9 categories with English and Bangla names and descriptions, 146 tags with English and Bangla names (from cipher-press), 8 provisional roles, default workflow policy, 9 rate limits, 6 AI use cases (budget zero), 11 feature flags (all off).
 
 **Worker jobs**: `story.publish_scheduled` and `schedule.scan` work. `cache.invalidate`, `search.index` and `notification.send` log and succeed. `media.variant` and `media.card_generate` fail on purpose as "not implemented".
 
-**Newsroom screens**: desk queue, new story, story workspace, media library and image page, configuration (feature flags). Source inbox and publishing calendar are placeholders.
+**Newsroom screens**: desk queue, new story, story workspace, media library and image page, configuration (languages, feature flags), sections and tags (menu, tags, per-language names), and a tag picker in the story workspace. Source inbox and publishing calendar are placeholders.
 
 ## How much is verified
 
@@ -67,7 +68,7 @@ What exists in this repository today, how much of it has been checked, and what 
 - **Operations:** tracing, metrics, Sentry, dashboards, backups, rate limits (the numbers are seeded, nothing enforces them).
 - **Auth:** token refresh, desk-scoped roles, a real identity provider (only the fake one has been used).
 - **Media:** variant generation in the worker, malware scanning, crop and focal point, social cards, orphan sweep, cipher-press upload migration, CDN.
-- **Editorial:** HTML import fixture, autosave, side-by-side locales, comment replies in the UI, audit search, taxonomy and contributor management screens.
+- **Editorial:** HTML import fixture, autosave, side-by-side locales, comment replies in the UI, audit search, taxonomy merge, contributor management screens.
 - **Commercial:** ad serving, signed redirects, targeting logic, ad-event capture, advertising screens.
-- **Public:** list, category, tag and search routes, sitemap, legacy redirects, view beacon, newsletter, analytics tags.
+- **Public:** web pages for category and tag lists and search (the API lists exist), sitemap, legacy redirects, view beacon, newsletter, analytics tags.
 - **Later phases:** ingestion, AI gateway, distribution, search projection, entities and claims, migration from cipher-press.

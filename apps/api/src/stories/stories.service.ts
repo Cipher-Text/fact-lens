@@ -14,6 +14,7 @@ import { AuthorizationService } from '../auth/authorization.service';
 import { isPgError, type Actor } from '../common/http';
 import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
+import { TaxonomyService } from '../taxonomy/taxonomy.service';
 import { publishIssues, reviewIssues, slugify, type RevisionSnapshot } from './validation';
 import { capabilityFor, findTransition, LIVE_STATUSES, movesFrom } from './workflow';
 
@@ -63,6 +64,7 @@ export class StoriesService {
     @Inject(PG_POOL) private readonly pool: Pool,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(AuthorizationService) private readonly authz: AuthorizationService,
+    @Inject(TaxonomyService) private readonly taxonomy: TaxonomyService,
   ) {}
 
   // ---------------------------------------------------------------- queries
@@ -110,7 +112,7 @@ export class StoriesService {
   async detail(id: string, principal: Principal, db: Db = this.pool): Promise<StoryDetail> {
     const story = await this.loadStory(db, id);
     const revision = await this.latestRevision(db, id);
-    const [translations, contributors, media, count, openComments] = await Promise.all([
+    const [translations, contributors, media, count, openComments, tags] = await Promise.all([
       db.query(
         `SELECT * FROM story_translation WHERE revision_id = $1 ORDER BY locale`, [revision.id]),
       db.query(
@@ -124,6 +126,7 @@ export class StoriesService {
           WHERE rm.revision_id = $1 ORDER BY rm.position`, [revision.id]),
       db.query<{ n: number }>('SELECT count(*)::int AS n FROM story_revision WHERE story_id = $1', [id]),
       db.query<{ n: number }>(`SELECT count(*)::int AS n FROM editorial_comment WHERE story_id = $1 AND status = 'open' AND parent_id IS NULL`, [id]),
+      this.taxonomy.tagsOfStory(id, db),
     ]);
     return {
       story: toStory(story),
@@ -141,6 +144,7 @@ export class StoriesService {
         id: m.id, mimeType: m.mime_type, byteSize: Number(m.byte_size), width: m.width, height: m.height, sha256: m.sha256,
         license: m.license, attribution: m.attribution, processingState: m.processing_state, role: m.role,
       })),
+      tags,
       revisionCount: count.rows[0]!.n,
       openCommentCount: openComments.rows[0]!.n,
       transitions: await this.availableTransitions(db, story, principal),
@@ -489,6 +493,8 @@ export class StoriesService {
           WHERE c.story_id = $1 AND r.revision_no <= $3 ORDER BY c.approved_at`, [row.story_id, locale, m.revision_no]),
     ]);
     const media = await this.publicMedia(bodyMediaAssetIds(m.body));
+    const categoryRow = await this.pool.query<{ category_id: string | null }>('SELECT category_id FROM story WHERE id = $1', [row.story_id]);
+    const refs = await this.taxonomy.publicRefs(row.story_id, categoryRow.rows[0]?.category_id ?? null, locale);
     return {
       story: {
         id: m.id, locale, slug, title: m.title, dek: m.dek, body: m.body, seoTitle: m.seo_title, seoDescription: m.seo_description,
@@ -499,6 +505,8 @@ export class StoriesService {
         alternates: alternates.rows.map((a) => ({ locale: a.locale, slug: a.slug })),
         corrections: corrections.rows.map((c) => ({ approvedAt: c.approved_at.toISOString(), notice: c.notice })),
         media,
+        category: refs.category,
+        tags: refs.tags,
       },
     };
   }

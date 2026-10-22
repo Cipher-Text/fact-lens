@@ -16,6 +16,7 @@ import { seedReferenceData } from '../seed/seed';
 import { PublicStoriesController } from './public.controller';
 import { StoriesController } from './stories.controller';
 import { StoriesService } from './stories.service';
+import { TaxonomyService } from '../taxonomy/taxonomy.service';
 
 const adminUrl = process.env.TEST_DATABASE_URL;
 const ISSUER = 'https://idp.test/';
@@ -46,7 +47,7 @@ describe.skipIf(!adminUrl)('stories (database)', () => {
     @Module({
       controllers: [StoriesController, PublicStoriesController],
       providers: [
-        { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService, StoriesService,
+        { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService, StoriesService, TaxonomyService,
         { provide: TOKEN_VERIFIER, useValue: verifier },
         { provide: CAPABILITY_STORE, useValue: new PgCapabilityStore(db.pool) },
         { provide: AUTH_OPTIONS, useValue: { rolesClaim: 'roles', requireMfa: true } },

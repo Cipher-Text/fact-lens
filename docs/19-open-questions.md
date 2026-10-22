@@ -22,6 +22,7 @@ These require product, editorial or business input; they are not unresolved mere
 18. Media rules. Which image types beyond JPEG, PNG and WebP (GIF, AVIF, SVG) are needed; the upload size limit (10 MB now); who may upload and who may delete (reporters upload today; deleting needs `media.manage`); what licence wording editors must use; how long an asset with expired rights stays in the library.
 19. Confirm the revision rule: a submitted revision is locked, and sending a story back or revising a published story opens a new revision ([06](./06-editorial-workflow.md)). The alternative is to reopen the same revision, which loses the record of what was reviewed.
 20. Session length. Access tokens are the session (no refresh yet). Is a sign-in per token lifetime acceptable to editors, or is silent refresh a launch requirement?
+21. Untranslated categories and tags. Today something with no name in a language is left out of that language's menu, story page and lists; languages are never mixed. The alternative is to fall back to another language's name. Also: should the menu have sub-menus (the column exists, nothing uses it), and should tags be capped at 30 per story as now?
 
 Resolved: advertising is confirmed part of the Phase 1 launch scope, carrying forward CipherPress's current Advertiser/Campaign/Placement/Ad/Event design as-is (see [product and platform scope](./02-product-and-platform-scope.md) and [domain model](./05-domain-model.md)).
 

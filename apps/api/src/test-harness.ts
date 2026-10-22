@@ -24,6 +24,10 @@ import { PublicStoriesController } from './stories/public.controller';
 import { SourcesService } from './stories/sources.service';
 import { StoriesController } from './stories/stories.controller';
 import { StoriesService } from './stories/stories.service';
+import { LocalesController } from './config/locales.controller';
+import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller';
+import { TaxonomyController } from './taxonomy/taxonomy.controller';
+import { TaxonomyService } from './taxonomy/taxonomy.service';
 
 const ISSUER = 'https://idp.test/';
 const AUDIENCE = 'fact-lens-api';
@@ -59,11 +63,11 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController, MediaController],
+    controllers: [StoriesController, PublicStoriesController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
-      StoriesService, CommentsService, AssignmentsService, SourcesService, MediaService,
+      StoriesService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, MediaService,
       { provide: OBJECT_STORAGE, useValue: storage },
       { provide: MEDIA_OPTIONS, useValue: { maxBytes: opts.maxUploadBytes ?? 10 * 1024 * 1024 } },
       { provide: TOKEN_VERIFIER, useValue: verifier },
