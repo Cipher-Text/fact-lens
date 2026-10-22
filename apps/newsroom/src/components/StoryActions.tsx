@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import type { AvailableTransition } from '@fact-lens/contracts';
 import { statusLabel } from '@/lib/format';
+import { announce } from '@/lib/announce';
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
 import { buttonClass, Empty, Field, inputClass, Notice } from './ui';
@@ -20,6 +21,7 @@ function useCommand() {
       const res = await bff(method, path, body);
       if (!res.ok) return setError({ message: res.reason === 'mfa_required' ? 'This step needs a sign-in with a second factor. Sign out and sign in again with MFA.' : res.message, issues: res.issues });
       after?.();
+      announce('Saved');
       router.refresh();
     });
   };
@@ -37,20 +39,32 @@ export function TransitionPanel({ storyId, transitions }: { storyId: string; tra
   return (
     <div className="space-y-3">
       {open.length === 0 ? <Empty>You cannot move this story from its current state.</Empty> : null}
-      {open.map((t) => (
-        <form key={t.to} className="space-y-2 border-b border-line pb-3 last:border-0 last:pb-0"
-          onSubmit={submitWith((form) => run('POST', `stories/${storyId}/transitions`, {
-            to: t.to,
-            ...(t.reasonRequired ? { reason: form.get('reason') } : {}),
-            ...(t.needsSchedule ? { schedule: { scheduledFor: dhakaToIso(form.get('when') as string), timeZone: 'Asia/Dhaka' } } : {}),
-          }))}>
-          {t.reasonRequired ? <Field label={t.to === 'ARCHIVED' ? 'Why archive this story?' : t.to === 'DRAFT' ? 'What needs to change?' : 'Reason'}><input name="reason" required minLength={3} maxLength={500} className={inputClass} /></Field> : null}
-          {t.needsSchedule ? <Field label="Publish at (Dhaka time)"><input type="datetime-local" name="when" required className={inputClass} /></Field> : null}
-          <button type="submit" disabled={pending} className={buttonClass(t.to === 'ARCHIVED' ? 'danger' : 'secondary')}>
-            Move to {statusLabel(t.to).toLowerCase()}
-          </button>
-        </form>
-      ))}
+      {open.map((t, i) => {
+        const needsInput = t.reasonRequired || t.needsSchedule;
+        const form = (
+          <form key={t.to} className="space-y-2"
+            onSubmit={submitWith((form) => run('POST', `stories/${storyId}/transitions`, {
+              to: t.to,
+              ...(t.reasonRequired ? { reason: form.get('reason') } : {}),
+              ...(t.needsSchedule ? { schedule: { scheduledFor: dhakaToIso(form.get('when') as string), timeZone: 'Asia/Dhaka' } } : {}),
+            }))}>
+            {t.reasonRequired ? <Field label={t.to === 'ARCHIVED' ? 'Why archive this story?' : t.to === 'DRAFT' ? 'What needs to change?' : 'Reason'}><input name="reason" required minLength={3} maxLength={500} className={inputClass} /></Field> : null}
+            {t.needsSchedule ? <Field label="Publish at (Dhaka time)"><input type="datetime-local" name="when" required className={inputClass} /></Field> : null}
+            <button type="submit" disabled={pending} className={buttonClass(t.to === 'ARCHIVED' ? 'danger' : i === 0 && !needsInput ? 'primary' : 'secondary')}>
+              Move to {statusLabel(t.to).toLowerCase()}
+            </button>
+          </form>
+        );
+        // Steps that ask for a reason or a time stay folded away until wanted, so the usual next step is the obvious one.
+        return needsInput ? (
+          <details key={t.to} className="border-t border-line pt-2 first:border-0 first:pt-0">
+            <summary className={`cursor-pointer text-sm font-medium ${t.to === 'ARCHIVED' ? 'text-danger' : ''}`}>
+              {t.to === 'ARCHIVED' ? 'Archive this story…' : t.to === 'DRAFT' ? 'Send back for changes…' : `Move to ${statusLabel(t.to).toLowerCase()}…`}
+            </summary>
+            <div className="mt-2">{form}</div>
+          </details>
+        ) : form;
+      })}
       {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}
       {closed.length > 0 ? (
         <details className="text-sm text-muted">

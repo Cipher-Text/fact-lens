@@ -21,7 +21,7 @@ export default async function DeskQueue({ searchParams }: { searchParams: Promis
   const chip = (value: string | undefined, label: string) => {
     const active = value === filter;
     return (
-      <Link key={label} href={value ? `/?status=${value}` : '/'} aria-current={active ? 'true' : undefined}
+      <Link key={label} href={value ? `/?status=${value}` : '/'} aria-current={active ? 'true' : undefined} aria-label={`${label}${active ? ' (selected)' : ''}`}
         className={`rounded-full border px-3 py-1 text-sm ${active ? 'border-accent bg-accent text-accent-fg' : 'border-line bg-panel'}`}>{label}</Link>
     );
   };
@@ -33,7 +33,7 @@ export default async function DeskQueue({ searchParams }: { searchParams: Promis
           <h1 id="stories-h" className="text-xl font-semibold">Desk queue</h1>
           {can(principal, 'story.edit') ? <Link href="/stories/new" className="rounded bg-accent px-3 py-1.5 text-sm font-medium text-accent-fg">New story</Link> : null}
         </div>
-        <div className="mb-3 flex flex-wrap gap-2" aria-label="Filter by status">
+        <div role="group" className="mb-3 flex flex-wrap gap-2" aria-label="Filter by status">
           {chip(undefined, 'All')}
           {storyStatuses.filter((s) => s !== 'INGESTED' && s !== 'RESEARCHING').map((s) => chip(s, statusLabel(s)))}
         </div>
@@ -44,10 +44,10 @@ export default async function DeskQueue({ searchParams }: { searchParams: Promis
             {list.items.map((s) => {
               const title = pickTitle(s.titles);
               return (
-                <li key={s.id} className="flex items-center justify-between gap-3 px-4 py-3">
+                <li key={s.id} className="relative flex items-center justify-between gap-3 px-4 py-3 hover:bg-line/30">
                   <div className="min-w-0">
-                    <Link href={`/stories/${s.id}`} lang={title?.locale} className="font-medium underline-offset-2 hover:underline">{title?.text ?? 'Untitled'}</Link>
-                    <div className="text-xs text-muted">Updated {relativeTime(s.updatedAt)}</div>
+                    <Link href={`/stories/${s.id}`} lang={title?.locale} className="font-medium underline-offset-2 after:absolute after:inset-0 hover:underline focus-visible:outline-2">{title?.text ?? 'Untitled'}</Link>
+                    <div className="text-xs text-muted">Updated {relativeTime(s.updatedAt)} · {Object.keys(s.titles).sort().join(', ') || 'no text yet'}</div>
                   </div>
                   <StatusBadge status={s.status} />
                 </li>

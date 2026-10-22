@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import type { Locale, TaxonomyCategory, TaxonomyTag } from '@fact-lens/contracts';
+import { announce } from '@/lib/announce';
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
 import { Badge, buttonClass, Field, inputClass, Notice } from './ui';
@@ -23,6 +24,7 @@ function useCommand() {
         return setError({ message, issues: res.issues });
       }
       after?.();
+      announce('Saved');
       router.refresh();
     });
   };
