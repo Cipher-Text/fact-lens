@@ -9,6 +9,11 @@ describe('loadApiEnv', () => {
     expect(env.API_PORT).toBe(4000);
     expect(env.NODE_ENV).toBe('development');
   });
+  it('treats an empty GEMINI_API_KEY as not set, and defaults the model', () => {
+    expect(loadApiEnv({ ...base, GEMINI_API_KEY: '' }).GEMINI_API_KEY).toBeUndefined();
+    expect(loadApiEnv({ ...base, GEMINI_API_KEY: ' k ' }).GEMINI_API_KEY).toBe('k');
+    expect(loadApiEnv(base).GEMINI_MODEL).toBe('gemini-2.5-flash');
+  });
   it('rejects a missing DATABASE_URL', () => {
     expect(() => loadApiEnv({ REDIS_URL: base.REDIS_URL })).toThrow(/DATABASE_URL/);
   });

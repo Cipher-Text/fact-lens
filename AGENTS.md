@@ -6,7 +6,7 @@ Fact Lens is a Bangla and English news platform. This repository is the main pro
 
 | Path | What it is |
 | --- | --- |
-| `apps/web` | The public site, imported from `fact-lens-web` with its history (git subtree). Mock data only; it does not call the API yet. |
+| `apps/web` | The public site, imported from `fact-lens-web` with its history (git subtree). Mock data only; its header menu is the one optional call to the API (`FACTLENS_API_URL`). |
 | `apps/api` | NestJS on Fastify. Default-deny authentication with capability checks, the editorial workflow (`/news`), comments, assignments, sources, the media library (`/media`), reference data, feature flags, a public read model (`/public`), and an internal endpoint for the worker. Owns the SQL migrations (node-pg-migrate) and the seed. |
 | `apps/worker` | BullMQ worker: outbox dispatcher (leases, retries, dead letters), idempotent job runtime, scheduled-publish scanner, health endpoint. Reads PostgreSQL for the outbox and schedules but changes news item state only through the API's `/internal` endpoints. |
 | `apps/newsroom` | Editorial workspace (Next.js 16, Tailwind 4). Server-side OIDC code flow with PKCE; the access token lives in an encrypted HttpOnly cookie and the browser reaches the API only through `/api/*`, a proxy that checks the origin and an allowlist. Desk queue, news item workspace (Tiptap editor limited to the body contract, with a media picker), media library, configuration. Source inbox and calendar are placeholders. |

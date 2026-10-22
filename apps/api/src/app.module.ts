@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { loadApiEnv } from '@fact-lens/config';
+import { AiController } from './ai/ai.controller';
+import { GEMINI_OPTIONS, GeminiService } from './ai/gemini.service';
 import { AuthModule } from './auth/auth.module';
 import { MeController } from './auth/me.controller';
 import { FeatureFlagsController } from './config/feature-flags.controller';
@@ -27,11 +29,13 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+  controllers: [AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
   providers: [
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
     { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },
     { provide: MEDIA_OPTIONS, useFactory: () => ({ maxBytes: loadApiEnv().MAX_UPLOAD_MB * 1024 * 1024 }) },
+    { provide: GEMINI_OPTIONS, useFactory: () => ({ apiKey: loadApiEnv().GEMINI_API_KEY ?? null, model: loadApiEnv().GEMINI_MODEL }) },
+    GeminiService,
     MediaService,
     NewsService,
     TaxonomyService,

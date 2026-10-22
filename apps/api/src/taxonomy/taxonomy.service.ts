@@ -244,6 +244,14 @@ export class TaxonomyService {
     return tops.map((p) => ({ ...ref(p), children: rows.filter((r) => r.parent_id === p.id).map(ref) }));
   }
 
+  /** Active tags that have a name in this language, for choosing tags from a text. Capped, in key order. */
+  async tagCandidates(locale: string, limit = 400): Promise<Array<{ id: string; key: string; name: string }>> {
+    const { rows } = await this.pool.query<{ id: string; key: string; name: string }>(
+      `SELECT t.id, t.key, l.name FROM tag t JOIN tag_label l ON l.tag_id = t.id AND l.locale = $1
+        WHERE t.status = 'active' ORDER BY t.key LIMIT $2`, [locale, limit]);
+    return rows;
+  }
+
   /** Published news in one language, newest first, optionally of one category or tag. */
   async publicNews(locale: string, q: { category?: string; tag?: string; limit: number; cursor?: string }): Promise<PublicNewsList> {
     await this.requireActiveLocale(locale);

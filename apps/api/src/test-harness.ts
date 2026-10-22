@@ -3,6 +3,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT } from 'jose';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { createApp } from './app';
+import { AiController } from './ai/ai.controller';
+import { GEMINI_OPTIONS, GeminiService, type GeminiOptions } from './ai/gemini.service';
 import { AuditService } from './audit/audit.service';
 import { AuthGuard } from './auth/auth.guard';
 import { AUTH_OPTIONS, AuthService, CAPABILITY_STORE } from './auth/auth.service';
@@ -48,7 +50,7 @@ export const TEST_INTERNAL_TOKEN = 'test-internal-token-0123456789abcdef';
 
 /** Pass `storage` to run the app on another store; the default is an in-memory one that tests can inspect. */
 export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
-  adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number; storage?: S } = {},
+  adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number; storage?: S; gemini?: GeminiOptions } = {},
 ) {
   const storage = (opts.storage ?? new MemoryStorage()) as S;
   const db = await createTestDatabase(adminUrl);
@@ -63,9 +65,10 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+    controllers: [AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
+      { provide: GEMINI_OPTIONS, useValue: opts.gemini ?? { apiKey: null, model: 'test-model' } }, GeminiService,
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
       NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, MediaService,
       { provide: OBJECT_STORAGE, useValue: storage },

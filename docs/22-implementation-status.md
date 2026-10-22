@@ -29,7 +29,7 @@ What exists in this repository today, how much of it has been checked, and what 
 - `apps/api`: NestJS on Fastify. Default-deny authentication, capability checks, audit, 15 SQL migrations.
 - `apps/worker`: BullMQ worker with an outbox dispatcher, a job runtime, a due-schedule scanner and a health endpoint.
 - `apps/newsroom`: Next.js editorial workspace with server-side OIDC sign-in.
-- `apps/web`: the public site design, imported from `fact-lens-web`, on mock data.
+- `apps/web`: the public site design, imported from `fact-lens-web`, on mock data. Its header menu can read `GET /public/navigation/:locale` when `FACTLENS_API_URL` is set, and falls back to the static menu otherwise (unit-tested, not run against a live API).
 - `tools/dev-idp`: a fake sign-in provider for local use. It refuses to run in production.
 - `packages/config` (environment validation) and `packages/contracts` (shared schemas and enums).
 
@@ -41,6 +41,8 @@ What exists in this repository today, how much of it has been checked, and what 
 - Reference data and administration: desks, categories, tags, locales, contributors, feature flags, `/me`.
 - Desk queue numbers: `GET /news/counts` (in progress, due today, stuck over 24 hours, published this week, and a count per stage); the list also carries each item's pending schedule time.
 - Taxonomy (`taxonomy.manage`): categories (create, rename per language, order, show or hide in the menu, archive, delete when unused), tags (the same, with search), tags on a news item (`PUT /news/:id/tags`), languages (`/config/locales`, `config.manage`). Tags carry a description per language and one picture. Public: `GET /public/navigation/:locale`, `GET /public/news/:locale?category=|tag=`; the public news item carries its category and tags in its own language, and an item with no name in a language is left out of that language.
+- Categories can have a parent (`parentId`): the menu has two levels, `GET /public/navigation/:locale` returns each menu with its `children`, and a parent's news list includes its children's news. The newsroom shows child menus under their parent and has a "Parent menu" choice.
+- Writing help (`news.edit`, needs `GEMINI_API_KEY`, ADR-022): `POST /ai/news-suggest` (headline, standfirst, slug, search text and existing tags from a text) and `POST /ai/news-translate` (a language into another, keeping the body's structure). Nothing is saved by these; the newsroom has "Generate with Gemini" and "Translate with Gemini" buttons. Tested with a fake Gemini; not run against the real service.
 - Internal (shared secret, for the worker): publish a due schedule.
 - Health: liveness and readiness.
 

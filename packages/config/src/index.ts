@@ -31,6 +31,9 @@ export const apiEnvSchema = z.object({
   S3_SECRET_ACCESS_KEY: z.string().min(1).optional(),
   S3_FORCE_PATH_STYLE: z.stringbool().default(false),
   MAX_UPLOAD_MB: z.coerce.number().int().min(1).max(25).default(10),
+  /** Gemini API key for the newsroom's writing suggestions. Unset turns the suggestion endpoint off. */
+  GEMINI_API_KEY: z.string().optional().transform((v) => v?.trim() || undefined),
+  GEMINI_MODEL: z.string().min(1).default('gemini-2.5-flash'),
 }).superRefine((env, ctx) => {
   if (env.STORAGE_DRIVER === 's3') {
     for (const key of ['S3_BUCKET', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const) {

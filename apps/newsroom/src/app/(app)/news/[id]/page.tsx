@@ -11,6 +11,10 @@ import { ApiError, api, getPrincipal } from '@/lib/current';
 import { formatDateTime, pickTitle } from '@/lib/format';
 import { can } from '@/lib/nav';
 
+/** A Latin-letter slug already used by another language of this news, so a new one can match it. */
+const latinSlugOf = (translations: Array<{ locale: string; slug: string }>, locale: string) =>
+  translations.find((t) => t.locale !== locale && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(t.slug))?.slug ?? null;
+
 export async function generateMetadata() {
   return { title: 'News item' };
 }
@@ -44,6 +48,12 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
   const heading = pickTitle(Object.fromEntries(translations.map((t) => [t.locale, t.title])));
   const canEdit = can(principal, 'news.edit') && editable && news.status !== 'ARCHIVED';
   const have = new Set(translations.map((t) => t.locale));
+  // A new language is translated from the first text of the item.
+  const first = translations[0];
+  const firstText = first
+    ? { locale: first.locale, localeName: locales.find((l) => l.code === first.locale)?.displayName ?? first.locale, title: first.title, dek: first.dek,
+        seoTitle: first.seoTitle, seoDescription: first.seoDescription, body: first.body }
+    : null;
   const missing = locales.filter((l) => !have.has(l.code));
   const sectionName = (c: (typeof categories)[number]) => c.labels.find((l) => l.locale === 'en')?.name ?? c.key;
 
@@ -66,7 +76,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
             <Panel key={t.id} title={`${locales.find((l) => l.code === t.locale)?.displayName ?? t.locale} text`} id={`t-${t.locale}`}
               actions={<span className="text-xs text-muted">v{t.version} · {t.translationStatus.replace('_', ' ')}</span>}>
               {canEdit ? (
-                <TranslationEditor newsId={id} translation={{
+                <TranslationEditor newsId={id} tagIds={detail.tags.map((x) => x.id)} siblingSlug={latinSlugOf(translations, t.locale)} translation={{
                   locale: t.locale, localeName: locales.find((l) => l.code === t.locale)?.displayName ?? t.locale, title: t.title, dek: t.dek, slug: t.slug,
                   seoTitle: t.seoTitle, seoDescription: t.seoDescription, body: t.body, version: t.version,
                 }} />
@@ -87,7 +97,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
                   <details key={l.code}>
                     <summary className="cursor-pointer text-sm font-medium">{l.displayName}</summary>
                     <div className="mt-3">
-                      <TranslationEditor newsId={id} translation={{ locale: l.code, localeName: l.displayName, title: '', dek: null, slug: '', seoTitle: null, seoDescription: null, body: { type: 'doc', content: [] }, version: null }} />
+                      <TranslationEditor newsId={id} tagIds={detail.tags.map((x) => x.id)} siblingSlug={latinSlugOf(translations, l.code)} source={firstText} translation={{ locale: l.code, localeName: l.displayName, title: '', dek: null, slug: '', seoTitle: null, seoDescription: null, body: { type: 'doc', content: [] }, version: null }} />
                     </div>
                   </details>
                 ))}

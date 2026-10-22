@@ -49,6 +49,8 @@ pnpm check          # lint, typecheck, test, build for every workspace
 The API, the worker, the newsroom and the dev identity provider share **one** file: `.env` in the repository root. Copy `.env.example` (or run `pnpm env:init`) and edit it. Each app reads only its own variables, and the file is ignored by git. `pnpm env:init` never replaces a value in an existing `.env`; it only fills secrets that are still blank.
 
 - Variables that must agree across apps appear once: `DATABASE_URL`, `REDIS_URL`, `INTERNAL_API_TOKEN` (API and worker), `API_BASE_URL` (worker and newsroom), `OIDC_ISSUER` (API and newsroom).
+- `GEMINI_API_KEY` (API only, optional) turns on the newsroom's "Generate with Gemini" and "Translate with Gemini" buttons; `GEMINI_MODEL` changes the model. Without the key the buttons report that suggestions are not set up. The news text is sent to Google when a button is used.
+- `FACTLENS_API_URL` (`apps/web` only, optional) makes the public site's header menu read the API; leave it unset to keep the static menu.
 - A variable set in the shell or by a deployment wins over the file.
 - The root `.env` is for development. In a deployment each service gets only its own variables from the platform's secret store; the newsroom, for example, should not be given the database password.
 - Test settings (`TEST_DATABASE_URL` and the others below) are not read from the file. Pass them in the shell.
