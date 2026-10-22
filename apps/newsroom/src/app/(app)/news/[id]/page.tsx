@@ -74,7 +74,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
                 <article lang={t.locale} className="space-y-2">
                   <h3 className="text-lg font-semibold">{t.title}</h3>
                   {t.dek ? <p className="text-muted">{t.dek}</p> : null}
-                  <p className="text-xs text-muted">Web address: {t.slug}</p>
+                  <p className="text-xs text-muted">Slug: {t.slug}</p>
                   <RichBody body={t.body} lang={t.locale} />
                 </article>
               )}

@@ -51,7 +51,7 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
 
   it('serves the menu per language, in order, and never mixes languages', async () => {
     expect((await nav('en')).slice(0, 2)).toEqual([
-      { key: 'local', name: 'Local', slug: 'local' }, { key: 'national', name: 'National', slug: 'national' },
+      { key: 'local', name: 'Local', slug: 'local', children: [] }, { key: 'national', name: 'National', slug: 'national', children: [] },
     ]);
     expect((await nav('bn-BD'))[0].name).toBe('স্থানীয়');
     expect((await t.anonymous('GET', '/public/navigation/xx')).statusCode).toBe(404);
@@ -62,9 +62,43 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     expect(res.status, JSON.stringify(res.body)).toBe(201);
     expect(res.body.key).toBe('culture-arts');
     expect(res.body.labels.find((l: any) => l.locale === 'bn-BD').slug).toBe('সংস্কৃতি');
-    expect((await nav('en')).at(-1)).toEqual({ key: 'culture-arts', name: 'Culture & Arts', slug: 'culture-arts' });
+    expect((await nav('en')).at(-1)).toEqual({ key: 'culture-arts', name: 'Culture & Arts', slug: 'culture-arts', children: [] });
     const audit = await t.db.pool.query(`SELECT 1 FROM audit_event WHERE action = 'taxonomy.category_create' AND object_id = $1`, [res.body.id]);
     expect(audit.rowCount).toBe(1);
+  });
+
+  it('nests child menus under a parent, two levels only, and hides a child with its parent', async () => {
+    const make = async (key: string, parentId?: string) =>
+      t.call({ method: 'POST', url: '/taxonomy/categories', body: { key, parentId, labels: { en: { name: key } } } });
+    const parent = await make('world');
+    expect(parent.status, JSON.stringify(parent.body)).toBe(201);
+    expect(parent.body.parentId).toBeNull();
+    const child = await make('asia', parent.body.id);
+    expect(child.status, JSON.stringify(child.body)).toBe(201);
+    expect(child.body.parentId).toBe(parent.body.id);
+
+    const world = (await nav('en')).find((c) => c.key === 'world');
+    expect(world.children).toEqual([{ key: 'asia', name: 'asia', slug: 'asia' }]);
+    expect((await nav('en')).some((c) => c.key === 'asia')).toBe(false);
+
+    // Two levels only.
+    expect((await make('india-news', child.body.id)).status).toBe(400);
+    expect((await t.call({ method: 'PUT', url: `/taxonomy/categories/${parent.body.id}`, body: { parentId: child.body.id } })).status).toBe(400);
+    expect((await t.call({ method: 'PUT', url: `/taxonomy/categories/${parent.body.id}`, body: { parentId: parent.body.id } })).status).toBe(400);
+    expect((await make('ghost', '00000000-0000-4000-8000-000000000000')).status).toBe(400);
+
+    // A parent with children cannot be deleted.
+    expect((await t.call({ method: 'DELETE', url: `/taxonomy/categories/${parent.body.id}` })).status).toBe(409);
+
+    // Hiding the parent hides its children from the menu.
+    await t.call({ method: 'PUT', url: `/taxonomy/categories/${parent.body.id}`, body: { showInMenu: false } });
+    expect((await nav('en')).some((c) => c.key === 'world')).toBe(false);
+    await t.call({ method: 'PUT', url: `/taxonomy/categories/${parent.body.id}`, body: { showInMenu: true } });
+
+    // Moving the child to the top level.
+    const moved = await t.call({ method: 'PUT', url: `/taxonomy/categories/${child.body.id}`, body: { parentId: null } });
+    expect(moved.body.parentId).toBeNull();
+    expect((await nav('en')).find((c) => c.key === 'world').children).toEqual([]);
   });
 
   it('needs an explicit key when no name is in Latin letters, and rejects unknown languages', async () => {
@@ -81,7 +115,7 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     expect((await nav('en')).some((c) => c.key === 'science')).toBe(false);
     const named = await t.call({ method: 'PUT', url: `/taxonomy/categories/${science.id}`, body: { labels: { en: { name: 'Science' } } } });
     expect(named.status).toBe(200);
-    expect((await nav('en')).find((c) => c.key === 'science')).toEqual({ key: 'science', name: 'Science', slug: 'science' });
+    expect((await nav('en')).find((c) => c.key === 'science')).toEqual({ key: 'science', name: 'Science', slug: 'science', children: [] });
   });
 
   it('keeps the address when a name changes, and reports a taken address as a conflict', async () => {
@@ -193,7 +227,7 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     const local = (await cats()).find((c) => c.key === 'local');
     const upd = await t.call({ method: 'PUT', url: `/taxonomy/categories/${local.id}`, body: { labels: { hi: { name: 'स्थानीय', slug: 'sthaniya' } } } });
     expect(upd.status, JSON.stringify(upd.body)).toBe(200);
-    expect(await nav('hi')).toEqual([{ key: 'local', name: 'स्थानीय', slug: 'sthaniya' }]);
+    expect(await nav('hi')).toEqual([{ key: 'local', name: 'स्थानीय', slug: 'sthaniya', children: [] }]);
     expect((await nav('en'))[1]).toMatchObject({ key: 'local', name: 'Local' });
 
     const off = await t.call({ method: 'PUT', url: '/config/locales/hi', body: { active: false } });

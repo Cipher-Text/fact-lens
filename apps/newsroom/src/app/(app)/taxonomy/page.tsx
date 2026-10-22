@@ -28,23 +28,30 @@ export default async function TaxonomyPage({ searchParams }: { searchParams: Pro
   }
   const [locales, categories, tags] = data;
   const order = categories.map((c) => c.id);
+  // Menu order, with each parent's child menus directly under it. The menu has two levels.
+  const tops = categories.filter((c) => c.parentId === null);
+  const childrenOf = (id: string) => categories.filter((c) => c.parentId === id);
+  const rows = tops.flatMap((p) => [
+    { category: p, siblings: tops.map((c) => c.id), hasChildren: childrenOf(p.id).length > 0 },
+    ...childrenOf(p.id).map((c) => ({ category: c, siblings: childrenOf(p.id).map((k) => k.id), hasChildren: false })),
+  ]);
   return (
     <div className="max-w-4xl space-y-6">
       <header>
         <h1 className="text-xl font-semibold">Sections and tags</h1>
         <p className="mt-1 text-sm text-muted">
-          Sections make up the news menu; a news item has one. Tags describe a news item; it can have many. Each is named once per language ({locales.map((l) => l.displayName).join(', ')}).
+          Sections make up the news menu; a news item has one. A section can sit under a parent menu as a child menu. Tags describe a news item; it can have many. Each is named once per language ({locales.map((l) => l.displayName).join(', ')}).
           Something with no name in a language is left out of that language&apos;s site. Add languages under <Link href="/config" className="underline">Configuration</Link>.
         </p>
       </header>
 
       <Panel title="Menu sections" id="categories-h">
         <ol className="mb-4 space-y-2">
-          {categories.map((c) => <CategoryRow key={c.id} category={c} order={order} locales={locales} />)}
+          {rows.map((r) => <CategoryRow key={r.category.id} category={r.category} order={order} siblings={r.siblings} parents={tops} hasChildren={r.hasChildren} locales={locales} />)}
         </ol>
         <details>
           <summary className="cursor-pointer text-sm font-medium">Add a section</summary>
-          <div className="mt-3"><NewCategoryForm locales={locales} /></div>
+          <div className="mt-3"><NewCategoryForm locales={locales} parents={tops} /></div>
         </details>
       </Panel>
 

@@ -80,18 +80,32 @@ function Missing({ item, locales }: { item: Item; locales: Locale[] }) {
   return <Badge tone="warn">{`No name in ${missing.map((l) => l.displayName).join(', ')}: left out there`}</Badge>;
 }
 
-export function NewCategoryForm({ locales }: { locales: Locale[] }) {
+/** Picks the parent menu. Only top-level sections can be parents, and a section with child menus cannot become a child. */
+function ParentSelect({ parents, current, self, hasChildren }: { parents: TaxonomyCategory[]; current?: string | null; self?: string; hasChildren?: boolean }) {
+  return (
+    <Field label="Parent menu" hint={hasChildren ? 'This section has child menus, so it stays a top-level menu.' : 'Optional. Makes this a child menu under the parent. The menu has two levels.'}>
+      <select name="parentId" defaultValue={current ?? ''} disabled={hasChildren} className={inputClass}>
+        <option value="">None: a top-level menu</option>
+        {parents.filter((p) => p.id !== self).map((p) => <option key={p.id} value={p.id}>{displayName(p)}</option>)}
+      </select>
+    </Field>
+  );
+}
+
+export function NewCategoryForm({ locales, parents }: { locales: Locale[]; parents: TaxonomyCategory[] }) {
   const { error, pending, run } = useCommand();
   return (
     <form className="space-y-3" onSubmit={submitWith((form, el) => {
       const key = String(form.get('key') ?? '').trim();
       run('POST', 'taxonomy/categories', {
-        ...(key ? { key } : {}), showInMenu: form.get('showInMenu') === 'on', labels: readLabels(form, locales, undefined, true),
+        ...(key ? { key } : {}), showInMenu: form.get('showInMenu') === 'on', parentId: String(form.get('parentId') ?? '') || null,
+        labels: readLabels(form, locales, undefined, true),
       }, () => el.reset());
     })}>
       <LabelFields locales={locales} withDescription />
       <div className="flex flex-wrap items-end gap-3">
         <Field label="Key" hint="Optional. Lowercase letters, digits and hyphens. Made from the English name when left empty."><input name="key" maxLength={60} className={inputClass} /></Field>
+        <ParentSelect parents={parents} />
         <label className="flex items-center gap-2 pb-5 text-sm"><input type="checkbox" name="showInMenu" defaultChecked /> Show in the menu</label>
         <button type="submit" disabled={pending} className={`${buttonClass('primary')} mb-5`}>Add section</button>
       </div>
@@ -100,21 +114,32 @@ export function NewCategoryForm({ locales }: { locales: Locale[] }) {
   );
 }
 
-export function CategoryRow({ category, order, locales }: { category: TaxonomyCategory; order: string[]; locales: Locale[] }) {
+/**
+ * One menu section. `order` is every section in menu order; `siblings` are the ones under the same
+ * parent, so the arrows move a section among its siblings and a child stays under its parent.
+ */
+export function CategoryRow({ category, order, siblings, parents, hasChildren, locales }: {
+  category: TaxonomyCategory; order: string[]; siblings: string[]; parents: TaxonomyCategory[]; hasChildren: boolean; locales: Locale[];
+}) {
   const { error, pending, run } = useCommand();
   const [editing, setEditing] = useState(false);
-  const at = order.indexOf(category.id);
+  const at = siblings.indexOf(category.id);
   const move = (by: -1 | 1) => {
+    const neighbour = siblings[at + by];
+    if (!neighbour) return;
     const next = [...order];
-    next.splice(at, 1);
-    next.splice(at + by, 0, category.id);
+    const a = next.indexOf(category.id);
+    const b = next.indexOf(neighbour);
+    [next[a], next[b]] = [next[b]!, next[a]!];
     run('PUT', 'taxonomy/categories/order', { ids: next });
   };
+  const child = category.parentId !== null;
   const archived = category.status === 'archived';
   return (
-    <li className="rounded-lg border border-line bg-panel p-3">
+    <li className={`rounded-lg border border-line bg-panel p-3 ${child ? 'ml-8 border-l-4' : ''}`}>
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs tabular-nums text-muted">{at + 1}</span>
+        {child ? <Badge>Child menu</Badge> : hasChildren ? <Badge tone="info">Parent menu</Badge> : null}
         <strong>{displayName(category)}</strong>
         <code className="text-xs text-muted">{category.key}</code>
         {archived ? <Badge>Archived</Badge> : null}
@@ -123,23 +148,27 @@ export function CategoryRow({ category, order, locales }: { category: TaxonomyCa
         <Missing item={category} locales={locales} />
         <span className="ml-auto flex flex-wrap gap-1">
           <button type="button" aria-label={`Move ${displayName(category)} up`} disabled={pending || at <= 0} onClick={() => move(-1)} className={buttonClass()}>↑</button>
-          <button type="button" aria-label={`Move ${displayName(category)} down`} disabled={pending || at < 0 || at >= order.length - 1} onClick={() => move(1)} className={buttonClass()}>↓</button>
+          <button type="button" aria-label={`Move ${displayName(category)} down`} disabled={pending || at < 0 || at >= siblings.length - 1} onClick={() => move(1)} className={buttonClass()}>↓</button>
           <button type="button" disabled={pending} onClick={() => run('PUT', `taxonomy/categories/${category.id}`, { showInMenu: !category.showInMenu })} className={buttonClass()}>
             {category.showInMenu ? 'Hide from menu' : 'Show in menu'}
           </button>
-          <button type="button" onClick={() => setEditing(!editing)} aria-expanded={editing} className={buttonClass()}>{editing ? 'Close' : 'Edit names'}</button>
+          <button type="button" onClick={() => setEditing(!editing)} aria-expanded={editing} className={buttonClass()}>{editing ? 'Close' : 'Edit'}</button>
         </span>
       </div>
       {editing ? (
-        <form className="mt-3 space-y-3" onSubmit={submitWith((form) => run('PUT', `taxonomy/categories/${category.id}`, { labels: readLabels(form, locales, category, true) }, () => setEditing(false)))}>
+        <form className="mt-3 space-y-3" onSubmit={submitWith((form) => run('PUT', `taxonomy/categories/${category.id}`, {
+          labels: readLabels(form, locales, category, true),
+          ...(hasChildren ? {} : { parentId: String(form.get('parentId') ?? '') || null }),
+        }, () => setEditing(false)))}>
           <LabelFields item={category} locales={locales} withDescription />
+          <ParentSelect parents={parents} current={category.parentId} self={category.id} hasChildren={hasChildren} />
           <p className="text-xs text-muted">Changing a name keeps its address, so links to the section keep working. Leave a name empty to remove that language.</p>
           <div className="flex flex-wrap gap-2">
-            <button type="submit" disabled={pending} className={buttonClass('primary')}>Save names</button>
+            <button type="submit" disabled={pending} className={buttonClass('primary')}>Save</button>
             <button type="button" disabled={pending} onClick={() => run('PUT', `taxonomy/categories/${category.id}`, { status: archived ? 'active' : 'archived' })} className={buttonClass()}>
               {archived ? 'Restore' : 'Archive'}
             </button>
-            <button type="button" disabled={pending || category.usageCount > 0} title={category.usageCount > 0 ? 'Used by news items: archive it instead' : undefined}
+            <button type="button" disabled={pending || category.usageCount > 0 || hasChildren} title={hasChildren ? 'Has child menus: move or delete them first' : category.usageCount > 0 ? 'Used by news items: archive it instead' : undefined}
               onClick={() => { if (window.confirm(`Delete ${displayName(category)}?`)) run('DELETE', `taxonomy/categories/${category.id}`); }} className={buttonClass('danger')}>Delete</button>
           </div>
         </form>

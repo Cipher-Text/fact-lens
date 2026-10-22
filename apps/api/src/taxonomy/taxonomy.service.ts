@@ -2,7 +2,7 @@ import {
   BadRequestException, ConflictException, Inject, Injectable, NotFoundException,
 } from '@nestjs/common';
 import type {
-  CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, PublicMedia, PublicNewsList, PublicTaxonomyRef, TagCreate, TagUpdate,
+  CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, PublicMedia, PublicNavItem, PublicNewsList, PublicTaxonomyRef, TagCreate, TagUpdate,
   TaxonomyCategory, TaxonomyTag, TaxonomyTagList,
 } from '@fact-lens/contracts';
 import { taxonomyTagQuerySchema } from '@fact-lens/contracts';
@@ -25,7 +25,7 @@ const KIND = {
 } as const;
 
 interface Row {
-  id: string; key: string; show_in_menu?: boolean; position?: number; image_id?: string | null; status: TaxonomyTag['status'];
+  id: string; key: string; show_in_menu?: boolean; parent_id?: string | null; position?: number; image_id?: string | null; status: TaxonomyTag['status'];
   usage_count: number; labels: TaxonomyTag['labels'];
 }
 
@@ -59,9 +59,11 @@ export class TaxonomyService {
     const id = await withTransaction(this.pool, async (db) => {
       await this.requireLocales(db, Object.keys(input.labels));
       const key = this.keyFor(input.key, input.labels);
+      await this.requireParent(db, null, input.parentId);
       const next = await db.query<{ n: number }>('SELECT COALESCE(max(position), 0) + 1 AS n FROM category');
       const created = await this.guard(() =>
-        db.query<{ id: string }>('INSERT INTO category (key, show_in_menu, position) VALUES ($1, $2, $3) RETURNING id', [key, input.showInMenu, next.rows[0]!.n]));
+        db.query<{ id: string }>('INSERT INTO category (key, show_in_menu, parent_id, position) VALUES ($1, $2, $3, $4) RETURNING id',
+          [key, input.showInMenu, input.parentId ?? null, next.rows[0]!.n]));
       const categoryId = created.rows[0]!.id;
       await this.writeLabels(db, 'category', categoryId, key, input.labels);
       await this.audit.record(
@@ -79,6 +81,10 @@ export class TaxonomyService {
       const found = await db.query<{ key: string }>('SELECT key FROM category WHERE id = $1 FOR UPDATE', [id]);
       if (!found.rows[0]) throw new NotFoundException('Category not found');
       if (input.showInMenu !== undefined) await db.query('UPDATE category SET show_in_menu = $2 WHERE id = $1', [id, input.showInMenu]);
+      if (input.parentId !== undefined) {
+        await this.requireParent(db, id, input.parentId);
+        await db.query('UPDATE category SET parent_id = $2 WHERE id = $1', [id, input.parentId]);
+      }
       if (input.status !== undefined) await db.query('UPDATE category SET status = $2 WHERE id = $1', [id, input.status]);
       if (input.labels) await this.applyLabels(db, 'category', id, found.rows[0].key, input.labels);
       await this.audit.record(
@@ -222,15 +228,20 @@ export class TaxonomyService {
 
   // ------------------------------------------------------------- what readers get
 
-  /** The news menu in one language: only categories that are active, shown in the menu and named in that language. */
-  async navigation(locale: string): Promise<PublicTaxonomyRef[]> {
+  /**
+   * The news menu in one language: parent menus with their child menus. Only categories that are active,
+   * shown in the menu and named in that language appear; a child under a parent that is hidden goes with it.
+   */
+  async navigation(locale: string): Promise<PublicNavItem[]> {
     await this.requireActiveLocale(locale);
-    const { rows } = await this.pool.query<PublicTaxonomyRef>(
-      `SELECT c.key, l.name, l.slug FROM category c JOIN category_label l ON l.category_id = c.id AND l.locale = $1
+    const { rows } = await this.pool.query<PublicTaxonomyRef & { id: string; parent_id: string | null }>(
+      `SELECT c.id, c.parent_id, c.key, l.name, l.slug FROM category c JOIN category_label l ON l.category_id = c.id AND l.locale = $1
         WHERE c.status = 'active' AND c.show_in_menu ORDER BY c.position, c.key`,
       [locale],
     );
-    return rows;
+    const ref = (r: PublicTaxonomyRef): PublicTaxonomyRef => ({ key: r.key, name: r.name, slug: r.slug });
+    const tops = rows.filter((r) => r.parent_id === null);
+    return tops.map((p) => ({ ...ref(p), children: rows.filter((r) => r.parent_id === p.id).map(ref) }));
   }
 
   /** Published news in one language, newest first, optionally of one category or tag. */
@@ -277,7 +288,7 @@ export class TaxonomyService {
            LEFT JOIN category c ON c.id = s.category_id AND c.status <> 'archived'
            LEFT JOIN category_label cl ON cl.category_id = c.id AND cl.locale = $1
           WHERE s.status = ANY ($2) AND s.published_revision_id IS NOT NULL
-            AND ($3::uuid IS NULL OR s.category_id = $3)
+            AND ($3::uuid IS NULL OR s.category_id = $3 OR s.category_id IN (SELECT id FROM category WHERE parent_id = $3))
             AND ($4::uuid IS NULL OR EXISTS (SELECT 1 FROM news_tag x WHERE x.news_id = s.id AND x.tag_id = $4))
             AND ($5::timestamptz IS NULL OR (s.published_at, s.id) < ($5::timestamptz, $6::uuid))
           ORDER BY s.published_at DESC, s.id DESC LIMIT $7`,
@@ -335,7 +346,7 @@ export class TaxonomyService {
     const k = KIND[kind];
     const usage = kind === 'category' ? 'SELECT count(*) FROM news s WHERE s.category_id = c.id' : 'SELECT count(*) FROM news_tag x WHERE x.tag_id = c.id';
     const description = k.hasDescription ? 'l.description' : 'NULL::text';
-    return `SELECT c.id, c.key, ${kind === 'category' ? 'c.show_in_menu, c.position,' : 'c.image_id,'} c.status,
+    return `SELECT c.id, c.key, ${kind === 'category' ? 'c.show_in_menu, c.parent_id, c.position,' : 'c.image_id,'} c.status,
                    (${usage})::int AS usage_count,
                    COALESCE((SELECT jsonb_agg(jsonb_build_object('locale', l.locale, 'name', l.name, 'slug', l.slug, 'description', ${description}, 'aliases', l.aliases) ORDER BY l.locale)
                                FROM ${k.labels} l WHERE l.${k.fk} = c.id), '[]'::jsonb) AS labels
@@ -351,6 +362,19 @@ export class TaxonomyService {
       void locale;
     }
     throw new BadRequestException('Give a key (lowercase letters, digits and hyphens): it cannot be made from names that are not in Latin letters.');
+  }
+
+  /** A parent must be a top-level category, and a category with children cannot become a child: the menu has two levels. */
+  private async requireParent(db: Db, id: string | null, parentId: string | null | undefined): Promise<void> {
+    if (!parentId) return;
+    if (parentId === id) throw new BadRequestException('A category cannot be its own parent');
+    const parent = await db.query<{ parent_id: string | null }>('SELECT parent_id FROM category WHERE id = $1', [parentId]);
+    if (!parent.rows[0]) throw new BadRequestException('That parent category does not exist');
+    if (parent.rows[0].parent_id !== null) throw new BadRequestException('The menu has two levels: a child menu cannot be a parent');
+    if (id) {
+      const kids = await db.query('SELECT 1 FROM category WHERE parent_id = $1 LIMIT 1', [id]);
+      if (kids.rowCount) throw new BadRequestException('This category has child menus, so it cannot become a child itself');
+    }
   }
 
   private async requireImage(db: Db, imageId: string | null | undefined): Promise<void> {
@@ -408,6 +432,10 @@ export class TaxonomyService {
   private async remove(kind: Kind, id: string, actor: Actor): Promise<void> {
     const k = KIND[kind];
     await withTransaction(this.pool, async (db) => {
+      if (kind === 'category') {
+        const kids = await db.query('SELECT 1 FROM category WHERE parent_id = $1 LIMIT 1', [id]);
+        if (kids.rowCount) throw new ConflictException({ message: 'This category has child menus. Move or delete them first.', reason: 'has_children' });
+      }
       try {
         const res = await db.query(`DELETE FROM ${k.table} WHERE id = $1`, [id]);
         if (res.rowCount === 0) throw new NotFoundException(`${kind === 'tag' ? 'Tag' : 'Category'} not found`);
@@ -441,6 +469,6 @@ export class TaxonomyService {
 }
 
 const toCategory = (r: Row): TaxonomyCategory => ({
-  id: r.id, key: r.key, showInMenu: r.show_in_menu ?? true, position: r.position ?? 0, status: r.status, usageCount: r.usage_count, labels: r.labels,
+  id: r.id, key: r.key, showInMenu: r.show_in_menu ?? true, parentId: r.parent_id ?? null, position: r.position ?? 0, status: r.status, usageCount: r.usage_count, labels: r.labels,
 });
 const toTag = (r: Row): TaxonomyTag => ({ id: r.id, key: r.key, imageId: r.image_id ?? null, status: r.status, usageCount: r.usage_count, labels: r.labels });

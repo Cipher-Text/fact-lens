@@ -1,5 +1,5 @@
 import { Controller, Get, Inject, NotFoundException, Param, Query, Res } from '@nestjs/common';
-import { localeCodeSchema, publicNewsListQuerySchema, type PublicNewsList, type PublicTaxonomyRef } from '@fact-lens/contracts';
+import { localeCodeSchema, publicNewsListQuerySchema, type PublicNewsList, type PublicNavItem, type PublicTaxonomyRef } from '@fact-lens/contracts';
 import type { FastifyReply } from 'fastify';
 import { Public } from '../auth/decorators';
 import { parse } from '../common/http';
@@ -18,7 +18,7 @@ export class PublicTaxonomyController {
   }
 
   @Get('navigation/:locale')
-  async navigation(@Param('locale') locale: string, @Res({ passthrough: true }) reply: FastifyReply): Promise<PublicTaxonomyRef[]> {
+  async navigation(@Param('locale') locale: string, @Res({ passthrough: true }) reply: FastifyReply): Promise<PublicNavItem[]> {
     const items = await this.taxonomy.navigation(this.locale(locale));
     void reply.header('cache-control', 'public, max-age=60, stale-while-revalidate=300');
     return items;

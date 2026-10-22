@@ -103,7 +103,7 @@ export function TranslationEditor({ newsId, translation }: { newsId: string; tra
     <form onSubmit={submitWith((form) => save(form))} onChange={() => setDirty(true)} className="space-y-3" lang={translation.locale}>
       <Field label="Headline"><input name="title" defaultValue={translation.title} required maxLength={300} className={inputClass} /></Field>
       <Field label="Standfirst"><textarea name="dek" defaultValue={translation.dek ?? ''} maxLength={600} rows={2} className={inputClass} /></Field>
-      <Field label="Web address" hint="Letters, digits and hyphens. Reserved when the news item is published.">
+      <Field label="Slug" hint="Letters, digits and hyphens. Reserved when the news item is published.">
         <input name="slug" defaultValue={translation.slug} required className={inputClass} />
       </Field>
       <div>

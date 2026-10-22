@@ -5,7 +5,9 @@ import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
 import { Drawer } from "./Drawer";
 import { LanguageSwitch } from "./LanguageSwitch";
-import { getNavItems } from "./navItems";
+import { fetchNavigation } from "@/lib/navigation";
+
+import { getApiNavItems, getNavItems } from "./navItems";
 import { NavBar } from "./NavBar";
 import { SearchDialog } from "./SearchDialog";
 import { ThemeButton } from "./ThemeButton";
@@ -31,10 +33,17 @@ type Props = {
  * Phones: menu | logo | En, ThemeButton. From 768px: menu, search | logo | English,
  * ThemeButton (one ThemeButton at every width, DR-349). No subscribe button (DR-188). The logo is a text stand-in in brand color until
  * the logo file exists (BRD-06, COL-04, U-08). The logo type is `type-logo` (DR-306).
+ *
+ * An async server component: it reads the menu from the API (`lib/navigation.ts`), with the
+ * static menu as the fallback.
  */
-export function SiteHeader({ lang, path = "/" }: Props) {
+export async function SiteHeader({ lang, path = "/" }: Props) {
   const t = getDictionary(lang);
-  const items = getNavItems(t, lang, path);
+  // The menu comes from the API when FACTLENS_API_URL is set and answers; otherwise the static one.
+  const menu = await fetchNavigation(lang);
+  const items = menu
+    ? getApiNavItems(menu, t, lang, path)
+    : getNavItems(t, lang, path);
   const home = localizedPath(lang);
 
   return (

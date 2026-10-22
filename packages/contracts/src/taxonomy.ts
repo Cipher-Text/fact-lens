@@ -35,6 +35,8 @@ export const categoryCreateSchema = z.object({
   /** Language-free identifier. Made from the first label's slug when left out. */
   key: taxonomyKeySchema.optional(),
   showInMenu: z.boolean().default(true),
+  /** Makes this a child menu of another category. One level only: a child cannot have children. */
+  parentId: idSchema.nullable().optional(),
   labels: labelsByLocale.refine((l) => Object.keys(l).length > 0, 'give the name in at least one language'),
 });
 export type CategoryCreate = z.infer<typeof categoryCreateSchema>;
@@ -43,6 +45,8 @@ export type CategoryCreate = z.infer<typeof categoryCreateSchema>;
 export const categoryUpdateSchema = z
   .object({
     showInMenu: z.boolean(),
+    /** null makes it a top-level menu again. */
+    parentId: idSchema.nullable(),
     status: z.enum(taxonomyStatuses),
     labels: z.record(localeCodeSchema, labelInputSchema.nullable()),
   })
@@ -75,6 +79,7 @@ export const taxonomyCategorySchema = z.object({
   id: idSchema,
   key: z.string(),
   showInMenu: z.boolean(),
+  parentId: idSchema.nullable(),
   position: z.number().int(),
   status: z.enum(taxonomyStatuses),
   /** News in this category. A category in use cannot be deleted, only archived. */
@@ -134,7 +139,11 @@ export type LocaleUpdate = z.infer<typeof localeUpdateSchema>;
 export const publicTaxonomyRefSchema = z.object({ key: z.string(), name: z.string(), slug: slugSchema });
 export type PublicTaxonomyRef = z.infer<typeof publicTaxonomyRefSchema>;
 
-export const navigationSchema = z.array(publicTaxonomyRefSchema);
+/** A parent menu and its child menus, in the page's language. */
+export const publicNavItemSchema = publicTaxonomyRefSchema.extend({ children: z.array(publicTaxonomyRefSchema) });
+export type PublicNavItem = z.infer<typeof publicNavItemSchema>;
+
+export const navigationSchema = z.array(publicNavItemSchema);
 
 export const publicNewsListQuerySchema = z.object({
   category: slugSchema.optional(),

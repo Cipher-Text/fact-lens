@@ -1,4 +1,5 @@
 import { localizedPath, type Dictionary, type Lang } from "@/i18n";
+import type { ApiNavItem } from "@/lib/navigation";
 
 export type NavItem = {
   id: string;
@@ -69,5 +70,36 @@ export function getNavItems(
         },
       ],
     },
+  ];
+}
+
+/**
+ * The navigation from the API menu: Home, then each parent menu with its child menus. Category
+ * pages do not exist yet, so the links go to the homepage sections, as the static menu does
+ * (DR-01).
+ */
+export function getApiNavItems(
+  menu: ApiNavItem[],
+  t: Dictionary,
+  lang: Lang,
+  path: string = "/",
+): NavItem[] {
+  const link = (key: string) => `#category-${key}`;
+  return [
+    { id: "home", label: t.header.navHome, href: localizedPath(lang), current: path === "/" },
+    ...menu.map((item) => ({
+      id: item.key,
+      label: item.name,
+      href: link(item.key),
+      ...(item.children.length > 0
+        ? {
+            children: item.children.map((child) => ({
+              id: child.key,
+              label: child.name,
+              href: link(child.key),
+            })),
+          }
+        : {}),
+    })),
   ];
 }
