@@ -49,7 +49,7 @@ What exists in this repository today, how much of it has been checked, and what 
 
 **Database**: locale, configuration, feature flag, desk, category, tag (with labels per language), contributor, media asset, news item, revision, translation, slug registry, news tags and contributors, revision media, source, news item source, assignment, comment, correction and notice, publishing schedule, card template, generated card, advertiser, campaign, placement, ad, ad category target, ad event, role, role capability, audit event, outbox event, processed job. Not yet created: newsletter subscriber, news item performance, entities, claims, AI runs, prompt templates, ingestion sources.
 
-**Seeded reference data** (`pnpm seed`): 4 provisional desks, 9 categories with English and Bangla names and descriptions, 146 tags with English and Bangla names (from cipher-press), 8 provisional roles, default workflow policy, 9 rate limits, 6 AI use cases (budget zero), 11 feature flags (all off).
+**Seeded reference data** (`pnpm seed`): 4 provisional desks, 9 categories with English and Bangla names and descriptions, 146 tags with English and Bangla names (from cipher-press), 8 provisional roles, default workflow policy, 9 rate limits, 6 AI use cases (budget zero), 11 feature flags (all off), 9 RSS feeds (BBC, Al Jazeera, Guardian, DW, France 24; each fetched and parsed before listing) that start paused, so an administrator resumes the ones wanted.
 
 **Worker jobs**: `news.publish_scheduled`, `schedule.scan`, `feed.scan` and `feed.fetch` work (RSS and Atom, with a guard against private addresses). `cache.invalidate`, `search.index` and `notification.send` log and succeed. `media.variant` and `media.card_generate` fail on purpose as "not implemented".
 

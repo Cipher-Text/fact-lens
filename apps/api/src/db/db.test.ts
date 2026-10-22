@@ -429,8 +429,10 @@ describe.skipIf(!adminUrl)('database schema', () => {
     await pool.query(`UPDATE category_label SET name = 'Edited' WHERE slug = 'local' AND locale = 'en'`);
 
     const second = await seedReferenceData(pool);
-    expect(second).toEqual({ desks: 0, categories: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0 });
+    expect(second).toEqual({ desks: 0, categories: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0, feeds: 0 });
     expect(first.roles).toBe(8);
+    expect(first.feeds).toBe(9);
+    expect((await pool.query(`SELECT count(*)::int AS n FROM feed WHERE active`)).rows[0].n).toBe(0);
 
     const flag = await pool.query(`SELECT enabled FROM feature_flag WHERE key = 'ads.serving'`);
     expect(flag.rows[0].enabled).toBe(true);

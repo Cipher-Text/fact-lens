@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
 import { capabilities } from '@fact-lens/contracts';
 import { tags } from './tags';
-import { categories, configuration, desks, featureFlags, roles } from './data';
+import { canonicalizeUrl } from '@fact-lens/contracts';
+import { categories, configuration, desks, featureFlags, feeds, roles } from './data';
 
 describe('seed data', () => {
   it('has configuration values that satisfy their contract schemas', () => {
@@ -14,6 +15,16 @@ describe('seed data', () => {
     expect(uniq(configuration.map((c) => `${c.key}|${c.scope}`))).toBe(true);
     expect(uniq(desks.map((d) => d.key))).toBe(true);
     expect(uniq(categories.map((c) => c.key))).toBe(true);
+  });
+
+  it('has feeds with clean, unique web addresses and a sane interval', () => {
+    expect(feeds.length).toBeGreaterThan(0);
+    expect(new Set(feeds.map((f) => canonicalizeUrl(f.url))).size).toBe(feeds.length);
+    for (const f of feeds) {
+      expect(f.url, f.name).toMatch(/^https:\/\//);
+      expect(f.url, f.name).not.toMatch(/utm_|\?ref=/);
+      expect(f.pollMinutes).toBeGreaterThanOrEqual(5);
+    }
   });
 
   it('seeds every declared feature flag exactly once', () => {

@@ -26,7 +26,9 @@ describe.skipIf(!adminUrl)('source inbox (database)', () => {
     feedId = made.body.id;
     expect((await t.call({ method: 'POST', url: '/feeds', body: { name: 'Again', url: 'https://example.com/rss.xml' } })).status).toBe(409);
     expect((await t.call({ method: 'POST', url: '/feeds', body: { name: 'Bad', url: 'ftp://example.com/x' } })).status).toBe(400);
-    expect((await t.call({ method: 'GET', url: '/feeds', roles: ['reporter'] })).body).toHaveLength(1);
+    const all = (await t.call({ method: 'GET', url: '/feeds', roles: ['reporter'] })).body as Array<{ id: string; active: boolean; createdBy?: string }>;
+    expect(all).toHaveLength(10); // the 9 seeded (paused) feeds and this one
+    expect(all.filter((f) => f.active).map((f) => f.id)).toEqual([feedId]);
     expect((await t.call({ method: 'GET', url: '/feeds', roles: ['reader'] })).status).toBeGreaterThanOrEqual(400);
   });
 
@@ -46,13 +48,13 @@ describe.skipIf(!adminUrl)('source inbox (database)', () => {
     expect(list.items.map((i: any) => i.title).sort()).toEqual(['Flood hits Feni', 'No link']);
     expect(list.counts).toEqual({ new: 2, used: 0, rejected: 0, duplicate: 1 });
     expect((await inbox('duplicate')).items[0].title).toBe('Same story elsewhere');
-    const feed = (await t.call({ method: 'GET', url: '/feeds', roles: ['reporter'] })).body[0];
+    const feed = (await t.call({ method: 'GET', url: '/feeds', roles: ['reporter'] })).body.find((f: any) => f.id === feedId);
     expect(feed).toMatchObject({ lastStatus: 'ok', lastError: null, newCount: 2 });
   });
 
   it('records a failed fetch on the feed without touching its items', async () => {
     expect((await ingest(feedId, { status: 'error', error: 'Timed out' })).statusCode).toBe(200);
-    const feed = (await t.call({ method: 'GET', url: '/feeds', roles: ['reporter'] })).body[0];
+    const feed = (await t.call({ method: 'GET', url: '/feeds', roles: ['reporter'] })).body.find((f: any) => f.id === feedId);
     expect(feed).toMatchObject({ lastStatus: 'error', lastError: 'Timed out', newCount: 2 });
     expect((await ingest('00000000-0000-4000-8000-000000000000', { status: 'ok', items: [] })).statusCode).toBe(404);
   });

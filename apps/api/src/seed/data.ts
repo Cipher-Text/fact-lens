@@ -102,3 +102,23 @@ export const roles: ReadonlyArray<{ key: string; name: string; capabilities: rea
     ],
   },
 ];
+
+/**
+ * RSS feeds for the source inbox. They are seeded PAUSED: an administrator resumes the ones the
+ * newsroom wants, so a fresh database never starts fetching publishers by itself. Each address was
+ * fetched and parsed with the worker's own fetcher before it was listed. Reuters is left out on
+ * purpose: its own feeds are gone, and the Google News stand-in links to Google redirect pages, which
+ * defeats the duplicate check and the source link. RSS access is not a licence to republish: the
+ * inbox keeps a short plain snippet and a link, and an editor writes the story.
+ */
+export const feeds: ReadonlyArray<{ name: string; url: string; pollMinutes: number }> = [
+  { name: 'Al Jazeera English', url: 'https://www.aljazeera.com/xml/rss/all.xml', pollMinutes: 15 },
+  { name: 'BBC World', url: 'https://feeds.bbci.co.uk/news/world/rss.xml', pollMinutes: 15 },
+  { name: 'The Guardian World', url: 'https://www.theguardian.com/world/rss', pollMinutes: 15 },
+  { name: 'Deutsche Welle', url: 'https://rss.dw.com/rdf/rss-en-top', pollMinutes: 15 },
+  { name: 'France 24', url: 'https://www.france24.com/en/rss', pollMinutes: 15 },
+  { name: 'BBC Asia', url: 'https://feeds.bbci.co.uk/news/world/asia/rss.xml', pollMinutes: 15 },
+  { name: 'The Guardian Middle East', url: 'https://www.theguardian.com/world/middleeast/rss', pollMinutes: 15 },
+  { name: 'BBC Business', url: 'https://feeds.bbci.co.uk/news/business/rss.xml', pollMinutes: 15 },
+  { name: 'The Guardian Global Development', url: 'https://www.theguardian.com/global-development/rss', pollMinutes: 15 },
+];

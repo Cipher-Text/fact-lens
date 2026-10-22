@@ -1,7 +1,7 @@
-import { featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
+import { canonicalizeUrl, featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
 import type { Pool } from 'pg';
 import { tags } from './tags';
-import { categories, configuration, desks, featureFlags, roles } from './data';
+import { categories, configuration, desks, featureFlags, feeds, roles } from './data';
 import { withTransaction } from '../db/transaction';
 
 export interface SeedResult {
@@ -11,6 +11,7 @@ export interface SeedResult {
   configuration: number;
   featureFlags: number;
   roles: number;
+  feeds: number;
 }
 
 /** Inserts reference data in one transaction. Existing rows are left as they are. */
@@ -23,7 +24,7 @@ export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
 
   return withTransaction(pool, async (db) => {
     const count = async (sql: string, params: unknown[]) => (await db.query(sql, params)).rowCount ?? 0;
-    const result: SeedResult = { desks: 0, categories: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0 };
+    const result: SeedResult = { desks: 0, categories: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0, feeds: 0 };
 
     for (const d of desks) {
       result.desks += await count('INSERT INTO desk (key, name) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING', [d.key, d.name]);
@@ -77,6 +78,15 @@ export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
       for (const capability of r.capabilities) {
         await db.query('INSERT INTO app_role_capability (role_key, capability) VALUES ($1, $2)', [r.key, capability]);
       }
+    }
+
+    // Paused, so nothing is fetched until an administrator resumes a feed.
+    for (const f of feeds) {
+      result.feeds += await count(
+        `INSERT INTO feed (name, url, canonical_url, active, poll_minutes, created_by) VALUES ($1, $2, $3, false, $4, 'seed')
+         ON CONFLICT (canonical_url) DO NOTHING`,
+        [f.name, f.url, canonicalizeUrl(f.url), f.pollMinutes],
+      );
     }
 
     return result;
