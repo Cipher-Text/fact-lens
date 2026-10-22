@@ -42,3 +42,5 @@ This set of documents plans a rebuild of FactLens as a digital newsroom platform
 ## Scope note
 
 Application code is being built in this repository, following the plan. What exists and how far it has been checked is in [implementation status](./22-implementation-status.md); where an implementation chose differently from the plan, the choice is recorded in [architecture decisions](./17-architecture-decisions.md) (ADR-012 onward). `cipher-press` must remain unchanged until a separately approved migration or compatibility project begins.
+
+Design reference: [newsroom admin UI](./design/newsroom-admin-ui.html), the visual design the newsroom follows (open it in a browser; it bundles its own fonts).
