@@ -1007,6 +1007,19 @@
     transform var(--duration-slide) var(--ease-slide),
     visibility 0s;
 }
+/* While the drawer, search or the share dialog is open (or closing), the dock drops to
+   the bar layer, so the backdrop and the panel cover it like the rest of the page. It
+   stays visible, so focus can return to its share button on close (DR-228, DR-386). */
+html:has(
+    :is(
+      [data-slot="sheet-overlay"],
+      [data-slot="dialog-overlay"],
+      [data-slot="drawer-overlay"]
+    )
+  )
+  .rd-dock {
+  z-index: var(--z-bar);
+}
 @media (min-width: 1280px) {
   .rd-dock {
     display: none;
