@@ -1,10 +1,10 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.22 · 17 October 2026 · Homepage, run 4 review (DR-355 to DR-357, DR-359)
+Version 2.23 · 24 October 2026 · Article page, checkpoint 1 (DR-385 to DR-387)
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
-This version covers the homepage and the layout rules that all pages share. Article pages and other templates are not yet revised. For those templates, Section 14 lists the open items.
+This version covers the homepage, the article page (Section 7A) and the layout rules that all pages share. Other templates are not yet revised. For those templates, Section 14 lists the open items.
 
 The wireframes show placement only. They do not give measurements. Use the values in this document. Component looks, parts and sizes are in `component-system.md`.
 
@@ -17,6 +17,7 @@ The wireframes show placement only. They do not give measurements. Use the value
 5. [Spacing tokens](#5-spacing-tokens)
 6. [Header](#6-header)
 7. [Homepage](#7-homepage)
+7A. [Article page](#7a-article-page)
 8. [Peer rows](#8-peer-rows)
 9. [Ads](#9-ads)
 10. [Layers](#10-layers)
@@ -51,7 +52,7 @@ There can be more than one editorial container width. Each width has one purpose
 | Editorial container | Token | Use |
 | --- | --- | --- |
 | Shell | `measure-shell` | Header nav row, every homepage section, footer |
-| Reading column | `measure-reading-en`, `measure-reading-bn` | Article text (article pass, not yet revised) |
+| Reading column | `measure-reading-en`, `measure-reading-bn` | Article text (Section 7A) |
 
 A section with a rail has two parts inside the shell:
 
@@ -297,6 +298,103 @@ Below 600px, the regions are tabs (`tablist`, arrow keys, `aria-selected`). The 
 
 **Footer.** The footer is provisional (`Footer`, C-21, DR-193). It is a full-width `surface-elevated` row with the panel inset (Section 5.3) and the content centered in the shell: logo, social links, and links to About, Contact, Corrections, Privacy and Terms. Each social link has a text name for screen readers. All labels are in the page language.
 
+## 7A. Article page
+
+The article page (`/story/<slug>`, `ReaderPage`) is defined from the accepted page spec log `docs/spec-log/article.md`, checkpoint 1 (DR-385). The code on the article branch is the reference. The page tokens are in `src/styles/reader.css`, scoped under `.rd`. Component looks are in `component-system.md` (C-27 to C-42).
+
+### 7A.1 Page order
+
+| Row | Container | Content |
+| --- | --- | --- |
+| Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18), unchanged. Section links point to `/#…` or `/en#…` (DR-331) |
+| `ad-top` | Ad container | As on the homepage (Section 9) |
+| Heading | `--rd-wrap`; text in the reading column, centered | `ArticleHeader` (C-27) |
+| Lead image | `--rd-wide` | `LeadMedia` (C-29); the caption is in the reading column |
+| Byline | `--rd-wrap`; reading column | `Byline` (C-28), then `PreferredSourceAlert` (C-32) |
+| Body | `--rd-wrap`; reading column, rail beside it from 1280 | `KeyPoints` (C-30), `ArticleBody` (C-33) with `ContextCard` (C-31), figures and `ad-inline`; a 1px rule, then `Tags` (C-34) |
+| `ad-band` | Ad container | One band after the article (`LAY-09`) |
+| Read next | `Shell` (`measure-shell`) | `ReadNext`: `SectionHeading` (C-13) and `StoryCard` (C-24), 3 per row from 1024 (Section 3.3) |
+| Footer | As on the homepage | `Footer` (C-21) |
+
+`ReadingTools` (C-35) is the rail from 1280 and the dock below 1280 (Section 7A.6). `SelectionShare` (C-41) and `Toaster` (C-42) are page-level.
+
+### 7A.2 Widths
+
+The article page has its own gutter and two containers (DR-386, a stated exception to `LAY-01`, `LAY-02` and `LAY-03`).
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--rd-gutter` | `clamp(16px, 4.5vw, 44px)` | Page gutter of the article page, and the dock's side padding |
+| `--rd-wrap` | `min(1240px, 100% - 2 * var(--rd-gutter))` | Heading, byline and body rows |
+| `--rd-wide` | `min(1400px, 100% - 2 * var(--rd-gutter))` | Lead image row |
+| Reading column | `measure-reading-en` 44rem, `measure-reading-bn` 42rem | Heading text, caption, byline, body. Centered (`LAY-04`, `TYP-12`) |
+| Rail | `min(12.5rem, 100%)` | Contents and reading tools, from 1280 |
+
+From 1280, the body row is a grid of three tracks: `minmax(0, 1fr)`, the reading column, `minmax(0, 1fr)`, with `--grid-column-gap`. The rail is at the start of the first track. The body is in the middle track, in the same place as without the rail. The source order is rail, then body (`LAY-14`). Below 1280, there is no rail.
+
+Every block in the body takes the full reading column width.
+
+### 7A.3 Spacing
+
+| Between | Value |
+| --- | --- |
+| `ad-top` and the heading | `space-page-start` (on the heading, `LAY-12`) |
+| Category row and title | `--rd-head-eyebrow-title`: `--space-lead-eyebrow-title` + 4px = 12px, every width (DR-386) |
+| Title and deck | `--rd-head-title-deck`: `--space-story-title-summary` + 4px = 12px, every width (DR-386) |
+| Deck and metadata line | `space-list-item` |
+| Heading and lead image | `--rd-head-deck-media` = `space-module` (DR-386) |
+| Lead image and caption | `space-media-caption` |
+| Caption and the byline rule | `space-module` |
+| Byline rule and byline | `space-list-item` |
+| Byline, `PreferredSourceAlert`, `KeyPoints`, body | `space-module` |
+| Before an `h2` in the body | `space-module`; after it `space-section-title-after` |
+| Around a figure and around `ContextCard` | `space-module` |
+| Panel heading and panel content (`KeyPoints`, `ContextCard`) | `space-section-title-after` |
+| Around an `ad-inline` slot | `space-module` on the paragraphs before and after it. The ad row has none (`LAY-09`, `LAY-12`) |
+| Body and the end rule; end rule and `Tags` | `space-module` on each side of the rule (as `Divider`, C-22) |
+| Article and `ad-band` | `space-section` on the article (`LAY-12`) |
+| `ad-band` and Read next | `space-module` on Read next (`LAY-12`) |
+| Read next and the footer | `space-section` (as the last homepage section) |
+| Paragraphs | 1.1em (`typography-system.md` Section 7.2) |
+
+Other one-component values are 4px scale steps in `reader.css` (`calc(var(--spacing) * n)`, half steps allowed, `LAY-21`).
+
+### 7A.4 Panel inset in the reading column
+
+`PreferredSourceAlert`, `KeyPoints` and `ContextCard` use `--rd-panel-inset`: 1.5rem (24px) on every side, at every width. It replaces the `panel-inset` utility for panels in the reading column, which is sized for page bands (DR-386, a stated exception to `LAY-20`). The panels have no border (`CPT-06`).
+
+### 7A.5 Lead image and body images
+
+- Editors upload a landscape lead image of any ratio. The lead image is required.
+- The lead image keeps its own ratio. It is centered in `--rd-wide` and as tall as it can be up to `--rd-lead-media-max` (32rem). Its width follows from its height. It is never cropped, stretched or wider than its container (`LAY-02`).
+- A body image takes the full reading column width at its own ratio. It is never cropped. Its placeholder background is `surface-alt`.
+- Do not use viewport height units (`dvh`, `svh`) for media (DR-386).
+
+### 7A.6 Reading tools, sticky and fixed parts
+
+These parts are the stated exceptions to `LAY-15` (DR-386). Their layers are in Section 10.
+
+| Part | Position | When |
+| --- | --- | --- |
+| Reading rail (`ReadingTools` layout `rail`, with `Toc`) | Sticky, `top`: bar height + 36px | From 1280 |
+| Reading dock (`ReadingTools` layout `dock`) | Fixed to the bottom edge, full width, `surface-elevated`, 1px `border-soft` top rule. Bottom padding adds `env(safe-area-inset-bottom)` | Below 1280, after the reader starts reading |
+| `SelectionShare` bar | Fixed, above the selected text | While text in the article is selected |
+| `Toaster` | Fixed, bottom center | For a short time after an action |
+
+No ad is sticky or fixed (`LAY-11`).
+
+### 7A.7 Motion
+
+- One duration for slides and fades: `--duration-slide` with `--ease-slide` (DR-357). Color changes use `--default-transition-duration` (200ms).
+- On load, the heading parts, the lead image and the byline rise 18px and fade in (DR-386).
+- A popover rises 6px and scales from 0.97. The selection bar fades in. The toast fades in and rises 16px. The dock slides in from the bottom edge. The contents marker glides between items.
+- A reader size change eases the body text to its new size (`typography-system.md` Section 4).
+- With reduced motion, nothing animates and no transition runs.
+
+### 7A.8 Print
+
+Print hides the dock, the rail, the `PreferredSourceAlert` row, Read next and the toast (DR-386).
+
 ## 8. Peer rows
 
 A peer row is a row of cards with equal rank.
@@ -318,9 +416,10 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 | `ad-band` | After the hero, Opinion, each featured category and Most read | 336×280 (from 336px), 300×250 below 336px | 728×90 (DR-315) | 970×250, 970×90 or 728×90 | 280 / 90 / 250 |
 | `ad-inset` | Between category rows in P-3, at wrapper width. No full-width row. Full screen width under 332px | 300×250 | 300×250 | 300×250; 728×90 from 1280 | 250; 90 from 1280 |
 | `ad-rail` | Homepage P-3 rail, below the poll (DR-240). Article pages later | – | – | From 1280 only: 300×600 or 300×250 (DR-241, DR-245) | 600 from 1280 |
-| `ad-inline` | Article pages only | Later | Later | Later | – |
+| `ad-inline` | Article body, between two paragraphs (`LAY-22`) | 300×250 | 300×250 | 300×250 | 250 |
 
-- The slot names follow the `AdSlot` variants: `ad-top` is `variant="top"`, `ad-band` is `variant="band"`, `ad-inset` is `variant="inset"` (DR-162, DR-197).
+- The slot names follow the `AdSlot` variants: `ad-top` is `variant="top"`, `ad-band` is `variant="band"`, `ad-inset` is `variant="inset"`, `ad-inline` is `variant="inline"` (DR-162, DR-197, DR-387).
+- The article page has one `ad-top`, the `ad-inline` slots in the body and one `ad-band` after the article. The `ad-inline` box is 300×250 at every width, centered in the reading column, `max-width: 100%`. In Phase 1 mock data, it uses the `ad-inset` creative (DR-387).
 - Serve the 336×280 creative only when the viewport is 336px or wider. Below 336px, serve 300×250 only (DR-206, DR-256). The reserved height stays 280, because the reserved height changes only at the breakpoints (`LAY-10`, DR-206).
 - When the viewport is narrower than 332px, the `ad-inset` box uses the full screen width, like an ad band. 332px is the 300px creative plus two 16px gutters (DR-207).
 - Ad rows and the `ad-inset` box use the `surface-alt` background. The label is `ink-muted`. The color is only behind the creative and the label; there is no padding.
@@ -342,7 +441,7 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 - Phase 1: when no campaign is booked for `ad-top`, the server leaves the band out of the page. The server knows the bookings before it builds the page, so nothing moves after load (DR-250). When a campaign is booked, `ad-top` never collapses.
 - Phase 2: what `ad-top` shows when Ad Manager has no fill (house ad) is decided with Phase 2 (ADS-09).
 - When another slot has no ad before it nears the viewport, collapse the whole row, label included.
-- Do not put an ad inside a peer row, a story list or an article block.
+- Do not put an ad inside a peer row, a story list or an article block. In the article body, `ad-inline` goes between two paragraphs only (`LAY-22`).
 - Ads never look like story cards. Editorial boxes (newsletter, poll) never look like ads.
 - Do not use pop-ups, prestitials, countdown postitials, scrollovers, flashing creatives or video that plays sound on its own.
 
@@ -371,6 +470,12 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 | `--z-content` | 0 | Content and ads |
 | `--z-bar` | 30 | Sticky top bar |
 | `--z-overlay` | 50 | Drawer, search dialog and their backdrop (DR-228) |
+| `--z-dock` | 55 | Article reading dock (DR-386) |
+| `--z-popover` | 70 | Article popovers (text size, more tools) (DR-386) |
+| `--z-selection` | 80 | Article selection bar (DR-386) |
+| `--z-toast` | 90 | Toast messages (DR-386) |
+
+Inside one component, a local `z-index: 1` may lift a part over its sibling (the contents marker, the selection bar buttons).
 
 ## 11. Rules
 
@@ -378,9 +483,13 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 
 Use the tokens in this document or a Tailwind spacing scale class (`LAY-21`). Do not type a raw value (`p-[22px]`). Add a token here only when two or more components share a value, or when the value is not a scale step.
 
+Exception: the article page widths in Section 7A.2 replace `--gutter-page` and `measure-shell` for the heading, lead image and body rows (DR-386).
+
 ### LAY-02 Keep content inside its container
 
 Do not break out of a container. Do not use `vw` units for layout. A full-width background is a full-width row.
+
+Exception: the article page gutter and containers (Section 7A.2, DR-386).
 
 ### LAY-03 Use the full shell for homepage sections
 
@@ -439,6 +548,8 @@ The DOM order is the phone order. Do not use CSS `order` to change the reading o
 
 The site header is sticky: the top bar and, from 1280, the nav row. Past the nav row, the nav row hides under the top bar; it shows again at the page top (DR-349). Use the layer tokens in Section 10.
 
+Exceptions on the article page (Section 7A.6, DR-386): the reading rail is sticky from 1280; the reading dock, the selection bar and the toast are fixed.
+
 ### LAY-16 Use the same geometry in both languages and both themes
 
 Bangla and English use the same containers and spacing. Dark mode changes color only.
@@ -461,9 +572,17 @@ Give ad slots their width and reserved height from the `--ad-*` tokens in Sectio
 
 Give every colored panel the `panel-inset` utility (Section 5.3). Do not type a panel padding in a component (DR-224). A panel band uses the block values only; its content is in the shell (DR-264).
 
+Exception: a panel in the article reading column uses `--rd-panel-inset` (Section 7A.4, DR-386).
+
 ### LAY-21 Use the 4px scale for one-component values
 
 Spacing and sizes use the Tailwind scale: one step is 4px (`--spacing: 0.25rem`), with 2px half steps (`px-3.5`, `py-0.5`, `size-6.5`). Write a value that one component uses as the scale class in that component, for example `gap-7` or `min-h-13`. Use a named token only when two or more components share the value, or when the value is not a scale step (`clamp()`, `cqi`). Do not use arbitrary values (`p-[22px]`). Border widths use the border classes (`border-b-3`) (DR-223).
+
+In plain CSS (`reader.css`), write a scale step as `calc(var(--spacing) * n)` (DR-386).
+
+### LAY-22 Put an inline ad between two paragraphs
+
+Put an `ad-inline` slot only between two paragraphs of the article body. Never put it next to a heading, an image, a list, `KeyPoints` or `ContextCard`. Place the slots after paragraphs 3 and 10. When the next block is not a paragraph, move the slot to the next paragraph that a paragraph follows. Put no slot after the second-to-last paragraph, so a short article gets fewer slots (DR-387).
 
 ## 12. Implementation
 
@@ -545,6 +664,10 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
   --z-content: 0;
   --z-bar: 30;
   --z-overlay: 50;
+  --z-dock: 55;
+  --z-popover: 70;
+  --z-selection: 80;
+  --z-toast: 90;
 }
 
 @media (min-width: 37.5rem) {
@@ -767,11 +890,22 @@ Test these content cases:
 
 - None. Bar and nav row heights: DR-295. Gaps: DR-300 (L-62 closed).
 
-### 14.2 Article and other pages (not yet revised)
+### 14.2 Article and other pages
 
-L-01, L-02, L-03, L-13, L-15 to L-20 and L-22 are open. The article layout, media widths, the context module and category pages are not defined. Do not build them until the article layout pass is complete (DR-259). The article pass starts from version 1.1.1, Sections 17 to 19, which the blueprint project keeps in its archive. It is not in the repository and it is not a spec.
+The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. Category and other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.23 (24 October 2026)**
+
+- New Section 7A, article page, from the accepted spec log checkpoint 1 (DR-385): page order, widths with the article gutter and containers (exception to LAY-01 to LAY-03), spacing with the heading gaps 12px and 12px, panel inset `--rd-panel-inset` 24px (exception to LAY-20), lead image cap 32rem, reading rail and dock, motion, print (DR-386).
+- LAY-15: the reading rail is sticky and the dock, selection bar and toast are fixed on the article page (DR-386). Section 10: `--z-dock` 55, `--z-popover` 70, `--z-selection` 80, `--z-toast` 90.
+- Section 9: `ad-inline` is 300×250 at every width, reserve 250. New rule LAY-22: inline ads between two paragraphs only, after paragraphs 3 and 10 (DR-387).
+- Section 14.2: the article page is defined; category and other pages are defined per page.
+
+**2.22.1 (19 October 2026)**
+
+- Section 14.2: article and other pages are defined per page through the brief and the spec log, not a separate layout pass (DR-370). No rule or value changed.
 
 **2.22 (17 October 2026)**
 

@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.12.1 · 18 October 2026 · Run 4 review decisions (DR-354 to DR-359); component-system 1.17.1 (DR-369); run 5
+Version 2.13 · 24 October 2026 · Section 3: article page approved, checkpoint 1 (DR-385 to DR-390); new rule LAY-22
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.15, `typography-system.md` v2.16, `spacing-layout-system.md` v2.22, `component-system.md` v1.17.1 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.16, `typography-system.md` v2.17, `spacing-layout-system.md` v2.23, `component-system.md` v1.18 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -45,10 +45,11 @@ If this contract and a foundation document do not agree, follow the foundation d
 | Typography | Approved for prototype run 4 | `typography-system.md` |
 | Homepage layout and spacing | Approved for prototype run 4 | `spacing-layout-system.md` |
 | Homepage components, radius, icons, motion | Approved for prototype run 4. The footer is provisional | `component-system.md` |
-| Article and other page layout | Not defined | Do not build. `spacing-layout-system.md` Section 14.2 lists the open items |
-| Article components | Not defined | Section 9 of this contract |
+| Article page layout and spacing | Approved, checkpoint 1 (DR-385, DR-386, DR-387) | `spacing-layout-system.md` Section 7A |
+| Article page components | Approved, checkpoint 1 (DR-390): C-27 to C-42 | `component-system.md` Section 7, Article page |
+| Other page layout and components | Defined per page in the browser (DR-370) | Build from the page brief `docs/briefs/<page>.md`; write changes in the page spec log. `spacing-layout-system.md` Section 14.2 lists the open items |
 
-Build the homepage first. Do not start article or category templates until their layout pass is complete.
+The homepage is locked (DR-370). Start a new page only with its ticket and brief (`AGENTS.md` Section 9).
 
 ## 4. Where the values are
 
@@ -85,7 +86,7 @@ Build the homepage first. Do not start article or category templates until their
 
 Each row links to the rule. The rule text is in the foundation document.
 
-### Color (`color-system.md` v2.15, 17 rules)
+### Color (`color-system.md` v2.16, 17 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -107,7 +108,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`COL-16`](color-system.md#col-16-set-the-page-colors-on-body) | Set the page colors on body |
 | [`COL-17`](color-system.md#col-17-show-a-selected-item-with-interactive-and-a-word) | Show a selected item with `interactive` and a word |
 
-### Typography (`typography-system.md` v2.16, 25 rules)
+### Typography (`typography-system.md` v2.17, 25 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -137,7 +138,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`TYP-24`](typography-system.md#typ-24-show-meaning-with-more-than-style) | Show meaning with more than style |
 | [`TYP-25`](typography-system.md#typ-25-break-a-word-only-when-it-does-not-fit) | Break a word only when it does not fit |
 
-### Spacing and layout (`spacing-layout-system.md` v2.22, 21 rules)
+### Spacing and layout (`spacing-layout-system.md` v2.23, 22 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -162,8 +163,9 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`LAY-19`](spacing-layout-system.md#lay-19-write-ad-sizes-in-px-tokens) | Write ad sizes in px tokens |
 | [`LAY-20`](spacing-layout-system.md#lay-20-use-the-panel-inset-in-a-colored-panel) | Use the panel inset in a colored panel |
 | [`LAY-21`](spacing-layout-system.md#lay-21-use-the-4px-scale-for-one-component-values) | Use the 4px scale for one-component values |
+| [`LAY-22`](spacing-layout-system.md#lay-22-put-an-inline-ad-between-two-paragraphs) | Put an inline ad between two paragraphs |
 
-### Components (`component-system.md` v1.17.1, 21 rules)
+### Components (`component-system.md` v1.18, 21 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -301,6 +303,7 @@ Before you finish a task:
 
 ## 11. How to change this contract
 
-1. Change the foundation document first. tajmin records the decision in the project decision register, which is not in this repo.
-2. Run `python3 tools/agent-contract/gen_contract.py`. It rebuilds the rule index and stops if a rule ID in this contract does not exist. `component-system.md` is generated from the component register by `tools/components/gen_component_md.py`.
-3. Change the template only for Sections 1 to 4 and 6 to 11.
+1. Do not edit the files in `docs/design-system/` in a code branch. On a page branch, write each spec change in the page spec log `docs/spec-log/<page>.md` (`AGENTS.md` Section 9.2, DR-372).
+2. The `design-reviewer` agent checks the spec log against the diff at `/accept`. tajmin's `/accept` approves the green items. Red items go to tajmin as flags.
+3. After `/accept`, a blueprint project thread writes the approved items into the foundation documents in this folder, rebuilds this contract (`gen_contract.py` rebuilds the rule index and stops if a rule ID in this contract does not exist) and records the decisions in the project decision register, which is not in this repo (DR-251).
+4. The blueprint thread changes the contract template only for Sections 1 to 4 and 6 to 11.
