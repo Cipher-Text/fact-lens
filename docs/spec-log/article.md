@@ -125,3 +125,4 @@ This log records how the article page code uses or changes the design system (DR
 
 - Spec log items so far: SL-01 to SL-53. Reviewer verdict: 40 green, 13 red (design-reviewer, 24 Oct; SL-03 reviewed red, corrected to green: layout §3.3 allows 3 per row from 1024px on other pages).
 - Decisions so far: dead code removed (commits 7187808, c29f254); header section links fixed (bca4abf). tajmin 24 Oct: no hook bypass; spec edits by a project thread after accept. Fix now done for SL-20, 21, 24, 44, 45, 48, 51, 52. Green items wait for /accept; red items need an explicit mark. Round 2: SL-15, 18, 19, 53 done; SL-12, 40, 42, 43, 46, 47 Keep. SL-13 deck gap on space-module. SL-49 done; Popover ref fixed; `pnpm check` green.
+- Accepted by tajmin, 24 Oct 2026: the green items and every Keep and Fix now item go into the specs. Spec edits and register entries by a project thread (DR-372, no hook bypass).
