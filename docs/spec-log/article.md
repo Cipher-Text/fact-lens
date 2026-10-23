@@ -96,8 +96,20 @@ This log records how the article page code uses or changes the design system (DR
 
 ## Open code issues (not spec items)
 
-- No e2e or unit test covers the article page yet: share dialog focus, text size radio group keys, widths and axe.
+- `tests/e2e/article.spec.ts` covers the widths, axe, the share dialog focus and copy result, the text size keys, the dock focus, the stored text size and the ads. Gaps are under Later.
 - Dark mode logo contrast (2.37:1 and 1.72:1): `--brand` is the same in both themes. Also on the homepage.
+
+### Later (PR #8 review notes, 24 Oct 2026)
+
+Not fixed in code. They wait for a later ticket.
+
+- Read next hand-writes a grid in `ReadNext` (`ArticleParts.tsx`) instead of extending `PeerRow` (`LAY-08`, AGENTS §9.3). Titles do not align across cards without subgrid.
+- The reading store writes `hidden`, `past` and `scrolled` but nothing reads them. The JS uses raw offsets: `72`, `240` and `8` in `ReaderRoot.tsx`, and `76` and `130` in `SelectionShare.tsx`. Remove the dead state; take the offsets from the layout tokens.
+- The Vercel preview domain is hard-coded twice: the Google preferred-source link (`ArticleParts.tsx`) and the share origin for the server render (`Share.tsx`). Move both to one site setting before production.
+- `SelectionShare` works with the mouse and touch only. Give it a keyboard path.
+- E2E gaps: keyboard and axe run at 1280 only, so the dock and the popovers below 1280 have no keyboard test. No CLS, reduced-motion or 200% text test on the article page. The `#region-` links are filtered out of the DR-331 check, as in `header.spec.ts`.
+- `.rd-sharedlg__link` and the `.rd-selbar` buttons have fixed heights (`LAY-17`). They are controls, not text blocks; check them at 200% text size.
+- Dark mode logo contrast: see the item above.
 
 ## Checkpoint reports
 
