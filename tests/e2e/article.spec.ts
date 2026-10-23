@@ -110,7 +110,8 @@ for (const p of PAGES) {
       const radios = group.getByRole("radio");
       await expect(radios).toHaveCount(3);
       await expect(radios.nth(0)).toHaveAttribute("aria-checked", "true");
-      const root = page.locator(".rd");
+      // The size is set on <html>, so the inline script can set it before the first paint.
+      const root = page.locator("html");
 
       await radios.nth(0).focus();
       await page.keyboard.press("ArrowRight");

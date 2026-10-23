@@ -2,6 +2,8 @@
 
 import { useSyncExternalStore } from "react";
 
+import { storeReaderSize } from "@/lib/reader-size";
+
 /**
  * Reading state for the article page. ReaderRoot writes it on scroll; the parts that
  * show progress read only the values they need, so a scroll re-renders very little.
@@ -68,25 +70,7 @@ export function useReading<T>(select: (s: ReadingState) => T): T {
   );
 }
 
-// Text size: kept per reader in local storage.
-const SIZE_KEY = "rd-text-size";
-
-export function readStoredSize(): number | null {
-  try {
-    const stored = window.localStorage.getItem(SIZE_KEY);
-    if (stored === null) return null;
-    const value = Number(stored);
-    return Number.isInteger(value) && value >= 0 && value <= 2 ? value : null;
-  } catch {
-    return null;
-  }
-}
-
 export function setTextSize(size: number) {
   setReading({ size });
-  try {
-    window.localStorage.setItem(SIZE_KEY, String(size));
-  } catch {
-    // Storage can be blocked; the size then lasts for this page only.
-  }
+  storeReaderSize(size);
 }

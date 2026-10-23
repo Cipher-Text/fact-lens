@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
+
+import { applyReaderSize, readStoredSize } from "@/lib/reader-size";
 
 import {
   getReading,
-  readStoredSize,
   resetReading,
   setReading,
   useReading,
@@ -19,9 +20,6 @@ type Props = {
 
 // The reading line sits a little above the middle of the screen: the text that crosses
 // it counts as read.
-// The reader sizes of the typography tokens: --reader-scale 1, 1.2 and 1.4.
-const READER_SIZES = [undefined, "lg", "xl"] as const;
-
 const READING_LINE = 0.45;
 // A section counts as the one being read once its heading passes this line.
 const SECTION_LINE = 0.35;
@@ -69,11 +67,22 @@ export function ReaderRoot({ minutes, category, className, children }: Props) {
   const size = useReading((s) => s.size);
   const done = useReading((s) => s.done);
 
-  useEffect(() => {
+  // The inline script has set the stored size on <html> before the first paint. Read it
+  // into the store before paint too, so the size controls match and nothing re-flows.
+  useLayoutEffect(() => {
     resetReading(minutes);
     const stored = readStoredSize();
     if (stored !== null) setReading({ size: stored });
+  }, [minutes]);
 
+  // Keep <html> in step with the reader's choice; take the size off when the page closes.
+  // The store, not `size`: on the first commit `size` is still the server value.
+  useLayoutEffect(() => {
+    applyReaderSize(getReading().size);
+  }, [size]);
+  useEffect(() => () => applyReaderSize(null), []);
+
+  useEffect(() => {
     const root = ref.current;
     if (!root) return;
     const body = root.querySelector<HTMLElement>("[data-reader-body]");
@@ -153,7 +162,6 @@ export function ReaderRoot({ minutes, category, className, children }: Props) {
       ref={ref}
       className={className ? `rd ${className}` : "rd"}
       data-cat={category}
-      data-reader-size={READER_SIZES[size]}
       data-done={done || undefined}
     >
       {children}
