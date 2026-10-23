@@ -90,6 +90,11 @@ export function ReaderRoot({ minutes, category, className, children }: Props) {
     const toc = root.querySelector<HTMLElement>("[data-toc]");
     let lastY = window.scrollY;
     let frame = 0;
+    // The sticky header zone is --scroll-offset (layout §6), which <html> resolves to px
+    // as scroll-padding-top. Read it there so the value follows the token (LAY-01, LAY-21).
+    const barBottom = () =>
+      parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) ||
+      0;
 
     const measure = () => {
       frame = 0;
@@ -129,7 +134,9 @@ export function ReaderRoot({ minutes, category, className, children }: Props) {
         percent: Math.round(progress * 100),
         minutesLeft: Math.max(0, Math.ceil(minutes * (1 - progress))),
         active,
-        past: title ? title.getBoundingClientRect().bottom < 72 : false,
+        past: title
+          ? title.getBoundingClientRect().bottom < barBottom()
+          : false,
         hidden,
         scrolled: y > 8,
         started: progress > 0,
