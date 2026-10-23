@@ -37,9 +37,13 @@ async function handle(request: NextRequest, context: { params: Promise<{ path: s
     upstreamType = contentType;
   } else if (request.method === 'POST' || request.method === 'PUT') {
     // A DELETE has no body, so it needs no content type either (the API rejects an empty JSON body).
-    if (contentType !== 'application/json') return problem(415, 'unsupported_media_type', 'JSON only');
-    body = await request.text();
-    if (body.length > MAX_BODY) return problem(413, 'payload_too_large', 'Request too large');
+    const text = await request.text();
+    // An action with nothing to send (open, close, archive) has no body and needs no content type.
+    if (text !== '') {
+      if (contentType !== 'application/json') return problem(415, 'unsupported_media_type', 'JSON only');
+      if (text.length > MAX_BODY) return problem(413, 'payload_too_large', 'Request too large');
+      body = text;
+    }
   }
 
   let upstream: Response;

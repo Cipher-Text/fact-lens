@@ -27,13 +27,55 @@ type DailyPollProps = {
  * (usePollVote). Mock data only (DR-01). Never the ad label or ad colors.
  */
 export function DailyPoll({ poll, strings }: DailyPollProps) {
-  const [vote, castVote] = usePollVote(
+  const [storedVote, storeVote] = usePollVote(
     poll.id,
     poll.options.map((option) => option.id),
   );
+  // A poll from the API keeps its counts and the browser's vote on the server (the voter cookie);
+  // a mock poll keeps the vote in local storage and adds it to the mock counts.
+  const [remote, setRemote] = useState(
+    poll.live ? { options: poll.options, myVote: poll.live.myVote } : null,
+  );
+  const [busy, setBusy] = useState(false);
+  const [problem, setProblem] = useState<string | null>(null);
+  const live = poll.live;
+  const vote = remote ? remote.myVote : storedVote;
+  const options = remote ? remote.options : poll.options;
+  // Results show after the vote, and for a poll that has closed.
+  const showResults = Boolean(vote) || (live ? !live.open : false);
   const [choice, setChoice] = useState<string | null>(null);
   const [justVoted, setJustVoted] = useState(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
+
+  async function castRemote(optionId: string) {
+    setBusy(true);
+    setProblem(null);
+    try {
+      const res = await fetch(`/api/poll/${poll.id}/vote`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ optionId, lang: poll.lang }),
+      });
+      if (!res.ok) {
+        setProblem(res.status === 429 ? strings.limit : res.status === 409 ? strings.closed : strings.error);
+        return;
+      }
+      const data = (await res.json()) as {
+        myVote: string | null;
+        options: { id: string; votes: number }[];
+      };
+      const votes = new Map(data.options.map((o) => [o.id, o.votes]));
+      setRemote({
+        myVote: data.myVote ?? optionId,
+        options: poll.options.map((o) => ({ ...o, votes: votes.get(o.id) ?? o.votes })),
+      });
+      setJustVoted(true);
+    } catch {
+      setProblem(strings.error);
+    } finally {
+      setBusy(false);
+    }
+  }
 
   // The vote button leaves the page, so focus moves to the poll heading (C-26, DR-346). The
   // results are in role status, so the change is announced.
@@ -42,7 +84,7 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
   }, [justVoted]);
 
   // After the vote the choose parts stay in the cell, hidden, to keep the height.
-  const hidden = vote
+  const hidden = showResults
     ? { inert: true, "aria-hidden": true, className: "invisible" }
     : {};
 
@@ -50,7 +92,7 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
     <section
       aria-labelledby={`${poll.id}-title`}
       data-poll
-      data-voted={vote ? "" : undefined}
+      data-voted={showResults ? "" : undefined}
       className="@container"
     >
       <div className="poll-layout">
@@ -74,9 +116,9 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
           <div data-poll-part="cell" {...hidden}>
             <RadioGroup
               onValueChange={(value) => setChoice(String(value))}
-              disabled={Boolean(vote)}
+              disabled={showResults}
             >
-              {poll.options.map((option) => (
+              {options.map((option) => (
                 <RadioGroupItem key={option.id} value={option.id}>
                   {option.label}
                 </RadioGroupItem>
@@ -85,20 +127,37 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
             <Button
               fullWidth
               className="mt-6"
+              disabled={busy}
               onClick={() => {
                 // No choice: nothing happens and focus stays on the button (C-26, DR-348).
                 if (!choice) return;
+                if (remote) {
+                  void castRemote(choice);
+                  return;
+                }
                 setJustVoted(true);
-                castVote(choice);
+                storeVote(choice);
               }}
             >
               {strings.vote}
             </Button>
+            {problem ? (
+              <p role="alert" className="mt-3 type-ui-sm text-ink">
+                {problem}
+              </p>
+            ) : null}
           </div>
         </fieldset>
         {/* Before the vote a hidden copy of the results holds the cell at the height of the
             results, because they are taller than the choose parts (LAY-10). */}
-        <PollResults poll={poll} vote={vote} strings={strings} />
+        <PollResults
+          poll={{ ...poll, options }}
+          vote={vote}
+          show={showResults}
+          countsIncludeVote={Boolean(remote)}
+          note={live && !live.open ? strings.closed : null}
+          strings={strings}
+        />
       </div>
     </section>
   );
@@ -107,6 +166,11 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
 type PollResultsProps = {
   poll: Poll;
   vote: string | null;
+  /** Whether the results are on show (after a vote, or a closed poll). */
+  show: boolean;
+  /** A poll from the API already counts this browser's vote; a mock poll adds it. */
+  countsIncludeVote: boolean;
+  note: string | null;
   strings: Dictionary["poll"];
 };
 
@@ -116,16 +180,16 @@ type PollResultsProps = {
  * `fill-neutral`, on a `border` track (COL-17, DR-295). The bars repeat the percent, so
  * they are hidden from screen readers.
  */
-function PollResults({ poll, vote, strings }: PollResultsProps) {
-  const { results, total } = pollResults(poll.options, vote);
+function PollResults({ poll, vote, show, countsIncludeVote, note, strings }: PollResultsProps) {
+  const { results, total } = pollResults(poll.options, countsIncludeVote ? null : vote);
   const labels = new Map(poll.options.map((o) => [o.id, o.label]));
-  const live = vote
+  const live = show
     ? { role: "status", "data-poll-results": "" }
     : { inert: true, "aria-hidden": true, "data-poll-ghost": "" };
   return (
     <div
       data-poll-part="cell"
-      className={cn("min-w-0", !vote && "invisible")}
+      className={cn("min-w-0", !show && "invisible")}
       {...live}
     >
       <ul className="flex flex-col gap-4">
@@ -134,7 +198,7 @@ function PollResults({ poll, vote, strings }: PollResultsProps) {
           return (
             <li
               key={result.id}
-              data-poll-result={vote ? result.id : undefined}
+              data-poll-result={show ? result.id : undefined}
               className="flex flex-col gap-2"
             >
               <span className="type-ui text-ink">
@@ -151,7 +215,10 @@ function PollResults({ poll, vote, strings }: PollResultsProps) {
         })}
       </ul>
       <p className="mt-4 type-ui-sm text-ink-muted tabular-nums">
-        {fill(strings.total, { count: formatNumber(total, poll.lang) })}
+        {fill(total === 1 ? strings.totalOne : strings.total, {
+          count: formatNumber(total, poll.lang),
+        })}
+        {note ? ` · ${note}` : null}
       </p>
     </div>
   );

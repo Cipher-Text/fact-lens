@@ -80,6 +80,10 @@ export const en: Dictionary = {
     vote: "Vote",
     yourVote: "Your vote",
     total: "{count} votes",
+    totalOne: "{count} vote",
+    closed: "Voting has closed",
+    error: "Your vote could not be counted. Try again.",
+    limit: "Too many votes from this network today. Try again tomorrow.",
   },
   ads: {
     label: "Advertisement",

@@ -4,6 +4,8 @@ import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT } from 'jose';
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { createApp } from './app';
 import { AiController } from './ai/ai.controller';
+import { PollsController, PublicPollsController } from './polls/polls.controller';
+import { POLL_OPTIONS, PollsService, type PollOptions } from './polls/polls.service';
 import { InboxController } from './inbox/inbox.controller';
 import { InboxService } from './inbox/inbox.service';
 import { GEMINI_OPTIONS, GeminiService, type GeminiOptions } from './ai/gemini.service';
@@ -52,7 +54,7 @@ export const TEST_INTERNAL_TOKEN = 'test-internal-token-0123456789abcdef';
 
 /** Pass `storage` to run the app on another store; the default is an in-memory one that tests can inspect. */
 export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
-  adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number; storage?: S; gemini?: GeminiOptions } = {},
+  adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number; storage?: S; gemini?: GeminiOptions; polls?: PollOptions; trustProxy?: boolean } = {},
 ) {
   const storage = (opts.storage ?? new MemoryStorage()) as S;
   const db = await createTestDatabase(adminUrl);
@@ -67,12 +69,13 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+    controllers: [PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: GEMINI_OPTIONS, useValue: opts.gemini ?? { apiKey: null, model: 'test-model' } }, GeminiService,
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
-      NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, InboxService, MediaService,
+      NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, InboxService, PollsService, MediaService,
+      { provide: POLL_OPTIONS, useValue: opts.polls ?? { secret: 'test-poll-secret-0123456789abcdef0123456789', perIpPerDay: 3 } },
       { provide: OBJECT_STORAGE, useValue: storage },
       { provide: MEDIA_OPTIONS, useValue: { maxBytes: opts.maxUploadBytes ?? 10 * 1024 * 1024 } },
       { provide: TOKEN_VERIFIER, useValue: verifier },
@@ -83,7 +86,7 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
   })
   class TestAppModule {}
 
-  const app: NestFastifyApplication = await createApp(TestAppModule, 'silent');
+  const app: NestFastifyApplication = await createApp(TestAppModule, 'silent', opts.trustProxy ?? false);
   await app.init();
   await app.getHttpAdapter().getInstance().ready();
 

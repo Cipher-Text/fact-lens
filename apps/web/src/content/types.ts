@@ -89,6 +89,8 @@ export interface Poll {
   lang: Lang;
   question: string;
   options: PollOption[]; // 2 to 4
+  /** Set when the poll comes from the API: its counts are real and include this browser's own vote. */
+  live?: { open: boolean; myVote: string | null };
 }
 
 /**

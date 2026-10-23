@@ -1,7 +1,10 @@
+import { createHmac } from 'node:crypto';
 import { Module } from '@nestjs/common';
 import { loadApiEnv } from '@fact-lens/config';
 import { AiController } from './ai/ai.controller';
 import { InboxController } from './inbox/inbox.controller';
+import { PollsController, PublicPollsController } from './polls/polls.controller';
+import { POLL_OPTIONS, PollsService } from './polls/polls.service';
 import { InboxService } from './inbox/inbox.service';
 import { GEMINI_OPTIONS, GeminiService } from './ai/gemini.service';
 import { AuthModule } from './auth/auth.module';
@@ -31,7 +34,7 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+  controllers: [PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
   providers: [
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
     { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },
@@ -45,6 +48,16 @@ import type { Pool } from 'pg';
     AssignmentsService,
     SourcesService,
     InboxService,
+    PollsService,
+    {
+      provide: POLL_OPTIONS,
+      useFactory: () => {
+        const env = loadApiEnv();
+        // Without its own secret, one is derived from the internal token: a different key for a different purpose.
+        const secret = env.POLL_HASH_SECRET ?? (env.INTERNAL_API_TOKEN ? createHmac('sha256', env.INTERNAL_API_TOKEN).update('poll-vote-v1').digest('base64url') : null);
+        return { secret, perIpPerDay: env.POLL_VOTES_PER_IP_PER_DAY };
+      },
+    },
     {
       provide: HealthService,
       inject: [PG_POOL],

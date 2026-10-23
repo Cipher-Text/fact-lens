@@ -34,6 +34,12 @@ export const apiEnvSchema = z.object({
   /** Gemini API key for the newsroom's writing suggestions. Unset turns the suggestion endpoint off. */
   GEMINI_API_KEY: z.string().optional().transform((v) => v?.trim() || undefined),
   GEMINI_MODEL: z.string().min(1).default('gemini-2.5-flash'),
+  /** Keys the hashes behind poll votes. Unset, it is derived from INTERNAL_API_TOKEN; with neither, voting is off. */
+  POLL_HASH_SECRET: z.string().min(32).optional(),
+  /** How many votes one network address may cast on one poll in 24 hours. Above 1 so offices and mobile networks still work. */
+  POLL_VOTES_PER_IP_PER_DAY: z.coerce.number().int().min(1).max(1000).default(5),
+  /** Read the client address from X-Forwarded-For. Only behind a proxy you control: otherwise anyone can fake it. */
+  TRUST_PROXY: z.stringbool().default(false),
 }).superRefine((env, ctx) => {
   if (env.STORAGE_DRIVER === 's3') {
     for (const key of ['S3_BUCKET', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const) {

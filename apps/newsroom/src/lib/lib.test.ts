@@ -99,11 +99,11 @@ describe('capability-aware navigation', () => {
   const principal = (capabilities: string[]) => principalSchema.parse({ subject: 'u', roles: [], capabilities, mfa: true });
   const labels = (caps: string[]) => visibleNav(principal(caps)).map((n) => n.label);
   it('shows only what the person can use', () => {
-    expect(labels(['news.edit', 'news.submit'])).toEqual(['Desk queue', 'New news item', 'Source inbox', 'Media library']);
+    expect(labels(['news.edit', 'news.submit'])).toEqual(['Desk queue', 'New news item', 'Source inbox', 'Polls', 'Media library']);
     expect(labels(['media.manage'])).toEqual(['Media library']);
     expect(labels(['config.manage'])).toEqual(['Configuration']);
     expect(labels([])).toEqual([]);
-    expect(labels(['news.publish'])).toEqual(['Desk queue', 'Publishing calendar']);
+    expect(labels(['news.publish'])).toEqual(['Desk queue', 'Polls', 'Publishing calendar']);
   });
 });
 

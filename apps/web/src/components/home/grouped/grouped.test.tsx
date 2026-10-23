@@ -1,6 +1,6 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   getHomepage,
@@ -204,5 +204,77 @@ describe("insetBefore (DR-276)", () => {
       false,
       true,
     ]);
+  });
+});
+
+describe("DailyPoll from the API", () => {
+  const strings = getDictionary("en").poll;
+  const livePoll = (open = true, myVote: string | null = null) => ({
+    id: "api-poll",
+    lang: "en" as const,
+    question: "Which story next?",
+    options: [
+      { id: "a", label: "Floods", votes: 3 },
+      { id: "b", label: "Exports", votes: 1 },
+    ],
+    live: { open, myVote },
+  });
+  const answer = (status: number, body: unknown) =>
+    vi.fn().mockResolvedValue({ ok: status < 400, status, json: async () => body });
+
+  beforeEach(() => window.localStorage.clear());
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("sends the vote to the site's vote route and shows the counts the server returns, without adding the vote again", async () => {
+    const f = answer(200, {
+      myVote: "a",
+      options: [
+        { id: "a", votes: 4 },
+        { id: "b", votes: 1 },
+      ],
+    });
+    vi.stubGlobal("fetch", f);
+    const user = userEvent.setup();
+    const { container } = render(<DailyPoll poll={livePoll()} strings={strings} />);
+    await user.click(screen.getByRole("radio", { name: "Floods" }));
+    await user.click(screen.getByRole("button", { name: "Vote" }));
+
+    expect(f).toHaveBeenCalledWith(
+      "/api/poll/api-poll/vote",
+      expect.objectContaining({ method: "POST", body: JSON.stringify({ optionId: "a", lang: "en" }) }),
+    );
+    const mine = await waitFor(() => container.querySelector('[data-poll-result="a"]')!);
+    expect(mine).toHaveTextContent("Your vote");
+    expect(mine).toHaveTextContent("80%"); // 4 of 5, not 5 of 6
+    expect(container).toHaveTextContent("5 votes");
+    // The vote is the server's: nothing is kept in local storage.
+    expect(window.localStorage.getItem(pollStorageKey("api-poll"))).toBeNull();
+  });
+
+  it("shows the results at once when this browser already voted", () => {
+    const { container } = render(<DailyPoll poll={livePoll(true, "b")} strings={strings} />);
+    expect(container.querySelector('[data-poll-result="b"]')).toHaveTextContent("Your vote");
+    expect(container).toHaveTextContent("4 votes");
+  });
+
+  it("shows the results, and says voting has closed, for a closed poll nobody here voted on", () => {
+    const { container } = render(<DailyPoll poll={livePoll(false)} strings={strings} />);
+    expect(container.querySelector("[data-poll-results]")).toBeTruthy();
+    expect(container).toHaveTextContent("Voting has closed");
+    expect(container.querySelector('[data-poll-result="a"]')).not.toHaveTextContent("Your vote");
+  });
+
+  it("tells the reader when the daily limit is reached or the vote fails, and lets them try again", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal("fetch", answer(429, {}));
+    render(<DailyPoll poll={livePoll()} strings={strings} />);
+    await user.click(screen.getByRole("radio", { name: "Exports" }));
+    await user.click(screen.getByRole("button", { name: "Vote" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(strings.limit);
+    expect(screen.getAllByRole("radio")).toHaveLength(2);
+
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
+    await user.click(screen.getByRole("button", { name: "Vote" }));
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(strings.error));
   });
 });

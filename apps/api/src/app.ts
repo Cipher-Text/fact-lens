@@ -9,9 +9,11 @@ import { ErrorEnvelopeFilter } from './error-envelope.filter';
 
 const REQUEST_ID_HEADER = 'x-request-id';
 
-export async function createApp(module: Type<unknown>, logLevel = 'info'): Promise<NestFastifyApplication> {
+/** `trustProxy` makes `request.ip` the client address from X-Forwarded-For. Turn it on only behind a proxy you control. */
+export async function createApp(module: Type<unknown>, logLevel = 'info', trustProxy = false): Promise<NestFastifyApplication> {
   const adapter = new FastifyAdapter({
     logger: { level: logLevel },
+    trustProxy,
     genReqId: (req: IncomingMessage) => {
       const incoming = req.headers[REQUEST_ID_HEADER];
       return typeof incoming === 'string' && /^[\w-]{8,64}$/.test(incoming) ? incoming : randomUUID();

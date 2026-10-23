@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { Fragment } from "react";
 
@@ -13,6 +14,7 @@ import { RegionsSection } from "@/components/home/regions/RegionsSection";
 import { AdSlot } from "@/components/ads/AdSlot";
 import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
+import { fetchFeaturedPoll, VOTER_COOKIE } from "@/lib/poll-api";
 import { cn } from "@/lib/utils";
 
 // The page reads searchParams, so it renders on each request: the footer year is the
@@ -33,6 +35,10 @@ export default async function HomePage({
         ? "sparse"
         : "full",
   });
+  // The poll the newsroom put on the homepage, when the API is set up; else the mock poll (DR-01).
+  const livePoll = home.grouped
+    ? await fetchFeaturedPoll(lang, (await cookies()).get(VOTER_COOKIE)?.value)
+    : null;
   const featured = [home.featured.bangladesh, home.featured.geopolitics].filter(
     (section) => section !== null,
   );
@@ -111,7 +117,7 @@ export default async function HomePage({
           <GroupedCategoriesSection
             lang={lang}
             categories={home.grouped.categories}
-            poll={home.grouped.poll}
+            poll={livePoll ?? home.grouped.poll}
             t={t}
             className={cn(
               (featured.length > 0 || home.hero || home.analysisOpinion) &&

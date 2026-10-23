@@ -50,7 +50,8 @@ The API, the worker, the newsroom and the dev identity provider share **one** fi
 
 - Variables that must agree across apps appear once: `DATABASE_URL`, `REDIS_URL`, `INTERNAL_API_TOKEN` (API and worker), `API_BASE_URL` (worker and newsroom), `OIDC_ISSUER` (API and newsroom).
 - `GEMINI_API_KEY` (API only, optional) turns on the newsroom's "Generate with Gemini" and "Translate with Gemini" buttons; `GEMINI_MODEL` changes the model. Without the key the buttons report that suggestions are not set up. The news text is sent to Google when a button is used.
-- `FACTLENS_API_URL` (`apps/web` only, optional) makes the public site's header menu read the API; leave it unset to keep the static menu.
+- `FACTLENS_API_URL` (`apps/web` only, optional) makes the public site's header menu and daily poll read the API; leave it unset to keep the static menu and the mock poll.
+- `POLL_HASH_SECRET`, `POLL_VOTES_PER_IP_PER_DAY` and `TRUST_PROXY` (API only, optional) control poll voting. Behind a proxy or the public site, set `TRUST_PROXY=true` only if the API cannot be reached any other way, or the per-address limit can be faked.
 - `FEED_SCAN_MS` and `FEED_ALLOW_PRIVATE_HOSTS` (worker only, optional) control the source inbox's RSS fetching. Leave private hosts off outside development: it is what keeps a feed address from reaching inside the network.
 - A variable set in the shell or by a deployment wins over the file.
 - The root `.env` is for development. In a deployment each service gets only its own variables from the platform's secret store; the newsroom, for example, should not be given the database password.

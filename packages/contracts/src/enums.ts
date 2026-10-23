@@ -17,6 +17,7 @@ export const revisionMediaRoles = ['lead', 'inline', 'gallery'] as const;
 export const sourceKinds = ['web', 'document', 'social', 'interview', 'dataset', 'agency', 'other'] as const;
 export const sourceValidationStatuses = ['unvalidated', 'valid', 'rejected'] as const;
 export const ingestChannels = ['rss', 'partner_api', 'approved_url', 'telegram'] as const;
+export const pollStatuses = ['draft', 'open', 'closed', 'archived'] as const;
 export const feedStatuses = ['ok', 'not_modified', 'error'] as const;
 export const inboxStatuses = ['new', 'used', 'rejected', 'duplicate'] as const;
 export const sourceRelations = ['primary', 'secondary'] as const;

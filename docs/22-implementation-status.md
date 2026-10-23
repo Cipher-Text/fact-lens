@@ -29,7 +29,7 @@ What exists in this repository today, how much of it has been checked, and what 
 - `apps/api`: NestJS on Fastify. Default-deny authentication, capability checks, audit, 15 SQL migrations.
 - `apps/worker`: BullMQ worker with an outbox dispatcher, a job runtime, a due-schedule scanner and a health endpoint.
 - `apps/newsroom`: Next.js editorial workspace with server-side OIDC sign-in.
-- `apps/web`: the public site design, imported from `fact-lens-web`, on mock data. Its header menu can read `GET /public/navigation/:locale` when `FACTLENS_API_URL` is set, and falls back to the static menu otherwise (unit-tested, not run against a live API).
+- `apps/web`: the public site design, imported from `fact-lens-web`, on mock data. With `FACTLENS_API_URL` set, its header menu reads `GET /public/navigation/:locale` and its daily poll is the one the newsroom featured, voted through the site's own `/api/poll/:id/vote`; without it, or if the API is down, it keeps the static menu and the mock poll.
 - `tools/dev-idp`: a fake sign-in provider for local use. It refuses to run in production.
 - `packages/config` (environment validation) and `packages/contracts` (shared schemas and enums).
 
@@ -44,6 +44,7 @@ What exists in this repository today, how much of it has been checked, and what 
 - Categories can have a parent (`parentId`): the menu has two levels, `GET /public/navigation/:locale` returns each menu with its `children`, and a parent's news list includes its children's news. The newsroom shows child menus under their parent and has a "Parent menu" choice.
 - Writing help (`news.edit`, needs `GEMINI_API_KEY`, ADR-022): `POST /ai/news-suggest` (headline, standfirst, slug, search text and existing tags from a text) and `POST /ai/news-translate` (a language into another, keeping the body's structure). Nothing is saved by these; the newsroom has "Generate with Gemini" and "Translate with Gemini" buttons. Tested with a fake Gemini; not run against the real service.
 - Source inbox (ADR-023, RSS only): feeds (`/feeds`, added and removed by `config.manage`, readable by editors), the inbox (`GET /inbox?status=`, `PUT /inbox/:id` put aside or bring back, `POST /inbox/:id/use` makes the item a source of a news item). The worker fetches each due feed and reports to `POST /internal/feeds/:id/ingest`; an item is stored once per feed, and the same address already in the inbox or sources is listed as a duplicate. Hand-checked against a real public feed and the running worker; automated tests use a fake feed.
+- Polls (ADR-024): editors write a poll per language with two to four options (`news.edit`), managing editors open, close, archive and feature it (`news.publish`); wording is fixed once there are votes. Public: `GET /public/polls/featured/:locale`, `GET /public/polls/:id/:locale`, `POST /public/polls/:id/vote`. One vote per browser (a random cookie token, one row per token per poll in the database) plus a daily limit per network address; only keyed hashes are stored. Tested; hand-checked on the public site against the dev API.
 - Internal (shared secret, for the worker): publish a due schedule; store what a feed fetch found.
 - Health: liveness and readiness.
 
@@ -53,7 +54,7 @@ What exists in this repository today, how much of it has been checked, and what 
 
 **Worker jobs**: `news.publish_scheduled`, `schedule.scan`, `feed.scan` and `feed.fetch` work (RSS and Atom, with a guard against private addresses). `cache.invalidate`, `search.index` and `notification.send` log and succeed. `media.variant` and `media.card_generate` fail on purpose as "not implemented".
 
-**Newsroom screens** (visual design from the Admin UI file: left sidebar, status pills, desk queue with numbers, stage tabs and a table, workflow steps on the news page; the design's fact-check verdict panel and checklist are not built, see open question 15): desk queue, new news item, news item workspace, media library and image page, configuration (languages, feature flags), sections and tags (menu, tags, per-language names), and a tag picker in the news item workspace. The source inbox (feeds, new, used, put aside and duplicate items, create a news item from an item) is built; the publishing calendar is a placeholder.
+**Newsroom screens** (visual design from the Admin UI file: left sidebar, status pills, desk queue with numbers, stage tabs and a table, workflow steps on the news page; the design's fact-check verdict panel and checklist are not built, see open question 15): desk queue, new news item, news item workspace, media library and image page, configuration (languages, feature flags), sections and tags (menu, tags, per-language names), and a tag picker in the news item workspace. The source inbox (feeds, new, used, put aside and duplicate items, create a news item from an item) and polls (write, open, close, archive, feature, results) are built; the publishing calendar is a placeholder.
 
 ## How much is verified
 
