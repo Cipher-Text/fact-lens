@@ -184,14 +184,7 @@ function Gauge({ uid, label }: { uid: string; label?: string }) {
         fill="none"
         strokeWidth="3"
       />
-      <rect
-        x="640"
-        y="120"
-        width="90"
-        height="700"
-        rx="10"
-        className="art-card"
-      />
+      <rect x="640" y="120" width="90" height="700" className="art-card" />
       {Array.from({ length: 23 }, (_, i) => (
         <line
           key={i}
@@ -203,14 +196,7 @@ function Gauge({ uid, label }: { uid: string; label?: string }) {
         />
       ))}
       <line x1="560" x2="920" y1="560" y2="560" className="art-level" />
-      <rect
-        x="760"
-        y="538"
-        width="120"
-        height="44"
-        rx="22"
-        className="art-sun"
-      />
+      <rect x="760" y="538" width="120" height="44" className="art-sun" />
       <line x1="685" y1="120" x2="685" y2="62" className="art-stem" />
       <circle cx="685" cy="50" r="12" className="art-sun" />
       <g fill="none" strokeLinecap="round" className="art-signal">
@@ -224,22 +210,8 @@ function Gauge({ uid, label }: { uid: string; label?: string }) {
         fill="none"
         strokeWidth="3"
       />
-      <rect
-        x="1000"
-        y="170"
-        width="420"
-        height="290"
-        rx="30"
-        className="art-card"
-      />
-      <rect
-        x="1040"
-        y="204"
-        width="150"
-        height="16"
-        rx="8"
-        className="art-muted"
-      />
+      <rect x="1000" y="170" width="420" height="290" className="art-card" />
+      <rect x="1040" y="204" width="150" height="16" className="art-muted" />
       {bars.map((height, i) => (
         <rect
           key={i}
@@ -247,7 +219,6 @@ function Gauge({ uid, label }: { uid: string; label?: string }) {
           y={420 - height}
           width="32"
           height={height}
-          rx="8"
           className={i === bars.length - 1 ? "art-sun" : "art-w2"}
         />
       ))}
@@ -358,14 +329,7 @@ function Balance({ uid, label }: { uid: string; label?: string }) {
       <circle cx="1420" cy="560" r="12" className="art-sand" />
       <circle cx="210" cy="300" r="10" className="art-w2" />
       <polygon points="800,452 728,640 872,640" className="art-ink" />
-      <rect
-        x="690"
-        y="640"
-        width="220"
-        height="18"
-        rx="9"
-        className="art-ink"
-      />
+      <rect x="690" y="640" width="220" height="18" className="art-ink" />
       <line x1="340" y1="472" x2="1260" y2="430" className="art-beam" />
       <circle cx="430" cy="410" r="52" className="art-w2" />
       <circle cx="560" cy="426" r="30" className="art-sun" />

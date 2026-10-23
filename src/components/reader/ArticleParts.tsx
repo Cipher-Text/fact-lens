@@ -1,10 +1,24 @@
-import { ArrowUpRight, History, Plus, Sparkles } from "lucide-react";
+import { ArrowUpRight, History, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { Fragment } from "react";
 
-import type { Article, Block, ReadNextItem } from "@/content/reader";
+import type {
+  Article,
+  ArticleContext,
+  Block,
+  ReadNextItem,
+} from "@/content/reader";
+import { StoryTime } from "@/components/story/StoryTime";
+import {
+  Alert,
+  AlertAction,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
 import { localizedPath, type Lang } from "@/i18n";
 
 import { Art } from "./Art";
+import { ContextCard } from "./ContextCard";
 import { GoogleG, LensMark } from "./icons";
 import { SectionAnchor } from "./Reading";
 import type { ReaderStrings } from "./strings";
@@ -16,24 +30,6 @@ const TIME_ZONE = "Asia/Dhaka";
 // production domain when there is one.
 const PREFERRED_SOURCE_DOMAIN = "fact-lens-web-ashy.vercel.app";
 export const preferredSourceHref = `https://www.google.com/preferences/source?q=${PREFERRED_SOURCE_DOMAIN}`;
-
-export function formatDay(iso: string, lang: Lang) {
-  return new Intl.DateTimeFormat(locales[lang], {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: TIME_ZONE,
-  }).format(new Date(iso));
-}
-
-export function formatClock(iso: string, lang: Lang) {
-  return new Intl.DateTimeFormat(locales[lang], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-    timeZone: TIME_ZONE,
-  }).format(new Date(iso));
-}
 
 export function formatNumber(value: number, lang: Lang, digits = 1) {
   return new Intl.NumberFormat(locales[lang], {
@@ -96,7 +92,7 @@ function BodyBlock({
       );
     case "h2":
       return (
-        <h2 id={block.id}>
+        <h2 id={block.id} data-section>
           {block.text}
           <SectionAnchor
             id={block.id}
@@ -157,46 +153,55 @@ function BodyBlock({
 
 export function ArticleBody({
   blocks,
+  context,
   t,
 }: {
   blocks: Block[];
+  context?: ArticleContext;
   t: ReaderStrings;
 }) {
   const lastParagraph = blocks.findLastIndex((block) => block.type === "p");
+  // The context goes in the body before the first section heading.
+  const contextAt = blocks.findIndex((block) => block.type === "h2");
   return (
     <div className="rd-prose" data-reader-body>
       {blocks.map((block, index) => (
-        <BodyBlock
-          key={index}
-          block={block}
-          last={index === lastParagraph}
-          t={t}
-          uid={`body-${index}`}
-        />
+        <Fragment key={index}>
+          {context && index === contextAt ? (
+            <ContextCard context={context} t={t} />
+          ) : null}
+          <BodyBlock
+            block={block}
+            last={index === lastParagraph}
+            t={t}
+            uid={`body-${index}`}
+          />
+        </Fragment>
       ))}
     </div>
   );
 }
 
-export function PreferredSourcePill({ t }: { t: ReaderStrings }) {
+/** The preferred-source prompt below the byline: a shadcn Alert with the Google button. */
+export function PreferredSourceAlert({ t }: { t: ReaderStrings }) {
   return (
-    <a
-      className="rd-gpill"
-      href={preferredSourceHref}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <span className="rd-gpill__g">
-        <GoogleG />
-      </span>
-      <span className="rd-gpill__text">
-        <span className="rd-gpill__kicker">{t.googleKicker}</span>
-        <span className="rd-gpill__label">{t.googleButton}</span>
-      </span>
-      <span className="rd-gpill__plus" aria-hidden="true">
-        <Plus />
-      </span>
-    </a>
+    // A standing prompt, not an urgent message, so it is a note and not an alert.
+    <Alert role="note" className="rd-galert">
+      <AlertTitle>{t.googleCardTitle}</AlertTitle>
+      <AlertDescription>{t.googleCardText}</AlertDescription>
+      <AlertAction>
+        <a
+          className="rd-galert__btn type-button"
+          href={preferredSourceHref}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <GoogleG className="rd-galert__g" />
+          {t.googleShort}
+          <ArrowUpRight aria-hidden="true" />
+        </a>
+      </AlertAction>
+    </Alert>
   );
 }
 
@@ -284,9 +289,7 @@ export function Updates({
       <ol>
         {updates.map((update) => (
           <li key={update.at}>
-            <time dateTime={update.at}>
-              {formatDay(update.at, lang)}, {formatClock(update.at, lang)}
-            </time>
+            <StoryTime story={{ publishedAt: update.at, lang }} />
             <p>{update.text}</p>
           </li>
         ))}

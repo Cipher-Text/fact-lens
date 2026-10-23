@@ -17,7 +17,7 @@ export interface ReadingState {
   scrolled: boolean;
   started: boolean; // the body has come into view
   done: boolean;
-  size: number; // text size step, 0 to 3
+  size: number; // reader size step: 0 default, 1 lg, 2 xl (typography tokens)
 }
 
 const initial: ReadingState = {
@@ -29,7 +29,7 @@ const initial: ReadingState = {
   scrolled: false,
   started: false,
   done: false,
-  size: 1,
+  size: 0,
 };
 
 let state = initial;
@@ -76,7 +76,7 @@ export function readStoredSize(): number | null {
     const stored = window.localStorage.getItem(SIZE_KEY);
     if (stored === null) return null;
     const value = Number(stored);
-    return Number.isInteger(value) && value >= 0 && value <= 3 ? value : null;
+    return Number.isInteger(value) && value >= 0 && value <= 2 ? value : null;
   } catch {
     return null;
   }

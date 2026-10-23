@@ -1,7 +1,7 @@
 "use client";
 
 import { Bookmark, BookmarkCheck, Moon, Sun, Type } from "lucide-react";
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useSyncExternalStore, type KeyboardEvent } from "react";
 
 import { useThemeChoice } from "@/components/header/useThemeChoice";
 import { nextThemeChoice, setThemeChoice } from "@/lib/theme";
@@ -32,51 +32,74 @@ export function ThemeToggle({ t }: { t: ReaderStrings }) {
   );
 }
 
-/** Four text sizes for the article body. */
-export function TextSize({
+/**
+ * Four text sizes for the article body, as a radio group. Arrow keys move between them, as
+ * in any radio group.
+ */
+export function TextSizeOptions({
   t,
-  side = "bottom",
-  buttonClassName,
+  labelledBy,
 }: {
   t: ReaderStrings;
-  side?: "top" | "bottom";
-  buttonClassName?: string;
+  labelledBy: string;
 }) {
   const size = useReading((s) => s.size);
   const names = t.textSizes.split(",");
+  const onKey = (event: KeyboardEvent<HTMLDivElement>) => {
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[
+      event.key
+    ];
+    if (!step) return;
+    event.preventDefault();
+    const next = Math.min(names.length - 1, Math.max(0, size + step));
+    setTextSize(next);
+    event.currentTarget
+      .querySelector<HTMLElement>(`[data-step="${next}"]`)
+      ?.focus();
+  };
   return (
-    <Popover
-      label={t.textSize}
-      icon={<Type aria-hidden="true" />}
-      side={side}
-      buttonClassName={buttonClassName}
+    <div
+      className="rd-sizes"
+      role="radiogroup"
+      aria-labelledby={labelledBy}
+      onKeyDown={onKey}
     >
+      {names.map((name, step) => (
+        <button
+          key={name}
+          type="button"
+          role="radio"
+          aria-checked={size === step}
+          aria-label={name}
+          title={name}
+          tabIndex={size === step ? 0 : -1}
+          className="rd-size"
+          data-step={step}
+          onClick={() => setTextSize(step)}
+        >
+          {t.textSizeGlyph}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** The text sizes behind one button, for the bottom bar on narrow screens. */
+export function TextSize({
+  t,
+  side = "bottom",
+}: {
+  t: ReaderStrings;
+  side?: "top" | "bottom";
+}) {
+  return (
+    <Popover label={t.textSize} icon={<Type aria-hidden="true" />} side={side}>
       {() => (
         <>
-          <p className="rd-pop__label" id="rd-size-label">
+          <p className="rd-pop__label" id="rd-size-pop">
             {t.textSize}
           </p>
-          <div
-            className="rd-sizes"
-            role="radiogroup"
-            aria-labelledby="rd-size-label"
-          >
-            {names.map((name, step) => (
-              <button
-                key={name}
-                type="button"
-                role="radio"
-                aria-checked={size === step}
-                aria-label={name}
-                title={name}
-                className="rd-size"
-                data-step={step}
-                onClick={() => setTextSize(step)}
-              >
-                {t.textSizeGlyph}
-              </button>
-            ))}
-          </div>
+          <TextSizeOptions t={t} labelledBy="rd-size-pop" />
         </>
       )}
     </Popover>
@@ -133,7 +156,7 @@ export function SaveButton({
     return (
       <button
         type="button"
-        className="rd-share__btn"
+        className="rd-iconbtn"
         data-net="save"
         aria-pressed={saved}
         aria-label={t.save}
@@ -155,35 +178,4 @@ export function SaveButton({
       {saved ? t.saved : t.save}
     </button>
   );
-}
-
-/** The relative time ("3 hours ago"), written after load in the reader's clock. */
-export function TimeAgo({ iso, lang }: { iso: string; lang: "bn" | "en" }) {
-  const [text, setText] = useState("");
-
-  useEffect(() => {
-    const locale = lang === "bn" ? "bn-BD-u-nu-beng" : "en-GB";
-    const format = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
-    const update = () => {
-      const seconds = (Date.parse(iso) - Date.now()) / 1000;
-      const units: [Intl.RelativeTimeFormatUnit, number][] = [
-        ["year", 31536000],
-        ["month", 2592000],
-        ["week", 604800],
-        ["day", 86400],
-        ["hour", 3600],
-        ["minute", 60],
-      ];
-      const [unit, size] = units.find(
-        ([, step]) => Math.abs(seconds) >= step,
-      ) ?? ["minute", 60];
-      setText(format.format(Math.round(seconds / size), unit));
-    };
-    update();
-    const timer = setInterval(update, 60000);
-    return () => clearInterval(timer);
-  }, [iso, lang]);
-
-  if (!text) return null;
-  return <span className="rd-ago">{text}</span>;
 }

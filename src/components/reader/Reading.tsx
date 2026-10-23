@@ -1,14 +1,11 @@
 "use client";
 
 import { ArrowUp, Check, Hash } from "lucide-react";
-import Link from "next/link";
-import type { ReactNode } from "react";
 
-import { LensMark } from "./icons";
+import { SaveButton, TextSize, TextSizeOptions } from "./Controls";
 import { useReading } from "./reading-store";
-import { ShareMenu, type ShareProps } from "./Share";
+import { ShareDialog, type ShareProps } from "./Share";
 import type { ReaderStrings } from "./strings";
-import { TextSize, ThemeToggle } from "./Controls";
 import { copyText } from "./Toaster";
 
 const locales = { bn: "bn-BD-u-nu-beng", en: "en-GB" } as const;
@@ -24,158 +21,130 @@ function numberText(value: number, lang: "bn" | "en") {
   return new Intl.NumberFormat(locales[lang]).format(value);
 }
 
-/** The thin line at the very top: how much of the body has been read. */
-export function ProgressLine({
-  label,
-  lang,
-}: {
-  label: string;
-  lang: "bn" | "en";
-}) {
-  const percent = useReading((s) => s.percent);
+/** A square frame that fills clockwise with --rd-progress. */
+export function ProgressFrame() {
   return (
-    <div
-      className="rd-progress"
-      role="progressbar"
-      aria-label={label}
-      aria-valuemin={0}
-      aria-valuemax={100}
-      aria-valuenow={percent}
-      aria-valuetext={percentText(percent, lang)}
-    >
-      <span />
-    </div>
-  );
-}
-
-type BarProps = ShareProps & {
-  lang: "bn" | "en";
-  homeHref: string;
-  siteName: string;
-  category: string;
-  otherHref: string;
-  otherLang: "bn" | "en";
-};
-
-/**
- * The reading bar. It turns to glass after the first scroll, hides while the reader
- * scrolls down, and shows the headline once the real headline is out of view.
- */
-export function ReaderBar({
-  lang,
-  homeHref,
-  siteName,
-  category,
-  otherHref,
-  otherLang,
-  ...share
-}: BarProps) {
-  const { t, title } = share;
-  const hidden = useReading((s) => s.hidden);
-  const past = useReading((s) => s.past);
-  const scrolled = useReading((s) => s.scrolled);
-
-  return (
-    <header
-      className="rd-bar"
-      data-hidden={hidden || undefined}
-      data-past={past || undefined}
-      data-scrolled={scrolled || undefined}
-    >
-      <div className="rd-bar__inner">
-        <Link
-          href={homeHref}
-          className="rd-logo"
-          aria-label={`${siteName}, ${t.home}`}
-        >
-          <LensMark />
-          <span className="rd-logo__word">{siteName}</span>
-        </Link>
-        <span className="rd-bar__crumb">
-          <span className="rd-dot" aria-hidden="true" />
-          {category}
-        </span>
-        <p className="rd-bar__title" aria-hidden="true">
-          {title}
-        </p>
-        <div className="rd-bar__actions">
-          <a
-            href={otherHref}
-            lang={otherLang}
-            hrefLang={otherLang}
-            className="rd-langlink"
-          >
-            {t.otherLanguage}
-          </a>
-          <ThemeToggle t={t} />
-          <ShareMenu {...share} />
-        </div>
-      </div>
-    </header>
-  );
-}
-
-/** The floating pill: progress ring (back to top), minutes left, text size and share. */
-export function ReadingPill({
-  lang,
-  ...share
-}: ShareProps & { lang: "bn" | "en" }) {
-  const { t } = share;
-  const percent = useReading((s) => s.percent);
-  const minutesLeft = useReading((s) => s.minutesLeft);
-  const started = useReading((s) => s.started);
-  const done = useReading((s) => s.done);
-
-  return (
-    <div className="rd-pill" data-show={started || undefined}>
-      <button
-        type="button"
-        className="rd-ringbtn"
-        aria-label={`${t.backToTop}. ${t.percentRead.replace("{p}", percentText(percent, lang))}`}
-        title={t.backToTop}
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      >
-        <Ring />
-        <span className="rd-ringbtn__pct" aria-hidden="true">
-          {done ? <Check /> : numberText(percent, lang)}
-        </span>
-        <ArrowUp className="rd-ringbtn__up" aria-hidden="true" />
-      </button>
-      <span className="rd-pill__meta" aria-hidden="true">
-        {done
-          ? t.finished
-          : t.minutesLeft.replace("{n}", numberText(minutesLeft, lang))}
-      </span>
-      <span className="rd-pill__sep" aria-hidden="true" />
-      <TextSize t={t} side="top" />
-      <ShareMenu {...share} side="top" />
-    </div>
-  );
-}
-
-/** A ring that fills with --rd-progress. */
-export function Ring() {
-  return (
-    <svg className="rd-ring" viewBox="0 0 36 36" aria-hidden="true">
-      <circle
-        className="rd-ring__track"
-        cx="18"
-        cy="18"
-        r="16"
+    <svg className="rd-frame" viewBox="0 0 40 40" aria-hidden="true">
+      <rect
+        className="rd-frame__track"
+        x="1.5"
+        y="1.5"
+        width="37"
+        height="37"
         pathLength={100}
       />
-      <circle
-        className="rd-ring__fill"
-        cx="18"
-        cy="18"
-        r="16"
+      <rect
+        className="rd-frame__fill"
+        x="1.5"
+        y="1.5"
+        width="37"
+        height="37"
         pathLength={100}
       />
     </svg>
   );
 }
 
-/** The contents list in the rail, with the section being read marked. */
+function ProgressButton({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
+  const percent = useReading((s) => s.percent);
+  const done = useReading((s) => s.done);
+  return (
+    <button
+      type="button"
+      className="rd-progressbtn"
+      aria-label={`${t.backToTop}. ${t.percentRead.replace("{p}", percentText(percent, lang))}`}
+      title={t.backToTop}
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+    >
+      <ProgressFrame />
+      <span className="rd-progressbtn__pct" aria-hidden="true">
+        {done ? <Check /> : numberText(percent, lang)}
+      </span>
+      <ArrowUp className="rd-progressbtn__up" aria-hidden="true" />
+    </button>
+  );
+}
+
+function MinutesLeft({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
+  const minutesLeft = useReading((s) => s.minutesLeft);
+  const done = useReading((s) => s.done);
+  return (
+    <>
+      {done
+        ? t.finished
+        : t.minutesLeft.replace("{n}", numberText(minutesLeft, lang))}
+    </>
+  );
+}
+
+/**
+ * The reading tools: progress (back to the top), minutes left, text size, share and save.
+ * `rail`: in the sticky left panel, from 1120. `dock`: a bar at the bottom edge below 1120,
+ * where there is no left panel.
+ */
+export function ReadingTools({
+  layout,
+  lang,
+  slug,
+  ...share
+}: ShareProps & { layout: "rail" | "dock"; lang: "bn" | "en"; slug: string }) {
+  const { t } = share;
+  const percent = useReading((s) => s.percent);
+  const started = useReading((s) => s.started);
+
+  if (layout === "dock") {
+    return (
+      <div className="rd-dock" data-show={started || undefined}>
+        <ProgressButton t={t} lang={lang} />
+        <span className="rd-dock__meta" aria-hidden="true">
+          <MinutesLeft t={t} lang={lang} />
+        </span>
+        <span className="rd-dock__sep" aria-hidden="true" />
+        <TextSize t={t} side="top" />
+        <ShareDialog {...share} />
+        <SaveButton slug={slug} t={t} compact />
+      </div>
+    );
+  }
+
+  return (
+    <div className="rd-tools">
+      <div className="rd-tools__group">
+        <p className="rd-rail__title">{t.reading}</p>
+        <div className="rd-tools__progress">
+          <ProgressButton t={t} lang={lang} />
+          <p className="rd-tools__meta">
+            <strong>
+              {t.percentRead.replace("{p}", percentText(percent, lang))}
+            </strong>
+            <span>
+              <MinutesLeft t={t} lang={lang} />
+            </span>
+          </p>
+        </div>
+      </div>
+      <div className="rd-tools__group">
+        <p className="rd-rail__title" id="rd-size-rail">
+          {t.textSize}
+        </p>
+        <TextSizeOptions t={t} labelledBy="rd-size-rail" />
+      </div>
+      <div className="rd-tools__group">
+        <p className="rd-rail__title">{t.share}</p>
+        <div className="rd-tools__row">
+          <ShareDialog {...share} look="label" />
+          <SaveButton slug={slug} t={t} compact />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The contents list in the rail. The marker and the filled part of the track follow the
+ * reading line through each section (--rd-toc-y, set on scroll by ReaderRoot), so they flow
+ * from one heading to the next instead of jumping.
+ */
 export function Toc({
   items,
   label,
@@ -188,20 +157,22 @@ export function Toc({
   return (
     <nav className="rd-toc" aria-label={label}>
       <p className="rd-rail__title">{label}</p>
-      {/* The list's ::before is the track and its ::after the read part. */}
-      <ol className="rd-toc__list">
-        {items.map((item) => (
-          <li key={item.id}>
-            <a
-              href={`#${item.id}`}
-              className="rd-toc__link"
-              aria-current={active === item.id ? "true" : undefined}
-            >
-              {item.text}
-            </a>
-          </li>
-        ))}
-      </ol>
+      <div className="rd-toc__body" data-toc>
+        <span className="rd-toc__marker" aria-hidden="true" />
+        <ol className="rd-toc__list">
+          {items.map((item) => (
+            <li key={item.id} data-toc-item>
+              <a
+                href={`#${item.id}`}
+                className="rd-toc__link"
+                aria-current={active === item.id ? "true" : undefined}
+              >
+                {item.text}
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
     </nav>
   );
 }
@@ -233,22 +204,14 @@ export function SectionAnchor({
   );
 }
 
-/** The card after the body: a ring while reading, a check once the reader is done. */
-export function EndCard({
-  t,
-  lang,
-  children,
-}: {
-  t: ReaderStrings;
-  lang: "bn" | "en";
-  children?: ReactNode;
-}) {
+/** The card after the body: a frame while reading, a check once the reader is done. */
+export function EndCard({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
   const percent = useReading((s) => s.percent);
   const done = useReading((s) => s.done);
   return (
     <section className="rd-end" aria-labelledby="rd-end-title">
-      <div className="rd-end__ring">
-        <Ring />
+      <div className="rd-end__frame">
+        <ProgressFrame />
         <span className="rd-end__pct" aria-hidden="true">
           {done ? (
             <Check className="rd-end__check" />
@@ -265,7 +228,6 @@ export function EndCard({
         </h2>
         <p className="rd-end__text">{t.endText}</p>
       </div>
-      {children}
     </section>
   );
 }

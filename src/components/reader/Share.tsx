@@ -1,10 +1,18 @@
 "use client";
 
-import { Link2, Mail, Share2, Upload } from "lucide-react";
-import { useSyncExternalStore } from "react";
+import { Check, Copy, Mail, Share2, Upload } from "lucide-react";
+import { useState, useSyncExternalStore } from "react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { NetworkIcon, type Network } from "./icons";
-import { Popover } from "./Popover";
 import type { ReaderStrings } from "./strings";
 import { copyText } from "./Toaster";
 
@@ -60,177 +68,120 @@ function mailto(url: string, title: string, summary: string) {
   return `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${summary}\n\n${url}`)}`;
 }
 
-function nativeShare(url: string, title: string, summary: string) {
-  navigator.share({ title, text: summary, url }).catch(() => {
-    // The reader closed the share sheet.
-  });
-}
-
-/** Round share buttons in a row (hero and end of article) or a column (the rail). */
-export function ShareButtons({
+/**
+ * The one share control. Every share place on the page (bar, hero, panel, end of the
+ * article) is this button; it opens a shadcn Dialog with every share option and the link.
+ * `icon`: an icon button. `label`: icon and text.
+ */
+export function ShareDialog({
   path,
   title,
   summary,
   t,
-  layout = "row",
-}: ShareProps & { layout?: "row" | "rail" }) {
+  look = "icon",
+  className,
+}: ShareProps & { look?: "icon" | "label"; className?: string }) {
   const url = useOrigin() + path;
   const canShare = useCanShare();
   const links = targets(url, title);
-  const name = (network: Network) =>
-    t.shareOn.replace("{network}", t.networks[network]);
+  const [copied, setCopied] = useState(false);
+
+  const copy = () => {
+    copyText(url, t.linkCopied);
+    setCopied(true);
+  };
 
   return (
-    <ul className={`rd-share rd-share--${layout}`} aria-label={t.shareStory}>
-      {networks.map((network) => (
-        <li key={network}>
-          <a
-            className="rd-share__btn"
-            data-net={network}
-            href={links[network]}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={name(network)}
-            title={name(network)}
-          >
-            <NetworkIcon network={network} />
-          </a>
-        </li>
-      ))}
-      {layout === "row" ? (
-        <li>
-          <a
-            className="rd-share__btn"
-            data-net="email"
-            href={mailto(url, title, summary)}
-            aria-label={t.email}
-            title={t.email}
-          >
-            <Mail aria-hidden="true" />
-          </a>
-        </li>
-      ) : null}
-      <li>
-        <button
-          type="button"
-          className="rd-share__btn"
-          data-net="copy"
-          aria-label={t.copyLink}
-          title={t.copyLink}
-          onClick={() => copyText(url, t.linkCopied)}
-        >
-          <Link2 aria-hidden="true" />
-        </button>
-      </li>
-      {canShare && layout === "row" ? (
-        <li>
-          <button
-            type="button"
-            className="rd-share__btn"
-            data-net="more"
-            aria-label={t.shareMore}
-            title={t.shareMore}
-            onClick={() => nativeShare(url, title, summary)}
-          >
-            <Upload aria-hidden="true" />
-          </button>
-        </li>
-      ) : null}
-    </ul>
-  );
-}
+    <Dialog onOpenChange={(open) => open || setCopied(false)}>
+      <DialogTrigger
+        className={className ?? (look === "icon" ? "rd-iconbtn" : "rd-chip")}
+        aria-label={look === "icon" ? t.share : undefined}
+        title={look === "icon" ? t.share : undefined}
+      >
+        <Share2 aria-hidden="true" />
+        {look === "label" ? t.share : null}
+      </DialogTrigger>
+      <DialogContent closeLabel={t.close} className="rd-sharedlg gap-6 p-6">
+        <DialogHeader>
+          <DialogTitle>{t.shareStory}</DialogTitle>
+          <DialogDescription>{title}</DialogDescription>
+        </DialogHeader>
 
-/** One share button that opens a menu of every target (the bar and the pill). */
-export function ShareMenu({
-  path,
-  title,
-  summary,
-  t,
-  side = "bottom",
-  buttonClassName,
-}: ShareProps & { side?: "top" | "bottom"; buttonClassName?: string }) {
-  const url = useOrigin() + path;
-  const canShare = useCanShare();
-  const links = targets(url, title);
-
-  return (
-    <Popover
-      label={t.share}
-      icon={<Share2 aria-hidden="true" />}
-      side={side}
-      buttonClassName={buttonClassName}
-    >
-      {(close) => (
-        <>
-          <p className="rd-pop__label">{t.shareStory}</p>
-          <ul className="rd-menu">
-            {networks.map((network) => (
-              <li key={network}>
-                <a
-                  className="rd-menu__item"
-                  data-net={network}
-                  href={links[network]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={close}
-                >
-                  <span className="rd-menu__icon">
-                    <NetworkIcon network={network} />
-                  </span>
-                  {t.networks[network]}
-                </a>
-              </li>
-            ))}
-            <li>
+        <ul className="rd-sharedlg__grid" aria-label={t.shareStory}>
+          {networks.map((network) => (
+            <li key={network}>
               <a
-                className="rd-menu__item"
-                data-net="email"
-                href={mailto(url, title, summary)}
-                onClick={close}
+                className="rd-sharedlg__option type-ui-sm text-ink"
+                data-net={network}
+                href={links[network]}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <span className="rd-menu__icon">
-                  <Mail aria-hidden="true" />
+                <span className="rd-sharedlg__icon">
+                  <NetworkIcon network={network} />
                 </span>
-                {t.email}
+                {t.networks[network]}
               </a>
             </li>
+          ))}
+          <li>
+            <a
+              className="rd-sharedlg__option type-ui-sm text-ink"
+              data-net="email"
+              href={mailto(url, title, summary)}
+            >
+              <span className="rd-sharedlg__icon">
+                <Mail aria-hidden="true" />
+              </span>
+              {t.email}
+            </a>
+          </li>
+          {canShare ? (
             <li>
               <button
                 type="button"
-                className="rd-menu__item"
-                data-net="copy"
-                onClick={() => {
-                  copyText(url, t.linkCopied);
-                  close();
-                }}
+                className="rd-sharedlg__option type-ui-sm text-ink"
+                data-net="more"
+                onClick={() =>
+                  navigator.share({ title, text: summary, url }).catch(() => {
+                    // The reader closed the share sheet.
+                  })
+                }
               >
-                <span className="rd-menu__icon">
-                  <Link2 aria-hidden="true" />
+                <span className="rd-sharedlg__icon">
+                  <Upload aria-hidden="true" />
                 </span>
-                {t.copyLink}
+                {t.shareMore}
               </button>
             </li>
-            {canShare ? (
-              <li>
-                <button
-                  type="button"
-                  className="rd-menu__item"
-                  data-net="more"
-                  onClick={() => {
-                    close();
-                    nativeShare(url, title, summary);
-                  }}
-                >
-                  <span className="rd-menu__icon">
-                    <Upload aria-hidden="true" />
-                  </span>
-                  {t.shareMore}
-                </button>
-              </li>
-            ) : null}
-          </ul>
-        </>
-      )}
-    </Popover>
+          ) : null}
+        </ul>
+
+        <div className="rd-sharedlg__link">
+          <label className="sr-only" htmlFor="rd-share-url">
+            {t.copyLink}
+          </label>
+          <input
+            id="rd-share-url"
+            className="rd-sharedlg__field type-input text-ink"
+            value={url}
+            readOnly
+            onFocus={(event) => event.currentTarget.select()}
+          />
+          <button
+            type="button"
+            className="rd-sharedlg__copy bg-interactive type-button text-on-interactive hover:bg-interactive-hover"
+            onClick={copy}
+          >
+            {copied ? (
+              <Check aria-hidden="true" />
+            ) : (
+              <Copy aria-hidden="true" />
+            )}
+            {copied ? t.copied : t.copy}
+          </button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
