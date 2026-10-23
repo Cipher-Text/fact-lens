@@ -1,8 +1,8 @@
-import { Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 import { AdSlot } from "@/components/ads/AdSlot";
+import { Footer } from "@/components/footer/Footer";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { SkipLink } from "@/components/header/SkipLink";
 import { categoryHref } from "@/components/story/links";
@@ -13,20 +13,15 @@ import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
 import {
   ArticleBody,
-  AuthorCard,
   formatNumber,
   KeyPoints,
-  PreferredSourceCard,
   PreferredSourceAlert,
-  ReaderFooter,
   ReadNext,
   Tags,
-  Updates,
 } from "./ArticleParts";
-import { EndCard, ReadingTools, Toc } from "./Reading";
+import { ReadingTools, Toc } from "./Reading";
 import { ReaderRoot } from "./ReaderRoot";
 import { SelectionShare } from "./SelectionShare";
-import { ShareDialog } from "./Share";
 import { readerStrings } from "./strings";
 import { Toaster } from "./Toaster";
 
@@ -75,48 +70,10 @@ export function ReaderPage({ lang, article, readNext }: Props) {
                 {story.title}
               </h1>
               <p className="rd-summary">{article.summary}</p>
-            </div>
-          </header>
-
-          {/* The lead image is optional: with no image, the whole figure (image and
-              caption) is left out. The image keeps its own ratio, centered, up to
-              --rd-lead-media-max tall. */}
-          {story.image ? (
-            <figure className="rd-hero-figure">
-              <Image
-                src={story.image.src}
-                alt={story.image.alt || article.caption}
-                width={story.image.width}
-                height={story.image.height}
-                preload
-                fetchPriority="high"
-                className="rd-hero-img"
-              />
-              <figcaption className="rd-caption rd-caption--hero">
-                <span>
-                  {article.caption}{" "}
-                  <span className="rd-credit">{article.credit}</span>
-                </span>
-              </figcaption>
-            </figure>
-          ) : null}
-
-          <div className="rd-byrow rd-wrap">
-            <div className="rd-hero__text">
-              <div className="rd-meta">
-                <div className="rd-byline">
-                  <span className="rd-avatar" aria-hidden="true">
-                    {article.author.initials}
-                  </span>
-                  <div>
-                    <p className="rd-byline__name">
-                      <span className="rd-byline__by">{t.by}</span>{" "}
-                      {article.author.name}
-                    </p>
-                    <p className="rd-byline__role">{article.author.role}</p>
-                  </div>
-                </div>
-                <dl className="rd-stamps">
+              {/* Published, updated and reading time, one line under the deck (tajmin,
+                  23 Oct 2026). */}
+              <div className="rd-deckmeta">
+                <dl className="rd-deckmeta__list">
                   <div className="rd-stamp">
                     <dt>{t.published}</dt>
                     <dd>
@@ -134,10 +91,7 @@ export function ReaderPage({ lang, article, readNext }: Props) {
                     </div>
                   ) : null}
                   <div className="rd-stamp">
-                    <dt>
-                      <Clock aria-hidden="true" />
-                      <span className="sr-only">{t.readingTimeLabel}</span>
-                    </dt>
+                    <dt className="sr-only">{t.readingTimeLabel}</dt>
                     <dd>
                       {t.readTime.replace(
                         "{n}",
@@ -146,6 +100,45 @@ export function ReaderPage({ lang, article, readNext }: Props) {
                     </dd>
                   </div>
                 </dl>
+              </div>
+            </div>
+          </header>
+
+          {/* The lead image is required (tajmin, 24 Oct 2026). It keeps its own ratio,
+              centered, up to --rd-lead-media-max tall. */}
+          <figure className="rd-hero-figure">
+            <Image
+              src={story.image.src}
+              alt={story.image.alt || article.caption}
+              width={story.image.width}
+              height={story.image.height}
+              preload
+              fetchPriority="high"
+              className="rd-hero-img"
+            />
+            <figcaption className="rd-caption rd-caption--hero">
+              <span>
+                {article.caption}{" "}
+                <span className="rd-credit">{article.credit}</span>
+              </span>
+            </figcaption>
+          </figure>
+
+          <div className="rd-byrow rd-wrap">
+            <div className="rd-hero__text">
+              <div className="rd-meta">
+                <div className="rd-byline">
+                  <span className="rd-avatar" aria-hidden="true">
+                    {article.author.initials}
+                  </span>
+                  <div>
+                    <p className="rd-byline__name">
+                      <span className="rd-byline__by">{t.by}</span>{" "}
+                      {article.author.name}
+                    </p>
+                    <p className="rd-byline__role">{article.author.role}</p>
+                  </div>
+                </div>
               </div>
 
               <div className="rd-actions">
@@ -176,35 +169,24 @@ export function ReaderPage({ lang, article, readNext }: Props) {
               <ArticleBody
                 blocks={article.body}
                 context={article.context}
+                ad={<AdSlot variant="inline" lang={lang} strings={site.ads} />}
                 t={t}
               />
 
               <div className="rd-after">
-                <EndCard t={t} lang={lang} />
-                <Tags tags={article.tags} t={t} />
-                {article.updates ? (
-                  <Updates updates={article.updates} t={t} lang={lang} />
-                ) : null}
-                <div className="rd-sharebox">
-                  <p className="rd-eyebrow">{t.shareStory}</p>
-                  <ShareDialog {...share} look="label" />
-                </div>
-                <PreferredSourceCard t={t} />
-                <AuthorCard article={article} t={t} />
+                <Tags tags={article.tags} t={t} lang={lang} />
               </div>
             </div>
           </div>
         </article>
 
-        <ReadNext
-          items={readNext}
-          t={t}
-          lang={lang}
-          categories={site.categories}
-        />
+        {/* After the article: one full-width ad-band row (LAY-09). */}
+        <AdSlot variant="band" lang={lang} strings={site.ads} />
+
+        <ReadNext items={readNext} t={t} strings={site} />
       </main>
 
-      <ReaderFooter t={t} lang={lang} siteName={site.site.name} />
+      <Footer lang={lang} />
       <ReadingTools {...share} layout="dock" lang={lang} slug={story.slug} />
       <SelectionShare title={story.title} t={t} />
       <Toaster />

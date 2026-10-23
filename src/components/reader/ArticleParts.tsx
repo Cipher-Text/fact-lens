@@ -1,7 +1,6 @@
 import { ArrowUpRight, History, Sparkles } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import {
   imageFiles,
@@ -11,21 +10,24 @@ import {
   type ReadNextItem,
 } from "@/content/reader";
 import { StoryTime } from "@/components/story/StoryTime";
+import { Badge } from "@/components/ui/badge";
+import { SectionHeading } from "@/components/layout/SectionHeading";
+import { Shell } from "@/components/layout/Shell";
+import { StoryCard } from "@/components/story/StoryCard";
 import {
   Alert,
   AlertAction,
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
-import { localizedPath, type Lang } from "@/i18n";
+import { localizedPath, type Dictionary, type Lang } from "@/i18n";
 
 import { ContextCard } from "./ContextCard";
-import { GoogleG, LensMark } from "./icons";
+import { GoogleG } from "./icons";
 import { SectionAnchor } from "./Reading";
 import type { ReaderStrings } from "./strings";
 
 const locales = { bn: "bn-BD-u-nu-beng", en: "en-GB" } as const;
-const TIME_ZONE = "Asia/Dhaka";
 
 // The domain that Google's preferred-source page should add. Change it to the
 // production domain when there is one.
@@ -70,25 +72,10 @@ export function KeyPoints({
   );
 }
 
-function BodyBlock({
-  block,
-  last,
-  t,
-}: {
-  block: Block;
-  last: boolean;
-  t: ReaderStrings;
-}) {
+function BodyBlock({ block, t }: { block: Block; t: ReaderStrings }) {
   switch (block.type) {
     case "p":
-      return (
-        <p>
-          {block.text}
-          {last ? (
-            <span className="rd-endmark" role="img" aria-label={t.articleEnd} />
-          ) : null}
-        </p>
-      );
+      return <p>{block.text}</p>;
     case "h2":
       return (
         <h2 id={block.id} data-section>
@@ -126,18 +113,44 @@ function BodyBlock({
   }
 }
 
+// Inline ads go after these paragraphs (counted from 1). When that paragraph is not
+// followed by another paragraph (a heading, image or list comes next), the ad moves to the
+// next paragraph that is. Short articles get fewer: no ad after the second-to-last
+// paragraph. tajmin, 24 Oct 2026.
+const INLINE_AD_AFTER = [3, 10];
+
+function inlineAdPositions(blocks: Block[]) {
+  const at = new Set<number>();
+  const paragraphs = blocks.filter((block) => block.type === "p").length;
+  let count = 0;
+  let target = 0;
+  blocks.forEach((block, index) => {
+    if (block.type !== "p") return;
+    count += 1;
+    const want = INLINE_AD_AFTER[target];
+    if (want === undefined || count < want || count >= paragraphs - 1) return;
+    if (blocks[index + 1]?.type !== "p") return;
+    at.add(index);
+    target += 1;
+  });
+  return at;
+}
+
 export function ArticleBody({
   blocks,
   context,
+  ad,
   t,
 }: {
   blocks: Block[];
   context?: ArticleContext;
+  /** The inline ad row, placed between paragraphs. */
+  ad?: ReactNode;
   t: ReaderStrings;
 }) {
-  const lastParagraph = blocks.findLastIndex((block) => block.type === "p");
   // The context goes in the body before the first section heading.
   const contextAt = blocks.findIndex((block) => block.type === "h2");
+  const adAt = ad ? inlineAdPositions(blocks) : new Set<number>();
   return (
     <div className="rd-prose" data-reader-body>
       {blocks.map((block, index) => (
@@ -145,7 +158,8 @@ export function ArticleBody({
           {context && index === contextAt ? (
             <ContextCard context={context} t={t} />
           ) : null}
-          <BodyBlock block={block} last={index === lastParagraph} t={t} />
+          <BodyBlock block={block} t={t} />
+          {adAt.has(index) ? ad : null}
         </Fragment>
       ))}
     </div>
@@ -226,14 +240,32 @@ export function AuthorCard({
   );
 }
 
-export function Tags({ tags, t }: { tags: string[]; t: ReaderStrings }) {
+/** The tags: shadcn Badge links (tajmin, 24 Oct 2026). Tag pages do not exist yet, so the
+ *  links lead to a 404 page, like the homepage story links. */
+export function Tags({
+  tags,
+  t,
+  lang,
+}: {
+  tags: string[];
+  t: ReaderStrings;
+  lang: Lang;
+}) {
   return (
     <div className="rd-tags">
       <p className="rd-eyebrow">{t.tags}</p>
       <ul>
         {tags.map((tag) => (
           <li key={tag}>
-            <span className="rd-tag">{tag}</span>
+            <Badge
+              render={
+                <a
+                  href={localizedPath(lang, `/tag/${encodeURIComponent(tag)}`)}
+                />
+              }
+            >
+              {tag}
+            </Badge>
           </li>
         ))}
       </ul>
@@ -268,110 +300,37 @@ export function Updates({
   );
 }
 
+/**
+ * Read next: a section in the shell with SectionHeading (C-13) and a row of StoryCards
+ * (C-24), stacked, 16:9, with the summary. Other pages: 1 card under 600px, 2 from 600px,
+ * 3 from 1024px (LAY-07, spacing-layout-system.md 3.3). These stories have no full text
+ * in this run, so their links lead to a 404 page, like the homepage story links.
+ */
 export function ReadNext({
   items,
   t,
-  lang,
-  categories,
+  strings,
 }: {
   items: ReadNextItem[];
   t: ReaderStrings;
-  lang: Lang;
-  categories: Record<string, string>;
+  strings: Dictionary;
 }) {
   if (items.length === 0) return null;
   return (
-    <section className="rd-next" aria-labelledby="rd-next-title">
-      <div className="rd-wrap">
-        <div className="rd-next__head">
-          <h2 id="rd-next-title" className="rd-next__title">
-            {t.readNext}
-          </h2>
-          <span className="rd-next__note">{t.readNextNote}</span>
-        </div>
-        <div className="rd-next__grid">
-          {items.map((item, index) => (
-            <article
-              key={item.story.id}
-              className={index === 0 ? "rd-card rd-card--lead" : "rd-card"}
-              data-cat={item.story.category}
-            >
-              {/* Placeholder image; with no image, the slot keeps a flat
-                  surface-alt fill (DR-338). */}
-              <div className="rd-card__art">
-                {item.story.image ? (
-                  <Image
-                    src={item.story.image.src}
-                    alt=""
-                    width={item.story.image.width}
-                    height={item.story.image.height}
-                    className="rd-card__img"
-                  />
-                ) : null}
-              </div>
-              <div className="rd-card__body">
-                <p className="rd-card__kicker">
-                  <span className="rd-dot" aria-hidden="true" />
-                  {categories[item.story.category]} ·{" "}
-                  {t.formats[item.story.format]}
-                </p>
-                <h3 className="rd-card__title">
-                  <Link href={localizedPath(lang, `/story/${item.story.slug}`)}>
-                    {item.story.title}
-                  </Link>
-                </h3>
-                <p className="rd-card__meta">
-                  {[
-                    item.story.author?.name,
-                    item.story.readingMinutes
-                      ? t.readTime.replace(
-                          "{n}",
-                          formatNumber(item.story.readingMinutes, lang),
-                        )
-                      : null,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export function ReaderFooter({
-  t,
-  lang,
-  siteName,
-}: {
-  t: ReaderStrings;
-  lang: Lang;
-  siteName: string;
-}) {
-  const year = new Intl.DateTimeFormat("en", {
-    year: "numeric",
-    timeZone: TIME_ZONE,
-  }).format(new Date());
-  const yearText = new Intl.NumberFormat(locales[lang], {
-    useGrouping: false,
-  }).format(Number(year));
-  return (
-    <footer className="rd-footer">
-      <div className="rd-wrap rd-footer__inner">
-        <div>
-          <Link href={localizedPath(lang)} className="rd-logo rd-logo--footer">
-            <LensMark />
-            <span className="rd-logo__word">{siteName}</span>
-          </Link>
-          <p className="rd-footer__tag">{t.tagline}</p>
-        </div>
-        <p className="rd-footer__rights">
-          {t.rights.replace("{year}", yearText)}
-        </p>
-      </div>
-    </footer>
+    <Shell
+      as="section"
+      aria-labelledby="rd-next-title"
+      className="rd-next"
+      data-read-next
+    >
+      <SectionHeading id="rd-next-title">{t.readNext}</SectionHeading>
+      <ul className="grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-(--grid-row-gap) sm:grid-cols-2 lg:grid-cols-3">
+        {items.map(({ story }) => (
+          <li key={story.id}>
+            <StoryCard story={story} strings={strings} />
+          </li>
+        ))}
+      </ul>
+    </Shell>
   );
 }

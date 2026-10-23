@@ -42,7 +42,7 @@ export function ContextCard({
             {context.teaser}
           </CardDescription>
         </CardHeader>
-        {/* One column of short parts: why, background, timeline. */}
+        {/* One column of short parts: why and background. */}
         <CardContent className="rd-context__list">
           <div className="rd-context__part">
             <h3 className="rd-context__label">{t.tabWhy}</h3>
@@ -52,19 +52,6 @@ export function ContextCard({
             <div className="rd-context__part">
               <h3 className="rd-context__label">{t.tabBackground}</h3>
               <p>{context.background}</p>
-            </div>
-          ) : null}
-          {context.timeline ? (
-            <div className="rd-context__part">
-              <h3 className="rd-context__label">{t.tabTimeline}</h3>
-              <ol className="rd-timeline">
-                {context.timeline.map((item) => (
-                  <li key={item.date}>
-                    <span className="rd-timeline__date">{item.date}</span>
-                    <p>{item.text}</p>
-                  </li>
-                ))}
-              </ol>
             </div>
           ) : null}
         </CardContent>

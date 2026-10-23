@@ -20,7 +20,6 @@ export interface ArticleContext {
   teaser: string;
   why: string;
   background?: string;
-  timeline?: { date: string; text: string }[];
 }
 
 export interface ArticleText {
@@ -133,14 +132,6 @@ export const articleDefs: ArticleDef[] = [
         why: "Most of Bangladesh's river water comes from upstream, so earlier data means earlier flood warnings.",
         background:
           "The four countries share some data today, but late, in different formats and often once a day.",
-        timeline: [
-          {
-            date: "2019",
-            text: "A shared flood-data platform is first proposed.",
-          },
-          { date: "Oct 2026", text: "Draft framework agreed in Dhaka." },
-          { date: "May 2027", text: "Target to connect the full network." },
-        ],
       },
       tags: ["Rivers", "Monsoon", "Flood forecasting", "Regional cooperation"],
       updates: [
@@ -228,14 +219,6 @@ export const articleDefs: ArticleDef[] = [
         why: "বাংলাদেশের নদীর বেশির ভাগ পানি আসে উজান থেকে, তাই আগের তথ্য মানে আগাম বন্যা সতর্কতা।",
         background:
           "চার দেশ এখনো কিছু তথ্য বিনিময় করে, তবে দেরিতে, ভিন্ন ধাঁচে এবং প্রায়ই দিনে একবার।",
-        timeline: [
-          {
-            date: "২০১৯",
-            text: "অভিন্ন বন্যা-তথ্য প্ল্যাটফর্মের প্রথম প্রস্তাব।",
-          },
-          { date: "অক্টোবর ২০২৬", text: "ঢাকায় খসড়া কাঠামোতে সম্মতি।" },
-          { date: "মে ২০২৭", text: "পুরো নেটওয়ার্ক যুক্ত করার লক্ষ্য।" },
-        ],
       },
       tags: ["নদী", "বর্ষা", "বন্যার পূর্বাভাস", "আঞ্চলিক সহযোগিতা"],
       updates: [

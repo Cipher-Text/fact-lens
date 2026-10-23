@@ -24,7 +24,6 @@
   --rd-ctx: var(--brand);
   --rd-ctx-ink: var(--ink);
   --rd-ctx-soft: var(--accent-subtle);
-  --rd-glass: color-mix(in oklab, var(--background) 82%, transparent);
   --rd-flare: var(--brand);
   --rd-flare-v: var(--brand);
   --rd-cat: var(--brand);
@@ -36,10 +35,11 @@
   /* Lead image: the tallest it may be, so the byline and body stay close to the fold.
      The second cap keeps it under 60% of a short viewport (a laptop or a phone held
      sideways). */
-  /* Inset of the key points and context panels: the smaller panel-inset step
-     (40 / 32px, LAY-20) at every width, tighter than the 48 / 40px step from 600px.
-     tajmin, 23 Oct 2026. */
-  --rd-panel-inset: 2.5rem 2rem;
+  /* Inset of every panel in the reading column (Google prompt, key points, context):
+     24px on each side at every width. tajmin approved, 24 Oct 2026, as a new article
+     panel inset; LAY-20's panel-inset (40 / 32, 48 / 40) is sized for page bands and reads
+     too loose next to body text. Not yet in the layout spec (DOC- issue). */
+  --rd-panel-inset: 1.5rem;
   /* Heading gaps: the story-unit tokens plus one 4px step where they read tight under
      the article title. tajmin, 23 Oct 2026. */
   --rd-head-eyebrow-title: calc(
@@ -49,6 +49,9 @@
   --rd-head-deck-media: 2.5rem; /* 40px */
   --rd-lead-media-max: min(32rem, 60svh);
   --rd-progress: 0;
+  /* The inline ad box in the article body: the 300×250 creative in px (LAY-19). */
+  --ad-inline-w: 300px;
+  --ad-inline-h: 250px;
 
   position: relative;
   min-height: 100dvh;
@@ -65,6 +68,9 @@
   --rd-accent: var(--interactive);
   --rd-ctx: var(--interactive);
   --rd-cat: var(--interactive);
+  /* The read part of the contents track (tajmin, 24 Oct 2026). */
+  --rd-flare: var(--interactive);
+  --rd-flare-v: var(--interactive);
 }
 
 /* Bangla: its own display face, a taller line and no negative tracking. */
@@ -100,13 +106,6 @@
   color: var(--rd-muted);
 }
 
-.rd-dot {
-  flex: none;
-  width: 8px;
-  height: 8px;
-  background: var(--rd-cat);
-}
-
 .rd-skip {
   font-family: var(--font-ui-active);
   font-size: var(--type-button-size);
@@ -125,43 +124,6 @@
 }
 .rd-skip:focus {
   top: 12px;
-}
-
-/* ---------- Lens mark and logo ---------- */
-
-.rd-lens__ring {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.5;
-}
-.rd-lens__glass {
-  fill: var(--rd-accent);
-}
-.rd-lens__spark {
-  fill: var(--rd-bg);
-}
-
-.rd-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--rd-ink);
-  text-decoration: none;
-  white-space: nowrap;
-}
-.rd-logo svg {
-  width: 28px;
-  height: 28px;
-  transition: transform var(--duration-slide) var(--ease-slide);
-}
-.rd-logo:hover svg {
-  transform: rotate(-90deg);
-}
-.rd-logo__word {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-logo-size);
-  font-weight: var(--type-logo-weight);
-  line-height: var(--type-logo-line);
 }
 
 /* ---------- Progress line ---------- */
@@ -190,6 +152,14 @@
 .rd-iconbtn svg {
   width: 19px;
   height: 19px;
+}
+/* A letter in place of an icon (the text size button): type-button, the same weight as
+   the button labels. */
+.rd-iconbtn__glyph {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-button-size);
+  font-weight: var(--type-button-weight);
+  line-height: var(--type-button-line);
 }
 
 /* ---------- Hero ---------- */
@@ -281,19 +251,57 @@
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
 
+/* Published, updated and reading time in one line under the deck, separated by the
+   CPT-10 separator (4px square, 10px each side, the metadata color). All the text is the metadata color. tajmin, 23 Oct 2026. Each item
+   carries its separator before it; the list starts one separator width to the left, and
+   the wrapper clips it, so a line never starts with a square when the line wraps. */
+.rd-deckmeta {
+  overflow: hidden;
+  /* Deck to metadata: space-list-item (16px). */
+  margin-top: var(--space-list-item);
+  animation: rd-rise var(--duration-slide) var(--ease-slide) both;
+}
+.rd-deckmeta__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: 4px;
+  margin: 0 0 0 -24px;
+  font-family: var(--font-ui-active);
+  font-size: var(--type-metadata-size);
+  font-weight: var(--type-metadata-weight);
+  line-height: var(--type-metadata-line);
+  letter-spacing: var(--type-metadata-tracking);
+  color: var(--color-meta);
+}
+.rd-stamp {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.rd-stamp::before {
+  content: "";
+  align-self: center;
+  flex: none;
+  width: 4px;
+  height: 4px;
+  /* 10px each side: the item's 4px gap makes up the rest after the square. */
+  margin-inline: 10px 6px;
+  /* The metadata color (CPT-10). tajmin, 24 Oct 2026. */
+  background: var(--color-meta);
+}
+.rd-stamp dd {
+  margin: 0;
+}
+
 /* The byline row sits below the hero image, in the same reading column as the heading. */
 .rd-byrow {
-  /* Caption (or heading, with no image) to the byline rule: space-module (24 / 32 / 40),
+  /* Caption to the byline rule: space-module (24 / 32 / 40),
      the same rhythm as the byline, prompt and key points. tajmin, 23 Oct 2026. */
   margin-top: var(--space-module);
 }
 
 .rd-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px 40px;
   /* Rule to byline: space-list-item (16px). */
   padding-top: var(--space-list-item);
   border-top: 1px solid var(--rd-line);
@@ -338,12 +346,8 @@
   place-items: center;
   width: 48px;
   height: 48px;
-  background: conic-gradient(
-    from 210deg,
-    var(--brand),
-    var(--interactive),
-    var(--brand)
-  );
+  /* The brand bar color: brand in light, interactive in dark (--color-bar). */
+  background: var(--color-bar);
   color: var(--on-interactive);
 }
 .rd-avatar--lg {
@@ -356,45 +360,6 @@
   height: 72px;
 }
 
-.rd-stamps {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px 34px;
-  margin: 0;
-}
-.rd-stamp {
-  display: grid;
-  align-content: start;
-  gap: 4px;
-}
-.rd-stamp dt {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: var(--type-eyebrow-case);
-  display: flex;
-  align-items: center;
-  min-height: 1rem;
-  color: var(--rd-muted);
-}
-.rd-stamp dt svg {
-  width: 15px;
-  height: 15px;
-}
-.rd-stamp dd {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  margin: 0;
-}
 
 .rd-actions {
   display: flex;
@@ -488,6 +453,8 @@
 /* No icon: title and text in the first column, the button beside them from 600. */
 .rd-galert {
   width: 100%;
+  /* Same inset as the other reading-column panels, not the shadcn p-5. */
+  padding: var(--rd-panel-inset);
   grid-template-columns: minmax(0, 1fr);
 }
 .rd-galert > * {
@@ -851,7 +818,8 @@
   padding: var(--rd-panel-inset);
   /* Body text in the card is ink-secondary; the title sets ink (TYP-14). */
   color: var(--rd-ink-2);
-  border-top: 4px solid var(--rd-ctx);
+  /* No top bar: in the article body a brand bar reads too strong (tajmin, 24 Oct
+     2026). */
 }
 .rd-context__head {
   grid-template-columns: auto minmax(0, 1fr);
@@ -922,70 +890,6 @@
 .rd-prose .rd-context__part p:last-child {
   margin-bottom: 0;
 }
-.rd-timeline {
-  position: relative;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  --rd-tl-dot: 12px;
-  --rd-tl-dot-top: calc(
-    (var(--type-eyebrow-line) * var(--type-eyebrow-size) - var(--rd-tl-dot)) / 2
-  );
-}
-.rd-timeline::before {
-  content: "";
-  position: absolute;
-  left: calc((var(--rd-tl-dot) - 2px) / 2);
-  top: var(--rd-tl-dot-top);
-  bottom: var(--space-list-item);
-  width: 2px;
-  background: color-mix(in oklab, var(--rd-ctx) 32%, transparent);
-}
-.rd-timeline li {
-  position: relative;
-  padding: 0 0 var(--space-list-item) 32px;
-}
-.rd-timeline li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: var(--rd-tl-dot-top);
-  width: var(--rd-tl-dot);
-  height: var(--rd-tl-dot);
-  border: 2px solid var(--rd-ctx);
-  background: var(--surface-elevated);
-}
-.rd-timeline li:nth-last-child(2)::before {
-  background: var(--rd-ctx);
-}
-.rd-timeline li:last-child {
-  padding-bottom: 0;
-}
-.rd-timeline li:last-child::before {
-  border-style: dashed;
-}
-.rd-timeline__date {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: none;
-  display: block;
-  color: var(--rd-ctx);
-}
-.rd-prose .rd-timeline p {
-  /* A list in the article: type-article-body (typography-system.md 7.2). */
-  font-family: var(--font-editorial-active);
-  font-size: max(
-    var(--type-body-min),
-    calc(var(--type-article-body-size) * var(--reader-scale))
-  );
-  font-weight: var(--type-article-body-weight);
-  line-height: var(--type-article-body-line);
-  letter-spacing: var(--type-article-body-tracking);
-  margin: 4px 0 0;
-}
 /* ---------- Article body ---------- */
 
 .rd-prose {
@@ -1003,6 +907,29 @@
 /* Key points to body: space-module. */
 .rd-points + .rd-prose {
   margin-top: var(--space-module);
+}
+/* Inline ads in the body: space-module above and below; the body owns the space, the ad
+   row has none (LAY-12). Placed between paragraphs only, never next to a heading, image,
+   key points or context. tajmin, 24 Oct 2026. */
+.rd-prose > [data-ad-slot] {
+  margin-block: var(--space-module);
+}
+/* The label line is not a body paragraph: no paragraph gap. */
+.rd-prose [data-ad-slot] p {
+  margin: 0;
+}
+/* The ad after the article: a full-width ad-band row. The article owns space-section
+   above it and Read next owns space-module below it (LAY-12). tajmin, 24 Oct 2026. */
+.rd-article:has(+ [data-ad-slot]) {
+  margin-bottom: var(--space-section);
+}
+[data-ad-slot] + .rd-next {
+  margin-top: var(--space-module);
+}
+/* Read next, the last section before the footer: space-section below it, as the
+   homepage's last section (FL-12). */
+.rd-next {
+  padding-bottom: var(--space-section);
 }
 /* Paragraph gap 1.1em, no indent (typography-system.md 7.2). */
 .rd-prose p {
@@ -1076,34 +1003,31 @@
   position: relative;
   padding-left: 1.7em;
 }
+/* The list bullet: a filled square, the shape of the metadata separator (CPT-10), in
+   the text color of the list (ink-secondary); brand stays for identity (COL-04). In em, so it scales with the reader
+   size (TYP-15); centered on the first line. tajmin, 24 Oct 2026. */
 .rd-list li::before {
+  --rd-bullet: 0.35em;
   content: "";
   position: absolute;
   left: 0.2em;
-  top: 0.62em;
-  width: 0.55em;
-  height: 0.55em;
-  border: 2px solid var(--rd-accent);
-}
-.rd-prose:lang(bn) .rd-list li::before {
-  top: 0.72em;
-}
-
-.rd-endmark {
-  display: inline-block;
-  width: 0.5em;
-  height: 0.5em;
-  margin-left: 0.4em;
-  background: var(--rd-accent);
-  vertical-align: 0.02em;
+  top: calc((var(--type-article-body-line) * 1em - var(--rd-bullet)) / 2);
+  width: var(--rd-bullet);
+  height: var(--rd-bullet);
+  background: currentColor;
 }
 
 /* ---------- After the body ---------- */
 
+/* The end of the article: a 1px rule, then the tags (tajmin, 24 Oct 2026). The same
+   space on both sides of the rule, as Divider does (C-22): space-module (24 / 32 / 40),
+   because the rule separates two modules, the body and the tags. */
 .rd-after {
   display: grid;
   gap: var(--space-module);
   margin-top: var(--space-module);
+  padding-top: var(--space-module);
+  border-top: 1px solid var(--rd-line-2);
 }
 
 .rd-end {
@@ -1170,24 +1094,6 @@
   padding: 0;
   list-style: none;
 }
-.rd-tag {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-ui-sm-weight);
-  line-height: var(--type-ui-sm-line);
-  letter-spacing: var(--type-ui-sm-tracking);
-  display: inline-flex;
-  align-items: center;
-  height: 36px;
-  padding: 0 14px;
-  border: 1px solid var(--rd-line-2);
-}
-.rd-tag::before {
-  content: "#";
-  margin-right: 4px;
-  color: var(--rd-accent);
-}
-
 .rd-updates {
   border-top: 1px solid var(--rd-line);
   border-bottom: 1px solid var(--rd-line);
@@ -1352,180 +1258,6 @@
   color: var(--rd-ink-2);
 }
 
-/* ---------- Read next ---------- */
-
-.rd-next {
-  margin-top: clamp(72px, 10vw, 128px);
-  padding: clamp(52px, 7vw, 96px) 0;
-  background: var(--rd-bg-2);
-}
-.rd-next__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px 16px;
-  margin-bottom: 30px;
-}
-.rd-next__title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-page-title-size);
-  font-weight: var(--type-page-title-weight);
-  line-height: var(--type-page-title-line);
-  letter-spacing: var(--type-page-title-tracking);
-  margin: 0;
-}
-.rd-next__note {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
-  color: var(--rd-muted);
-}
-.rd-next__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 20px;
-}
-@media (min-width: 720px) {
-  .rd-next__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .rd-card--lead {
-    grid-column: 1 / -1;
-  }
-}
-@media (min-width: 1120px) {
-  .rd-next__grid {
-    grid-template-columns: 1.5fr 1fr 1fr;
-  }
-  .rd-card--lead {
-    grid-column: auto;
-  }
-}
-.rd-card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  border: 1px solid var(--rd-line);
-  background: var(--rd-card);
-  transition: transform var(--duration-slide) var(--ease-slide);
-}
-.rd-card:hover {
-  transform: translateY(-6px);
-}
-.rd-card:focus-within {
-  outline: 2px solid var(--rd-accent);
-  outline-offset: 3px;
-}
-/* Read next card image: the 3:2 story slot, filled (StoryImage); empty slot is surface-alt. */
-.rd-card__art {
-  overflow: hidden;
-  aspect-ratio: 3 / 2;
-  background: var(--rd-bg-2);
-}
-.rd-card__img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.rd-card__art .rd-card__img {
-  transition: transform var(--duration-slide) var(--ease-slide);
-}
-.rd-card:hover .rd-card__art .rd-card__img {
-  transform: scale(1.05);
-}
-.rd-card__body {
-  display: grid;
-  gap: 10px;
-  padding: 20px 22px 24px;
-}
-.rd-card__kicker {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: var(--type-eyebrow-case);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  color: var(--rd-cat);
-}
-.rd-card__title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-title-sm-size);
-  font-weight: var(--type-story-title-sm-weight);
-  line-height: var(--type-story-title-sm-line);
-  letter-spacing: var(--type-story-title-sm-tracking);
-  margin: 0;
-  text-wrap: balance;
-}
-.rd-card--lead .rd-card__title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-title-size);
-  font-weight: var(--type-story-title-weight);
-  line-height: var(--type-story-title-line);
-  letter-spacing: var(--type-story-title-tracking);
-}
-.rd-card__title a {
-  color: inherit;
-  text-decoration: none;
-}
-.rd-card__title a:focus-visible {
-  outline: none;
-}
-.rd-card__title a::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-.rd-card__meta {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
-  margin: 0;
-  color: var(--rd-muted);
-}
-
-/* ---------- Footer ---------- */
-
-.rd-footer {
-  padding: 44px 0 96px;
-  border-top: 1px solid var(--rd-line);
-}
-.rd-footer__inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  justify-content: space-between;
-  gap: 16px 32px;
-}
-.rd-footer__tag {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-ui-sm-weight);
-  line-height: var(--type-ui-sm-line);
-  letter-spacing: var(--type-ui-sm-tracking);
-  margin: 10px 0 0;
-  color: var(--rd-muted);
-}
-.rd-footer__rights {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
-  margin: 0;
-  color: var(--rd-muted);
-}
-
 /* ---------- Reading tools: progress frame and the bottom dock ---------- */
 
 .rd-progressbtn {
@@ -1614,9 +1346,9 @@
   gap: 4px;
   padding: 8px var(--rd-gutter) calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--rd-line);
-  background: var(--rd-glass);
-  -webkit-backdrop-filter: blur(18px) saturate(1.6);
-  backdrop-filter: blur(18px) saturate(1.6);
+  /* A raised surface: surface-elevated, opaque, no blur (COL-01, COL-15). tajmin,
+     24 Oct 2026. */
+  background: var(--surface-elevated);
   transform: translateY(100%);
   transition: transform var(--duration-slide) var(--ease-slide);
 }

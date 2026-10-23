@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, BookmarkCheck, Moon, Sun, Type } from "lucide-react";
+import { Bookmark, BookmarkCheck, Moon, Sun } from "lucide-react";
 import { useSyncExternalStore, type KeyboardEvent } from "react";
 
 import { useThemeChoice } from "@/components/header/useThemeChoice";
@@ -95,7 +95,16 @@ export function TextSize({
   side?: "top" | "bottom";
 }) {
   return (
-    <Popover label={t.textSize} icon={<Type aria-hidden="true" />} side={side}>
+    <Popover
+      label={t.textSize}
+      // The page's own letter (অ or A), not a Latin T: Bangla pages show Bangla only.
+      icon={
+        <span className="rd-iconbtn__glyph" aria-hidden="true">
+          {t.textSizeGlyphs.split(",")[0]}
+        </span>
+      }
+      side={side}
+    >
       {() => (
         <>
           <p className="rd-pop__label" id="rd-size-pop">

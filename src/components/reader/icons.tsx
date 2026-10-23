@@ -57,20 +57,3 @@ export function GoogleG(props: IconProps) {
     </svg>
   );
 }
-
-/** The lens mark: an outer ring, an aperture and a bright spot. */
-export function LensMark(props: IconProps) {
-  return (
-    <svg
-      viewBox="0 0 32 32"
-      aria-hidden="true"
-      focusable="false"
-      className="rd-lens"
-      {...props}
-    >
-      <circle cx="16" cy="16" r="14" className="rd-lens__ring" />
-      <circle cx="16" cy="16" r="8.5" className="rd-lens__glass" />
-      <circle cx="13" cy="13" r="2.6" className="rd-lens__spark" />
-    </svg>
-  );
-}

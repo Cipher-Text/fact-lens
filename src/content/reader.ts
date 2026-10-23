@@ -3,7 +3,7 @@
 import { getStory } from "./index";
 import { articleDefs, readNextIds, type ArticleText } from "./reader-articles";
 import { authors } from "./stories";
-import type { Lang, Story } from "./types";
+import type { ImageRef, Lang, Story } from "./types";
 
 export type { ArticleContext, Block } from "./reader-articles";
 export { imageFiles } from "./stories";
@@ -19,7 +19,9 @@ export interface Article extends Omit<
   ArticleText,
   "summary" | "authorRole" | "authorBio"
 > {
-  story: Story;
+  /** The lead image is required on an article page; body images stay optional
+   *  (tajmin, 24 Oct 2026). Homepage stories may still have no image. */
+  story: Story & { image: ImageRef };
   summary: string;
   updatedAt?: string;
   author: ReaderAuthor;
@@ -59,6 +61,9 @@ export function getArticle(slug: string, lang: Lang): Article | null {
   const def = byId.get(slug);
   if (!def) return null;
   const story = getStory(slug, lang);
+  // Editors must add a lead image before an article can be published.
+  const { image } = story;
+  if (!image) throw new Error(`Article without a lead image: ${slug} (${lang})`);
   const { summary, authorRole, authorBio, ...text } = def[lang];
   const name = authors[def.author][lang];
   // Bangla is read a little slower per word than English.
@@ -69,7 +74,7 @@ export function getArticle(slug: string, lang: Lang): Article | null {
 
   return {
     ...text,
-    story,
+    story: { ...story, image },
     summary: summary ?? story.summary ?? "",
     updatedAt: def.updatedAt,
     author: {
