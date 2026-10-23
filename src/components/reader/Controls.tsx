@@ -1,36 +1,12 @@
 "use client";
 
-import { Bookmark, BookmarkCheck, Moon, Sun } from "lucide-react";
+import { Bookmark, BookmarkCheck } from "lucide-react";
 import { useSyncExternalStore, type KeyboardEvent } from "react";
-
-import { useThemeChoice } from "@/components/header/useThemeChoice";
-import { nextThemeChoice, setThemeChoice } from "@/lib/theme";
 
 import { Popover } from "./Popover";
 import { setTextSize, useReading } from "./reading-store";
 import type { ReaderStrings } from "./strings";
 import { toast } from "./Toaster";
-
-/** Light and dark, with the site's own theme choice (the .dark class and fl-theme). */
-export function ThemeToggle({ t }: { t: ReaderStrings }) {
-  const choice = useThemeChoice();
-  const label = choice === "dark" ? t.lightTheme : t.darkTheme;
-  return (
-    <button
-      type="button"
-      className="rd-iconbtn"
-      aria-label={label}
-      title={label}
-      onClick={() => setThemeChoice(nextThemeChoice(choice))}
-    >
-      {choice === "dark" ? (
-        <Sun aria-hidden="true" />
-      ) : (
-        <Moon aria-hidden="true" />
-      )}
-    </button>
-  );
-}
 
 /**
  * Four text sizes for the article body, as a radio group. Arrow keys move between them, as
@@ -138,15 +114,7 @@ function subscribeSaved(onChange: () => void) {
   };
 }
 
-export function SaveButton({
-  slug,
-  t,
-  compact = false,
-}: {
-  slug: string;
-  t: ReaderStrings;
-  compact?: boolean;
-}) {
+export function SaveButton({ slug, t }: { slug: string; t: ReaderStrings }) {
   const raw = useSyncExternalStore(subscribeSaved, readSaved, () => "[]");
   const saved = (JSON.parse(raw) as string[]).includes(slug);
 
@@ -163,30 +131,17 @@ export function SaveButton({
   };
 
   const Icon = saved ? BookmarkCheck : Bookmark;
-  if (compact) {
-    return (
-      <button
-        type="button"
-        className="rd-iconbtn"
-        data-net="save"
-        aria-pressed={saved}
-        aria-label={t.save}
-        title={t.save}
-        onClick={toggle}
-      >
-        <Icon aria-hidden="true" />
-      </button>
-    );
-  }
   return (
     <button
       type="button"
-      className="rd-chip"
+      className="rd-iconbtn"
+      data-net="save"
       aria-pressed={saved}
+      aria-label={t.save}
+      title={t.save}
       onClick={toggle}
     >
       <Icon aria-hidden="true" />
-      {saved ? t.saved : t.save}
     </button>
   );
 }

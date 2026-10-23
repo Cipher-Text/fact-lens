@@ -92,17 +92,10 @@ export function CopyLinkButton({
 
 /**
  * The one share control. Every share place on the page (bar, hero, panel, end of the
- * article) is this button; it opens a shadcn Dialog with every share option and the link.
- * `icon`: an icon button. `label`: icon and text.
+ * article) is this icon button; it opens a shadcn Dialog with every share option and the
+ * link.
  */
-export function ShareDialog({
-  path,
-  title,
-  summary,
-  t,
-  look = "icon",
-  className,
-}: ShareProps & { look?: "icon" | "label"; className?: string }) {
+export function ShareDialog({ path, title, summary, t }: ShareProps) {
   const url = useOrigin() + path;
   const canShare = useCanShare();
   const links = targets(url, title);
@@ -116,12 +109,11 @@ export function ShareDialog({
   return (
     <Dialog onOpenChange={(open) => open || setCopied(false)}>
       <DialogTrigger
-        className={className ?? (look === "icon" ? "rd-iconbtn" : "rd-chip")}
-        aria-label={look === "icon" ? t.share : undefined}
-        title={look === "icon" ? t.share : undefined}
+        className="rd-iconbtn"
+        aria-label={t.share}
+        title={t.share}
       >
         <Share2 aria-hidden="true" />
-        {look === "label" ? t.share : null}
       </DialogTrigger>
       <DialogContent closeLabel={t.close} className="rd-sharedlg gap-6 p-6">
         <DialogHeader>

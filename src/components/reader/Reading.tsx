@@ -102,7 +102,7 @@ export function ReadingTools({
         <span className="rd-dock__sep" aria-hidden="true" />
         <TextSize t={t} side="top" />
         <ShareDialog {...share} />
-        <SaveButton slug={slug} t={t} compact />
+        <SaveButton slug={slug} t={t} />
       </div>
     );
   }
@@ -134,7 +134,7 @@ export function ReadingTools({
         <div className="rd-tools__row">
           <ShareDialog {...share} />
           <CopyLinkButton path={share.path} t={t} />
-          <SaveButton slug={slug} t={t} compact />
+          <SaveButton slug={slug} t={t} />
         </div>
       </div>
     </div>
@@ -202,33 +202,5 @@ export function SectionAnchor({
     >
       <Hash aria-hidden="true" />
     </button>
-  );
-}
-
-/** The card after the body: a frame while reading, a check once the reader is done. */
-export function EndCard({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
-  const percent = useReading((s) => s.percent);
-  const done = useReading((s) => s.done);
-  return (
-    <section className="rd-end" aria-labelledby="rd-end-title">
-      <div className="rd-end__frame">
-        <ProgressFrame />
-        <span className="rd-end__pct" aria-hidden="true">
-          {done ? (
-            <Check className="rd-end__check" />
-          ) : (
-            numberText(percent, lang)
-          )}
-        </span>
-      </div>
-      <div>
-        <h2 id="rd-end-title" className="rd-end__title">
-          {done
-            ? t.endTitle
-            : t.percentRead.replace("{p}", percentText(percent, lang))}
-        </h2>
-        <p className="rd-end__text">{t.endText}</p>
-      </div>
-    </section>
   );
 }

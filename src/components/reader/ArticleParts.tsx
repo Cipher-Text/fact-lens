@@ -1,15 +1,13 @@
-import { ArrowUpRight, History, Sparkles } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { Fragment, type ReactNode } from "react";
 
 import {
   imageFiles,
-  type Article,
   type ArticleContext,
   type Block,
   type ReadNextItem,
 } from "@/content/reader";
-import { StoryTime } from "@/components/story/StoryTime";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { Shell } from "@/components/layout/Shell";
@@ -189,57 +187,6 @@ export function PreferredSourceAlert({ t }: { t: ReaderStrings }) {
   );
 }
 
-export function PreferredSourceCard({ t }: { t: ReaderStrings }) {
-  return (
-    <section className="rd-gcard" aria-labelledby="rd-gcard-title">
-      <span className="rd-gcard__g" aria-hidden="true">
-        <GoogleG />
-      </span>
-      <div>
-        <h2 id="rd-gcard-title">{t.googleCardTitle}</h2>
-        <p>{t.googleCardText}</p>
-        <a
-          className="rd-gbtn"
-          href={preferredSourceHref}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span className="rd-gbtn__g">
-            <GoogleG />
-          </span>
-          {t.googleButton}
-          <ArrowUpRight aria-hidden="true" />
-        </a>
-      </div>
-    </section>
-  );
-}
-
-export function AuthorCard({
-  article,
-  t,
-}: {
-  article: Article;
-  t: ReaderStrings;
-}) {
-  const { author } = article;
-  return (
-    <section className="rd-author" aria-labelledby="rd-author-name">
-      <span className="rd-avatar rd-avatar--lg" aria-hidden="true">
-        {author.initials}
-      </span>
-      <div>
-        <p className="rd-eyebrow">{t.aboutAuthor}</p>
-        <h2 id="rd-author-name" className="rd-author__name">
-          {author.name}
-        </h2>
-        <p className="rd-author__role">{author.role}</p>
-        <p className="rd-author__bio">{author.bio}</p>
-      </div>
-    </section>
-  );
-}
-
 /** The tags: shadcn Badge links (tajmin, 24 Oct 2026). Tag pages do not exist yet, so the
  *  links lead to a 404 page, like the homepage story links. */
 export function Tags({
@@ -270,33 +217,6 @@ export function Tags({
         ))}
       </ul>
     </div>
-  );
-}
-
-export function Updates({
-  updates,
-  t,
-  lang,
-}: {
-  updates: { at: string; text: string }[];
-  t: ReaderStrings;
-  lang: Lang;
-}) {
-  return (
-    <details className="rd-updates">
-      <summary>
-        <History aria-hidden="true" />
-        {t.updates}
-      </summary>
-      <ol>
-        {updates.map((update) => (
-          <li key={update.at}>
-            <StoryTime story={{ publishedAt: update.at, lang }} />
-            <p>{update.text}</p>
-          </li>
-        ))}
-      </ol>
-    </details>
   );
 }
 
