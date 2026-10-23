@@ -9,8 +9,26 @@ import { setTheme } from "./theme";
 
 const SLUG = "river-data-framework";
 const PAGES = [
-  { lang: "bn", path: `/story/${SLUG}`, home: "/", share: "শেয়ার" },
-  { lang: "en", path: `/en/story/${SLUG}`, home: "/en", share: "Share" },
+  {
+    lang: "bn",
+    path: `/story/${SLUG}`,
+    home: "/",
+    share: "শেয়ার",
+    copy: "কপি",
+    copied: "লিংক কপি হয়েছে",
+    copyFailed: "লিংক কপি করা যায়নি",
+    heading: "কাঠামোতে কী আছে",
+  },
+  {
+    lang: "en",
+    path: `/en/story/${SLUG}`,
+    home: "/en",
+    share: "Share",
+    copy: "Copy",
+    copied: "Link copied",
+    copyFailed: "The link could not be copied",
+    heading: "What the framework covers",
+  },
 ];
 const WIDTHS = [320, 768, 1280];
 
@@ -99,6 +117,103 @@ for (const p of PAGES) {
       await page.keyboard.press("Escape");
       await expect(dialog).toBeHidden();
       await expect(trigger).toBeFocused();
+    });
+
+    test("the dock is out of the Tab order until the reader starts (COL-13)", async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width: 768, height: 900 });
+      await page.goto(p.path);
+      const dock = page.locator(".rd-dock");
+      await expect(dock).toBeHidden();
+      // At the top of the page nothing in the dock can take focus: a hidden control is
+      // skipped by Tab, and focus() does nothing.
+      const focusable = await dock.evaluate((el) =>
+        [...el.querySelectorAll<HTMLElement>("button")].some((button) => {
+          button.focus();
+          return document.activeElement === button;
+        }),
+      );
+      expect(focusable).toBe(false);
+
+      // Once the body is read, the dock shows and its controls can take focus.
+      await page
+        .locator("[data-reader-body] p")
+        .nth(2)
+        .scrollIntoViewIfNeeded();
+      await expect(dock).toBeVisible();
+      await dock.getByRole("button", { name: p.share, exact: true }).focus();
+      await expect(
+        dock.getByRole("button", { name: p.share, exact: true }),
+      ).toBeFocused();
+    });
+
+    test("a stored text size is set before hydration (TYP-15)", async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        window.localStorage.setItem("rd-text-size", "2");
+      });
+      // No app JavaScript: only the inline script in the HTML can set the size.
+      await page.route("**/_next/static/chunks/**", (route) => route.abort());
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.path);
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-reader-size",
+        "xl",
+      );
+    });
+
+    test("a section heading is named by its text only", async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.path);
+      await expect(
+        page.getByRole("heading", { level: 2, name: p.heading, exact: true }),
+      ).toHaveCount(1);
+    });
+
+    test("the share dialog reports the copy result", async ({
+      page,
+      context,
+      browserName,
+    }) => {
+      if (browserName === "chromium")
+        await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.path);
+      await page
+        .locator(".rd-rail")
+        .getByRole("button", { name: p.share, exact: true })
+        .click();
+      const dialog = page.getByRole("dialog");
+      const status = dialog.getByRole("status");
+      await expect(status).toHaveText("");
+      await dialog.getByRole("button", { name: p.copy, exact: true }).click();
+      await expect(status).toHaveText(p.copied);
+    });
+
+    test("the share dialog says so when the copy fails", async ({ page }) => {
+      await page.addInitScript(() => {
+        Object.defineProperty(navigator, "clipboard", {
+          value: { writeText: () => Promise.reject(new Error("blocked")) },
+        });
+        document.execCommand = () => false;
+      });
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.path);
+      await page
+        .locator(".rd-rail")
+        .getByRole("button", { name: p.share, exact: true })
+        .click();
+      const dialog = page.getByRole("dialog");
+      const copyButton = dialog.getByRole("button", {
+        name: p.copy,
+        exact: true,
+      });
+      await copyButton.click();
+      await expect(dialog.getByRole("status")).toHaveText(p.copyFailed);
+      // The button does not claim the copy worked.
+      await expect(copyButton).toHaveText(p.copy);
     });
 
     test("text size radio group moves with the arrow keys", async ({
