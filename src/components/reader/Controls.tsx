@@ -6,6 +6,7 @@ import { useSyncExternalStore, type KeyboardEvent } from "react";
 import { Popover } from "./Popover";
 import { setTextSize, useReading } from "./reading-store";
 import type { ReaderStrings } from "@/i18n";
+import { parseSaved } from "@/lib/saved";
 import { toast } from "./Toaster";
 
 /**
@@ -93,7 +94,7 @@ export function TextSize({
   );
 }
 
-// Saved stories: a list of slugs in local storage, for this mock.
+// Saved stories: a list of slugs in local storage (src/lib/saved.ts).
 const SAVED_KEY = "rd-saved";
 const SAVED_EVENT = "rd-saved-change";
 
@@ -116,10 +117,10 @@ function subscribeSaved(onChange: () => void) {
 
 export function SaveButton({ slug, t }: { slug: string; t: ReaderStrings }) {
   const raw = useSyncExternalStore(subscribeSaved, readSaved, () => "[]");
-  const saved = (JSON.parse(raw) as string[]).includes(slug);
+  const saved = parseSaved(raw).includes(slug);
 
   const toggle = () => {
-    const list = JSON.parse(readSaved()) as string[];
+    const list = parseSaved(readSaved());
     const next = saved ? list.filter((item) => item !== slug) : [...list, slug];
     try {
       window.localStorage.setItem(SAVED_KEY, JSON.stringify(next));
