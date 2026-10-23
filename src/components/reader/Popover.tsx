@@ -48,15 +48,18 @@ export function Popover({
     };
   }, [open]);
 
+  // Closes from inside the panel. It finds the button by id, not by the ref: the ref is
+  // not read while the panel renders (react-hooks/refs).
   const close = () => {
     setOpen(false);
-    button.current?.focus();
+    document.getElementById(`${id}-button`)?.focus();
   };
 
   return (
     <div className="rd-pop" ref={wrap}>
       <button
         ref={button}
+        id={`${id}-button`}
         type="button"
         className={buttonClassName}
         aria-label={label}

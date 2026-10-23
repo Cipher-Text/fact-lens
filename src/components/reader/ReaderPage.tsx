@@ -8,7 +8,7 @@ import { SkipLink } from "@/components/header/SkipLink";
 import { categoryHref } from "@/components/story/links";
 import { StoryTime } from "@/components/story/StoryTime";
 
-import type { Article, ReadNextItem } from "@/content/reader";
+import type { Article, ReadNextItem } from "@/content";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
 import {

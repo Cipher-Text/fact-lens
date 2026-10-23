@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { ArticleContext } from "@/content/reader";
+import type { ArticleContext } from "@/content";
 
 import type { ReaderStrings } from "@/i18n";
 

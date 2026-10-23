@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ReaderPage } from "@/components/reader/ReaderPage";
-import { articleSlugs, getArticle, getReadNext } from "@/content/reader";
+import { articleSlugs, getArticle, getReadNext } from "@/content";
 import { isLang, langs, localizedPath } from "@/i18n";
 
 import "@/styles/reader.css";
@@ -72,11 +72,7 @@ export default async function StoryPage({
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
-      <ReaderPage
-        lang={lang}
-        article={article}
-        readNext={getReadNext(lang)}
-      />
+      <ReaderPage lang={lang} article={article} readNext={getReadNext(lang)} />
     </>
   );
 }

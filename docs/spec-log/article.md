@@ -96,7 +96,6 @@ This log records how the article page code uses or changes the design system (DR
 
 ## Open code issues (not spec items)
 
-- `Popover.tsx:72` reads a ref during render (lint `react-hooks/refs`).
 - No e2e or unit test covers the article page yet: share dialog focus, text size radio group keys, widths and axe.
 - Dark mode logo contrast (2.37:1 and 1.72:1): `--brand` is the same in both themes. Also on the homepage.
 
@@ -118,11 +117,11 @@ This log records how the article page code uses or changes the design system (DR
 | SL-44 | Fix now | Done: no hex. Share icons are ink, interactive-hover on hover; the Google mark takes the text color |
 | SL-45 | Fix now | Done: the page's focus override is removed; the base rule applies (2px ring, 2px offset, COL-13) |
 | SL-48 | Fix now | Done: reader strings moved to `src/i18n/bn.ts` and `en.ts` under `reader` |
-| SL-49 | Question | Proposed: export the article functions and types from `src/content/index.ts` and import from `@/content` (no rule change); waiting for yes |
+| SL-49 | Fix now | Done: article functions and types exported from `src/content/index.ts`; the page imports `@/content` (DR-01, no rule change) |
 | SL-51 | Fix now | Done: no margin on the ad row; the paragraphs before and after it own space-module (LAY-12) |
 | SL-52 | Fix now | Done: the `--rd-*` color aliases are removed; colors are the color-system tokens, accents `--color-bar` |
 | SL-53 | Fix now | Done: no `dvh`; lead image cap 32rem; `env(safe-area-inset-bottom)` stays with the dock (SL-42 Keep) |
 | SL-12, SL-40, SL-42, SL-43, SL-46, SL-47 | Keep | tajmin 24 Oct: "all ok" |
 
 - Spec log items so far: SL-01 to SL-53. Reviewer verdict: 40 green, 13 red (design-reviewer, 24 Oct; SL-03 reviewed red, corrected to green: layout §3.3 allows 3 per row from 1024px on other pages).
-- Decisions so far: dead code removed (commits 7187808, c29f254); header section links fixed (bca4abf). tajmin 24 Oct: no hook bypass; spec edits by a project thread after accept. Fix now done for SL-20, 21, 24, 44, 45, 48, 51, 52. Green items wait for /accept; red items need an explicit mark. Round 2: SL-15, 18, 19, 53 done; SL-12, 40, 42, 43, 46, 47 Keep. SL-13 deck gap on space-module. Open: SL-49.
+- Decisions so far: dead code removed (commits 7187808, c29f254); header section links fixed (bca4abf). tajmin 24 Oct: no hook bypass; spec edits by a project thread after accept. Fix now done for SL-20, 21, 24, 44, 45, 48, 51, 52. Green items wait for /accept; red items need an explicit mark. Round 2: SL-15, 18, 19, 53 done; SL-12, 40, 42, 43, 46, 47 Keep. SL-13 deck gap on space-module. SL-49 done; Popover ref fixed; `pnpm check` green.

@@ -7,7 +7,7 @@ import {
   type ArticleContext,
   type Block,
   type ReadNextItem,
-} from "@/content/reader";
+} from "@/content";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeading } from "@/components/layout/SectionHeading";
 import { Shell } from "@/components/layout/Shell";
