@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 import type { ArticleContext } from "@/content/reader";
 
-import type { ReaderStrings } from "./strings";
+import type { ReaderStrings } from "@/i18n";
 
 /**
  * The optional news context, inside the article body before the first section: short

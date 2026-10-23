@@ -5,11 +5,11 @@ import { useSyncExternalStore, type KeyboardEvent } from "react";
 
 import { Popover } from "./Popover";
 import { setTextSize, useReading } from "./reading-store";
-import type { ReaderStrings } from "./strings";
+import type { ReaderStrings } from "@/i18n";
 import { toast } from "./Toaster";
 
 /**
- * Four text sizes for the article body, as a radio group. Arrow keys move between them, as
+ * Three text sizes for the article body (TYP-15), as a radio group. Arrow keys move between them, as
  * in any radio group.
  */
 export function TextSizeOptions({
@@ -135,7 +135,6 @@ export function SaveButton({ slug, t }: { slug: string; t: ReaderStrings }) {
     <button
       type="button"
       className="rd-iconbtn"
-      data-net="save"
       aria-pressed={saved}
       aria-label={t.save}
       title={t.save}

@@ -6,3 +6,6 @@ type Strings<T> = {
 
 /** The shape of a string table. bn.ts sets the keys; en.ts must have the same keys. */
 export type Dictionary = Strings<typeof bn>;
+
+/** The article page strings. */
+export type ReaderStrings = Dictionary["reader"];

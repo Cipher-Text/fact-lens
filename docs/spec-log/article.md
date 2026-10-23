@@ -62,7 +62,7 @@ This log records how the article page code uses or changes the design system (DR
 | SL-30 | New component | Reading rail (from 1280): contents with a moving marker, progress, minutes left, text size, share, copy link, save | `Reading.tsx:85`, `:149`, `reader.css:499` to `:640` | `LAY-05` | tajmin 23 to 24 Oct green |
 | SL-31 | New component | Reading dock (below 1280): the same tools in a bar at the bottom edge, shown after the reader starts | `ReaderPage.tsx:190`, `reader.css:1049` | `LAY-15` | tajmin 24 Oct green |
 | SL-32 | New component | ProgressButton: square frame that fills clockwise, percent, back to top on hover | `Reading.tsx:25`, `:48`, `reader.css:972` to `:1047` | | build green |
-| SL-33 | New component | Popover and TextSize: four text sizes as a radio group | `Popover.tsx:17`, `Controls.tsx:15`, `:66`, `reader.css:1091` to `:1158` | `TYP-15` | build green |
+| SL-33 | New component | Popover and TextSize: the three reader sizes (A, A+, A++) as a radio group | `Popover.tsx:17`, `Controls.tsx:15`, `:66`, `reader.css:1091` to `:1158` | `TYP-15` | build green |
 | SL-34 | New component | ShareDialog: shadcn Dialog, network grid and copy field; CopyLinkButton; SaveButton | `Share.tsx:72`, `:98`, `Controls.tsx:117`, `components.css:340` | `CPT-16` | build green |
 | SL-35 | New component | SelectionShare: a bar over selected text to share or copy the quote | `SelectionShare.tsx:18`, `reader.css:1233` | | build green |
 | SL-36 | New component | Toaster: short confirmation messages (link copied, saved) | `Toaster.tsx:51`, `reader.css:1282` | | build green |
@@ -106,6 +106,23 @@ This log records how the article page code uses or changes the design system (DR
 
 | Item | Keep / Fix now / Later | Note |
 | --- | --- | --- |
+| SL-13 | Question | Spec: 8px, 8px; no deck-to-image gap (nearest `space-story-media-text` 16px). Code: 12, 12, 40px |
+| SL-15 | Question | 48px en, 44px bn from 1280, smaller below. Proposed fluid token: en `clamp(2.25rem, 1.957rem + 1.304vw, 3rem)`, bn `clamp(2.125rem, 1.880rem + 1.087vw, 2.75rem)`; waiting for yes |
+| SL-18 | Question | Spec: IconButton 44px filled, ghost 32/36px, icons 20px. Proposed: use them; waiting for yes |
+| SL-19 | Question | Proposed: snap each to the 4px scale, shared values as component tokens; waiting for yes |
+| SL-20 | Fix now | Done: `--default-transition-duration` |
+| SL-21 | Fix now | Done: no wash. Icon buttons change icon color (interactive-hover, -pressed); category fill interactive-hover, -pressed; selection bar fill interactive |
+| SL-22 | Question | "Kicker" is the CSS name of the row that holds the category; it is the Eyebrow. Rename when the heading is rebuilt |
+| SL-24 | Fix now | Done: no caption bar |
+| SL-33 | Question | Three sizes, as the spec; the log and a code comment said four (corrected) |
+| SL-44 | Fix now | Done: no hex. Share icons are ink, interactive-hover on hover; the Google mark takes the text color |
+| SL-45 | Fix now | Done: the page's focus override is removed; the base rule applies (2px ring, 2px offset, COL-13) |
+| SL-48 | Fix now | Done: reader strings moved to `src/i18n/bn.ts` and `en.ts` under `reader` |
+| SL-49 | Question | Proposed: export the article functions and types from `src/content/index.ts` and import from `@/content` (no rule change); waiting for yes |
+| SL-51 | Fix now | Done: no margin on the ad row; the paragraphs before and after it own space-module (LAY-12) |
+| SL-52 | Fix now | Done: the `--rd-*` color aliases are removed; colors are the color-system tokens, accents `--color-bar` |
+| SL-53 | Question | Proposed: drop `min-height: 100dvh`; lead image cap 32rem without `svh`; `env(safe-area-inset-bottom)` depends on SL-42; waiting for yes |
+| SL-12, SL-40, SL-42, SL-43, SL-46, SL-47 | Not marked yet | |
 
 - Spec log items so far: SL-01 to SL-53. Reviewer verdict: 40 green, 13 red (design-reviewer, 24 Oct; SL-03 reviewed red, corrected to green: layout §3.3 allows 3 per row from 1024px on other pages).
-- Decisions so far: dead code removed (commits 7187808, c29f254); header section links fixed (bca4abf).
+- Decisions so far: dead code removed (commits 7187808, c29f254); header section links fixed (bca4abf). tajmin 24 Oct: no hook bypass; spec edits by a project thread after accept. Fix now done for SL-20, 21, 24, 44, 45, 48, 51, 52. Green items wait for /accept; red items need an explicit mark.

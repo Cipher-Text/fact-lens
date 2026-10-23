@@ -1,32 +1,10 @@
 /*
  * Wild card reader page (branch page/article-parallel).
- * A free design with its own type scale and motion, scoped under .rd. It follows the design
- * system on color (only the color tokens, brand for the page's own accents) and on corners
- * (CPT-05).
+ * A free design with its own type scale and motion, scoped under .rd. Colors are the
+ * color-system tokens only; accents use --color-bar (brand in light, interactive in dark).
  */
 
-/* ---------- Palette ---------- */
-
 .rd {
-  /* Every color is a design-system token (color-system.md Section 5); the .dark class
-     switches them. Where this page had its own colors, it now uses brand. */
-  --rd-bg: var(--background);
-  --rd-bg-2: var(--surface-alt);
-  --rd-card: var(--surface-elevated);
-  --rd-ink: var(--ink);
-  --rd-ink-2: var(--ink-secondary);
-  --rd-muted: var(--ink-muted);
-  --rd-line: var(--border-soft);
-  --rd-line-2: var(--border);
-  --rd-accent: var(--brand);
-  --rd-accent-ink: var(--interactive);
-  --rd-accent-soft: var(--accent-subtle);
-  --rd-ctx: var(--brand);
-  --rd-ctx-soft: var(--accent-subtle);
-  --rd-flare: var(--brand);
-  --rd-flare-v: var(--brand);
-  --rd-cat: var(--brand);
-
   --rd-gutter: clamp(16px, 4.5vw, 44px);
   --rd-wrap: min(1240px, 100% - 2 * var(--rd-gutter));
   --rd-wide: min(1400px, 100% - 2 * var(--rd-gutter));
@@ -54,34 +32,18 @@
 
   position: relative;
   min-height: 100dvh;
-  background: var(--rd-bg);
-  color: var(--rd-ink);
+  background: var(--background);
+  color: var(--ink);
   font-family: var(--font-ui-active);
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Dark: brand is too dark to read on the dark background, so the accents use
-   interactive, as the design system does in dark. */
-.dark .rd {
-  --rd-accent: var(--interactive);
-  --rd-ctx: var(--interactive);
-  --rd-cat: var(--interactive);
-  /* The read part of the contents track (tajmin, 24 Oct 2026). */
-  --rd-flare: var(--interactive);
-  --rd-flare-v: var(--interactive);
-}
-
 /* Bangla: its own display face, a taller line and no negative tracking. */
 
 .rd ::selection {
-  background: var(--rd-accent-soft);
-  color: var(--rd-ink);
-}
-
-.rd :focus-visible {
-  outline: 2px solid var(--rd-accent);
-  outline-offset: 3px;
+  background: var(--accent-subtle);
+  color: var(--ink);
 }
 
 .rd button {
@@ -102,7 +64,7 @@
   letter-spacing: var(--type-eyebrow-tracking);
   text-transform: var(--type-eyebrow-case);
   margin: 0 0 12px;
-  color: var(--rd-muted);
+  color: var(--ink-muted);
 }
 
 /* ---------- Progress line ---------- */
@@ -116,17 +78,21 @@
   height: 40px;
   border: 0;
   background: transparent;
-  color: var(--rd-ink);
+  color: var(--ink);
   transition:
-    background-color 200ms,
-    transform var(--duration-slide) var(--ease-slide);
+    color var(--default-transition-duration),
+    background-color var(--default-transition-duration);
 }
+/* IconButton ghost: no wash; the icon turns interactive-hover, interactive-pressed. */
 .rd-iconbtn:hover {
-  background: color-mix(in oklab, var(--rd-ink) 8%, transparent);
+  color: var(--interactive-hover);
+}
+.rd-iconbtn:active {
+  color: var(--interactive-pressed);
 }
 .rd-iconbtn[aria-expanded="true"] {
-  background: var(--rd-ink);
-  color: var(--rd-bg);
+  background: var(--ink);
+  color: var(--background);
 }
 .rd-iconbtn svg {
   width: 19px;
@@ -190,16 +156,16 @@
   align-items: center;
   min-height: 2.25rem;
   padding: 0 14px;
-  background: var(--rd-cat);
+  background: var(--color-bar);
   color: var(--on-interactive);
   text-decoration: none;
-  transition: background-color 200ms;
+  transition: background-color var(--default-transition-duration);
 }
 .rd-cat:hover {
-  background: color-mix(in oklab, var(--rd-cat) 85%, var(--ink));
+  background: var(--interactive-hover);
 }
 .rd-cat:active {
-  background: color-mix(in oklab, var(--rd-cat) 72%, var(--ink));
+  background: var(--interactive-pressed);
 }
 
 .rd-title {
@@ -225,7 +191,7 @@
   max-inline-size: var(--measure-deck);
   /* Title to deck: 12px (--rd-head-title-deck). */
   margin: var(--rd-head-title-deck) 0 0;
-  color: var(--rd-ink-2);
+  color: var(--ink-secondary);
   text-wrap: pretty;
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
@@ -283,7 +249,7 @@
 .rd-meta {
   /* Rule to byline: space-list-item (16px). */
   padding-top: var(--space-list-item);
-  border-top: 1px solid var(--rd-line);
+  border-top: 1px solid var(--border-soft);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
 .rd-byline {
@@ -302,7 +268,7 @@
   letter-spacing: var(--type-ui-tracking);
 }
 .rd-byline__by {
-  color: var(--rd-muted);
+  color: var(--ink-muted);
 }
 .rd-byline__role {
   font-family: var(--font-ui-active);
@@ -311,7 +277,7 @@
   line-height: var(--type-metadata-line);
   letter-spacing: var(--type-metadata-tracking);
   margin-top: 2px !important;
-  color: var(--rd-muted);
+  color: var(--ink-muted);
 }
 
 .rd-avatar {
@@ -341,42 +307,7 @@
   margin-top: var(--space-module);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
-/* ---------- Share network colors ---------- */
-
-[data-net="whatsapp"] {
-  --net: #25d366;
-}
-[data-net="facebook"] {
-  --net: #1877f2;
-}
-[data-net="x"] {
-  --net: var(--ink);
-}
-[data-net="linkedin"] {
-  --net: #0a66c2;
-}
-[data-net="telegram"] {
-  --net: #229ed9;
-}
-[data-net="email"],
-[data-net="more"],
-[data-net="save"] {
-  --net: var(--interactive);
-}
 /* ---------- The Google mark and prompt ---------- */
-
-.g-blue {
-  fill: #4285f4;
-}
-.g-green {
-  fill: #34a853;
-}
-.g-yellow {
-  fill: #fbbc05;
-}
-.g-red {
-  fill: #ea4335;
-}
 
 /* No icon: title and text in the first column, the button beside them from 600. */
 .rd-galert {
@@ -413,8 +344,8 @@
   text-decoration: none;
   white-space: nowrap;
   transition:
-    background-color 200ms,
-    color 200ms;
+    background-color var(--default-transition-duration),
+    color var(--default-transition-duration);
 }
 .rd-galert__btn:hover,
 .rd-galert__btn:active {
@@ -452,18 +383,8 @@
   font-weight: var(--type-caption-weight);
   line-height: var(--type-caption-line);
   letter-spacing: var(--type-caption-tracking);
-  display: flex;
-  gap: 12px;
   margin: var(--space-media-caption) 0 0;
-  color: var(--rd-muted);
-}
-.rd-caption::before {
-  content: "";
-  flex: none;
-  width: 26px;
-  height: 2px;
-  margin-top: 0.7em;
-  background: var(--rd-cat);
+  color: var(--ink-muted);
 }
 /* The caption sits in the byline column (the reading measure, centered), whatever the
    image width. tajmin, 23 Oct 2026. */
@@ -475,7 +396,7 @@
   max-inline-size: var(--measure-reading-bn);
 }
 .rd-credit {
-  color: var(--rd-ink-2);
+  color: var(--ink-secondary);
   white-space: nowrap;
 }
 
@@ -536,7 +457,7 @@
   letter-spacing: var(--type-eyebrow-tracking);
   text-transform: var(--type-eyebrow-case);
   margin: 0 0 14px;
-  color: var(--rd-muted);
+  color: var(--ink-muted);
 }
 .rd-tools {
   display: grid;
@@ -556,7 +477,7 @@
   display: grid;
   gap: 2px;
   margin: 0;
-  color: var(--rd-muted);
+  color: var(--ink-muted);
 }
 .rd-tools__meta strong {
   font-family: var(--font-ui-active);
@@ -564,23 +485,13 @@
   font-weight: var(--type-ui-sm-weight);
   line-height: var(--type-ui-sm-line);
   letter-spacing: var(--type-ui-sm-tracking);
-  color: var(--rd-ink);
+  color: var(--ink);
 }
 .rd-tools__row {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-/* Share, copy link and save in the left panel: the icon turns interactive-hover on hover,
-   no wash (COL-05, DR-349). tajmin, 23 Oct 2026. */
-.rd-tools__row .rd-iconbtn {
-  transition: color 200ms;
-}
-.rd-tools__row .rd-iconbtn:hover {
-  background: transparent;
-  color: var(--interactive-hover);
-}
-
 /* The marker and the read part of the track follow --rd-toc-y, set on every scroll. A
    short eased transition smooths the steps between scroll events (a mouse wheel moves
    the page in jumps), so the marker glides from item to item. Reduced motion turns it off. */
@@ -598,11 +509,11 @@
 }
 .rd-toc__body::before {
   bottom: 0;
-  background: var(--rd-line-2);
+  background: var(--border);
 }
 .rd-toc__body::after {
   height: var(--rd-toc-y, 0px);
-  background: var(--rd-flare-v);
+  background: var(--color-bar);
   transition: height var(--duration-slide) var(--ease-slide);
 }
 .rd-toc__marker {
@@ -612,7 +523,7 @@
   top: 0;
   width: 10px;
   height: 10px;
-  background: var(--rd-accent);
+  background: var(--color-bar);
   transform: translateY(calc(var(--rd-toc-y, 0px) - 5px));
   transition: transform var(--duration-slide) var(--ease-slide);
 }
@@ -630,13 +541,13 @@
   line-height: var(--type-nav-line);
   display: block;
   padding: 7px 0;
-  color: var(--rd-muted);
+  color: var(--ink-muted);
   text-decoration: none;
-  transition: color 200ms;
+  transition: color var(--default-transition-duration);
 }
 .rd-toc__link:hover,
 .rd-toc__link[aria-current="true"] {
-  color: var(--rd-ink);
+  color: var(--ink);
 }
 
 .rd-main {
@@ -649,7 +560,7 @@
 /* A colored panel: surface-elevated, --rd-panel-inset padding, no border (CPT-06). */
 .rd-points {
   padding: var(--rd-panel-inset);
-  background: var(--rd-card);
+  background: var(--surface-elevated);
 }
 .rd-points__head {
   display: flex;
@@ -671,12 +582,12 @@
   align-items: center;
   gap: 8px;
   margin: 0;
-  color: var(--rd-ink);
+  color: var(--ink);
 }
 .rd-points__title svg {
   width: 20px;
   height: 20px;
-  color: var(--rd-accent);
+  color: var(--color-bar);
 }
 .rd-points__note {
   font-family: var(--font-ui-active);
@@ -684,7 +595,7 @@
   font-weight: var(--type-metadata-weight);
   line-height: var(--type-metadata-line);
   letter-spacing: var(--type-metadata-tracking);
-  color: var(--rd-muted);
+  color: var(--ink-muted);
 }
 .rd-points ol {
   display: grid;
@@ -705,7 +616,7 @@
 }
 .rd-points li:not(:last-child) p {
   padding-bottom: 8px;
-  border-bottom: 1px dotted var(--rd-line-2);
+  border-bottom: 1px dotted var(--border);
 }
 .rd-points__n {
   /* The item number is part of the list: type-article-body, so it sits on the line. */
@@ -717,7 +628,7 @@
   font-weight: var(--type-article-body-weight);
   line-height: var(--type-article-body-line);
   letter-spacing: var(--type-article-body-tracking);
-  color: var(--rd-accent);
+  color: var(--color-bar);
   font-variant-numeric: tabular-nums;
 }
 .rd-points p {
@@ -731,7 +642,7 @@
   line-height: var(--type-article-body-line);
   letter-spacing: var(--type-article-body-tracking);
   margin: 0;
-  color: var(--rd-ink-2);
+  color: var(--ink-secondary);
 }
 
 /* ---------- Context (inside the body) ---------- */
@@ -745,7 +656,7 @@
   gap: 0;
   padding: var(--rd-panel-inset);
   /* Body text in the card is ink-secondary; the title sets ink (TYP-14). */
-  color: var(--rd-ink-2);
+  color: var(--ink-secondary);
   /* No top bar: in the article body a brand bar reads too strong (tajmin, 24 Oct
      2026). */
 }
@@ -762,8 +673,8 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  background: var(--rd-ctx);
-  color: var(--rd-ctx-soft);
+  background: var(--color-bar);
+  color: var(--accent-subtle);
 }
 .rd-context__icon svg {
   width: 20px;
@@ -777,7 +688,7 @@
   line-height: var(--type-article-h3-line);
   letter-spacing: var(--type-article-h3-tracking);
   margin: 0;
-  color: var(--rd-ink);
+  color: var(--ink);
 }
 /* The teaser line: type-metadata, muted (TYP-14). */
 .rd-context__teaser {
@@ -787,7 +698,7 @@
   line-height: var(--type-metadata-line);
   letter-spacing: var(--type-metadata-tracking);
   margin: 0;
-  color: var(--rd-muted);
+  color: var(--ink-muted);
 }
 .rd-context__list {
   display: grid;
@@ -802,7 +713,7 @@
   /* Uppercase only on Eyebrow and Chip (DR-216). */
   text-transform: none;
   margin: 0 0 8px;
-  color: var(--rd-ctx);
+  color: var(--color-bar);
 }
 .rd-prose .rd-context__part p {
   font-family: var(--font-editorial-active);
@@ -830,7 +741,7 @@
   line-height: var(--type-article-body-line);
   letter-spacing: var(--type-article-body-tracking);
   /* Body text ink-secondary, headlines ink (TYP-14). */
-  color: var(--rd-ink-2);
+  color: var(--ink-secondary);
 }
 /* Key points to body: space-module. */
 .rd-points + .rd-prose {
@@ -839,8 +750,11 @@
 /* Inline ads in the body: space-module above and below; the body owns the space, the ad
    row has none (LAY-12). Placed between paragraphs only, never next to a heading, image,
    key points or context. tajmin, 24 Oct 2026. */
-.rd-prose > [data-ad-slot] {
-  margin-block: var(--space-module);
+.rd-prose > :has(+ [data-ad-slot]) {
+  margin-bottom: var(--space-module);
+}
+.rd-prose > [data-ad-slot] + * {
+  margin-top: var(--space-module);
 }
 /* The label line is not a body paragraph: no paragraph gap. */
 .rd-prose [data-ad-slot] p {
@@ -873,7 +787,7 @@
   /* Space around headings from the spacing tokens (typography-system.md 7.2): a module
      gap before, the heading-to-content gap after. */
   margin: var(--space-module) 0 var(--space-section-title-after);
-  color: var(--rd-ink);
+  color: var(--ink);
   scroll-margin-top: calc(var(--rd-bar-h) + 28px);
 }
 .rd-anchor {
@@ -884,12 +798,12 @@
   margin-left: 0.3em;
   border: 0;
   background: transparent;
-  color: var(--rd-muted);
+  color: var(--ink-muted);
   vertical-align: middle;
   opacity: 0;
   transition:
     opacity var(--duration-slide) var(--ease-slide),
-    background-color 200ms;
+    background-color var(--default-transition-duration);
 }
 .rd-anchor svg {
   width: 0.6em;
@@ -900,8 +814,8 @@
   opacity: 1;
 }
 .rd-anchor:hover {
-  background: var(--rd-accent-soft);
-  color: var(--rd-accent-ink);
+  background: var(--accent-subtle);
+  color: var(--interactive);
 }
 @media (hover: none) {
   .rd-anchor {
@@ -917,7 +831,7 @@
   display: block;
   width: 100%;
   height: auto;
-  background: var(--rd-bg-2);
+  background: var(--surface-alt);
 }
 
 .rd-list {
@@ -955,7 +869,7 @@
   gap: var(--space-module);
   margin-top: var(--space-module);
   padding-top: var(--space-module);
-  border-top: 1px solid var(--rd-line-2);
+  border-top: 1px solid var(--border);
 }
 
 .rd-tags ul {
@@ -978,8 +892,8 @@
   height: 48px;
   padding: 0;
   border: 0;
-  background: var(--rd-card);
-  color: var(--rd-ink);
+  background: var(--surface-elevated);
+  color: var(--ink);
 }
 .rd-progressbtn__pct {
   font-family: var(--font-ui-active);
@@ -995,7 +909,7 @@
 .rd-progressbtn__pct svg {
   width: 18px;
   height: 18px;
-  color: var(--rd-accent);
+  color: var(--color-bar);
 }
 .rd-progressbtn__up {
   position: absolute;
@@ -1025,21 +939,21 @@
   stroke-width: 3;
 }
 .rd-frame__track {
-  stroke: var(--rd-line-2);
+  stroke: var(--border);
 }
 .rd-frame__fill {
-  stroke: var(--rd-accent);
+  stroke: var(--color-bar);
   stroke-dasharray: 100px;
   stroke-dashoffset: calc((1 - var(--rd-progress)) * 100px);
 }
 /* At 100% the box fills with the brand accent and the tick turns on-interactive. */
 .rd-progressbtn {
   transition:
-    background-color 200ms,
-    color 200ms;
+    background-color var(--default-transition-duration),
+    color var(--default-transition-duration);
 }
 .rd[data-done] .rd-progressbtn {
-  background: var(--rd-accent);
+  background: var(--color-bar);
   color: var(--on-interactive);
 }
 .rd[data-done] .rd-progressbtn__pct svg {
@@ -1054,7 +968,7 @@
   align-items: center;
   gap: 4px;
   padding: 8px var(--rd-gutter) calc(8px + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--rd-line);
+  border-top: 1px solid var(--border-soft);
   /* A raised surface: surface-elevated, opaque, no blur (COL-01, COL-15). tajmin,
      24 Oct 2026. */
   background: var(--surface-elevated);
@@ -1083,7 +997,7 @@
   width: 1px;
   height: 24px;
   margin: 0 4px;
-  background: var(--rd-line-2);
+  background: var(--border);
 }
 
 /* ---------- Popovers ---------- */
@@ -1098,8 +1012,8 @@
   right: 0;
   min-width: 248px;
   padding: 8px;
-  border: 1px solid var(--rd-line);
-  background: var(--rd-card);
+  border: 1px solid var(--border-soft);
+  background: var(--surface-elevated);
   animation: rd-pop var(--duration-slide) var(--ease-slide) both;
 }
 .rd-pop__panel[data-side="bottom"] {
@@ -1119,7 +1033,7 @@
   text-transform: var(--type-eyebrow-case);
   margin: 0;
   padding: 8px 10px 10px;
-  color: var(--rd-muted);
+  color: var(--ink-muted);
 }
 .rd-sizes {
   display: flex;
@@ -1138,22 +1052,22 @@
   place-items: center;
   width: 48px;
   height: 48px;
-  border: 1px solid var(--rd-line-2);
+  border: 1px solid var(--border);
   background: transparent;
-  color: var(--rd-ink);
+  color: var(--ink);
   transition:
-    background-color 200ms,
-    color 200ms;
+    background-color var(--default-transition-duration),
+    color var(--default-transition-duration);
 }
 .rd-size[aria-checked="true"] {
-  border-color: var(--rd-ink);
-  background: var(--rd-ink);
-  color: var(--rd-bg);
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--background);
 }
 /* Hover on a step that is not chosen: a neutral wash and an ink border, no brand. */
 .rd-size:not([aria-checked="true"]):hover {
-  border-color: var(--rd-ink);
-  background: var(--rd-bg-2);
+  border-color: var(--ink);
+  background: var(--surface-alt);
 }
 /* ---------- Share dialog (shadcn Dialog, in a portal outside .rd) ---------- */
 
@@ -1181,7 +1095,7 @@
   background: transparent;
   text-align: center;
   text-decoration: none;
-  transition: background-color 200ms;
+  transition: background-color var(--default-transition-duration);
 }
 .rd-sharedlg__option:hover {
   background: var(--surface-alt);
@@ -1191,11 +1105,12 @@
   place-items: center;
   width: 48px;
   height: 48px;
-  background: var(--net, var(--ink));
-  color: #fff;
+  /* Icon only, ink; it turns interactive-hover with the option (no network colors). */
+  color: var(--ink);
+  transition: color var(--default-transition-duration);
 }
-.rd-sharedlg__option[data-net="x"] .rd-sharedlg__icon {
-  color: var(--background);
+.rd-sharedlg__option:hover .rd-sharedlg__icon {
+  color: var(--interactive-hover);
 }
 .rd-sharedlg__icon svg {
   width: 22px;
@@ -1221,7 +1136,7 @@
   gap: 8px;
   padding: 0 18px;
   border: 0;
-  transition: background-color 200ms;
+  transition: background-color var(--default-transition-duration);
 }
 .rd-sharedlg__copy svg {
   width: 18px;
@@ -1237,8 +1152,8 @@
   align-items: center;
   gap: 2px;
   padding: 4px;
-  background: var(--rd-ink);
-  color: var(--rd-bg);
+  background: var(--ink);
+  color: var(--background);
   transform: translate(-50%, -100%);
   animation: rd-fade var(--duration-slide) var(--ease-slide) both;
 }
@@ -1249,7 +1164,7 @@
   bottom: -5px;
   width: 12px;
   height: 12px;
-  background: var(--rd-ink);
+  background: var(--ink);
   transform: translateX(-50%) rotate(45deg);
 }
 .rd-selbar button,
@@ -1272,7 +1187,8 @@
 }
 .rd-selbar button:hover,
 .rd-selbar a:hover {
-  background: color-mix(in oklab, var(--rd-bg) 16%, transparent);
+  background: var(--interactive);
+  color: var(--on-interactive);
 }
 .rd-selbar svg {
   width: 16px;
@@ -1293,8 +1209,8 @@
   align-items: center;
   gap: 10px;
   padding: 12px 20px 12px 16px;
-  background: var(--rd-ink);
-  color: var(--rd-bg);
+  background: var(--ink);
+  color: var(--background);
   opacity: 0;
   pointer-events: none;
   transform: translate(-50%, 16px);
@@ -1309,7 +1225,7 @@
 .rd-toast svg {
   width: 18px;
   height: 18px;
-  color: var(--rd-accent);
+  color: var(--color-bar);
 }
 .rd-toast:empty {
   display: none;

@@ -4,7 +4,7 @@ import { Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { NetworkIcon } from "./icons";
-import type { ReaderStrings } from "./strings";
+import type { ReaderStrings } from "@/i18n";
 import { copyText } from "./Toaster";
 
 type Spot = { x: number; y: number; text: string };

@@ -22,7 +22,6 @@ import {
 import { ReadingTools, Toc } from "./Reading";
 import { ReaderRoot } from "./ReaderRoot";
 import { SelectionShare } from "./SelectionShare";
-import { readerStrings } from "./strings";
 import { Toaster } from "./Toaster";
 
 type Props = {
@@ -36,8 +35,8 @@ type Props = {
  * (CPT-05) and uses restyled shadcn parts for the context and the share dialog (CPT-16).
  */
 export function ReaderPage({ lang, article, readNext }: Props) {
-  const t = readerStrings[lang];
   const site = getDictionary(lang);
+  const t = site.reader;
   const { story } = article;
   const path = localizedPath(lang, `/story/${story.slug}`);
   const category = site.categories[story.category];

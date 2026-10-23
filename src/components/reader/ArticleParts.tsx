@@ -23,7 +23,7 @@ import { localizedPath, type Dictionary, type Lang } from "@/i18n";
 import { ContextCard } from "./ContextCard";
 import { GoogleG } from "./icons";
 import { SectionAnchor } from "./Reading";
-import type { ReaderStrings } from "./strings";
+import type { ReaderStrings } from "@/i18n";
 
 const locales = { bn: "bn-BD-u-nu-beng", en: "en-GB" } as const;
 

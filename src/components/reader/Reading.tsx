@@ -5,7 +5,7 @@ import { ArrowUp, Check, Hash } from "lucide-react";
 import { SaveButton, TextSize, TextSizeOptions } from "./Controls";
 import { useReading } from "./reading-store";
 import { CopyLinkButton, ShareDialog, type ShareProps } from "./Share";
-import type { ReaderStrings } from "./strings";
+import type { ReaderStrings } from "@/i18n";
 import { copyText } from "./Toaster";
 
 const locales = { bn: "bn-BD-u-nu-beng", en: "en-GB" } as const;

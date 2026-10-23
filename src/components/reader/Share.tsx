@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 
 import { NetworkIcon, type Network } from "./icons";
-import type { ReaderStrings } from "./strings";
+import type { ReaderStrings } from "@/i18n";
 import { copyText } from "./Toaster";
 
 // The public site, for the server render. In the browser the links use the page origin.
@@ -126,7 +126,6 @@ export function ShareDialog({ path, title, summary, t }: ShareProps) {
             <li key={network}>
               <a
                 className="rd-sharedlg__option type-ui-sm text-ink"
-                data-net={network}
                 href={links[network]}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -141,7 +140,6 @@ export function ShareDialog({ path, title, summary, t }: ShareProps) {
           <li>
             <a
               className="rd-sharedlg__option type-ui-sm text-ink"
-              data-net="email"
               href={mailto(url, title, summary)}
             >
               <span className="rd-sharedlg__icon">
@@ -155,7 +153,6 @@ export function ShareDialog({ path, title, summary, t }: ShareProps) {
               <button
                 type="button"
                 className="rd-sharedlg__option type-ui-sm text-ink"
-                data-net="more"
                 onClick={() =>
                   navigator.share({ title, text: summary, url }).catch(() => {
                     // The reader closed the share sheet.
