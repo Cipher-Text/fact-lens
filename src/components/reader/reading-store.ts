@@ -1,0 +1,92 @@
+"use client";
+
+import { useSyncExternalStore } from "react";
+
+/**
+ * Reading state for the article page. ReaderRoot writes it on scroll; the parts that
+ * show progress read only the values they need, so a scroll re-renders very little.
+ * The progress itself is also written to the CSS variable --rd-progress, which the
+ * progress line, the rings and the contents track use without any re-render.
+ */
+export interface ReadingState {
+  percent: number; // 0 to 100
+  minutesLeft: number;
+  active: string | null; // id of the section being read
+  past: boolean; // the headline has scrolled out of view
+  hidden: boolean; // the bar is hidden while the reader scrolls down
+  scrolled: boolean;
+  started: boolean; // the body has come into view
+  done: boolean;
+  size: number; // text size step, 0 to 3
+}
+
+const initial: ReadingState = {
+  percent: 0,
+  minutesLeft: 0,
+  active: null,
+  past: false,
+  hidden: false,
+  scrolled: false,
+  started: false,
+  done: false,
+  size: 1,
+};
+
+let state = initial;
+const listeners = new Set<() => void>();
+
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+export function getReading(): ReadingState {
+  return state;
+}
+
+export function setReading(patch: Partial<ReadingState>) {
+  let changed = false;
+  for (const key of Object.keys(patch) as (keyof ReadingState)[]) {
+    if (patch[key] !== state[key]) changed = true;
+  }
+  if (!changed) return;
+  state = { ...state, ...patch };
+  listeners.forEach((listener) => listener());
+}
+
+export function resetReading(minutes: number) {
+  state = { ...initial, size: state.size, minutesLeft: minutes };
+  listeners.forEach((listener) => listener());
+}
+
+/** One value of the reading state. The selector must return a primitive. */
+export function useReading<T>(select: (s: ReadingState) => T): T {
+  return useSyncExternalStore(
+    subscribe,
+    () => select(state),
+    () => select(initial),
+  );
+}
+
+// Text size: kept per reader in local storage.
+const SIZE_KEY = "rd-text-size";
+
+export function readStoredSize(): number | null {
+  try {
+    const stored = window.localStorage.getItem(SIZE_KEY);
+    if (stored === null) return null;
+    const value = Number(stored);
+    return Number.isInteger(value) && value >= 0 && value <= 3 ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setTextSize(size: number) {
+  setReading({ size });
+  try {
+    window.localStorage.setItem(SIZE_KEY, String(size));
+  } catch {
+    // Storage can be blocked; the size then lasts for this page only.
+  }
+}
