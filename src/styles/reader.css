@@ -786,32 +786,37 @@
   scroll-margin-top: calc(var(--rd-bar-h) + calc(var(--spacing) * 7));
 }
 /* A section heading and its copy-link button. The button sits beside the h2, not in it,
-   so the heading's accessible name is the heading text only. */
+   so the heading's accessible name is the heading text only. The h2 is inline, so the
+   button follows the last word as it did inside the heading; the wrapper carries the
+   heading type so the line boxes match. */
 .rd-section-head {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.3em;
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
+  line-height: var(--type-article-h2-line);
   /* Space around headings from the spacing tokens (typography-system.md 7.2): a module
      gap before, the heading-to-content gap after. */
   margin: var(--space-module) 0 var(--space-section-title-after);
 }
-/* In the h2 size, so it scales with the reader size (TYP-15). At least 24px, the
-   smallest touch target (WCAG 2.5.8). Centered on the first line of the heading. */
+.rd-section-head h2 {
+  display: inline;
+}
+/* In the h2 size, so it scales with the reader size (TYP-15); at least 24px, the
+   smallest touch target (WCAG 2.5.8). (.rd .rd-anchor wins over the .rd button font
+   reset.) */
+.rd .rd-anchor {
+  font-size: inherit;
+}
 .rd-anchor {
   --rd-anchor-size: max(1.3em, calc(var(--spacing) * 6));
-  display: grid;
-  flex: none;
+  display: inline-grid;
   place-items: center;
   width: var(--rd-anchor-size);
   height: var(--rd-anchor-size);
-  margin-top: calc(
-    (var(--type-article-h2-line) * 1em - var(--rd-anchor-size)) / 2
-  );
+  margin-left: 0.3em;
   border: 0;
   background: transparent;
   color: var(--ink-muted);
-  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
-  line-height: 1;
+  vertical-align: middle;
   opacity: 0;
   transition:
     opacity var(--duration-slide) var(--ease-slide),
@@ -1313,7 +1318,7 @@
 /* The reader size change eases the text to its new size. */
 .rd-prose,
 .rd-prose h2,
-.rd-anchor,
+.rd-section-head,
 .rd-prose .rd-context__part p {
   transition: font-size var(--duration-slide) var(--ease-slide);
 }
