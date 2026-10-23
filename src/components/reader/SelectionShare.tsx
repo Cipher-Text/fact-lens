@@ -80,7 +80,10 @@ export function SelectionShare({
       // Keep the selection when a button is pressed.
       onPointerDown={(event) => event.preventDefault()}
     >
-      <button type="button" onClick={() => copyText(quote, t.quoteCopied)}>
+      <button
+        type="button"
+        onClick={() => copyText(quote, t.quoteCopied, t.copyFailed)}
+      >
         <Copy aria-hidden="true" />
         {t.copyQuote}
       </button>

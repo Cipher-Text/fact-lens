@@ -30,11 +30,16 @@ function subscribe(listener: () => void) {
 
 const hidden = { text: "", visible: false };
 
-/** Copies text and confirms with a toast. Falls back to a hidden textarea. */
-export async function copyText(text: string, confirm: string) {
+/**
+ * Copies text to the clipboard and says whether it worked. Falls back to a hidden
+ * textarea; focus goes back to where it was after the fallback.
+ */
+export async function writeClipboard(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
+    return true;
   } catch {
+    const focused = document.activeElement;
     const area = document.createElement("textarea");
     area.value = text;
     area.setAttribute("readonly", "");
@@ -42,10 +47,27 @@ export async function copyText(text: string, confirm: string) {
     area.style.opacity = "0";
     document.body.append(area);
     area.select();
-    document.execCommand("copy");
+    let copied = false;
+    try {
+      copied = document.execCommand("copy");
+    } catch {
+      copied = false;
+    }
     area.remove();
+    if (focused instanceof HTMLElement) focused.focus();
+    return copied;
   }
-  toast(confirm);
+}
+
+/** Copies text and says so with a toast: the confirmation, or the failure message. */
+export async function copyText(
+  text: string,
+  confirm: string,
+  failed: string,
+): Promise<boolean> {
+  const copied = await writeClipboard(text);
+  toast(copied ? confirm : failed);
+  return copied;
 }
 
 export function Toaster() {

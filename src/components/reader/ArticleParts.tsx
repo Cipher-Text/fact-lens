@@ -21,22 +21,16 @@ import {
 import { localizedPath, type Dictionary, type Lang } from "@/i18n";
 
 import { ContextCard } from "./ContextCard";
+import { contextPosition } from "./placement";
 import { GoogleG } from "./icons";
 import { SectionAnchor } from "./Reading";
 import type { ReaderStrings } from "@/i18n";
-
-const locales = { bn: "bn-BD-u-nu-beng", en: "en-GB" } as const;
+import { formatNumber } from "@/lib/format";
 
 // The domain that Google's preferred-source page should add. Change it to the
 // production domain when there is one.
 const PREFERRED_SOURCE_DOMAIN = "fact-lens-web-ashy.vercel.app";
 export const preferredSourceHref = `https://www.google.com/preferences/source?q=${PREFERRED_SOURCE_DOMAIN}`;
-
-export function formatNumber(value: number, lang: Lang, digits = 1) {
-  return new Intl.NumberFormat(locales[lang], {
-    minimumIntegerDigits: digits,
-  }).format(value);
-}
 
 export function KeyPoints({
   points,
@@ -76,21 +70,26 @@ function BodyBlock({ block, t }: { block: Block; t: ReaderStrings }) {
       return <p>{block.text}</p>;
     case "h2":
       return (
-        <h2 id={block.id} data-section>
-          {block.text}
+        <div className="rd-section-head">
+          <h2 id={block.id} data-section>
+            {block.text}
+          </h2>
           <SectionAnchor
             id={block.id}
             label={t.sectionLink}
             copied={t.linkCopied}
+            failed={t.copyFailed}
           />
-        </h2>
+        </div>
       );
     case "figure":
       return (
         <figure className="rd-figure">
           <Image
             {...imageFiles[block.image]}
-            alt={block.caption}
+            // The caption below says what the image shows; a copy in alt would be read
+            // twice. Real alt text wins when a block has it.
+            alt={block.alt ?? ""}
             className="rd-figure__img"
           />
           <figcaption className="rd-caption">
@@ -146,8 +145,7 @@ export function ArticleBody({
   ad?: ReactNode;
   t: ReaderStrings;
 }) {
-  // The context goes in the body before the first section heading.
-  const contextAt = blocks.findIndex((block) => block.type === "h2");
+  const contextAt = contextPosition(blocks);
   const adAt = ad ? inlineAdPositions(blocks) : new Set<number>();
   return (
     <div className="rd-prose" data-reader-body>

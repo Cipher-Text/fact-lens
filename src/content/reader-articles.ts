@@ -12,7 +12,14 @@ export type ImageFile = keyof typeof imageFiles;
 export type Block =
   | { type: "p"; text: string }
   | { type: "h2"; id: string; text: string }
-  | { type: "figure"; image: ImageFile; caption: string; credit: string }
+  | {
+      type: "figure";
+      image: ImageFile;
+      caption: string;
+      credit: string;
+      /** Alt text, when the image needs more than its caption says. */
+      alt?: string;
+    }
   | { type: "list"; items: string[] };
 
 /** The optional news context: short one-liners in one column. Only `why` is required. */

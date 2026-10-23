@@ -9,12 +9,12 @@ import { categoryHref } from "@/components/story/links";
 import { StoryTime } from "@/components/story/StoryTime";
 
 import type { Article, ReadNextItem } from "@/content";
+import { formatNumber } from "@/lib/format";
 import { readerSizeScript } from "@/lib/reader-size";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
 import {
   ArticleBody,
-  formatNumber,
   KeyPoints,
   PreferredSourceAlert,
   ReadNext,
@@ -111,7 +111,9 @@ export function ReaderPage({ lang, article, readNext }: Props) {
           <figure className="rd-hero-figure">
             <Image
               src={story.image.src}
-              alt={story.image.alt || article.caption}
+              // The caption says what the image shows, so with no alt text of its own the
+              // image is decorative here rather than read twice.
+              alt={story.image.alt}
               width={story.image.width}
               height={story.image.height}
               preload
@@ -152,7 +154,7 @@ export function ReaderPage({ lang, article, readNext }: Props) {
           {/* The body stays in the centered reading column. From 1280 the rail
               (contents, progress, text size) sits in the free space on its left. */}
           <div className="rd-layout rd-wrap">
-            <aside className="rd-rail" aria-label={t.contents}>
+            <aside className="rd-rail" aria-label={t.readingTools}>
               <div className="rd-rail__sticky">
                 <Toc items={toc} label={t.contents} />
                 <ReadingTools

@@ -6,20 +6,8 @@ import { SaveButton, TextSize, TextSizeOptions } from "./Controls";
 import { useReading } from "./reading-store";
 import { CopyLinkButton, ShareDialog, type ShareProps } from "./Share";
 import type { ReaderStrings } from "@/i18n";
+import { formatNumber, formatPercent } from "@/lib/format";
 import { copyText } from "./Toaster";
-
-const locales = { bn: "bn-BD-u-nu-beng", en: "en-GB" } as const;
-
-function percentText(value: number, lang: "bn" | "en") {
-  return new Intl.NumberFormat(locales[lang], {
-    style: "percent",
-    maximumFractionDigits: 0,
-  }).format(value / 100);
-}
-
-function numberText(value: number, lang: "bn" | "en") {
-  return new Intl.NumberFormat(locales[lang]).format(value);
-}
 
 /** A square frame that fills clockwise with --rd-progress. */
 export function ProgressFrame() {
@@ -52,13 +40,13 @@ function ProgressButton({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
     <button
       type="button"
       className="rd-progressbtn"
-      aria-label={`${t.backToTop}. ${t.percentRead.replace("{p}", percentText(percent, lang))}`}
+      aria-label={`${t.backToTop}. ${t.percentRead.replace("{p}", formatPercent(percent, lang))}`}
       title={t.backToTop}
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
     >
       <ProgressFrame />
       <span className="rd-progressbtn__pct" aria-hidden="true">
-        {done ? <Check /> : numberText(percent, lang)}
+        {done ? <Check /> : formatNumber(percent, lang)}
       </span>
       <ArrowUp className="rd-progressbtn__up" aria-hidden="true" />
     </button>
@@ -72,7 +60,7 @@ function MinutesLeft({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
     <>
       {done
         ? t.finished
-        : t.minutesLeft.replace("{n}", numberText(minutesLeft, lang))}
+        : t.minutesLeft.replace("{n}", formatNumber(minutesLeft, lang))}
     </>
   );
 }
@@ -115,7 +103,7 @@ export function ReadingTools({
           <ProgressButton t={t} lang={lang} />
           <p className="rd-tools__meta">
             <strong>
-              {t.percentRead.replace("{p}", percentText(percent, lang))}
+              {t.percentRead.replace("{p}", formatPercent(percent, lang))}
             </strong>
             <span>
               <MinutesLeft t={t} lang={lang} />
@@ -183,10 +171,12 @@ export function SectionAnchor({
   id,
   label,
   copied,
+  failed,
 }: {
   id: string;
   label: string;
   copied: string;
+  failed: string;
 }) {
   return (
     <button
@@ -197,7 +187,7 @@ export function SectionAnchor({
       onClick={() => {
         const url = `${window.location.origin}${window.location.pathname}#${id}`;
         history.replaceState(null, "", `#${id}`);
-        copyText(url, copied);
+        void copyText(url, copied, failed);
       }}
     >
       <Hash aria-hidden="true" />
