@@ -10,19 +10,21 @@
   --rd-wide: min(1400px, 100% - 2 * var(--rd-gutter));
   --rd-bar-h: var(--bar-height); /* the site TopBar */
   /* Inset of every panel in the reading column (Google prompt, key points, context):
-     calc(var(--spacing) * 6) on each side at every width. tajmin approved, 24 Oct 2026, as a new article
+     24px on each side at every width. tajmin approved, 24 Oct 2026, as a new article
      panel inset; LAY-20's panel-inset (40 / 32, 48 / 40) is sized for page bands and reads
      too loose next to body text. Not yet in the layout spec (DOC- issue). */
   --rd-panel-inset: 1.5rem;
-  /* Heading gaps: the story-unit tokens plus one calc(var(--spacing) * 1) step where they read tight under
+  /* Heading gaps: the story-unit tokens plus one 4px step where they read tight under
      the article title. tajmin, 23 Oct 2026. */
   --rd-head-eyebrow-title: calc(
     var(--space-lead-eyebrow-title) + calc(var(--spacing) * 1)
-  ); /* calc(var(--spacing) * 3) */
+  ); /* 12px */
   --rd-head-title-deck: calc(
     var(--space-story-title-summary) + calc(var(--spacing) * 1)
-  ); /* calc(var(--spacing) * 3) */
-  --rd-head-deck-media: 2.5rem; /* calc(var(--spacing) * 10) */
+  ); /* 12px */
+  /* Deck to lead image: space-module (24 / 32 / 40), like the other module gaps
+     (tajmin 24 Oct, SL-13). */
+  --rd-head-deck-media: var(--space-module);
   /* Lead image: the tallest it may be, so the byline and body stay close to the fold. */
   --rd-lead-media-max: 32rem;
   --rd-progress: 0;
@@ -120,7 +122,6 @@
   /* After ad-top, as on the homepage: space-page-start (24 / 32 / 40). The space
      belongs to the section, not to the ad row (LAY-12). */
   padding-top: var(--space-page-start);
-  /* Heading (deck) to image: calc(var(--spacing) * 10) (--rd-head-deck-media). */
   padding-bottom: var(--rd-head-deck-media);
 }
 
@@ -145,7 +146,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
-  /* Category to title: calc(var(--spacing) * 3) (--rd-head-eyebrow-title). */
+  /* Category to title: 12px (--rd-head-eyebrow-title). */
   margin-bottom: var(--rd-head-eyebrow-title);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
@@ -169,7 +170,7 @@
 
 .rd-title {
   font-family: var(--font-editorial-active);
-  /* 36 to calc(var(--spacing) * 12) (en), 34 to calc(var(--spacing) * 11) (bn), largest from 1280 (tajmin 24 Oct, SL-15). */
+  /* 36 to 48px (en), 34 to 44px (bn), largest from 1280 (tajmin 24 Oct, SL-15). */
   font-size: clamp(2.25rem, 1.957rem + 1.304vw, 3rem);
   font-weight: var(--type-article-title-weight);
   line-height: var(--type-article-title-line);
@@ -189,7 +190,7 @@
   line-height: var(--type-deck-line);
   letter-spacing: var(--type-deck-tracking);
   max-inline-size: var(--measure-deck);
-  /* Title to deck: calc(var(--spacing) * 3) (--rd-head-title-deck). */
+  /* Title to deck: 12px (--rd-head-title-deck). */
   margin: var(--rd-head-title-deck) 0 0;
   color: var(--ink-secondary);
   text-wrap: pretty;
@@ -197,12 +198,12 @@
 }
 
 /* Published, updated and reading time in one line under the deck, separated by the
-   CPT-10 separator (calc(var(--spacing) * 1) square, calc(var(--spacing) * 2.5) each side, the metadata color). All the text is the metadata color. tajmin, 23 Oct 2026. Each item
+   CPT-10 separator (4px square, 10px each side, the metadata color). All the text is the metadata color. tajmin, 23 Oct 2026. Each item
    carries its separator before it; the list starts one separator width to the left, and
    the wrapper clips it, so a line never starts with a square when the line wraps. */
 .rd-deckmeta {
   overflow: hidden;
-  /* Deck to metadata: space-list-item (calc(var(--spacing) * 4)). */
+  /* Deck to metadata: space-list-item (16px). */
   margin-top: var(--space-list-item);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
@@ -230,7 +231,7 @@
   flex: none;
   width: calc(var(--spacing) * 1);
   height: calc(var(--spacing) * 1);
-  /* calc(var(--spacing) * 2.5) each side: the item's calc(var(--spacing) * 1) gap makes up the rest after the square. */
+  /* 10px each side: the item's 4px gap makes up the rest after the square. */
   margin-inline: calc(var(--spacing) * 2.5) calc(var(--spacing) * 1.5);
   /* The metadata color (CPT-10). tajmin, 24 Oct 2026. */
   background: var(--color-meta);
@@ -247,7 +248,7 @@
 }
 
 .rd-meta {
-  /* Rule to byline: space-list-item (calc(var(--spacing) * 4)). */
+  /* Rule to byline: space-list-item (16px). */
   padding-top: var(--space-list-item);
   border-top: 1px solid var(--border-soft);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
@@ -609,7 +610,7 @@
   grid-template-columns: 2.5rem minmax(0, 1fr);
   gap: calc(var(--spacing) * 3);
 }
-/* A dotted rule below the text only (not under the number), calc(var(--spacing) * 2) on each side of the rule.
+/* A dotted rule below the text only (not under the number), 8px on each side of the rule.
    tajmin, 23 Oct 2026. */
 .rd-points li + li {
   margin-top: calc(var(--spacing) * 2);

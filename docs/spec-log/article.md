@@ -106,7 +106,7 @@ This log records how the article page code uses or changes the design system (DR
 
 | Item | Keep / Fix now / Later | Note |
 | --- | --- | --- |
-| SL-13 | Keep (full HD) | 12px, 12px, 40px at every width. Question open: smaller on narrow screens? |
+| SL-13 | Keep, Fix now | 12px and 12px at every width; deck to lead image is space-module (24 / 32 / 40), like the other module gaps (tajmin 24 Oct) |
 | SL-15 | Fix now | Done: en `clamp(2.25rem, 1.957rem + 1.304vw, 3rem)` 36 to 48px, bn `clamp(2.125rem, 1.88rem + 1.087vw, 2.75rem)` 34 to 44px, largest from 1280 |
 | SL-18 | Fix now | Done: icon buttons `--icon-button-size-ghost`, controls `--icon-button-size`, icons `--icon-size` |
 | SL-19 | Fix now | Done: every spacing and size px is `calc(var(--spacing) * n)` (LAY-21, half steps allowed); odd 5px and 7px snapped to 4px and 8px. Left in px: 1px rules, ad sizes (LAY-19), media queries, the SVG frame, SL-43 widths |
@@ -125,4 +125,4 @@ This log records how the article page code uses or changes the design system (DR
 | SL-12, SL-40, SL-42, SL-43, SL-46, SL-47 | Keep | tajmin 24 Oct: "all ok" |
 
 - Spec log items so far: SL-01 to SL-53. Reviewer verdict: 40 green, 13 red (design-reviewer, 24 Oct; SL-03 reviewed red, corrected to green: layout §3.3 allows 3 per row from 1024px on other pages).
-- Decisions so far: dead code removed (commits 7187808, c29f254); header section links fixed (bca4abf). tajmin 24 Oct: no hook bypass; spec edits by a project thread after accept. Fix now done for SL-20, 21, 24, 44, 45, 48, 51, 52. Green items wait for /accept; red items need an explicit mark. Round 2: SL-15, 18, 19, 53 done; SL-12, 40, 42, 43, 46, 47 Keep. Open: SL-13 narrow screens, SL-49.
+- Decisions so far: dead code removed (commits 7187808, c29f254); header section links fixed (bca4abf). tajmin 24 Oct: no hook bypass; spec edits by a project thread after accept. Fix now done for SL-20, 21, 24, 44, 45, 48, 51, 52. Green items wait for /accept; red items need an explicit mark. Round 2: SL-15, 18, 19, 53 done; SL-12, 40, 42, 43, 46, 47 Keep. SL-13 deck gap on space-module. Open: SL-49.
