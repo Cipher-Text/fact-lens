@@ -22,7 +22,6 @@
   --rd-accent-ink: var(--interactive);
   --rd-accent-soft: var(--accent-subtle);
   --rd-ctx: var(--brand);
-  --rd-ctx-ink: var(--ink);
   --rd-ctx-soft: var(--accent-subtle);
   --rd-flare: var(--brand);
   --rd-flare-v: var(--brand);
@@ -104,26 +103,6 @@
   text-transform: var(--type-eyebrow-case);
   margin: 0 0 12px;
   color: var(--rd-muted);
-}
-
-.rd-skip {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-button-size);
-  font-weight: var(--type-button-weight);
-  line-height: var(--type-button-line);
-  letter-spacing: var(--type-button-tracking);
-  position: absolute;
-  z-index: 100;
-  left: 16px;
-  top: -80px;
-  padding: 12px 18px;
-  background: var(--rd-ink);
-  color: var(--rd-bg);
-  text-decoration: none;
-  transition: top var(--duration-slide) var(--ease-slide);
-}
-.rd-skip:focus {
-  top: 12px;
 }
 
 /* ---------- Progress line ---------- */
@@ -360,7 +339,6 @@
   height: 72px;
 }
 
-
 .rd-actions {
   display: flex;
   flex-wrap: wrap;
@@ -372,13 +350,6 @@
   margin-top: var(--space-module);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
-.rd-actions__start {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-}
-
 /* ---------- Share network colors ---------- */
 
 [data-net="whatsapp"] {
@@ -1217,10 +1188,6 @@
   }
 }
 
-.rd-sharebox .rd-eyebrow {
-  margin-bottom: 14px;
-}
-
 .rd-author {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
@@ -1646,7 +1613,6 @@
   .rd-actions,
   .rd-next,
   .rd-gcard,
-  .rd-sharebox,
   .rd-end,
   .rd-toast {
     display: none !important;
