@@ -19,6 +19,19 @@ import type {
 
 export type * from "./types";
 
+// The article page (wild card reader): its content goes through this file too (DR-01).
+export {
+  articleSlugs,
+  getArticle,
+  getReadNext,
+  imageFiles,
+  type Article,
+  type ArticleContext,
+  type Block,
+  type ReadNextItem,
+  type ReaderAuthor,
+} from "./reader";
+
 const byId = new Map(stories.map((def) => [def.id, def]));
 
 function toStory(def: StoryDef, lang: Lang): Story {

@@ -6,8 +6,11 @@ const locales: Record<Lang, string> = { bn: "bn-BD-u-nu-beng", en: "en-GB" };
 
 const TIME_ZONE = "Asia/Dhaka";
 
-export function formatNumber(value: number, lang: Lang): string {
-  return new Intl.NumberFormat(locales[lang]).format(value);
+/** A number in the page language. `minDigits` pads with zeros: 2 gives "01" or "০১". */
+export function formatNumber(value: number, lang: Lang, minDigits = 1): string {
+  return new Intl.NumberFormat(locales[lang], {
+    minimumIntegerDigits: minDigits,
+  }).format(value);
 }
 
 /** A year without a thousands separator: "2026" or "২০২৬". */

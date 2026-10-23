@@ -28,8 +28,11 @@
    Language-free tokens stay on :root only: a :lang(en) copy of --reader-scale would reset the reader size. */
 :root,
 :lang(en) {
-  --font-editorial-active: var(--font-source-serif), Georgia, "Times New Roman", serif;
-  --font-ui-active: var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-editorial-active:
+    var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-ui-active:
+    var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial,
+    sans-serif;
 
   --type-body-min: 1.0625rem;
   --type-eyebrow-case: uppercase;
@@ -43,7 +46,7 @@
   --type-page-title-weight: 600;
   --type-page-title-line: 1.06;
   --type-page-title-tracking: -0.025em;
-  --type-article-title-size: clamp(2.5rem, 2.011rem + 2.174vw, 3.75rem);
+  --type-article-title-size: clamp(2.25rem, 1.957rem + 1.304vw, 3rem);
   --type-article-title-weight: 600;
   --type-article-title-line: 1.06;
   --type-article-title-tracking: -0.025em;
@@ -141,8 +144,12 @@
 }
 
 :lang(bn) {
-  --font-editorial-active: var(--font-noto-serif-bengali), var(--font-source-serif), "Noto Serif", serif;
-  --font-ui-active: var(--font-noto-sans-bengali), var(--font-plus-jakarta), "Nirmala UI", sans-serif;
+  --font-editorial-active:
+    var(--font-noto-serif-bengali), var(--font-source-serif), "Noto Serif",
+    serif;
+  --font-ui-active:
+    var(--font-noto-sans-bengali), var(--font-plus-jakarta), "Nirmala UI",
+    sans-serif;
 
   --type-body-min: 1.125rem;
   --type-eyebrow-case: none;
@@ -156,7 +163,7 @@
   --type-page-title-weight: 600;
   --type-page-title-line: 1.18;
   --type-page-title-tracking: 0;
-  --type-article-title-size: clamp(2.375rem, 1.935rem + 1.957vw, 3.5rem);
+  --type-article-title-size: clamp(2.125rem, 1.88rem + 1.087vw, 2.75rem);
   --type-article-title-weight: 600;
   --type-article-title-line: 1.18;
   --type-article-title-tracking: 0;
@@ -248,8 +255,12 @@
   --type-input-tracking: 0;
 }
 
-[data-reader-size="lg"] { --reader-scale: 1.2; }
-[data-reader-size="xl"] { --reader-scale: 1.4; }
+[data-reader-size="lg"] {
+  --reader-scale: 1.2;
+}
+[data-reader-size="xl"] {
+  --reader-scale: 1.4;
+}
 
 body {
   font-family: var(--font-ui-active);
@@ -260,16 +271,26 @@ body {
 
 @media (min-width: 48rem) {
   :root,
-  :lang(en) { --type-logo-size: 1.75rem; }
+  :lang(en) {
+    --type-logo-size: 1.75rem;
+  }
 }
 
 @media (min-width: 64rem) {
   :root,
-  :lang(en) { --type-rank-size: 3.5rem; --type-logo-size: 2rem; }
+  :lang(en) {
+    --type-rank-size: 3.5rem;
+    --type-logo-size: 2rem;
+  }
 }
 
-:lang(bn) em { font-style: normal; font-weight: 600; }
-:lang(bn) strong { font-weight: 700; }
+:lang(bn) em {
+  font-style: normal;
+  font-weight: 600;
+}
+:lang(bn) strong {
+  font-weight: 700;
+}
 
 @utility type-display {
   font-family: var(--font-editorial-active);
@@ -353,7 +374,10 @@ body {
 
 @utility type-article-body {
   font-family: var(--font-editorial-active);
-  font-size: max(var(--type-body-min), calc(var(--type-article-body-size) * var(--reader-scale)));
+  font-size: max(
+    var(--type-body-min),
+    calc(var(--type-article-body-size) * var(--reader-scale))
+  );
   font-weight: var(--type-article-body-weight);
   line-height: var(--type-article-body-line);
   letter-spacing: var(--type-article-body-tracking);
@@ -482,7 +506,12 @@ body {
 
 @utility rank-list {
   list-style: none;
-  & > li { display: grid; grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
+  & > li {
+    display: grid;
+    grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr);
+    column-gap: 0.75rem;
+    align-items: start;
+  }
   /* The rank number from the data, in <span aria-hidden="true"> (DR-290) */
   & > li > [aria-hidden="true"]:first-child {
     font-family: var(--type-rank-family);

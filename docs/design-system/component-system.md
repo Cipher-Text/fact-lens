@@ -1,12 +1,12 @@
 # Fact Lens Component System
 
-Version 1.17.1 · 18 October 2026 · Homepage components (run 4 review, DR-355 to DR-357, DR-359; C-15 wording DR-369)
+Version 1.18 · 24 October 2026 · Article page components, checkpoint 1 (DR-385 to DR-390)
 
-This document is the single source for the homepage components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
+This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
 The component values use the tokens of `color-system.md`, `typography-system.md` and `spacing-layout-system.md`, plus the component tokens in Section 6. The section layouts (wrapper, rail, columns per width) are in `spacing-layout-system.md` Section 7.
 
-This file is generated from the component register of the blueprint project (`components/fact-lens-component-register.html`). The register also holds the drawings on the design canvas. To change a value, change the register and generate this file again.
+This file is the only home of the component specs (DR-372, DR-377). To change it, write the change in the page spec log (`docs/spec-log/<page>.md`); after `/accept`, a blueprint project thread writes it into this file (DR-392).
 
 ## Contents
 
@@ -42,7 +42,7 @@ This file is generated from the component register of the blueprint project (`co
 | C-23 | `CategoryBlock` | Section components | Approved | DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351 |
 | C-07 | `RankedList` | Section components | Approved | DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148, DR-300 |
 | C-15 | `RegionSlider` | Section parts | Approved | DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236, DR-284, DR-291, DR-318 |
-| C-16 | `AdSlot` | Section parts | Approved | DR-127, DR-163, DR-197, DR-206, DR-207, DR-233, DR-240, DR-241, DR-242, DR-245, ad proposal (approved 5 Oct), DR-315 |
+| C-16 | `AdSlot` | Section parts | Approved | DR-127, DR-163, DR-197, DR-206, DR-207, DR-233, DR-240, DR-241, DR-242, DR-245, ad proposal (approved 5 Oct), DR-315, DR-387 |
 | C-14 | `NewsletterSignup` | Section parts | Deferred | DR-128, DR-129, DR-130, DR-131, DR-132, DR-133, DR-134, DR-135, DR-137, DR-224, DR-229, DR-230, DR-231, DR-238, DR-239 |
 | C-26 | `DailyPoll` | Section parts | Approved | DR-134, DR-138, DR-139, DR-149, DR-236, DR-239, DR-273, DR-277, DR-287, DR-295, DR-298 |
 | C-22 | `Divider` | Small parts | Approved | DR-87, DR-102, DR-103, DR-262, DR-299, DR-350, DR-351 |
@@ -57,6 +57,22 @@ This file is generated from the component register of the blueprint project (`co
 | C-19 | `Drawer` | Page chrome | Approved | DR-21, DR-41, DR-56, DR-170, DR-181, DR-182, DR-185, DR-188, DR-223, DR-226, DR-227, DR-228, DR-280, DR-295, DR-302, DR-306, DR-331, DR-349 |
 | C-20 | `SearchDialog` | Page chrome | Approved | DR-21, DR-186, DR-187, DR-189, DR-190, DR-191, DR-192, DR-227, DR-228, DR-231, DR-280, DR-349 |
 | C-21 | `Footer` | Page chrome | Provisional | DR-59, DR-157, DR-193 (provisional; extension after run 2, CMP-33), DR-224, DR-264, DR-306, DR-314 |
+| C-27 | `ArticleHeader` | Article page | Approved | DR-386, DR-388, DR-389, DR-390 |
+| C-28 | `Byline` | Article page | Approved | DR-386, DR-390 |
+| C-29 | `LeadMedia` | Article page | Approved | DR-386, DR-390 |
+| C-30 | `KeyPoints` | Article page | Approved | DR-386, DR-388, DR-390 |
+| C-31 | `ContextCard` | Article page | Approved | DR-383, DR-386, DR-388, DR-390 |
+| C-32 | `PreferredSourceAlert` | Article page | Approved | DR-386, DR-389, DR-390 |
+| C-33 | `ArticleBody` | Article page | Approved | DR-386, DR-387, DR-388, DR-390 |
+| C-34 | `Tags` | Article page | Approved | DR-390 |
+| C-35 | `ReadingTools` | Article page | Approved | DR-386, DR-390 |
+| C-36 | `ProgressButton` | Article page | Approved | DR-390 |
+| C-37 | `TextSize` | Article page | Approved | DR-388, DR-390 |
+| C-38 | `ShareDialog` | Article page | Approved | DR-389, DR-390 |
+| C-39 | `CopyLinkButton`, `SaveButton` | Article page | Approved | DR-390 |
+| C-40 | `Popover` | Article page | Approved | DR-390 |
+| C-41 | `SelectionShare` | Article page | Approved | DR-386, DR-390 |
+| C-42 | `Toaster` | Article page | Approved | DR-386, DR-390 |
 
 **Approved**: build as written. **Provisional**: build as written; the design can grow later. **Draft**: not decided; use the values that the sheets of the other components give.
 
@@ -136,7 +152,7 @@ Code names to change: the code uses the approved names above, and the folder nam
 
 ### 3.3 Labels
 
-Interface labels come from `src/i18n/bn.ts` and `src/i18n/en.ts`. English labels are working labels.
+Interface labels come from `src/i18n/bn.ts` and `src/i18n/en.ts`. English labels are working labels. The article page labels are under `reader` in the same files (DR-390).
 
 | Bangla | English | Where |
 | --- | --- | --- |
@@ -218,7 +234,7 @@ Align a standalone link (a link on its own line, such as আরও দেখু�
 
 ### CPT-16 Restyle a shadcn component when you add it
 
-Restyle a shadcn/ui component when you add it. After shadcn add, change the file to the Fact Lens sheet before use: remove radius, shadow, dark: classes, opacity modifiers (/50), ring-3, leading-none, text-sm and text-xs, size-4 icons and the active translate. Give the parts the typography roles (typography §7.3) and the color tokens. Keep the behavior (focus, keys, aria). Use Button, Input, Drawer (SearchDialog, from the top), Sheet (Drawer), Collapsible (Drawer.accordion), Tabs (phone region chips), RadioGroup (DailyPoll) and Switch (theme controls). Do not use Carousel, NavigationMenu, Separator or Badge. Keep the shadcn base-nova preset (Base UI). (DR-236)
+Restyle a shadcn/ui component when you add it. After shadcn add, change the file to the Fact Lens sheet before use: remove radius, shadow, dark: classes, opacity modifiers (/50), ring-3, leading-none, text-sm and text-xs, size-4 icons and the active translate. Give the parts the typography roles (typography §7.3) and the color tokens. Keep the behavior (focus, keys, aria). Use Button, Input, Drawer (SearchDialog, from the top), Sheet (Drawer), Collapsible (Drawer.accordion), Tabs (phone region chips), RadioGroup (DailyPoll), Switch (theme controls), Alert (PreferredSourceAlert), Badge (Tags), Card (ContextCard) and Dialog (ShareDialog) (DR-390). Do not use Carousel, NavigationMenu or Separator. Keep the shadcn base-nova preset (Base UI). (DR-236)
 
 ### N-01 Name each section with Section at the end
 
@@ -269,8 +285,8 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--space-card-notch` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same | same (46px at 464, 58px at 584) | Image left visible at the end side of an overlap card: 10% of the card width, 40 to 64px | DR-105, DR-109 |
 | `--button-height` | 3rem (48px) | same | same | Button height at every width | DR-208 |
 | `--button-padding` | 1.25rem (20px) | same | same | Button side padding | DR-208 |
-| `--icon-button-size` | 2.75rem (44px) | same | same | IconButton filled size (slider buttons) and the 44px caret and social link taps | DR-208, DR-349 |
-| `--icon-button-size-ghost` | 2rem (32px) | 2.25rem (36px) from 768 | same | IconButton ghost size: TopBar (menu, search, theme), Drawer and SearchDialog close (DR-349; was --icon-button-size-bar, phones only) | DR-208, DR-209, DR-349 |
+| `--icon-button-size` | 2.75rem (44px) | same | same | IconButton filled size (slider buttons) and the 44px caret and social link taps. Article page: `ProgressButton`, `TextSize` steps, share dialog icons (DR-390) | DR-208, DR-349, DR-390 |
+| `--icon-button-size-ghost` | 2rem (32px) | 2.25rem (36px) from 768 | same | IconButton ghost size: TopBar (menu, search, theme), Drawer and SearchDialog close (DR-349; was --icon-button-size-bar, phones only). Article page: `ReadingTools` icon buttons (DR-390) | DR-208, DR-209, DR-349, DR-390 |
 | `--icon-size` | 1.25rem (20px) | same | same | Icon size in buttons and icon buttons, every width | DR-208 |
 | `--button-icon-gap` | 0.5rem (8px) | same | same | Space between a button label and its icon | DR-208 |
 | `--top-bar-inset` | 0.625rem (10px) | 1.125rem (18px) at 600; 1rem (16px) from 768 |  | TopBar side padding = page gutter minus the controls inner space (C-17): (32 - 20) / 2 = 6 under 768, (36 - 20) / 2 = 8 from 768 (DR-349). Columns: phone / 600 and 768 up | DR-294, DR-349 |
@@ -363,6 +379,8 @@ The container rule sets the lead tokens on `.lead-story`, so the `@container` is
 ```
 
 `--color-bar` is the one allowed component color token (color §2.9, DR-294, DR-349). The NewsletterSignup colors (after prototype run 2, DR-239) are in `color-system.md` Section 2.9.
+
+Article page tokens (`--rd-*`, `--ad-inline-w`, `--ad-inline-h`) are in `src/styles/reader.css`, scoped under `.rd`. `spacing-layout-system.md` Section 7A lists them (DR-386). The shadcn `Dialog` motion is the `dialog-panel` utility in `components.css` (DR-390).
 
 ## 7. Components
 
@@ -812,13 +830,14 @@ The regions section (P-3b): one column per region in a row that slides, previous
 
 One ad row: surface-alt band, 24px label line, creative centered. No padding, margin or gutter (ad proposal). A rail variant for the homepage P-3 rail from 1280 only (DR-240, DR-245): 300×600 or 300×250, reserve 600, space-module below the poll (DR-241, DR-242).
 
-**Variants.** variant="top" | "band" | "inset" | "rail" (DR-162 names, DR-197). Layout §9 slots: ad-top, ad-band, ad-inset, ad-rail.
+**Variants.** variant="top" | "band" | "inset" | "rail" | "inline" (DR-162 names, DR-197, DR-387). Layout §9 slots: ad-top, ad-band, ad-inset, ad-rail, ad-inline.
 
 | Part | Spec |
 | --- | --- |
 | `AdSlot.label` | বিজ্ঞাপন (EN Advertisement, IA-06): type-eyebrow 600, ink-muted, centered, line 24px |
 | `AdSlot.creative` | Reserved box, centered. top: 320 x 100 under 768, 728 x 90 768 to 1023, 970 x 250 from 1024. band: 336 x 280 under 768 when the viewport is 336px or wider, else 300 x 250 (DR-206), 728 x 90 768 to 1023 (reserve 90, DR-315), 970 x 250 from 1024. inset: 300 x 250 below 1280, 728 x 90 from 1280. rail: 300 x 600 or 300 x 250 from 1280, the 300 x 250 at the top of the 600 reserve; row = rail width 304, surface-alt, label on top; creative box 300 x 600 centered, no padding: w-(--ad-rail-w) h-(--ad-rail-h) (DR-241, DR-245, DR-296). Sizes from the px tokens --ad-*-w and --ad-*-h (layout §12.2, LAY-19): w-(--ad-inset-w) h-(--ad-inset-h) |
 | AdSlot band width | top and band: full viewport width. inset: wrapper width; full screen width when the viewport is under 332px (DR-207) |
+| AdSlot inline | Article body only, between two paragraphs (layout `LAY-22`). Creative box 300 x 250 at every width, `max-width: 100%`, centered in the reading column: w-(--ad-inline-w) h-(--ad-inline-h). Reserve 274 (label + creative). `data-ad-slot="ad-inline"`. Phase 1 mock: the ad-inset creative (DR-387) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
@@ -1316,6 +1335,217 @@ The minimum footer (DR-59) after the last ad band. Wireframe V2 look: everything
 
 - Not surface-alt (ad look).
 
+### Article page
+
+These sheets come from the accepted page spec log `docs/spec-log/article.md`, checkpoint 1 (DR-385, DR-390). The code is in `src/components/reader/` and `src/styles/reader.css`. Layout, widths and spacing are in `spacing-layout-system.md` Section 7A. Colors are in `color-system.md` Section 2.9.
+
+#### C-27 ArticleHeader
+
+**Status:** Approved · **Decisions:** DR-386, DR-388, DR-389, DR-390
+
+The article heading: the category, the title, the deck and the metadata line. The text is in the reading column, centered, left-aligned.
+
+| Part | Spec |
+| --- | --- |
+| `ArticleHeader.category` | A link to the category page, drawn as a filled button: `--color-bar` fill, `on-interactive` text, `type-eyebrow`; min height 36px, inline padding 14px; hover `interactive-hover`, pressed `interactive-pressed` (`COL-04` exception, DR-389). The row that holds it is the Eyebrow row (`.rd-kicker` in the CSS) |
+| `ArticleHeader.title` | `h1`, `type-article-title`, `ink`, `text-wrap: pretty` |
+| `ArticleHeader.deck` | `type-deck`, `ink-secondary`, `measure-deck` |
+| `ArticleHeader.meta` | Published, updated (when there is one) and reading time in one line, `type-metadata`, `--color-meta`, in a `dl`. The `CPT-10` separator (4px square, 10px on each side, `--color-meta`) comes before each item; a line never starts with a square when it wraps |
+
+Gaps: layout Section 7A.3 (12px, 12px, `space-list-item`, `space-module`).
+
+**Checks.**
+
+- No border, no background on the heading.
+- The reading time label is visually hidden; the value shows.
+
+#### C-28 Byline
+
+**Status:** Approved · **Decisions:** DR-386, DR-390
+
+The author under the lead image, in the reading column, after a 1px `border-soft` rule.
+
+| Part | Spec |
+| --- | --- |
+| `Byline.avatar` | 48px square, `--color-bar` fill, initials in `type-button`, `on-interactive`. `aria-hidden` |
+| `Byline.name` | "By" in `ink-muted`, the name in `ink`; `type-ui` |
+| `Byline.role` | `type-metadata`, `ink-muted`, 2px below the name |
+
+The avatar and the text are 14px apart.
+
+#### C-29 LeadMedia
+
+**Status:** Approved · **Decisions:** DR-386, DR-390
+
+The lead image with its caption and credit. The lead image is required.
+
+| Part | Spec |
+| --- | --- |
+| `LeadMedia.image` | Own ratio, centered in `--rd-wide`, up to `--rd-lead-media-max` (32rem) tall; never cropped or stretched (layout Section 7A.5). Loaded first (`preload`, high fetch priority) |
+| `LeadMedia.caption` | `type-caption`, `ink-muted`, in the reading column, `space-media-caption` below the image. No caption bar |
+| `LeadMedia.credit` | After the caption on the same line, `ink-secondary`, no wrap |
+
+The alt text is the image alt, else the caption.
+
+#### C-30 KeyPoints
+
+**Status:** Approved · **Decisions:** DR-386, DR-388, DR-390
+
+A numbered summary panel at the top of the body.
+
+| Part | Spec |
+| --- | --- |
+| Panel | `surface-elevated`, `--rd-panel-inset`, no border (`CPT-06`) |
+| `KeyPoints.title` | `h2`, `type-article-h3` × reader scale, `ink`, with a 20px `--color-bar` icon |
+| `KeyPoints.note` | `type-metadata`, `ink-muted`, at the end of the title row |
+| `KeyPoints.item` | Number (two digits in the page language, `type-article-body`, `--color-bar`, `aria-hidden`) in a 40px column, 12px gap, then the text (`type-article-body`, `ink-secondary`). A 1px dotted `border` rule under the text only, 8px on each side |
+
+The list is an `ol`, so the numbers are read once.
+
+#### C-31 ContextCard
+
+**Status:** Approved · **Decisions:** DR-386, DR-388, DR-390
+
+Background to the story, inside the body. A shadcn `Card` (`CPT-16`).
+
+| Part | Spec |
+| --- | --- |
+| Card | `surface-elevated`, `--rd-panel-inset`, no border and no top bar. Body text `ink-secondary` |
+| `ContextCard.icon` | 40px square tile, `--color-bar`, 20px icon in `accent-subtle`. `aria-hidden` |
+| `ContextCard.title` | `h2`, `type-article-h3` × reader scale, `ink`. Fixed label প্রেক্ষাপট / Context (DR-383) |
+| `ContextCard.teaser` | `type-metadata`, `ink-muted` |
+| `ContextCard.part` | Label `h3` in `type-eyebrow`, no uppercase, `--color-bar`, 8px above the text; text `type-article-body` × reader scale. Parts: why, and background when there is one. `--grid-row-gap` between parts |
+
+`space-module` above and below; the anchor target `#context` clears the top bar.
+
+#### C-32 PreferredSourceAlert
+
+**Status:** Approved · **Decisions:** DR-386, DR-389, DR-390
+
+A standing prompt to add Fact Lens as a preferred source on Google. A shadcn `Alert` with `role="note"` (not urgent).
+
+| Part | Spec |
+| --- | --- |
+| Panel | `surface-alt`, `--rd-panel-inset`, no icon column |
+| Title, text | `type-ui` 600 `ink`; `type-ui-sm` `ink-secondary` |
+| Button | Outline link: 1px `--color-bar` border and text; hover and pressed fill `--color-bar` with `on-interactive` text. Min height 44px. The Google mark in the text color (no brand colors), the label, an arrow icon. Opens in a new tab (`noopener noreferrer`) |
+
+The button is below the text under 600px and beside it from 600px.
+
+#### C-33 ArticleBody
+
+**Status:** Approved · **Decisions:** DR-386, DR-387, DR-388, DR-390
+
+The article text: paragraphs, `h2` headings, figures, lists, `ContextCard` and `ad-inline` slots.
+
+| Part | Spec |
+| --- | --- |
+| Paragraph | `type-article-body` × reader scale, floor `--type-body-min`, `ink-secondary`, gap 1.1em, `text-wrap: pretty` |
+| `h2` | `type-article-h2` × reader scale, `ink`; `space-module` before, `space-section-title-after` after; clears the top bar as an anchor target |
+| `SectionAnchor` | A button after each `h2` that copies the link to the heading. Shows on heading hover or focus; 60% visible on touch screens. `ink-muted` icon; on hover an `accent-subtle` fill and an `interactive` icon (stated exception, DR-391) |
+| List | `ul` with a filled square bullet in the text color (0.35em, the shape of the `CPT-10` separator), centered on the first line; 0.55em between items |
+| Figure | Full column width, own ratio, `space-module` above and below |
+| `ad-inline` | `AdSlot variant="inline"` between two paragraphs only (`LAY-22`) |
+
+#### C-34 Tags
+
+**Status:** Approved · **Decisions:** DR-390
+
+The story tags after the body, below a 1px `border` rule with `space-module` on each side.
+
+| Part | Spec |
+| --- | --- |
+| Label | `type-eyebrow`, `ink-muted` |
+| `Tags.item` | A shadcn `Badge` link, variant outline: 1px `border`, `type-eyebrow` no uppercase, `ink`; hover `interactive-hover`, pressed `interactive-pressed`. 8px gap. Links to `/tag/<tag>` (the tag page is not built yet) |
+
+#### C-35 ReadingTools
+
+**Status:** Approved · **Decisions:** DR-386, DR-390
+
+The reading tools: progress and back to top, minutes left, text size, share, copy link and save. One component with `layout="rail" | "dock"` (`CPT-02`).
+
+| Part | Spec |
+| --- | --- |
+| Rail (from 1280) | In the start column of the body grid, sticky (layout Section 7A.6). `Toc`, then three groups, each with a `type-eyebrow` `ink-muted` title: reading (`ProgressButton`, percent read, minutes left), text size (the `TextSize` steps inline), share (`ShareDialog` button, `CopyLinkButton`, `SaveButton`). 36px after `Toc`, 28px between groups |
+| `Toc` | Contents of the `h2` headings, a `nav`. Links `type-nav`, `ink-muted`, `ink` on hover and when current (`aria-current`). A 2px `border` track on the start side with a `--color-bar` read part and a 10px square marker that glide to the current item |
+| Percent read and minutes left (rail) | Percent `type-ui-sm` `ink`; minutes left `type-metadata` `ink-muted` |
+| Dock (below 1280) | Fixed bar at the bottom edge, `surface-elevated`, 1px `border-soft` top rule, opaque, no blur. Slides in after the reader starts. `ProgressButton`, minutes left (`type-ui-sm`, `aria-hidden`), a 1px separator, then `TextSize` (in a `Popover`), the `ShareDialog` button and `SaveButton` |
+| Icon buttons | `--icon-button-size-ghost`, icon `--icon-size`, `ink`; hover `interactive-hover`, pressed `interactive-pressed`, no wash. Open state (`aria-expanded`): `ink` fill, `background` icon |
+
+#### C-36 ProgressButton
+
+**Status:** Approved · **Decisions:** DR-390
+
+A square frame that fills clockwise from the top start corner as the reader scrolls, with the percent read. A press goes back to the top.
+
+| Part | Spec |
+| --- | --- |
+| Button | `--icon-button-size`, `surface-elevated`, `ink`. The name says "back to top" and the percent read |
+| Frame | SVG, 3px stroke: track `border`, fill `--color-bar` |
+| Percent | `type-ui-sm`, tabular digits in the page language. On hover or focus it fades out and an up arrow fades in |
+| Done (100%) | `--color-bar` fill, `on-interactive` tick |
+
+#### C-37 TextSize
+
+**Status:** Approved · **Decisions:** DR-388, DR-390
+
+The reader size control: three steps A, A+, A++ (`typography-system.md` Section 4). A radio group; arrow keys move between the steps. The setting is kept on the device.
+
+| Part | Spec |
+| --- | --- |
+| Step | `--icon-button-size` square, 1px `border`, glyph `type-button` `ink`. Selected: `ink` fill and border, `background` glyph. Hover on a step that is not selected: `surface-alt`, `ink` border |
+| `Popover` | In the dock, the steps open from an icon button; in the rail they show inline. Panel `surface-elevated`, 1px `border-soft`, 8px padding, min width 248px; label `type-eyebrow` `ink-muted`. Opens above or below its button. Escape and an outside press close it |
+
+#### C-38 ShareDialog
+
+**Status:** Approved · **Decisions:** DR-389, DR-390
+
+A shadcn `Dialog` (`CPT-16`) to share the article: a network grid and a copy field.
+
+| Part | Spec |
+| --- | --- |
+| Panel | `surface-elevated` over the scrim, no radius, shadow, ring or blur. Phones: at the bottom edge, full width, slides up. From 600: centered, rises 16px and fades in (`dialog-panel` utility, `--duration-slide`) |
+| Network grid | WhatsApp, Facebook, X, LinkedIn, Telegram: 3 per row, 4 from 600. Each option: icon in a `--icon-button-size` box, `ink`; on hover the option fills `surface-alt` and the icon turns `interactive-hover`. No network colors |
+| Copy field | 48px tall, 1px `border-interactive`; the URL field and a copy button |
+
+#### C-39 CopyLinkButton and SaveButton
+
+**Status:** Approved · **Decisions:** DR-390
+
+Two icon buttons of `ReadingTools`, with the `ReadingTools` icon button look.
+
+| Part | Spec |
+| --- | --- |
+| `CopyLinkButton` | Copies the article link and shows a toast |
+| `SaveButton` | Saves the article on the device (local storage). `aria-pressed` shows the state; the icon changes when saved; shows a toast |
+
+#### C-40 Popover
+
+**Status:** Approved · **Decisions:** DR-390
+
+The small panel that opens from an icon button (`TextSize` in the dock, `C-37`). Its own component, so later tools can share it (`N-04`). Layer `--z-popover`.
+
+#### C-41 SelectionShare
+
+**Status:** Approved · **Decisions:** DR-386, DR-390
+
+A bar over selected article text to copy the quote or share it on X or WhatsApp. `role="toolbar"`.
+
+| Part | Spec |
+| --- | --- |
+| Bar | Fixed above the selection (layout Section 7A.6), `ink` fill, `background` text, 4px padding, a 12px pointer below. Fades in |
+| Button | 38px tall, 12px inline padding, `type-ui-sm` with the button weight, 20px icon; hover `interactive` fill, `on-interactive` text |
+
+#### C-42 Toaster
+
+**Status:** Approved · **Decisions:** DR-386, DR-390
+
+A short confirmation (link copied, saved). `role="status"`, `aria-live="polite"`.
+
+| Part | Spec |
+| --- | --- |
+| Toast | Fixed, bottom center, 100px above the bottom edge. `ink` fill, `background` text, `type-ui-sm`, a 20px `--color-bar` icon. Fades in and rises 16px |
+
 ## 8. Open items
 
 | Item | What to do now |
@@ -1325,3 +1555,5 @@ The minimum footer (DR-59) after the last ad band. Wireframe V2 look: everything
 | RegionSlider region list | The editorial team sets the regions and their order (U-07). Use the 7 working regions as built (bn.ts). The final list and order go in the IA label table (DR-342). |
 | English labels | Working labels until IA-06. |
 | Logo | Text stand-in until the logo file exists (BRD-06). |
+| ArticleHeader category row | The CSS name is `.rd-kicker`; the row is the Eyebrow row. Rename it when the heading is rebuilt (spec log SL-22). |
+| Tag pages | Not built; `Tags` links lead to a 404 page for now. |

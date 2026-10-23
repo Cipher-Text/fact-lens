@@ -1,0 +1,1327 @@
+/*
+ * Wild card reader page (branch page/article-parallel).
+ * A free design with its own type scale and motion, scoped under .rd. Colors are the
+ * color-system tokens only; accents use --color-bar (brand in light, interactive in dark).
+ */
+
+.rd {
+  --rd-gutter: clamp(16px, 4.5vw, 44px);
+  --rd-wrap: min(1240px, 100% - 2 * var(--rd-gutter));
+  --rd-wide: min(1400px, 100% - 2 * var(--rd-gutter));
+  --rd-bar-h: var(--bar-height); /* the site TopBar */
+  /* Inset of every panel in the reading column (Google prompt, key points, context):
+     24px on each side at every width. tajmin approved, 24 Oct 2026, as a new article
+     panel inset; LAY-20's panel-inset (40 / 32, 48 / 40) is sized for page bands and reads
+     too loose next to body text. Not yet in the layout spec (DOC- issue). */
+  --rd-panel-inset: 1.5rem;
+  /* Heading gaps: the story-unit tokens plus one 4px step where they read tight under
+     the article title. tajmin, 23 Oct 2026. */
+  --rd-head-eyebrow-title: calc(
+    var(--space-lead-eyebrow-title) + calc(var(--spacing) * 1)
+  ); /* 12px */
+  --rd-head-title-deck: calc(
+    var(--space-story-title-summary) + calc(var(--spacing) * 1)
+  ); /* 12px */
+  /* Deck to lead image: space-module (24 / 32 / 40), like the other module gaps
+     (tajmin 24 Oct, SL-13). */
+  --rd-head-deck-media: var(--space-module);
+  /* Lead image: the tallest it may be, so the byline and body stay close to the fold. */
+  --rd-lead-media-max: 32rem;
+  --rd-progress: 0;
+  /* The inline ad box in the article body: the 300×250 creative in px (LAY-19). */
+  --ad-inline-w: 300px;
+  --ad-inline-h: 250px;
+
+  position: relative;
+  background: var(--background);
+  color: var(--ink);
+  font-family: var(--font-ui-active);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Bangla: its own display face, a taller line and no negative tracking. */
+
+.rd ::selection {
+  background: var(--accent-subtle);
+  color: var(--ink);
+}
+
+.rd button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.rd-wrap {
+  width: var(--rd-wrap);
+  margin-inline: auto;
+}
+
+.rd-eyebrow {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--type-eyebrow-weight);
+  line-height: var(--type-eyebrow-line);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: var(--type-eyebrow-case);
+  margin: 0 0 calc(var(--spacing) * 3);
+  color: var(--ink-muted);
+}
+
+/* ---------- Progress line ---------- */
+
+/* ---------- Reading bar ---------- */
+
+.rd-iconbtn {
+  display: inline-grid;
+  place-items: center;
+  width: var(--icon-button-size-ghost);
+  height: var(--icon-button-size-ghost);
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  transition:
+    color var(--default-transition-duration),
+    background-color var(--default-transition-duration);
+}
+/* IconButton ghost: no wash; the icon turns interactive-hover, interactive-pressed. */
+.rd-iconbtn:hover {
+  color: var(--interactive-hover);
+}
+.rd-iconbtn:active {
+  color: var(--interactive-pressed);
+}
+.rd-iconbtn[aria-expanded="true"] {
+  background: var(--ink);
+  color: var(--background);
+}
+.rd-iconbtn svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+/* A letter in place of an icon (the text size button): type-button, the same weight as
+   the button labels. */
+.rd-iconbtn__glyph {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-button-size);
+  font-weight: var(--type-button-weight);
+  line-height: var(--type-button-line);
+}
+
+/* ---------- Hero ---------- */
+
+.rd-article {
+  position: relative;
+}
+.rd-article > * {
+  position: relative;
+}
+
+.rd-hero {
+  isolation: isolate;
+  /* After ad-top, as on the homepage: space-page-start (24 / 32 / 40). The space
+     belongs to the section, not to the ad row (LAY-12). */
+  padding-top: var(--space-page-start);
+  padding-bottom: var(--rd-head-deck-media);
+}
+
+/* The heading text (kicker, title, summary) sits in the reading column, centered, with
+   left-aligned text (measure-reading-en / -bn, spacing-layout-system.md 4.1). */
+.rd-hero__text {
+  max-inline-size: var(--measure-reading-en);
+  margin-inline: auto;
+}
+.rd-hero__text:lang(bn) {
+  max-inline-size: var(--measure-reading-bn);
+}
+
+.rd-kicker {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--type-eyebrow-weight);
+  line-height: var(--type-eyebrow-line);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: var(--type-eyebrow-case);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+  /* Category to title: 12px (--rd-head-eyebrow-title). */
+  margin-bottom: var(--rd-head-eyebrow-title);
+  animation: rd-rise var(--duration-slide) var(--ease-slide) both;
+}
+/* The category as a brand button: brand fill, on-interactive text (interactive in dark). */
+.rd-cat {
+  display: inline-flex;
+  align-items: center;
+  min-height: calc(var(--spacing) * 9);
+  padding: 0 calc(var(--spacing) * 3.5);
+  background: var(--color-bar);
+  color: var(--on-interactive);
+  text-decoration: none;
+  transition: background-color var(--default-transition-duration);
+}
+.rd-cat:hover {
+  background: var(--interactive-hover);
+}
+.rd-cat:active {
+  background: var(--interactive-pressed);
+}
+
+.rd-title {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-article-title-size);
+  font-weight: var(--type-article-title-weight);
+  line-height: var(--type-article-title-line);
+  letter-spacing: var(--type-article-title-tracking);
+  margin: 0;
+  text-wrap: pretty;
+  animation: rd-rise var(--duration-slide) var(--ease-slide) both;
+}
+
+.rd-summary {
+  font-family: var(--font-editorial-active);
+  font-size: var(--type-deck-size);
+  font-weight: var(--type-deck-weight);
+  line-height: var(--type-deck-line);
+  letter-spacing: var(--type-deck-tracking);
+  max-inline-size: var(--measure-deck);
+  /* Title to deck: 12px (--rd-head-title-deck). */
+  margin: var(--rd-head-title-deck) 0 0;
+  color: var(--ink-secondary);
+  text-wrap: pretty;
+  animation: rd-rise var(--duration-slide) var(--ease-slide) both;
+}
+
+/* Published, updated and reading time in one line under the deck, separated by the
+   CPT-10 separator (4px square, 10px each side, the metadata color). All the text is the metadata color. tajmin, 23 Oct 2026. Each item
+   carries its separator before it; the list starts one separator width to the left, and
+   the wrapper clips it, so a line never starts with a square when the line wraps. */
+.rd-deckmeta {
+  overflow: hidden;
+  /* Deck to metadata: space-list-item (16px). */
+  margin-top: var(--space-list-item);
+  animation: rd-rise var(--duration-slide) var(--ease-slide) both;
+}
+.rd-deckmeta__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  row-gap: calc(var(--spacing) * 1);
+  margin: 0 0 0 calc(var(--spacing) * -6);
+  font-family: var(--font-ui-active);
+  font-size: var(--type-metadata-size);
+  font-weight: var(--type-metadata-weight);
+  line-height: var(--type-metadata-line);
+  letter-spacing: var(--type-metadata-tracking);
+  color: var(--color-meta);
+}
+.rd-stamp {
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--spacing) * 1);
+}
+.rd-stamp::before {
+  content: "";
+  align-self: center;
+  flex: none;
+  width: calc(var(--spacing) * 1);
+  height: calc(var(--spacing) * 1);
+  /* 10px each side: the item's 4px gap makes up the rest after the square. */
+  margin-inline: calc(var(--spacing) * 2.5) calc(var(--spacing) * 1.5);
+  /* The metadata color (CPT-10). tajmin, 24 Oct 2026. */
+  background: var(--color-meta);
+}
+.rd-stamp dd {
+  margin: 0;
+}
+
+/* The byline row sits below the hero image, in the same reading column as the heading. */
+.rd-byrow {
+  /* Caption to the byline rule: space-module (24 / 32 / 40),
+     the same rhythm as the byline, prompt and key points. tajmin, 23 Oct 2026. */
+  margin-top: var(--space-module);
+}
+
+.rd-meta {
+  /* Rule to byline: space-list-item (16px). */
+  padding-top: var(--space-list-item);
+  border-top: 1px solid var(--border-soft);
+  animation: rd-rise var(--duration-slide) var(--ease-slide) both;
+}
+.rd-byline {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 3.5);
+}
+.rd-byline p {
+  margin: 0;
+}
+.rd-byline__name {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-ui-size);
+  font-weight: var(--type-ui-weight);
+  line-height: var(--type-ui-line);
+  letter-spacing: var(--type-ui-tracking);
+}
+.rd-byline__by {
+  color: var(--ink-muted);
+}
+.rd-byline__role {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-metadata-size);
+  font-weight: var(--type-metadata-weight);
+  line-height: var(--type-metadata-line);
+  letter-spacing: var(--type-metadata-tracking);
+  margin-top: calc(var(--spacing) * 0.5) !important;
+  color: var(--ink-muted);
+}
+
+.rd-avatar {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-button-size);
+  font-weight: var(--type-button-weight);
+  line-height: var(--type-button-line);
+  letter-spacing: var(--type-button-tracking);
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: calc(var(--spacing) * 12);
+  height: calc(var(--spacing) * 12);
+  /* The brand bar color: brand in light, interactive in dark (--color-bar). */
+  background: var(--color-bar);
+  color: var(--on-interactive);
+}
+
+.rd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 4);
+  /* Byline, prompt and key points are separate modules: space-module between them
+     (24 / 32 / 40). tajmin, 23 Oct 2026. */
+  margin-top: var(--space-module);
+  animation: rd-rise var(--duration-slide) var(--ease-slide) both;
+}
+/* ---------- The Google mark and prompt ---------- */
+
+/* No icon: title and text in the first column, the button beside them from 600. */
+.rd-galert {
+  width: 100%;
+  /* Same inset as the other reading-column panels, not the shadcn p-5. */
+  padding: var(--rd-panel-inset);
+  grid-template-columns: minmax(0, 1fr);
+}
+.rd-galert > * {
+  grid-column: 1;
+}
+@media (min-width: 600px) {
+  .rd-galert {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: calc(var(--spacing) * 5);
+  }
+  .rd-galert [data-slot="alert-action"] {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    margin-top: 0;
+  }
+}
+/* Outline button: brand border and text (--color-bar: brand in light, interactive in
+   dark), brand fill on hover. */
+.rd-galert__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2.5);
+  min-height: calc(var(--spacing) * 11);
+  padding: 0 calc(var(--spacing) * 4) 0 calc(var(--spacing) * 3);
+  border: 1px solid var(--color-bar);
+  color: var(--color-bar);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--default-transition-duration),
+    color var(--default-transition-duration);
+}
+.rd-galert__btn:hover,
+.rd-galert__btn:active {
+  background: var(--color-bar);
+  color: var(--on-interactive);
+}
+.rd-galert__btn svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+/* ---------- Hero figure ---------- */
+
+.rd-hero-figure {
+  width: var(--rd-wide);
+  margin: 0 auto;
+  animation: rd-rise var(--duration-slide) var(--ease-slide) both;
+}
+/* Lead image rule: editors upload landscape images of any ratio. The image keeps its own
+   ratio, sits in the center of the hero width and is as tall as it can be up to
+   --rd-lead-media-max; its width follows from that height. It is never stretched or
+   cropped, and never wider than the container. */
+.rd-hero-img {
+  display: block;
+  margin-inline: auto;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: var(--rd-lead-media-max);
+}
+
+.rd-caption {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-line);
+  letter-spacing: var(--type-caption-tracking);
+  margin: var(--space-media-caption) 0 0;
+  color: var(--ink-muted);
+}
+/* The caption sits in the byline column (the reading measure, centered), whatever the
+   image width. tajmin, 23 Oct 2026. */
+.rd-caption--hero {
+  max-inline-size: var(--measure-reading-en);
+  margin-inline: auto;
+}
+.rd-caption--hero:lang(bn) {
+  max-inline-size: var(--measure-reading-bn);
+}
+.rd-credit {
+  color: var(--ink-secondary);
+  white-space: nowrap;
+}
+
+/* ---------- Layout: rail and main column ---------- */
+
+/* The body sits in the reading column, centered, like the heading: measure-reading-en
+   (44rem) or measure-reading-bn (42rem) (typography-system.md 5, spacing-layout-system.md
+   4.1). Every block in it takes the full column width. */
+.rd-layout {
+  margin-top: var(--space-module);
+}
+.rd-main {
+  max-inline-size: var(--measure-reading-en);
+  margin-inline: auto;
+}
+.rd-main:lang(bn) {
+  max-inline-size: var(--measure-reading-bn);
+}
+/* The rail shows from xl (1280), where the free space beside the reading column is wide
+   enough. Below that, the dock at the bottom carries the reading tools. */
+.rd-rail {
+  display: none;
+}
+@media (min-width: 1280px) {
+  .rd-layout {
+    --rd-col: var(--measure-reading-en);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) var(--rd-col) minmax(0, 1fr);
+    column-gap: var(--grid-column-gap);
+  }
+  .rd-layout:lang(bn) {
+    --rd-col: var(--measure-reading-bn);
+  }
+  /* The rail at the start of the left column, the body in the middle (same place as
+     without the rail). Source order stays rail, then body (LAY-14). */
+  .rd-rail {
+    display: block;
+    grid-column: 1;
+    width: min(calc(var(--spacing) * 50), 100%);
+  }
+  .rd-main {
+    grid-column: 2;
+    max-inline-size: none;
+    margin-inline: 0;
+  }
+}
+.rd-rail__sticky {
+  position: sticky;
+  top: calc(var(--rd-bar-h) + calc(var(--spacing) * 9));
+  display: grid;
+  gap: calc(var(--spacing) * 9);
+}
+.rd-rail__title {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--type-eyebrow-weight);
+  line-height: var(--type-eyebrow-line);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: var(--type-eyebrow-case);
+  margin: 0 0 calc(var(--spacing) * 3.5);
+  color: var(--ink-muted);
+}
+.rd-tools {
+  display: grid;
+  gap: calc(var(--spacing) * 7);
+}
+.rd-tools__progress {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 3);
+}
+.rd-tools__meta {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-metadata-size);
+  font-weight: var(--type-metadata-weight);
+  line-height: var(--type-metadata-line);
+  letter-spacing: var(--type-metadata-tracking);
+  display: grid;
+  gap: calc(var(--spacing) * 0.5);
+  margin: 0;
+  color: var(--ink-muted);
+}
+.rd-tools__meta strong {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-ui-sm-size);
+  font-weight: var(--type-ui-sm-weight);
+  line-height: var(--type-ui-sm-line);
+  letter-spacing: var(--type-ui-sm-tracking);
+  color: var(--ink);
+}
+.rd-tools__row {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+}
+/* The marker and the read part of the track follow --rd-toc-y, set on every scroll. A
+   short eased transition smooths the steps between scroll events (a mouse wheel moves
+   the page in jumps), so the marker glides from item to item. Reduced motion turns it off. */
+.rd-toc__body {
+  position: relative;
+  padding-left: calc(var(--spacing) * 5.5);
+}
+.rd-toc__body::before,
+.rd-toc__body::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: calc(var(--spacing) * 0.5);
+}
+.rd-toc__body::before {
+  bottom: 0;
+  background: var(--border);
+}
+.rd-toc__body::after {
+  height: var(--rd-toc-y, 0px);
+  background: var(--color-bar);
+  transition: height var(--duration-slide) var(--ease-slide);
+}
+.rd-toc__marker {
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--spacing) * -1);
+  top: 0;
+  width: calc(var(--spacing) * 2.5);
+  height: calc(var(--spacing) * 2.5);
+  background: var(--color-bar);
+  transform: translateY(calc(var(--rd-toc-y, 0px) - 50%));
+  transition: transform var(--duration-slide) var(--ease-slide);
+}
+.rd-toc__list {
+  display: grid;
+  gap: calc(var(--spacing) * 0.5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rd-toc__link {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-nav-size);
+  font-weight: var(--type-nav-weight);
+  line-height: var(--type-nav-line);
+  display: block;
+  padding: calc(var(--spacing) * 2) 0;
+  color: var(--ink-muted);
+  text-decoration: none;
+  transition: color var(--default-transition-duration);
+}
+.rd-toc__link:hover,
+.rd-toc__link[aria-current="true"] {
+  color: var(--ink);
+}
+
+.rd-main {
+  min-width: 0;
+  outline: none;
+}
+
+/* ---------- Key points ---------- */
+
+/* A colored panel: surface-elevated, --rd-panel-inset padding, no border (CPT-06). */
+.rd-points {
+  padding: var(--rd-panel-inset);
+  background: var(--surface-elevated);
+}
+.rd-points__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
+  margin-bottom: var(--space-section-title-after);
+}
+/* The box heading is a minor subheading in the article: type-article-h3, with the reader
+   size (TYP-15), headline ink (TYP-14). */
+.rd-points__title {
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-article-h3-size) * var(--reader-scale));
+  font-weight: var(--type-article-h3-weight);
+  line-height: var(--type-article-h3-line);
+  letter-spacing: var(--type-article-h3-tracking);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  color: var(--ink);
+}
+.rd-points__title svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--color-bar);
+}
+.rd-points__note {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-metadata-size);
+  font-weight: var(--type-metadata-weight);
+  line-height: var(--type-metadata-line);
+  letter-spacing: var(--type-metadata-tracking);
+  color: var(--ink-muted);
+}
+.rd-points ol {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rd-points li {
+  display: grid;
+  grid-template-columns: calc(var(--spacing) * 10) minmax(0, 1fr);
+  gap: calc(var(--spacing) * 3);
+}
+/* A dotted rule below the text only (not under the number), 8px on each side of the rule.
+   tajmin, 23 Oct 2026. */
+.rd-points li + li {
+  margin-top: calc(var(--spacing) * 2);
+}
+.rd-points li:not(:last-child) p {
+  padding-bottom: calc(var(--spacing) * 2);
+  border-bottom: 1px dotted var(--border);
+}
+.rd-points__n {
+  /* The item number is part of the list: type-article-body, so it sits on the line. */
+  font-family: var(--font-editorial-active);
+  font-size: max(
+    var(--type-body-min),
+    calc(var(--type-article-body-size) * var(--reader-scale))
+  );
+  font-weight: var(--type-article-body-weight);
+  line-height: var(--type-article-body-line);
+  letter-spacing: var(--type-article-body-tracking);
+  color: var(--color-bar);
+  font-variant-numeric: tabular-nums;
+}
+.rd-points p {
+  /* Lists in the article: type-article-body (typography-system.md 7.2). */
+  font-family: var(--font-editorial-active);
+  font-size: max(
+    var(--type-body-min),
+    calc(var(--type-article-body-size) * var(--reader-scale))
+  );
+  font-weight: var(--type-article-body-weight);
+  line-height: var(--type-article-body-line);
+  letter-spacing: var(--type-article-body-tracking);
+  margin: 0;
+  color: var(--ink-secondary);
+}
+
+/* ---------- Context (inside the body) ---------- */
+
+.rd-prose .rd-context {
+  margin: var(--space-module) 0;
+  container-type: inline-size;
+  scroll-margin-top: calc(var(--rd-bar-h) + calc(var(--spacing) * 6));
+}
+.rd-context__card {
+  gap: 0;
+  padding: var(--rd-panel-inset);
+  /* Body text in the card is ink-secondary; the title sets ink (TYP-14). */
+  color: var(--ink-secondary);
+  /* No top bar: in the article body a brand bar reads too strong (tajmin, 24 Oct
+     2026). */
+}
+.rd-context__head {
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: calc(var(--spacing) * 4);
+  row-gap: calc(var(--spacing) * 1);
+  align-items: center;
+  margin-bottom: var(--space-section-title-after);
+}
+.rd-context__icon {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 10);
+  background: var(--color-bar);
+  color: var(--accent-subtle);
+}
+.rd-context__icon svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+/* Same role as the key points heading: type-article-h3. */
+.rd-prose .rd-context__title {
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-article-h3-size) * var(--reader-scale));
+  font-weight: var(--type-article-h3-weight);
+  line-height: var(--type-article-h3-line);
+  letter-spacing: var(--type-article-h3-tracking);
+  margin: 0;
+  color: var(--ink);
+}
+/* The teaser line: type-metadata, muted (TYP-14). */
+.rd-context__teaser {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-metadata-size);
+  font-weight: var(--type-metadata-weight);
+  line-height: var(--type-metadata-line);
+  letter-spacing: var(--type-metadata-tracking);
+  margin: 0;
+  color: var(--ink-muted);
+}
+.rd-context__list {
+  display: grid;
+  gap: var(--grid-row-gap);
+}
+.rd-context__label {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--type-eyebrow-weight);
+  line-height: var(--type-eyebrow-line);
+  letter-spacing: var(--type-eyebrow-tracking);
+  /* Uppercase only on Eyebrow and Chip (DR-216). */
+  text-transform: none;
+  margin: 0 0 calc(var(--spacing) * 2);
+  color: var(--color-bar);
+}
+.rd-prose .rd-context__part p {
+  font-family: var(--font-editorial-active);
+  font-size: max(
+    var(--type-body-min),
+    calc(var(--type-article-body-size) * var(--reader-scale))
+  );
+  font-weight: var(--type-article-body-weight);
+  line-height: var(--type-article-body-line);
+  letter-spacing: var(--type-article-body-tracking);
+  margin: 0 0 1.1em;
+}
+.rd-prose .rd-context__part p:last-child {
+  margin-bottom: 0;
+}
+/* ---------- Article body ---------- */
+
+.rd-prose {
+  font-family: var(--font-editorial-active);
+  font-size: max(
+    var(--type-body-min),
+    calc(var(--type-article-body-size) * var(--reader-scale))
+  );
+  font-weight: var(--type-article-body-weight);
+  line-height: var(--type-article-body-line);
+  letter-spacing: var(--type-article-body-tracking);
+  /* Body text ink-secondary, headlines ink (TYP-14). */
+  color: var(--ink-secondary);
+}
+/* Key points to body: space-module. */
+.rd-points + .rd-prose {
+  margin-top: var(--space-module);
+}
+/* Inline ads in the body: space-module above and below; the body owns the space, the ad
+   row has none (LAY-12). Placed between paragraphs only, never next to a heading, image,
+   key points or context. tajmin, 24 Oct 2026. */
+.rd-prose > :has(+ [data-ad-slot]) {
+  margin-bottom: var(--space-module);
+}
+.rd-prose > [data-ad-slot] + * {
+  margin-top: var(--space-module);
+}
+/* The label line is not a body paragraph: no paragraph gap. */
+.rd-prose [data-ad-slot] p {
+  margin: 0;
+}
+/* The ad after the article: a full-width ad-band row. The article owns space-section
+   above it and Read next owns space-module below it (LAY-12). tajmin, 24 Oct 2026. */
+.rd-article:has(+ [data-ad-slot]) {
+  margin-bottom: var(--space-section);
+}
+[data-ad-slot] + .rd-next {
+  margin-top: var(--space-module);
+}
+/* Read next, the last section before the footer: space-section below it, as the
+   homepage's last section (FL-12). */
+.rd-next {
+  padding-bottom: var(--space-section);
+}
+/* Paragraph gap 1.1em, no indent (typography-system.md 7.2). */
+.rd-prose p {
+  margin: 0 0 1.1em;
+  text-wrap: pretty;
+}
+.rd-prose h2 {
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
+  font-weight: var(--type-article-h2-weight);
+  line-height: var(--type-article-h2-line);
+  letter-spacing: var(--type-article-h2-tracking);
+  margin: 0;
+  color: var(--ink);
+  scroll-margin-top: calc(var(--rd-bar-h) + calc(var(--spacing) * 7));
+}
+/* A section heading and its copy-link button. The button sits beside the h2, not in it,
+   so the heading's accessible name is the heading text only. The h2 is inline, so the
+   button follows the last word as it did inside the heading; the wrapper carries the
+   heading type so the line boxes match. */
+.rd-section-head {
+  font-family: var(--font-editorial-active);
+  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
+  line-height: var(--type-article-h2-line);
+  /* Space around headings from the spacing tokens (typography-system.md 7.2): a module
+     gap before, the heading-to-content gap after. */
+  margin: var(--space-module) 0 var(--space-section-title-after);
+}
+.rd-section-head h2 {
+  display: inline;
+}
+/* In the h2 size, so it scales with the reader size (TYP-15); at least 24px, the
+   smallest touch target (WCAG 2.5.8). (.rd .rd-anchor wins over the .rd button font
+   reset.) */
+.rd .rd-anchor {
+  font-size: inherit;
+}
+.rd-anchor {
+  --rd-anchor-size: max(1.3em, calc(var(--spacing) * 6));
+  display: inline-grid;
+  place-items: center;
+  width: var(--rd-anchor-size);
+  height: var(--rd-anchor-size);
+  margin-left: 0.3em;
+  border: 0;
+  background: transparent;
+  color: var(--ink-muted);
+  vertical-align: middle;
+  opacity: 0;
+  transition:
+    opacity var(--duration-slide) var(--ease-slide),
+    background-color var(--default-transition-duration);
+}
+.rd-anchor svg {
+  width: 0.6em;
+  height: 0.6em;
+}
+/* With a mouse it shows on hover; with the keyboard on focus. On touch it always shows,
+   at full strength in ink-muted (COL-08, TYP-22). */
+.rd-section-head:hover .rd-anchor,
+.rd-anchor:focus-visible {
+  opacity: 1;
+}
+.rd-anchor:hover {
+  background: var(--accent-subtle);
+  color: var(--interactive);
+}
+@media (hover: none) {
+  .rd-anchor {
+    opacity: 1;
+  }
+}
+
+.rd-figure {
+  margin: var(--space-module) 0;
+}
+/* Body image: the full column width at its own ratio, never cropped. */
+.rd-figure__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--surface-alt);
+}
+
+.rd-list {
+  display: grid;
+  gap: 0.55em;
+  margin: 0 0 1.1em;
+  padding: 0;
+  list-style: none;
+}
+.rd-list li {
+  position: relative;
+  padding-left: 1.7em;
+}
+/* The list bullet: a filled square, the shape of the metadata separator (CPT-10), in
+   the text color of the list (ink-secondary); brand stays for identity (COL-04). In em, so it scales with the reader
+   size (TYP-15); centered on the first line. tajmin, 24 Oct 2026. */
+.rd-list li::before {
+  --rd-bullet: 0.35em;
+  content: "";
+  position: absolute;
+  left: 0.2em;
+  top: calc((var(--type-article-body-line) * 1em - var(--rd-bullet)) / 2);
+  width: var(--rd-bullet);
+  height: var(--rd-bullet);
+  background: currentColor;
+}
+
+/* ---------- After the body ---------- */
+
+/* The end of the article: a 1px rule, then the tags (tajmin, 24 Oct 2026). The same
+   space on both sides of the rule, as Divider does (C-22): space-module (24 / 32 / 40),
+   because the rule separates two modules, the body and the tags. */
+.rd-after {
+  display: grid;
+  gap: var(--space-module);
+  margin-top: var(--space-module);
+  padding-top: var(--space-module);
+  border-top: 1px solid var(--border);
+}
+
+.rd-tags ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(var(--spacing) * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------- Reading tools: progress frame and the bottom dock ---------- */
+
+.rd-progressbtn {
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
+  padding: 0;
+  border: 0;
+  background: var(--surface-elevated);
+  color: var(--ink);
+}
+.rd-progressbtn__pct {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-ui-sm-size);
+  font-weight: var(--type-ui-sm-weight);
+  line-height: var(--type-ui-sm-line);
+  letter-spacing: var(--type-ui-sm-tracking);
+  display: grid;
+  place-items: center;
+  font-variant-numeric: tabular-nums;
+  transition: opacity var(--duration-slide) var(--ease-slide);
+}
+.rd-progressbtn__pct svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--color-bar);
+}
+.rd-progressbtn__up {
+  position: absolute;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  opacity: 0;
+  transition: opacity var(--duration-slide) var(--ease-slide);
+}
+.rd-progressbtn:hover .rd-progressbtn__pct,
+.rd-progressbtn:focus-visible .rd-progressbtn__pct {
+  opacity: 0;
+}
+.rd-progressbtn:hover .rd-progressbtn__up,
+.rd-progressbtn:focus-visible .rd-progressbtn__up {
+  opacity: 1;
+}
+
+/* A square frame that fills clockwise from the top left corner. */
+.rd-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.rd-frame rect {
+  fill: none;
+  stroke-width: 3;
+}
+.rd-frame__track {
+  stroke: var(--border);
+}
+.rd-frame__fill {
+  stroke: var(--color-bar);
+  stroke-dasharray: 100px;
+  stroke-dashoffset: calc((1 - var(--rd-progress)) * 100px);
+}
+/* At 100% the box fills with the brand accent and the tick turns on-interactive. */
+.rd-progressbtn {
+  transition:
+    background-color var(--default-transition-duration),
+    color var(--default-transition-duration);
+}
+.rd[data-done] .rd-progressbtn {
+  background: var(--color-bar);
+  color: var(--on-interactive);
+}
+.rd[data-done] .rd-progressbtn__pct svg {
+  color: var(--on-interactive);
+}
+
+.rd-dock {
+  position: fixed;
+  z-index: var(--z-dock);
+  inset: auto 0 0;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1);
+  padding: calc(var(--spacing) * 2) var(--rd-gutter)
+    calc(calc(var(--spacing) * 2) + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--border-soft);
+  /* A raised surface: surface-elevated, opaque, no blur (COL-01, COL-15). tajmin,
+     24 Oct 2026. */
+  background: var(--surface-elevated);
+  transform: translateY(100%);
+  /* Hidden until the reader starts: visibility takes the buttons out of the Tab order
+     and the accessibility tree (COL-13). It turns hidden only after the slide-out ends. */
+  visibility: hidden;
+  transition:
+    transform var(--duration-slide) var(--ease-slide),
+    visibility 0s linear var(--duration-slide);
+}
+.rd-dock[data-show] {
+  transform: none;
+  visibility: visible;
+  transition:
+    transform var(--duration-slide) var(--ease-slide),
+    visibility 0s;
+}
+@media (min-width: 1280px) {
+  .rd-dock {
+    display: none;
+  }
+}
+/* Below 1280 the dock covers the bottom of the screen: its height is the button, the
+   padding, the top border and the safe area. A link that takes focus scrolls clear of
+   it, and the page ends above it. */
+@media (width < 80rem) {
+  html:has(.rd-dock) {
+    --rd-dock-h: calc(
+      var(--icon-button-size) + calc(var(--spacing) * 4) + 1px +
+        env(safe-area-inset-bottom)
+    );
+    scroll-padding-bottom: var(--rd-dock-h);
+  }
+  .rd {
+    padding-bottom: var(--rd-dock-h);
+  }
+}
+.rd-dock__meta {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-ui-sm-size);
+  font-weight: var(--type-ui-sm-weight);
+  line-height: var(--type-ui-sm-line);
+  letter-spacing: var(--type-ui-sm-tracking);
+  /* min-width 0 and wrapping keep the fixed dock inside 320px at 200% text and with long
+     Bangla text: the text wraps, it is not clipped or made smaller (LAY-02, TYP-09). */
+  flex: 1;
+  min-width: 0;
+  padding: 0 calc(var(--spacing) * 2);
+  overflow-wrap: anywhere;
+}
+.rd-dock__sep {
+  width: 1px;
+  height: calc(var(--spacing) * 6);
+  margin: 0 calc(var(--spacing) * 1);
+  background: var(--border);
+}
+
+/* ---------- Popovers ---------- */
+
+.rd-pop {
+  position: relative;
+  display: inline-flex;
+}
+.rd-pop__panel {
+  position: absolute;
+  z-index: var(--z-popover);
+  right: 0;
+  min-width: calc(var(--spacing) * 62);
+  padding: calc(var(--spacing) * 2);
+  border: 1px solid var(--border-soft);
+  background: var(--surface-elevated);
+  animation: rd-pop var(--duration-slide) var(--ease-slide) both;
+}
+.rd-pop__panel[data-side="bottom"] {
+  top: calc(100% + calc(var(--spacing) * 2.5));
+  transform-origin: top right;
+}
+.rd-pop__panel[data-side="top"] {
+  bottom: calc(100% + calc(var(--spacing) * 3.5));
+  transform-origin: bottom right;
+}
+.rd-pop__label {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-eyebrow-size);
+  font-weight: var(--type-eyebrow-weight);
+  line-height: var(--type-eyebrow-line);
+  letter-spacing: var(--type-eyebrow-tracking);
+  text-transform: var(--type-eyebrow-case);
+  margin: 0;
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 2.5)
+    calc(var(--spacing) * 2.5);
+  color: var(--ink-muted);
+}
+.rd-sizes {
+  display: flex;
+  gap: calc(var(--spacing) * 2);
+  padding: 0 calc(var(--spacing) * 1) calc(var(--spacing) * 1.5);
+}
+/* One glyph size for every step (+ and ++ mark the larger ones): type-button, the role
+   for control labels. (.rd .rd-size wins over the .rd button font reset.) */
+.rd .rd-size {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-button-size);
+  font-weight: var(--type-button-weight);
+  line-height: var(--type-button-line);
+  letter-spacing: var(--type-button-tracking);
+  display: grid;
+  place-items: center;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--ink);
+  transition:
+    background-color var(--default-transition-duration),
+    color var(--default-transition-duration);
+}
+.rd-size[aria-checked="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--background);
+}
+/* Hover on a step that is not chosen: a neutral wash and an ink border, no brand. */
+.rd-size:not([aria-checked="true"]):hover {
+  border-color: var(--ink);
+  background: var(--surface-alt);
+}
+/* ---------- Share dialog (shadcn Dialog, in a portal outside .rd) ---------- */
+
+.rd-sharedlg__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(var(--spacing) * 1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 600px) {
+  .rd-sharedlg__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.rd-sharedlg__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--spacing) * 2.5);
+  width: 100%;
+  padding: calc(var(--spacing) * 3.5) calc(var(--spacing) * 1.5);
+  border: 0;
+  background: transparent;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color var(--default-transition-duration);
+}
+.rd-sharedlg__option:hover {
+  background: var(--surface-alt);
+}
+.rd-sharedlg__icon {
+  display: grid;
+  place-items: center;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
+  /* Icon only, ink; it turns interactive-hover with the option (no network colors). */
+  color: var(--ink);
+  transition: color var(--default-transition-duration);
+}
+.rd-sharedlg__option:hover .rd-sharedlg__icon {
+  color: var(--interactive-hover);
+}
+.rd-sharedlg__icon svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+.rd-sharedlg__link {
+  display: flex;
+  height: calc(var(--spacing) * 12);
+  border: 1px solid var(--border-interactive);
+}
+.rd-sharedlg__field {
+  flex: 1;
+  min-width: 0;
+  padding: 0 calc(var(--spacing) * 3.5);
+  border: 0;
+  background: transparent;
+  outline-offset: calc(var(--spacing) * -0.5);
+}
+.rd-sharedlg__copy {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  padding: 0 calc(var(--spacing) * 4.5);
+  border: 0;
+  transition: background-color var(--default-transition-duration);
+}
+.rd-sharedlg__copy svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+/* ---------- Selection bar and toast ---------- */
+
+.rd-selbar {
+  position: fixed;
+  z-index: var(--z-selection);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 0.5);
+  padding: calc(var(--spacing) * 1);
+  background: var(--ink);
+  color: var(--background);
+  transform: translate(-50%, -100%);
+  animation: rd-fade var(--duration-slide) var(--ease-slide) both;
+}
+.rd-selbar::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--spacing) * -1);
+  width: calc(var(--spacing) * 3);
+  height: calc(var(--spacing) * 3);
+  background: var(--ink);
+  transform: translateX(-50%) rotate(45deg);
+}
+.rd-selbar button,
+.rd-selbar a {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 9.5);
+  padding: 0 calc(var(--spacing) * 3);
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-ui-active);
+  font-size: var(--type-ui-sm-size);
+  font-weight: var(--type-button-weight);
+  line-height: var(--type-ui-sm-line);
+  text-decoration: none;
+}
+.rd-selbar button:hover,
+.rd-selbar a:hover {
+  background: var(--interactive);
+  color: var(--on-interactive);
+}
+.rd-selbar svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+}
+
+.rd-toast {
+  font-family: var(--font-ui-active);
+  font-size: var(--type-ui-sm-size);
+  font-weight: var(--type-ui-sm-weight);
+  line-height: var(--type-ui-sm-line);
+  letter-spacing: var(--type-ui-sm-tracking);
+  position: fixed;
+  z-index: var(--z-toast);
+  left: 50%;
+  bottom: calc(var(--spacing) * 25);
+  display: flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 2.5);
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 5)
+    calc(var(--spacing) * 3) calc(var(--spacing) * 4);
+  background: var(--ink);
+  color: var(--background);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, calc(var(--spacing) * 4));
+  transition:
+    opacity var(--duration-slide) var(--ease-slide),
+    transform var(--duration-slide) var(--ease-slide);
+}
+.rd-toast[data-show] {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.rd-toast svg {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--color-bar);
+}
+.rd-toast:empty {
+  display: none;
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes rd-rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--spacing) * 4.5));
+  }
+}
+@keyframes rd-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rd-pop {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--spacing) * 1.5)) scale(0.97);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rd *,
+  .rd *::before,
+  .rd *::after {
+    animation: none !important;
+    transition-duration: 0s !important;
+  }
+}
+
+@media print {
+  .rd-dock,
+  .rd-rail,
+  .rd-actions,
+  .rd-next,
+  .rd-toast {
+    display: none !important;
+  }
+}
+
+/* The reader size change eases the text to its new size. */
+.rd-prose,
+.rd-prose h2,
+.rd-section-head,
+.rd-prose .rd-context__part p {
+  transition: font-size var(--duration-slide) var(--ease-slide);
+}
