@@ -9,29 +9,28 @@
   --rd-wrap: min(1240px, 100% - 2 * var(--rd-gutter));
   --rd-wide: min(1400px, 100% - 2 * var(--rd-gutter));
   --rd-bar-h: var(--bar-height); /* the site TopBar */
-  /* Lead image: the tallest it may be, so the byline and body stay close to the fold.
-     The second cap keeps it under 60% of a short viewport (a laptop or a phone held
-     sideways). */
   /* Inset of every panel in the reading column (Google prompt, key points, context):
-     24px on each side at every width. tajmin approved, 24 Oct 2026, as a new article
+     calc(var(--spacing) * 6) on each side at every width. tajmin approved, 24 Oct 2026, as a new article
      panel inset; LAY-20's panel-inset (40 / 32, 48 / 40) is sized for page bands and reads
      too loose next to body text. Not yet in the layout spec (DOC- issue). */
   --rd-panel-inset: 1.5rem;
-  /* Heading gaps: the story-unit tokens plus one 4px step where they read tight under
+  /* Heading gaps: the story-unit tokens plus one calc(var(--spacing) * 1) step where they read tight under
      the article title. tajmin, 23 Oct 2026. */
   --rd-head-eyebrow-title: calc(
-    var(--space-lead-eyebrow-title) + 4px
-  ); /* 12px */
-  --rd-head-title-deck: calc(var(--space-story-title-summary) + 4px); /* 12px */
-  --rd-head-deck-media: 2.5rem; /* 40px */
-  --rd-lead-media-max: min(32rem, 60svh);
+    var(--space-lead-eyebrow-title) + calc(var(--spacing) * 1)
+  ); /* calc(var(--spacing) * 3) */
+  --rd-head-title-deck: calc(
+    var(--space-story-title-summary) + calc(var(--spacing) * 1)
+  ); /* calc(var(--spacing) * 3) */
+  --rd-head-deck-media: 2.5rem; /* calc(var(--spacing) * 10) */
+  /* Lead image: the tallest it may be, so the byline and body stay close to the fold. */
+  --rd-lead-media-max: 32rem;
   --rd-progress: 0;
   /* The inline ad box in the article body: the 300×250 creative in px (LAY-19). */
   --ad-inline-w: 300px;
   --ad-inline-h: 250px;
 
   position: relative;
-  min-height: 100dvh;
   background: var(--background);
   color: var(--ink);
   font-family: var(--font-ui-active);
@@ -63,7 +62,7 @@
   line-height: var(--type-eyebrow-line);
   letter-spacing: var(--type-eyebrow-tracking);
   text-transform: var(--type-eyebrow-case);
-  margin: 0 0 12px;
+  margin: 0 0 calc(var(--spacing) * 3);
   color: var(--ink-muted);
 }
 
@@ -74,8 +73,8 @@
 .rd-iconbtn {
   display: inline-grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: var(--icon-button-size-ghost);
+  height: var(--icon-button-size-ghost);
   border: 0;
   background: transparent;
   color: var(--ink);
@@ -95,8 +94,8 @@
   color: var(--background);
 }
 .rd-iconbtn svg {
-  width: 19px;
-  height: 19px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 /* A letter in place of an icon (the text size button): type-button, the same weight as
    the button labels. */
@@ -121,7 +120,7 @@
   /* After ad-top, as on the homepage: space-page-start (24 / 32 / 40). The space
      belongs to the section, not to the ad row (LAY-12). */
   padding-top: var(--space-page-start);
-  /* Heading (deck) to image: 40px (--rd-head-deck-media). */
+  /* Heading (deck) to image: calc(var(--spacing) * 10) (--rd-head-deck-media). */
   padding-bottom: var(--rd-head-deck-media);
 }
 
@@ -145,8 +144,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 16px;
-  /* Category to title: 12px (--rd-head-eyebrow-title). */
+  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
+  /* Category to title: calc(var(--spacing) * 3) (--rd-head-eyebrow-title). */
   margin-bottom: var(--rd-head-eyebrow-title);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
@@ -155,7 +154,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 2.25rem;
-  padding: 0 14px;
+  padding: 0 calc(var(--spacing) * 3.5);
   background: var(--color-bar);
   color: var(--on-interactive);
   text-decoration: none;
@@ -170,7 +169,8 @@
 
 .rd-title {
   font-family: var(--font-editorial-active);
-  font-size: 3rem; /* 48px, tajmin 23 Oct (type-article-title is fluid) */
+  /* 36 to calc(var(--spacing) * 12) (en), 34 to calc(var(--spacing) * 11) (bn), largest from 1280 (tajmin 24 Oct, SL-15). */
+  font-size: clamp(2.25rem, 1.957rem + 1.304vw, 3rem);
   font-weight: var(--type-article-title-weight);
   line-height: var(--type-article-title-line);
   letter-spacing: var(--type-article-title-tracking);
@@ -179,7 +179,7 @@
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
 .rd-title:lang(bn) {
-  font-size: 2.75rem; /* 44px */
+  font-size: clamp(2.125rem, 1.88rem + 1.087vw, 2.75rem);
 }
 
 .rd-summary {
@@ -189,7 +189,7 @@
   line-height: var(--type-deck-line);
   letter-spacing: var(--type-deck-tracking);
   max-inline-size: var(--measure-deck);
-  /* Title to deck: 12px (--rd-head-title-deck). */
+  /* Title to deck: calc(var(--spacing) * 3) (--rd-head-title-deck). */
   margin: var(--rd-head-title-deck) 0 0;
   color: var(--ink-secondary);
   text-wrap: pretty;
@@ -197,12 +197,12 @@
 }
 
 /* Published, updated and reading time in one line under the deck, separated by the
-   CPT-10 separator (4px square, 10px each side, the metadata color). All the text is the metadata color. tajmin, 23 Oct 2026. Each item
+   CPT-10 separator (calc(var(--spacing) * 1) square, calc(var(--spacing) * 2.5) each side, the metadata color). All the text is the metadata color. tajmin, 23 Oct 2026. Each item
    carries its separator before it; the list starts one separator width to the left, and
    the wrapper clips it, so a line never starts with a square when the line wraps. */
 .rd-deckmeta {
   overflow: hidden;
-  /* Deck to metadata: space-list-item (16px). */
+  /* Deck to metadata: space-list-item (calc(var(--spacing) * 4)). */
   margin-top: var(--space-list-item);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
@@ -210,8 +210,8 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  row-gap: 4px;
-  margin: 0 0 0 -24px;
+  row-gap: calc(var(--spacing) * 1);
+  margin: 0 0 0 calc(var(--spacing) * -6);
   font-family: var(--font-ui-active);
   font-size: var(--type-metadata-size);
   font-weight: var(--type-metadata-weight);
@@ -222,16 +222,16 @@
 .rd-stamp {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: calc(var(--spacing) * 1);
 }
 .rd-stamp::before {
   content: "";
   align-self: center;
   flex: none;
-  width: 4px;
-  height: 4px;
-  /* 10px each side: the item's 4px gap makes up the rest after the square. */
-  margin-inline: 10px 6px;
+  width: calc(var(--spacing) * 1);
+  height: calc(var(--spacing) * 1);
+  /* calc(var(--spacing) * 2.5) each side: the item's calc(var(--spacing) * 1) gap makes up the rest after the square. */
+  margin-inline: calc(var(--spacing) * 2.5) calc(var(--spacing) * 1.5);
   /* The metadata color (CPT-10). tajmin, 24 Oct 2026. */
   background: var(--color-meta);
 }
@@ -247,7 +247,7 @@
 }
 
 .rd-meta {
-  /* Rule to byline: space-list-item (16px). */
+  /* Rule to byline: space-list-item (calc(var(--spacing) * 4)). */
   padding-top: var(--space-list-item);
   border-top: 1px solid var(--border-soft);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
@@ -255,7 +255,7 @@
 .rd-byline {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: calc(var(--spacing) * 3.5);
 }
 .rd-byline p {
   margin: 0;
@@ -276,7 +276,7 @@
   font-weight: var(--type-metadata-weight);
   line-height: var(--type-metadata-line);
   letter-spacing: var(--type-metadata-tracking);
-  margin-top: 2px !important;
+  margin-top: calc(var(--spacing) * 0.5) !important;
   color: var(--ink-muted);
 }
 
@@ -289,8 +289,8 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: calc(var(--spacing) * 12);
+  height: calc(var(--spacing) * 12);
   /* The brand bar color: brand in light, interactive in dark (--color-bar). */
   background: var(--color-bar);
   color: var(--on-interactive);
@@ -301,7 +301,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: calc(var(--spacing) * 4);
   /* Byline, prompt and key points are separate modules: space-module between them
      (24 / 32 / 40). tajmin, 23 Oct 2026. */
   margin-top: var(--space-module);
@@ -322,7 +322,7 @@
 @media (min-width: 600px) {
   .rd-galert {
     grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: 20px;
+    column-gap: calc(var(--spacing) * 5);
   }
   .rd-galert [data-slot="alert-action"] {
     grid-column: 2;
@@ -336,9 +336,9 @@
 .rd-galert__btn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-height: 44px;
-  padding: 0 16px 0 12px;
+  gap: calc(var(--spacing) * 2.5);
+  min-height: calc(var(--spacing) * 11);
+  padding: 0 calc(var(--spacing) * 4) 0 calc(var(--spacing) * 3);
   border: 1px solid var(--color-bar);
   color: var(--color-bar);
   text-decoration: none;
@@ -353,8 +353,8 @@
   color: var(--on-interactive);
 }
 .rd-galert__btn svg {
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 
 /* ---------- Hero figure ---------- */
@@ -445,9 +445,9 @@
 }
 .rd-rail__sticky {
   position: sticky;
-  top: calc(var(--rd-bar-h) + 36px);
+  top: calc(var(--rd-bar-h) + calc(var(--spacing) * 9));
   display: grid;
-  gap: 36px;
+  gap: calc(var(--spacing) * 9);
 }
 .rd-rail__title {
   font-family: var(--font-ui-active);
@@ -456,17 +456,17 @@
   line-height: var(--type-eyebrow-line);
   letter-spacing: var(--type-eyebrow-tracking);
   text-transform: var(--type-eyebrow-case);
-  margin: 0 0 14px;
+  margin: 0 0 calc(var(--spacing) * 3.5);
   color: var(--ink-muted);
 }
 .rd-tools {
   display: grid;
-  gap: 28px;
+  gap: calc(var(--spacing) * 7);
 }
 .rd-tools__progress {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: calc(var(--spacing) * 3);
 }
 .rd-tools__meta {
   font-family: var(--font-ui-active);
@@ -475,7 +475,7 @@
   line-height: var(--type-metadata-line);
   letter-spacing: var(--type-metadata-tracking);
   display: grid;
-  gap: 2px;
+  gap: calc(var(--spacing) * 0.5);
   margin: 0;
   color: var(--ink-muted);
 }
@@ -490,14 +490,14 @@
 .rd-tools__row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: calc(var(--spacing) * 2);
 }
 /* The marker and the read part of the track follow --rd-toc-y, set on every scroll. A
    short eased transition smooths the steps between scroll events (a mouse wheel moves
    the page in jumps), so the marker glides from item to item. Reduced motion turns it off. */
 .rd-toc__body {
   position: relative;
-  padding-left: 22px;
+  padding-left: calc(var(--spacing) * 5.5);
 }
 .rd-toc__body::before,
 .rd-toc__body::after {
@@ -505,7 +505,7 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 2px;
+  width: calc(var(--spacing) * 0.5);
 }
 .rd-toc__body::before {
   bottom: 0;
@@ -519,17 +519,17 @@
 .rd-toc__marker {
   position: absolute;
   z-index: 1;
-  left: -4px;
+  left: calc(var(--spacing) * -1);
   top: 0;
-  width: 10px;
-  height: 10px;
+  width: calc(var(--spacing) * 2.5);
+  height: calc(var(--spacing) * 2.5);
   background: var(--color-bar);
-  transform: translateY(calc(var(--rd-toc-y, 0px) - 5px));
+  transform: translateY(calc(var(--rd-toc-y, 0px) - 50%));
   transition: transform var(--duration-slide) var(--ease-slide);
 }
 .rd-toc__list {
   display: grid;
-  gap: 2px;
+  gap: calc(var(--spacing) * 0.5);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -540,7 +540,7 @@
   font-weight: var(--type-nav-weight);
   line-height: var(--type-nav-line);
   display: block;
-  padding: 7px 0;
+  padding: calc(var(--spacing) * 2) 0;
   color: var(--ink-muted);
   text-decoration: none;
   transition: color var(--default-transition-duration);
@@ -567,7 +567,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: 4px 16px;
+  gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
   margin-bottom: var(--space-section-title-after);
 }
 /* The box heading is a minor subheading in the article: type-article-h3, with the reader
@@ -580,13 +580,13 @@
   letter-spacing: var(--type-article-h3-tracking);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: calc(var(--spacing) * 2);
   margin: 0;
   color: var(--ink);
 }
 .rd-points__title svg {
-  width: 20px;
-  height: 20px;
+  width: var(--icon-size);
+  height: var(--icon-size);
   color: var(--color-bar);
 }
 .rd-points__note {
@@ -607,15 +607,15 @@
 .rd-points li {
   display: grid;
   grid-template-columns: 2.5rem minmax(0, 1fr);
-  gap: 12px;
+  gap: calc(var(--spacing) * 3);
 }
-/* A dotted rule below the text only (not under the number), 8px on each side of the rule.
+/* A dotted rule below the text only (not under the number), calc(var(--spacing) * 2) on each side of the rule.
    tajmin, 23 Oct 2026. */
 .rd-points li + li {
-  margin-top: 8px;
+  margin-top: calc(var(--spacing) * 2);
 }
 .rd-points li:not(:last-child) p {
-  padding-bottom: 8px;
+  padding-bottom: calc(var(--spacing) * 2);
   border-bottom: 1px dotted var(--border);
 }
 .rd-points__n {
@@ -650,7 +650,7 @@
 .rd-prose .rd-context {
   margin: var(--space-module) 0;
   container-type: inline-size;
-  scroll-margin-top: calc(var(--rd-bar-h) + 24px);
+  scroll-margin-top: calc(var(--rd-bar-h) + calc(var(--spacing) * 6));
 }
 .rd-context__card {
   gap: 0;
@@ -662,8 +662,8 @@
 }
 .rd-context__head {
   grid-template-columns: auto minmax(0, 1fr);
-  column-gap: 16px;
-  row-gap: 4px;
+  column-gap: calc(var(--spacing) * 4);
+  row-gap: calc(var(--spacing) * 1);
   align-items: center;
   margin-bottom: var(--space-section-title-after);
 }
@@ -671,14 +671,14 @@
   display: grid;
   grid-row: span 2;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 10);
   background: var(--color-bar);
   color: var(--accent-subtle);
 }
 .rd-context__icon svg {
-  width: 20px;
-  height: 20px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 /* Same role as the key points heading: type-article-h3. */
 .rd-prose .rd-context__title {
@@ -712,7 +712,7 @@
   letter-spacing: var(--type-eyebrow-tracking);
   /* Uppercase only on Eyebrow and Chip (DR-216). */
   text-transform: none;
-  margin: 0 0 8px;
+  margin: 0 0 calc(var(--spacing) * 2);
   color: var(--color-bar);
 }
 .rd-prose .rd-context__part p {
@@ -788,7 +788,7 @@
      gap before, the heading-to-content gap after. */
   margin: var(--space-module) 0 var(--space-section-title-after);
   color: var(--ink);
-  scroll-margin-top: calc(var(--rd-bar-h) + 28px);
+  scroll-margin-top: calc(var(--rd-bar-h) + calc(var(--spacing) * 7));
 }
 .rd-anchor {
   display: inline-grid;
@@ -875,7 +875,7 @@
 .rd-tags ul {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: calc(var(--spacing) * 2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -888,8 +888,8 @@
   display: grid;
   flex: none;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
   padding: 0;
   border: 0;
   background: var(--surface-elevated);
@@ -907,14 +907,14 @@
   transition: opacity var(--duration-slide) var(--ease-slide);
 }
 .rd-progressbtn__pct svg {
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size);
+  height: var(--icon-size);
   color: var(--color-bar);
 }
 .rd-progressbtn__up {
   position: absolute;
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size);
+  height: var(--icon-size);
   opacity: 0;
   transition: opacity var(--duration-slide) var(--ease-slide);
 }
@@ -966,8 +966,9 @@
   inset: auto 0 0;
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px var(--rd-gutter) calc(8px + env(safe-area-inset-bottom));
+  gap: calc(var(--spacing) * 1);
+  padding: calc(var(--spacing) * 2) var(--rd-gutter)
+    calc(calc(var(--spacing) * 2) + env(safe-area-inset-bottom));
   border-top: 1px solid var(--border-soft);
   /* A raised surface: surface-elevated, opaque, no blur (COL-01, COL-15). tajmin,
      24 Oct 2026. */
@@ -990,13 +991,13 @@
   line-height: var(--type-ui-sm-line);
   letter-spacing: var(--type-ui-sm-tracking);
   flex: 1;
-  padding: 0 8px;
+  padding: 0 calc(var(--spacing) * 2);
   white-space: nowrap;
 }
 .rd-dock__sep {
   width: 1px;
-  height: 24px;
-  margin: 0 4px;
+  height: calc(var(--spacing) * 6);
+  margin: 0 calc(var(--spacing) * 1);
   background: var(--border);
 }
 
@@ -1010,18 +1011,18 @@
   position: absolute;
   z-index: 70;
   right: 0;
-  min-width: 248px;
-  padding: 8px;
+  min-width: calc(var(--spacing) * 62);
+  padding: calc(var(--spacing) * 2);
   border: 1px solid var(--border-soft);
   background: var(--surface-elevated);
   animation: rd-pop var(--duration-slide) var(--ease-slide) both;
 }
 .rd-pop__panel[data-side="bottom"] {
-  top: calc(100% + 10px);
+  top: calc(100% + calc(var(--spacing) * 2.5));
   transform-origin: top right;
 }
 .rd-pop__panel[data-side="top"] {
-  bottom: calc(100% + 14px);
+  bottom: calc(100% + calc(var(--spacing) * 3.5));
   transform-origin: bottom right;
 }
 .rd-pop__label {
@@ -1032,13 +1033,14 @@
   letter-spacing: var(--type-eyebrow-tracking);
   text-transform: var(--type-eyebrow-case);
   margin: 0;
-  padding: 8px 10px 10px;
+  padding: calc(var(--spacing) * 2) calc(var(--spacing) * 2.5)
+    calc(var(--spacing) * 2.5);
   color: var(--ink-muted);
 }
 .rd-sizes {
   display: flex;
-  gap: 8px;
-  padding: 0 4px 6px;
+  gap: calc(var(--spacing) * 2);
+  padding: 0 calc(var(--spacing) * 1) calc(var(--spacing) * 1.5);
 }
 /* One glyph size for every step (+ and ++ mark the larger ones): type-button, the role
    for control labels. (.rd .rd-size wins over the .rd button font reset.) */
@@ -1050,8 +1052,8 @@
   letter-spacing: var(--type-button-tracking);
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
   border: 1px solid var(--border);
   background: transparent;
   color: var(--ink);
@@ -1074,7 +1076,7 @@
 .rd-sharedlg__grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 4px;
+  gap: calc(var(--spacing) * 1);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -1088,9 +1090,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: calc(var(--spacing) * 2.5);
   width: 100%;
-  padding: 14px 6px;
+  padding: calc(var(--spacing) * 3.5) calc(var(--spacing) * 1.5);
   border: 0;
   background: transparent;
   text-align: center;
@@ -1103,8 +1105,8 @@
 .rd-sharedlg__icon {
   display: grid;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
   /* Icon only, ink; it turns interactive-hover with the option (no network colors). */
   color: var(--ink);
   transition: color var(--default-transition-duration);
@@ -1113,8 +1115,8 @@
   color: var(--interactive-hover);
 }
 .rd-sharedlg__icon svg {
-  width: 22px;
-  height: 22px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 .rd-sharedlg__link {
   display: flex;
@@ -1124,23 +1126,23 @@
 .rd-sharedlg__field {
   flex: 1;
   min-width: 0;
-  padding: 0 14px;
+  padding: 0 calc(var(--spacing) * 3.5);
   border: 0;
   background: transparent;
-  outline-offset: -2px;
+  outline-offset: calc(var(--spacing) * -0.5);
 }
 .rd-sharedlg__copy {
   display: inline-flex;
   flex: none;
   align-items: center;
-  gap: 8px;
-  padding: 0 18px;
+  gap: calc(var(--spacing) * 2);
+  padding: 0 calc(var(--spacing) * 4.5);
   border: 0;
   transition: background-color var(--default-transition-duration);
 }
 .rd-sharedlg__copy svg {
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 
 /* ---------- Selection bar and toast ---------- */
@@ -1150,8 +1152,8 @@
   z-index: 80;
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 4px;
+  gap: calc(var(--spacing) * 0.5);
+  padding: calc(var(--spacing) * 1);
   background: var(--ink);
   color: var(--background);
   transform: translate(-50%, -100%);
@@ -1161,9 +1163,9 @@
   content: "";
   position: absolute;
   left: 50%;
-  bottom: -5px;
-  width: 12px;
-  height: 12px;
+  bottom: calc(var(--spacing) * -1);
+  width: calc(var(--spacing) * 3);
+  height: calc(var(--spacing) * 3);
   background: var(--ink);
   transform: translateX(-50%) rotate(45deg);
 }
@@ -1173,9 +1175,9 @@
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 38px;
-  padding: 0 12px;
+  gap: calc(var(--spacing) * 2);
+  height: calc(var(--spacing) * 9.5);
+  padding: 0 calc(var(--spacing) * 3);
   border: 0;
   background: transparent;
   color: inherit;
@@ -1191,8 +1193,8 @@
   color: var(--on-interactive);
 }
 .rd-selbar svg {
-  width: 16px;
-  height: 16px;
+  width: var(--icon-size);
+  height: var(--icon-size);
 }
 
 .rd-toast {
@@ -1204,16 +1206,17 @@
   position: fixed;
   z-index: 90;
   left: 50%;
-  bottom: 100px;
+  bottom: calc(var(--spacing) * 25);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 20px 12px 16px;
+  gap: calc(var(--spacing) * 2.5);
+  padding: calc(var(--spacing) * 3) calc(var(--spacing) * 5)
+    calc(var(--spacing) * 3) calc(var(--spacing) * 4);
   background: var(--ink);
   color: var(--background);
   opacity: 0;
   pointer-events: none;
-  transform: translate(-50%, 16px);
+  transform: translate(-50%, calc(var(--spacing) * 4));
   transition:
     opacity var(--duration-slide) var(--ease-slide),
     transform var(--duration-slide) var(--ease-slide);
@@ -1223,8 +1226,8 @@
   transform: translate(-50%, 0);
 }
 .rd-toast svg {
-  width: 18px;
-  height: 18px;
+  width: var(--icon-size);
+  height: var(--icon-size);
   color: var(--color-bar);
 }
 .rd-toast:empty {
@@ -1236,7 +1239,7 @@
 @keyframes rd-rise {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(calc(var(--spacing) * 4.5));
   }
 }
 @keyframes rd-fade {
@@ -1247,7 +1250,7 @@
 @keyframes rd-pop {
   from {
     opacity: 0;
-    transform: translateY(6px) scale(0.97);
+    transform: translateY(calc(var(--spacing) * 1.5)) scale(0.97);
   }
 }
 @media (prefers-reduced-motion: reduce) {
