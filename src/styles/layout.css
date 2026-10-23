@@ -67,6 +67,10 @@
   --z-content: 0;
   --z-bar: 30;
   --z-overlay: 50;
+  --z-dock: 55;
+  --z-popover: 70;
+  --z-selection: 80;
+  --z-toast: 90;
 }
 
 @media (min-width: 37.5rem) {

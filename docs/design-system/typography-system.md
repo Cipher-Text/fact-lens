@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.16 · 17 October 2026 · Run 4 review (DR-355)
+Version 2.17 · 24 October 2026 · Article page, checkpoint 1 (DR-388)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -85,7 +85,7 @@ Tracking for Bangla is 0 in every role.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `type-display` | Serif | 44–64px | 600 | 1.02 | -0.03em | 40–56px | 600 | 1.16 | Brand moments, special pages |
 | `type-page-title` | Serif | 34–48px | 600 | 1.06 | -0.025em | 32–44px | 600 | 1.18 | Section and category page titles |
-| `type-article-title` | Serif | 40–60px | 600 | 1.06 | -0.025em | 38–56px | 600 | 1.18 | The article headline (h1) |
+| `type-article-title` | Serif | 36–48px | 600 | 1.06 | -0.025em | 34–44px | 600 | 1.18 | The article headline (h1). Largest from 1280 (DR-388) |
 | `type-story-lead` | Serif | 30–42px | 600 | 1.08 | -0.02em | 28–40px | 600 | 1.2 | Lead story on the homepage |
 | `type-story-title-lg` | Serif | 26–34px | 600 | 1.12 | -0.015em | 26–32px | 600 | 1.22 | Second-level story in a lead group (not on the homepage) |
 | `type-story-title` | Serif | 22–26px | 600 | 1.16 | -0.01em | 22–26px | 600 | 1.26 | Standard story card |
@@ -146,7 +146,11 @@ The scale changes all text inside the article body (`TYP-15`):
 - `type-blockquote`, `type-pullquote`
 - `type-caption` inside the article
 
+On the article page the scale also changes the `KeyPoints` and `ContextCard` headings (`type-article-h3`), their text and the key point numbers (`type-article-body`) (DR-388).
+
 The scale does not change the article title, deck, metadata, navigation, buttons, header, footer or ads.
+
+A reader size change eases the text to its new size over `--duration-slide` with `--ease-slide`. With reduced motion the size changes at once (DR-388).
 
 The body has a floor of 17px English and 18px Bangla at every step.
 
@@ -400,6 +404,18 @@ Story prominence comes from the role, layout, image size, position and white spa
 | Quotation | `type-blockquote` |
 | Pull quote | `type-pullquote` |
 | Image caption | `type-caption` |
+| Category in the heading (`ArticleHeader`, a filled button) | `type-eyebrow` |
+| Metadata line under the deck | `type-metadata`, `--color-meta` |
+| Byline name; role | `type-ui`; `type-metadata` |
+| Avatar initials, text size glyphs (A, A+, A++) | `type-button` |
+| `KeyPoints` and `ContextCard` headings | `type-article-h3` |
+| Key point text and numbers; `ContextCard` parts | `type-article-body` |
+| `KeyPoints` note, `ContextCard` teaser | `type-metadata` |
+| `ContextCard` part labels | `type-eyebrow`, no uppercase (DR-216) |
+| Rail title, popover label | `type-eyebrow` |
+| Contents links | `type-nav` |
+| Minutes left (rail); progress percent, dock line, selection bar, toast | `type-metadata` with `type-ui-sm`; `type-ui-sm` |
+| Read next heading | `type-section-title` |
 
 Paragraph gap is 1.1em. Do not indent paragraphs. The spacing tokens in `spacing-layout-system.md` set the space around headings.
 
@@ -512,7 +528,7 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-page-title-weight: 600;
   --type-page-title-line: 1.06;
   --type-page-title-tracking: -0.025em;
-  --type-article-title-size: clamp(2.5rem, 2.011rem + 2.174vw, 3.75rem);
+  --type-article-title-size: clamp(2.25rem, 1.957rem + 1.304vw, 3rem);
   --type-article-title-weight: 600;
   --type-article-title-line: 1.06;
   --type-article-title-tracking: -0.025em;
@@ -625,7 +641,7 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-page-title-weight: 600;
   --type-page-title-line: 1.18;
   --type-page-title-tracking: 0;
-  --type-article-title-size: clamp(2.375rem, 1.935rem + 1.957vw, 3.5rem);
+  --type-article-title-size: clamp(2.125rem, 1.88rem + 1.087vw, 2.75rem);
   --type-article-title-weight: 600;
   --type-article-title-line: 1.18;
   --type-article-title-tracking: 0;
@@ -1022,6 +1038,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.17 | 2026-10-24 | Article page, checkpoint 1 (DR-385, DR-388): `type-article-title` 36–48px English, 34–44px Bangla, largest from 1280 (was 40–60 and 38–56). Section 4: the reader size also scales `KeyPoints` and `ContextCard`; a size change eases over `--duration-slide`. Section 7.2: article page role map for the new parts. |
 | 2.16 | 2026-10-17 | New Section 3.1 ink inset: `--type-story-title-sm-ink-start`, `--type-story-title-sm-ink-end`, `--type-metadata-ink-end` per language, for the Divider.item space measured to the ink (DR-350, DR-355). `type-logo`: the stuck 24px is a transform (C-17); the stuck font-size rule is removed from Section 8.2 (DR-355). |
 | 2.15 | 2026-10-16 | New role `type-nav` (14px English, 16px Bangla, weight 600) for the NavBar items; no `lang-bn` variant (DR-346). TYP-17: locale `bn-BD-u-nu-beng`; story time script 1.5 KB or less (DR-348). |
 | 2.14 | 2026-10-15 | Section 8.2 links to the one `globals.css` import list (layout Section 12.5, DR-339); Section 8.4 lists `globals.css`. |
