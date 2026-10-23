@@ -4,7 +4,7 @@ import { ArrowUp, Check, Hash } from "lucide-react";
 
 import { SaveButton, TextSize, TextSizeOptions } from "./Controls";
 import { useReading } from "./reading-store";
-import { ShareDialog, type ShareProps } from "./Share";
+import { CopyLinkButton, ShareDialog, type ShareProps } from "./Share";
 import type { ReaderStrings } from "./strings";
 import { copyText } from "./Toaster";
 
@@ -132,7 +132,8 @@ export function ReadingTools({
       <div className="rd-tools__group">
         <p className="rd-rail__title">{t.share}</p>
         <div className="rd-tools__row">
-          <ShareDialog {...share} look="label" />
+          <ShareDialog {...share} />
+          <CopyLinkButton path={share.path} t={t} />
           <SaveButton slug={slug} t={t} compact />
         </div>
       </div>

@@ -45,6 +45,8 @@ export function TextSizeOptions({
 }) {
   const size = useReading((s) => s.size);
   const names = t.textSizes.split(",");
+  // The same glyph at one size, marked +, ++ for the larger steps.
+  const glyphs = t.textSizeGlyphs.split(",");
   const onKey = (event: KeyboardEvent<HTMLDivElement>) => {
     const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[
       event.key
@@ -77,7 +79,7 @@ export function TextSizeOptions({
           data-step={step}
           onClick={() => setTextSize(step)}
         >
-          {t.textSizeGlyph}
+          {glyphs[step]}
         </button>
       ))}
     </div>

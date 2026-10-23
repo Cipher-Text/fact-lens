@@ -4,24 +4,23 @@
 // one article page; more entries here would add more pages.
 // Fictional but realistic: no real people and no real events.
 
-export type Art = "river" | "gauge" | "port" | "balance" | "network";
+import type { imageFiles } from "./stories";
+
+/** A placeholder image file from stories.ts (16:9, 3:2 or 4:3). */
+export type ImageFile = keyof typeof imageFiles;
 
 export type Block =
   | { type: "p"; text: string }
   | { type: "h2"; id: string; text: string }
-  | { type: "quote"; text: string }
-  | { type: "stats"; items: { value: string; label: string }[] }
-  | { type: "figure"; art: Art; caption: string; credit: string }
-  | { type: "list"; items: string[] }
-  | { type: "note"; title: string; text: string };
+  | { type: "figure"; image: ImageFile; caption: string; credit: string }
+  | { type: "list"; items: string[] };
 
-/** The optional news context. Only `why` is required; each other part adds a tab. */
+/** The optional news context: short one-liners in one column. Only `why` is required. */
 export interface ArticleContext {
   teaser: string;
-  why: string[];
-  background?: string[];
+  why: string;
+  background?: string;
   timeline?: { date: string; text: string }[];
-  numbers?: { value: string; label: string }[];
 }
 
 export interface ArticleText {
@@ -44,7 +43,6 @@ export interface ArticleDef {
   author:
     "farhana-kabir" | "tanvir-ahmed" | "rashed-hossain" | "mehnaz-chowdhury";
   updatedAt?: string;
-  art: Art;
   bn: ArticleText;
   en: ArticleText;
 }
@@ -60,12 +58,11 @@ export const articleDefs: ArticleDef[] = [
     id: "river-data-framework",
     author: "rashed-hossain",
     updatedAt: at("10-07 13:40"),
-    art: "river",
     en: {
       dateline: "Dhaka",
       caption:
         "Readings from gauge stations upstream would reach forecasters in all four countries within hours.",
-      credit: "Illustration: Fact Lens",
+      credit: "Photo: Fact Lens",
       keyPoints: [
         "Flow and rainfall data would be shared every six hours in the flood season, and once a day in the dry months.",
         "More than 120 gauge stations on the main rivers and their tributaries would feed one shared platform.",
@@ -90,20 +87,8 @@ export const articleDefs: ArticleDef[] = [
           text: "The draft lists three kinds of data: water levels at gauge stations, the volume of water flowing past them, and rainfall in the upper catchment areas. From June to October, readings would be shared every six hours. In the dry months, the interval would be once a day.",
         },
         {
-          type: "stats",
-          items: [
-            { value: "6 hrs", label: "Data interval in the flood season" },
-            { value: "120+", label: "Gauge stations to be linked" },
-            { value: "4", label: "Countries in the framework" },
-          ],
-        },
-        {
           type: "p",
           text: "Officials stressed that the framework deals only with information. It does not touch how water is shared between the countries, which remains the most sensitive question in the region, and the text says so in its first article.",
-        },
-        {
-          type: "quote",
-          text: "Forecasters could see water rising upstream hours, and sometimes days, earlier than they can today.",
         },
         { type: "h2", id: "why-six-hours", text: "Why six hours matters" },
         {
@@ -116,10 +101,10 @@ export const articleDefs: ArticleDef[] = [
         },
         {
           type: "figure",
-          art: "gauge",
+          image: "photo",
           caption:
             "Automatic gauge stations send water levels over the mobile network; older stations are still read by hand twice a day.",
-          credit: "Illustration: Fact Lens",
+          credit: "Photo: Fact Lens",
         },
         {
           type: "p",
@@ -139,57 +124,22 @@ export const articleDefs: ArticleDef[] = [
           ],
         },
         {
-          type: "note",
-          title: "What it does not cover",
-          text: "The framework sets no rules on water sharing, dam operations or river projects. Those questions stay with the existing bilateral talks.",
-        },
-        {
           type: "p",
           text: "A joint technical committee would review the system after its first flood season and could shorten the interval wherever the stations allow.",
         },
       ],
       context: {
-        teaser: "New to this story? Here is the background in under a minute.",
-        why: [
-          "Most of the water in Bangladesh's rivers falls as rain far upstream, outside the country. Forecasters can only warn of a flood as early as they learn about that water.",
-          "Faster, shared data means earlier warnings for the millions of people who live on floodplains.",
-        ],
-        background: [
-          "The four countries already exchange some river data under older bilateral arrangements. The readings arrive at different times, in different formats, and often only once a day.",
-          "Earlier plans for a regional system stalled over cost and over which country's agency would host the data. The new draft gives that job to a rotating technical secretariat.",
-        ],
+        teaser: "New to this story? The background in brief.",
+        why: "Most of Bangladesh's river water comes from upstream, so earlier data means earlier flood warnings.",
+        background:
+          "The four countries share some data today, but late, in different formats and often once a day.",
         timeline: [
           {
             date: "2019",
-            text: "A regional workshop on flood data first proposes a shared platform.",
-          },
-          {
-            date: "2024",
-            text: "A season of flash floods renews calls for faster upstream data.",
-          },
-          {
-            date: "Mar 2026",
-            text: "Technical teams from the four countries begin drafting.",
+            text: "A shared flood-data platform is first proposed.",
           },
           { date: "Oct 2026", text: "Draft framework agreed in Dhaka." },
-          {
-            date: "May 2027",
-            text: "Target date to connect the full network, before the monsoon.",
-          },
-        ],
-        numbers: [
-          {
-            value: "90%+",
-            label: "of the water in Bangladesh's rivers comes from upstream",
-          },
-          {
-            value: "1–2 days",
-            label: "of extra warning time that forecasters hope to gain",
-          },
-          {
-            value: "57",
-            label: "rivers that Bangladesh shares with its neighbours",
-          },
+          { date: "May 2027", text: "Target to connect the full network." },
         ],
       },
       tags: ["Rivers", "Monsoon", "Flood forecasting", "Regional cooperation"],
@@ -207,7 +157,7 @@ export const articleDefs: ArticleDef[] = [
       dateline: "ঢাকা",
       caption:
         "উজানের পানি পরিমাপ কেন্দ্রের তথ্য কয়েক ঘণ্টার মধ্যেই চার দেশের পূর্বাভাসকর্মীদের কাছে পৌঁছাবে।",
-      credit: "অলংকরণ: ফ্যাক্ট লেন্স",
+      credit: "ছবি: ফ্যাক্ট লেন্স",
       keyPoints: [
         "বন্যার মৌসুমে প্রতি ছয় ঘণ্টায় এবং শুষ্ক মৌসুমে দিনে একবার পানিপ্রবাহ ও বৃষ্টিপাতের তথ্য ভাগ করা হবে।",
         "প্রধান নদী ও উপনদীর ১২০টির বেশি পরিমাপ কেন্দ্র একটি অভিন্ন প্ল্যাটফর্মে তথ্য পাঠাবে।",
@@ -232,20 +182,8 @@ export const articleDefs: ArticleDef[] = [
           text: "খসড়ায় তিন ধরনের তথ্যের কথা বলা হয়েছে: পরিমাপ কেন্দ্রে পানির উচ্চতা, সেখান দিয়ে বয়ে যাওয়া পানির পরিমাণ এবং উজানের অববাহিকায় বৃষ্টিপাত। জুন থেকে অক্টোবর পর্যন্ত প্রতি ছয় ঘণ্টায় তথ্য ভাগ করা হবে। শুষ্ক মৌসুমে দিনে একবার।",
         },
         {
-          type: "stats",
-          items: [
-            { value: "৬ ঘণ্টা", label: "বন্যার মৌসুমে তথ্য পাঠানোর বিরতি" },
-            { value: "১২০+", label: "যুক্ত হবে এমন পরিমাপ কেন্দ্র" },
-            { value: "৪", label: "কাঠামোর অংশীদার দেশ" },
-          ],
-        },
-        {
           type: "p",
           text: "কর্মকর্তারা জোর দিয়ে বলেছেন, এই কাঠামো কেবল তথ্য নিয়ে। দেশগুলোর মধ্যে পানি বণ্টনের প্রশ্ন, যা অঞ্চলের সবচেয়ে স্পর্শকাতর বিষয়, এতে নেই। খসড়ার প্রথম অনুচ্ছেদেই তা স্পষ্ট করে লেখা আছে।",
-        },
-        {
-          type: "quote",
-          text: "পূর্বাভাসকর্মীরা উজানে পানি বাড়ার খবর এখনকার চেয়ে কয়েক ঘণ্টা, কখনো কয়েক দিন আগেই পাবেন।",
         },
         { type: "h2", id: "why-six-hours", text: "ছয় ঘণ্টা কেন গুরুত্বপূর্ণ" },
         {
@@ -258,10 +196,10 @@ export const articleDefs: ArticleDef[] = [
         },
         {
           type: "figure",
-          art: "gauge",
+          image: "photo",
           caption:
             "স্বয়ংক্রিয় কেন্দ্রগুলো মোবাইল নেটওয়ার্কে পানির উচ্চতা পাঠায়; পুরোনো কেন্দ্রগুলোতে এখনো দিনে দুবার হাতে মাপা হয়।",
-          credit: "অলংকরণ: ফ্যাক্ট লেন্স",
+          credit: "ছবি: ফ্যাক্ট লেন্স",
         },
         {
           type: "p",
@@ -281,48 +219,22 @@ export const articleDefs: ArticleDef[] = [
           ],
         },
         {
-          type: "note",
-          title: "যা এতে নেই",
-          text: "পানি বণ্টন, বাঁধ পরিচালনা বা নদী প্রকল্প নিয়ে এই কাঠামোতে কোনো নিয়ম নেই। সেসব প্রশ্ন চলমান দ্বিপক্ষীয় আলোচনাতেই থাকছে।",
-        },
-        {
           type: "p",
           text: "প্রথম বন্যা মৌসুম শেষে একটি যৌথ কারিগরি কমিটি ব্যবস্থাটি পর্যালোচনা করবে এবং যেসব কেন্দ্রে সম্ভব, সেখানে বিরতি আরও কমাতে পারবে।",
         },
       ],
       context: {
-        teaser: "খবরটি নতুন লাগছে? এক মিনিটে জেনে নিন প্রেক্ষাপট।",
-        why: [
-          "বাংলাদেশের নদীগুলোর বেশির ভাগ পানি আসে দেশের বাইরে, উজানের বৃষ্টি থেকে। সেই পানির খবর যত আগে পাওয়া যায়, বন্যার সতর্কবার্তাও তত আগে দেওয়া যায়।",
-          "দ্রুত ও অভিন্ন তথ্য মানে প্লাবনভূমিতে বাস করা লাখো মানুষের জন্য আগাম সতর্কতা।",
-        ],
-        background: [
-          "পুরোনো দ্বিপক্ষীয় ব্যবস্থায় চার দেশ এখনো কিছু নদীর তথ্য বিনিময় করে। তবে সেই তথ্য আসে ভিন্ন ভিন্ন সময়ে, ভিন্ন ধাঁচে এবং প্রায়ই দিনে মাত্র একবার।",
-          "আঞ্চলিক ব্যবস্থার আগের উদ্যোগগুলো খরচ এবং কোন দেশের সংস্থা তথ্য রাখবে, সেই প্রশ্নে আটকে গিয়েছিল। নতুন খসড়ায় দায়িত্বটি পালাক্রমে একটি কারিগরি সচিবালয়ের হাতে থাকবে।",
-        ],
+        teaser: "খবরটি নতুন লাগছে? সংক্ষেপে প্রেক্ষাপট।",
+        why: "বাংলাদেশের নদীর বেশির ভাগ পানি আসে উজান থেকে, তাই আগের তথ্য মানে আগাম বন্যা সতর্কতা।",
+        background:
+          "চার দেশ এখনো কিছু তথ্য বিনিময় করে, তবে দেরিতে, ভিন্ন ধাঁচে এবং প্রায়ই দিনে একবার।",
         timeline: [
           {
             date: "২০১৯",
-            text: "বন্যার তথ্য নিয়ে এক আঞ্চলিক কর্মশালায় প্রথম অভিন্ন প্ল্যাটফর্মের প্রস্তাব।",
-          },
-          {
-            date: "২০২৪",
-            text: "আকস্মিক বন্যার এক মৌসুমের পর উজানের দ্রুত তথ্যের দাবি আবার জোরালো হয়।",
-          },
-          {
-            date: "মার্চ ২০২৬",
-            text: "চার দেশের কারিগরি দল খসড়া তৈরির কাজ শুরু করে।",
+            text: "অভিন্ন বন্যা-তথ্য প্ল্যাটফর্মের প্রথম প্রস্তাব।",
           },
           { date: "অক্টোবর ২০২৬", text: "ঢাকায় খসড়া কাঠামোতে সম্মতি।" },
-          {
-            date: "মে ২০২৭",
-            text: "বর্ষার আগে পুরো নেটওয়ার্ক যুক্ত করার লক্ষ্য।",
-          },
-        ],
-        numbers: [
-          { value: "৯০%+", label: "বাংলাদেশের নদীর পানি আসে উজান থেকে" },
-          { value: "১–২ দিন", label: "বাড়তি সতর্কতার সময় পাওয়ার আশা" },
-          { value: "৫৭", label: "প্রতিবেশীদের সঙ্গে বাংলাদেশের অভিন্ন নদী" },
+          { date: "মে ২০২৭", text: "পুরো নেটওয়ার্ক যুক্ত করার লক্ষ্য।" },
         ],
       },
       tags: ["নদী", "বর্ষা", "বন্যার পূর্বাভাস", "আঞ্চলিক সহযোগিতা"],
@@ -340,8 +252,8 @@ export const articleDefs: ArticleDef[] = [
 ];
 
 /** Other stories for the Read next row. Only the article above has full text. */
-export const readNextDefs: { id: string; art: Art }[] = [
-  { id: "deep-sea-port-trial-ship", art: "port" },
-  { id: "small-state-balancing", art: "balance" },
-  { id: "opinion-connectivity-not-port", art: "network" },
+export const readNextIds: string[] = [
+  "deep-sea-port-trial-ship",
+  "small-state-balancing",
+  "opinion-connectivity-not-port",
 ];

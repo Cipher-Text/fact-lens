@@ -1,16 +1,12 @@
 // Read access for the wild card reader page. Joins a story from stories.ts with its
 // full article text from reader-articles.ts.
 import { getStory } from "./index";
-import {
-  articleDefs,
-  readNextDefs,
-  type Art,
-  type ArticleText,
-} from "./reader-articles";
+import { articleDefs, readNextIds, type ArticleText } from "./reader-articles";
 import { authors } from "./stories";
 import type { Lang, Story } from "./types";
 
-export type { Art, ArticleContext, Block } from "./reader-articles";
+export type { ArticleContext, Block } from "./reader-articles";
+export { imageFiles } from "./stories";
 
 export interface ReaderAuthor {
   name: string;
@@ -26,14 +22,12 @@ export interface Article extends Omit<
   story: Story;
   summary: string;
   updatedAt?: string;
-  art: Art;
   author: ReaderAuthor;
   readingMinutes: number;
 }
 
 export interface ReadNextItem {
   story: Story;
-  art: Art;
 }
 
 const byId = new Map(articleDefs.map((def) => [def.id, def]));
@@ -78,7 +72,6 @@ export function getArticle(slug: string, lang: Lang): Article | null {
     story,
     summary: summary ?? story.summary ?? "",
     updatedAt: def.updatedAt,
-    art: def.art,
     author: {
       name,
       role: authorRole,
@@ -94,8 +87,5 @@ export function getArticle(slug: string, lang: Lang): Article | null {
  * lead to a 404 page, like the homepage story links.
  */
 export function getReadNext(lang: Lang): ReadNextItem[] {
-  return readNextDefs.map((def) => ({
-    story: getStory(def.id, lang),
-    art: def.art,
-  }));
+  return readNextIds.map((id) => ({ story: getStory(id, lang) }));
 }

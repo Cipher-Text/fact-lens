@@ -1,12 +1,14 @@
 import { ArrowUpRight, History, Sparkles } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { Fragment } from "react";
 
-import type {
-  Article,
-  ArticleContext,
-  Block,
-  ReadNextItem,
+import {
+  imageFiles,
+  type Article,
+  type ArticleContext,
+  type Block,
+  type ReadNextItem,
 } from "@/content/reader";
 import { StoryTime } from "@/components/story/StoryTime";
 import {
@@ -17,7 +19,6 @@ import {
 } from "@/components/ui/alert";
 import { localizedPath, type Lang } from "@/i18n";
 
-import { Art } from "./Art";
 import { ContextCard } from "./ContextCard";
 import { GoogleG, LensMark } from "./icons";
 import { SectionAnchor } from "./Reading";
@@ -73,12 +74,10 @@ function BodyBlock({
   block,
   last,
   t,
-  uid,
 }: {
   block: Block;
   last: boolean;
   t: ReaderStrings;
-  uid: string;
 }) {
   switch (block.type) {
     case "p":
@@ -101,31 +100,14 @@ function BodyBlock({
           />
         </h2>
       );
-    case "quote":
-      return (
-        <figure className="rd-quote">
-          <blockquote>
-            <p>{block.text}</p>
-          </blockquote>
-        </figure>
-      );
-    case "stats":
-      return (
-        <div className="rd-stats">
-          {block.items.map((item) => (
-            <div className="rd-stat" key={item.label}>
-              <strong>{item.value}</strong>
-              <span>{item.label}</span>
-            </div>
-          ))}
-        </div>
-      );
     case "figure":
       return (
         <figure className="rd-figure">
-          <div className="rd-figure__art">
-            <Art name={block.art} uid={uid} label={block.caption} />
-          </div>
+          <Image
+            {...imageFiles[block.image]}
+            alt={block.caption}
+            className="rd-figure__img"
+          />
           <figcaption className="rd-caption">
             <span>
               {block.caption} <span className="rd-credit">{block.credit}</span>
@@ -140,13 +122,6 @@ function BodyBlock({
             <li key={item}>{item}</li>
           ))}
         </ul>
-      );
-    case "note":
-      return (
-        <aside className="rd-note">
-          <h3>{block.title}</h3>
-          <p>{block.text}</p>
-        </aside>
       );
   }
 }
@@ -170,12 +145,7 @@ export function ArticleBody({
           {context && index === contextAt ? (
             <ContextCard context={context} t={t} />
           ) : null}
-          <BodyBlock
-            block={block}
-            last={index === lastParagraph}
-            t={t}
-            uid={`body-${index}`}
-          />
+          <BodyBlock block={block} last={index === lastParagraph} t={t} />
         </Fragment>
       ))}
     </div>
@@ -326,8 +296,18 @@ export function ReadNext({
               className={index === 0 ? "rd-card rd-card--lead" : "rd-card"}
               data-cat={item.story.category}
             >
+              {/* Placeholder image; with no image, the slot keeps a flat
+                  surface-alt fill (DR-338). */}
               <div className="rd-card__art">
-                <Art name={item.art} uid={`next-${index}`} />
+                {item.story.image ? (
+                  <Image
+                    src={item.story.image.src}
+                    alt=""
+                    width={item.story.image.width}
+                    height={item.story.image.height}
+                    className="rd-card__img"
+                  />
+                ) : null}
               </div>
               <div className="rd-card__body">
                 <p className="rd-card__kicker">

@@ -1,4 +1,5 @@
 import { Clock } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -10,7 +11,6 @@ import { StoryTime } from "@/components/story/StoryTime";
 import type { Article, ReadNextItem } from "@/content/reader";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
-import { Art } from "./Art";
 import {
   ArticleBody,
   AuthorCard,
@@ -78,21 +78,28 @@ export function ReaderPage({ lang, article, readNext }: Props) {
             </div>
           </header>
 
-          <figure className="rd-hero-figure">
-            <div className="rd-hero-art">
-              <Art
-                name={article.art}
-                uid="hero"
-                label={story.image?.alt || article.caption}
+          {/* The lead image is optional: with no image, the whole figure (image and
+              caption) is left out. The image keeps its own ratio, centered, up to
+              --rd-lead-media-max tall. */}
+          {story.image ? (
+            <figure className="rd-hero-figure">
+              <Image
+                src={story.image.src}
+                alt={story.image.alt || article.caption}
+                width={story.image.width}
+                height={story.image.height}
+                preload
+                fetchPriority="high"
+                className="rd-hero-img"
               />
-            </div>
-            <figcaption className="rd-caption rd-caption--hero">
-              <span>
-                {article.caption}{" "}
-                <span className="rd-credit">{article.credit}</span>
-              </span>
-            </figcaption>
-          </figure>
+              <figcaption className="rd-caption rd-caption--hero">
+                <span>
+                  {article.caption}{" "}
+                  <span className="rd-credit">{article.credit}</span>
+                </span>
+              </figcaption>
+            </figure>
+          ) : null}
 
           <div className="rd-byrow rd-wrap">
             <div className="rd-hero__text">
@@ -147,6 +154,8 @@ export function ReaderPage({ lang, article, readNext }: Props) {
             </div>
           </div>
 
+          {/* The body stays in the centered reading column. From 1280 the rail
+              (contents, progress, text size) sits in the free space on its left. */}
           <div className="rd-layout rd-wrap">
             <aside className="rd-rail" aria-label={t.contents}>
               <div className="rd-rail__sticky">

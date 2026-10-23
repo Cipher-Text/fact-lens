@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, Mail, Share2, Upload } from "lucide-react";
+import { Check, Copy, Link2, Mail, Share2, Upload } from "lucide-react";
 import { useState, useSyncExternalStore } from "react";
 
 import {
@@ -66,6 +66,28 @@ function targets(url: string, title: string): Record<Network, string> {
 
 function mailto(url: string, title: string, summary: string) {
   return `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`${summary}\n\n${url}`)}`;
+}
+
+/** An icon button that copies the story link, for the left panel. */
+export function CopyLinkButton({
+  path,
+  t,
+}: {
+  path: string;
+  t: ReaderStrings;
+}) {
+  const url = useOrigin() + path;
+  return (
+    <button
+      type="button"
+      className="rd-iconbtn"
+      aria-label={t.copyLink}
+      title={t.copyLink}
+      onClick={() => copyText(url, t.linkCopied)}
+    >
+      <Link2 aria-hidden="true" />
+    </button>
+  );
 }
 
 /**
