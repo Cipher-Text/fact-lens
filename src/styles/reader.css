@@ -971,14 +971,38 @@
      24 Oct 2026. */
   background: var(--surface-elevated);
   transform: translateY(100%);
-  transition: transform var(--duration-slide) var(--ease-slide);
+  /* Hidden until the reader starts: visibility takes the buttons out of the Tab order
+     and the accessibility tree (COL-13). It turns hidden only after the slide-out ends. */
+  visibility: hidden;
+  transition:
+    transform var(--duration-slide) var(--ease-slide),
+    visibility 0s linear var(--duration-slide);
 }
 .rd-dock[data-show] {
   transform: none;
+  visibility: visible;
+  transition:
+    transform var(--duration-slide) var(--ease-slide),
+    visibility 0s;
 }
 @media (min-width: 1280px) {
   .rd-dock {
     display: none;
+  }
+}
+/* Below 1280 the dock covers the bottom of the screen: its height is the button, the
+   padding, the top border and the safe area. A link that takes focus scrolls clear of
+   it, and the page ends above it. */
+@media (width < 80rem) {
+  html:has(.rd-dock) {
+    --rd-dock-h: calc(
+      var(--icon-button-size) + calc(var(--spacing) * 4) + 1px +
+        env(safe-area-inset-bottom)
+    );
+    scroll-padding-bottom: var(--rd-dock-h);
+  }
+  .rd {
+    padding-bottom: var(--rd-dock-h);
   }
 }
 .rd-dock__meta {
