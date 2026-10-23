@@ -1033,9 +1033,12 @@
   font-weight: var(--type-ui-sm-weight);
   line-height: var(--type-ui-sm-line);
   letter-spacing: var(--type-ui-sm-tracking);
+  /* min-width 0 and wrapping keep the fixed dock inside 320px at 200% text and with long
+     Bangla text: the text wraps, it is not clipped or made smaller (LAY-02, TYP-09). */
   flex: 1;
+  min-width: 0;
   padding: 0 calc(var(--spacing) * 2);
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 .rd-dock__sep {
   width: 1px;

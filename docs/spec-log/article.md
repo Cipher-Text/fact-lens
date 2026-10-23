@@ -111,6 +111,16 @@ Not fixed in code. They wait for a later ticket.
 - `.rd-sharedlg__link` and the `.rd-selbar` buttons have fixed heights (`LAY-17`). They are controls, not text blocks; check them at 200% text size.
 - Dark mode logo contrast: see the item above.
 
+Second review on PR #8 (24 Oct 2026). Fixed in code: popover focus and keyboard, the share dialog panel inset, the dock meta wrap. These wait:
+
+- The lead image alt passes `story.image.alt` through, so it may repeat the caption.
+- `SelectionShare` uses a fixed half width (`130`) and has no keyboard path (see the item above).
+- `textSizes` and `textSizeGlyphs` are comma-packed strings in the string tables, split in `Controls.tsx`. Make them arrays.
+- The toast does not announce the same text twice in a row, and `.rd-toast:empty` is dead CSS.
+- Missing tests: popover keyboard below 1280, the dock at 320px with 200% text, reduced motion.
+- The dock meta can now wrap to two lines; `--rd-dock-h` still assumes one line, so the scroll padding may be short by a line.
+- `UNRESOLVED_DESIGN_SYSTEM`: dark mode logo contrast, the existing item above (U-08 in `docs/PROGRESS.md`).
+
 ## Checkpoint reports
 
 ### Checkpoint 1 · 24 Oct 2026

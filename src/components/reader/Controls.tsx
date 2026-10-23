@@ -30,7 +30,12 @@ export function TextSizeOptions({
     ];
     if (!step) return;
     event.preventDefault();
-    const next = Math.min(names.length - 1, Math.max(0, size + step));
+    // Step from the radio that has focus, not from the stored size.
+    const from = Number(
+      (event.target as HTMLElement).closest<HTMLElement>("[data-step]")?.dataset
+        .step ?? size,
+    );
+    const next = Math.min(names.length - 1, Math.max(0, from + step));
     setTextSize(next);
     event.currentTarget
       .querySelector<HTMLElement>(`[data-step="${next}"]`)

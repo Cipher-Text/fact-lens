@@ -12,7 +12,8 @@ type Props = {
 
 /**
  * A button with a small panel. Escape and a click outside close it, and focus goes back
- * to the button. The panel takes focus on its first control when it opens.
+ * to the button. Focus that leaves the panel also closes it. The panel takes focus on its
+ * checked control, else its control in the Tab order, else its first control.
  */
 export function Popover({
   label,
@@ -29,7 +30,11 @@ export function Popover({
   useEffect(() => {
     if (!open) return;
     const panel = wrap.current?.querySelector<HTMLElement>("[data-panel]");
-    panel?.querySelector<HTMLElement>("a, button")?.focus();
+    (
+      panel?.querySelector<HTMLElement>('[aria-checked="true"]') ??
+      panel?.querySelector<HTMLElement>('[tabindex="0"]') ??
+      panel?.querySelector<HTMLElement>("a, button")
+    )?.focus();
 
     const onPointer = (event: PointerEvent) => {
       if (!wrap.current?.contains(event.target as Node)) setOpen(false);
@@ -40,11 +45,18 @@ export function Popover({
         button.current?.focus();
       }
     };
+    // Tab out of the panel closes it, as Escape does, but focus stays where the reader
+    // moved it.
+    const onFocus = (event: FocusEvent) => {
+      if (!wrap.current?.contains(event.target as Node)) setOpen(false);
+    };
     document.addEventListener("pointerdown", onPointer);
     document.addEventListener("keydown", onKey);
+    document.addEventListener("focusin", onFocus);
     return () => {
       document.removeEventListener("pointerdown", onPointer);
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("focusin", onFocus);
     };
   }, [open]);
 
