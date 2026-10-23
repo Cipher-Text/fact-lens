@@ -121,6 +121,16 @@ Second review on PR #8 (24 Oct 2026). Fixed in code: popover focus and keyboard,
 - The dock meta can now wrap to two lines; `--rd-dock-h` still assumes one line, so the scroll padding may be short by a line.
 - `UNRESOLVED_DESIGN_SYSTEM`: dark mode logo contrast, the existing item above (U-08 in `docs/PROGRESS.md`).
 
+Third review on PR #8 (23 Oct 2026). Merged as is; these wait. Items already above are not repeated (the toast, the `SelectionShare` keyboard path, the raw offsets in `ReaderRoot.tsx`, 200% text and popover keyboard tests).
+
+- Back to top in `Reading.tsx` scrolls with `behavior: "smooth"` and ignores `prefers-reduced-motion`.
+- `SelectionShare`: the quote bar has `role="toolbar"` but no arrow-key handling, and its scroll listener removes the bar while touch readers drag the selection handles.
+- `inlineAdPositions` (`ArticleParts.tsx`): when the first ad moves past paragraph 10, the second ad can follow right after it (`LAY-22`). Add a minimum gap and a unit test.
+- `Popover.tsx` sets `aria-controls` while the panel is closed and not in the DOM.
+- `ReaderPage.tsx` (near line 115): the comment on the hero image alt is stale.
+- Code comments cite "tajmin, 24 Oct 2026" for approvals given on 23 Oct 2026. Fix the dates.
+- Missing tests: axe with the dock, a popover and the share dialog open; `SelectionShare`; the toast; popover focus-out.
+
 ## Checkpoint reports
 
 ### Checkpoint 1 · 24 Oct 2026
