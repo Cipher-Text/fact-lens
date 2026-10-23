@@ -145,3 +145,24 @@ describe('toCanonicalBody', () => {
     expect(bodyAttrAllowlist.link).toEqual(['href']);
   });
 });
+
+import { isSocialUrl, socialLinksSchema } from './index';
+
+describe('social links', () => {
+  it('accepts an https address on the network, including subdomains and the old domain of X', () => {
+    expect(isSocialUrl('facebook', 'https://www.facebook.com/factlens')).toBe(true);
+    expect(isSocialUrl('x', 'https://twitter.com/factlens')).toBe(true);
+    expect(isSocialUrl('youtube', 'https://youtu.be/abc')).toBe(true);
+  });
+  it('refuses lookalike hosts, other schemes and embedded passwords', () => {
+    expect(isSocialUrl('facebook', 'https://facebook.com.evil.example/x')).toBe(false);
+    expect(isSocialUrl('facebook', 'https://notfacebook.com/x')).toBe(false);
+    expect(isSocialUrl('facebook', 'http://facebook.com/x')).toBe(false);
+    expect(isSocialUrl('instagram', 'https://a:b@instagram.com/x')).toBe(false);
+    expect(isSocialUrl('x', 'not a url')).toBe(false);
+  });
+  it('allows empty values and refuses unknown networks', () => {
+    expect(socialLinksSchema.safeParse({ x: '', facebook: null }).success).toBe(true);
+    expect(socialLinksSchema.safeParse({ tiktok: 'https://tiktok.com/x' }).success).toBe(false);
+  });
+});

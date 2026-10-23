@@ -5,7 +5,7 @@ import { getDictionary, localizedPath, type Lang } from "@/i18n";
 import { dhakaYear, fill, formatYear } from "@/lib/format";
 
 import { SocialIcon } from "./SocialIcon";
-import { socialLinks } from "./socialLinks";
+import { socialLinks, type SocialLink } from "./socialLinks";
 
 // The site pages do not exist yet, so these links lead to a 404 page (IMP-29).
 const sitePages = [
@@ -18,6 +18,8 @@ const sitePages = [
 
 type Props = {
   lang: Lang;
+  /** The social links to show. The page passes the newsroom's addresses; the default is the placeholder list. */
+  social?: SocialLink[];
 };
 
 /**
@@ -28,7 +30,7 @@ type Props = {
  * Footer landmark; the links are lists. Labels in the page
  * language. The design extension comes after run 2 (CMP-33): add nothing here.
  */
-export function Footer({ lang }: Props) {
+export function Footer({ lang, social = socialLinks }: Props) {
   const t = getDictionary(lang);
   const strings = t.footer;
 
@@ -48,7 +50,7 @@ export function Footer({ lang }: Props) {
             aria-label={strings.social}
             className="flex flex-wrap justify-center gap-1"
           >
-            {socialLinks.map(({ network, href }) => (
+            {social.map(({ network, href }) => (
               <li key={network}>
                 <a
                   href={href}

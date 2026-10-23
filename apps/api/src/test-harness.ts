@@ -31,6 +31,7 @@ import { SourcesService } from './news/sources.service';
 import { NewsController } from './news/news.controller';
 import { NewsService } from './news/news.service';
 import { LocalesController } from './config/locales.controller';
+import { PublicSiteController, SocialLinksController } from './config/social-links.controller';
 import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller';
 import { TaxonomyController } from './taxonomy/taxonomy.controller';
 import { TaxonomyService } from './taxonomy/taxonomy.service';
@@ -69,7 +70,7 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+    controllers: [SocialLinksController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: GEMINI_OPTIONS, useValue: opts.gemini ?? { apiKey: null, model: 'test-model' } }, GeminiService,

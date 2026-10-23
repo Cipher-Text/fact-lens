@@ -10,6 +10,7 @@ import { GEMINI_OPTIONS, GeminiService } from './ai/gemini.service';
 import { AuthModule } from './auth/auth.module';
 import { MeController } from './auth/me.controller';
 import { FeatureFlagsController } from './config/feature-flags.controller';
+import { PublicSiteController, SocialLinksController } from './config/social-links.controller';
 import { MediaController } from './media/media.controller';
 import { MEDIA_OPTIONS, MediaService } from './media/media.service';
 import { createStorage, OBJECT_STORAGE } from './media/storage';
@@ -34,7 +35,7 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+  controllers: [SocialLinksController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
   providers: [
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
     { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },

@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { featureFlagSchema, localeSchema } from '@fact-lens/contracts';
+import { featureFlagSchema, localeSchema, socialNetworks, type SocialNetwork } from '@fact-lens/contracts';
 import { FlagToggle } from '@/components/NewsActions';
+import { SocialLinksForm } from '@/components/SiteParts';
 import { LanguageManager } from '@/components/TaxonomyParts';
 import { AccessProblem, Badge, Empty, Panel } from '@/components/ui';
 import { ApiError, api, getPrincipal, isMfaRequired } from '@/lib/current';
@@ -14,11 +15,12 @@ export default async function ConfigPage() {
   if (!can(principal, 'config.manage')) {
     return <Empty>You do not have permission to change configuration.</Empty>;
   }
-  let flags, locales;
+  let flags, locales, social;
   try {
-    [flags, locales] = await Promise.all([
+    [flags, locales, social] = await Promise.all([
       api('/config/flags', z.array(featureFlagSchema), { returnTo: '/config' }),
       api('/config/locales', z.array(localeSchema), { returnTo: '/config' }),
+      api('/config/social-links', z.record(z.enum(socialNetworks), z.string().nullable()), { returnTo: '/config' }),
     ]);
   } catch (err) {
     if (err instanceof ApiError && err.status === 403) return <AccessProblem mfaRequired={isMfaRequired(err)} />;
@@ -30,6 +32,10 @@ export default async function ConfigPage() {
       <Panel title="Languages" id="languages-h">
         <p className="mb-3 text-sm text-muted">The languages the site can be published in. A new language can be used straight away for names of sections and tags and for news translations; the public site needs its own interface text added separately.</p>
         <LanguageManager locales={locales} />
+      </Panel>
+      <Panel title="Social links" id="social-h">
+        <p className="mb-3 text-sm text-muted">The accounts the public site&apos;s footer and menu link to. Leave a network empty to keep the default link, which is that network&apos;s front page. An address must be an https address on the network&apos;s own site.</p>
+        <SocialLinksForm links={social as Record<SocialNetwork, string | null>} />
       </Panel>
       <section aria-labelledby="flags-h">
       <h2 id="flags-h" className="mb-1 text-sm font-semibold uppercase tracking-wide text-muted">Feature flags</h2>

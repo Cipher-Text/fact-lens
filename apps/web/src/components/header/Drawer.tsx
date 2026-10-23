@@ -5,7 +5,7 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 
 import { SocialIcon } from "@/components/footer/SocialIcon";
-import { socialLinks } from "@/components/footer/socialLinks";
+import { socialLinks, type SocialLink } from "@/components/footer/socialLinks";
 import { IconButton } from "@/components/story/IconButton";
 import {
   Collapsible,
@@ -31,6 +31,8 @@ type Props = {
   footerStrings: Dictionary["footer"];
   siteName: string;
   homeHref: string;
+  /** The social links to show; the default is the placeholder list. */
+  social?: SocialLink[];
 };
 
 /**
@@ -60,6 +62,7 @@ export function Drawer({
   footerStrings,
   siteName,
   homeHref,
+  social = socialLinks,
 }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
   // Set by a link: the element that gets the focus instead of the menu button.
@@ -197,7 +200,7 @@ export function Drawer({
           aria-label={footerStrings.social}
           className="flex shrink-0 justify-center gap-2 bg-surface-alt px-5 py-3"
         >
-          {socialLinks.map(({ network, href }) => (
+          {social.map(({ network, href }) => (
             <li key={network}>
               <a
                 href={href}

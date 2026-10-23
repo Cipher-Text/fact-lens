@@ -15,6 +15,7 @@ import { AdSlot } from "@/components/ads/AdSlot";
 import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
 import { fetchFeaturedPoll, VOTER_COOKIE } from "@/lib/poll-api";
+import { fetchSocialLinks } from "@/lib/social-api";
 import { cn } from "@/lib/utils";
 
 // The page reads searchParams, so it renders on each request: the footer year is the
@@ -39,6 +40,8 @@ export default async function HomePage({
   const livePoll = home.grouped
     ? await fetchFeaturedPoll(lang, (await cookies()).get(VOTER_COOKIE)?.value)
     : null;
+  // The social accounts the newsroom set, else the default links.
+  const social = await fetchSocialLinks();
   const featured = [home.featured.bangladesh, home.featured.geopolitics].filter(
     (section) => section !== null,
   );
@@ -52,7 +55,7 @@ export default async function HomePage({
   return (
     <>
       <SkipLink label={t.header.skipLink} />
-      <SiteHeader lang={lang} />
+      <SiteHeader lang={lang} social={social} />
       {/* The top ad row is below the header: below the nav row from 1280, below the
           top bar under 1280 (DR-295). */}
       <AdSlot variant="top" lang={lang} strings={t.ads} />
@@ -160,7 +163,7 @@ export default async function HomePage({
       </main>
       {/* Row 15: the minimum footer, a full-width row with its content in the shell
           (7.1, 7.4, DR-59). */}
-      <Footer lang={lang} />
+      <Footer lang={lang} social={social} />
     </>
   );
 }

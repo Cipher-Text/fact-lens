@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import type { SocialLink } from "@/components/footer/socialLinks";
 import { getTrendingTerms } from "@/content";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
@@ -17,6 +18,8 @@ type Props = {
   lang: Lang;
   /** The current page path without the language prefix, for the language switch. */
   path?: string;
+  /** The social links for the menu. The page passes the newsroom's addresses. */
+  social?: SocialLink[];
 };
 
 /**
@@ -37,7 +40,7 @@ type Props = {
  * An async server component: it reads the menu from the API (`lib/navigation.ts`), with the
  * static menu as the fallback.
  */
-export async function SiteHeader({ lang, path = "/" }: Props) {
+export async function SiteHeader({ lang, path = "/", social }: Props) {
   const t = getDictionary(lang);
   // The menu comes from the API when FACTLENS_API_URL is set and answers; otherwise the static one.
   const menu = await fetchNavigation(lang);
@@ -57,6 +60,7 @@ export async function SiteHeader({ lang, path = "/" }: Props) {
               footerStrings={t.footer}
               siteName={t.site.name}
               homeHref={home}
+              social={social}
             />
             <SearchDialog
               strings={t.header}
