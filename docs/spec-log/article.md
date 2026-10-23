@@ -1,6 +1,6 @@
 # Article page spec log
 
-Branch `page/article-parallel` (wild card build) · Brief: none (free design, then moved onto the design system) · Specs at branch start: color 2.15, typography 2.16, layout 2.22, components 1.17.1, contract 2.12.1
+Branch `page/article-parallel` (wild card build) · Brief: none (free design, then moved onto the design system) · Specs at branch start: color 2.15, typography 2.16, layout 2.22, components 1.17.1, contract 2.12.1 · After checkpoint 1: color 2.16, typography 2.17, layout 2.23, components 1.18, contract 2.13
 
 This log records how the article page code uses or changes the design system (DR-372). It does not edit `docs/design-system/`. The code is the reference: after tajmin marks the items, a project thread writes the Keep items into the specs and the decision register. Line numbers are for commit `c29f254`. `reader.css` is `src/styles/reader.css`.
 

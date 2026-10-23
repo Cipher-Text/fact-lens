@@ -79,7 +79,7 @@ function MinutesLeft({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
 
 /**
  * The reading tools: progress (back to the top), minutes left, text size, share and save.
- * `rail`: in the sticky left panel, from 1120. `dock`: a bar at the bottom edge below 1120,
+ * `rail`: in the sticky left panel, from 1280. `dock`: a bar at the bottom edge below 1280,
  * where there is no left panel.
  */
 export function ReadingTools({

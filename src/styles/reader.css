@@ -154,7 +154,7 @@
 .rd-cat {
   display: inline-flex;
   align-items: center;
-  min-height: 2.25rem;
+  min-height: calc(var(--spacing) * 9);
   padding: 0 calc(var(--spacing) * 3.5);
   background: var(--color-bar);
   color: var(--on-interactive);
@@ -170,17 +170,13 @@
 
 .rd-title {
   font-family: var(--font-editorial-active);
-  /* 36 to 48px (en), 34 to 44px (bn), largest from 1280 (tajmin 24 Oct, SL-15). */
-  font-size: clamp(2.25rem, 1.957rem + 1.304vw, 3rem);
+  font-size: var(--type-article-title-size);
   font-weight: var(--type-article-title-weight);
   line-height: var(--type-article-title-line);
   letter-spacing: var(--type-article-title-tracking);
   margin: 0;
   text-wrap: pretty;
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
-}
-.rd-title:lang(bn) {
-  font-size: clamp(2.125rem, 1.88rem + 1.087vw, 2.75rem);
 }
 
 .rd-summary {
@@ -436,7 +432,7 @@
   .rd-rail {
     display: block;
     grid-column: 1;
-    width: min(12.5rem, 100%);
+    width: min(calc(var(--spacing) * 50), 100%);
   }
   .rd-main {
     grid-column: 2;
@@ -607,7 +603,7 @@
 }
 .rd-points li {
   display: grid;
-  grid-template-columns: 2.5rem minmax(0, 1fr);
+  grid-template-columns: calc(var(--spacing) * 10) minmax(0, 1fr);
   gap: calc(var(--spacing) * 3);
 }
 /* A dotted rule below the text only (not under the number), 8px on each side of the rule.
@@ -963,7 +959,7 @@
 
 .rd-dock {
   position: fixed;
-  z-index: 55;
+  z-index: var(--z-dock);
   inset: auto 0 0;
   display: flex;
   align-items: center;
@@ -1010,7 +1006,7 @@
 }
 .rd-pop__panel {
   position: absolute;
-  z-index: 70;
+  z-index: var(--z-popover);
   right: 0;
   min-width: calc(var(--spacing) * 62);
   padding: calc(var(--spacing) * 2);
@@ -1121,7 +1117,7 @@
 }
 .rd-sharedlg__link {
   display: flex;
-  height: 3rem;
+  height: calc(var(--spacing) * 12);
   border: 1px solid var(--border-interactive);
 }
 .rd-sharedlg__field {
@@ -1150,7 +1146,7 @@
 
 .rd-selbar {
   position: fixed;
-  z-index: 80;
+  z-index: var(--z-selection);
   display: flex;
   align-items: center;
   gap: calc(var(--spacing) * 0.5);
@@ -1205,7 +1201,7 @@
   line-height: var(--type-ui-sm-line);
   letter-spacing: var(--type-ui-sm-tracking);
   position: fixed;
-  z-index: 90;
+  z-index: var(--z-toast);
   left: 50%;
   bottom: calc(var(--spacing) * 25);
   display: flex;
