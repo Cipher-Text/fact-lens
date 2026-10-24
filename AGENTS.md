@@ -164,7 +164,7 @@ A flag gives: what is wrong, what you did, the rule IDs, your proposal and an ex
 
 There are no sprints or tickets. One page is one branch, one brief and one spec log (`DR-370` to `DR-377`).
 
-1. **Start.** tajmin types `/page <name>`. Make `page/<name>` from `dev`. Ask tajmin the questions, then draft `docs/briefs/<name>.md` (one page at most) with 3 to 6 one-line checkpoints and the test files. Build only after tajmin says yes.
+1. **Start.** tajmin types `/page <name>`. Make `page/<name>` from `dev` and set the page as in progress in `docs/STATUS.md` "Now". Ask tajmin the questions, then draft `docs/briefs/<name>.md` (one page at most) with 3 to 6 one-line checkpoints and the test files. Build only after tajmin says yes.
 2. **Build in the browser, one checkpoint at a time.** At each checkpoint of the brief (not the final one):
    1. Finish the step and stop.
    2. Post a short note: what you built, and each new token or component you added.

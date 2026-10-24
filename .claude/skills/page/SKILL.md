@@ -13,6 +13,7 @@ There are no sprints or tickets. One page is one branch, one brief and one spec 
 
 1. Run `git fetch origin dev`. Make the branch: `git switch -c page/$ARGUMENTS origin/dev`.
 2. If the working tree is not clean, stop and tell tajmin.
+3. In `docs/STATUS.md` "Now", set the next page line to `Next page: $ARGUMENTS, in progress (branch page/$ARGUMENTS)`.
 
 ## 2. Ask
 
