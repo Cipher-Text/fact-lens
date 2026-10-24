@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.13 · 24 October 2026 · Section 3: article page approved, checkpoint 1 (DR-385 to DR-390); new rule LAY-22
+Version 2.13.1 · 24 October 2026 · Section 3: article page approved, checkpoint 1 (DR-385 to DR-390); new rule LAY-22; Section 11: no tickets, no `/accept`
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -49,7 +49,7 @@ If this contract and a foundation document do not agree, follow the foundation d
 | Article page components | Approved, checkpoint 1 (DR-390): C-27 to C-42 | `component-system.md` Section 7, Article page |
 | Other page layout and components | Defined per page in the browser (DR-370) | Build from the page brief `docs/briefs/<page>.md`; write changes in the page spec log. `spacing-layout-system.md` Section 14.2 lists the open items |
 
-The homepage is locked (DR-370). Start a new page only with its ticket and brief (`AGENTS.md` Section 9).
+The homepage is locked (DR-370). Start a new page only with its brief (`AGENTS.md` Section 9).
 
 ## 4. Where the values are
 
@@ -303,7 +303,7 @@ Before you finish a task:
 
 ## 11. How to change this contract
 
-1. Do not edit the files in `docs/design-system/` in a code branch. On a page branch, write each spec change in the page spec log `docs/spec-log/<page>.md` (`AGENTS.md` Section 9.2, DR-372).
-2. The `design-reviewer` agent checks the spec log against the diff at `/accept`. tajmin's `/accept` approves the green items. Red items go to tajmin as flags.
-3. After `/accept`, a blueprint project thread writes the approved items into the foundation documents in this folder, rebuilds this contract (`gen_contract.py` rebuilds the rule index and stops if a rule ID in this contract does not exist) and records the decisions in the project decision register, which is not in this repo (DR-251).
+1. Edit the files in `docs/design-system/` only on a page branch. First write each spec change in the page spec log `docs/spec-log/<page>.md` (`AGENTS.md` Section 9, DR-372).
+2. The `design-reviewer` agent checks the spec log against the diff at the final checkpoint (`/checkpoint`). tajmin's merge of the page pull request approves the green items. Red items go to tajmin as flags.
+3. At the final checkpoint, the coding agent writes the green items into the foundation documents in this folder on the page branch, so they go in the same pull request. A hook allows spec edits only on a `page/` branch, so nothing changes after the merge. Before the merge, a project thread rebuilds this contract (`gen_contract.py` rebuilds the rule index and stops if a rule ID in this contract does not exist) and records the decisions in the project decision register, which is not in this repo (DR-251).
 4. The blueprint thread changes the contract template only for Sections 1 to 4 and 6 to 11.

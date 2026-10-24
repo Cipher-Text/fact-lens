@@ -119,7 +119,7 @@ Second review on PR #8 (24 Oct 2026). Fixed in code: popover focus and keyboard,
 - The toast does not announce the same text twice in a row, and `.rd-toast:empty` is dead CSS.
 - Missing tests: popover keyboard below 1280, the dock at 320px with 200% text, reduced motion.
 - The dock meta can now wrap to two lines; `--rd-dock-h` still assumes one line, so the scroll padding may be short by a line.
-- `UNRESOLVED_DESIGN_SYSTEM`: dark mode logo contrast, the existing item above (U-08 in `docs/PROGRESS.md`).
+- `UNRESOLVED_DESIGN_SYSTEM`: dark mode logo contrast, the existing item above (U-08 in `docs/ISSUES.md`).
 
 Third review on PR #8 (23 Oct 2026). Merged as is; these wait. Items already above are not repeated (the toast, the `SelectionShare` keyboard path, the raw offsets in `ReaderRoot.tsx`, 200% text and popover keyboard tests).
 

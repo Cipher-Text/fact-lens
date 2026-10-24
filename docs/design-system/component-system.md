@@ -1,12 +1,12 @@
 # Fact Lens Component System
 
-Version 1.18 · 24 October 2026 · Article page components, checkpoint 1 (DR-385 to DR-390)
+Version 1.18.1 · 24 October 2026 · Article page components, checkpoint 1 (DR-385 to DR-390); process wording: no tickets, no `/accept`
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
 The component values use the tokens of `color-system.md`, `typography-system.md` and `spacing-layout-system.md`, plus the component tokens in Section 6. The section layouts (wrapper, rail, columns per width) are in `spacing-layout-system.md` Section 7.
 
-This file is the only home of the component specs (DR-372, DR-377). To change it, write the change in the page spec log (`docs/spec-log/<page>.md`); after `/accept`, a blueprint project thread writes it into this file (DR-392).
+This file is the only home of the component specs (DR-372, DR-377). To change it, write the change in the page spec log (`docs/spec-log/<page>.md`); at the final checkpoint the coding agent writes the green items into this file on the page branch, so they go in the same pull request (DR-392).
 
 ## Contents
 
@@ -21,7 +21,7 @@ This file is the only home of the component specs (DR-372, DR-377). To change it
 
 ## 1. How to use this document
 
-- Find the component for a homepage part in the **name table** (Section 3). Use these names in code, tests, tickets and chat (`N-05`).
+- Find the component for a homepage part in the **name table** (Section 3). Use these names in code, tests, briefs and chat (`N-05`).
 - Follow the **rules** (Section 4). Each rule has a stable ID, for example `CPT-05`. Use the ID in reviews, prompts and commit messages.
 - Build each component from its **sheet** (Section 7). The sheet gives the parts, the values per width and the checks.
 - Values in the sheets are the result. Build them with the tokens and the Tailwind 4px scale classes. Do not type a hex value or an arbitrary size in a component (`CPT-07`). A value that only one component uses is a scale class in that component, for example `min-h-13` for a 52px row (`LAY-21`). Add a component token in `src/styles/components.css` only for a value that two or more components share or that is not a scale step.
@@ -254,7 +254,7 @@ Make a part that two or more components use its own component, with its own C-ID
 
 ### N-05 Use the approved names and words
 
-Use the names and words of Section 3 of this document in specs, tickets, canvas boards, code and chat. (DR-162, DR-259)
+Use the names and words of Section 3 of this document in specs, briefs, canvas boards, code and chat. (DR-162, DR-259)
 
 ## 5. Container sizes
 
