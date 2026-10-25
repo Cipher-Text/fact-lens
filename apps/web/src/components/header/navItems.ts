@@ -86,9 +86,13 @@ export function getApiNavItems(
   lang: Lang,
   path: string = "/",
 ): NavItem[] {
-  const link = (key: string) => `#category-${key}`;
+  const home = localizedPath(lang);
+  const link = (key: string) => {
+    const hash = `#category-${key}`;
+    return path === "/" ? hash : `${home}${hash}`;
+  };
   return [
-    { id: "home", label: t.header.navHome, href: localizedPath(lang), current: path === "/" },
+    { id: "home", label: t.header.navHome, href: home, current: path === "/" },
     ...menu.map((item) => ({
       id: item.key,
       label: item.name,

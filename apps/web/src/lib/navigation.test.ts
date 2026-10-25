@@ -51,4 +51,18 @@ describe("getApiNavItems", () => {
     expect(items[1]!.children?.map((c) => c.label)).toEqual(["Asia"]);
     expect(items[2]!.children).toBeUndefined();
   });
+
+  it("links to the homepage sections by hash on the homepage", () => {
+    const items = getApiNavItems(menu, en, "en", "/");
+    expect(items[1]!.href).toBe("#category-world");
+    expect(items[1]!.children?.[0]!.href).toBe("#category-asia");
+  });
+
+  it("links back to the homepage sections from other pages", () => {
+    const items = getApiNavItems(menu, en, "en", "/story/river-data-framework");
+    expect(items[0]!.current).toBe(false);
+    expect(items[1]!.href).toBe("/en#category-world");
+    expect(items[1]!.children?.[0]!.href).toBe("/en#category-asia");
+    expect(items[2]!.href).toBe("/en#category-local");
+  });
 });
