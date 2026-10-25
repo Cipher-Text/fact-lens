@@ -101,7 +101,10 @@ export const newsSchema = z.object({
   id: idSchema,
   canonicalKey: z.string(),
   status: newsStatusSchema,
+  /** The primary section. */
   categoryId: idSchema.nullable(),
+  /** Every section, the primary one first. */
+  categoryIds: z.array(idSchema),
   deskId: idSchema.nullable(),
   publishedRevisionId: idSchema.nullable(),
   publishedAt: timestampSchema.nullable(),

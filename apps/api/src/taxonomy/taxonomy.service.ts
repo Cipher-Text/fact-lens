@@ -296,7 +296,9 @@ export class TaxonomyService {
            LEFT JOIN category c ON c.id = s.category_id AND c.status <> 'archived'
            LEFT JOIN category_label cl ON cl.category_id = c.id AND cl.locale = $1
           WHERE s.status = ANY ($2) AND s.published_revision_id IS NOT NULL
-            AND ($3::uuid IS NULL OR s.category_id = $3 OR s.category_id IN (SELECT id FROM category WHERE parent_id = $3))
+            AND ($3::uuid IS NULL OR EXISTS (
+                  SELECT 1 FROM news_category x JOIN category xc ON xc.id = x.category_id
+                   WHERE x.news_id = s.id AND (x.category_id = $3 OR xc.parent_id = $3)))
             AND ($4::uuid IS NULL OR EXISTS (SELECT 1 FROM news_tag x WHERE x.news_id = s.id AND x.tag_id = $4))
             AND ($5::timestamptz IS NULL OR (s.published_at, s.id) < ($5::timestamptz, $6::uuid))
           ORDER BY s.published_at DESC, s.id DESC LIMIT $7`,
@@ -332,27 +334,32 @@ export class TaxonomyService {
     } : null;
   }
 
-  /** The category and tags of a news item as a reader of this language sees them. An item with no label here is left out. */
-  async publicRefs(newsId: string, categoryId: string | null, locale: string): Promise<{ category: PublicTaxonomyRef | null; tags: PublicTaxonomyRef[] }> {
-    const [category, tags] = await Promise.all([
-      categoryId
-        ? this.pool.query<PublicTaxonomyRef>(
-            `SELECT c.key, l.name, l.slug FROM category c JOIN category_label l ON l.category_id = c.id AND l.locale = $2
-              WHERE c.id = $1 AND c.status <> 'archived'`, [categoryId, locale])
-        : Promise.resolve({ rows: [] as PublicTaxonomyRef[] }),
+  /**
+   * The sections and tags of a news item as a reader of this language sees them: `category` is the primary
+   * section, `categories` all of them with the primary first. One with no label here is left out.
+   */
+  async publicRefs(newsId: string, locale: string): Promise<{ category: PublicTaxonomyRef | null; categories: PublicTaxonomyRef[]; tags: PublicTaxonomyRef[] }> {
+    const [categories, tags] = await Promise.all([
+      this.pool.query<PublicTaxonomyRef & { is_primary: boolean }>(
+        `SELECT c.key, l.name, l.slug, (c.id = n.category_id) AS is_primary
+           FROM news_category nc JOIN news n ON n.id = nc.news_id
+           JOIN category c ON c.id = nc.category_id AND c.status <> 'archived'
+           JOIN category_label l ON l.category_id = c.id AND l.locale = $2
+          WHERE nc.news_id = $1 ORDER BY (c.id = n.category_id) DESC, c.position, c.key`, [newsId, locale]),
       this.pool.query<PublicTaxonomyRef>(
         `SELECT t.key, l.name, l.slug FROM news_tag st JOIN tag t ON t.id = st.tag_id AND t.status <> 'archived'
            JOIN tag_label l ON l.tag_id = t.id AND l.locale = $2
           WHERE st.news_id = $1 ORDER BY l.name`, [newsId, locale]),
     ]);
-    return { category: category.rows[0] ?? null, tags: tags.rows };
+    const refs = categories.rows.map(({ key, name, slug }) => ({ key, name, slug }));
+    return { category: categories.rows[0]?.is_primary ? refs[0]! : null, categories: refs, tags: tags.rows };
   }
 
   // ------------------------------------------------------------------- internals
 
   private select(kind: Kind): string {
     const k = KIND[kind];
-    const usage = kind === 'category' ? 'SELECT count(*) FROM news s WHERE s.category_id = c.id' : 'SELECT count(*) FROM news_tag x WHERE x.tag_id = c.id';
+    const usage = kind === 'category' ? 'SELECT count(*) FROM news_category x WHERE x.category_id = c.id' : 'SELECT count(*) FROM news_tag x WHERE x.tag_id = c.id';
     const description = k.hasDescription ? 'l.description' : 'NULL::text';
     return `SELECT c.id, c.key, ${kind === 'category' ? 'c.show_in_menu, c.parent_id, c.position,' : 'c.image_id,'} c.status,
                    (${usage})::int AS usage_count,

@@ -21,7 +21,7 @@ import { capabilityFor, findTransition, LIVE_STATUSES, movesFrom } from './workf
 type Db = Pool | PoolClient;
 
 interface NewsRow {
-  id: string; canonical_key: string; status: NewsStatus; category_id: string | null; desk_id: string | null;
+  id: string; canonical_key: string; status: NewsStatus; category_id: string | null; category_ids?: string[]; desk_id: string | null;
   published_revision_id: string | null; published_at: Date | null; created_at: Date; updated_at: Date;
 }
 interface RevisionRow {
@@ -32,7 +32,8 @@ interface RevisionRow {
 
 const iso = (d: Date | null) => (d ? d.toISOString() : null);
 const toNews = (r: NewsRow) => ({
-  id: r.id, canonicalKey: r.canonical_key, status: r.status, categoryId: r.category_id, deskId: r.desk_id,
+  id: r.id, canonicalKey: r.canonical_key, status: r.status, categoryId: r.category_id,
+  categoryIds: r.category_ids ?? (r.category_id ? [r.category_id] : []), deskId: r.desk_id,
   publishedRevisionId: r.published_revision_id, publishedAt: iso(r.published_at),
   createdAt: r.created_at.toISOString(), updatedAt: r.updated_at.toISOString(),
 });
@@ -41,6 +42,23 @@ const toRevision = (r: RevisionRow) => ({
   changeReason: r.change_reason, submittedAt: iso(r.submitted_at), approvedAt: iso(r.approved_at),
   isCorrection: r.is_correction, aiAssisted: r.ai_assisted,
 });
+
+/**
+ * The sections a request asks for: the primary one and all of them. `categoryIds` is the full list;
+ * `categoryId` alone (older callers) means a single section. The primary is `categoryId` when it is in the
+ * list, otherwise the first of the list.
+ */
+export function resolveCategories(input: { categoryId?: string | null; categoryIds?: string[] }): { primary: string | null; ids: string[] } {
+  const list = input.categoryIds ?? (input.categoryId ? [input.categoryId] : []);
+  const ids = [...new Set(list)];
+  const primary = input.categoryId && ids.includes(input.categoryId) ? input.categoryId : (ids[0] ?? null);
+  return { primary, ids };
+}
+
+/** Every section of a news item, the primary one first. */
+const categoryIdsOf = (alias: string) =>
+  `COALESCE((SELECT array_agg(nc.category_id ORDER BY (nc.category_id = ${alias}.category_id) DESC, nc.category_id)
+               FROM news_category nc WHERE nc.news_id = ${alias}.id), '{}') AS category_ids`;
 
 const conflict = (reason: string, message: string) => new ConflictException({ message, reason });
 const unprocessable = (message: string, issues: string[]) => new UnprocessableEntityException({ message, issues });
@@ -102,7 +120,7 @@ export class NewsService {
     }
     const { rows } = await this.pool
       .query<NewsRow & { titles: Record<string, string>; cursor_at: string; scheduled_for: Date | null }>(
-        `SELECT s.*, to_char(s.updated_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at,
+        `SELECT s.*, ${categoryIdsOf('s')}, to_char(s.updated_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at,
                 COALESCE(t.titles, '{}'::jsonb) AS titles,
                 (SELECT min(p.scheduled_for) FROM publishing_schedule p WHERE p.news_id = s.id AND p.status = 'pending') AS scheduled_for
            FROM news s
@@ -219,11 +237,13 @@ export class NewsService {
     const id = await withTransaction(this.pool, async (db) => {
       const newsId = randomUUID();
       const slug = input.slug ?? slugify(input.title, `news-${newsId.slice(0, 8)}`);
+      const { primary, ids } = resolveCategories(input);
       try {
         await db.query(
           'INSERT INTO news (id, canonical_key, category_id, desk_id) VALUES ($1, $2, $3, $4)',
-          [newsId, `news-${newsId}`, input.categoryId ?? null, input.deskId ?? null],
+          [newsId, `news-${newsId}`, primary, input.deskId ?? null],
         );
+        await this.writeCategories(db, newsId, ids);
         const rev = await db.query<{ id: string }>(
           `INSERT INTO news_revision (news_id, revision_no, changed_by, change_reason) VALUES ($1, 1, $2, 'created') RETURNING id`,
           [newsId, actor.principal.subject],
@@ -290,14 +310,16 @@ export class NewsService {
       const news = await this.lockNews(db, id);
       if (news.status === 'ARCHIVED') throw conflict('news_archived', 'Archived news cannot be edited');
       try {
-        if ('deskId' in input || 'categoryId' in input) {
+        const sections = 'categoryId' in input || 'categoryIds' in input ? resolveCategories(input) : null;
+        if ('deskId' in input || sections) {
           await db.query(
             `UPDATE news SET desk_id = CASE WHEN $2::boolean THEN $3::uuid ELSE desk_id END,
                               category_id = CASE WHEN $4::boolean THEN $5::uuid ELSE category_id END
               WHERE id = $1`,
-            [id, 'deskId' in input, input.deskId ?? null, 'categoryId' in input, input.categoryId ?? null],
+            [id, 'deskId' in input, input.deskId ?? null, sections !== null, sections?.primary ?? null],
           );
         }
+        if (sections) await this.writeCategories(db, id, sections.ids);
         if (input.contributors) {
           await db.query('DELETE FROM news_contributor WHERE news_id = $1', [id]);
           for (const c of input.contributors) {
@@ -315,7 +337,7 @@ export class NewsService {
       await this.audit.record(
         { actorType: 'human', actorId: actor.principal.subject, action: 'news.meta_update', objectType: 'news', objectId: id,
           newsId: id, requestId: actor.requestId,
-          metadata: { changed: Object.keys(input), from: { deskId: news.desk_id, categoryId: news.category_id } } },
+          metadata: { changed: Object.keys(input), from: { deskId: news.desk_id, categoryId: news.category_id }, categoryIds: 'categoryIds' in input ? input.categoryIds : undefined } },
         db,
       );
     });
@@ -514,8 +536,7 @@ export class NewsService {
           WHERE c.news_id = $1 AND r.revision_no <= $3 ORDER BY c.approved_at`, [row.news_id, locale, m.revision_no]),
     ]);
     const media = await this.publicMedia(bodyMediaAssetIds(m.body));
-    const categoryRow = await this.pool.query<{ category_id: string | null }>('SELECT category_id FROM news WHERE id = $1', [row.news_id]);
-    const refs = await this.taxonomy.publicRefs(row.news_id, categoryRow.rows[0]?.category_id ?? null, locale);
+    const refs = await this.taxonomy.publicRefs(row.news_id, locale);
     return {
       news: {
         id: m.id, locale, slug, title: m.title, dek: m.dek, body: m.body, seoTitle: m.seo_title, seoDescription: m.seo_description,
@@ -527,6 +548,7 @@ export class NewsService {
         corrections: corrections.rows.map((c) => ({ approvedAt: c.approved_at.toISOString(), notice: c.notice })),
         media,
         category: refs.category,
+        categories: refs.categories,
         tags: refs.tags,
       },
     };
@@ -702,8 +724,17 @@ export class NewsService {
     return chosen ? (parseConfigValue('workflow.transition_policy', chosen.value) as WorkflowPolicy) : defaultWorkflowPolicy;
   }
 
+  /** Replaces the sections of a news item. The primary section is always one of them. */
+  private async writeCategories(db: PoolClient, newsId: string, ids: string[]): Promise<void> {
+    await db.query('DELETE FROM news_category WHERE news_id = $1 AND NOT (category_id = ANY ($2::uuid[]))', [newsId, ids]);
+    if (ids.length > 0) {
+      await db.query(
+        'INSERT INTO news_category (news_id, category_id) SELECT $1, unnest($2::uuid[]) ON CONFLICT DO NOTHING', [newsId, ids]);
+    }
+  }
+
   private async loadNews(db: Db, id: string): Promise<NewsRow> {
-    const { rows } = await db.query<NewsRow>('SELECT * FROM news WHERE id = $1', [id]);
+    const { rows } = await db.query<NewsRow>(`SELECT s.*, ${categoryIdsOf('s')} FROM news s WHERE s.id = $1`, [id]);
     if (!rows[0]) throw new NotFoundException('News not found');
     return rows[0];
   }

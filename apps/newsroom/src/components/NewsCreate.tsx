@@ -12,6 +12,7 @@ import { slugOf } from '@/lib/slug';
 import { collectTexts, replaceTexts } from '@/lib/translate-doc';
 import { MediaPicker } from './MediaParts';
 import { RichTextEditor } from './RichTextEditor';
+import { SectionPicker, type Sections } from './SectionPicker';
 import { buttonClass, Field, inputClass, Notice, Panel } from './ui';
 
 interface Draft { title: string; dek: string; slug: string; seoTitle: string; seoDescription: string }
@@ -43,7 +44,7 @@ export function NewNewsForm({ locales, desks, categories, fromInbox = null }: {
   });
   const editors = useRef<Record<string, Editor | null>>({});
   const [deskId, setDeskId] = useState('');
-  const [categoryId, setCategoryId] = useState('');
+  const [sections, setSections] = useState<Sections>({ ids: [], primary: null });
   const [tags, setTags] = useState<Tag[]>([]);
   const [picking, setPicking] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
@@ -99,7 +100,7 @@ export function NewNewsForm({ locales, desks, categories, fromInbox = null }: {
       }));
       const made = await bff<{ news: { id: string } }>('POST', 'news', {
         locale: first.code, title: draftOf(first.code).title.trim(), slug: slugs[first.code],
-        ...(deskId ? { deskId } : {}), ...(categoryId ? { categoryId } : {}),
+        ...(deskId ? { deskId } : {}), ...(sections.ids.length ? { categoryId: sections.primary, categoryIds: sections.ids } : {}),
       });
       if (!made.ok) return setError({ message: made.message, issues: made.issues });
       const id = made.data.news.id;
@@ -180,15 +181,9 @@ export function NewNewsForm({ locales, desks, categories, fromInbox = null }: {
                   {desks.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                 </select>
               </Field>
-              <Field label="Section">
-                <select value={categoryId} onChange={(e) => { setCategoryId(e.target.value); setDirty(true); }} className={inputClass}>
-                  <option value="">None</option>
-                  {categories.filter((c) => c.parentId === null).flatMap((c) => [
-                    <option key={c.id} value={c.id}>{categoryName(c)}</option>,
-                    ...categories.filter((k) => k.parentId === c.id).map((k) => <option key={k.id} value={k.id}>{`— ${categoryName(k)}`}</option>),
-                  ])}
-                </select>
-              </Field>
+              <SectionPicker
+                options={categories.map((c) => ({ id: c.id, name: categoryName(c), parentId: c.parentId }))}
+                value={sections} onChange={(next) => { setSections(next); setDirty(true); }} />
               <TagChooser tags={tags} onAdd={addTags} onRemove={(id) => setTags((cur) => cur.filter((t) => t.id !== id))} />
             </div>
           </Panel>

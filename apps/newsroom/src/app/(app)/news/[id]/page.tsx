@@ -132,8 +132,8 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
           <Panel title="Details" id="meta-h">
             {can(principal, 'news.edit') && news.status !== 'ARCHIVED' ? (
               <div className="space-y-3">
-                <MetaForm newsId={id} deskId={news.deskId} categoryId={news.categoryId}
-                  desks={desks.map((d) => ({ id: d.id, name: d.name }))} categories={categories.map((c) => ({ id: c.id, name: sectionName(c) }))}
+                <MetaForm newsId={id} deskId={news.deskId} categoryId={news.categoryId} categoryIds={news.categoryIds}
+                  desks={desks.map((d) => ({ id: d.id, name: d.name }))} categories={categories.map((c) => ({ id: c.id, name: sectionName(c), parentId: c.parentId }))}
                   contributors={detail.contributors.map((c) => ({ id: c.contributor.id, name: c.contributor.displayName, role: c.role }))}
                   people={people.map((p) => ({ id: p.id, name: p.displayName }))} />
                 <NewsTagPicker newsId={id} tags={detail.tags} locales={locales} />

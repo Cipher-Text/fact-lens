@@ -7,6 +7,7 @@ import { statusLabel } from '@/lib/format';
 import { announce } from '@/lib/announce';
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
+import { SectionPicker, type SectionOption, type Sections } from './SectionPicker';
 import { buttonClass, Empty, Field, inputClass, Notice } from './ui';
 
 type Failure = { message: string; issues: string[] } | null;
@@ -107,26 +108,28 @@ export function CorrectionForm({ newsId, locales }: { newsId: string; locales: s
   );
 }
 
-export function MetaForm({ newsId, desks, categories, deskId, categoryId, contributors, people }: {
+export function MetaForm({ newsId, desks, categories, deskId, categoryId, categoryIds, contributors, people }: {
   newsId: string;
   desks: Array<{ id: string; name: string }>;
-  categories: Array<{ id: string; name: string }>;
+  categories: SectionOption[];
   deskId: string | null;
   categoryId: string | null;
+  categoryIds: string[];
   contributors: Array<{ id: string; name: string; role: string }>;
   people: Array<{ id: string; name: string }>;
 }) {
   const { error, pending, run } = useCommand();
   const [added, setAdded] = useState(contributors);
+  const [sections, setSections] = useState<Sections>({ ids: categoryIds, primary: categoryId });
 
   return (
     <form className="space-y-3"
       onSubmit={submitWith((form) => run('PUT', `news/${newsId}/meta`, {
-        deskId: (form.get('deskId') as string) || null, categoryId: (form.get('categoryId') as string) || null,
+        deskId: (form.get('deskId') as string) || null, categoryId: sections.primary, categoryIds: sections.ids,
         contributors: added.map((c, i) => ({ contributorId: c.id, role: c.role, position: i })),
       }))}>
       <Field label="Desk"><select name="deskId" defaultValue={deskId ?? ''} className={inputClass}><option value="">None</option>{desks.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</select></Field>
-      <Field label="Section"><select name="categoryId" defaultValue={categoryId ?? ''} className={inputClass}><option value="">None</option>{categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></Field>
+      <SectionPicker options={categories} value={sections} onChange={setSections} />
       <fieldset>
         <legend className="mb-1 text-sm font-medium">Credits</legend>
         <ul className="mb-2 space-y-1 text-sm">

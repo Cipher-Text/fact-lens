@@ -6,13 +6,21 @@ import { idSchema, localeCodeSchema, slugSchema, timestampSchema } from './commo
 import { contributorRoles, newsStatuses } from './enums';
 import { publicTaxonomyRefSchema, taxonomyTagSchema } from './taxonomy';
 
+export const categoryIdsSchema = z
+  .array(idSchema)
+  .max(10)
+  .refine((ids) => new Set(ids).size === ids.length, 'each section once');
+
 export const newsCreateSchema = z.object({
   locale: localeCodeSchema,
   title: z.string().trim().min(1).max(300),
   /** Derived from the title when omitted. */
   slug: slugSchema.optional(),
   deskId: idSchema.nullish(),
+  /** The primary section. Must be one of `categoryIds` when both are given; alone it means a single section. */
   categoryId: idSchema.nullish(),
+  /** Every section the news item appears in (the news menu). The first is the primary one unless `categoryId` says otherwise. */
+  categoryIds: categoryIdsSchema.optional(),
 });
 export type NewsCreate = z.infer<typeof newsCreateSchema>;
 
@@ -32,6 +40,7 @@ export const newsMetaSchema = z
   .object({
     deskId: idSchema.nullable(),
     categoryId: idSchema.nullable(),
+    categoryIds: categoryIdsSchema,
     contributors: z
       .array(z.object({ contributorId: idSchema, role: z.enum(contributorRoles), position: z.number().int().min(0).default(0) }))
       .max(50),
@@ -142,6 +151,8 @@ export const publicNewsSchema = z.object({
   media: z.array(publicMediaSchema),
   /** In this news item's language only; null / left out when it has no name in that language. */
   category: publicTaxonomyRefSchema.nullable(),
+  /** Every section the item appears in, the primary one first. */
+  categories: z.array(publicTaxonomyRefSchema),
   tags: z.array(publicTaxonomyRefSchema),
 });
 export type PublicNews = z.infer<typeof publicNewsSchema>;

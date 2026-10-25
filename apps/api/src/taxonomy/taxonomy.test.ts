@@ -280,4 +280,51 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     const edited = await t.call({ method: 'PUT', url: `/taxonomy/tags/${made.body.id}`, body: { labels: { en: { name: 'Monsoon', description: null } } } });
     expect(edited.body.labels.find((l: any) => l.locale === 'en').description).toBeNull();
   });
+
+  it('keeps one news item in several menu sections, with one primary section', async () => {
+    const list = await cats();
+    const [local, national, politics] = ['local', 'national', 'politics'].map((k) => list.find((c) => c.key === k));
+    const created = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Many', slug: 'many-sections', deskId, categoryIds: [national.id, politics.id] } });
+    expect(created.status).toBe(201);
+    const id = created.body.news.id as string;
+    // The first of the list is the primary section when categoryId is not given.
+    expect(created.body.news).toMatchObject({ categoryId: national.id, categoryIds: [national.id, politics.id] });
+
+    // The primary can be named, but only from the list; otherwise the first of the list is used.
+    const moved = await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { categoryId: politics.id, categoryIds: [national.id, politics.id, local.id] } });
+    expect(moved.body.news).toMatchObject({ categoryId: politics.id });
+    expect(moved.body.news.categoryIds[0]).toBe(politics.id);
+    expect([...moved.body.news.categoryIds].sort()).toEqual([local.id, national.id, politics.id].sort());
+    const dropped = await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { categoryIds: [local.id] } });
+    expect(dropped.body.news).toMatchObject({ categoryId: local.id, categoryIds: [local.id] });
+    const dup = await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { categoryIds: [local.id, local.id] } });
+    expect(dup.status).toBe(400);
+    const unknown = await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { categoryIds: ['00000000-0000-4000-8000-000000000000'] } });
+    expect(unknown.status).toBe(400);
+
+    // An older caller that sends one categoryId still gets a single section.
+    const single = await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { categoryId: national.id } });
+    expect(single.body.news).toMatchObject({ categoryId: national.id, categoryIds: [national.id] });
+    await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { categoryId: politics.id, categoryIds: [politics.id, local.id] } });
+
+    // Readers: the news appears under each of its sections, and names the primary first.
+    const slug = 'many-sections';
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/translations/en`, roles: ['reporter'], body: { title: 'Many', body: doc('x'), slug, expectedVersion: 1 } })).status).toBe(200);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } })).status).toBe(200);
+    for (const [to, role] of [['EDITOR_REVIEW', 'reporter'], ['READY', 'fact_checker'], ['PUBLISHED', 'managing_editor']] as const) {
+      expect((await t.call({ method: 'POST', url: `/news/${id}/transitions`, roles: [role], body: { to } })).status).toBe(201);
+    }
+    const page = (await t.anonymous('GET', `/public/news/en/${slug}`)).json() as any;
+    expect(page.category).toEqual({ key: 'politics', name: 'Politics', slug: 'politics' });
+    expect(page.categories.map((c: any) => c.key)).toEqual(['politics', 'local']);
+    for (const c of ['politics', 'local']) {
+      expect(((await t.anonymous('GET', `/public/news/en?category=${c}`)).json() as any).items.map((i: any) => i.id)).toContain(id);
+    }
+    expect(((await t.anonymous('GET', '/public/news/en?category=national')).json() as any).items.map((i: any) => i.id)).not.toContain(id);
+
+    // Each section counts the item once, and a section in use cannot be removed.
+    const after = await cats();
+    expect(after.find((c) => c.key === 'politics').usageCount).toBeGreaterThanOrEqual(1);
+    expect((await t.call({ method: 'DELETE', url: `/taxonomy/categories/${local.id}` })).status).toBe(409);
+  });
 });

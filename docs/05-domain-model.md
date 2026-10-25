@@ -12,7 +12,7 @@ erDiagram
   SOURCE ||--o{ STORY_SOURCE : supports
   STORY ||--o{ STORY_TAG : uses
   TAG ||--o{ STORY_TAG : labels
-  STORY }o--|| CATEGORY : belongs_to
+  STORY }o--o{ CATEGORY : belongs_to
   STORY }o--o| DESK : assigned_to
   STORY }o--o{ ENTITY : mentions
   STORY_REVISION ||--o{ REVISION_MEDIA : uses
@@ -32,7 +32,7 @@ erDiagram
   - **Multilingual by data.** A category or tag is one record with one label row per language (`category_label`, `tag_label`: name, address, aliases, and a description for categories). Which languages exist is the `locale` table, not code, so adding a language (for example `hi`) needs no release: it is added under Configuration, then categories and tags can be named in it and news items translated into it.
   - **Tag page content.** A tag has a short description per language (like a category) and one picture, chosen from the media library, that does not depend on language. The picture is shown publicly only while it is ready, allowed on the web, not expired and has a credit or licence; an image used as a tag picture cannot be deleted.
   - **Naming:** editors and readers see "section"; the code, API and database keep `category` (the cipher-press term), so renaming those is a separate, larger change.
-  - **Category** is the news menu: a news item has one; `position` orders the menu and `show_in_menu` hides a category from it without deleting it. The menu is flat for now (`parent_id` is unused). **Tag**: a news item has many (at most 30). Addresses are unique per language, so `/bn-BD/…/india` and `/en/…/india` do not collide.
+  - **Category** is the news menu: a news item can be in several (at most 10, `news_category`), and one of them is its primary section (`news.category_id`, always one of the set), which the reader's page names first; `position` orders the menu and `show_in_menu` hides a category from it without deleting it. The menu is flat for now (`parent_id` is unused). **Tag**: a news item has many (at most 30). Addresses are unique per language, so `/bn-BD/…/india` and `/en/…/india` do not collide.
   - **Missing translations.** A category or tag with no label in a language is left out of that language's menu, news item and lists; languages are never mixed on a page. The newsroom shows what is missing (open question 21).
   - **Delete.** Something used by news items is archived, not deleted. Changing a name keeps its address so live links keep working.
 - **Source, NewsSource:** structured source identity, URL/canonical URL, publisher/type, published/retrieved times, archive URL, notes, primary/secondary and use type.
