@@ -218,6 +218,7 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
   - Bare `/story` and `/opinion` give a 404.
   - The Eyebrow shows the format (example: Opinion) on analysis, explainer, opinion and op-ed articles. No breadcrumb trail.
 - **Suggested solution:** do it on a `page/` branch, so the spec line in `spacing-layout-system.md` can change with the code. IMP-18 and IMP-35 stay: section pages are still 404 pages.
+- **Answers so far (tajmin, 26 Oct 2026):** the format replaces the category in the Eyebrow; it applies everywhere the Eyebrow shows, homepage cards included; op-ed is not built now. Open: the format Eyebrow is a link to a "voices hub" (opinion), but the hub, its URL (bare `/opinion` is a 404) and the analysis and explainer targets are not decided. Its own branch, after the category page.
 
 ### DOC-52 R5-01 check: "first item edge equals the shell edge"
 

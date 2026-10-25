@@ -9,6 +9,8 @@ type MostReadSectionProps = {
   lang: Lang;
   stories: Story[];
   t: Pick<Dictionary, "mostRead">;
+  /** Divider.item between the rows (RankedList). The category page turns it off. */
+  rules?: boolean;
   className?: string;
 };
 
@@ -21,6 +23,7 @@ export function MostReadSection({
   lang,
   stories,
   t,
+  rules = true,
   className,
 }: MostReadSectionProps) {
   return (
@@ -31,7 +34,7 @@ export function MostReadSection({
       className={className}
     >
       <SectionHeading id="most-read-title">{t.mostRead.title}</SectionHeading>
-      <RankedList lang={lang} stories={stories} />
+      <RankedList lang={lang} stories={stories} rules={rules} />
     </Shell>
   );
 }

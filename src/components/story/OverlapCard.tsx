@@ -16,6 +16,8 @@ type OverlapCardProps = {
   surface?: "background" | "elevated";
   /** Load the image without lazy loading: cards near the top of the page (hero). */
   eager?: boolean;
+  /** The page drops the eyebrow when its title names the category (DR-114, DR-153). */
+  eyebrow?: boolean;
   className?: string;
 };
 
@@ -32,6 +34,7 @@ export function OverlapCard({
   strings,
   surface = "background",
   eager = false,
+  eyebrow = true,
   className,
 }: OverlapCardProps) {
   return (
@@ -45,11 +48,13 @@ export function OverlapCard({
           "me-(--space-card-notch) -mt-(--space-card-overlap) pt-4",
         )}
       >
-        <Eyebrow
-          story={story}
-          strings={strings}
-          className="mb-(--space-lead-eyebrow-title)"
-        />
+        {eyebrow ? (
+          <Eyebrow
+            story={story}
+            strings={strings}
+            className="mb-(--space-lead-eyebrow-title)"
+          />
+        ) : null}
         <h3 className="type-story-title">
           <Link href={storyHref(story)} className={headlineLink}>
             {story.title}
