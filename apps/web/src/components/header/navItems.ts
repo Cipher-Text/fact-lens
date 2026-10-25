@@ -20,24 +20,26 @@ export type NavItem = {
  * the section heading, #analysis-opinion-title; every # target must exist (DR-331).
  * The labels are the working category labels (U-01); the C-18 list names them shorter.
  * The Regions item reads অঞ্চলসমূহ / Regions (component-system.md Section 3.3, DR-345).
+ * On any other page the section links go to the homepage, so the # targets still exist.
  */
 export function getNavItems(
   t: Dictionary,
   lang: Lang,
   path: string = "/",
 ): NavItem[] {
+  const home = localizedPath(lang);
+  const section = (hash: string) => (path === "/" ? hash : `${home}${hash}`);
   const category = (id: keyof Dictionary["categories"]): NavItem => ({
     id,
     label: t.categories[id],
-    href: `#category-${id}`,
+    href: section(`#category-${id}`),
   });
   // The regions are every entry of the region table.
   const regions = Object.entries(t.regions).map(([id, label]) => ({
     id,
     label,
-    href: `#region-${id}`,
+    href: section(`#region-${id}`),
   }));
-  const home = localizedPath(lang);
 
   return [
     { id: "home", label: t.header.navHome, href: home, current: path === "/" },
@@ -45,7 +47,7 @@ export function getNavItems(
     {
       id: "regions",
       label: t.header.navRegions,
-      href: "#regions",
+      href: section("#regions"),
       children: regions,
     },
     category("geopolitics"),
@@ -56,17 +58,17 @@ export function getNavItems(
     {
       id: "analysis-opinion",
       label: t.analysisOpinion.title,
-      href: "#analysis-opinion-title",
+      href: section("#analysis-opinion-title"),
       children: [
         {
           id: "analysis",
           label: t.analysisOpinion.analysis,
-          href: "#analysis-opinion-title",
+          href: section("#analysis-opinion-title"),
         },
         {
           id: "opinion",
           label: t.analysisOpinion.opinion,
-          href: "#analysis-opinion-title",
+          href: section("#analysis-opinion-title"),
         },
       ],
     },

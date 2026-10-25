@@ -44,3 +44,15 @@ describe("formatPercent", () => {
     expect(formatPercent(100, "bn")).toBe("১০০%");
   });
 });
+
+describe("formatNumber with leading zeros (article key points)", () => {
+  it("pads to the minimum digits in the page language", () => {
+    expect(formatNumber(1, "en", 2)).toBe("01");
+    expect(formatNumber(1, "bn", 2)).toBe("০১");
+    expect(formatNumber(12, "en", 2)).toBe("12");
+  });
+
+  it("keeps one digit by default", () => {
+    expect(formatNumber(7, "bn")).toBe("৭");
+  });
+});

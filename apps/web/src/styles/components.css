@@ -337,6 +337,26 @@
   }
 }
 
+/* shadcn Dialog (CPT-16), used by the share dialog of the wild card article page: it
+   slides up from the bottom edge on phones and rises a little into place from 600, with the
+   one motion duration. */
+@utility dialog-panel {
+  transition:
+    transform var(--duration-slide) var(--ease-slide),
+    opacity var(--duration-slide) var(--ease-slide);
+  &[data-starting-style],
+  &[data-ending-style] {
+    transform: translateY(100%);
+  }
+  @media (width >= 600px) {
+    &[data-starting-style],
+    &[data-ending-style] {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+  }
+}
+
 @utility drawer-overlay {
   transition: opacity var(--duration-slide) var(--ease-slide);
   &[data-starting-style],

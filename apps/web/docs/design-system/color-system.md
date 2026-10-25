@@ -1,6 +1,6 @@
 # Fact Lens Color System
 
-Version 2.15 · 17 October 2026 · Run 4 review (DR-358)
+Version 2.16 · 24 October 2026 · Article page, checkpoint 1 (DR-389)
 
 The values are not final. Some colors can change after a few prototype rounds. Run the contrast tests in Section 3 again after each change.
 
@@ -130,6 +130,8 @@ NewsletterSignup (DR-229; paused for prototype run 2, built in a later phase, DR
 
 Theme control (DR-349): the ThemeButton at every width is an IconButton ghost. Icon `ink` in both themes; hover `interactive-hover`, pressed `interactive-pressed`; no wash; focus outline. The ThemeToggle switch is removed.
 
+Article page (DR-389): colors are the tokens of this document; the page has no color aliases of its own. The accent is `--color-bar` (brand in light, interactive in dark): the category button, the byline avatar and the `PreferredSourceAlert` outline button (both with `on-interactive` on a fill), the key point numbers and icon, the `ContextCard` icon tile (`accent-subtle` icon) and part labels, the contents marker and read track, the progress frame fill and the toast icon. Icon buttons are ink; hover `interactive-hover`, pressed `interactive-pressed`; no wash. The selection bar and the toast are `ink` with `background` text; a selection bar button fills `interactive` on hover. A selected text size is an `ink` fill with `background` text. The focus outline is the base rule (`COL-13`); the page has no focus override. Exception: the `SectionAnchor` button after an article `h2` fills `accent-subtle` with an `interactive` icon on hover (DR-391).
+
 Form error (DR-230): the field gets a 2px `error` border. The message is `ink` with a 20px `error` icon (`COL-09`).
 
 ## 3. Contrast results
@@ -180,6 +182,8 @@ Do not add new grays, reds, surfaces or status colors. Ask for a new token inste
 
 Use `bg-surface`, `text-ink-muted` and other utilities. Do not write `text-[#1F1A17]` in a component.
 
+Third-party marks (share networks, the Google mark) have no brand colors. They take the text color of their control (`ink`; `interactive-hover` on hover) (DR-389).
+
 ### COL-03 Keep theme logic in the tokens
 
 Do not write `dark:` color overrides in components. The token value changes with the theme.
@@ -188,6 +192,8 @@ Do not write `dark:` color overrides in components. The token value changes with
 
 Use `brand` for the logo, brand mark and editorial rules. Do not use it for links, buttons or small text.
 
+Exception: on the article page, the category in `ArticleHeader` is a filled button in `--color-bar` (brand in light, interactive in dark) with `on-interactive` text; hover `interactive-hover`, pressed `interactive-pressed` (DR-389). `COL-05` has the same exception.
+
 Reason: `brand` is 2.37:1 on the dark background.
 
 ### COL-05 Use `interactive` for controls and UI links
@@ -195,6 +201,8 @@ Reason: `brand` is 2.37:1 on the dark background.
 Use `interactive` (shadcn `primary`) for buttons, UI links, active navigation and focus. A UI link goes to a part of the interface, for example আরও দেখুন, a category label (eyebrow), the privacy link or a search term. Navigation and footer links keep the text color of their component at rest.
 
 Do not use `interactive` for news links. A news link goes to a news item, for example a story title. It keeps the text color of its role (`ink` for titles).
+
+Exception: the article category button (`COL-04`, DR-389).
 
 ### COL-06 Show link states with color only
 
@@ -465,6 +473,7 @@ Examples:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.16 | 2026-10-24 | Article page, checkpoint 1 (DR-385, DR-389): Section 2.9 article page colors (`--color-bar` accents, no page aliases, no wash, base focus outline). COL-02: third-party marks take the text color, no hex. COL-04 and COL-05: the article category is a filled `--color-bar` button, a stated exception. `SectionAnchor` hover wash, a stated exception to the no-wash rule (DR-391). |
 | 2.15 | 2026-10-17 | `border` changed: light `#DDD2C4` to `#CEC7BD`, dark `#3A3D44` to `#494D55`, so divider rules show on every surface, `surface-elevated` in dark included (Section 2.5, Section 5, DR-358). |
 | 2.14 | 2026-10-16 | `--color-theme-control` and `--color-theme-icon` removed; `--color-bar` is the one component color token. Ghost icon buttons and the language link: ink, hover `interactive-hover`, no wash; `accent-subtle` has no hover use; `fill-neutral` for the poll only (Section 2.9, Section 4, DR-349). |
 | 2.13 | 2026-10-16 | Third component color token `--color-theme-icon` for the theme control icons (Section 2.9, DR-348). |

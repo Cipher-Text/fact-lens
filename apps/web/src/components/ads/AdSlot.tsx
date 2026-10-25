@@ -2,7 +2,7 @@ import { getAd, type AdSlotId, type Lang } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-export type AdSlotVariant = "top" | "band" | "inset" | "rail";
+export type AdSlotVariant = "top" | "band" | "inset" | "rail" | "inline";
 
 type Tier = { media: string; size: string };
 
@@ -36,6 +36,10 @@ const tiers: Record<
     fallback: "300x250",
   },
   rail: { slot: "ad-rail", sources: [], fallback: "300x600" },
+  // Article pages (wild card): ad-inline has no sizes in the spec yet ("Later"), so it
+  // is a 300×250 box in the reading column at every width and borrows the ad-inset mock
+  // creative. UNRESOLVED_DESIGN_SYSTEM.
+  inline: { slot: "ad-inset", sources: [], fallback: "300x250" },
 };
 
 // The row: top and band are full-width rows, inset is at wrapper width, rail is the rail
@@ -45,6 +49,7 @@ const rowClass: Record<AdSlotVariant, string> = {
   band: "ad-row",
   inset: "ad-inset",
   rail: "hidden xl:grid justify-items-center",
+  inline: "ad-inset",
 };
 
 // The reserved creative box (LAY-10, LAY-19): sizes from the --ad-* tokens in px.
@@ -53,6 +58,7 @@ const boxClass: Record<AdSlotVariant, string> = {
   band: "w-full h-(--ad-band-h)",
   inset: "w-(--ad-inset-w) max-w-full h-(--ad-inset-h)",
   rail: "w-(--ad-rail-w) h-(--ad-rail-h) items-start",
+  inline: "w-(--ad-inline-w) max-w-full h-(--ad-inline-h)",
 };
 
 type AdSlotProps = {
@@ -81,7 +87,7 @@ export function AdSlot({ variant, lang, strings }: AdSlotProps) {
 
   return (
     <div
-      data-ad-slot={slot}
+      data-ad-slot={variant === "inline" ? "ad-inline" : slot}
       className={cn(rowClass[variant], "bg-surface-alt")}
     >
       <p className="flex min-h-(--ad-label) items-center type-eyebrow text-ink-muted">
