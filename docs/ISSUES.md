@@ -6,7 +6,7 @@ The one place for every open item, flag and decision on an issue. Read it instea
 
 ## How to use this file
 
-- Add a row for each new finding with the next free ID of its prefix (U-42, IMP-97, DOC-55, KIT-xx). Add a detail entry below when one line is not enough.
+- Add a row for each new finding with the next free ID of its prefix (U-42, IMP-98, DOC-55, KIT-xx). Add a detail entry below when one line is not enough.
 - Do not delete a row. Change its status: Open, Open (flag), Later, Decided, Fixed or Closed, with the date, who decided and the commit or PR when there is one.
 - A flag is an item that needs tajmin's decision (`AGENTS.md` Section 8). Its status is "Open (flag)" until tajmin decides.
 - Article page spec items stay in `docs/spec-log/article.md`; a finding that needs a decision goes here too.
@@ -43,6 +43,7 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | IMP-95 | PR #7 review | `header.spec.ts` uses fixed waits (lines 357, 1216: 100ms; 1310: 500ms) for "nothing changes" checks | Low | Open |
 | DOC-54 | PR #9 hotfix | `reader.css` `.rd-dock` (C-35, DR-228, DR-386): layout §10 puts `--z-dock` (55) above `--z-overlay` (50), so the dock covered the drawer, search and share dialog. While an overlay is open the dock drops to `--z-bar` | Medium | Decided: keep the CSS rule, no spec change (tajmin, 24 Oct 2026) |
 | IMP-96 | PR #7 review | The run 5 report says "A11Y-24 closed" with IMP-92 open, and "every WebKit failure is a test fault" without per-test evidence | Low | Closed: the run 5 report is removed (tajmin, 24 Oct 2026) |
+| IMP-97 | – | URL change: two article roots and the Eyebrow format | Medium | Open (tajmin, 25 Oct 2026; DR-397, DR-400) |
 | DOC-52 | R5-01 | The R5-01 sprint check says the first NavBar item edge equals the shell edge; C-18 centers the items (DR-170) | Low | Closed: the sprint file is removed (tajmin, 24 Oct 2026) |
 
 ## Details
@@ -204,6 +205,19 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 - **Source:** `docs/run-5-report.md:12`; `docs/webkit-failures.md` "Real Safari (A11Y-24)"; IMP-92.
 - **Problem:** the report says "A11Y-24 closed" while IMP-92 (a keyboard failure on the vote button) is open, and "every WebKit failure is a test fault" although the Safari check maps families to checklist items, not each of the 51 tests. The PR body says "except IMP-92".
 - **Suggested solution:** "A11Y-24 closed with one open item (IMP-92)"; "every WebKit failure family maps to a checklist item that passes in real Safari". Fix the "( Tab" typo in the same line.
+
+### IMP-97 URL change: two article roots and the Eyebrow format
+
+- **Found:** URL format thread, 25 Oct 2026 · **Severity:** Medium · **Status:** Open (tajmin, 25 Oct 2026; DR-397, DR-400)
+- **Source:** `src/components/story/links.ts` (`storyHref`), `src/app/[lang]/story/[slug]/`, `src/content/` (mock data), `spacing-layout-system.md` line 303 (`/story/<slug>`).
+- **Problem:** articles use `/story/<slug>` for every format, and the Eyebrow shows the category on every article.
+- **Rules to build:**
+  - News, analysis and explainer: `/story/<slug>-<id>`. Opinion and op-ed: `/opinion/<slug>-<id>`. English adds `/en`.
+  - `<id>` is a short fixed id per article, shared by both languages. One slug for both languages; the Bangla page uses the English slug. The backend makes slugs; mock data gets short ids.
+  - The page is found by `<id>`. A wrong or old slug or root gets a 301 to the current URL. Lowercase Latin, hyphens, no trailing slash.
+  - Bare `/story` and `/opinion` give a 404.
+  - The Eyebrow shows the format (example: Opinion) on analysis, explainer, opinion and op-ed articles. No breadcrumb trail.
+- **Suggested solution:** do it on a `page/` branch, so the spec line in `spacing-layout-system.md` can change with the code. IMP-18 and IMP-35 stay: section pages are still 404 pages.
 
 ### DOC-52 R5-01 check: "first item edge equals the shell edge"
 
