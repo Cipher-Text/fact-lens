@@ -42,10 +42,10 @@
   --color-bar: var(--interactive);
 }
 
-/* Divider (C-22, DR-351). Section 6 has no tokens for these values (CPT-07): the rule
-   weight of Divider.item and Divider.column, the column-inset distance from the top and the
-   bottom, and the OpinionList quote mark width (C-06: 28 / 36 / 44px), which also sets where
-   the OpinionList item rule starts. */
+/* Divider (C-22, DR-351). --divider-rule is in Section 6: the rule weight of Divider.item,
+   Divider.rule and Divider.column. Section 6 has no tokens for the other values (CPT-07):
+   the column-inset distance from the top and the bottom, and the OpinionList quote mark
+   width (C-06: 28 / 36 / 44px), which also sets where the OpinionList item rule starts. */
 :root {
   --divider-rule: 1px;
   --divider-column-inset: 1rem;

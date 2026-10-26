@@ -8,7 +8,7 @@ type Props = {
 /**
  * PageTitle: the title of a page that is not the homepage or an article, as the page h1,
  * type-page-title, in the shell, with a short brand bar above it. No description. The
- * category page uses it with the category name (docs/briefs/category.md). No sheet yet (U-45).
+ * category page uses it with the category name (docs/briefs/category.md). Sheet: C-43.
  */
 export function PageTitle({ title, className }: Props) {
   return (

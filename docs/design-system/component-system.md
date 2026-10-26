@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.19 · 27 October 2026 · NavBar and Drawer category items link to the category pages (CL-08); RankedList variant `columns` for the category page (CL-10 to CL-12, CL-18, CL-21, CL-22); Divider.rule (C-22); new C-43 PageTitle; StoryCard layout dated (CL-16, CL-17)
+Version 1.20 · 27 October 2026 · Category review: C-02 OverlapCard `feature` and `eyebrow` (CL-15); category page names in Section 3.1; `--divider-rule` and the RankedList `columns` CSS in Section 6 (tajmin, category review)
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -102,10 +102,22 @@ In page order. The pattern ID links to `spacing-layout-system.md` Section 7.2.
 |  |  |  | `GroupedCategoriesSection.adInset` | AdSlot variant="inset" | Between the two rows of blocks, wrapper width |
 |  |  |  | `GroupedCategoriesSection.rail` | DailyPoll (C-26) in prototype run 2; NewsletterSignup (C-14) above it after run 2 (DR-239) | নিউজলেটার / Newsletter, আজকের জরিপ / Daily poll (DR-346) |
 |  |  |  | `GroupedCategoriesSection.adRail` | AdSlot variant="rail" | Below the poll in the rail, from 1280 only (DR-240, DR-245) |
-| P-5 | `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07, 5 items) | Numbered list, 4 / 3 / 2 / 1 per row. No MoreLink |
+| P-5 | `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07, 5 items) | Numbered list, 4 / 3 / 2 / 1 per row (`layout` grid). The category page uses `layout` columns (C-07). No MoreLink |
 | P-3b | `RegionsSection` | অঞ্চলসমূহ / Regions | `RegionsSection.slider` | RegionSlider (C-15) | Slider from 600px, tabs (Chip) on phones |
 |  |  |  | `RegionsSection.more` | MoreLink | আরও দেখুন / See more, like every section |
 | — | `Footer` | – | – | Footer (C-21) | Logo, social links, About, Contact, Corrections, Privacy, Terms |
+
+Category page sections (`spacing-layout-system.md` 7B, DR-402). In page order, between the top ad and the footer.
+
+| Section | Label (Bangla / English) | Item | Component | What |
+| --- | --- | --- | --- | --- |
+| `CategoryPageView` | – | – | – | The page template for every category |
+| `PageTitle` (C-43) | Category name | – | – | The page `h1` |
+| `CategoryFeatureSection` | Hidden heading | `CategoryFeatureSection.featureStory` | OverlapCard (C-02, `feature`, no eyebrow) | The feature story in the wrapper |
+|  |  | `CategoryFeatureSection.cards` | `CategoryCardList`: 3 × StoryCard (C-24, row, 16:9, md, third, summary) | Card rows under the feature story, 1 per row at every width |
+|  | সর্বশেষ / Latest | `CategoryFeatureSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | In the rail |
+| `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07, `columns`) | The top 5 of the category |
+| `CategoryMoreStoriesSection` | আরও পড়ুন / More stories | `CategoryMoreStoriesSection.list` | `CategoryMoreStoriesList`: StoryCard (C-24, `dated`), 10 at a time | 1 per row; Divider.rule and the load more Button (C-12) |
 
 Helper parts. They are not sections or numbered components; use these names in code (DR-286).
 
@@ -299,6 +311,7 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--rank-chip-digit-size` | 1.5rem (24px) | same | 2rem (32px) from 1024 | RankedList `columns`: the chip digits | category spec log CL-10 |
 | `--rank-chip-digit-weight` | 700 | same | 600 from 1024 | RankedList `columns`: the chip digits | category spec log CL-10 |
 | `--rank-list-gap` | 1.5rem (24px) | 1.75rem (28px) from 600 | 2rem (32px) from 1280 | RankedList `columns`: the space between items, which have no rule | category spec log CL-12 |
+| `--divider-rule` | 1px | same | same | Rule weight of Divider.item, Divider.rule and Divider.column (C-22) | DR-262, DR-351, DR-405 |
 
 In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-height`, and `--space-lead-inset` is the pair `--space-lead-inset-start` and `--space-lead-inset-end`.
 
@@ -328,6 +341,11 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --story-feature-media-min: 26.25rem;
   --story-feature-media-max: 34.8125rem;
   --story-feature-media-share: 0.5;
+  --divider-rule: 1px;
+  --rank-chip-size: 2.25rem;
+  --rank-chip-digit-size: 1.5rem;
+  --rank-chip-digit-weight: 700;
+  --rank-list-gap: 1.5rem;
 }
 
 .dark {
@@ -335,7 +353,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
 }
 
 @media (min-width: 37.5rem) {
-  :root { --top-bar-inset: 1.125rem; }
+  :root { --top-bar-inset: 1.125rem; --rank-list-gap: 1.75rem; }
 }
 
 @media (min-width: 48rem) {
@@ -347,12 +365,21 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
     --bar-section-width: 3rem;
     --bar-section-height: 0.5rem;
     --story-feature-media-share: 0.6;
+    --rank-chip-size: 2.75rem;
+    --rank-chip-digit-size: 2rem;
+    --rank-chip-digit-weight: 600;
   }
 }
 
-/* LeadStory root: container-type: inline-size */
+@media (min-width: 80rem) {
+  :root { --rank-list-gap: 2rem; }
+}
+
+/* LeadStory root: container-type: inline-size. .overlap-feature is the OverlapCard
+   feature body (C-02): the card is its container */
 @container (width >= 600px) {
-  .lead-story {
+  .lead-story,
+  .overlap-feature {
     --bar-brand: 0.5rem;
     --space-lead-inset-start: clamp(2rem, 4.2cqi, 2.5rem);
     --space-lead-inset-end: clamp(2rem, 4.2cqi, 2.5rem);
@@ -363,7 +390,8 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
 }
 
 @container (width >= 880px) {
-  .lead-story {
+  .lead-story,
+  .overlap-feature {
     --bar-brand: 0.625rem;
     --space-lead-panel: 2rem;
     --space-lead-panel-start: var(--space-lead-panel);
@@ -444,18 +472,18 @@ The one lead story of the whole site, in the homepage hero (P-1) only (DR-155). 
 
 #### C-02 OverlapCard
 
-**Status:** Approved · **Decisions:** DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109, DR-325
+**Status:** Approved · **Decisions:** DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109, DR-325; `feature` and `eyebrow` (DR-407)
 
-The image-led story card with the text block over the image bottom. Used for the two stories under the lead in the hero (P-1) and the first story of the analysis column (P-4). First shared card of the DR-93 merge (DR-106).
+The image-led story card with the text block over the image bottom. Used for the two stories under the lead in the hero (P-1), the first story of the analysis column (P-4) and the feature story of the category page (`CategoryFeatureSection`, `feature`). First shared card of the DR-93 merge (DR-106).
 
-**Variants.** surface: background (hero) | elevated (P-4). Sets the text block color to the section background (DR-283).
+**Variants.** surface: background (hero) | elevated (P-4). Sets the text block color to the section background (DR-283). feature: the feature story of a section (category page): the title in type-story-lead, and the body ends with --space-lead-panel, which steps with the card width as in LeadStory (the `.overlap-feature` container rule, Section 6). eyebrow: false drops the Eyebrow when the page title names the category (DR-153).
 
 | Part | Spec |
 | --- | --- |
 | `OverlapCard.media` | Image, 16:9, square corners (StoryImage). No image: the no-image placeholder (DR-338) |
 | `OverlapCard.body` | Text block in the background color of its section (page color in the hero, surface-elevated in P-4), no border. Covers the image bottom by --space-card-overlap from the start edge, stops --space-card-notch short of the end edge |
 | `OverlapCard.eyebrow` | Category: type-eyebrow, interactive (link) |
-| `OverlapCard.title` | type-story-title, ink, h3. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
+| `OverlapCard.title` | type-story-title (feature: type-story-lead), ink, h3. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
 | `OverlapCard.summary` | Optional. type-summary at weight 500 (DR-97), ink-secondary |
 | `OverlapCard.meta` | type-metadata at weight 400 (DR-96), --color-meta |
 | Spacing | Same gaps as LeadStory: 8 / 8 / 16px (DR-92) |
@@ -464,7 +492,7 @@ The image-led story card with the text block over the image bottom. Used for the
 | --- | --- | --- | --- |
 | Body | Same look as every width: overlap and notch 40px at 328 (DR-109, replaces DR-94) | Covers the image by --space-card-overlap (10% of card width, 46px at 464); --space-card-notch (10%) of image shows at the end side; padding 16px top and end, 0 at the start (DR-105) | Same |
 | Title | type-story-title | Same | Same |
-| Place | Phone: stacked under the lead. 768: pair, 348px each. 1024: pair, 312px. 1366: pair, 464px |  |  |
+| Place | Phone: stacked under the lead. 768: pair, 348px each. 1024: pair, 312px. 1366: pair, 464px. Category page: one feature card, the wrapper width |  |  |
 
 **Content.**
 
@@ -525,7 +553,7 @@ Shared list (DR-162, was LatestList): a ul of story items with 16px padding and 
 
 #### C-24 StoryCard
 
-**Status:** Approved · **Decisions:** DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153, DR-267, DR-283, DR-300, DR-308, DR-325; layout dated (tajmin, 27 Oct 2026)
+**Status:** Approved · **Decisions:** DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153, DR-267, DR-283, DR-300, DR-308, DR-325; layout dated: DR-406
 
 Shared card from the merge (DR-93): one story with an image and text. Draws every image story that is not a LeadStory or an OverlapCard. Takes over the working name StoryRow (DR-121). Merge approved (DR-153): no approved look changes.
 
@@ -758,7 +786,7 @@ One category inside the grouped categories section (P-3): heading, a feature sto
 
 #### C-07 RankedList
 
-**Status:** Approved · **Decisions:** DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148, DR-300; `columns`: category spec log CL-18, CL-21, CL-22 (tajmin, 27 Oct 2026)
+**Status:** Approved · **Decisions:** DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148, DR-300; `columns`: DR-403, DR-404 (category spec log CL-18, CL-21, CL-22)
 
 Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = rank numeral + title (DR-162, was RankItem).
 
@@ -963,7 +991,7 @@ Daily poll in the P-3 rail: at the top of the rail from 1024 (the only rail modu
 
 #### C-22 Divider
 
-**Status:** Approved · **Decisions:** DR-87, DR-102, DR-103, DR-262, DR-299, DR-350, DR-351; Divider.rule (tajmin, 27 Oct 2026)
+**Status:** Approved · **Decisions:** DR-87, DR-102, DR-103, DR-262, DR-299, DR-350, DR-351; Divider.rule: DR-405
 
 A thin rule that separates list rows, sections, modules and (option) columns. Dividers and space show grouping; no card borders or surfaces for that (DR-87).
 
@@ -1033,7 +1061,7 @@ The heading of every news and category section: the section divider (C-22) with 
 
 #### C-43 PageTitle
 
-**Status:** Approved · **Decisions:** category page spec log CL-14 (tajmin, 27 Oct 2026)
+**Status:** Approved · **Decisions:** DR-405 (category page spec log CL-14)
 
 The title of a page that is not the homepage or an article: the page `h1` in the shell. The category page uses it with the category name (`spacing-layout-system.md` 7B). Code: `src/components/layout/PageTitle.tsx`.
 

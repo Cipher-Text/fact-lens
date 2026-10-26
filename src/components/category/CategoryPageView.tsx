@@ -52,9 +52,9 @@ export function CategoryPageView({ page }: Props) {
             <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
-        {/* Most read in this category: P-5 in the columns layout (title | 1 to 3 | 4 and 5
-            from 1024), Divider.item inside a column, then its ad row. After an ad row:
-            space-module above (LAY-12). */}
+        {/* Most read in this category: P-5 with RankedList columns (C-07: from 1024 the list
+            in the end two thirds, 1 to 3 then 4 and 5, no rule between items), then its ad
+            row. After an ad row: space-module above (LAY-12). */}
         {page.mostRead.length > 0 ? (
           <>
             <MostReadSection
