@@ -140,6 +140,7 @@ describe("StoryCard (C-24)", () => {
     ["row", "story-split-third"],
     ["row-from-md", "md:story-split-third"],
     ["row-until-lg", "lg:story-stacked"],
+    ["dated", "story-dated"],
   ] as const)(
     "sets layout %s on the grid inside the container",
     (layout, grid) => {
@@ -187,6 +188,29 @@ describe("StoryCard (C-24)", () => {
     );
     expect(container.querySelector(".type-eyebrow")).toBeNull();
     expect(container.querySelector(".type-summary")).toBeNull();
+  });
+
+  it("dated: the image, the text, then the date in its own area, time only (category page, tajmin)", () => {
+    const { container } = render(
+      <StoryCard
+        story={withImage}
+        strings={bn}
+        layout="dated"
+        eyebrow={false}
+      />,
+    );
+    const grid =
+      container.querySelector("[data-story-card]")!.firstElementChild!;
+    // Source order is the reading order on phones: media, body, date (LAY-14, DR-267).
+    expect(grid.children).toHaveLength(3);
+    expect(grid.children[0]).toHaveAttribute("data-story-media");
+    expect(grid.children[1]).toHaveClass("story-body");
+    expect(grid.children[2]).toHaveClass("story-date");
+    // One meta line, the date only: no reading time.
+    expect(container.querySelectorAll("[data-reading-time]")).toHaveLength(0);
+    expect(grid.children[1].querySelector("time")).toBeNull();
+    expect(grid.children[2].querySelector("time")).not.toBeNull();
+    expect(container.querySelector(".type-eyebrow")).toBeNull();
   });
 
   it("shows the no-image placeholder for a story with no image, in the row layout, whole title (DR-338)", () => {

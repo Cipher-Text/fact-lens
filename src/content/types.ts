@@ -7,13 +7,16 @@ export type { Lang };
 export type Format = "news" | "analysis" | "opinion" | "explainer";
 
 // চীন is a region, not a category (DR-19). No fact-check category (DR-18).
-export type CategoryId =
-  | "bangladesh"
-  | "geopolitics"
-  | "security"
-  | "history"
-  | "economy"
-  | "technology";
+export const categoryIds = [
+  "bangladesh",
+  "geopolitics",
+  "security",
+  "history",
+  "economy",
+  "technology",
+] as const;
+
+export type CategoryId = (typeof categoryIds)[number];
 
 export type RegionId =
   | "china"
@@ -110,6 +113,20 @@ export interface Homepage {
 }
 
 export type HomepageVariant = "full" | "sparse";
+
+/**
+ * A category page in one language, in page order (docs/briefs/category.md). Every
+ * story is in the category. A section with no stories is empty, and the page drops it.
+ */
+export interface CategoryPage {
+  lang: Lang;
+  category: CategoryId;
+  feature: Story | null; // the feature story: the newest story with an image
+  latest: Story[]; // the next 5 newest, for the rail
+  cards: Story[]; // 3 image stories, one per row
+  mostRead: Story[]; // ranked, rank set
+  more: Story[]; // the rest, newest first; the page shows 10 at a time
+}
 
 /** The four ad slots (spacing-layout-system.md 9). `ad-inline` is for article pages, later. */
 export type AdSlotId = "ad-top" | "ad-band" | "ad-inset" | "ad-rail";

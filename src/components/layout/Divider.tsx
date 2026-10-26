@@ -38,8 +38,8 @@ export const dividerColumn = {
 } as const;
 
 type DividerProps = {
-  /** Only the section variant is a component. Item and column are the classes above. */
-  variant?: "section";
+  /** section and rule are components. Item and column are the classes above. */
+  variant?: "section" | "rule";
   className?: string;
 };
 
@@ -48,7 +48,19 @@ type DividerProps = {
  * the rule share the bottom edge. Bar size is --bar-section, color is --color-bar (brand in
  * light, interactive in dark). Decorative, so it is aria-hidden.
  */
-export function Divider({ className }: DividerProps) {
+export function Divider({ variant = "section", className }: DividerProps) {
+  // Divider.rule (C-22, tajmin 27 Oct 2026): a 1px solid horizontal rule in the border color,
+  // the full width of its container. The shared part wherever one plain rule separates two
+  // modules; the space around it belongs to the caller.
+  if (variant === "rule") {
+    return (
+      <div
+        aria-hidden="true"
+        data-divider="rule"
+        className={cn("h-(--divider-rule) w-full shrink-0 bg-border", className)}
+      />
+    );
+  }
   return (
     <div
       aria-hidden="true"

@@ -8,8 +8,10 @@ import { en } from "@/i18n/en";
 
 import { homepagePlans } from "./homepage";
 import { ads } from "./ads";
+import { categoryMostRead } from "./category-most-read";
 import {
   getAd,
+  getCategoryPage,
   getHomepage,
   getPoll,
   getStory,
@@ -389,4 +391,36 @@ describe("getStory", () => {
   it("throws for an unknown id", () => {
     expect(() => getStory("no-such-story", "bn")).toThrow(/Unknown story id/);
   });
+});
+
+// The category page (docs/briefs/category.md).
+describe("category pages", () => {
+  for (const category of categoryIds) {
+    it(`${category}: 16 stories or more, every section full, More news has a second load`, () => {
+      const defs = stories.filter((def) => def.category === category);
+      expect(defs.length).toBeGreaterThanOrEqual(16);
+      for (const lang of langs) {
+        const page = getCategoryPage(category, lang);
+        expect(page.feature?.image).toBeTruthy();
+        expect(page.latest).toHaveLength(5);
+        expect(page.cards).toHaveLength(3);
+        for (const s of page.cards) expect(s.image).toBeTruthy();
+        expect(page.mostRead.map((s) => s.rank)).toEqual([1, 2, 3, 4, 5]);
+        // 10 at a time: more than 10 left gives a second load.
+        expect(page.more.length).toBeGreaterThan(10);
+        const shown = [page.feature!, ...page.latest, ...page.cards, ...page.more];
+        // Every story of the category once, newest first after the feature story, all in it.
+        expect(new Set(shown.map((s) => s.id)).size).toBe(defs.length);
+        for (const s of [...shown, ...page.mostRead])
+          expect(s.category).toBe(category);
+      }
+    });
+
+    it(`${category}: the most read ranking has 8 ids that exist in the category`, () => {
+      const ids = categoryMostRead[category];
+      expect(ids).toHaveLength(8);
+      expect(new Set(ids).size).toBe(8);
+      for (const id of ids) expect(getStory(id, "bn").category).toBe(category);
+    });
+  }
 });

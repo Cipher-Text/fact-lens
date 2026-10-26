@@ -685,16 +685,66 @@ for (const p of PAGES) {
       const menu = page.getByRole("button", { name: p.menu, exact: true });
       const drawer = page.locator("[data-drawer]");
       await openWithKeyboard(menu, drawer);
-      // The target is the P-2 বাংলাদেশ section (FL-08).
-      await drawer.locator('nav a[href="#category-bangladesh"]').click();
+      // The target is the Analysis and Opinion heading: the category items go to the
+      // category pages now (docs/briefs/category.md), so this is a link to a place on the page.
+      await drawer
+        .locator('nav a[href="#analysis-opinion-title"]')
+        .first()
+        .click();
       await expectClosed(drawer);
-      const target = page.locator("#category-bangladesh");
+      const target = page.locator("#analysis-opinion-title");
       await expect(target).toBeFocused();
       // The target keeps no tabindex once focus has left it (DR-330).
       await page.keyboard.press("Tab");
       await expect(target).not.toHaveAttribute("tabindex");
       // The scroll lock is gone with the drawer.
       await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
+    });
+
+    // The category items go to the category pages; the open category is the current item,
+    // and the Drawer marks it too (docs/briefs/category.md, DR-181).
+    test("category links go to the category pages, with aria-current on the open one", async ({
+      page,
+    }) => {
+      const prefix = p.path === "/" ? "" : "/en";
+      const ids = [
+        "bangladesh",
+        "geopolitics",
+        "economy",
+        "security",
+        "technology",
+        "history",
+      ];
+      await page.setViewportSize({ width: 1280, height: 800 });
+      await page.goto(p.path);
+      await waitForNavRow(page);
+      const row = page.locator("[data-nav-row]");
+      for (const id of ids) {
+        await expect(
+          row.locator(`a[href="${prefix}/category/${id}"]`),
+        ).toHaveCount(1);
+      }
+      await expect(row.locator('a[href*="#category-"]')).toHaveCount(0);
+
+      await page.goto(`${prefix}/category/economy`);
+      await waitForNavRow(page);
+      const current = row.locator('a[aria-current="page"]');
+      await expect(current).toHaveCount(1);
+      await expect(current).toHaveAttribute(
+        "href",
+        `${prefix}/category/economy`,
+      );
+
+      await page.setViewportSize({ width: 360, height: 800 });
+      const menu = page.getByRole("button", { name: p.menu, exact: true });
+      const drawer = page.locator("[data-drawer]");
+      await openWithKeyboard(menu, drawer);
+      const drawerCurrent = drawer.locator('a[aria-current="page"]');
+      await expect(drawerCurrent).toHaveCount(1);
+      await expect(drawerCurrent).toHaveAttribute(
+        "href",
+        `${prefix}/category/economy`,
+      );
     });
 
     test("search dialog works with the keyboard from 768", async ({ page }) => {

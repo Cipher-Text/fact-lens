@@ -6,7 +6,7 @@ The one place for every open item, flag and decision on an issue. Read it instea
 
 ## How to use this file
 
-- Add a row for each new finding with the next free ID of its prefix (U-42, IMP-98, DOC-55, KIT-xx). Add a detail entry below when one line is not enough.
+- Add a row for each new finding with the next free ID of its prefix (U-47, IMP-101, DOC-56, KIT-xx). Add a detail entry below when one line is not enough.
 - Do not delete a row. Change its status: Open, Open (flag), Later, Decided, Fixed or Closed, with the date, who decided and the commit or PR when there is one.
 - A flag is an item that needs tajmin's decision (`AGENTS.md` Section 8). Its status is "Open (flag)" until tajmin decides.
 - Article page spec items stay in `docs/spec-log/article.md`; a finding that needs a decision goes here too.
@@ -26,11 +26,11 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | U-07 | FL-04 | Region list under অঞ্চল | Medium | Later: IA label table; 7 working regions (DR-342) |
 | U-08 | FL-05 | Logo asset and its role. The dark text logo fails axe contrast until the SVG exists | Medium | Later: logo SVG from the design owner; text stand-in stays (DR-304) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Later: backend integration; labels stay in `src/i18n/` (DR-263) |
-| IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Later: backend integration; homepage anchors stay |
-| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section pages; URL patterns are set, 404s stay |
+| IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Later: backend integration. Category items go to the category pages (page/category, 27 Oct 2026, merge pending); region and Analysis links stay anchors |
+| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section pages; URL patterns are set, 404s stay. Category part fixed (page/category, 27 Oct 2026, merge pending) |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Later: newsletter phase (DR-343) |
 | IMP-33 | R2-03 | Newsletter strings and components stay until the newsletter phase | Low | Later: newsletter phase (DR-343) |
-| IMP-35 | R2-04 | The Eyebrow is a link to `/category/<id>`, which is a 404 page | Low | Later: covered by the URL patterns, 404 stays (DR-311) |
+| IMP-35 | R2-04 | The Eyebrow is a link to `/category/<id>`, which is a 404 page | Low | Fixed: the category pages exist (page/category, 27 Oct 2026, merge pending) |
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Later: IA label table; working labels stay (DR-282) |
 | IMP-45 | R2-06 | `AdSlot` always renders; the rule "no booking, no `ad-top` row" (DR-250) has no code path yet | Low | Later: no-booking path with real ad data (DR-316) |
 | IMP-65 | Audit 13 Oct | Production-only behavior is not tested | Low | Later: production smoke run in M2 (DR-345) |
@@ -44,6 +44,15 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | DOC-54 | PR #9 hotfix | `reader.css` `.rd-dock` (C-35, DR-228, DR-386): layout §10 puts `--z-dock` (55) above `--z-overlay` (50), so the dock covered the drawer, search and share dialog. While an overlay is open the dock drops to `--z-bar` | Medium | Decided: keep the CSS rule, no spec change (tajmin, 24 Oct 2026) |
 | IMP-96 | PR #7 review | The run 5 report says "A11Y-24 closed" with IMP-92 open, and "every WebKit failure is a test fault" without per-test evidence | Low | Closed: the run 5 report is removed (tajmin, 24 Oct 2026) |
 | IMP-97 | – | URL change: two article roots and the Eyebrow format | Medium | Open (tajmin, 25 Oct 2026; DR-397, DR-400) |
+| DOC-55 | Category page | `--type-rank-nudge` changed (en -0.1em to -0.14em, bn -0.125em to -0.05em, tajmin after checkpoint 5) changes a token value on the locked homepage, and the en value fails the C-22 16px ink check on `/en` at 360 and 768 (`small-parts.spec.ts:102`). -0.12em passes | Medium | Closed: values set back to dev; the homepage list moves to the columns layout (IMP-99) (tajmin, 27 Oct 2026) |
+| U-42 | Category page | RankedList columns layout and rank chip (spec log CL-10, CL-12, CL-18, CL-21, CL-22) differ from C-07: 2 list columns, no Divider.item, the numeral in a `--color-bar` chip | Medium | Decided: approved for the category page, C-07 variant `columns` (tajmin, 27 Oct 2026); homepage: IMP-99 |
+| U-43 | Category page | Part names: `CategoryLead`, `CategoryMoreNews`, `CategoryMoreList`, `CategoryHeader`, the OverlapCard `lead` prop break `N-01` and component-system 3.2 ("Feature story: never call it the lead") | Medium | Decided: `CategoryFeatureSection`, `CategoryMoreStoriesSection`, `CategoryMoreStoriesList`, `PageTitle`, OverlapCard `feature` (tajmin, 27 Oct 2026) |
+| U-44 | Category page | Token placement: `--more-story-date-width` is a scale step for one component (`w-32`, `CPT-07`); the rank chip ink tokens sit in `components.css`, not with the other ink tokens in `typography.css` | Low | Fixed: the date column is `--spacing(32)`, the token is removed; the chip ink tokens are in `typography.css` and typography 3.1 (tajmin, 27 Oct 2026; page/category) |
+| U-45 | Category page | Two hand-made bars: the page title bar (a `Divider.section` bar with no rule) and the 1px rule above load more are not Divider (C-22) parts | Low | Decided: new C-22 variant Divider.rule, the shared 1px horizontal rule, used above load more; the title bar stays alone with no rule, C-43 PageTitle (tajmin, 27 Oct 2026). Other rules move to Divider.rule: IMP-100 |
+| U-46 | Category page checkpoint | 200% text size at 1280: the More stories item grid (date column 8rem, then 2 : 1) leaves the title column about 75px wide, one or two characters per line. No horizontal scroll. Needs a stacking trigger (tests rule: tajmin chooses) | Medium | Closed: not fixing (tajmin, 27 Oct 2026) |
+| IMP-100 | Category page checkpoint | Move the hand-drawn 1px horizontal rules to Divider.rule (C-22): the article rule above the Tags, and the candidates in the detail entry | Medium | Open: to do (tajmin, 27 Oct 2026) |
+| IMP-99 | Category page checkpoint | Replace the homepage RankedList with the columns layout of the category page; amend DR-51, DR-145, DR-299, DR-144 to DR-147 and the DR-370 lock for P-5. Task file `docs/tasks/home-most-read.md` | Medium | Later: own branch after the `page/category` merge (tajmin, 27 Oct 2026) |
+| IMP-98 | Category page checkpoint | `regions.spec.ts:579` axe at 360 fails in the full Chromium run (`scrollable-region-focusable` on the phone tab list) and passes when run alone: timing before hydration | Low | Open |
 | DOC-52 | R5-01 | The R5-01 sprint check says the first NavBar item edge equals the shell edge; C-18 centers the items (DR-170) | Low | Closed: the sprint file is removed (tajmin, 24 Oct 2026) |
 
 ## Details
@@ -218,6 +227,45 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
   - Bare `/story` and `/opinion` give a 404.
   - The Eyebrow shows the format (example: Opinion) on analysis, explainer, opinion and op-ed articles. No breadcrumb trail.
 - **Suggested solution:** do it on a `page/` branch, so the spec line in `spacing-layout-system.md` can change with the code. IMP-18 and IMP-35 stay: section pages are still 404 pages.
+- **Answers so far (tajmin, 26 Oct 2026):** the format replaces the category in the Eyebrow; it applies everywhere the Eyebrow shows, homepage cards included; op-ed is not built now. Open: the format Eyebrow is a link to a "voices hub" (opinion), but the hub, its URL (bare `/opinion` is a 404) and the analysis and explainer targets are not decided. Its own branch, after the category page.
+
+### DOC-55 `--type-rank-nudge` change fails the C-22 ink check
+
+- **Found:** category page final checkpoint, 27 Oct 2026 · **Severity:** Medium · **Status:** Closed (tajmin, 27 Oct 2026): the values are set back to dev; the homepage list moves to the columns layout (IMP-99)
+- **Source:** `src/styles/typography.css:136` (en), `:250` (bn); `tests/e2e/small-parts.spec.ts:102`; `tests/e2e/most-read.spec.ts:256`; typography 7.1 `type-rank`, DR-144, C-22, DR-350, DR-370.
+- **Problem:** tajmin asked for the homepage numerals to sit lower in Bangla and higher in English (after checkpoint 5). The new values change a token value on the locked homepage. On `/en` at 360 and 768 the most read rules are 13 to 14px from the ink (median 14, the check allows 15 to 17).
+- **What the code does:** keeps tajmin's values (-0.14em, -0.05em). The full Chromium run fails 2 tests.
+- **Suggested solution:** en -0.12em (all 6 ink checks pass), bn -0.05em as it is. Or keep -0.14em and change the C-22 check for rank numerals (a changed rule).
+
+### U-42 RankedList columns layout and rank chip
+
+- **Found:** category page final checkpoint, 27 Oct 2026 · **Severity:** Medium · **Status:** Decided (tajmin, 27 Oct 2026): approved for the category page and written into C-07 as the variant `columns`; the homepage replacement is IMP-99
+- **Source:** `src/components/home/most-read/RankedList.tsx`, `MostReadSection.tsx`, `src/styles/components.css:540` to `:612`; spec log CL-10, CL-12, CL-18, CL-21, CL-22; C-07, C-11, DR-51, DR-145, DR-299, `COL-04`, `COL-05`.
+- **Problem:** tajmin's redesign after checkpoint 5 gives RankedList a second layout. From 1024 the start third is empty and the list has 2 columns (C-07: 3 at 1024, 4 at 1280). There is no Divider.item between items (DR-299). The rank is a square `--color-bar` chip with `on-interactive` serif digits, not a `type-rank` numeral in `interactive`.
+- **What the code does:** builds it as a `layout="columns"` variant on the category page only. The homepage keeps the grid layout.
+- **Suggested solution:** approve it as a C-07 variant `columns` (sheet update: parts, tokens `--rank-chip-*` and `--rank-list-gap`, checks), or use the grid layout on the category page too.
+
+### U-43 Category page part names
+
+- **Found:** category page final checkpoint (design-reviewer), 27 Oct 2026 · **Severity:** Medium · **Status:** Decided (tajmin, 27 Oct 2026): `CategoryFeatureSection` (was CategoryLead), `CategoryMoreStoriesSection` (was CategoryMoreNews), `CategoryMoreStoriesList` (was CategoryMoreList), `PageTitle` in `src/components/layout/` (was CategoryHeader), OverlapCard `feature` and `.overlap-feature` (was `lead`), `CategoryPage.feature`. Not "Featured" (P-2 FeaturedCategorySection) and not "Top" (3.2 Top stories). Done on `page/category`
+- **Source:** `src/components/category/`; `src/components/story/OverlapCard.tsx` (`lead` prop, `.overlap-lead`); `src/content/types.ts` (`CategoryPage.lead`); spec log CL-14 to CL-17; `N-01`, `N-02`, `N-05`, component-system 3.2.
+- **Problem:** `CategoryLead` and `CategoryMoreNews` are sections without "Section" at the end. 3.2 keeps "lead" for LeadStory in HeroSection; the first story of a section is the feature story. The brief and log say "More stories", the code says "MoreNews". None of the names is in Section 3.
+- **Suggested solution:** `CategoryTopSection` (was CategoryLead), `CategoryMoreStoriesSection` (was CategoryMoreNews), `MoreStoriesList` (was CategoryMoreList), `PageTitle` (was CategoryHeader, so other pages can reuse it); OverlapCard `feature` (was `lead`); `CategoryPage.feature` (was `lead`). Rename after tajmin picks the names.
+
+### IMP-100 Move the hand-drawn 1px rules to Divider.rule
+
+- **Found:** category page final checkpoint, 27 Oct 2026 · **Severity:** Medium · **Status:** Open: to do (tajmin, 27 Oct 2026)
+- **Source:** C-22 Divider.rule (`component-system.md`, `src/components/layout/Divider.tsx`). tajmin: Divider.rule is the shared part wherever one plain 1px horizontal rule is needed.
+- **To do: swap (same look):**
+  - [ ] Article page: the rule above the Tags, `.rd-after` `border-top: 1px solid var(--border)` (`src/styles/reader.css:891`, C-34 area).
+- **To do: tajmin decides, then swap or keep (each differs a little or belongs to another component's sheet; tajmin, 27 Oct 2026):**
+  - [ ] Article page: the line above the byline, `.rd-meta` `border-top: 1px solid var(--border-soft)` (`reader.css:249`). Uses the softer border color.
+  - [ ] Article page: the dock's top edge, `.rd-dock` `border-top: 1px solid var(--border-soft)` (`reader.css:991`). Uses the softer border color; the edge of a fixed surface.
+  - [ ] NavBar bottom line, `border-b border-border` (`NavBar.tsx:107`; C-18, DR-349).
+  - [ ] Drawer row lines, `border-b border-border` (`Drawer.tsx:243`; C-19 Drawer.item).
+  - [ ] TopBar stuck line (`TopBar.tsx:29`; C-17).
+- **Not a candidate:** the key points line is dotted (`reader.css:616`), so it matches Divider.item.
+- **Suggested solution:** swap the article rule on the next article branch; decide each candidate with its sheet.
 
 ### DOC-52 R5-01 check: "first item edge equals the shell edge"
 

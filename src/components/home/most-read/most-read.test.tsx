@@ -78,6 +78,35 @@ describe("MostReadSection (P-5)", () => {
     }
   });
 
+  it("puts the rank in a chip, with no rule, in the columns layout only (category page, tajmin)", () => {
+    const stories = getHomepage("bn").mostRead!;
+    const { unmount } = render(
+      <MostReadSection lang="bn" stories={stories} t={getDictionary("bn")} />,
+    );
+    expect(screen.getByRole("list")).not.toHaveClass("rank-list-chip");
+    unmount();
+
+    render(
+      <MostReadSection
+        lang="bn"
+        stories={stories}
+        t={getDictionary("bn")}
+        layout="columns"
+      />,
+    );
+    expect(screen.getByRole("list")).toHaveClass("rank-list", "rank-list-chip");
+    screen.getAllByRole("listitem").forEach((li, i) => {
+      // No rule between the items (tajmin): they are --rank-list-gap apart.
+      expect(li.className).not.toMatch(/divider-item/);
+      if (i > 0) expect(li).toHaveClass("mt-(--rank-list-gap)");
+      const numeral = li.firstElementChild!;
+      expect(numeral).toHaveAttribute("aria-hidden", "true");
+      // One inner span, which the chip trims to the ink of the digits.
+      expect([...numeral.children].map((el) => el.tagName)).toEqual(["SPAN"]);
+      expect(numeral.textContent).toBe(["১", "২", "৩", "৪", "৫"][i]);
+    });
+  });
+
   it("shows the items that exist when content is sparse (7.3)", () => {
     renderSection("bn", "sparse");
     expect(screen.getAllByRole("listitem")).toHaveLength(3);

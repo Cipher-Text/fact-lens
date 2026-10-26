@@ -47,6 +47,15 @@ export const en: Dictionary = {
     title: "Top stories",
     latest: "Latest",
   },
+  // The category page (docs/briefs/category.md).
+  categoryPage: {
+    // Visually hidden name of CategoryFeatureSection.
+    feature: "Top story",
+    latest: "Latest",
+    // Older stories under the most read section, 10 at a time.
+    moreStories: "More stories",
+    loadMore: "Load more",
+  },
   analysisOpinion: {
     // The section name follows the column order: analysis, then opinion (7.4).
     title: "Analysis and Opinion",

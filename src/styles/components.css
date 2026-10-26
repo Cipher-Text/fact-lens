@@ -162,9 +162,12 @@
   }
 }
 
-/* LeadStory root: container-type: inline-size */
+/* LeadStory root: container-type: inline-size. .overlap-feature is the OverlapCard feature
+   body (CategoryFeatureSection): the card is its container, so --space-lead-panel steps with the card
+   width as in LeadStory (tajmin, category page). */
 @container (width >= 600px) {
-  .lead-story {
+  .lead-story,
+  .overlap-feature {
     --bar-brand: 0.5rem;
     --space-lead-inset-start: clamp(2rem, 4.2cqi, 2.5rem);
     --space-lead-inset-end: clamp(2rem, 4.2cqi, 2.5rem);
@@ -174,7 +177,8 @@
 }
 
 @container (width >= 880px) {
-  .lead-story {
+  .lead-story,
+  .overlap-feature {
     --bar-brand: 0.625rem;
     --space-lead-panel: 2rem;
   }
@@ -238,6 +242,50 @@
     column-gap: 0;
     row-gap: var(--space-story-media-text);
   }
+}
+
+/* StoryCard layout dated (C-24; category page More stories, tajmin 27 Oct 2026). Under 600px:
+   the image, then the title and deck, then the date. From 600px (a page breakpoint, named in
+   the sheet): three columns, date | title and deck | image, text : image = 2 : 1 after the
+   date column. The image is first in the markup (DR-267); the grid areas place the parts, no
+   `order` (LAY-14). The date column is the 8rem scale step, so no token (CPT-07, U-44). The
+   spacing between the stacked parts is here, so the 17.5rem fallback (DR-308) gets it too. */
+@utility story-dated {
+  grid-template-areas: "media" "body" "date";
+  grid-template-columns: minmax(0, 1fr);
+  & > .story-body {
+    margin-block-start: var(--space-story-media-text);
+  }
+  & > .story-date {
+    margin-block-start: var(--space-lead-summary-meta);
+  }
+  @media (width >= 37.5rem) {
+    grid-template-areas: "date body media";
+    grid-template-columns:
+      --spacing(32) minmax(0, 2fr)
+      minmax(0, 1fr);
+    column-gap: var(--grid-column-gap);
+    & > .story-body,
+    & > .story-date {
+      margin-block-start: 0;
+    }
+    /* As every StoryCard row: stacked when the card is narrower than 17.5rem (DR-308). */
+    @container (width < 17.5rem) {
+      grid-template-areas: "media" "body" "date";
+      grid-template-columns: minmax(0, 1fr);
+      column-gap: 0;
+      & > .story-body {
+        margin-block-start: var(--space-story-media-text);
+      }
+      & > .story-date {
+        margin-block-start: var(--space-lead-summary-meta);
+      }
+    }
+  }
+}
+
+@utility story-date {
+  grid-area: date;
 }
 
 /* DailyPoll layout (C-26, DR-298): one column in a container under 600px (phones, the 304px
@@ -502,6 +550,77 @@
 @utility list-ink-title {
   --list-ink-start: var(--type-story-title-sm-ink-start);
   --list-ink-end: var(--type-story-title-sm-ink-end);
+}
+
+/* RankedList chip (category page, tajmin): the rank in a square chip, serif digits in both
+   languages (Source Serif 4, Noto Serif Bengali), 1.5rem at weight 700 in a 2.25rem chip,
+   2rem at 600 in 2.75rem from 1024. The ink insets are the blank space above and below the
+   ink of the digits in their 1em line box, as a share of the digit size, measured from the
+   fonts as in typography-system.md 3.1, at both sizes and weights: one value per language
+   keeps the digits within half a pixel of the chip center. The ink tokens
+   (--rank-chip-ink-start, --rank-chip-ink-end) are in typography.css with the other ink
+   insets (U-44). */
+
+/* --rank-list-gap: the space between the items of the RankedList columns layout, which have
+   no rule (tajmin):
+   1.5rem on phones, 1.75rem from 600 (two columns), 2rem from 1280 (equal to
+   --grid-column-gap). */
+:root {
+  --rank-chip-size: 2.25rem;
+  --rank-chip-digit-size: 1.5rem;
+  --rank-chip-digit-weight: 700;
+  --rank-list-gap: 1.5rem;
+}
+
+@media (min-width: 37.5rem) {
+  :root {
+    --rank-list-gap: 1.75rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --rank-chip-size: 2.75rem;
+    --rank-chip-digit-size: 2rem;
+    --rank-chip-digit-weight: 600;
+  }
+}
+
+@media (min-width: 80rem) {
+  :root {
+    --rank-list-gap: 2rem;
+  }
+}
+
+/* The chip is --color-bar with on-interactive digits, as the label Chip (C-11). The inner
+   span takes the ink insets off with negative margins, so the chip centers the ink of the
+   digits. 16px between the chip and the title (tajmin; rank-list has 12px). The chip and
+   the title center on each other (tajmin): on the title's line boxes,
+   whose center is within about half a pixel of the ink of a real headline. The selectors
+   repeat .rank-list to win over the type-rank rules of rank-list (family, weight and the
+   nudge margin). */
+@utility rank-list-chip {
+  &.rank-list > li {
+    grid-template-columns: var(--rank-chip-size) minmax(0, 1fr);
+    column-gap: --spacing(4);
+    align-items: center;
+  }
+  &.rank-list > li > [aria-hidden="true"]:first-child {
+    display: grid;
+    place-items: center;
+    inline-size: var(--rank-chip-size);
+    aspect-ratio: 1;
+    margin-block: 0;
+    background-color: var(--color-bar);
+    color: var(--on-interactive);
+    font-family: var(--font-editorial-active);
+    font-size: var(--rank-chip-digit-size);
+    font-weight: var(--rank-chip-digit-weight);
+  }
+  &.rank-list > li > [aria-hidden="true"]:first-child > span {
+    margin-block: calc(-1 * var(--rank-chip-ink-start))
+      calc(-1 * var(--rank-chip-ink-end));
+  }
 }
 
 /* OpinionList: the item rule spans the text column only, not the quote mark (DR-351). */
