@@ -7,9 +7,9 @@ The current state of the repository. It replaces `PROGRESS.md`, `HANDOVER.md`, `
 ## Now
 
 - Branch: `dev`. New pages start on `page/<name>` from `dev` (`AGENTS.md` Section 9).
-- Pages done: homepage (locked, DR-370) and article page `/[lang]/story/[slug]` (PR #8, hotfixes PR #9 and #10).
-- Specs in `docs/design-system/`: color 2.16, typography 2.17, layout 2.24, component-system 1.19, agent-contract 2.14 (the category changes are on `page/category` until the merge).
-- Category page: final checkpoint run 27 Oct 2026 on `page/category`, not committed. Spec log `docs/spec-log/category.md`: 10 green and 6 decided by tajmin (RankedList `columns`), written into layout 2.24 Section 7B, components 1.19, contract 2.14. DOC-55 closed (nudge back to dev). Part names decided (U-43); U-44 fixed; U-45 decided (Divider.rule, C-43 PageTitle; other rules move in IMP-100). U-46 closed, not fixing (tajmin). More stories is StoryCard `dated` (CL-16, CL-17 decided). Every spec-log item is green or decided. Waits for tajmin: those flags, then the commit and the PR to `dev`.
+- Pages done: homepage (locked, DR-370), article page `/[lang]/story/[slug]` (PR #8, hotfixes PR #9 and #10) and category page `/[lang]/category/[id]` (PR #11).
+- Specs in `docs/design-system/`: color 2.16, typography 2.18, layout 2.25, component-system 1.20, agent-contract 2.15 (layout, components and contract on `page/category-review` until the merge).
+- Category review (`page/category-review`, 27 Oct 2026): specs, code and the decision register cross-checked; tajmin decided every flag. Specs updated (C-02 `feature`, Section 3.1 and 6, LAY-07 and 7B amend DR-44, DR-398 amended). Decisions DR-402 to DR-409 are in the register. PR #12 to `dev`; after the merge, run the full Chromium e2e on `dev`.
 - Next: `page/home-most-read` after the merge, task file `docs/tasks/home-most-read.md` (IMP-99).
 - Article page open items: `docs/spec-log/article.md`, "Later".
 

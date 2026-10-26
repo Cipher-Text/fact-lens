@@ -13,7 +13,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 | Current work | M2 production build, one page at a time (Section 9). State: `docs/STATUS.md`. Open items and flags: `docs/ISSUES.md` |
 | Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
-| Pages | Homepage and article page are done; the homepage is locked (`DR-370`). Start a new page only with its brief (Section 9) |
+| Pages | Homepage, article page and category page are done; the homepage is locked (`DR-370`). Start a new page only with its brief (Section 9) |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |
 
 ## 2. Authority
@@ -73,9 +73,11 @@ src/
       layout.tsx           Sets <html lang>, fonts and the theme script
       page.tsx             Homepage
       story/[slug]/        Article page
+      category/[id]/       Category page (one template, 6 categories)
   components/
     ui/                    shadcn/ui primitives, restyled after add (CPT-16): Sheet (Drawer), Drawer (SearchDialog, from the top), Collapsible, Tabs, RadioGroup
-    layout/                Shell, Wrapper, Rail, WithRail, PeerRow, SectionHeading, Divider
+    layout/                Shell, Wrapper, Rail, WithRail, PeerRow, SectionHeading, Divider, PageTitle
+    category/              Category page: CategoryPageView, CategoryFeatureSection, CategoryCards, CategoryMoreStoriesSection
     header/                SiteHeader, TopBar, NavBar, Drawer (shadcn Sheet), SearchDialog (shadcn Drawer), ThemeButton (DR-280, DR-349)
     home/                  One folder per section, with the parts that only that section uses:
                            hero (HeroSection), analysis (AnalysisSection, OpinionList),
