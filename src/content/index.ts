@@ -1,6 +1,7 @@
 // The only way components read content (DR-01). A backend can replace the
 // data behind these functions later without changes to components.
 import { ads } from "./ads";
+import { categoryMostRead } from "./category-most-read";
 import { homepagePlans } from "./homepage";
 import { dailyPoll } from "./poll";
 import { authors, imageFiles, stories, type StoryDef } from "./stories";
@@ -8,6 +9,8 @@ import { trendingTerms } from "./trending";
 import type {
   Ad,
   AdSlotId,
+  CategoryId,
+  CategoryPage,
   FeaturedSection,
   Homepage,
   HomepageVariant,
@@ -18,6 +21,7 @@ import type {
 } from "./types";
 
 export type * from "./types";
+export { categoryIds } from "./types";
 
 // The article page (wild card reader): its content goes through this file too (DR-01).
 export {
@@ -183,6 +187,48 @@ export function getHomepage(
       })),
     ),
     regions: nonEmpty(regions),
+  };
+}
+
+const LATEST_COUNT = 5;
+const CARD_COUNT = 3;
+// The top 5, as on the homepage (tajmin, checkpoint 4).
+const MOST_READ_COUNT = 5;
+
+/**
+ * A category page in one language (spacing-layout-system.md 7B). Stories are newest first:
+ * the feature story is the newest with an image, the rail takes the next 5, the card rows the
+ * next 3 with an image, and More news the rest. Most read comes from the mock ranking.
+ */
+export function getCategoryPage(
+  category: CategoryId,
+  lang: Lang,
+): CategoryPage {
+  const all = stories
+    .filter((def) => def.category === category)
+    .map((def) => toStory(def, lang))
+    .sort(newestFirst);
+  const feature = all.find((story) => story.image) ?? null;
+  const rest = all.filter((story) => story !== feature);
+  const latest = rest.slice(0, LATEST_COUNT);
+  const cards = rest
+    .slice(LATEST_COUNT)
+    .filter((story) => story.image)
+    .slice(0, CARD_COUNT);
+  const more = rest.filter(
+    (story) => !latest.includes(story) && !cards.includes(story),
+  );
+  return {
+    lang,
+    category,
+    feature,
+    latest,
+    cards,
+    mostRead: getStories(
+      categoryMostRead[category].slice(0, MOST_READ_COUNT),
+      lang,
+    ).map((story, index) => ({ ...story, rank: index + 1 })),
+    more,
   };
 }
 

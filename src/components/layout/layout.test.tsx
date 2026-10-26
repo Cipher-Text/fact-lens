@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import { Divider } from "./Divider";
 import { PeerCard, PeerRow } from "./PeerRow";
 import { Rail } from "./Rail";
 import { SectionHeading } from "./SectionHeading";
@@ -38,6 +39,25 @@ describe("Shell, WithRail, Wrapper and Rail", () => {
       "rail",
     ]);
     for (const el of children) expect(el.className).not.toMatch(/\border-/);
+  });
+});
+
+describe("Divider", () => {
+  it("draws Divider.rule as one 1px solid border-color rule, hidden from screen readers (C-22)", () => {
+    const { container } = render(<Divider variant="rule" />);
+    const rule = container.firstElementChild!;
+    expect(rule).toHaveAttribute("aria-hidden", "true");
+    expect(rule).toHaveAttribute("data-divider", "rule");
+    expect(rule).toHaveClass("h-(--divider-rule)", "w-full", "bg-border");
+    expect(rule.children).toHaveLength(0);
+  });
+
+  it("keeps Divider.section as the default variant", () => {
+    const { container } = render(<Divider />);
+    expect(container.firstElementChild).toHaveAttribute(
+      "data-divider",
+      "section",
+    );
   });
 });
 

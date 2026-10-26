@@ -26,7 +26,7 @@ export function TopBar({ start, logo, end }: Props) {
   return (
     <header
       data-top-bar
-      className="header-focus sticky top-0 z-(--z-bar) flex min-h-(--bar-height) flex-col border-b border-transparent bg-background bar-stuck:border-border"
+      className="sticky top-0 z-(--z-bar) flex min-h-(--bar-height) header-focus flex-col border-b border-transparent bg-background bar-stuck:border-border"
     >
       <ScrollOffset />
       <div className="flex flex-1 flex-wrap items-center px-(--top-bar-inset)">

@@ -14,8 +14,12 @@ import { StoryImage } from "./StoryImage";
  * stack: image above the text. row: text at the start, image at the end.
  * row-from-md: stack under 768px, row from 768px (P-2 feature story).
  * row-until-lg: row under 1024px, stack from 1024px (P-2 rail image story).
+ * dated: the image, the text, then the date under 600px; from 600px three columns, the date,
+ * the text, the image (category page More stories; tajmin, 27 Oct 2026). The date is the
+ * time only, no reading time.
  */
-export type StoryCardLayout = "stack" | "row" | "row-from-md" | "row-until-lg";
+export type StoryCardLayout =
+  "stack" | "row" | "row-from-md" | "row-until-lg" | "dated";
 
 type StoryCardProps = {
   story: Story;
@@ -60,6 +64,8 @@ function gridClass(layout: StoryCardLayout, kind: "third" | "feature") {
       return `story-stacked ${splitFromMd[kind]}`;
     case "row-until-lg":
       return `${split[kind]} lg:story-stacked`;
+    case "dated":
+      return "story-dated";
   }
 }
 
@@ -84,6 +90,7 @@ export function StoryCard({
   className,
 }: StoryCardProps) {
   const showSummary = summary && Boolean(story.summary);
+  const dated = layout === "dated";
   return (
     <article
       data-story-card
@@ -119,15 +126,24 @@ export function StoryCard({
               {story.summary}
             </p>
           ) : null}
-          <MetaLine
-            items={storyMetaItems(story, strings.story)}
-            className={
-              showSummary
-                ? "mt-(--space-lead-summary-meta)"
-                : "mt-(--space-story-title-meta)"
-            }
-          />
+          {dated ? null : (
+            <MetaLine
+              items={storyMetaItems(story, strings.story)}
+              className={
+                showSummary
+                  ? "mt-(--space-lead-summary-meta)"
+                  : "mt-(--space-story-title-meta)"
+              }
+            />
+          )}
         </div>
+        {/* dated: the date is its own grid area, at the start from 600px. */}
+        {dated ? (
+          <MetaLine
+            items={storyMetaItems(story, strings.story, { readingTime: false })}
+            className="self-start story-date"
+          />
+        ) : null}
       </div>
     </article>
   );

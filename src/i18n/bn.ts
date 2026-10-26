@@ -46,6 +46,15 @@ export const bn = {
     title: "শীর্ষ খবর",
     latest: "সর্বশেষ",
   },
+  // The category page (spacing-layout-system.md 7B).
+  categoryPage: {
+    // Visually hidden name of CategoryFeatureSection.
+    feature: "প্রধান খবর",
+    latest: "সর্বশেষ",
+    // Older stories under the most read section, 10 at a time.
+    moreStories: "আরও পড়ুন",
+    loadMore: "আরও লোড করুন",
+  },
   analysisOpinion: {
     // The section name follows the column order: analysis, then opinion (7.4).
     title: "বিশ্লেষণ ও মতামত",

@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.7 · 18 October 2026 · For the production frontend, run 5 (M2 stage F0)
+Version 1.8 · 24 October 2026 · For the production frontend (M2). No sprints or tickets
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -10,10 +10,10 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Item | Status |
 | --- | --- |
-| Current work | Run 5, M2 stage F0 (Production build): a short fix run. Put the run 4 review decisions (`DR-355` to `DR-359`) in the code from the current specs. The tickets are in `docs/SPRINT.md`. Do not add new features |
+| Current work | M2 production build, one page at a time (Section 9). State: `docs/STATUS.md`. Open items and flags: `docs/ISSUES.md` |
 | Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
-| Pages | Homepage first. Do not start article or category pages until their layout pass is complete |
+| Pages | Homepage, article page and category page are done; the homepage is locked (`DR-370`). Start a new page only with its brief (Section 9) |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |
 
 ## 2. Authority
@@ -72,9 +72,12 @@ src/
     [lang]/                bn and en. See Section 7
       layout.tsx           Sets <html lang>, fonts and the theme script
       page.tsx             Homepage
+      story/[slug]/        Article page
+      category/[id]/       Category page (one template, 6 categories)
   components/
     ui/                    shadcn/ui primitives, restyled after add (CPT-16): Sheet (Drawer), Drawer (SearchDialog, from the top), Collapsible, Tabs, RadioGroup
-    layout/                Shell, Wrapper, Rail, WithRail, PeerRow, SectionHeading, Divider
+    layout/                Shell, Wrapper, Rail, WithRail, PeerRow, SectionHeading, Divider, PageTitle
+    category/              Category page: CategoryPageView, CategoryFeatureSection, CategoryCards, CategoryMoreStoriesSection
     header/                SiteHeader, TopBar, NavBar, Drawer (shadcn Sheet), SearchDialog (shadcn Drawer), ThemeButton (DR-280, DR-349)
     home/                  One folder per section, with the parts that only that section uses:
                            hero (HeroSection), analysis (AnalysisSection, OpinionList),
@@ -83,6 +86,7 @@ src/
                            RankedList), regions (RegionsSection, RegionSlider)
     story/                 Shared parts: LeadStory, OverlapCard, StoryCard, StoryImage, StoryListItem, StoryList,
                            Eyebrow, MetaLine, MoreLink, Chip, Button, IconButton, QuoteMark
+    reader/                Article page: ReaderPage, ReaderRoot, ArticleParts, ContextCard, Controls, Popover, Share, SelectionShare, Toaster
     footer/                Footer, SocialIcon
     ads/                   AdSlot and its placeholder creative
   content/                 Mock data, typed (see the mock-content skill)
@@ -93,9 +97,10 @@ src/
     typography.css         From typography-system.md Section 8
     layout.css             From spacing-layout-system.md Section 12
     components.css         From component-system.md Section 6
+    reader.css             Article page component CSS (component-system.md Section 7, Article page)
 tests/
   e2e/                     Playwright tests
-docs/                      Specs and the sprint. Specs are read only (Section 10)
+docs/                      Specs, STATUS.md, ISSUES.md, briefs/ and spec-log/ per page. Specs are read only (Section 10)
 public/mock/               Placeholder images for mock stories
 ```
 
@@ -139,13 +144,13 @@ Before you do one of the things in `agent-contract.md` Section 8 ("If you are ab
 
 ## 8. Gaps in the design system
 
-There is no elevation: no shadows (`COL-15`, `DR-202`). The system does not yet define article and category page components or the full footer (the footer is provisional, `DR-193`). `component-system.md` Section 8 lists the open items and what to do now.
+There is no elevation: no shadows (`COL-15`, `DR-202`). The system defines the homepage and the article page (`component-system.md` C-27 to C-42, `spacing-layout-system.md` Section 7A). Other pages are defined per page, from the brief and the spec log. The footer is provisional (`DR-193`). `component-system.md` Section 8 lists the open items and what to do now.
 
 For a gap:
 
 1. Use a neutral treatment that obeys every rule in Section 6.
 2. Do not call it a Fact Lens standard.
-3. Add it to `docs/PROGRESS.md` under "Unresolved" as `UNRESOLVED_DESIGN_SYSTEM`, with the file and the component.
+3. Add it to the page spec log and to `docs/ISSUES.md` as a `U-` row, with the file and the component.
 
 ### Flag before you decide
 
@@ -155,23 +160,29 @@ Solve every task from the design-system rules (`COL`, `TYP`, `LAY`, `CPT`, `N`).
 2. Your fix is a workaround that does not belong to the design system.
 3. Your fix needs a new rule that contradicts an existing rule.
 
-A flag gives: what is wrong, what you did, the rule IDs, your proposal and an example. Put it in your summary. A choice is approved only when tajmin says so explicitly. "Next" or "go on" starts work; it does not approve a choice (`agent-contract.md` Section 9).
+A flag gives: what is wrong, what you did, the rule IDs, your proposal and an example. Put it in your summary and as an "Open (flag)" row in `docs/ISSUES.md`. A choice is approved only when tajmin says so explicitly. "Next" or "go on" starts work; it does not approve a choice (`agent-contract.md` Section 9).
 
 ## 9. How to work
 
-The work is a small sprint of tickets in `docs/SPRINT.md`. The repo is the production frontend (`DR-361`); each run is a small sprint.
+There are no sprints or tickets. One page is one branch, one brief and one spec log (`DR-370` to `DR-377`).
 
-1. **One ticket at a time.** Do the ticket that the user starts. Do not start the next ticket until the user accepts the current one.
-2. **Plan, build, test, verify.** Show a short plan, build, add tests, then run every check in Section 11.
-3. **Build from the shared parts.** Use `Shell`, `Wrapper`, `Rail`, `AdSlot`, `SectionHeading` and the shared story units (`StoryCard`, `StoryListItem`, `StoryList`). Do not repeat layout utilities in page code.
-4. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
-5. **Hand over.** List each acceptance criterion as met or not met, and give the user test steps. Then stop.
-6. **Record progress.** Keep the board in `docs/SPRINT.md` and `docs/PROGRESS.md` current.
-7. **Commit on acceptance.** One commit per accepted ticket: `R5-01: Docs and run 4 review fixes` on the subject line, and the rule IDs on the next line, not on the subject line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
+1. **Start.** tajmin types `/page <name>`. Make `page/<name>` from `dev` and set the page as in progress in `docs/STATUS.md` "Now". Ask tajmin the questions, then draft `docs/briefs/<name>.md` (one page at most) with 3 to 6 one-line checkpoints and the test files. Build only after tajmin says yes.
+2. **Build in the browser, one checkpoint at a time.** At each checkpoint of the brief (not the final one):
+   1. Finish the step and stop.
+   2. Post a short note: what you built, and each new token or component you added.
+   3. tajmin gives tweaks in chat. Each tweak snaps to the nearest token, or you add a named new token (`CPT-07`).
+   4. Start the next checkpoint only when tajmin says "next". Do not run the full checks, update the spec log or commit at these checkpoints.
+
+   Build from the shared parts (`Shell`, `Wrapper`, `Rail`, `AdSlot`, `SectionHeading`, the story units). Do not repeat layout utilities in page code.
+3. **Final checkpoint.** Run `/checkpoint` at the last checkpoint, or when tajmin asks, not after each checkpoint: the checks (Section 11), the spec log `docs/spec-log/<name>.md`, the `design-reviewer` subagent, the spec update in `docs/design-system/` from the green items, `docs/STATUS.md`, `docs/ISSUES.md`, and a report. Green spec-log items are approved by tajmin's merge; red items are flags.
+4. **Commit only on tajmin's yes.** One commit per yes on the page branch: `<page>: <what>` on the subject line, the rule IDs on the next line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
+5. **Pull request.** Open a PR from `page/<name>` to `dev`. The design-system updates for the page go in the same PR. When the review shows issues, fix them, but do not commit before tajmin approves. The merge is tajmin's approval. Nothing changes after the merge.
+6. **After the merge.** Run the full `pnpm test:e2e:chromium` on `dev` (the PR changed the specs).
+7. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
 
 ## 10. What you must not change
 
-- Do not edit `docs/design-system/`. These files come from the blueprint project. If a spec is wrong or missing a value, stop and report it as a `DOC-` issue in your summary.
+- Edit `docs/design-system/` only on a `page/<name>` branch, at the final checkpoint, from the green spec-log items (Section 9). A hook blocks spec edits on every other branch, so the specs do not change after a merge. If a spec is wrong or missing a value, report it as a `DOC-` issue.
 - Do not edit `.env` files or read secrets.
 - Do not push to the remote or deploy unless the user asks.
 - Do not add a dependency without saying why in your summary.
@@ -181,12 +192,12 @@ The work is a small sprint of tickets in `docs/SPRINT.md`. The repo is the produ
 A task is done when all of these are true:
 
 1. `pnpm check` passes with no new warnings.
-2. Chromium e2e passes on the ticket's "Test files" (`docs/SPRINT.md`) and on every test file the ticket adds or changes (`pnpm exec playwright test --project=chromium <files>`). Run the full `pnpm test:e2e:chromium` in the final ticket of a run, and in any ticket that changes the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`). The run passes, including the axe check, with no serious or critical violations. WebKit runs as a separate report until its failures are fixed; do not let a WebKit failure block a ticket, and do not skip the test (`DR-289`).
-3. The section matches its row in `spacing-layout-system.md` Section 7.2 at every tier, and the sparse cases in Section 7.3.
+2. Chromium e2e passes on the brief's "Test files" and on every test file the work adds or changes (`pnpm exec playwright test --project=chromium <files>`). Run the full `pnpm test:e2e:chromium` when the work changes the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`), and on `dev` after each merge. The run passes, including the axe check, with no serious or critical violations. WebKit runs as a separate report until its failures are fixed; do not let a WebKit failure block the work, and do not skip the test (`DR-289`).
+3. Homepage: each section matches its row in `spacing-layout-system.md` Section 7.2 at every tier, and the sparse cases in Section 7.3. Article page: Section 7A. Other pages: the brief.
 4. Each component passes the checks in its sheet (`component-system.md` Section 7).
 5. The validation widths and content cases in `spacing-layout-system.md` Section 13 show no clipped text and no horizontal scroll.
 6. Bangla and English, light and dark, keyboard focus and 200% zoom work. Supported browsers are in `agent-contract.md` Section 10 (`DR-341`).
-7. `docs/SPRINT.md` and `docs/PROGRESS.md` are current.
+7. The spec log, `docs/STATUS.md` and `docs/ISSUES.md` are current.
 
 ## 12. Summary format
 

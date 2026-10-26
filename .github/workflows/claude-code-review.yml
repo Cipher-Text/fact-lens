@@ -36,18 +36,19 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          # The prompt is the run goals (DR-335). Edit the goals when a new run starts.
+          # The prompt is the review goals (DR-335).
           prompt: |
             REPO: ${{ github.repository }}
             PR NUMBER: ${{ github.event.pull_request.number }}
 
-            Review this pull request of the Fact Lens homepage prototype (run 3, fix run).
-            Read AGENTS.md, docs/SPRINT.md (the tickets the PR names) and
+            Review this pull request of the Fact Lens production frontend.
+            Read AGENTS.md, the page brief (docs/briefs/<page>.md) and spec log
+            (docs/spec-log/<page>.md) that the PR names, and
             docs/design-system/agent-contract.md Sections 5 to 9 first. The specs in
             docs/design-system/ are correct when the code and a spec disagree.
 
             Review against these goals, in this order:
-            1. Specs: the change follows the spec sections its tickets name. Cite the rule ID
+            1. Specs: the change follows the spec sections its brief and spec log name. Cite the rule ID
                (COL-, TYP-, LAY-, CPT-, N-) for each break. No raw values, no new rule.
             2. Bugs: wrong behavior, broken tests, a skipped or weakened test.
             3. Readers: both languages (/ and /en), light and dark, keyboard, screen reader,

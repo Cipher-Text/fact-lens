@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.23 · 24 October 2026 · Article page, checkpoint 1 (DR-385 to DR-387)
+Version 2.25 · 27 October 2026 · Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -18,6 +18,7 @@ The wireframes show placement only. They do not give measurements. Use the value
 6. [Header](#6-header)
 7. [Homepage](#7-homepage)
 7A. [Article page](#7a-article-page)
+7B. [Category page](#7b-category-page)
 8. [Peer rows](#8-peer-rows)
 9. [Ads](#9-ads)
 10. [Layers](#10-layers)
@@ -395,6 +396,37 @@ No ad is sticky or fixed (`LAY-11`).
 
 Print hides the dock, the rail, the `PreferredSourceAlert` row, Read next and the toast (DR-386).
 
+## 7B. Category page
+
+The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is defined from the green items of the page spec log `docs/spec-log/category.md` (CL-01 to CL-08, CL-19, CL-20). One template serves the 6 categories; the 12 pages are built at build time and an unknown id is a 404 page. The most read `columns` layout is in the C-07 sheet (CL-10 to CL-12, CL-18, CL-21, CL-22; tajmin, 27 Oct 2026). The page title is C-43 `PageTitle`; the More stories item is StoryCard `dated` (C-24). Every item of that log is decided (tajmin, 27 Oct 2026).
+
+### 7B.1 Page order
+
+| Row | Container | Content |
+| --- | --- | --- |
+| Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18), unchanged. The category items link to the category pages; the open category is the current item (C-18, C-19) |
+| `ad-top` | Ad container | As on the homepage (Section 9) |
+| Page title | `Shell` | `PageTitle` (C-43): the category name, the page `h1`; space-section-title-after below |
+| `CategoryFeatureSection` | `Shell`, `WithRail` | A hidden `h2` names the section. Wrapper: the feature story as an `OverlapCard` (C-02, `feature`, no eyebrow), then 3 card rows (`CategoryCardList`). Rail: `SectionHeading` and the 5 newest stories after the feature story as a `StoryList` (C-03 of C-25) |
+| `ad-band` | Ad container | After `CategoryFeatureSection` |
+| Most read | `Shell` | The top 5 of the category: `MostReadSection` with RankedList `columns` (C-07 variant) |
+| `ad-band` | Ad container | After most read |
+| `CategoryMoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | `CategoryMoreStoriesList`: the older stories as StoryCard `dated` (C-24), Divider.item between them, 10 at a time; Divider.rule (C-22) and the load more `Button` |
+| Footer | As on the homepage | `Footer` (C-21) |
+
+### 7B.2 Patterns
+
+- **CategoryFeatureSection.** Laid out as HeroSection: from 1024 the rail is beside the wrapper; below 1024 it goes under the whole wrapper (`LAY-05`). With no rail stories the wrapper spans the shell (Section 7.3, DR-271).
+- **Card rows.** `StoryCard` (C-24) row, 16:9 image at the end, text : image = 2 : 1, with the summary; `Divider.item` between the rows, measured to the image top (DR-268, DR-350). One per row at every width (`LAY-07`, DR-409).
+- **Formats.** The page lists every story of the category, opinion and op-ed included (DR-408 amends DR-398).
+- **No Eyebrow.** No card on the page shows the Eyebrow: the page title names the category (DR-153).
+- **Spacing.** `main` starts with `space-page-start` and ends with `space-section`. The space before an ad band belongs to the section above it (`space-module`), and the section after an ad band starts with `space-module` (`LAY-12`).
+- **Load more.** A list shows 10 stories. Each press of the C-12 primary `Button` adds the next 10 and moves focus to the title link of the first added story. The button goes when no stories are left (`COL-13`).
+
+### 7B.3 Sparse content
+
+A section with no stories is removed with its ad band (Section 7.3, `LAY-13`).
+
 ## 8. Peer rows
 
 A peer row is a row of cards with equal rank.
@@ -512,7 +544,7 @@ Values stop changing at `lg` (spacing) and `xl` (layout). From 1366px, nothing c
 
 ### LAY-07 Use the agreed cards per row
 
-Homepage peer rows: 1 below 600px, 2 from 600px. The homepage has no 4-up rows. Other pages use 3 from 1024px.
+Homepage peer rows: 1 below 600px, 2 from 600px. The homepage has no 4-up rows. Other pages use 3 from 1024px, except the category page: its card rows and More stories show 1 per row at every width (Section 7B; DR-409 amends DR-44).
 
 Two homepage parts are not peer rows and have their own counts: Most read (`RankedList`) has 4 items per row from 1280px and 3 at 1024–1279px (DR-51, DR-145). The regions slider (`RegionSlider`) shows 4 region panels from 1280px (DR-140).
 
@@ -892,9 +924,19 @@ Test these content cases:
 
 ### 14.2 Article and other pages
 
-The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. Category and other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
+The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.25 (27 October 2026)**
+
+- Category review (tajmin): `LAY-07` and 7B.2, the category page shows 1 card per row at every width (amends DR-44). 7B.2 Formats: opinion and op-ed are listed on the category page (amends DR-398). 7B.1 names the feature story part (OverlapCard `feature`), the hidden heading, `CategoryCardList` and the empty rail of More stories. Section 14.2: no open flags for the category page.
+
+**2.24 (27 October 2026)**
+
+- New Section 7B, category page, from the green items of `docs/spec-log/category.md` (CL-01 to CL-08, CL-19, CL-20) and the most read `columns` layout tajmin approved (C-07): page order, CategoryFeatureSection as HeroSection (`LAY-05`), card rows, no Eyebrow (DR-153), spacing (`LAY-12`), the load more pattern, sparse content (`LAY-13`).
+- Section 14.2: the category page is defined in Section 7B; its red items are open flags.
+- Section 7B: `PageTitle` (C-43), Divider.rule (C-22) above load more, and StoryCard `dated` (C-24) for More stories (tajmin, 27 Oct 2026).
 
 **2.23 (24 October 2026)**
 

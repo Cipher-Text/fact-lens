@@ -376,16 +376,21 @@ test("page order: P-4, ad, বাংলাদেশ, ad, ভূরাজনী�
   await expect(main.nth(8)).toHaveAttribute("data-ad-slot", "ad-band");
 });
 
-test("the nav link scrolls to its category section (IMP-14)", async ({
+// The nav link goes to the category page now (spacing-layout-system.md 7B); the section anchor
+// stays and clears the sticky header (IMP-14).
+test("the nav link opens the category page; the section anchor still works (IMP-14)", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   await page
-    .locator('nav a[href="#category-geopolitics"]:visible')
+    .locator('nav a[href="/category/geopolitics"]:visible')
     .first()
     .click();
-  await expect(page).toHaveURL(/#category-geopolitics$/);
+  await expect(page).toHaveURL(/\/category\/geopolitics$/);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+
+  await page.goto("/#category-geopolitics");
   await expect(
     section(page, "geopolitics").getByRole("heading", { level: 2 }),
   ).toBeInViewport();

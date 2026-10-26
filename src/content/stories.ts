@@ -2,6 +2,8 @@
 // people, no quotes, no real events. No fact-check content (DR-18).
 // Each story is written once with a bn and an en part, so a story and its
 // translation share one id. Components read stories through ./index.ts only.
+import { categoryStories } from "./category-stories";
+import { olderCategoryStories } from "./category-stories-older";
 import type { CategoryId, Format, RegionId } from "./types";
 
 type ImageFile = keyof typeof imageFiles;
@@ -806,4 +808,7 @@ export const stories: StoryDef[] = [
     bn: { title: "জার্মানিতে নার্স পাঠানোর পাইলট কর্মসূচি" },
     en: { title: "Pilot programme to send nurses to Germany" },
   },
+  // The category pages (spacing-layout-system.md 7B).
+  ...categoryStories,
+  ...olderCategoryStories,
 ];

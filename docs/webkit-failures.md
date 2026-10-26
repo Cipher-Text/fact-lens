@@ -155,7 +155,7 @@ Run: `pnpm exec playwright test --project=webkit` (full suite) on `prototype-run
 
 #### IDs for the run 3 failures (DR-346 B6)
 
-The run 3 list (`docs/run-3-report.md`) and the run 2 groups above get one ID per family. "Safari" is the real Safari check (macOS and iOS); tajmin runs it (checklist in `docs/run-4-report.md`). A failure that shows in Safari is a code fix; one that does not is a test fix.
+The run 3 list (run 3 report, git history at `c2621c5`) and the run 2 groups above get one ID per family. "Safari" is the real Safari check (macOS and iOS); tajmin runs it (checklist in the run 4 report, git history at `c2621c5`). A failure that shows in Safari is a code fix; one that does not is a test fix.
 
 | ID | Family (run 2 group) | Tests now | Result in R4-05 | Safari |
 | --- | --- | --- | --- | --- |
@@ -212,7 +212,7 @@ Run: `pnpm exec playwright test --project=webkit` on the checkpoint's test files
 
 ## Not checked
 
-- Whether each failure is new since R2-13. `PROGRESS.md` only gives counts (40 at R2-12, 5 regions at R2-13), not names.
+- Whether each failure is new since R2-13. The old progress file (git history at `c2621c5`) only gives counts (40 at R2-12, 5 regions at R2-13), not names.
 - The Safari causes above (groups B, C, E) are my reading of the errors. None is confirmed in a real Safari.
 
 ### R5-02 full run (18 October 2026)
@@ -240,7 +240,7 @@ Run: `pnpm exec playwright test --project=webkit` (full suite) on `production-ru
 
 #### Real Safari (A11Y-24)
 
-tajmin ran the checklist in `docs/run-5-report.md` on macOS Safari and iOS Safari on 18 October 2026, against the production build. Every item passed except the Tab step of item 1 (IMP-92). So every WebKit failure below is a test fault of Playwright WebKit, not a fault readers see (no code fix).
+tajmin ran the checklist in the run 5 report (git history at `c2621c5`) on macOS Safari and iOS Safari on 18 October 2026, against the production build. Every item passed except the Tab step of item 1 (IMP-92). So every WebKit failure below is a test fault of Playwright WebKit, not a fault readers see (no code fix).
 
 | ID | Checklist item | macOS Safari | iOS Safari | Result |
 | --- | --- | --- | --- | --- |

@@ -110,6 +110,9 @@
   --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.2);
   --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.12);
   --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.18);
+  /* RankedList columns chip digits, a share of the digit size (components.css) */
+  --rank-chip-ink-start: 0.205em;
+  --rank-chip-ink-end: 0.143em;
   --type-caption-size: 0.875rem;
   --type-caption-weight: 400;
   --type-caption-line: 1.5;
@@ -227,6 +230,9 @@
   --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.03);
   --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.25);
   --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.33);
+  /* RankedList columns chip digits, a share of the digit size (components.css) */
+  --rank-chip-ink-start: 0.17em;
+  --rank-chip-ink-end: 0.19em;
   --type-caption-size: 0.9375rem;
   --type-caption-weight: 400;
   --type-caption-line: 1.6;

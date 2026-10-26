@@ -6,24 +6,24 @@ The text above comes from `AGENTS.md`. It is the source for every agent. This pa
 
 ### Start of each session
 
-1. Read `docs/PROGRESS.md` and the board in `docs/SPRINT.md`. They tell you which ticket is current. Run 5 is a fix run (M2 stage F0): each ticket names the `DR-` IDs and the spec sections it rebuilds. Read those spec sections, not the old run 2 code, as the target.
+1. The session-start hook shows the "Now" part of `docs/STATUS.md`. For page work, read the page brief `docs/briefs/<page>.md` and its spec log `docs/spec-log/<page>.md`.
 2. Read `docs/design-system/agent-contract.md` Sections 1 to 4 before the first code change.
-3. Read only the spec sections that the ticket needs. Do not read all four specs at once.
+3. Read only the spec sections that the brief needs. Do not read all four specs at once.
 4. Before you build a component, read its sheet in `docs/design-system/component-system.md` Section 7 and the names in Section 3.
 5. If the code and the spec do not agree, the spec wins. Change the code; report a spec problem as a `DOC-` issue.
 
-### The sprint is turn-based
+### The flow (no sprints or tickets)
 
-- Work on one ticket only. Start a ticket only when tajmin types `/ticket`.
-- At the end of a ticket, hand over and stop. tajmin tests it and types `/accept` or reports problems.
-- Never start the next ticket on your own, even when the current one went well.
+- tajmin starts a page with `/page <name>`. Ask, draft the brief, then wait for tajmin's yes.
+- At each checkpoint: stop, post what you built and any new token or component, apply tajmin's tweaks, and wait for "next" (`AGENTS.md` Section 9, step 2).
+- Run `/checkpoint` at the final checkpoint or when tajmin asks. Commit only when tajmin says so (`AGENTS.md` Section 9).
 
 ### Skills in this repository
 
 | Command | Use it to |
 | --- | --- |
-| `/ticket [id]` | Plan, build, test and verify the next ticket, then stop for acceptance |
-| `/accept` | Mark the ticket in review as Done, commit and push |
+| `/page <name>` | Make the page branch, ask the questions, draft the brief and the spec log |
+| `/checkpoint` | Checks, spec log, reviewer, specs, `docs/STATUS.md`, `docs/ISSUES.md` and a report; commit after tajmin's yes |
 | `/verify` | Run `pnpm check`, the browser tests and the visual check |
 | `/check-rules [path]` | Review files against the rule IDs (runs in the `design-reviewer` subagent) |
 
@@ -45,7 +45,7 @@ The `mock-content` skill loads by itself when you create or change mock data.
 
 The hooks in `.claude/settings.json` run by themselves:
 
-- A file in `docs/design-system/`, a `.env` file or `pnpm-lock.yaml` cannot be edited. If a hook blocks you, do not try another way. Report it.
+- A `.env` file or `pnpm-lock.yaml` cannot be edited. A file in `docs/design-system/` can be edited only on a `page/` branch (`AGENTS.md` Section 10). If a hook blocks you, do not try another way. Report it.
 - After each edit in `src/`, a check looks for raw values (hex, `text-[...]`, pixel values, `dark:`, `2xl:`, `vw`, `order-`). If it reports a problem, fix it before you continue.
 - Prettier formats each edited file when Prettier is installed.
 
@@ -55,7 +55,7 @@ The session starts in "accept edits" mode: file edits run without a question. Co
 
 ### Context
 
-- One ticket per conversation. tajmin runs `/clear` after `/accept`.
+- One page per conversation, if the context allows. tajmin runs `/clear` between pages.
 
 ### Preview
 
