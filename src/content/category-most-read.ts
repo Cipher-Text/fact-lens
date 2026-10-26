@@ -1,4 +1,4 @@
-// Mock most read ranking per category page (docs/briefs/category.md), 8 story ids,
+// Mock most read ranking per category page (spacing-layout-system.md 7B), 8 story ids,
 // rank 1 first. A backend replaces it with the most-read query (DR-290).
 import type { CategoryId } from "./types";
 

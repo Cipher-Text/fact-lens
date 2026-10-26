@@ -57,7 +57,10 @@ export function Divider({ variant = "section", className }: DividerProps) {
       <div
         aria-hidden="true"
         data-divider="rule"
-        className={cn("h-(--divider-rule) w-full shrink-0 bg-border", className)}
+        className={cn(
+          "h-(--divider-rule) w-full shrink-0 bg-border",
+          className,
+        )}
       />
     );
   }

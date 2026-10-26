@@ -15,7 +15,7 @@ type Props = {
   page: CategoryPage;
 };
 
-/** One template for every category page. Page order: docs/briefs/category.md. */
+/** One template for every category page. Page order: spacing-layout-system.md 7B. */
 export function CategoryPageView({ page }: Props) {
   const { lang, category } = page;
   const t = getDictionary(lang);

@@ -101,7 +101,7 @@ export function NavBar({ items, label }: Props) {
       ref={navRef}
       aria-label={label}
       inert={stuck}
-      className="header-focus nav-row-slide bg-background max-xl:hidden"
+      className="nav-row-slide header-focus bg-background max-xl:hidden"
       data-nav-row
     >
       <div className="shell border-b border-border" data-nav-shell>

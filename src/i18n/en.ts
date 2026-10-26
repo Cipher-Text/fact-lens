@@ -47,7 +47,7 @@ export const en: Dictionary = {
     title: "Top stories",
     latest: "Latest",
   },
-  // The category page (docs/briefs/category.md).
+  // The category page (spacing-layout-system.md 7B).
   categoryPage: {
     // Visually hidden name of CategoryFeatureSection.
     feature: "Top story",

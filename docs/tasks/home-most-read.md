@@ -1,14 +1,14 @@
 # Task: replace the homepage RankedList with the columns layout
 
-Status: Waiting for the `page/category` merge · Issue: IMP-99 · Asked by tajmin, 27 October 2026
+Status: Ready (`page/category` merged, PR #11) · Issue: IMP-99 · Asked by tajmin, 27 October 2026
 
-This is a task file, not a brief. Start the work with `/page home-most-read` after `page/category` is merged into `dev`. The brief (`docs/briefs/home-most-read.md`) is drafted from this file (`AGENTS.md` Section 9).
+This is a task file, not a brief. Start the work with `/page home-most-read`. The brief (`docs/briefs/home-most-read.md`) is drafted from this file (`AGENTS.md` Section 9).
 
 ## Goal
 
 The homepage most read section (P-5) uses the RankedList `columns` layout of the category page, not the grid layout. `columns` becomes the only RankedList layout.
 
-The `columns` layout as built on `page/category` (`docs/briefs/category.md`, section 6; spec log CL-10, CL-12, CL-18, CL-21, CL-22):
+The `columns` layout as built on `page/category` (C-07 `columns`, DR-403, DR-404):
 
 - From 1024: three equal columns; the start column stays empty, items 1 to 3 in the middle column, items 4 and 5 in the end column. 600 to 1023: two list columns across the shell. Phone: one column.
 - No Divider.item between items; the items are `--rank-list-gap` apart, and the tops of the two columns line up.

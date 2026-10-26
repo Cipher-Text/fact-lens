@@ -13,7 +13,7 @@ type ListProps = {
  * the end, text : image = 2 : 1 (C-24 row, split third), with the summary. Divider.item
  * between the rows, as in AnalysisList (DR-268); the rows start with the image top, so the
  * item space is measured to it (DR-350). No Eyebrow: the page title names the category
- * (DR-153). The card rows (docs/briefs/category.md, section 4) sit under the feature story in
+ * (DR-153). The card rows (spacing-layout-system.md 7B) sit under the feature story in
  * the CategoryFeatureSection wrapper, as the top stories do in HeroSection; More stories used the same list
  * (tajmin's tweak at checkpoint 5).
  */

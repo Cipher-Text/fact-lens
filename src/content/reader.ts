@@ -63,7 +63,8 @@ export function getArticle(slug: string, lang: Lang): Article | null {
   const story = getStory(slug, lang);
   // Editors must add a lead image before an article can be published.
   const { image } = story;
-  if (!image) throw new Error(`Article without a lead image: ${slug} (${lang})`);
+  if (!image)
+    throw new Error(`Article without a lead image: ${slug} (${lang})`);
   const { summary, authorRole, authorBio, ...text } = def[lang];
   const name = authors[def.author][lang];
   // Bangla is read a little slower per word than English.

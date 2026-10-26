@@ -19,8 +19,7 @@ type Props = {
 };
 
 /**
- * CategoryFeatureSection: the top of the category page (docs/briefs/category.md, sections 3
- * and 4), laid out as HeroSection: the wrapper holds the feature story as an OverlapCard
+ * CategoryFeatureSection: the top of the category page (spacing-layout-system.md 7B), laid out as HeroSection: the wrapper holds the feature story as an OverlapCard
  * (C-02, tajmin's tweak at checkpoint 2) with the title in type-story-lead, then the card rows; the rail holds the
  * category's latest stories. From 1024px the rail is beside the wrapper; below, it goes
  * under the whole wrapper (LAY-05). No Eyebrow: the page title names the category

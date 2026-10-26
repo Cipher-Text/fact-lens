@@ -19,11 +19,7 @@ import { StoryImage } from "./StoryImage";
  * time only, no reading time.
  */
 export type StoryCardLayout =
-  | "stack"
-  | "row"
-  | "row-from-md"
-  | "row-until-lg"
-  | "dated";
+  "stack" | "row" | "row-from-md" | "row-until-lg" | "dated";
 
 type StoryCardProps = {
   story: Story;

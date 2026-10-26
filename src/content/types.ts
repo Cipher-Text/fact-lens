@@ -115,7 +115,7 @@ export interface Homepage {
 export type HomepageVariant = "full" | "sparse";
 
 /**
- * A category page in one language, in page order (docs/briefs/category.md). Every
+ * A category page in one language, in page order (spacing-layout-system.md 7B). Every
  * story is in the category. A section with no stories is empty, and the page drops it.
  */
 export interface CategoryPage {

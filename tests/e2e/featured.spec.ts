@@ -376,7 +376,7 @@ test("page order: P-4, ad, বাংলাদেশ, ad, ভূরাজনী�
   await expect(main.nth(8)).toHaveAttribute("data-ad-slot", "ad-band");
 });
 
-// The nav link goes to the category page now (docs/briefs/category.md); the section anchor
+// The nav link goes to the category page now (spacing-layout-system.md 7B); the section anchor
 // stays and clears the sticky header (IMP-14).
 test("the nav link opens the category page; the section anchor still works (IMP-14)", async ({
   page,

@@ -15,7 +15,7 @@ export type NavItem = {
  * No fact-check item (DR-18). China is a region under Regions, not a nav item (DR-19).
  * Regions and Analysis and Opinion have sub-items, which only the Drawer shows (DR-255).
  * The category items go to the category pages, /category/<id> (/en/...), and the open
- * category is the current item (docs/briefs/category.md, DR-181). Region pages do not exist
+ * category is the current item (spacing-layout-system.md 7B, DR-181). Region pages do not exist
  * yet, so those links go to the homepage sections (DR-01). There is no Op-ed item (DR-302).
  * Both sub-items of Analysis and Opinion link to the section heading,
  * #analysis-opinion-title; every # target must exist (DR-331).

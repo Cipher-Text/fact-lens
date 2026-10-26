@@ -4,7 +4,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
-// The category page, /[lang]/category/[id] (docs/briefs/category.md): page order, the
+// The category page, /[lang]/category/[id] (spacing-layout-system.md 7B): page order, the
 // feature section with the rail (LAY-05), the card rows, most read in the columns layout, More stories
 // with load more, 404, keyboard and axe, in Bangla and English (COL-13, TYP-03, LAY-02,
 // LAY-06, LAY-07, LAY-09 to LAY-14, LAY-17, CPT-05, CPT-06, DR-153, DR-181).
@@ -89,7 +89,9 @@ for (const p of PAGES) {
       ).toHaveCount(3);
       await expect(page.locator("[data-most-read-item]")).toHaveCount(5);
       // More stories: 10 at first.
-      await expect(page.locator('[data-section="category-more"] [data-story-card]')).toHaveCount(10);
+      await expect(
+        page.locator('[data-section="category-more"] [data-story-card]'),
+      ).toHaveCount(10);
 
       // No Eyebrow: the page title names the category (DR-153). No Fact Check (DR-18).
       await expect(page.locator("main [data-eyebrow]")).toHaveCount(0);
@@ -160,7 +162,9 @@ for (const p of PAGES) {
         }
 
         // More stories: image on top on phones; date | body | image from 600.
-        const story = page.locator('[data-section="category-more"] [data-story-card]').first();
+        const story = page
+          .locator('[data-section="category-more"] [data-story-card]')
+          .first();
         const image = await box(story.locator(".story-media"));
         const title = await box(story.locator("h3"));
         if (width < 600) {
@@ -175,12 +179,16 @@ for (const p of PAGES) {
       page,
     }) => {
       await page.goto(p.path);
-      const stories = page.locator('[data-section="category-more"] [data-story-card]');
+      const stories = page.locator(
+        '[data-section="category-more"] [data-story-card]',
+      );
       const button = page.getByRole("button", {
         name: p.loadMore,
         exact: true,
       });
-      const rule = page.locator('[data-section="category-more"] [data-divider="rule"]');
+      const rule = page.locator(
+        '[data-section="category-more"] [data-divider="rule"]',
+      );
       await expect(stories).toHaveCount(10);
       await expect(rule).toBeVisible();
 

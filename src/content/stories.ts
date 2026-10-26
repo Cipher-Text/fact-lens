@@ -808,7 +808,7 @@ export const stories: StoryDef[] = [
     bn: { title: "জার্মানিতে নার্স পাঠানোর পাইলট কর্মসূচি" },
     en: { title: "Pilot programme to send nurses to Germany" },
   },
-  // The category pages (docs/briefs/category.md).
+  // The category pages (spacing-layout-system.md 7B).
   ...categoryStories,
   ...olderCategoryStories,
 ];

@@ -22,7 +22,7 @@ type Props = {
 };
 
 /**
- * CategoryMoreStoriesSection (docs/briefs/category.md, section 8): the older
+ * CategoryMoreStoriesSection (spacing-layout-system.md 7B): the older
  * stories as CategoryMoreStoriesList items, date | title and deck | image (tajmin, after
  * checkpoint 5), 10 at a time. A story with no image shows the no-image placeholder
  * (DR-338). Divider.rule (C-22), then the Button (C-12 primary), which adds the next 10; both go

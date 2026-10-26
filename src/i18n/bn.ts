@@ -46,7 +46,7 @@ export const bn = {
     title: "শীর্ষ খবর",
     latest: "সর্বশেষ",
   },
-  // The category page (docs/briefs/category.md).
+  // The category page (spacing-layout-system.md 7B).
   categoryPage: {
     // Visually hidden name of CategoryFeatureSection.
     feature: "প্রধান খবর",

@@ -196,7 +196,7 @@ const CARD_COUNT = 3;
 const MOST_READ_COUNT = 5;
 
 /**
- * A category page in one language (docs/briefs/category.md). Stories are newest first:
+ * A category page in one language (spacing-layout-system.md 7B). Stories are newest first:
  * the feature story is the newest with an image, the rail takes the next 5, the card rows the
  * next 3 with an image, and More news the rest. Most read comes from the mock ranking.
  */

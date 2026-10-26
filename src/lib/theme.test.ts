@@ -49,12 +49,16 @@ describe("theme", () => {
   });
 
   it("keeps the choice for this page when storage is blocked (DR-340)", () => {
-    const getItem = vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
-      throw new Error("blocked");
-    });
-    const setItem = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
-      throw new Error("blocked");
-    });
+    const getItem = vi
+      .spyOn(Storage.prototype, "getItem")
+      .mockImplementation(() => {
+        throw new Error("blocked");
+      });
+    const setItem = vi
+      .spyOn(Storage.prototype, "setItem")
+      .mockImplementation(() => {
+        throw new Error("blocked");
+      });
     setThemeChoice("dark");
     expect(readThemeChoice()).toBe("dark");
     expect(document.documentElement.classList.contains("dark")).toBe(true);

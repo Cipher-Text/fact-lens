@@ -121,7 +121,10 @@ export function ShareDialog({ path, title, summary, t }: ShareProps) {
       >
         <Share2 aria-hidden="true" />
       </DialogTrigger>
-      <DialogContent closeLabel={t.close} className="rd-sharedlg panel-inset gap-6">
+      <DialogContent
+        closeLabel={t.close}
+        className="rd-sharedlg gap-6 panel-inset"
+      >
         <DialogHeader>
           <DialogTitle>{t.shareStory}</DialogTitle>
           <DialogDescription>{title}</DialogDescription>

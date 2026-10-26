@@ -1,4 +1,4 @@
-// Extra mock stories for the category pages (docs/briefs/category.md). Fictional: no real
+// Extra mock stories for the category pages (spacing-layout-system.md 7B). Fictional: no real
 // people, no quotes, no real events. No fact-check content (DR-18).
 import type { StoryDef } from "./stories";
 

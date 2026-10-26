@@ -393,7 +393,7 @@ describe("getStory", () => {
   });
 });
 
-// The category page (docs/briefs/category.md).
+// The category page (spacing-layout-system.md 7B).
 describe("category pages", () => {
   for (const category of categoryIds) {
     it(`${category}: 16 stories or more, every section full, More news has a second load`, () => {
@@ -408,7 +408,12 @@ describe("category pages", () => {
         expect(page.mostRead.map((s) => s.rank)).toEqual([1, 2, 3, 4, 5]);
         // 10 at a time: more than 10 left gives a second load.
         expect(page.more.length).toBeGreaterThan(10);
-        const shown = [page.feature!, ...page.latest, ...page.cards, ...page.more];
+        const shown = [
+          page.feature!,
+          ...page.latest,
+          ...page.cards,
+          ...page.more,
+        ];
         // Every story of the category once, newest first after the feature story, all in it.
         expect(new Set(shown.map((s) => s.id)).size).toBe(defs.length);
         for (const s of [...shown, ...page.mostRead])

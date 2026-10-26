@@ -606,7 +606,7 @@ test("page order: ভূরাজনীতি, ad, P-3 (7.1)", async ({ page }) 
 });
 
 // The header has no Subscribe link any more (DR-188), so only the category link is left.
-// The nav link goes to the category page now (docs/briefs/category.md); the P-3 anchor stays.
+// The nav link goes to the category page now (spacing-layout-system.md 7B); the P-3 anchor stays.
 test("a category nav link opens its page; the P-3 anchor still works (IMP-14)", async ({
   page,
 }) => {

@@ -686,7 +686,7 @@ for (const p of PAGES) {
       const drawer = page.locator("[data-drawer]");
       await openWithKeyboard(menu, drawer);
       // The target is the Analysis and Opinion heading: the category items go to the
-      // category pages now (docs/briefs/category.md), so this is a link to a place on the page.
+      // category pages now (spacing-layout-system.md 7B), so this is a link to a place on the page.
       await drawer
         .locator('nav a[href="#analysis-opinion-title"]')
         .first()
@@ -702,7 +702,7 @@ for (const p of PAGES) {
     });
 
     // The category items go to the category pages; the open category is the current item,
-    // and the Drawer marks it too (docs/briefs/category.md, DR-181).
+    // and the Drawer marks it too (spacing-layout-system.md 7B, DR-181).
     test("category links go to the category pages, with aria-current on the open one", async ({
       page,
     }) => {

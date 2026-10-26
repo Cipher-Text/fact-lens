@@ -5,7 +5,7 @@ import { CategoryPageView } from "@/components/category/CategoryPageView";
 import { categoryIds, getCategoryPage, type CategoryId } from "@/content";
 import { getDictionary, isLang, langs, localizedPath } from "@/i18n";
 
-// One template for every category (docs/briefs/category.md). An unknown id is a 404.
+// One template for every category (spacing-layout-system.md 7B). An unknown id is a 404.
 export const dynamicParams = false;
 
 function isCategory(value: string): value is CategoryId {
