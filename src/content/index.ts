@@ -197,7 +197,7 @@ const MOST_READ_COUNT = 5;
 
 /**
  * A category page in one language (docs/briefs/category.md). Stories are newest first:
- * the lead is the newest with an image, the rail takes the next 5, the card rows the
+ * the feature story is the newest with an image, the rail takes the next 5, the card rows the
  * next 3 with an image, and More news the rest. Most read comes from the mock ranking.
  */
 export function getCategoryPage(
@@ -208,8 +208,8 @@ export function getCategoryPage(
     .filter((def) => def.category === category)
     .map((def) => toStory(def, lang))
     .sort(newestFirst);
-  const lead = all.find((story) => story.image) ?? null;
-  const rest = all.filter((story) => story !== lead);
+  const feature = all.find((story) => story.image) ?? null;
+  const rest = all.filter((story) => story !== feature);
   const latest = rest.slice(0, LATEST_COUNT);
   const cards = rest
     .slice(LATEST_COUNT)
@@ -221,7 +221,7 @@ export function getCategoryPage(
   return {
     lang,
     category,
-    lead,
+    feature,
     latest,
     cards,
     mostRead: getStories(

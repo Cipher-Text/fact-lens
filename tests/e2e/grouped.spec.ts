@@ -606,11 +606,16 @@ test("page order: ভূরাজনীতি, ad, P-3 (7.1)", async ({ page }) 
 });
 
 // The header has no Subscribe link any more (DR-188), so only the category link is left.
-test("a category nav link reaches P-3 (IMP-14)", async ({ page }) => {
+// The nav link goes to the category page now (docs/briefs/category.md); the P-3 anchor stays.
+test("a category nav link opens its page; the P-3 anchor still works (IMP-14)", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  await page.locator('nav a[href="#category-economy"]:visible').first().click();
-  await expect(page).toHaveURL(/#category-economy$/);
+  await page.locator('nav a[href="/category/economy"]:visible').first().click();
+  await expect(page).toHaveURL(/\/category\/economy$/);
+
+  await page.goto("/#category-economy");
   await expect(
     page.locator("#category-economy").getByRole("heading", { level: 2 }),
   ).toBeInViewport();

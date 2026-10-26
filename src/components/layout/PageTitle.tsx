@@ -6,11 +6,11 @@ type Props = {
 };
 
 /**
- * The category page title: the category name as the page h1, type-page-title, in the
- * shell, with a short brand bar above it. No description
- * (docs/briefs/category.md). No sheet yet: a page part (U- gap).
+ * PageTitle: the title of a page that is not the homepage or an article, as the page h1,
+ * type-page-title, in the shell, with a short brand bar above it. No description. The
+ * category page uses it with the category name (docs/briefs/category.md). No sheet yet (U-45).
  */
-export function CategoryHeader({ title, className }: Props) {
+export function PageTitle({ title, className }: Props) {
   return (
     <Shell as="header" className={className}>
       {/* A short brand bar above the title, at the start edge: the bar of Divider.section

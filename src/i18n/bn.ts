@@ -48,11 +48,11 @@ export const bn = {
   },
   // The category page (docs/briefs/category.md).
   categoryPage: {
-    // Visually hidden name of the lead block.
-    lead: "প্রধান খবর",
+    // Visually hidden name of CategoryFeatureSection.
+    feature: "প্রধান খবর",
     latest: "সর্বশেষ",
     // Older stories under the most read section, 10 at a time.
-    moreNews: "আরও খবর",
+    moreStories: "আরও পড়ুন",
     loadMore: "আরও লোড করুন",
   },
   analysisOpinion: {

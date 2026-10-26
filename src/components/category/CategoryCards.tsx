@@ -1,11 +1,6 @@
-import { AdSlot } from "@/components/ads/AdSlot";
 import { dividerItem, listInk } from "@/components/layout/Divider";
-import { Rail } from "@/components/layout/Rail";
-import { Shell } from "@/components/layout/Shell";
-import { WithRail } from "@/components/layout/WithRail";
-import { Wrapper } from "@/components/layout/Wrapper";
 import { StoryCard } from "@/components/story/StoryCard";
-import type { Lang, Story } from "@/content";
+import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 
 type ListProps = {
@@ -14,8 +9,13 @@ type ListProps = {
 };
 
 /**
- * The card row list: one StoryCard row per story, Divider.item between the rows. The card
- * rows and More news use it (tajmin's tweak at checkpoint 5).
+ * The card row list: one StoryCard row per story, text at the start and the 16:9 image at
+ * the end, text : image = 2 : 1 (C-24 row, split third), with the summary. Divider.item
+ * between the rows, as in AnalysisList (DR-268); the rows start with the image top, so the
+ * item space is measured to it (DR-350). No Eyebrow: the page title names the category
+ * (DR-153). The card rows (docs/briefs/category.md, section 4) sit under the feature story in
+ * the CategoryFeatureSection wrapper, as the top stories do in HeroSection; More stories used the same list
+ * (tajmin's tweak at checkpoint 5).
  */
 export function CategoryCardList({ stories, t }: ListProps) {
   return (
@@ -37,34 +37,27 @@ export function CategoryCardList({ stories, t }: ListProps) {
   );
 }
 
-type Props = {
-  lang: Lang;
-  stories: Story[];
-  t: Dictionary;
-  className?: string;
-};
-
 /**
- * The category page card rows (docs/briefs/category.md, section 4): one StoryCard per row in
- * the wrapper, text at the start and the 16:9 image at the end, text : image = 2 : 1
- * (C-24 row, split third), with the summary. One list with Divider.item between the rows, as
- * in AnalysisList (DR-268); the rows start with the image top, so the item space is measured
- * to it (DR-350). No Eyebrow: the page title names the category (DR-153). No heading.
- * The rail holds one ad-rail slot (tajmin's tweak at checkpoint 3), shown from 1280 only
- * (DR-245); at 1024 to 1279 the rail column stays empty (tajmin, checkpoint 3).
+ * CategoryMoreStoriesList: the More stories list (tajmin, after checkpoint 5): one StoryCard
+ * per story in the dated layout (C-24: date | title and deck | image from 600, the basic
+ * image card on phones; the date is the time only), Divider.item between the rows. No
+ * Eyebrow (DR-153).
  */
-export function CategoryCards({ lang, stories, t, className }: Props) {
+export function CategoryMoreStoriesList({ stories, t }: ListProps) {
   return (
-    <Shell data-section="category-cards" className={className}>
-      <WithRail>
-        <Wrapper data-category-cards-wrapper>
-          <CategoryCardList stories={stories} t={t} />
-        </Wrapper>
-        {/* Hidden with its ad under 1280, so an empty rail adds no row gap under the cards. */}
-        <Rail data-category-cards-rail className="hidden xl:block">
-          <AdSlot variant="rail" lang={lang} strings={t.ads} />
-        </Rail>
-      </WithRail>
-    </Shell>
+    <ul className={listInk.mediaMeta}>
+      {stories.map((story) => (
+        <li key={story.id} className={dividerItem}>
+          <StoryCard
+            story={story}
+            strings={t}
+            layout="dated"
+            ratio="16:9"
+            size="md"
+            eyebrow={false}
+          />
+        </li>
+      ))}
+    </ul>
   );
 }

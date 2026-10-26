@@ -49,11 +49,11 @@ export const en: Dictionary = {
   },
   // The category page (docs/briefs/category.md).
   categoryPage: {
-    // Visually hidden name of the lead block.
-    lead: "Top story",
+    // Visually hidden name of CategoryFeatureSection.
+    feature: "Top story",
     latest: "Latest",
     // Older stories under the most read section, 10 at a time.
-    moreNews: "More news",
+    moreStories: "More stories",
     loadMore: "Load more",
   },
   analysisOpinion: {

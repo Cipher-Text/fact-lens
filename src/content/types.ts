@@ -121,7 +121,7 @@ export type HomepageVariant = "full" | "sparse";
 export interface CategoryPage {
   lang: Lang;
   category: CategoryId;
-  lead: Story | null; // the newest story with an image
+  feature: Story | null; // the feature story: the newest story with an image
   latest: Story[]; // the next 5 newest, for the rail
   cards: Story[]; // 3 image stories, one per row
   mostRead: Story[]; // ranked, rank set

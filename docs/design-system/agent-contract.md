@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.13.1 · 24 October 2026 · Section 3: article page approved, checkpoint 1 (DR-385 to DR-390); new rule LAY-22; Section 11: no tickets, no `/accept`
+Version 2.14 · 27 October 2026 · Section 3: category page, green items (layout 7B), C-43 PageTitle, Divider.rule; spec versions in Section 5
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -47,6 +47,7 @@ If this contract and a foundation document do not agree, follow the foundation d
 | Homepage components, radius, icons, motion | Approved for prototype run 4. The footer is provisional | `component-system.md` |
 | Article page layout and spacing | Approved, checkpoint 1 (DR-385, DR-386, DR-387) | `spacing-layout-system.md` Section 7A |
 | Article page components | Approved, checkpoint 1 (DR-390): C-27 to C-42 | `component-system.md` Section 7, Article page |
+| Category page layout | Green spec-log items (CL-01 to CL-08, CL-19, CL-20) and the RankedList `columns` variant (C-07, tajmin 27 Oct 2026); the other red items are open flags | `spacing-layout-system.md` Section 7B, `docs/spec-log/category.md` |
 | Other page layout and components | Defined per page in the browser (DR-370) | Build from the page brief `docs/briefs/<page>.md`; write changes in the page spec log. `spacing-layout-system.md` Section 14.2 lists the open items |
 
 The homepage is locked (DR-370). Start a new page only with its brief (`AGENTS.md` Section 9).
@@ -108,7 +109,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`COL-16`](color-system.md#col-16-set-the-page-colors-on-body) | Set the page colors on body |
 | [`COL-17`](color-system.md#col-17-show-a-selected-item-with-interactive-and-a-word) | Show a selected item with `interactive` and a word |
 
-### Typography (`typography-system.md` v2.17, 25 rules)
+### Typography (`typography-system.md` v2.18, 25 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -138,7 +139,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`TYP-24`](typography-system.md#typ-24-show-meaning-with-more-than-style) | Show meaning with more than style |
 | [`TYP-25`](typography-system.md#typ-25-break-a-word-only-when-it-does-not-fit) | Break a word only when it does not fit |
 
-### Spacing and layout (`spacing-layout-system.md` v2.23, 22 rules)
+### Spacing and layout (`spacing-layout-system.md` v2.24, 22 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -165,7 +166,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`LAY-21`](spacing-layout-system.md#lay-21-use-the-4px-scale-for-one-component-values) | Use the 4px scale for one-component values |
 | [`LAY-22`](spacing-layout-system.md#lay-22-put-an-inline-ad-between-two-paragraphs) | Put an inline ad between two paragraphs |
 
-### Components (`component-system.md` v1.18, 21 rules)
+### Components (`component-system.md` v1.19, 21 rules)
 
 | ID | Rule |
 | --- | --- |

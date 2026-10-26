@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.17 · 24 October 2026 · Article page, checkpoint 1 (DR-388)
+Version 2.18 · 27 October 2026 · Category page: RankedList `columns` chip ink insets in Section 3.1 (U-44)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -124,6 +124,8 @@ The space next to a `Divider.item` rule is measured to the text ink, not to the 
 | `--type-story-title-sm-ink-start` | 0.2 | 0.03 | Above the first title line of a list item |
 | `--type-story-title-sm-ink-end` | 0.12 | 0.25 | Below the last title line (RankedList) |
 | `--type-metadata-ink-end` | 0.18 | 0.33 | Below the meta line of the item above a rule |
+| `--rank-chip-ink-start` | 0.205em | 0.17em | Above the ink of the serif digits in the RankedList `columns` chip (C-07), so the chip centers the ink. Measured at both chip sizes and weights |
+| `--rank-chip-ink-end` | 0.143em | 0.19em | Below the ink of the same digits |
 
 Change these values with the fonts or the role sizes. Section 8.2 gives the CSS.
 
@@ -592,6 +594,9 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.2);
   --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.12);
   --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.18);
+  /* RankedList columns chip digits, a share of the digit size (components.css) */
+  --rank-chip-ink-start: 0.205em;
+  --rank-chip-ink-end: 0.143em;
   --type-caption-size: 0.875rem;
   --type-caption-weight: 400;
   --type-caption-line: 1.5;
@@ -705,6 +710,9 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.03);
   --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.25);
   --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.33);
+  /* RankedList columns chip digits, a share of the digit size (components.css) */
+  --rank-chip-ink-start: 0.17em;
+  --rank-chip-ink-end: 0.19em;
   --type-caption-size: 0.9375rem;
   --type-caption-weight: 400;
   --type-caption-line: 1.6;
@@ -1038,6 +1046,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.18 | 2026-10-27 | Category page (tajmin, U-44): Section 3.1 and 8.2 add `--rank-chip-ink-start` and `--rank-chip-ink-end` per language, the ink insets of the RankedList `columns` chip digits (C-07). |
 | 2.17 | 2026-10-24 | Article page, checkpoint 1 (DR-385, DR-388): `type-article-title` 36–48px English, 34–44px Bangla, largest from 1280 (was 40–60 and 38–56). Section 4: the reader size also scales `KeyPoints` and `ContextCard`; a size change eases over `--duration-slide`. Section 7.2: article page role map for the new parts. |
 | 2.16 | 2026-10-17 | New Section 3.1 ink inset: `--type-story-title-sm-ink-start`, `--type-story-title-sm-ink-end`, `--type-metadata-ink-end` per language, for the Divider.item space measured to the ink (DR-350, DR-355). `type-logo`: the stuck 24px is a transform (C-17); the stuck font-size rule is removed from Section 8.2 (DR-355). |
 | 2.15 | 2026-10-16 | New role `type-nav` (14px English, 16px Bangla, weight 600) for the NavBar items; no `lang-bn` variant (DR-346). TYP-17: locale `bn-BD-u-nu-beng`; story time script 1.5 KB or less (DR-348). |

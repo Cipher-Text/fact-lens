@@ -8,35 +8,50 @@ import { StoryList } from "@/components/story/StoryList";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 
+import { CategoryCardList } from "./CategoryCards";
+
 type Props = {
-  lead: Story;
+  feature: Story;
   latest: Story[];
+  cards: Story[];
   t: Dictionary;
   className?: string;
 };
 
 /**
- * The category page lead block (docs/briefs/category.md, section 3): the top story as an
- * OverlapCard (C-02, tajmin's tweak at checkpoint 2) in the wrapper, and the category's latest stories in the rail, as HeroSection lays them out
- * (LAY-05). No Eyebrow: the page title names the category (DR-153). With no latest
- * stories the wrapper spans the shell (spacing-layout-system.md 7.3).
+ * CategoryFeatureSection: the top of the category page (docs/briefs/category.md, sections 3
+ * and 4), laid out as HeroSection: the wrapper holds the feature story as an OverlapCard
+ * (C-02, tajmin's tweak at checkpoint 2) with the title in type-story-lead, then the card rows; the rail holds the
+ * category's latest stories. From 1024px the rail is beside the wrapper; below, it goes
+ * under the whole wrapper (LAY-05). No Eyebrow: the page title names the category
+ * (DR-153). With no latest stories the wrapper spans the shell (spacing-layout-system.md 7.3).
  */
-export function CategoryLead({ lead, latest, t, className }: Props) {
+export function CategoryFeatureSection({
+  feature,
+  latest,
+  cards,
+  t,
+  className,
+}: Props) {
   const wrapper = (
-    <Wrapper data-category-wrapper>
-      <OverlapCard story={lead} strings={t} eager eyebrow={false} />
+    <Wrapper
+      data-category-wrapper
+      className="flex flex-col gap-y-(--grid-row-gap)"
+    >
+      <OverlapCard story={feature} strings={t} eager eyebrow={false} feature />
+      {cards.length > 0 ? <CategoryCardList stories={cards} t={t} /> : null}
     </Wrapper>
   );
 
   return (
     <Shell
       as="section"
-      aria-labelledby="category-lead-title"
-      data-section="category-lead"
+      aria-labelledby="category-feature-title"
+      data-section="category-feature"
       className={className}
     >
-      <h2 id="category-lead-title" className="sr-only">
-        {t.categoryPage.lead}
+      <h2 id="category-feature-title" className="sr-only">
+        {t.categoryPage.feature}
       </h2>
       {latest.length > 0 ? (
         <WithRail>
