@@ -10,18 +10,14 @@ import { cn } from "@/lib/utils";
  */
 export const dividerItem = "divider-item";
 
-/** Divider.item for the items of a multi-column grid list: the rule runs within a column only. */
-export const dividerItemGrid = "divider-item-grid";
-
 /**
  * The ink trim of a list (DR-350), by what starts and ends its items: a title and a meta
- * line (StoryListItem, OpinionList, a StoryList after a card), an image and a meta line
- * (the AnalysisSection rows), or a title only (RankedList).
+ * line (StoryListItem, OpinionList, a StoryList after a card), or an image and a meta line
+ * (the AnalysisSection rows).
  */
 export const listInk = {
   titleMeta: "list-ink-title-meta",
   mediaMeta: "list-ink-media-meta",
-  title: "list-ink-title",
 } as const;
 
 /**

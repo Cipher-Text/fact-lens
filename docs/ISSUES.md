@@ -6,7 +6,7 @@ The one place for every open item, flag and decision on an issue. Read it instea
 
 ## How to use this file
 
-- Add a row for each new finding with the next free ID of its prefix (U-47, IMP-115, DOC-56, KIT-xx). Add a detail entry below when one line is not enough.
+- Add a row for each new finding with the next free ID of its prefix (U-48, IMP-116, DOC-57, KIT-xx). Add a detail entry below when one line is not enough.
 - This file lists open items only: Open, Open (flag) or Later. When an item is fixed, decided or closed, record the result where it belongs (the spec, the decision register or the commit) and remove the row and its detail entry (tajmin, 27 Oct 2026). The git history keeps the old rows.
 - A flag is an item that needs tajmin's decision (`AGENTS.md` Section 8). Its status is "Open (flag)" until tajmin decides.
 - Page spec logs keep only their open spec items. Open code items of a page are rows here.
@@ -42,7 +42,10 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | IMP-95 | PR #7 review | `header.spec.ts` uses fixed waits (lines 357, 1216: 100ms; 1310: 500ms) for "nothing changes" checks | Low | Open |
 | IMP-97 | – | URL change: two article roots and the Eyebrow format | Medium | Open (tajmin, 25 Oct 2026; DR-397, DR-400) |
 | IMP-100 | Category page checkpoint | Move the hand-drawn 1px horizontal rules to Divider.rule (C-22): the article rule above the Tags, and the candidates in the detail entry | Medium | Open: to do (tajmin, 27 Oct 2026) |
-| IMP-99 | Category page checkpoint | Replace the homepage RankedList with the columns layout of the category page; amend DR-51, DR-145, DR-299, DR-144 to DR-147 and the DR-370 lock for P-5. Task file `docs/tasks/home-most-read.md` | Medium | Later: own branch after the `page/category` merge (tajmin, 27 Oct 2026) |
+| IMP-99 | Category page checkpoint | Replace the homepage RankedList with the columns layout of the category page; amend DR-51, DR-145, DR-299, DR-144 to DR-147 and the DR-370 lock for P-5. Task file `docs/tasks/home-most-read.md` | Medium | Fixed on `page/home-most-read` (spec log `home-most-read.md` HM-01 to HM-03, HM-05); remove after the merge |
+| U-47 | `page/home-most-read` checkpoint | 200% text size: layout §13 and the C-07 check say most read stacks; with the one RankedList layout it keeps two list columns from 600 (no sideways scroll, `text-size.spec.ts` passes). Keep two columns and change §13, or set a stacking trigger (spec log HM-04) | Medium | Open (flag) |
+| DOC-56 | `page/home-most-read` checkpoint | `--type-story-title-sm-ink-end` (typography 3.1, "Below the last title line (RankedList)") has no user since RankedList dropped Divider.item (IMP-99); only `tokens.test.ts` reads it. Retire it or name a new user | Low | Open |
+| IMP-115 | `page/home-most-read` visual QA | Homepage `/` and `/en` at 768 with the root font size at 200%: the page scrolls sideways (scrollWidth 936 for 753): Featured story media and the Regions row. Category pages do not. `text-size.spec.ts` passes; check how it sets the text size. Not caused by IMP-99 | Medium | Open |
 | IMP-98 | Category page checkpoint | `regions.spec.ts:579` axe at 360 fails in the full Chromium run (`scrollable-region-focusable` on the phone tab list) and passes when run alone: timing before hydration | Low | Open |
 | IMP-101 | Article PR #8 review | Read next (`ReadNext`, `ArticleParts.tsx`) hand-writes a grid instead of extending `PeerRow`; titles do not align across cards without subgrid (`LAY-08`) | Medium | Later (tajmin, 27 Oct 2026) |
 | IMP-102 | Article PR #8 review | Dead reading state (`hidden`, `past`, `scrolled` are written, never read) and raw offsets in JS: `240`, `8`, `10` in `ReaderRoot.tsx`, `76`, `130`, `12` in `SelectionShare.tsx` | Low | Later |

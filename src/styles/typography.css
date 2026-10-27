@@ -110,7 +110,7 @@
   --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.2);
   --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.12);
   --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.18);
-  /* RankedList columns chip digits, a share of the digit size (components.css) */
+  /* RankedList chip digits, a share of the digit size (components.css) */
   --rank-chip-ink-start: 0.205em;
   --rank-chip-ink-end: 0.143em;
   --type-caption-size: 0.875rem;
@@ -132,11 +132,6 @@
   --type-button-weight: 600;
   --type-button-line: 1.2;
   --type-button-tracking: 0;
-  --type-rank-family: var(--font-editorial-active);
-  --type-rank-size: 2.75rem;
-  --type-rank-weight: 700;
-  --type-rank-line: 1;
-  --type-rank-nudge: -0.1em;
   --type-logo-size: 1.25rem;
   --type-logo-weight: 700;
   --type-logo-line: 1;
@@ -230,7 +225,7 @@
   --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.03);
   --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.25);
   --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.33);
-  /* RankedList columns chip digits, a share of the digit size (components.css) */
+  /* RankedList chip digits, a share of the digit size (components.css) */
   --rank-chip-ink-start: 0.17em;
   --rank-chip-ink-end: 0.19em;
   --type-caption-size: 0.9375rem;
@@ -252,8 +247,6 @@
   --type-button-weight: 600;
   --type-button-line: 1.35;
   --type-button-tracking: 0;
-  --type-rank-family: var(--font-ui-active);
-  --type-rank-nudge: -0.125em;
   --type-logo-line: 1.1;
   --type-input-size: 1rem;
   --type-input-weight: 400;
@@ -285,7 +278,6 @@ body {
 @media (min-width: 64rem) {
   :root,
   :lang(en) {
-    --type-rank-size: 3.5rem;
     --type-logo-size: 2rem;
   }
 }
@@ -508,24 +500,4 @@ body {
   font-weight: var(--type-input-weight);
   line-height: var(--type-input-line);
   letter-spacing: var(--type-input-tracking);
-}
-
-@utility rank-list {
-  list-style: none;
-  & > li {
-    display: grid;
-    grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr);
-    column-gap: 0.75rem;
-    align-items: start;
-  }
-  /* The rank number from the data, in <span aria-hidden="true"> (DR-290) */
-  & > li > [aria-hidden="true"]:first-child {
-    font-family: var(--type-rank-family);
-    font-size: var(--type-rank-size);
-    font-weight: var(--type-rank-weight);
-    line-height: var(--type-rank-line);
-    margin-block-start: var(--type-rank-nudge);
-    color: var(--interactive);
-    font-variant-numeric: tabular-nums;
-  }
 }

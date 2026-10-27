@@ -20,6 +20,5 @@ None.
 
 ## Later
 
-- The homepage keeps its most read grid layout for now; its own branch moves it to `columns`: `docs/tasks/home-most-read.md` (IMP-99).
 - IMP-97: article URLs and the format Eyebrow, its own branch.
 - Mock data: 8 of the first 10 older economy stories have no image, so More stories shows mostly the no-image placeholder (DR-338). More images would show the layout better.

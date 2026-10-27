@@ -431,7 +431,7 @@
    list sets --list-ink-start (blank space above the first ink of an item) with a list-ink-*
    utility and the padding takes it off; the item above ends at its ink because its meta line
    is trimmed in place (rule below). The padding holds the rule, so the space below the rule
-   is the full space-list-item too. --list-ink-end is for RankedList only.
+   is the full space-list-item too.
    --divider-item-start moves the rule start (OpinionList: the text column only). The first
    item has no rule (no rule before the first row, none after the last). */
 @utility divider-item {
@@ -439,7 +439,7 @@
      collapse through it (WebKit carried it across the Latest column break). */
   display: flow-root;
   position: relative;
-  margin-block-start: calc(var(--space-list-item) - var(--list-ink-end, 0rem));
+  margin-block-start: var(--space-list-item);
   padding-block-start: calc(
     var(--space-list-item) + var(--divider-rule) - var(--list-ink-start, 0rem)
   );
@@ -460,66 +460,6 @@
     padding-block-start: 0;
     &::before {
       display: none;
-    }
-  }
-}
-
-/* Divider.item inside a multi-column grid list (RankedList): the rule runs within a column
-   only (DR-299, DR-300), so an item on the first grid row has no rule and the others have
-   one above them. Items per row: 1, 2 from 600, 3 from 1024, 4 from 1280 (DR-51, DR-145).
-   The list sets row-gap 0: the space above and below the rule is space-list-item, measured
-   to the ink as in divider-item. The rule is the ::after of the li, because the rank numeral
-   is its ::before. */
-@utility divider-item-grid {
-  position: relative;
-  margin-block-start: calc(var(--space-list-item) - var(--list-ink-end, 0rem));
-  padding-block-start: calc(
-    var(--space-list-item) + var(--divider-rule) - var(--list-ink-start, 0rem)
-  );
-  &::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: var(--divider-rule);
-    background-image: repeating-linear-gradient(
-      to right,
-      var(--color-border) 0 1px,
-      transparent 1px 3px
-    );
-  }
-  &:nth-child(-n + 1) {
-    margin-block-start: 0;
-    padding-block-start: 0;
-    &::after {
-      display: none;
-    }
-  }
-  @media (width >= 37.5rem) {
-    &:nth-child(-n + 2) {
-      margin-block-start: 0;
-      padding-block-start: 0;
-      &::after {
-        display: none;
-      }
-    }
-  }
-  @media (width >= 64rem) {
-    &:nth-child(-n + 3) {
-      margin-block-start: 0;
-      padding-block-start: 0;
-      &::after {
-        display: none;
-      }
-    }
-  }
-  @media (width >= 80rem) {
-    &:nth-child(-n + 4) {
-      margin-block-start: 0;
-      padding-block-start: 0;
-      &::after {
-        display: none;
-      }
     }
   }
 }
@@ -545,14 +485,7 @@
   --list-ink-start: 0rem;
 }
 
-/* RankedList: the title is the first and the last row. A row-first grid: the item below a
-   rule sits under the tallest item of the row above (C-07), so the list sets both edges. */
-@utility list-ink-title {
-  --list-ink-start: var(--type-story-title-sm-ink-start);
-  --list-ink-end: var(--type-story-title-sm-ink-end);
-}
-
-/* RankedList chip (category page, tajmin): the rank in a square chip, serif digits in both
+/* RankedList chip (C-07): the rank in a square chip, serif digits in both
    languages (Source Serif 4, Noto Serif Bengali), 1.5rem at weight 700 in a 2.25rem chip,
    2rem at 600 in 2.75rem from 1024. The ink insets are the blank space above and below the
    ink of the digits in their 1em line box, as a share of the digit size, measured from the
@@ -561,8 +494,7 @@
    (--rank-chip-ink-start, --rank-chip-ink-end) are in typography.css with the other ink
    insets (U-44). */
 
-/* --rank-list-gap: the space between the items of the RankedList columns layout, which have
-   no rule (tajmin):
+/* --rank-list-gap: the space between the RankedList items, which have no rule (tajmin):
    1.5rem on phones, 1.75rem from 600 (two columns), 2rem from 1280 (equal to
    --grid-column-gap). */
 :root {
@@ -592,32 +524,35 @@
   }
 }
 
-/* The chip is --color-bar with on-interactive digits, as the label Chip (C-11). The inner
-   span takes the ink insets off with negative margins, so the chip centers the ink of the
-   digits. 16px between the chip and the title (tajmin; rank-list has 12px). The chip and
-   the title center on each other (tajmin): on the title's line boxes,
-   whose center is within about half a pixel of the ink of a real headline. The selectors
-   repeat .rank-list to win over the type-rank rules of rank-list (family, weight and the
-   nudge margin). */
-@utility rank-list-chip {
-  &.rank-list > li {
+/* RankedList (C-07): the rank and the title in a two-column grid per item. The rank is the
+   number from the data in <span aria-hidden="true"> (DR-290), in a square chip in
+   --color-bar with on-interactive digits, as the label Chip (C-11). The inner span takes the
+   ink insets off with negative margins, so the chip centers the ink of the digits. 16px
+   between the chip and the title (tajmin). The chip and the title center on each other
+   (tajmin): on the title's line boxes, whose center is within about half a pixel of the ink
+   of a real headline. */
+@utility rank-list {
+  list-style: none;
+  & > li {
+    display: grid;
     grid-template-columns: var(--rank-chip-size) minmax(0, 1fr);
     column-gap: --spacing(4);
     align-items: center;
   }
-  &.rank-list > li > [aria-hidden="true"]:first-child {
+  & > li > [aria-hidden="true"]:first-child {
     display: grid;
     place-items: center;
     inline-size: var(--rank-chip-size);
     aspect-ratio: 1;
-    margin-block: 0;
     background-color: var(--color-bar);
     color: var(--on-interactive);
     font-family: var(--font-editorial-active);
     font-size: var(--rank-chip-digit-size);
     font-weight: var(--rank-chip-digit-weight);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
-  &.rank-list > li > [aria-hidden="true"]:first-child > span {
+  & > li > [aria-hidden="true"]:first-child > span {
     margin-block: calc(-1 * var(--rank-chip-ink-start))
       calc(-1 * var(--rank-chip-ink-end));
   }
