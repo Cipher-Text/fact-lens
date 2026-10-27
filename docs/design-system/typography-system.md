@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.18 · 27 October 2026 · Category page: RankedList `columns` chip ink insets in Section 3.1 (U-44)
+Version 2.19 · 27 October 2026 · Homepage most read (IMP-99): `type-rank` retired; the RankedList rank is the chip (`component-system.md` C-07)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -107,13 +107,11 @@ Tracking for Bangla is 0 in every role.
 | `type-nav` | Sans | 14px | 600 | 1.4 | 0 | 16px | 600 | 1.5 | NavBar items (DR-295, DR-346). The size changes by `:lang`; no language variant in the component |
 | `type-button` | Sans | 14px | 600 | 1.2 | 0 | 15px | 600 | 1.35 | Button labels (`Button`, C-12). Same size at every width (DR-208) |
 | `type-input` | Sans | 16px | 400 | 1.4 | 0 | 16px | 400 | 1.5 | Form input values |
-| `type-rank` | Serif | 44px; 56px from 1024 | 700 | 1 | 0 | Sans: 44px; 56px from 1024 | 700 | 1 | Most read rank numeral. Use through `rank-list` only, no element class (§8.2, DR-217) |
 
 Notes:
 
 - In English, `type-eyebrow` is uppercase on `Eyebrow` and `Chip` only. Other uses add `normal-case` (DR-216). Bangla has no case.
 - `type-blockquote` is italic in English. In Bangla it uses weight 500.
-- `type-rank` uses Noto Sans Bengali in Bangla (already loaded for the interface) and Source Serif 4 in English (DR-147).
 
 ### 3.1 Ink inset
 
@@ -124,7 +122,7 @@ The space next to a `Divider.item` rule is measured to the text ink, not to the 
 | `--type-story-title-sm-ink-start` | 0.2 | 0.03 | Above the first title line of a list item |
 | `--type-story-title-sm-ink-end` | 0.12 | 0.25 | Below the last title line (RankedList) |
 | `--type-metadata-ink-end` | 0.18 | 0.33 | Below the meta line of the item above a rule |
-| `--rank-chip-ink-start` | 0.205em | 0.17em | Above the ink of the serif digits in the RankedList `columns` chip (C-07), so the chip centers the ink. Measured at both chip sizes and weights |
+| `--rank-chip-ink-start` | 0.205em | 0.17em | Above the ink of the serif digits in the RankedList chip (C-07), so the chip centers the ink. Measured at both chip sizes and weights |
 | `--rank-chip-ink-end` | 0.143em | 0.19em | Below the ink of the same digits |
 
 Change these values with the fonts or the role sizes. Section 8.2 gives the CSS.
@@ -334,7 +332,7 @@ The component names are in `component-system.md` Section 3.
 | Region name in a region panel | `type-story-title-sm` |
 | Category label (`Eyebrow`) | `type-eyebrow` |
 | Time, author (`MetaLine`) | `type-metadata` |
-| Most read numeral | `type-rank` |
+| Most read rank chip | The chip digits: `--rank-chip-*` (`component-system.md` C-07, Section 6) |
 | Most read title | `type-story-title-sm` |
 | Opinion title | `type-story-title-sm` |
 | Opinion author and time | `type-metadata`, author in 600 |
@@ -360,22 +358,11 @@ The component names are in `component-system.md` Section 3.
 
 Every homepage text uses a role in this table. Phones use the low end of each fluid role, so the hierarchy is the same at every width.
 
-**Most read numerals (`type-rank`).**
-
-| Width | Items per row | Numeral size | Numeral column | Gap to title |
-| --- | --- | --- | --- | --- |
-| Phone | 1 | 44px | 0.75em (33px) | 12px |
-| 600–1023 | 2 | 44px | 0.75em (33px) | 12px |
-| 1024–1279 | 3 | 56px | 0.75em (42px) | 12px |
-| From 1280 | 4 | 56px | 0.75em (42px) | 12px |
+**Most read rank.**
 
 - The list is an `<ol>`. The rank comes from the data (the backend most-read query), not from a CSS counter. React writes it in a `<span aria-hidden="true">` at the start of each item: Bangla digits on Bangla pages (১), Latin digits on English pages (1). No leading zero (DR-290).
-- The numeral column has a fixed width, so every title starts at the same position.
-- The top of the numeral glyph aligns with the top of the title's first line (DR-144). A small negative margin moves the glyph up: -0.125em in Bangla, -0.1em in English.
-- Color: `text-interactive` (light 7.06:1, dark 6.59:1 on `background`). Do not use `brand`: it is 2.37:1 on the dark background (`COL-04`).
-- The numeral is hidden from screen readers (`aria-hidden`). The list order gives the rank.
-
-The CSS is `@utility rank-list` in §8.2. Put the class on the `<ol>`: `<ol class="rank-list">` (DR-217). The numeral span is the first child of each `<li>` (DR-290).
+- The rank is a square chip with serif digits in both languages (Source Serif 4, Noto Serif Bengali): sizes, weights and colors in `component-system.md` C-07 and Section 6; the ink insets in Section 3.1. `type-rank` is retired (IMP-99; amends DR-144, DR-146, DR-147).
+- The CSS is `@utility rank-list` in `component-system.md` Section 6. Put the class on the `<ol>`: `<ol class="rank-list">` (DR-217).
 
 **Other homepage rules.**
 
@@ -594,7 +581,7 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.2);
   --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.12);
   --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.18);
-  /* RankedList columns chip digits, a share of the digit size (components.css) */
+  /* RankedList chip digits, a share of the digit size (components.css) */
   --rank-chip-ink-start: 0.205em;
   --rank-chip-ink-end: 0.143em;
   --type-caption-size: 0.875rem;
@@ -616,11 +603,6 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-button-weight: 600;
   --type-button-line: 1.2;
   --type-button-tracking: 0;
-  --type-rank-family: var(--font-editorial-active);
-  --type-rank-size: 2.75rem;
-  --type-rank-weight: 700;
-  --type-rank-line: 1;
-  --type-rank-nudge: -0.1em;
   --type-logo-size: 1.25rem;
   --type-logo-weight: 700;
   --type-logo-line: 1;
@@ -710,7 +692,7 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.03);
   --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.25);
   --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.33);
-  /* RankedList columns chip digits, a share of the digit size (components.css) */
+  /* RankedList chip digits, a share of the digit size (components.css) */
   --rank-chip-ink-start: 0.17em;
   --rank-chip-ink-end: 0.19em;
   --type-caption-size: 0.9375rem;
@@ -732,8 +714,6 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-button-weight: 600;
   --type-button-line: 1.35;
   --type-button-tracking: 0;
-  --type-rank-family: var(--font-ui-active);
-  --type-rank-nudge: -0.125em;
   --type-logo-line: 1.1;
   --type-input-size: 1rem;
   --type-input-weight: 400;
@@ -758,7 +738,7 @@ body {
 
 @media (min-width: 64rem) {
   :root,
-  :lang(en) { --type-rank-size: 3.5rem; --type-logo-size: 2rem; }
+  :lang(en) { --type-logo-size: 2rem; }
 }
 
 :lang(bn) em { font-style: normal; font-weight: 600; }
@@ -972,21 +952,6 @@ body {
   line-height: var(--type-input-line);
   letter-spacing: var(--type-input-tracking);
 }
-
-@utility rank-list {
-  list-style: none;
-  & > li { display: grid; grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr); column-gap: 0.75rem; align-items: start; }
-  /* The rank number from the data, in <span aria-hidden="true"> (DR-290) */
-  & > li > [aria-hidden="true"]:first-child {
-    font-family: var(--type-rank-family);
-    font-size: var(--type-rank-size);
-    font-weight: var(--type-rank-weight);
-    line-height: var(--type-rank-line);
-    margin-block-start: var(--type-rank-nudge);
-    color: var(--interactive);
-    font-variant-numeric: tabular-nums;
-  }
-}
 ```
 
 Put `data-reader-size` on the article element, not on `<html>`. Then only the article text scales.
@@ -1046,6 +1011,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.19 | 2026-10-27 | Homepage most read (IMP-99, spec log `home-most-read.md` HM-03, HM-05): `type-rank` and the `--type-rank-*` tokens retired, with the numeral rules of `rank-list`; the rank is the chip of `component-system.md` C-07, whose `@utility rank-list` is in that file's Section 6 (amends DR-144, DR-146, DR-147). Section 7.1 role map and the most read notes follow. |
 | 2.18 | 2026-10-27 | Category page (tajmin, U-44): Section 3.1 and 8.2 add `--rank-chip-ink-start` and `--rank-chip-ink-end` per language, the ink insets of the RankedList `columns` chip digits (C-07). |
 | 2.17 | 2026-10-24 | Article page, checkpoint 1 (DR-385, DR-388): `type-article-title` 36–48px English, 34–44px Bangla, largest from 1280 (was 40–60 and 38–56). Section 4: the reader size also scales `KeyPoints` and `ContextCard`; a size change eases over `--duration-slide`. Section 7.2: article page role map for the new parts. |
 | 2.16 | 2026-10-17 | New Section 3.1 ink inset: `--type-story-title-sm-ink-start`, `--type-story-title-sm-ink-end`, `--type-metadata-ink-end` per language, for the Divider.item space measured to the ink (DR-350, DR-355). `type-logo`: the stuck 24px is a transform (C-17); the stuck font-size rule is removed from Section 8.2 (DR-355). |

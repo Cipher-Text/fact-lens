@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.15 · 27 October 2026 · Category review: Section 3 category row (every item decided); spec versions in Section 5
+Version 2.16 · 27 October 2026 · Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.16, `typography-system.md` v2.17, `spacing-layout-system.md` v2.23, `component-system.md` v1.18 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.16, `typography-system.md` v2.19, `spacing-layout-system.md` v2.26, `component-system.md` v1.21 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -43,14 +43,14 @@ If this contract and a foundation document do not agree, follow the foundation d
 | --- | --- | --- |
 | Color | Approved for prototype run 4 | `color-system.md` |
 | Typography | Approved for prototype run 4 | `typography-system.md` |
-| Homepage layout and spacing | Approved for prototype run 4 | `spacing-layout-system.md` |
+| Homepage layout and spacing | Approved for prototype run 4. P-5 most read uses the RankedList layout of the category page (IMP-99, spec log `home-most-read.md` HM-01 to HM-03) | `spacing-layout-system.md` |
 | Homepage components, radius, icons, motion | Approved for prototype run 4. The footer is provisional | `component-system.md` |
 | Article page layout and spacing | Approved, checkpoint 1 (DR-385, DR-386, DR-387) | `spacing-layout-system.md` Section 7A |
 | Article page components | Approved, checkpoint 1 (DR-390): C-27 to C-42 | `component-system.md` Section 7, Article page |
 | Category page layout | Green spec-log items (CL-01 to CL-08, CL-19, CL-20) and the RankedList `columns` variant (C-07, tajmin 27 Oct 2026); every red item is decided: DR-402 to DR-409 (amend DR-44, DR-51, DR-144 to DR-147, DR-153, DR-299, DR-300, DR-398 for this page) | `spacing-layout-system.md` Section 7B, `docs/spec-log/category.md` |
 | Other page layout and components | Defined per page in the browser (DR-370) | Build from the page brief `docs/briefs/<page>.md`; write changes in the page spec log. `spacing-layout-system.md` Section 14.2 lists the open items |
 
-The homepage is locked (DR-370). Start a new page only with its brief (`AGENTS.md` Section 9).
+The homepage is locked (DR-370), except P-5 most read, which moved to the RankedList layout of the category page (IMP-99). Start a new page only with its brief (`AGENTS.md` Section 9).
 
 ## 4. Where the values are
 
@@ -109,7 +109,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`COL-16`](color-system.md#col-16-set-the-page-colors-on-body) | Set the page colors on body |
 | [`COL-17`](color-system.md#col-17-show-a-selected-item-with-interactive-and-a-word) | Show a selected item with `interactive` and a word |
 
-### Typography (`typography-system.md` v2.18, 25 rules)
+### Typography (`typography-system.md` v2.19, 25 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -139,7 +139,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`TYP-24`](typography-system.md#typ-24-show-meaning-with-more-than-style) | Show meaning with more than style |
 | [`TYP-25`](typography-system.md#typ-25-break-a-word-only-when-it-does-not-fit) | Break a word only when it does not fit |
 
-### Spacing and layout (`spacing-layout-system.md` v2.25, 22 rules)
+### Spacing and layout (`spacing-layout-system.md` v2.26, 22 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -166,7 +166,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`LAY-21`](spacing-layout-system.md#lay-21-use-the-4px-scale-for-one-component-values) | Use the 4px scale for one-component values |
 | [`LAY-22`](spacing-layout-system.md#lay-22-put-an-inline-ad-between-two-paragraphs) | Put an inline ad between two paragraphs |
 
-### Components (`component-system.md` v1.20, 21 rules)
+### Components (`component-system.md` v1.21, 21 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -231,7 +231,7 @@ These decisions are not in the foundation documents, but every build must obey t
 | `DR-19` | চীন is not in the navigation. It is an entry under অঞ্চলসমূহ (DR-345) |
 | `DR-35` | The first prototype uses the fixed rail only. Do not build the 8+4 hero |
 | `DR-44` | No 4-up card rows anywhere. The hero has two top-story cards |
-| `DR-51`, `DR-145` | Most read is a numbered list, not a card row: 4 per row from 1280px, 3 at 1024–1279px. The category page uses RankedList `columns` (C-07) |
+| `DR-51`, `DR-145` | Most read is a numbered list, not a card row: RankedList (C-07) on the homepage and the category page. Two list columns from 600px; from 1024px the middle and end of three columns, the start column empty. No rule between items; the rank is the chip, not `type-rank` (IMP-99; amends DR-51, DR-145, DR-299, DR-144, DR-146, DR-147) |
 | `DR-87` | No rounded corners and no card borders, no exception (`CPT-05`, DR-349) |
 | `DR-162` | Use the approved component and section names (`component-system.md` Section 3) |
 | `DR-188` | No subscribe button in the header or the drawer |

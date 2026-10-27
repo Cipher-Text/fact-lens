@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.20 · 27 October 2026 · Category review: C-02 OverlapCard `feature` and `eyebrow` (CL-15); category page names in Section 3.1; `--divider-rule` and the RankedList `columns` CSS in Section 6 (tajmin, category review)
+Version 1.21 · 27 October 2026 · Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -40,7 +40,7 @@ This file is the only home of the component specs (DR-372, DR-377). To change it
 | P-4 | `AnalysisSection` | Sections | Approved | DR-52, DR-76, DR-93, DR-101, DR-108, DR-110, DR-111, DR-205, DR-224, DR-264, DR-268, DR-300, DR-351 |
 | C-06 | `OpinionList` | Section components | Approved | DR-52, DR-76, DR-101, DR-110, DR-112, DR-113, DR-299, DR-300, DR-301, DR-351 |
 | C-23 | `CategoryBlock` | Section components | Approved | DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351 |
-| C-07 | `RankedList` | Section components | Approved | DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148, DR-300; `columns` (category page, 27 Oct 2026) |
+| C-07 | `RankedList` | Section components | Approved | DR-44, DR-148, DR-290, DR-300, DR-403, DR-404; one layout on the homepage and the category page (IMP-99) |
 | C-15 | `RegionSlider` | Section parts | Approved | DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236, DR-284, DR-291, DR-318 |
 | C-16 | `AdSlot` | Section parts | Approved | DR-127, DR-163, DR-197, DR-206, DR-207, DR-233, DR-240, DR-241, DR-242, DR-245, ad proposal (approved 5 Oct), DR-315, DR-387 |
 | C-14 | `NewsletterSignup` | Section parts | Deferred | DR-128, DR-129, DR-130, DR-131, DR-132, DR-133, DR-134, DR-135, DR-137, DR-224, DR-229, DR-230, DR-231, DR-238, DR-239 |
@@ -102,7 +102,7 @@ In page order. The pattern ID links to `spacing-layout-system.md` Section 7.2.
 |  |  |  | `GroupedCategoriesSection.adInset` | AdSlot variant="inset" | Between the two rows of blocks, wrapper width |
 |  |  |  | `GroupedCategoriesSection.rail` | DailyPoll (C-26) in prototype run 2; NewsletterSignup (C-14) above it after run 2 (DR-239) | নিউজলেটার / Newsletter, আজকের জরিপ / Daily poll (DR-346) |
 |  |  |  | `GroupedCategoriesSection.adRail` | AdSlot variant="rail" | Below the poll in the rail, from 1280 only (DR-240, DR-245) |
-| P-5 | `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07, 5 items) | Numbered list, 4 / 3 / 2 / 1 per row (`layout` grid). The category page uses `layout` columns (C-07). No MoreLink |
+| P-5 | `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07, 5 items) | Numbered list: from 1024 the middle and end of three columns (1 to 3, then 4 and 5), the start column empty; 2 list columns from 600; 1 on phones (C-07). No MoreLink |
 | P-3b | `RegionsSection` | অঞ্চলসমূহ / Regions | `RegionsSection.slider` | RegionSlider (C-15) | Slider from 600px, tabs (Chip) on phones |
 |  |  |  | `RegionsSection.more` | MoreLink | আরও দেখুন / See more, like every section |
 | — | `Footer` | – | – | Footer (C-21) | Logo, social links, About, Contact, Corrections, Privacy, Terms |
@@ -116,7 +116,7 @@ Category page sections (`spacing-layout-system.md` 7B, DR-402). In page order, b
 | `CategoryFeatureSection` | Hidden heading | `CategoryFeatureSection.featureStory` | OverlapCard (C-02, `feature`, no eyebrow) | The feature story in the wrapper |
 |  |  | `CategoryFeatureSection.cards` | `CategoryCardList`: 3 × StoryCard (C-24, row, 16:9, md, third, summary) | Card rows under the feature story, 1 per row at every width |
 |  | সর্বশেষ / Latest | `CategoryFeatureSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | In the rail |
-| `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07, `columns`) | The top 5 of the category |
+| `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07) | The top 5 of the category |
 | `CategoryMoreStoriesSection` | আরও পড়ুন / More stories | `CategoryMoreStoriesSection.list` | `CategoryMoreStoriesList`: StoryCard (C-24, `dated`), 10 at a time | 1 per row; Divider.rule and the load more Button (C-12) |
 
 Helper parts. They are not sections or numbered components; use these names in code (DR-286).
@@ -153,7 +153,7 @@ Code names to change: the code uses the approved names above, and the folder nam
 | Column | One of two equal halves of AnalysisSection. Not the rail. |
 | Block | One category inside GroupedCategoriesSection (CategoryBlock). |
 | Card | One story with an image: LeadStory, OverlapCard or StoryCard. |
-| List | Stories in a row stack with rules between them: StoryList, OpinionList, RankedList. |
+| List | Stories in a row stack: StoryList and OpinionList with rules between them, RankedList with --rank-list-gap. |
 | Item | One story in a list: StoryListItem, OpinionList.item, RankedList.item. |
 | Lead story | LeadStory: the one lead story of the whole site, in HeroSection only. |
 | Feature story | FeatureStory: the first and largest story of a section, a CategoryBlock or a region panel. It is a role, not a card: StoryCard or OverlapCard draws it. Never call it the lead. |
@@ -307,10 +307,10 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--story-feature-media-min` | 26.25rem (420px) | same | same | Feature split: smallest image column (C-24, P-2) | DR-297 |
 | `--story-feature-media-max` | 34.8125rem (557px) | same | same | Feature split: largest image column | DR-297 |
 | `--story-feature-media-share` | 0.5 | same | 0.6 from 1024 | Feature split: image share of the row (minus one column gap) | DR-297 |
-| `--rank-chip-size` | 2.25rem (36px) | same | 2.75rem (44px) from 1024 | RankedList `columns`: the square rank chip | category spec log CL-10 |
-| `--rank-chip-digit-size` | 1.5rem (24px) | same | 2rem (32px) from 1024 | RankedList `columns`: the chip digits | category spec log CL-10 |
-| `--rank-chip-digit-weight` | 700 | same | 600 from 1024 | RankedList `columns`: the chip digits | category spec log CL-10 |
-| `--rank-list-gap` | 1.5rem (24px) | 1.75rem (28px) from 600 | 2rem (32px) from 1280 | RankedList `columns`: the space between items, which have no rule | category spec log CL-12 |
+| `--rank-chip-size` | 2.25rem (36px) | same | 2.75rem (44px) from 1024 | RankedList: the square rank chip | category spec log CL-10 |
+| `--rank-chip-digit-size` | 1.5rem (24px) | same | 2rem (32px) from 1024 | RankedList: the chip digits | category spec log CL-10 |
+| `--rank-chip-digit-weight` | 700 | same | 600 from 1024 | RankedList: the chip digits | category spec log CL-10 |
+| `--rank-list-gap` | 1.5rem (24px) | 1.75rem (28px) from 600 | 2rem (32px) from 1280 | RankedList: the space between items, which have no rule | category spec log CL-12 |
 | `--divider-rule` | 1px | same | same | Rule weight of Divider.item, Divider.rule and Divider.column (C-22) | DR-262, DR-351, DR-405 |
 
 In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-height`, and `--space-lead-inset` is the pair `--space-lead-inset-start` and `--space-lead-inset-end`.
@@ -406,6 +406,29 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
 @utility stack-cell {
   display: grid;
   & > * { grid-column: 1; grid-row: 1; }
+}
+
+/* RankedList (C-07): the rank chip and the title per item. Put the class on the <ol>; the
+   rank span (aria-hidden, DR-290) is the first child of each <li>, with one inner span */
+@utility rank-list {
+  list-style: none;
+  & > li { display: grid; grid-template-columns: var(--rank-chip-size) minmax(0, 1fr); column-gap: --spacing(4); align-items: center; }
+  & > li > [aria-hidden="true"]:first-child {
+    display: grid;
+    place-items: center;
+    inline-size: var(--rank-chip-size);
+    aspect-ratio: 1;
+    background-color: var(--color-bar);
+    color: var(--on-interactive);
+    font-family: var(--font-editorial-active);
+    font-size: var(--rank-chip-digit-size);
+    font-weight: var(--rank-chip-digit-weight);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  & > li > [aria-hidden="true"]:first-child > span {
+    margin-block: calc(-1 * var(--rank-chip-ink-start)) calc(-1 * var(--rank-chip-ink-end));
+  }
 }
 The container rule sets the lead tokens on `.lead-story`, so the `@container` is the parent of `.lead-story`, not the card itself (DR-297). The feature split utilities `story-split-third` and `story-split-feature` and the poll utility `poll-layout` are in `components.css` (DR-297, DR-298).
 
@@ -786,22 +809,20 @@ One category inside the grouped categories section (P-3): heading, a feature sto
 
 #### C-07 RankedList
 
-**Status:** Approved · **Decisions:** DR-44, DR-51, DR-144, DR-145, DR-146, DR-147, DR-148, DR-300; `columns`: DR-403, DR-404 (category spec log CL-18, CL-21, CL-22)
+**Status:** Approved · **Decisions:** DR-44, DR-148, DR-290, DR-300, DR-403, DR-404 (category spec log CL-18, CL-21, CL-22); one layout on the homepage and the category page (IMP-99, spec log `home-most-read.md` HM-01 to HM-03; amends DR-51, DR-145, DR-299, DR-144, DR-146, DR-147)
 
-Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = rank numeral + title (DR-162, was RankItem).
-
-**Variants.** `layout`: `grid` (default, the homepage; the tables below) and `columns` (the category page, `spacing-layout-system.md` 7B). The homepage keeps `grid` until its own branch (`docs/tasks/home-most-read.md`).
+Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = rank chip + title (DR-162, was RankItem). One layout on the homepage and the category page (the former `columns` variant; the `grid` layout is removed).
 
 | Part | Spec |
 | --- | --- |
-| Heading | Section divider (C-22) + সর্বাধিক পঠিত / Most read, h2, not a link. No section link (no page behind it) |
-| List | ol, 5 items, row-first order. Column gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). Divider.item between two items in the same column (rules within a column only, as Latest), space-list-item on each side; no rule after the last item of a column (DR-299, DR-300) |
-| Numeral | type-rank, interactive, weight 700, 56px from 1024, 44px below (DR-146); Bangla: Noto Sans Bengali, English: Source Serif 4 (DR-147); column 0.75em (42 / 33px), 12px gap to the title; glyph top on the first title line (DR-144). The rank comes from the data (backend query): React writes it in a span with aria-hidden="true", digits in the page language (১ on Bangla pages, 1 on English pages). No CSS counter (DR-290) |
+| Heading | Section divider (C-22) + সর্বাধিক পঠিত / Most read, h2, not a link, SectionHeading across the shell. No section link (no page behind it) |
+| List | ol, 5 items, column-first in CSS columns: items 1 to 3 in the first list column, 4 and 5 in the second, which starts with a column break and no space above, so the column tops line up. Column gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). No Divider.item: the items are --rank-list-gap apart (amends DR-299) |
+| Rank | A square chip, --rank-chip-size, in --color-bar with on-interactive digits, as the label Chip (C-11). Serif digits in both languages (Source Serif 4, Noto Serif Bengali), --rank-chip-digit-size at --rank-chip-digit-weight. The inner span takes off --rank-chip-ink-start and --rank-chip-ink-end, so the chip centers the ink of the digits. 16px to the title. The chip and the whole title center on each other. The rank comes from the data (backend query): React writes it in a span with aria-hidden="true", digits in the page language (১ on Bangla pages, 1 on English pages). No CSS counter (DR-290). CSS: `@utility rank-list` (Section 6). Replaces `type-rank` (amends DR-144, DR-146, DR-147) |
 | Title | h3 link, type-story-title-sm 600, ink. No image, no meta. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| Items per row | Phone: 1 | 600 to 1023: 2, item 5 on row 3 | 1024 to 1279: 3, items 4 and 5 on row 2 (DR-145); 1280 and up: 4, item 5 on row 2 (DR-51) |
+| Columns | Phone: 1 | 600 to 1023: 2 list columns across the shell | From 1024: a 3-column grid (--grid-column-gap); the start column stays empty, the list spans the middle and end columns |
 
 **Content.**
 
@@ -811,33 +832,14 @@ Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = r
 
 **Accessibility.**
 
-- The list order gives the rank; the numeral is hidden from screen readers.
+- The list order gives the rank; the chip is hidden from screen readers.
 
 **Checks.**
 
-- Numeral glyph top on the first title line (DR-144).
-- No radius, no card borders.
-- Divider.item between items in a column, none across columns (DR-300).
-- At 200% browser text size the list stacks and nothing scrolls sideways (DR-81).
-
-**Variant `columns`** (category page; tajmin, 27 Oct 2026).
-
-| Part | Spec |
-| --- | --- |
-| Heading | As in `grid`: SectionHeading across the shell |
-| List | ol, 5 items, column-first in CSS columns: items 1 to 3 in the first list column, 4 and 5 in the second, which starts with a column break and no space above, so the column tops line up. Column gap --grid-column-gap. No Divider.item: the items are --rank-list-gap apart (amends DR-299 for this variant) |
-| Numeral | A square chip, --rank-chip-size, in --color-bar with on-interactive digits, as the label Chip (C-11). Serif digits in both languages (Source Serif 4, Noto Serif Bengali), --rank-chip-digit-size at --rank-chip-digit-weight. The inner span takes off --rank-chip-ink-start and --rank-chip-ink-end, so the chip centers the ink of the digits. 16px to the title. The chip and the whole title center on each other. aria-hidden, digits in the page language (DR-290) |
-| Title | As in `grid` |
-
-| Part | Phone or narrow | Tablet or medium | Desktop or wide |
-| --- | --- | --- | --- |
-| Columns | Phone: 1 | 600 to 1023: 2 list columns across the shell | From 1024: a 3-column grid (--grid-column-gap); the start column stays empty, the list spans the middle and end columns |
-
-**Checks (`columns`).**
-
 - The tops of the two list columns line up.
 - The chip digits are centered in the chip.
-- No rule between items, no radius.
+- No rule between items, no radius, no card borders.
+- At 200% browser text size the list stacks and nothing scrolls sideways (DR-81).
 
 ### Section parts
 
@@ -1014,7 +1016,7 @@ A thin rule that separates list rows, sections, modules and (option) columns. Di
 
 - One color (border). Section rule 2px solid; item rule 1px dotted; rule 1px solid; column rule 1px solid. No dashed or double rules.
 - Do not draw a 1px horizontal rule by hand (a border or a 1px div): use Divider.rule.
-- General rule (DR-299): a group of items of the same kind stacked in a column gets Divider.item between the items (StoryList, OpinionList, RankedList, the AnalysisSection rows, RegionSlider.panel). In a multi-column list the rule runs within a column only (DR-300).
+- General rule (DR-299): a group of items of the same kind stacked in a column gets Divider.item between the items (StoryList, OpinionList, the AnalysisSection rows, RegionSlider.panel). In a multi-column list the rule runs within a column only (DR-300). RankedList has no rule: its items are --rank-list-gap apart (C-07, IMP-99).
 
 **Accessibility.**
 

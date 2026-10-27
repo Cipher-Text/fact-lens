@@ -61,7 +61,6 @@ export function CategoryPageView({ page }: Props) {
               lang={lang}
               stories={page.mostRead}
               t={t}
-              layout="columns"
               className={cn(
                 page.feature && "pt-(--space-module)",
                 "pb-(--space-module)",

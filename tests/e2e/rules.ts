@@ -33,21 +33,16 @@ export async function prepareInkScan(page: Page) {
 
 /**
  * Every Divider.item rule in view on the page (in `scope` when given): the items that draw
- * the rule (divider-item ::before, divider-item-grid ::after) and are visible, inside the
+ * the rule (divider-item ::before) and are visible, inside the
  * viewport width and not in a hidden or inert panel. Returns their index in document order.
  */
 async function visibleRules(page: Page, scope: string) {
   return page.evaluate((scopeSelector) => {
     const root = document.querySelector(scopeSelector);
     if (!root) return [];
-    const items = [
-      ...root.querySelectorAll(".divider-item, .divider-item-grid"),
-    ];
+    const items = [...root.querySelectorAll(".divider-item")];
     return items.flatMap((el, index) => {
-      const pseudo = el.classList.contains("divider-item")
-        ? "::before"
-        : "::after";
-      const s = getComputedStyle(el, pseudo);
+      const s = getComputedStyle(el, "::before");
       if (s.display === "none" || s.content === "none") return [];
       const r = el.getBoundingClientRect();
       if (r.width === 0 || r.height === 0) return [];
@@ -72,25 +67,15 @@ async function scanRule(
     ([scopeSelector, i]) => {
       const el = document
         .querySelector(scopeSelector)!
-        .querySelectorAll(".divider-item, .divider-item-grid")[i as number];
-      const pseudo = el.classList.contains("divider-item")
-        ? "::before"
-        : "::after";
+        .querySelectorAll(".divider-item")[i as number];
       const top = el.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: top - 300, behavior: "instant" });
       const r = el.getBoundingClientRect();
-      const s = getComputedStyle(el, pseudo);
-      const start = r.left + parseFloat(s.left);
-      // A row-first grid (RankedList, C-07): the item below a rule sits under the tallest
-      // item of the row above, so the ink above is read across the whole list width.
-      const list = el.parentElement!.getBoundingClientRect();
-      const grid = pseudo === "::after";
+      const s = getComputedStyle(el, "::before");
       return {
         top: r.top,
-        left: start,
+        left: r.left + parseFloat(s.left),
         width: parseFloat(s.width),
-        aboveLeft: grid ? list.left : start,
-        aboveWidth: grid ? list.width : parseFloat(s.width),
       };
     },
     [scope, index] as const,
@@ -105,21 +90,15 @@ async function scanRule(
         img.complete,
     ),
   );
-  const shot = async (left: number, w: number) => {
-    const x = Math.ceil(left);
-    const y = Math.floor(rect.top) - REACH;
-    const width = Math.floor(left + w) - x;
-    const buffer = await page.screenshot({
-      clip: { x, y, width, height: 2 * REACH + 2 },
-      scale: "css",
-      animations: "disabled",
-    });
-    return measure(page, buffer.toString("base64"), rect.top - y);
-  };
-  const own = await shot(rect.left, rect.width);
-  if (rect.aboveLeft === rect.left) return own;
-  const row = await shot(rect.aboveLeft, rect.aboveWidth);
-  return { above: row.above, below: own.below };
+  const x = Math.ceil(rect.left);
+  const y = Math.floor(rect.top) - REACH;
+  const width = Math.floor(rect.left + rect.width) - x;
+  const buffer = await page.screenshot({
+    clip: { x, y, width, height: 2 * REACH + 2 },
+    scale: "css",
+    animations: "disabled",
+  });
+  return measure(page, buffer.toString("base64"), rect.top - y);
 }
 
 /** Blank rows above and below the rule row in a screenshot strip. */

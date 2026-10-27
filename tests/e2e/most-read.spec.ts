@@ -4,8 +4,8 @@ import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // R2-12: P-5 Most read, C-07 RankedList (component-system.md; spacing-layout-system.md
-// 7.1 to 7.3, 8, 9, 13; DR-51, DR-68, DR-144, DR-145; typography-system.md 7.1 type-rank; LAY-03, LAY-07, LAY-12, LAY-13, LAY-14, LAY-17,
-// TYP-17, COL-04, COL-13).
+// 7.1 to 7.3, 8, 9, 13; DR-44, DR-68, DR-290; LAY-03, LAY-07, LAY-12, LAY-13, LAY-14, LAY-17,
+// TYP-17, COL-13). The columns layout and the rank chip of the category page (IMP-99).
 
 const PAGES = [
   { path: "/", lang: "bn", title: "সর্বাধিক পঠিত", bengali: true },
@@ -54,111 +54,117 @@ for (const p of PAGES) {
 
         const gutter = width < 600 ? 16 : 24;
         const shell = Math.min(width - 2 * gutter, 1280);
-        // C-07: --grid-column-gap (16 / 24 from 768 / 32 from 1280, DR-300). No row gap: the
-        // rule between rows in a column has space-list-item (16px) on each side (DR-299),
-        // measured to the ink (DR-350): the box gap is 16px less the blank space below the
-        // title ink (--list-ink-end). small-parts.spec.ts measures the ink.
+        // --grid-column-gap (16 / 24 from 768 / 32 from 1280, DR-300). --rank-list-gap
+        // between the items, no rule (24 / 28 from 600 / 32 from 1280).
         const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
-        const rowGap =
-          16 -
-          (await page
-            .locator("[data-most-read-item]")
-            .first()
-            .evaluate((li) => {
-              const probe = document.createElement("span");
-              probe.style.display = "block";
-              probe.style.height = "var(--list-ink-end)";
-              li.append(probe);
-              const h = parseFloat(getComputedStyle(probe).height);
-              probe.remove();
-              return h;
-            }));
+        const itemGap = width >= 1280 ? 32 : width >= 600 ? 28 : 24;
         const space = width >= 1024 ? 40 : width >= 768 ? 32 : 24;
 
         const s = mostRead(page);
         const sectionBox = await box(s);
         expect(Math.round(sectionBox.width)).toBe(shell); // LAY-03
 
-        // 4 per row from 1280 (item 5 on row 2), 3 at 1024-1279 (items 4 and 5 on
-        // row 2), 2 per row from 600, 1 per row on phones (DR-51, DR-145, 7.2).
+        // From 1024 three equal columns: the start column stays empty and the list takes
+        // the middle and end columns. Below 1024 the list spans the shell (C-07).
+        const list = await box(s.locator("ol"));
+        const third = (shell - 2 * columnGap) / 3;
+        if (width >= 1024) {
+          expect(
+            Math.abs(list.x - (sectionBox.x + third + columnGap)),
+          ).toBeLessThanOrEqual(1);
+          expect(
+            Math.abs(list.width - (2 * third + columnGap)),
+          ).toBeLessThanOrEqual(1);
+        } else {
+          expect(Math.abs(list.x - sectionBox.x)).toBeLessThanOrEqual(1);
+          expect(Math.abs(list.width - shell)).toBeLessThanOrEqual(1);
+        }
+
+        // Phone: one column. From 600 two CSS columns, column-first: items 1 to 3 in the
+        // first, 4 and 5 in the second, the tops of the two columns level (C-07).
         const items = s.locator("[data-most-read-item]");
         await expect(items).toHaveCount(5);
         const b = await Promise.all(
           [0, 1, 2, 3, 4].map((i) => box(items.nth(i))),
         );
-        const perRow =
-          width >= 1280 ? 4 : width >= 1024 ? 3 : width >= 600 ? 2 : 1;
-        for (let i = 0; i < 5; i++) {
-          const column = i % perRow;
-          const first = b[i - column];
-          // Same row as the first item of the row, same column as the item above.
-          expect(Math.round(b[i].y)).toBe(Math.round(first.y));
-          if (i >= perRow) {
-            expect(Math.round(b[i].x)).toBe(Math.round(b[i - perRow].x));
-            expect(b[i].y).toBeGreaterThan(b[i - perRow].y);
+        const columns = width >= 600 ? [[0, 1, 2], [3, 4]] : [[0, 1, 2, 3, 4]];
+        const columnWidth =
+          columns.length === 2 ? (list.width - columnGap) / 2 : list.width;
+        columns.forEach((column, c) => {
+          const x = list.x + c * (columnWidth + columnGap);
+          for (const [n, i] of column.entries()) {
+            expect(Math.abs(b[i].x - x), `item ${i + 1} x`).toBeLessThanOrEqual(1);
+            expect(
+              Math.abs(b[i].width - columnWidth),
+              `item ${i + 1} width`,
+            ).toBeLessThanOrEqual(1);
+            if (n === 0) {
+              expect(Math.abs(b[i].y - b[0].y)).toBeLessThanOrEqual(1);
+            } else {
+              const above = b[column[n - 1]];
+              expect(
+                Math.abs(b[i].y - (above.y + above.height) - itemGap),
+                `gap above item ${i + 1}`,
+              ).toBeLessThanOrEqual(0.5);
+            }
           }
-          if (i === perRow) {
-            // Row gap between the first two rows is measured from the tallest item.
-            const rowBottom = Math.max(
-              ...b.slice(0, perRow).map((r) => r.y + r.height),
-            );
-            expect(Math.abs(b[i].y - rowBottom - rowGap)).toBeLessThanOrEqual(
-              0.5,
-            );
-          }
-          if (column > 0) {
-            const prev = b[i - 1];
-            expect(Math.round(b[i].x - (prev.x + prev.width))).toBe(columnGap);
-          }
-        }
-        if (perRow === 1) expect(Math.round(b[0].width)).toBe(shell);
-        // Item 5 keeps its column width; the rest of row 2 stays empty.
-        expect(Math.abs(b[4].width - b[0].width)).toBeLessThanOrEqual(1);
-
-        // type-rank (typography-system.md 7.1): numeral 44px in a 33px column with a
-        // 12px gap; 56px in a 42px column from 1024. The numeral uses
-        // text-interactive, not brand (COL-04), and the rank from the data.
-        const rank = await items.first().evaluate((li) => {
-          const before = getComputedStyle(li.firstElementChild!);
-          const probe = document.createElement("span");
-          probe.style.color = "var(--interactive)";
-          li.append(probe);
-          const text = li.firstElementChild!.textContent;
-          const interactive = getComputedStyle(probe).color;
-          probe.remove();
-          return {
-            columns: getComputedStyle(li).gridTemplateColumns,
-            gap: getComputedStyle(li).columnGap,
-            size: before.fontSize,
-            weight: before.fontWeight,
-            color: before.color,
-            interactive,
-            text,
-            hidden: li.firstElementChild!.getAttribute("aria-hidden"),
-          };
         });
-        const big = width >= 1024;
-        // The column is 0.75em of the numeral: 33px and 42px.
-        expect(rank.columns.split(" ")[0]).toBe(big ? "42px" : "33px");
-        expect(rank.gap).toBe("12px");
-        expect(rank.size).toBe(big ? "56px" : "44px");
-        expect(rank.weight).toBe("700");
-        expect(rank.color).toBe(rank.interactive);
-        // The rank comes from the data, in an aria-hidden span, digits in the page
-        // language (DR-290). No CSS counter.
-        expect(rank.hidden).toBe("true");
-        expect(rank.text).toBe(p.bengali ? "১" : "1");
 
-        // Every title starts at the same position in its item.
-        const offsets = await items.evaluateAll((lis) =>
-          lis.map(
-            (li) =>
-              li.querySelector("h3")!.getBoundingClientRect().left -
-              li.getBoundingClientRect().left,
-          ),
+        // The rank chip: a square in --color-bar with on-interactive serif digits, 36px
+        // with 24px digits at 700, 44px with 32px digits at 600 from 1024; 16px to the
+        // title; chip and title centered on each other. The rank comes from the data, in
+        // an aria-hidden span, digits in the page language (DR-290). No CSS counter.
+        const big = width >= 1024;
+        const chips = await items.evaluateAll((lis) =>
+          lis.map((li) => {
+            const chip = li.firstElementChild as HTMLElement;
+            const s = getComputedStyle(chip);
+            const probe = (v: string) => {
+              const el = document.createElement("span");
+              el.style.color = `var(${v})`;
+              li.append(el);
+              const c = getComputedStyle(el).color;
+              el.remove();
+              return c;
+            };
+            const c = chip.getBoundingClientRect();
+            const h = li.querySelector("h3")!.getBoundingClientRect();
+            const l = li.getBoundingClientRect();
+            return {
+              width: c.width,
+              height: c.height,
+              size: s.fontSize,
+              weight: s.fontWeight,
+              background: s.backgroundColor,
+              bar: probe("--color-bar"),
+              color: s.color,
+              onInteractive: probe("--on-interactive"),
+              titleOffset: h.left - l.left,
+              chipCenter: c.top + c.height / 2,
+              titleCenter: h.top + h.height / 2,
+              text: chip.textContent,
+              hidden: chip.getAttribute("aria-hidden"),
+            };
+          }),
         );
-        expect(new Set(offsets.map(Math.round)).size).toBe(1);
-        expect(Math.round(offsets[0])).toBe(big ? 54 : 45); // column + 12px gap
+        const digits = p.bengali
+          ? ["১", "২", "৩", "৪", "৫"]
+          : ["1", "2", "3", "4", "5"];
+        chips.forEach((chip, i) => {
+          expect(chip.width).toBe(big ? 44 : 36);
+          expect(chip.height).toBe(chip.width);
+          expect(chip.size).toBe(big ? "32px" : "24px");
+          expect(chip.weight).toBe(big ? "600" : "700");
+          expect(chip.background).toBe(chip.bar);
+          expect(chip.color).toBe(chip.onInteractive);
+          // Every title starts at the same position: the chip and 16px.
+          expect(Math.round(chip.titleOffset)).toBe(chip.width + 16);
+          expect(
+            Math.abs(chip.chipCenter - chip.titleCenter),
+          ).toBeLessThanOrEqual(1);
+          expect(chip.hidden).toBe("true");
+          expect(chip.text).toBe(digits[i]);
+        });
 
         // After P-3 with no ad row between: P-3 keeps space-section, P-5 none above.
         // Then space-module and the ad-band (LAY-12, DR-68).
@@ -218,44 +224,44 @@ for (const p of PAGES) {
       });
     }
 
-    test("sheet checks: numeral nudge, no radius, border or rule, link colors (C-07)", async ({
+    test("sheet checks: no radius, border, rule or shadow, link colors (C-07, CPT-05)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
       const s = mostRead(page);
-      const first = s.locator("[data-most-read-item]").first();
-      const info = await first.evaluate((li) => {
-        const before = getComputedStyle(li.firstElementChild!);
-        const size = parseFloat(before.fontSize);
-        const link = li.querySelector("a")!;
-        const probe = (v: string) => {
+      const info = await s.locator("[data-most-read-item]").evaluateAll((lis) =>
+        lis.map((li) => {
+          const link = li.querySelector("a")!;
           const el = document.createElement("span");
-          el.style.color = `var(${v})`;
+          el.style.color = "var(--ink)";
           li.append(el);
-          const c = getComputedStyle(el).color;
+          const ink = getComputedStyle(el).color;
           el.remove();
-          return c;
-        };
-        const nodes = [li, li.querySelector("h3")!, link];
-        return {
-          // Glyph top on the first title line (DR-144): the nudge in em.
-          nudge: parseFloat(before.marginBlockStart) / size,
-          linkColor: getComputedStyle(link).color,
-          ink: probe("--ink"),
-          decorated: nodes.some(
-            (n) =>
-              getComputedStyle(n).textDecorationLine !== "none" ||
-              getComputedStyle(n).borderTopWidth !== "0px" ||
-              getComputedStyle(n).borderBottomWidth !== "0px" ||
-              getComputedStyle(n).borderRadius !== "0px" ||
-              getComputedStyle(n).boxShadow !== "none",
-          ),
-        };
-      });
-      expect(info.nudge).toBeCloseTo(p.bengali ? -0.125 : -0.1, 2);
-      expect(info.linkColor).toBe(info.ink);
-      expect(info.decorated).toBe(false);
+          const nodes = [li, li.firstElementChild!, li.querySelector("h3")!, link];
+          return {
+            linkColor: getComputedStyle(link).color,
+            ink,
+            // No Divider.item between the items: no rule pseudo-element either.
+            rule: ["::before", "::after"].some(
+              (pseudo) => getComputedStyle(li, pseudo).content !== "none",
+            ),
+            decorated: nodes.some(
+              (n) =>
+                getComputedStyle(n).textDecorationLine !== "none" ||
+                getComputedStyle(n).borderTopWidth !== "0px" ||
+                getComputedStyle(n).borderBottomWidth !== "0px" ||
+                getComputedStyle(n).borderRadius !== "0px" ||
+                getComputedStyle(n).boxShadow !== "none",
+            ),
+          };
+        }),
+      );
+      for (const item of info) {
+        expect(item.linkColor).toBe(item.ink);
+        expect(item.rule).toBe(false);
+        expect(item.decorated).toBe(false);
+      }
       const list = s.locator("ol");
       expect(
         await list.evaluate((el) => getComputedStyle(el).listStyleType),
@@ -275,7 +281,7 @@ for (const p of PAGES) {
       const list = s.locator("ol");
       await expect(list.getByRole("heading", { level: 3 })).toHaveCount(5);
 
-      // The numeral is hidden from screen readers; the list order gives the rank.
+      // The chip is hidden from screen readers; the list order gives the rank.
       const names = await list
         .locator("li")
         .evaluateAll((lis) =>

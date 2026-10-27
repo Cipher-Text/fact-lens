@@ -13,7 +13,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 | Current work | M2 production build, one page at a time (Section 9). State: `docs/STATUS.md`. Open items and flags: `docs/ISSUES.md` |
 | Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
-| Pages | Homepage, article page and category page are done; the homepage is locked (`DR-370`). Start a new page only with its brief (Section 9) |
+| Pages | Homepage, article page and category page are done; the homepage is locked (`DR-370`), except P-5 most read (IMP-99). Start a new page only with its brief (Section 9) |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |
 
 ## 2. Authority
@@ -118,7 +118,7 @@ The rule IDs link to the full text through `docs/design-system/agent-contract.md
 8. Use the breakpoints phone, `sm` 600, `md` 768, `lg` 1024 and `xl` 1280 only. There is no `2xl` (`LAY-06`).
 9. Keep content inside its container. Do not use `vw` or breakout tricks (`LAY-02`).
 10. Keep the source order equal to the reading order. Do not use CSS `order` (`LAY-14`).
-11. Homepage card rows have 1 card (phone) or 2 cards (from 600px). No 3-up or 4-up rows (`LAY-07`, `DR-44`). Most read is a numbered list: 4 per row from 1280px, 3 at 1024–1279px (`DR-51`, `DR-145`). The regions slider shows 4 panels from 1280px (`DR-140`).
+11. Homepage card rows have 1 card (phone) or 2 cards (from 600px). No 3-up or 4-up rows (`LAY-07`, `DR-44`). Most read is a numbered list (RankedList, C-07): two list columns from 600px; from 1024px the middle and end of three columns, the start column empty (`DR-51`, `DR-145`, IMP-99). The regions slider shows 4 panels from 1280px (`DR-140`).
 12. Ad rows are full width with no padding, margin or gutter. Reserve their height. No ad is sticky (`LAY-09` to `LAY-13`).
 13. Only the site header is sticky: the TopBar and, from 1280, the NavBar. Past the NavBar row the NavBar hides under the TopBar (`LAY-15`).
 14. Every focusable element shows the focus ring (`COL-13`). Every control works with a keyboard.

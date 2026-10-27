@@ -57,4 +57,4 @@ Does the homepage keep the empty start column from 1024, as the category page do
 
 - `pnpm check` and the full `pnpm test:e2e:chromium` pass (the token CSS changes).
 - The homepage and the category page show the same RankedList at every validation width, in Bangla and English, light and dark, and at 200% text size.
-- U-42 and DOC-55 are closed in `docs/ISSUES.md`.
+- IMP-99 is closed in `docs/ISSUES.md` (U-42 and DOC-55 were already closed on `dev`, commit a3722aa).

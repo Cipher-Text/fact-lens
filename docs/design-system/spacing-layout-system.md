@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.25 · 27 October 2026 · Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.26 · 27 October 2026 · Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -98,7 +98,7 @@ The shell is `min(100% − 2 × gutter, 1280px)`.
 | From 600px | 2 | 2 |
 | From 1024px | 2 | 3 |
 
-The homepage has no 4-up and no 3-up card row. Two parts are not card rows: Most read is a numbered list with 4 items per row from 1280px and 3 at 1024–1279px (DR-51, DR-145), and the regions slider shows 4 region panels from 1280px (DR-140). The hero has two top-story cards.
+The homepage has no 4-up and no 3-up card row. Two parts are not card rows: Most read is a numbered list in two list columns: from 1024px in the middle and end of three columns, the start column empty (C-07; amends DR-51, DR-145), and the regions slider shows 4 region panels from 1280px (DR-140). The hero has two top-story cards.
 
 ## 4. Widths
 
@@ -255,7 +255,7 @@ The section heading row is a component. It is not a pattern.
 | P-3 Grouped categories | One section. Rows of two categories. Inset ad between rows, at wrapper width. Rail: daily poll (DR-239) | Wrapper + rail | Two categories per row. Below the blocks: the poll as a full row (DR-134, DR-239) | A, B, ad, C, D, then the poll |
 | P-3b Regions | All regions in one row of columns. Previous and next buttons in the heading row. One "আরও দেখুন" link at the section end | 4 regions in view from 1280px, 3 at 1024–1279px | 2 regions in view (DR-141) | Region tabs. One region in view |
 | P-4 বিশ্লেষণ ও মতামত | Shell width. Two equal columns: analysis (image-led list) and opinion (quote list), gap `--space-analysis-gap` (32 / 48 / 64px, DR-356). No rail | Two columns | Two columns from 768px. Stacked at 600–767px | Stacked: analysis, then opinion |
-| P-5 Most read | Top 5, full shell | 4 per row from 1280px, item 5 on row 2. 3 per row at 1024–1279px, items 4 and 5 on row 2 (DR-145) | 2 per row | 1 per row |
+| P-5 Most read | Top 5, full shell. RankedList (C-07): column-first, items 1 to 3 then 4 and 5, the column tops level; no rule, `--rank-list-gap` between items | Three equal columns from 1024px: the start column empty, the list in the middle and end columns | 2 list columns across the shell (from 600px) | 1 column |
 
 The hero, featured category and grouped category sections use the same wrapper + rail layout. The rail is always 304px.
 
@@ -409,7 +409,7 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 | Page title | `Shell` | `PageTitle` (C-43): the category name, the page `h1`; space-section-title-after below |
 | `CategoryFeatureSection` | `Shell`, `WithRail` | A hidden `h2` names the section. Wrapper: the feature story as an `OverlapCard` (C-02, `feature`, no eyebrow), then 3 card rows (`CategoryCardList`). Rail: `SectionHeading` and the 5 newest stories after the feature story as a `StoryList` (C-03 of C-25) |
 | `ad-band` | Ad container | After `CategoryFeatureSection` |
-| Most read | `Shell` | The top 5 of the category: `MostReadSection` with RankedList `columns` (C-07 variant) |
+| Most read | `Shell` | The top 5 of the category: `MostReadSection` with RankedList (C-07), as on the homepage |
 | `ad-band` | Ad container | After most read |
 | `CategoryMoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | `CategoryMoreStoriesList`: the older stories as StoryCard `dated` (C-24), Divider.item between them, 10 at a time; Divider.rule (C-22) and the load more `Button` |
 | Footer | As on the homepage | `Footer` (C-21) |
@@ -546,7 +546,7 @@ Values stop changing at `lg` (spacing) and `xl` (layout). From 1366px, nothing c
 
 Homepage peer rows: 1 below 600px, 2 from 600px. The homepage has no 4-up rows. Other pages use 3 from 1024px, except the category page: its card rows and More stories show 1 per row at every width (Section 7B; DR-409 amends DR-44).
 
-Two homepage parts are not peer rows and have their own counts: Most read (`RankedList`) has 4 items per row from 1280px and 3 at 1024–1279px (DR-51, DR-145). The regions slider (`RegionSlider`) shows 4 region panels from 1280px (DR-140).
+Two homepage parts are not peer rows and have their own counts: Most read (`RankedList`, C-07) has two list columns from 600px, in the middle and end of three columns from 1024px (amends DR-51, DR-145). The regions slider (`RegionSlider`) shows 4 region panels from 1280px (DR-140).
 
 ### LAY-08 Use one card variant per peer row
 
@@ -927,6 +927,10 @@ Test these content cases:
 The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.26 (27 October 2026)**
+
+- Homepage most read (IMP-99, spec log `home-most-read.md` HM-01): P-5 in 7.2, Section 4 and Section 8 use the RankedList layout of the category page (C-07): two list columns from 600px, from 1024px the middle and end of three columns with the start column empty. Amends DR-51, DR-145 and the DR-370 homepage lock for P-5 only. Section 13 (200% text size, "Most read stacks") is unchanged: open flag HM-04.
 
 **2.25 (27 October 2026)**
 

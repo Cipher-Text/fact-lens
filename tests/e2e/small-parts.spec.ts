@@ -106,21 +106,22 @@ for (const { path, more } of PAGES) {
         await page.goto(path);
         await prepareInkScan(page);
         const rules = await ruleInkSpaces(page);
-        // Latest, P-4, P-2, P-3, Most read and the regions each have rules in view.
+        // Latest, P-4, P-2, P-3 and the regions each have rules in view. Most read has
+        // none: its items are --rank-list-gap apart (C-07, IMP-99).
         const sections = new Set(rules.map((r) => r.label.split(" ")[0]));
         for (const s of [
           "hero",
           "analysis-opinion",
           "featured",
           "grouped",
-          "most-read",
           "regions",
         ]) {
           expect(sections, `${s} at ${width}`).toContain(s);
         }
+        expect(sections, `most-read at ${width}`).not.toContain("most-read");
         // The ink tokens are measured from the fonts: per list the median space is 16 ±1px.
         // A glyph that hangs lower or stands higher than the median (Bangla ্র and ু, a
-        // descender, a rank digit) moves one rule by up to 3px (flag F-2, DOC-47).
+        // descender) moves one rule by up to 3px (flag F-2, DOC-47).
         const median = (values: number[]) => {
           const sorted = [...values].sort((a, b) => a - b);
           return sorted[Math.floor(sorted.length / 2)];
