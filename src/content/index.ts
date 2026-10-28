@@ -16,6 +16,7 @@ import type {
   Homepage,
   HomepageVariant,
   Lang,
+  LatestPage,
   Poll,
   RegionId,
   Story,
@@ -255,6 +256,21 @@ export function getCategoryPage(
       lang,
     ).map((story, index) => ({ ...story, rank: index + 1 })),
     more,
+  };
+}
+
+/**
+ * The Latest page in one language (layout 7C.2 Paths, News hub row: news only). Every news story of every
+ * category, newest first. Every story has a category, so no region-only news shows
+ * (tajmin, 28 Oct 2026).
+ */
+export function getLatestPage(lang: Lang): LatestPage {
+  return {
+    lang,
+    stories: stories
+      .filter((def) => def.format === "news")
+      .map((def) => toStory(def, lang))
+      .sort(newestFirst),
   };
 }
 

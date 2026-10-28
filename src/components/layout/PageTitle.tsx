@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 
 type Props = {
   title: string;
+  /** The h1 id, for a section the title names (the Latest page list). */
+  id?: string;
   /** A line above the brand bar, in the band: the category page MissingTranslationNote. */
   note?: ReactNode;
   className?: string;
@@ -22,7 +24,7 @@ type Props = {
  * ad-top row: it takes the place of space-page-start. The page sets the space after it.
  * Every page that has a PageTitle shows the band.
  */
-export function PageTitle({ title, note, className }: Props) {
+export function PageTitle({ title, id, note, className }: Props) {
   return (
     <header
       data-page-title
@@ -31,7 +33,10 @@ export function PageTitle({ title, note, className }: Props) {
       <Shell>
         {note}
         <Divider />
-        <h1 className="mt-(--space-section-rule-title) type-page-title text-ink">
+        <h1
+          id={id}
+          className="mt-(--space-section-rule-title) type-page-title text-ink"
+        >
           {title}
         </h1>
       </Shell>

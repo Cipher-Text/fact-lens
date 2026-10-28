@@ -74,10 +74,12 @@ src/
       page.tsx             Homepage
       story/[slug]/        Article page
       category/[id]/       Category page (one template, 6 categories)
+      latest/              Latest page, the news hub (layout 7C.2 Paths, News hub row)
   components/
     ui/                    shadcn/ui primitives, restyled after add (CPT-16): Sheet (Drawer), Drawer (SearchDialog, from the top), Collapsible, Tabs, RadioGroup
     layout/                Shell, Wrapper, Rail, WithRail, PeerRow, SectionHeading, Divider, PageTitle
     category/              Category page: CategoryPageView, CategoryFeatureSection, CategoryCards, CategoryMoreStoriesSection
+    latest/                Latest page: LatestPageView (the list is CategoryMoreStoriesSection)
     header/                SiteHeader, TopBar, NavBar, Drawer (shadcn Sheet), SearchDialog (shadcn Drawer), ThemeButton (DR-280, DR-349)
     home/                  One folder per section, with the parts that only that section uses:
                            hero (HeroSection), analysis (AnalysisSection, OpinionList),

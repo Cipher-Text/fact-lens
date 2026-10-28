@@ -2,10 +2,20 @@ import { dividerItem, listInk } from "@/components/layout/Divider";
 import { StoryCard } from "@/components/story/StoryCard";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
+import { cn } from "@/lib/utils";
 
 type ListProps = {
   stories: Story[];
   t: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
+};
+
+type MoreListProps = ListProps & {
+  /** The C-08 `category` Eyebrow on every row: the Latest page, which mixes categories. */
+  eyebrow?: boolean;
+  /** h2 when no section heading sits between the page h1 and the titles (Latest). */
+  titleAs?: "h2" | "h3";
+  /** The index of the first row a load more press added: rows from it on fade in. */
+  addedFrom?: number;
 };
 
 /**
@@ -42,24 +52,40 @@ export function CategoryCardList({ stories, t }: ListProps) {
  * per story in the dated layout (C-24: date | title and deck | image from 600, the basic
  * image card on phones; the date is the time only), Divider.item between the rows. News
  * rows show no Eyebrow (DR-153). An analysis row shows the format Eyebrow above the title
- * at every width (tajmin, 28 Oct 2026).
+ * at every width (tajmin, 28 Oct 2026). The Latest page reuses the list with the category
+ * Eyebrow on every row (tajmin, 28 Oct 2026).
  */
-export function CategoryMoreStoriesList({ stories, t }: ListProps) {
+export function CategoryMoreStoriesList({
+  stories,
+  t,
+  eyebrow = false,
+  titleAs = "h3",
+  addedFrom,
+}: MoreListProps) {
   return (
     <ul className={listInk.mediaMeta}>
-      {stories.map((story) => (
-        <li key={story.id} className={dividerItem}>
-          <StoryCard
-            story={story}
-            strings={t}
-            layout="dated"
-            ratio="16:9"
-            size="md"
-            eyebrow={false}
-            formatLabel
-          />
-        </li>
-      ))}
+      {stories.map((story, index) => {
+        const added = addedFrom !== undefined && index >= addedFrom;
+        return (
+          <li
+            key={story.id}
+            className={cn(dividerItem, added && "story-added")}
+            data-added={added || undefined}
+          >
+            <StoryCard
+              story={story}
+              strings={t}
+              layout="dated"
+              ratio="16:9"
+              size="md"
+              eyebrow={eyebrow}
+              formatLabel
+              titleAs={titleAs}
+              imageFadeIn={added}
+            />
+          </li>
+        );
+      })}
     </ul>
   );
 }

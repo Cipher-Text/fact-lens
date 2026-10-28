@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { Divider } from "@/components/layout/Divider";
 import { SectionHeading } from "@/components/layout/SectionHeading";
@@ -10,6 +10,7 @@ import { Wrapper } from "@/components/layout/Wrapper";
 import { Button } from "@/components/story/Button";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
+import { refreshStoryTimes } from "@/lib/story-time";
 
 import { CategoryMoreStoriesList } from "./CategoryCards";
 
@@ -17,6 +18,13 @@ const PAGE_SIZE = 10;
 
 type Props = {
   stories: Story[];
+  /**
+   * The id of a heading outside the section that names it (the Latest page h1). Then the
+   * section shows no SectionHeading of its own, and data-section is "latest".
+   */
+  labelledBy?: string;
+  /** The category Eyebrow on every row (the Latest page). */
+  eyebrow?: boolean;
   t: Pick<
     Dictionary,
     "categoryPage" | "story" | "categories" | "analysisOpinion"
@@ -32,20 +40,35 @@ type Props = {
  * when none are left. Focus moves to the title
  * link of the first added story, so a keyboard or screen reader user goes on reading
  * there. The list stays in the wrapper column, as the card rows above it; the rail column
- * is empty (tajmin, checkpoint 5).
+ * is empty (tajmin, checkpoint 5). The Latest page reuses the section: the page title
+ * names it, 10 show first, then 10 per press, each row with the category Eyebrow (tajmin,
+ * 28 Oct 2026).
  */
-export function CategoryMoreStoriesSection({ stories, t, className }: Props) {
+export function CategoryMoreStoriesSection({
+  stories,
+  labelledBy,
+  eyebrow = false,
+  t,
+  className,
+}: Props) {
   const [count, setCount] = useState(PAGE_SIZE);
   const listRef = useRef<HTMLDivElement>(null);
   // The index of the first story the last press added; null before any press.
   const focusFrom = useRef<number | null>(null);
 
+  // The added rows have the server time text (Dhaka, no relative form). Give them the
+  // reader text before the browser paints them, so the server text never shows (TYP-17).
+  useLayoutEffect(() => {
+    if (count > PAGE_SIZE) refreshStoryTimes();
+  }, [count]);
+
   useEffect(() => {
     if (focusFrom.current === null) return;
-    // The title link: the image link is out of the tab order (StoryImage).
+    // The title link: the image link is out of the tab order (StoryImage), and the
+    // Eyebrow link (Latest) comes before the title.
     const items = listRef.current?.querySelectorAll("li");
     items?.[focusFrom.current]
-      ?.querySelector<HTMLAnchorElement>("a:not([tabindex='-1'])")
+      ?.querySelector<HTMLAnchorElement>(":is(h2, h3) > a")
       ?.focus();
     focusFrom.current = null;
   }, [count]);
@@ -59,17 +82,26 @@ export function CategoryMoreStoriesSection({ stories, t, className }: Props) {
   return (
     <Shell
       as="section"
-      aria-labelledby="category-more-title"
-      data-section="category-more"
+      aria-labelledby={labelledBy ?? "category-more-title"}
+      data-section={labelledBy ? "latest" : "category-more"}
       className={className}
     >
       <WithRail>
         <Wrapper data-category-more-wrapper>
-          <SectionHeading id="category-more-title">
-            {t.categoryPage.moreStories}
-          </SectionHeading>
+          {labelledBy ? null : (
+            <SectionHeading id="category-more-title">
+              {t.categoryPage.moreStories}
+            </SectionHeading>
+          )}
           <div ref={listRef}>
-            <CategoryMoreStoriesList stories={shown} t={t} />
+            {/* With no SectionHeading the titles are h2 under the page h1. */}
+            <CategoryMoreStoriesList
+              stories={shown}
+              t={t}
+              eyebrow={eyebrow}
+              titleAs={labelledBy ? "h2" : "h3"}
+              addedFrom={PAGE_SIZE}
+            />
           </div>
           {/* Divider.rule, then the button; both go when no stories are left. */}
           {count < stories.length ? (
