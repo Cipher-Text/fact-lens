@@ -45,7 +45,11 @@ export function getNavItems(
 
   return [
     { id: "home", label: t.header.navHome, href: home, current: path === "/" },
-    category("bangladesh"),
+    {
+      id: "south-asia",
+      label: t.regions["south-asia"],
+      href: localizedPath(lang, "/regions/south-asia"),
+    },
     {
       id: "regions",
       label: t.header.navRegions,

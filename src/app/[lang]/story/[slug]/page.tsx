@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { ReaderPage } from "@/components/reader/ReaderPage";
-import { articleSlugs, getArticle, getReadNext } from "@/content";
-import { isLang, langs, localizedPath } from "@/i18n";
+import { articleLangs, getArticle, getReadNext } from "@/content";
+import { isLang, localizedPath } from "@/i18n";
 
 import "@/styles/reader.css";
 
@@ -11,7 +11,9 @@ import "@/styles/reader.css";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return langs.flatMap((lang) => articleSlugs.map((slug) => ({ lang, slug })));
+  return articleLangs.flatMap(({ slug, langs }) =>
+    langs.map((lang) => ({ lang, slug })),
+  );
 }
 
 export async function generateMetadata({
@@ -38,7 +40,8 @@ export async function generateMetadata({
       publishedTime: story.publishedAt,
       modifiedTime: article.updatedAt,
       authors: [article.author.name],
-      tags: article.tags,
+      // Open Graph names this field "tags" (article:tag); it holds the topic labels.
+      tags: article.topics.map((topic) => topic.label),
     },
   };
 }
@@ -61,7 +64,7 @@ export default async function StoryPage({
     datePublished: article.story.publishedAt,
     dateModified: article.updatedAt ?? article.story.publishedAt,
     author: [{ "@type": "Person", name: article.author.name }],
-    keywords: article.tags.join(", "),
+    keywords: article.topics.map((topic) => topic.label).join(", "),
   };
 
   return (

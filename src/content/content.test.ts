@@ -18,14 +18,16 @@ import {
   type Homepage,
   type Story,
 } from "./index";
+import { articleDefs } from "./reader-articles";
 import { stories } from "./stories";
-import type { CategoryId, RegionId } from "./types";
+import { topics } from "./topics";
+import { regionIds, type CategoryId, type RegionId } from "./types";
 
 const BENGALI = /[ঀ-৿]/;
 const langs = ["bn", "en"] as const;
 
+// Bangladesh is not a category (DR-412).
 const categoryIds: CategoryId[] = [
-  "bangladesh",
   "geopolitics",
   "security",
   "history",
@@ -42,7 +44,7 @@ function allStories(home: Homepage): Story[] {
     ...(home.analysisOpinion
       ? [...home.analysisOpinion.analysis, ...home.analysisOpinion.opinion]
       : []),
-    ...[home.featured.bangladesh, home.featured.geopolitics].flatMap((s) =>
+    ...[home.featured.southAsia, home.featured.geopolitics].flatMap((s) =>
       s ? [s.lead, ...s.rail] : [],
     ),
     ...(home.grouped?.categories.flatMap((c) => c.stories) ?? []),
@@ -57,9 +59,38 @@ describe("story data", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it("gives each story an id of 6 to 8 base36 characters (layout 7C, DR-413)", () => {
+    for (const def of stories) expect(def.id, def.slug).toMatch(/^[0-9a-z]{6,8}$/);
+  });
+
+  it("gives each story a unique Latin slug (layout 7C.1)", () => {
+    const slugs = stories.map((s) => s.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+    for (const slug of slugs) expect(slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+  });
+
+  it("uses the three formats only: no explainer, no op-ed (DR-414)", () => {
+    for (const def of stories) {
+      expect(["news", "analysis", "opinion"], def.slug).toContain(def.format);
+    }
+  });
+
+  it("gives each story one or more regions from the region list (DR-411)", () => {
+    for (const def of stories) {
+      expect(def.regions.length, def.slug).toBeGreaterThan(0);
+      for (const region of def.regions)
+        expect(regionIds, def.slug).toContain(region);
+    }
+  });
+
+  it("has no Bangladesh category and no domestic story (DR-412)", () => {
+    for (const def of stories) expect(def.category).not.toBe("bangladesh");
+    expect(stories.map((s) => s.slug)).not.toContain("chattogram-rain-warning");
+  });
+
   it("gives each story the same id in Bangla and English", () => {
     for (const def of stories) {
-      expect(getStory(def.id, "bn").id).toBe(getStory(def.id, "en").id);
+      expect(getStory(def.slug, "bn").id).toBe(getStory(def.slug, "en").id);
     }
   });
 
@@ -67,32 +98,32 @@ describe("story data", () => {
     for (const def of stories) {
       for (const text of [def.bn.title, def.bn.summary, def.bn.imageAlt]) {
         if (!text) continue;
-        expect(text, def.id).toMatch(BENGALI);
-        expect(text, def.id).not.toMatch(/[A-Za-z]/);
+        expect(text, def.slug).toMatch(BENGALI);
+        expect(text, def.slug).not.toMatch(/[A-Za-z]/);
       }
       for (const text of [def.en.title, def.en.summary, def.en.imageAlt]) {
-        if (text) expect(text, def.id).not.toMatch(BENGALI);
+        if (text) expect(text, def.slug).not.toMatch(BENGALI);
       }
     }
   });
 
   it("has a summary in both languages or in neither", () => {
     for (const def of stories) {
-      expect(Boolean(def.bn.summary), def.id).toBe(Boolean(def.en.summary));
+      expect(Boolean(def.bn.summary), def.slug).toBe(Boolean(def.en.summary));
     }
   });
 
   it("gives every image alt text in both languages", () => {
     for (const lang of langs) {
       for (const def of stories.filter((s) => s.image)) {
-        expect(getStory(def.id, lang).image?.alt.trim(), def.id).toBeTruthy();
+        expect(getStory(def.slug, lang).image?.alt.trim(), def.slug).toBeTruthy();
       }
     }
   });
 
   it("uses local SVG placeholder images that exist in public/mock (rule 6)", () => {
     for (const def of stories.filter((s) => s.image)) {
-      const { image } = getStory(def.id, "bn");
+      const { image } = getStory(def.slug, "bn");
       expect(image?.src).toMatch(/^\/mock\/[a-z0-9-]+\.svg$/);
       const file = join(process.cwd(), "public", image!.src);
       expect(existsSync(file), image!.src).toBe(true);
@@ -116,7 +147,7 @@ describe("story data", () => {
 
   it("gives every opinion piece an author", () => {
     for (const def of stories.filter((s) => s.format === "opinion")) {
-      expect(def.author, def.id).toBeDefined();
+      expect(def.author, def.slug).toBeDefined();
     }
   });
 
@@ -147,14 +178,26 @@ describe("story data", () => {
   });
 
   it("has a label for every category and region in both string tables", () => {
-    const regionIds = homepagePlans.full.regions;
     for (const table of [bn, en]) {
       expect(Object.keys(table.categories).sort()).toEqual(
         [...categoryIds].sort(),
       );
-      for (const region of regionIds) {
+      expect(Object.keys(table.regions)).toEqual([...regionIds]);
+      for (const region of homepagePlans.full.regions) {
         expect(table.regions[region as RegionId]).toBeTruthy();
       }
+    }
+  });
+
+  it("has a Latin slug and a label in both languages for every topic (DR-410)", () => {
+    for (const [id, topic] of Object.entries(topics)) {
+      expect(topic.slug, id).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+      expect(topic.bn, id).toMatch(BENGALI);
+      expect(topic.en, id).not.toMatch(BENGALI);
+    }
+    for (const def of articleDefs) {
+      expect(def.topics.length, def.slug).toBeGreaterThan(0);
+      for (const id of def.topics) expect(topics[id], def.slug).toBeDefined();
     }
   });
 });
@@ -188,16 +231,26 @@ describe("getHomepage full", () => {
         }
       });
 
-      it("has both featured categories with a lead, one image story and two stories", () => {
-        for (const key of ["bangladesh", "geopolitics"] as const) {
-          const section = home.featured[key]!;
-          expect(section.category).toBe(key);
-          expect(section.lead.category).toBe(key);
+      it("has both featured sections with a lead, one image story and two stories", () => {
+        for (const section of [home.featured.southAsia!, home.featured.geopolitics!]) {
           expect(section.lead.image).toBeDefined();
           expect(section.rail).toHaveLength(3);
           expect(section.rail[0].image).toBeDefined();
-          for (const s of section.rail) expect(s.category).toBe(key);
         }
+      });
+
+      it("features the region দক্ষিণ এশিয়া with its own stories (DR-412)", () => {
+        const section = home.featured.southAsia!;
+        expect(section.source).toEqual({ kind: "region", id: "south-asia" });
+        for (const s of [section.lead, ...section.rail])
+          expect(s.regions).toContain("south-asia");
+      });
+
+      it("features the category ভূরাজনীতি with its own stories", () => {
+        const section = home.featured.geopolitics!;
+        expect(section.source).toEqual({ kind: "category", id: "geopolitics" });
+        for (const s of [section.lead, ...section.rail])
+          expect(s.category).toBe("geopolitics");
       });
 
       it("has the remaining categories in the grouped section, with the poll", () => {
@@ -230,11 +283,11 @@ describe("getHomepage full", () => {
         const ids = home.regions!.map((r) => r.region);
         expect(ids.length).toBeGreaterThanOrEqual(6);
         expect(ids).toContain("china");
-        expect(homepagePlans.full.regions).toContain("africa");
-        expect(ids).not.toContain("africa");
+        expect(homepagePlans.full.regions).toContain("oceania");
+        expect(ids).not.toContain("oceania");
         for (const block of home.regions!) {
           expect(block.stories.length).toBeGreaterThan(0);
-          for (const s of block.stories) expect(s.region).toBe(block.region);
+          for (const s of block.stories) expect(s.regions).toContain(block.region);
         }
       });
     });
@@ -261,7 +314,7 @@ describe("getHomepage sparse (spacing-layout-system.md 7.3)", () => {
   });
 
   it("P-2: no rail stories, and one featured section with no content", () => {
-    expect(home.featured.bangladesh!.rail).toHaveLength(0);
+    expect(home.featured.southAsia!.rail).toHaveLength(0);
     expect(home.featured.geopolitics).toBeNull();
   });
 
@@ -274,9 +327,9 @@ describe("getHomepage sparse (spacing-layout-system.md 7.3)", () => {
   });
 
   it("P-3b: 4 regions or fewer, and the empty one is dropped", () => {
-    expect(homepagePlans.sparse.regions).toContain("africa");
+    expect(homepagePlans.sparse.regions).toContain("oceania");
     expect(home.regions!.length).toBeLessThanOrEqual(4);
-    expect(home.regions!.map((r) => r.region)).not.toContain("africa");
+    expect(home.regions!.map((r) => r.region)).not.toContain("oceania");
   });
 });
 
@@ -291,15 +344,15 @@ describe("same story ids in both languages (R2-03)", () => {
 
   it("has a title in both languages for every story", () => {
     for (const def of stories) {
-      expect(def.bn.title.trim(), def.id).toBeTruthy();
-      expect(def.en.title.trim(), def.id).toBeTruthy();
+      expect(def.bn.title.trim(), def.slug).toBeTruthy();
+      expect(def.en.title.trim(), def.slug).toBeTruthy();
     }
   });
 
   it("keeps the same image and slug in both languages", () => {
     for (const def of stories) {
-      const bnStory = getStory(def.id, "bn");
-      const enStory = getStory(def.id, "en");
+      const bnStory = getStory(def.slug, "bn");
+      const enStory = getStory(def.slug, "en");
       expect(bnStory.slug).toBe(enStory.slug);
       expect(bnStory.image?.src).toBe(enStory.image?.src);
     }
@@ -388,8 +441,8 @@ describe("no newsletter content (DR-239)", () => {
 });
 
 describe("getStory", () => {
-  it("throws for an unknown id", () => {
-    expect(() => getStory("no-such-story", "bn")).toThrow(/Unknown story id/);
+  it("throws for an unknown slug", () => {
+    expect(() => getStory("no-such-story", "bn")).toThrow(/Unknown story slug/);
   });
 });
 

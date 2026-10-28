@@ -25,7 +25,7 @@ export default async function StoryUnitsPage({
 
   const full = getStory("river-data-framework", lang);
   const longWithImage = getStory("deep-sea-port-trial-ship", lang);
-  const longNoImage = getStory("primary-teacher-training", lang);
+  const longNoImage = getStory("royal-family-genealogy", lang);
   const noImage = getStory("joint-border-patrol-rules", lang);
   const latest = getHomepage(lang).hero!.latest.slice(0, 5);
 

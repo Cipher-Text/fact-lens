@@ -25,6 +25,9 @@ type FeaturedCategorySectionProps = {
  * story is a row (text 2 : 1 image) until 1024px and a stack in the 304px rail. No rail
  * stories: the wrapper spans the shell. One MoreLink at the section end (DR-110, DR-123).
  * The heading is plain text (DR-122). The section id is the anchor of the nav links (IMP-14).
+ * The section features a category or a region (DR-412): the heading, the id and the
+ * MoreLink target come from its source. A region section is `featured-<region>`, because
+ * `region-<region>` is the RegionSlider panel id on the same page.
  */
 export function FeaturedCategorySection({
   lang,
@@ -32,8 +35,20 @@ export function FeaturedCategorySection({
   t,
   className,
 }: FeaturedCategorySectionProps) {
-  const { category, lead, rail } = section;
-  const titleId = `category-${category}-title`;
+  const { source, lead, rail } = section;
+  const label =
+    source.kind === "category"
+      ? t.categories[source.id]
+      : t.regions[source.id];
+  const sectionId =
+    source.kind === "category"
+      ? `category-${source.id}`
+      : `featured-${source.id}`;
+  const href =
+    source.kind === "category"
+      ? `/category/${source.id}`
+      : `/regions/${source.id}`;
+  const titleId = `${sectionId}-title`;
   const [imageStory, ...textStories] = rail;
 
   const wrapper = (
@@ -53,13 +68,14 @@ export function FeaturedCategorySection({
   return (
     <Shell
       as="section"
-      id={`category-${category}`}
+      id={sectionId}
       aria-labelledby={titleId}
       data-section="featured"
-      data-category={category}
+      data-category={source.kind === "category" ? source.id : undefined}
+      data-region={source.kind === "region" ? source.id : undefined}
       className={className}
     >
-      <SectionHeading id={titleId}>{t.categories[category]}</SectionHeading>
+      <SectionHeading id={titleId}>{label}</SectionHeading>
       {imageStory ? (
         <WithRail>
           {wrapper}
@@ -87,8 +103,8 @@ export function FeaturedCategorySection({
         wrapper
       )}
       <MoreLink
-        href={localizedPath(lang, `/category/${category}`)}
-        section={t.categories[category]}
+        href={localizedPath(lang, href)}
+        section={label}
         strings={t.common}
       />
     </Shell>

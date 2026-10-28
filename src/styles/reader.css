@@ -880,9 +880,9 @@
 
 /* ---------- After the body ---------- */
 
-/* The end of the article: a 1px rule, then the tags (tajmin, 24 Oct 2026). The same
+/* The end of the article: a 1px rule, then the topics (tajmin, 24 Oct 2026). The same
    space on both sides of the rule, as Divider does (C-22): space-module (24 / 32 / 40),
-   because the rule separates two modules, the body and the tags. */
+   because the rule separates two modules, the body and the topics. */
 .rd-after {
   display: grid;
   gap: var(--space-module);
@@ -891,7 +891,7 @@
   border-top: 1px solid var(--border);
 }
 
-.rd-tags ul {
+.rd-topics ul {
   display: flex;
   flex-wrap: wrap;
   gap: calc(var(--spacing) * 2);

@@ -12,6 +12,7 @@ import type {
   CategoryId,
   CategoryPage,
   FeaturedSection,
+  FeaturedSource,
   Homepage,
   HomepageVariant,
   Lang,
@@ -21,11 +22,11 @@ import type {
 } from "./types";
 
 export type * from "./types";
-export { categoryIds } from "./types";
+export { categoryIds, regionIds } from "./types";
 
 // The article page (wild card reader): its content goes through this file too (DR-01).
 export {
-  articleSlugs,
+  articleLangs,
   getArticle,
   getReadNext,
   imageFiles,
@@ -36,20 +37,21 @@ export {
   type ReaderAuthor,
 } from "./reader";
 
-const byId = new Map(stories.map((def) => [def.id, def]));
+// The mock plans name stories by slug; the article URL finds a story by id (layout 7C).
+const bySlug = new Map(stories.map((def) => [def.slug, def]));
 
 function toStory(def: StoryDef, lang: Lang): Story {
   const text = def[lang];
   const story: Story = {
     id: def.id,
     lang,
-    slug: def.id,
+    slug: def.slug,
     format: def.format,
     category: def.category,
+    regions: def.regions,
     title: text.title,
     publishedAt: def.publishedAt,
   };
-  if (def.region) story.region = def.region;
   if (text.summary) story.summary = text.summary;
   if (def.readingMinutes) story.readingMinutes = def.readingMinutes;
   if (def.author)
@@ -60,15 +62,15 @@ function toStory(def: StoryDef, lang: Lang): Story {
   return story;
 }
 
-/** One story in one language. Throws for an unknown id, so a typo in the plan fails fast. */
-export function getStory(id: string, lang: Lang): Story {
-  const def = byId.get(id);
-  if (!def) throw new Error(`Unknown story id: ${id}`);
+/** One story in one language. Throws for an unknown slug, so a typo in the plan fails fast. */
+export function getStory(slug: string, lang: Lang): Story {
+  const def = bySlug.get(slug);
+  if (!def) throw new Error(`Unknown story slug: ${slug}`);
   return toStory(def, lang);
 }
 
-function getStories(ids: string[], lang: Lang): Story[] {
-  return ids.map((id) => getStory(id, lang));
+function getStories(slugs: string[], lang: Lang): Story[] {
+  return slugs.map((slug) => getStory(slug, lang));
 }
 
 /** Newest first. */
@@ -78,7 +80,7 @@ function newestFirst(a: Story, b: Story): number {
 
 function getRegionStories(region: RegionId, lang: Lang): Story[] {
   return stories
-    .filter((def) => def.region === region)
+    .filter((def) => def.regions.includes(region))
     .map((def) => toStory(def, lang))
     .sort(newestFirst);
 }
@@ -136,10 +138,10 @@ export function getHomepage(
 
   const featured = (
     section: { lead: string; rail: string[] } | null,
-    category: FeaturedSection["category"],
+    source: FeaturedSource,
   ): FeaturedSection | null =>
     section && {
-      category,
+      source,
       lead: getStory(section.lead, lang),
       rail: getStories(section.rail, lang),
     };
@@ -173,8 +175,14 @@ export function getHomepage(
         ? analysisOpinion
         : null,
     featured: {
-      bangladesh: featured(plan.featured.bangladesh, "bangladesh"),
-      geopolitics: featured(plan.featured.geopolitics, "geopolitics"),
+      southAsia: featured(plan.featured.southAsia, {
+        kind: "region",
+        id: "south-asia",
+      }),
+      geopolitics: featured(plan.featured.geopolitics, {
+        kind: "category",
+        id: "geopolitics",
+      }),
     },
     grouped:
       groupedCategories.length > 0

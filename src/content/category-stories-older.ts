@@ -9,124 +9,13 @@ function at(monthDayTime: string): string {
 }
 
 export const olderCategoryStories: StoryDef[] = [
-  // Bangladesh (6 stories)
-  {
-    id: "rural-clinic-expansion-phase",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-15 10:45"),
-    readingMinutes: 3,
-    bn: {
-      title:
-        "গ্রামীণ স্বাস্থ্যসেবা কেন্দ্র সম্প্রসারণে পাঁচ শত কোটি টাকা বাজেট বরাদ্দ",
-    },
-    en: {
-      title:
-        "Five hundred crore taka allocated for rural health centre expansion",
-    },
-  },
-  {
-    id: "rice-productivity-research",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-13 14:20"),
-    readingMinutes: 4,
-    image: "photo",
-    bn: {
-      title:
-        "ধানের ফলন বৃদ্ধিতে নতুন জাত উদ্ভাবন, গবেষণা কেন্দ্র সাফল্যের ঘোষণা দিয়েছে",
-      summary:
-        "নতুন জাতটি লবণাক্ত মাটিতেও ভালো ফলন দিতে পারে বলে প্রাথমিক পরীক্ষায় দেখা গেছে।",
-      imageAlt: "পরীক্ষামূলক ক্ষেতে নতুন ধানের জাত পরীক্ষা করছেন গবেষকরা",
-    },
-    en: {
-      title:
-        "New rice variety developed to boost yield, research centre announces success",
-      summary:
-        "Initial tests show the variety performs well even in saline soil.",
-      imageAlt:
-        "Researchers testing a new rice variety in an experimental field",
-    },
-  },
-  {
-    id: "village-electrification-deadline",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-11 09:30"),
-    readingMinutes: 3,
-    bn: {
-      title:
-        "সকল গ্রামে বিদ্যুৎ সংযোগের লক্ষ্য ২০২৬ শেষে, দেশব্যাপী নবায়নযোগ্য শক্তি সমন্বয় কর্মসূচি",
-    },
-    en: {
-      title:
-        "Target to provide electricity to all villages by year-end, renewable energy integration programme nationwide",
-    },
-  },
-  {
-    id: "dhaka-flood-resilience-analysis",
-    format: "analysis",
-    category: "bangladesh",
-    publishedAt: at("09-09 11:15"),
-    readingMinutes: 5,
-    image: "classic",
-    author: "farhana-kabir",
-    bn: {
-      title:
-        "ঢাকার বন্যা সহনশীলতা: নগর নকশা এবং নদী ব্যবস্থাপনার সমন্বয়ের চ্যালেঞ্জ",
-      imageAlt: "শহরের প্লাবন প্রতিরোধী অবকাঠামো নির্মাণের একটি স্থান",
-    },
-    en: {
-      title:
-        "Dhaka's flood resilience: challenges in coordinating urban planning and river management",
-      imageAlt:
-        "A site under construction for flood-resistant urban infrastructure",
-    },
-  },
-  {
-    id: "forest-conservation-initiative",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-07 13:00"),
-    readingMinutes: 3,
-    image: "wide",
-    bn: {
-      title:
-        "বনায়ন প্রকল্পে স্থানীয় সম্প্রদায়ের অংশগ্রহণ, পাঁচ লাখ গাছ রোপণের নতুন আয়োজন",
-      summary:
-        "বন বিভাগ স্থানীয় চাষিদের জন্য ন্যায্য মূল্যে বনজ পণ্য ক্রয়ের নিশ্চয়তা দিয়েছে।",
-      imageAlt: "কমিউনিটি বনায়ন কর্মসূচিতে গাছ রোপণ করছেন স্থানীয় বাসিন্দারা",
-    },
-    en: {
-      title:
-        "Afforestation project with local community participation, five hundred thousand trees to be planted",
-      summary:
-        "Forest department has assured fair-price purchase of forest products from local farmers.",
-      imageAlt:
-        "Local residents planting trees in a community afforestation programme",
-    },
-  },
-  {
-    id: "women-microenterprise-funding",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-05 10:30"),
-    readingMinutes: 3,
-    bn: {
-      title:
-        "মহিলা উদ্যোক্তাদের জন্য সুদমুক্ত ঋণ প্রকল্প চালু, প্রথম পর্যায়ে পাঁচ হাজার মহিলা উপকৃত হবেন",
-    },
-    en: {
-      title:
-        "Interest-free loan project launched for women entrepreneurs, five thousand women to benefit in first phase",
-    },
-  },
-
   // Geopolitics (6 stories)
   {
-    id: "regional-maritime-patrol-accord",
+    id: "iqvka56",
+    slug: "regional-maritime-patrol-accord",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-14 12:45"),
     readingMinutes: 4,
     image: "photo",
@@ -148,9 +37,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "bilateral-labor-agreement-signed",
+    id: "3vszl06",
+    slug: "bilateral-labor-agreement-signed",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-12 15:30"),
     readingMinutes: 3,
     bn: {
@@ -163,9 +54,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "intra-asia-transport-corridor",
+    id: "tnqlp8m",
+    slug: "intra-asia-transport-corridor",
     format: "news",
     category: "geopolitics",
+    regions: ["asia", "south-asia"],
     publishedAt: at("09-10 10:15"),
     readingMinutes: 4,
     image: "wide",
@@ -186,9 +79,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "regional-economic-integration-prospects",
+    id: "0bivwf5",
+    slug: "regional-economic-integration-prospects",
     format: "analysis",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-08 14:00"),
     readingMinutes: 6,
     author: "tanvir-ahmed",
@@ -202,9 +97,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "diplomatic-youth-exchange-program",
+    id: "znnij6g",
+    slug: "diplomatic-youth-exchange-program",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-06 11:45"),
     readingMinutes: 3,
     image: "classic",
@@ -221,9 +118,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "infrastructure-financing-multilateral",
+    id: "l4751cc",
+    slug: "infrastructure-financing-multilateral",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-03 09:20"),
     readingMinutes: 3,
     bn: {
@@ -238,9 +137,11 @@ export const olderCategoryStories: StoryDef[] = [
 
   // Economy (6 stories)
   {
-    id: "export-merchandise-august-report",
+    id: "4me7iod",
+    slug: "export-merchandise-august-report",
     format: "news",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("09-16 08:45"),
     readingMinutes: 3,
     image: "photo",
@@ -260,9 +161,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "pharmaceutical-pricing-regulation",
+    id: "iuw2sad",
+    slug: "pharmaceutical-pricing-regulation",
     format: "news",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("09-14 13:15"),
     readingMinutes: 3,
     bn: {
@@ -275,9 +178,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "leather-industry-modernization",
+    id: "8oejaci",
+    slug: "leather-industry-modernization",
     format: "news",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("09-11 15:45"),
     readingMinutes: 4,
     image: "wide",
@@ -297,9 +202,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "trade-deficit-analysis-quarterly",
+    id: "occhv1m",
+    slug: "trade-deficit-analysis-quarterly",
     format: "analysis",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("09-09 10:30"),
     readingMinutes: 5,
     author: "mehnaz-chowdhury",
@@ -313,9 +220,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "fmcg-sector-investment-drive",
+    id: "a2e24a8",
+    slug: "fmcg-sector-investment-drive",
     format: "news",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("09-07 12:00"),
     readingMinutes: 3,
     bn: {
@@ -328,9 +237,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "tourism-revenue-growth-summer",
+    id: "67ayluw",
+    slug: "tourism-revenue-growth-summer",
     format: "news",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("09-04 14:30"),
     readingMinutes: 3,
     image: "classic",
@@ -349,9 +260,11 @@ export const olderCategoryStories: StoryDef[] = [
 
   // Security (6 stories)
   {
-    id: "joint-maritime-exercises-completed",
+    id: "smuxa0h",
+    slug: "joint-maritime-exercises-completed",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-15 07:30"),
     readingMinutes: 4,
     image: "photo",
@@ -372,9 +285,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "border-infrastructure-reinforcement",
+    id: "a0lzudj",
+    slug: "border-infrastructure-reinforcement",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-12 09:45"),
     readingMinutes: 3,
     bn: {
@@ -387,9 +302,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "disaster-preparedness-annual-review",
+    id: "6kbir9e",
+    slug: "disaster-preparedness-annual-review",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-10 13:30"),
     readingMinutes: 3,
     image: "wide",
@@ -411,9 +328,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "counter-trafficking-regional-strategy",
+    id: "jsa7q0q",
+    slug: "counter-trafficking-regional-strategy",
     format: "analysis",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-08 11:00"),
     readingMinutes: 5,
     author: "arif-rahman",
@@ -427,9 +346,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "law-enforcement-capacity-training",
+    id: "0fpp0jn",
+    slug: "law-enforcement-capacity-training",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-05 15:15"),
     readingMinutes: 3,
     bn: {
@@ -442,9 +363,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "defense-procurement-modernization",
+    id: "n06axe5",
+    slug: "defense-procurement-modernization",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-02 10:20"),
     readingMinutes: 4,
     image: "classic",
@@ -462,9 +385,11 @@ export const olderCategoryStories: StoryDef[] = [
 
   // Technology (6 stories)
   {
-    id: "ai-ethics-framework-adoption",
+    id: "g7coicu",
+    slug: "ai-ethics-framework-adoption",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-14 10:00"),
     readingMinutes: 3,
     image: "photo",
@@ -485,9 +410,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "open-source-software-initiative",
+    id: "ajcgm91",
+    slug: "open-source-software-initiative",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-12 14:00"),
     readingMinutes: 3,
     bn: {
@@ -500,9 +427,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "semiconductor-testing-facility",
+    id: "s0jpfrf",
+    slug: "semiconductor-testing-facility",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-10 11:30"),
     readingMinutes: 4,
     image: "wide",
@@ -524,9 +453,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "digital-payment-transformation-policy",
+    id: "a3wdc34",
+    slug: "digital-payment-transformation-policy",
     format: "analysis",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-08 09:45"),
     readingMinutes: 5,
     author: "rashed-hossain",
@@ -540,9 +471,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "space-technology-research-center",
+    id: "07o36sy",
+    slug: "space-technology-research-center",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-06 13:20"),
     readingMinutes: 3,
     bn: {
@@ -555,9 +488,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "biotechnology-lab-accreditation",
+    id: "6w1h725",
+    slug: "biotechnology-lab-accreditation",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-03 15:45"),
     readingMinutes: 3,
     image: "classic",
@@ -577,9 +512,11 @@ export const olderCategoryStories: StoryDef[] = [
 
   // History (6 stories)
   {
-    id: "ancient-city-settlement-unearthed",
+    id: "z0i8dxz",
+    slug: "ancient-city-settlement-unearthed",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-16 10:30"),
     readingMinutes: 4,
     image: "photo",
@@ -600,9 +537,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "historical-manuscript-collection-digitized",
+    id: "bm24a4q",
+    slug: "historical-manuscript-collection-digitized",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-13 12:15"),
     readingMinutes: 3,
     bn: {
@@ -615,9 +554,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "temple-restoration-completion",
+    id: "5ihb1t7",
+    slug: "temple-restoration-completion",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-11 14:45"),
     readingMinutes: 3,
     image: "wide",
@@ -638,9 +579,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "colonial-governance-history-study",
+    id: "oxz7pdi",
+    slug: "colonial-governance-history-study",
     format: "analysis",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-09 10:00"),
     readingMinutes: 6,
     author: "sumaiya-islam",
@@ -654,9 +597,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "oral-history-project-documentation",
+    id: "3ap0khe",
+    slug: "oral-history-project-documentation",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-07 11:30"),
     readingMinutes: 3,
     bn: {
@@ -669,9 +614,11 @@ export const olderCategoryStories: StoryDef[] = [
     },
   },
   {
-    id: "archaeological-artifact-dating-completed",
+    id: "a674r6c",
+    slug: "archaeological-artifact-dating-completed",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-04 13:00"),
     readingMinutes: 3,
     image: "classic",

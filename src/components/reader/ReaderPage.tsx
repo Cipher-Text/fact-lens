@@ -18,7 +18,7 @@ import {
   KeyPoints,
   PreferredSourceAlert,
   ReadNext,
-  Tags,
+  Topics,
 } from "./ArticleParts";
 import { ReadingTools, Toc } from "./Reading";
 import { ReaderRoot } from "./ReaderRoot";
@@ -178,7 +178,7 @@ export function ReaderPage({ lang, article, readNext }: Props) {
               />
 
               <div className="rd-after">
-                <Tags tags={article.tags} t={t} lang={lang} />
+                <Topics topics={article.topics} t={t} lang={lang} />
               </div>
             </div>
           </div>
