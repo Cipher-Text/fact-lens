@@ -2,8 +2,8 @@ import { AdSlot } from "@/components/ads/AdSlot";
 import { Footer } from "@/components/footer/Footer";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { SkipLink } from "@/components/header/SkipLink";
-import { CategoryMoreStoriesSection } from "@/components/category/CategoryMoreStoriesSection";
 import { PageTitle } from "@/components/layout/PageTitle";
+import { MoreStoriesSection } from "@/components/more-stories/MoreStoriesSection";
 import type { LatestPage } from "@/content";
 import { getDictionary } from "@/i18n";
 
@@ -43,7 +43,7 @@ export function LatestPageView({ page }: Props) {
             2026). The h1 names it; 10 first, then 10 per press (tajmin, 28 Oct 2026); the category Eyebrow on
             every row. With no news the section is not shown (7.3). */}
         {page.stories.length > 0 ? (
-          <CategoryMoreStoriesSection
+          <MoreStoriesSection
             stories={page.stories}
             labelledBy="latest-title"
             eyebrow

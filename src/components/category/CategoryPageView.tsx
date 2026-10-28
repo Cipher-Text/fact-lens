@@ -4,13 +4,13 @@ import { SiteHeader } from "@/components/header/SiteHeader";
 import { SkipLink } from "@/components/header/SkipLink";
 import { MostReadSection } from "@/components/home/most-read/MostReadSection";
 import { PageTitle } from "@/components/layout/PageTitle";
+import { MoreStoriesSection } from "@/components/more-stories/MoreStoriesSection";
 import type { CategoryPage } from "@/content";
 import { getDictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 import { CategoryFeatureSection } from "./CategoryFeatureSection";
 import { CategoryFormatsSection } from "./CategoryFormatsSection";
-import { CategoryMoreStoriesSection } from "./CategoryMoreStoriesSection";
 import { MissingTranslationNote } from "./MissingTranslationNote";
 
 type Props = {
@@ -99,7 +99,7 @@ export function CategoryPageView({ page }: Props) {
         {/* More stories: the older stories, 10 at a time. After an ad row: space-module
             above (LAY-12); main ends with space-section. */}
         {page.more.length > 0 ? (
-          <CategoryMoreStoriesSection
+          <MoreStoriesSection
             stories={page.more}
             t={t}
             className={cn(afterAd && "pt-(--space-module)")}

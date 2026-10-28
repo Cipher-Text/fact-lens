@@ -16,9 +16,9 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 ## Now
 
 - State: Final checkpoint done, waiting for tajmin's commit yes
-- Next step: on tajmin's yes, one commit on `page/latest`; then the PR to `dev`
-- Open questions to tajmin: U-51 (LT-02 flag): rename the reused More stories parts or amend the Section 3 row
-- Uncommitted: yes, all of the work (code, tests, brief, progress, spec log, specs, STATUS, ISSUES, AGENTS.md)
+- Next step: push `page/latest` and open the PR to `dev` when tajmin asks
+- Open questions to tajmin: none (U-51 decided: rename)
+- Uncommitted: no; the U-51 rename committed after e840f9c (not pushed)
 
 ## Decisions
 
@@ -146,3 +146,11 @@ Costs for every option: the focus ring on the first added title fades in with it
 - Spec log: `docs/spec-log/latest.md` LT-01 to LT-05 (LT-01 split into the page rule and LT-05, the new component).
 - Specs written (green items): layout 2.29 (new 7D; 7B.2 Load more motion and story time), typography 2.21 (TYP-17 story time after load more), component-system 1.25 (Section 3 Latest table, Section 6 motion CSS, C-24 `imageFadeIn`, Section 8 `/latest` built), agent-contract 2.19 (Section 1 versions, Section 3 Latest row).
 - STATUS and ISSUES: IMP-18 `/latest` part fixed; new U-51 (flag), IMP-122, DOC-59.
+
+### U-51: rename the More stories parts (28 Oct 2026)
+
+- Decision: tajmin, chat, 28 Oct 2026: "Rename it." (LT-02 flag, U-51).
+- Code: `src/components/category/CategoryMoreStoriesSection.tsx` moved (git mv) to `src/components/more-stories/MoreStoriesSection.tsx`, `CategoryMoreStoriesSection` renamed `MoreStoriesSection`. `CategoryMoreStoriesList` moved out of `src/components/category/CategoryCards.tsx` to `src/components/more-stories/MoreStoriesList.tsx` as `MoreStoriesList` (its props type is `Props`; `CategoryCards.tsx` keeps `CategoryCardList` only and no longer imports `cn`).
+- Code: imports in `CategoryPageView.tsx`, `LatestPageView.tsx`; comments in `CategoryFormatsSection.tsx`, `CategoryCards.tsx`.
+- Not changed: the DOM hooks (`id="category-more-title"`, `data-section="category-more"`, `data-category-more-wrapper`), so the page output and the tests stay as they were.
+- Specs: component-system 1.25 Section 3 (category row and Latest row name `MoreStoriesSection`, `MoreStoriesList`; "never opinion" is the category page rule), layout 2.29 7B.1, 7D and changelog, agent-contract 2.19 Section 3 Latest row. Spec log LT-02 decided. `AGENTS.md` Section 5 lists `more-stories/`. ISSUES U-51 Fixed; STATUS updated.

@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01, LT-03, LT-04): new Section 7D; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -413,7 +413,7 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 | `CategoryFormatsSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | The analysis and opinion row (DR-415): one row of two CategoryBlocks (C-23), Analysis at the start, Opinion at the end; 1 per row on phones, 2 from 600 (`LAY-07`). Up to 5 stories per block. `space-module` above (after the ad band, `LAY-12`), `space-section` to Most read |
 | Most read | `Shell` | The top 5 of the category: `MostReadSection` with RankedList (C-07), as on the homepage |
 | `ad-band` | Ad container | After most read |
-| `CategoryMoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | `CategoryMoreStoriesList`: the older stories as StoryCard `dated` (C-24), Divider.item between them, 10 at a time; Divider.rule (C-22) and the load more `Button` |
+| `MoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | `MoreStoriesList`: the older stories as StoryCard `dated` (C-24), Divider.item between them, 10 at a time; Divider.rule (C-22) and the load more `Button` |
 | Footer | As on the homepage | `Footer` (C-21) |
 
 ### 7B.2 Patterns
@@ -473,7 +473,7 @@ The Latest page (`/latest`, `/en/latest`, `LatestPageView`) is the news hub of S
 | Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18), unchanged. Latest is not a nav item, so no item is current |
 | `ad-top` | Ad container | As on the homepage (Section 9). The page has no `ad-band` |
 | Page title | `Shell` | `PageTitle` (C-43): সর্বশেষ / Latest, the page `h1`, in the `surface` band, as on the category page; `space-module` below |
-| Latest list | `Shell`, `WithRail`: the wrapper column; the rail stays empty | The More stories list of 7B (StoryCard `dated`, C-24; Divider.item; Divider.rule and the load more `Button`), with the C-08 `category` Eyebrow on every row: the page mixes categories (DR-153 does not apply). The page `h1` names the list; it has no heading of its own, so the titles are `h2` |
+| `MoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | The More stories list of 7B, `MoreStoriesList` (StoryCard `dated`, C-24; Divider.item; Divider.rule and the load more `Button`), with the C-08 `category` Eyebrow on every row: the page mixes categories (DR-153 does not apply). The page `h1` names the list; it has no heading of its own, so the titles are `h2` |
 | Footer | As on the homepage | `Footer` (C-21) |
 
 ### 7D.2 Content and load more
@@ -989,7 +989,7 @@ The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and
 
 **2.29 (28 October 2026)**
 
-- Latest page (IMP-18, spec log `latest.md` LT-01, LT-03, LT-04): new Section 7D (page order, content, sparse); 7B.2 Load more: the added rows and their images fade in, and the added rows show the reader story time at once. The names of the reused More stories parts on this page are open (LT-02, flag).
+- Latest page (IMP-18, spec log `latest.md` LT-01 to LT-04): new Section 7D (page order, content, sparse); 7B.2 Load more: the added rows and their images fade in, and the added rows show the reader story time at once. LT-02: the reused More stories parts are `MoreStoriesSection` and `MoreStoriesList` (were `CategoryMoreStoriesSection`, `CategoryMoreStoriesList`; tajmin, 28 Oct 2026).
 
 **2.28 (28 October 2026)**
 

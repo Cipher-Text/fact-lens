@@ -12,7 +12,7 @@ import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { refreshStoryTimes } from "@/lib/story-time";
 
-import { CategoryMoreStoriesList } from "./CategoryCards";
+import { MoreStoriesList } from "./MoreStoriesList";
 
 const PAGE_SIZE = 10;
 
@@ -33,8 +33,8 @@ type Props = {
 };
 
 /**
- * CategoryMoreStoriesSection (spacing-layout-system.md 7B): the older
- * stories as CategoryMoreStoriesList items, date | title and deck | image (tajmin, after
+ * MoreStoriesSection (spacing-layout-system.md 7B): the older
+ * stories as MoreStoriesList items, date | title and deck | image (tajmin, after
  * checkpoint 5), 10 at a time. A story with no image shows the no-image placeholder
  * (DR-338). Divider.rule (C-22), then the Button (C-12 primary), which adds the next 10; both go
  * when none are left. Focus moves to the title
@@ -44,7 +44,7 @@ type Props = {
  * names it, 10 show first, then 10 per press, each row with the category Eyebrow (tajmin,
  * 28 Oct 2026).
  */
-export function CategoryMoreStoriesSection({
+export function MoreStoriesSection({
   stories,
   labelledBy,
   eyebrow = false,
@@ -95,7 +95,7 @@ export function CategoryMoreStoriesSection({
           )}
           <div ref={listRef}>
             {/* With no SectionHeading the titles are h2 under the page h1. */}
-            <CategoryMoreStoriesList
+            <MoreStoriesList
               stories={shown}
               t={t}
               eyebrow={eyebrow}
