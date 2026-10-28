@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.8 · 24 October 2026 · For the production frontend (M2). No sprints or tickets
+Version 1.9 · 28 October 2026 · For the production frontend (M2). No sprints or tickets
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -10,7 +10,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 
 | Item | Status |
 | --- | --- |
-| Current work | M2 production build, one page at a time (Section 9). State: `docs/STATUS.md`. Open items and flags: `docs/ISSUES.md` |
+| Current work | M2 production build, one page or task at a time (Section 9). State: `docs/STATUS.md`. Open items and flags: `docs/ISSUES.md` |
 | Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
 | Pages | Homepage, article page and category page are done; the homepage is locked (`DR-370`), except P-5 most read (IMP-99). Start a new page only with its brief (Section 9) |
@@ -100,7 +100,7 @@ src/
     reader.css             Article page component CSS (component-system.md Section 7, Article page)
 tests/
   e2e/                     Playwright tests
-docs/                      Specs, STATUS.md, ISSUES.md, briefs/ and spec-log/ per page. Specs are read only (Section 10)
+docs/                      Specs, STATUS.md, ISSUES.md, and per page or task briefs/, progress/ and spec-log/. Specs are read only (Section 10)
 public/mock/               Placeholder images for mock stories
 ```
 
@@ -145,13 +145,13 @@ Before you do one of the things in `agent-contract.md` Section 8 ("If you are ab
 
 ## 8. Gaps in the design system
 
-There is no elevation: no shadows (`COL-15`, `DR-202`). The system defines the homepage and the article page (`component-system.md` C-27 to C-42, `spacing-layout-system.md` Section 7A). Other pages are defined per page, from the brief and the spec log. The footer is provisional (`DR-193`). `component-system.md` Section 8 lists the open items and what to do now.
+There is no elevation: no shadows (`COL-15`, `DR-202`). The system defines the homepage and the article page (`component-system.md` C-27 to C-42, `spacing-layout-system.md` Section 7A). Other pages are defined per page, from the brief and the progress file. The footer is provisional (`DR-193`). `component-system.md` Section 8 lists the open items and what to do now.
 
 For a gap:
 
 1. Use a neutral treatment that obeys every rule in Section 6.
 2. Do not call it a Fact Lens standard.
-3. Add it to the page spec log and to `docs/ISSUES.md` as a `U-` row, with the file and the component.
+3. Add it to the progress file and to `docs/ISSUES.md` as a `U-` row, with the file and the component.
 
 ### Flag before you decide
 
@@ -165,25 +165,31 @@ A flag gives: what is wrong, what you did, the rule IDs, your proposal and an ex
 
 ## 9. How to work
 
-There are no sprints or tickets. One page is one branch, one brief and one spec log (`DR-370` to `DR-377`).
+There are no sprints or tickets. One page or task is one branch, one brief, one progress file and one spec log (`DR-370` to `DR-377`). A page is a new page. A task is any other change: a fix, a UI piece, typography, a token, a component or an open issue.
 
-1. **Start.** tajmin types `/page <name>`. Make `page/<name>` from `dev` and set the page as in progress in `docs/STATUS.md` "Now". Ask tajmin the questions, then draft `docs/briefs/<name>.md` (one page at most) with 3 to 6 one-line checkpoints and the test files. Build only after tajmin says yes.
+1. **Start.**
+   - Page: tajmin types `/page <name>`. Make `page/<name>` from `dev`. Draft `docs/briefs/<name>.md` (one page at most) with 3 to 6 one-line checkpoints and the test files.
+   - Task: tajmin types `/task` with an issue ID, with what to change and where, or with both. Make `task/<name>` from `dev`. Draft a short `docs/briefs/<name>.md` with 1 to 6 checkpoints and the test files.
+
+   Set the work as in progress in `docs/STATUS.md` "Now". Ask tajmin the questions, and make `docs/progress/<name>.md` from `docs/progress/TEMPLATE.md`. Build only after tajmin says yes.
 2. **Build in the browser, one checkpoint at a time.** At each checkpoint of the brief (not the final one):
    1. Finish the step and stop.
    2. Post a short note: what you built, and each new token or component you added.
    3. tajmin gives tweaks in chat. Each tweak snaps to the nearest token, or you add a named new token (`CPT-07`).
    4. Start the next checkpoint only when tajmin says "next". Do not run the full checks, update the spec log or commit at these checkpoints.
 
+   **Keep the progress file.** `docs/progress/<name>.md` is the memory of the work: tajmin clears the context often. Update it before you stop: after each checkpoint, after each batch of tweaks and before a question to tajmin. It has everything the work adds, changes or decides, with tajmin's words for each decision (`docs/progress/TEMPLATE.md`). A new session reads it before it changes code.
+
    Build from the shared parts (`Shell`, `Wrapper`, `Rail`, `AdSlot`, `SectionHeading`, the story units). Do not repeat layout utilities in page code.
-3. **Final checkpoint.** Run `/checkpoint` at the last checkpoint, or when tajmin asks, not after each checkpoint: the checks (Section 11), the spec log `docs/spec-log/<name>.md`, the `design-reviewer` subagent, the spec update in `docs/design-system/` from the green items, `docs/STATUS.md`, `docs/ISSUES.md`, and a report. Green spec-log items are approved by tajmin's merge; red items are flags.
-4. **Commit only on tajmin's yes.** One commit per yes on the page branch: `<page>: <what>` on the subject line, the rule IDs on the next line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
-5. **Pull request.** Open a PR from `page/<name>` to `dev`. The design-system updates for the page go in the same PR. When the review shows issues, fix them, but do not commit before tajmin approves. The merge is tajmin's approval. Nothing changes after the merge.
+3. **Final checkpoint.** Run `/checkpoint` at the last checkpoint, or when tajmin asks, not after each checkpoint: the checks (Section 11), the spec log `docs/spec-log/<name>.md` made from the progress file, the `design-reviewer` subagent, the spec update in `docs/design-system/` from the green items, `docs/STATUS.md`, `docs/ISSUES.md`, and a report. Green spec-log items are approved by tajmin's merge; red items are flags.
+4. **Commit only on tajmin's yes.** One commit per yes on the branch: `<name>: <what>` on the subject line, the rule IDs on the next line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
+5. **Pull request.** Open a PR from `page/<name>` or `task/<name>` to `dev`. The design-system updates for the work go in the same PR. When the review shows issues, fix them, but do not commit before tajmin approves. The merge is tajmin's approval. Nothing changes after the merge.
 6. **After the merge.** Run the full `pnpm test:e2e:chromium` on `dev` (the PR changed the specs).
 7. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
 
 ## 10. What you must not change
 
-- Edit `docs/design-system/` only on a `page/<name>` branch, at the final checkpoint, from the green spec-log items (Section 9). A hook blocks spec edits on every other branch, so the specs do not change after a merge. If a spec is wrong or missing a value, report it as a `DOC-` issue.
+- Edit `docs/design-system/` only on a `page/<name>` or `task/<name>` branch, at the final checkpoint, from the green spec-log items (Section 9). A hook blocks spec edits on every other branch, so the specs do not change after a merge. If a spec is wrong or missing a value, report it as a `DOC-` issue.
 - Do not edit `.env` files or read secrets.
 - Do not push to the remote or deploy unless the user asks.
 - Do not add a dependency without saying why in your summary.
@@ -198,7 +204,7 @@ A task is done when all of these are true:
 4. Each component passes the checks in its sheet (`component-system.md` Section 7).
 5. The validation widths and content cases in `spacing-layout-system.md` Section 13 show no clipped text and no horizontal scroll.
 6. Bangla and English, light and dark, keyboard focus and 200% zoom work. Supported browsers are in `agent-contract.md` Section 10 (`DR-341`).
-7. The spec log, `docs/STATUS.md` and `docs/ISSUES.md` are current.
+7. The progress file, the spec log, `docs/STATUS.md` and `docs/ISSUES.md` are current.
 
 ## 12. Summary format
 

@@ -6,7 +6,7 @@ The current state of the repository. It replaces `PROGRESS.md`, `HANDOVER.md`, `
 
 ## Now
 
-- Branch: `dev`, no page in progress. New pages start on `page/<name>` from `dev` (`AGENTS.md` Section 9).
+- Branch: `dev`, no page or task in progress. New pages start on `page/<name>`, other changes on `task/<name>`, both from `dev` (`AGENTS.md` Section 9).
 - Pages done: homepage (locked, DR-370, except P-5 most read: PR #14), article page `/[lang]/story/[slug]` (PR #8, hotfixes PR #9 and #10), category page `/[lang]/category/[id]` (PR #11), url-format (PR #15) and category-formats (PR #16).
 - Specs in `docs/design-system/`: color 2.17, typography 2.20, layout 2.28, component-system 1.24, agent-contract 2.17.
 - url-format (IMP-97, run 1 of 2) merged (PR #15, 28 Oct 2026): `/story/<slug>-<id>` with 301 and 404s, formats, South Asia, 8 regions, topics, C-08 `format` and `two-part`, missing translation (DR-401). Full Chromium e2e on `dev`: 806 passed.

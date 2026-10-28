@@ -11,7 +11,7 @@ Run each step. Do not stop at the first failure: collect every result, then fix 
 ## 1. Code checks
 
 1. `pnpm check`
-2. Chromium e2e, the gate (`AGENTS.md` §11): `pnpm exec playwright test --project=chromium` with the "Test files" in the page brief (`docs/briefs/<page>.md`) and every test file the work added or changed. Run the full `pnpm test:e2e:chromium` when the work changed the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`), and on `dev` after each merge. WebKit is a separate report (`docs/webkit-failures.md`).
+2. Chromium e2e, the gate (`AGENTS.md` §11): `pnpm exec playwright test --project=chromium` with the "Test files" in the brief (`docs/briefs/<name>.md`) and every test file the work added or changed. Run the full `pnpm test:e2e:chromium` when the work changed the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`), and on `dev` after each merge. WebKit is a separate report (`docs/webkit-failures.md`).
 
 ## 2. Visual check
 
