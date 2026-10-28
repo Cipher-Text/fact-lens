@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.9 · 28 October 2026 · For the production frontend (M2). No sprints or tickets
+Version 1.10 · 29 October 2026 · For the production frontend (M2). No sprints or tickets
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -186,8 +186,8 @@ There are no sprints or tickets. One page or task is one branch, one brief and o
    Build from the shared parts (`Shell`, `Wrapper`, `Rail`, `AdSlot`, `SectionHeading`, the story units). Do not repeat layout utilities in page code.
 3. **Final checkpoint.** Run `/checkpoint` at the last checkpoint, or when tajmin asks, not after each checkpoint: the checks (Section 11), the spec log `docs/spec-log/<name>.md` made from the progress file (when the work has spec items), the `design-reviewer` subagent, the spec update in `docs/design-system/` from the green items, `docs/STATUS.md`, `docs/ISSUES.md`, and a report. Green spec-log items are approved by tajmin's merge; red items are flags.
 4. **Commit only on tajmin's yes.** One commit per yes on the branch: `<name>: <what>` on the subject line, the rule IDs on the next line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
-5. **Pull request.** Open a PR from `page/<name>` or `task/<name>` to `dev`. The design-system updates for the work go in the same PR. When the review shows issues, fix them, but do not commit before tajmin approves. The merge is tajmin's approval. Nothing changes after the merge.
-6. **After the merge.** Run the full `pnpm test:e2e:chromium` on `dev` (the PR changed the specs).
+5. **Pull request.** Open a PR from `page/<name>` or `task/<name>` to `dev`. The design-system updates for the work go in the same PR. When the review shows issues, fix them, but do not commit before tajmin approves. The merge is tajmin's approval. The specs do not change after the merge.
+6. **After the merge.** On `dev`: run the full `pnpm test:e2e:chromium` (the PR changed the specs), update `docs/STATUS.md`, and delete `docs/briefs/<name>.md`, `docs/progress/<name>.md` and `docs/spec-log/<name>.md` once each open item in them is a row in `docs/ISSUES.md`. Git history keeps them. Commit and push on tajmin's yes: the only commit made on `dev` itself. The specs name spec-log items by ID, never by the file.
 7. **Do not weaken tests.** Do not skip, disable or delete a test to make the suite pass.
 
 ## 10. What you must not change

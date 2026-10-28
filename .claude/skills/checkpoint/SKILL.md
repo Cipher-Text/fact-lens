@@ -18,7 +18,7 @@ Run the `/verify` steps. The test files are in the brief.
 
 ## 3. Spec log
 
-Make or update `docs/spec-log/<name>.md` in the format of `docs/spec-log/category-formats.md` (header, kinds, item table, flags). Take the items from the progress file: each reused rule, new token, new component, new rule and changed rule, with `file:line` from the code now. A changed rule is always a flag. Code changes that are not spec items stay in the progress file only. If the work has no spec item, make no spec log and say so in the report.
+Make or update `docs/spec-log/<name>.md` from `docs/spec-log/TEMPLATE.md` (header, kinds, item table, flags). Take the items from the progress file: each reused rule, new token, new component, new rule and changed rule, with `file:line` from the code now. A changed rule is always a flag. Code changes that are not spec items stay in the progress file only. If the work has no spec item, make no spec log and say so in the report.
 
 ## 4. Review
 

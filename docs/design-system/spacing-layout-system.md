@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names spec-log items by ID, not by the log file, since the logs of merged work are deleted (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -302,7 +302,7 @@ Below 600px, the regions are tabs (`tablist`, arrow keys, `aria-selected`). The 
 
 ## 7A. Article page
 
-The article page (`/story/<slug>-<id>`, `ReaderPage`; Section 7C) is defined from the accepted page spec log `docs/spec-log/article.md`, checkpoint 1 (DR-385). The code on the article branch is the reference. The page tokens are in `src/styles/reader.css`, scoped under `.rd`. Component looks are in `component-system.md` (C-27 to C-42).
+The article page (`/story/<slug>-<id>`, `ReaderPage`; Section 7C) is defined from the accepted article page spec log, checkpoint 1 (DR-385). The code on the article branch is the reference. The page tokens are in `src/styles/reader.css`, scoped under `.rd`. Component looks are in `component-system.md` (C-27 to C-42).
 
 ### 7A.1 Page order
 
@@ -399,7 +399,7 @@ Print hides the dock, the rail, the `PreferredSourceAlert` row, Read next and th
 
 ## 7B. Category page
 
-The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is defined from the green items of the page spec log `docs/spec-log/category.md` (CL-01 to CL-08, CL-19, CL-20). One template serves the 5 categories (Section 7C); the 10 pages are built at build time and an unknown id is a 404 page. The most read `columns` layout is in the C-07 sheet (CL-10 to CL-12, CL-18, CL-21, CL-22; tajmin, 27 Oct 2026). The page title is C-43 `PageTitle`; the More stories item is StoryCard `dated` (C-24). Every item of that log is decided (tajmin, 27 Oct 2026).
+The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is defined from the green items of the category page spec log (CL-01 to CL-08, CL-19, CL-20). One template serves the 5 categories (Section 7C); the 10 pages are built at build time and an unknown id is a 404 page. The most read `columns` layout is in the C-07 sheet (CL-10 to CL-12, CL-18, CL-21, CL-22; tajmin, 27 Oct 2026). The page title is C-43 `PageTitle`; the More stories item is StoryCard `dated` (C-24). Every item of that log is decided (tajmin, 27 Oct 2026).
 
 ### 7B.1 Page order
 
@@ -421,9 +421,9 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 - **CategoryFeatureSection.** Laid out as HeroSection: from 1024 the rail is beside the wrapper; below 1024 it goes under the whole wrapper (`LAY-05`). With no rail stories the wrapper spans the shell (Section 7.3, DR-271).
 - **Card rows.** `StoryCard` (C-24) row, 16:9 image at the end, text : image = 2 : 1, with the summary; `Divider.item` between the rows, measured to the image top (DR-268, DR-350). One per row at every width (`LAY-07`, DR-409).
 - **Formats.** The main stream is news only: the feature story, the rail and the card rows. Analysis and opinion have their own row, `CategoryFormatsSection`, directly above Most read, up to 5 of each, newest first. More stories lists the news and analysis that no section above shows, never opinion, newest first. No story shows twice on the page (DR-415, replaces DR-408).
-- **No Eyebrow.** No card on the page shows the Eyebrow: the page title names the category (DR-153). One exception: an analysis row in More stories shows the C-08 `format` Eyebrow above the title at every width (DR-415, spec log `category-formats.md` CF-07).
+- **No Eyebrow.** No card on the page shows the Eyebrow: the page title names the category (DR-153). One exception: an analysis row in More stories shows the C-08 `format` Eyebrow above the title at every width (DR-415, category formats spec log CF-07).
 - **Spacing.** `main` starts with `space-page-start` and ends with `space-section`. The space before an ad band belongs to the section above it (`space-module`), and the section after an ad band starts with `space-module` (`LAY-12`).
-- **Load more.** A list shows 10 stories. Each press of the C-12 primary `Button` adds the next 10 and moves focus to the title link of the first added story. The button goes when no stories are left (`COL-13`). The added rows fade in (opacity, `--duration-slide`, `ease-slide`, no stagger; nothing moves), and the story image of an added row fades in when it has loaded; lazy loading stays. The first rows do not animate. No motion with reduced motion (DR-227). The added rows show the reader story time at once (`TYP-17`). Component CSS: `component-system.md` Section 6 (spec log `latest.md` LT-03, LT-04; tajmin, 28 Oct 2026).
+- **Load more.** A list shows 10 stories. Each press of the C-12 primary `Button` adds the next 10 and moves focus to the title link of the first added story. The button goes when no stories are left (`COL-13`). The added rows fade in (opacity, `--duration-slide`, `ease-slide`, no stagger; nothing moves), and the story image of an added row fades in when it has loaded; lazy loading stays. The first rows do not animate. No motion with reduced motion (DR-227). The added rows show the reader story time at once (`TYP-17`). Component CSS: `component-system.md` Section 6 (Latest spec log LT-03, LT-04; tajmin, 28 Oct 2026).
 
 ### 7B.3 Sparse content
 
@@ -464,7 +464,7 @@ When an article is missing in the other language, do not emit an hreflang to tha
 
 ## 7D. Latest page
 
-The Latest page (`/latest`, `/en/latest`, `LatestPageView`) is the news hub of Section 7C.2 (row News hub: news only). Defined from the spec log `docs/spec-log/latest.md` LT-01 (tajmin, 28 Oct 2026). The page is built at build time for bn and en.
+The Latest page (`/latest`, `/en/latest`, `LatestPageView`) is the news hub of Section 7C.2 (row News hub: news only). Defined from the Latest spec log LT-01 (tajmin, 28 Oct 2026). The page is built at build time for bn and en.
 
 ### 7D.1 Page order
 
@@ -986,6 +986,10 @@ Test these content cases:
 The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.30 (29 October 2026)**
+
+- Docs cleanup (`task/docs-cleanup`): the spec text names spec-log items by ID, not by the log file, since the logs of merged work are deleted: 7A (article page), 7B intro and 7B.2 (category page), 7D (Latest page). No rule or value changes.
 
 **2.29 (28 October 2026)**
 

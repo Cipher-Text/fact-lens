@@ -1,8 +1,8 @@
-# Article page spec log
+# <name> spec log
 
-Branch `page/article-parallel` · Accepted at checkpoint 1 (tajmin, 24 Oct 2026; DR-385 to DR-390) and written into the specs: layout 7A, components C-27 to C-42, color 2.9. The git history keeps the full log (commit adb2fe9).
+Branch `<page|task>/<name>` · Brief `docs/briefs/<name>.md` · Issue <ID or none> · Started <date>
 
-This log keeps only the open spec items of the article page (tajmin, 27 Oct 2026). Open code items are rows in `docs/ISSUES.md`.
+This log keeps what the work changes in the specs, made from the progress file at the final checkpoint. Open code items are rows in `docs/ISSUES.md`. After the merge, the log is deleted with the brief and the progress file (`AGENTS.md` Section 9, step 6).
 
 ## Kinds
 
@@ -14,11 +14,12 @@ This log keeps only the open spec items of the article page (tajmin, 27 Oct 2026
 | New rule | A behavior that no rule covers |
 | Changed rule | The page needs an existing rule to change. Always a flag |
 
-## Open items
+## Items
 
 | ID | Kind | What | Code (`file:line`) | Rule or token IDs | Source | Reviewer |
 | --- | --- | --- | --- | --- | --- | --- |
+| | | | | | | |
 
-## Open code items
+## Flags
 
-In `docs/ISSUES.md`: IMP-101 to IMP-114 (the PR #8 review notes), IMP-100 (the rule above the Tags to Divider.rule), U-08 (dark mode logo contrast).
+<Each red item, or "None open.">

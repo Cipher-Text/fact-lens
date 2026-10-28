@@ -149,7 +149,7 @@ export interface CategoryPage {
 }
 
 /**
- * The Latest page in one language (layout 7C.2 Paths, News hub row; `docs/briefs/latest.md`): the news hub,
+ * The Latest page in one language (layout 7C.2 Paths, News hub row; layout 7D): the news hub,
  * every news story of every category, newest first. No analysis or opinion.
  */
 export interface LatestPage {
