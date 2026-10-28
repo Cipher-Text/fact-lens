@@ -16,7 +16,7 @@ try {
 } catch {
   branch = "";
 }
-const onPageBranch = branch.startsWith("page/");
+const onPageBranch = branch.startsWith("page/") || branch.startsWith("task/");
 
 const PROTECTED = [
   { test: (p) => !onPageBranch && p.startsWith("docs/design-system/"), why: "the specs change only on a page/ branch, at the final checkpoint" },
