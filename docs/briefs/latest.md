@@ -13,7 +13,7 @@ The news hub `/latest` and `/en/latest` (layout 7C.2 Paths, News hub row: news o
 | Site header | C-17 TopBar, C-18 NavBar | As on the category page. No current item: Latest is not a nav item |
 | `ad-top` | AdSlot | As on the homepage (layout 9). No `ad-band` on the page |
 | Page title | C-43 PageTitle | সর্বশেষ / Latest, the page `h1`, in the `surface` band, as on the category page |
-| Latest list | Reuse: `Shell`, `WithRail` (the rail stays empty), `Wrapper` | StoryCard `dated` rows (C-24) as in `CategoryMoreStoriesList`: the 3 columns from 600px, the date column at a fixed width. Divider.item between the rows. Each row shows the C-08 `category` Eyebrow. 10 stories first, then each press of the load more Button (C-12) adds 10 (was 20 first; tajmin, 28 Oct 2026). The added rows fade in and their images fade in when loaded (progress file, Decisions). Then Divider.rule (C-22) and the Button, as in More stories |
+| Latest list | Reuse: `Shell`, `WithRail` (the rail stays empty), `Wrapper` | StoryCard `dated` rows (C-24) as in `MoreStoriesList` (was `CategoryMoreStoriesList`, renamed for U-51): the 3 columns from 600px, the date column at a fixed width. Divider.item between the rows. Each row shows the C-08 `category` Eyebrow. 10 stories first, then each press of the load more Button (C-12) adds 10 (was 20 first; tajmin, 28 Oct 2026). The added rows fade in and their images fade in when loaded (progress file, Decisions). Then Divider.rule (C-22) and the Button, as in More stories |
 | Footer | C-21 Footer | As on the homepage |
 
 ## Content and mock data
@@ -25,7 +25,7 @@ The news hub `/latest` and `/en/latest` (layout 7C.2 Paths, News hub row: news o
 ## Reuse and what is new
 
 - New: the route `src/app/[lang]/latest/page.tsx` (static, `bn` and `en`) and `LatestPageView`.
-- Reuse: the load-more logic of `CategoryMoreStoriesSection` as it is: 10 first, then 10. No copied layout utilities.
+- Reuse: the load-more logic of `MoreStoriesSection` (was `CategoryMoreStoriesSection`, renamed for U-51) as it is: 10 first, then 10. No copied layout utilities.
 - Reuse: StoryCard `dated` with `eyebrow` (`category` mode). An analysis row cannot occur (news only), so `formatLabel` is not used.
 - Sparse (layout 7.3): with no news the list section is removed. With 10 or fewer stories there is no Button.
 

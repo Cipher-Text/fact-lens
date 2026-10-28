@@ -154,3 +154,9 @@ Costs for every option: the focus ring on the first added title fades in with it
 - Code: imports in `CategoryPageView.tsx`, `LatestPageView.tsx`; comments in `CategoryFormatsSection.tsx`, `CategoryCards.tsx`.
 - Not changed: the DOM hooks (`id="category-more-title"`, `data-section="category-more"`, `data-category-more-wrapper`), so the page output and the tests stay as they were.
 - Specs: component-system 1.25 Section 3 (category row and Latest row name `MoreStoriesSection`, `MoreStoriesList`; "never opinion" is the category page rule), layout 2.29 7B.1, 7D and changelog, agent-contract 2.19 Section 3 Latest row. Spec log LT-02 decided. `AGENTS.md` Section 5 lists `more-stories/`. ISSUES U-51 Fixed; STATUS updated.
+
+### PR #18 review fixes (28 Oct 2026)
+
+- Decision: tajmin, chat, 28 Oct 2026: "Fix both" (the spec log cells and the brief names; the focus note and IMP-122 stay as they are).
+- Docs: `docs/spec-log/latest.md` LT-01 to LT-05: the `||` between Source and Reviewer is now one `|` (7 cells, as the header).
+- Docs: `docs/briefs/latest.md` names `MoreStoriesList` and `MoreStoriesSection`, with the old names noted (U-51).
