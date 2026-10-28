@@ -6,7 +6,7 @@ import { useSyncExternalStore, type KeyboardEvent } from "react";
 import { Popover } from "./Popover";
 import { setTextSize, useReading } from "./reading-store";
 import type { ReaderStrings } from "@/i18n";
-import { parseSaved } from "@/lib/saved";
+import { migrateSaved, parseSaved } from "@/lib/saved";
 import { toast } from "./Toaster";
 
 /**
@@ -123,16 +123,20 @@ function subscribeSaved(onChange: () => void) {
 
 export function SaveButton({
   storyId,
+  storySlug,
   t,
 }: {
   storyId: string;
+  /** The slug, to read a save made before the list held ids. */
+  storySlug: string;
   t: ReaderStrings;
 }) {
+  const story = { id: storyId, slug: storySlug };
   const raw = useSyncExternalStore(subscribeSaved, readSaved, () => "[]");
-  const saved = parseSaved(raw).includes(storyId);
+  const saved = migrateSaved(parseSaved(raw), story).includes(storyId);
 
   const toggle = () => {
-    const list = parseSaved(readSaved());
+    const list = migrateSaved(parseSaved(readSaved()), story);
     const next = saved
       ? list.filter((item) => item !== storyId)
       : [...list, storyId];

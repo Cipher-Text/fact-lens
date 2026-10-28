@@ -206,10 +206,10 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 ### IMP-95 Fixed waits in the header tests
 
 - **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
-- **Source:** `tests/e2e/header.spec.ts:357`, `:1216` (100ms), `:1310` (500ms); IMP-86 (flaky under load).
+- **Source:** `tests/e2e/header.spec.ts:357`, `:1322` (100ms), `:1416` (500ms); IMP-86 (flaky under load).
 - **Problem:** the review calls these flaky. They check that nothing changes (no scroll, the bar stays stuck, no layout shift), so they cannot poll for a state; but the 100ms waits stand for "the scroll handler has run", which is one animation frame.
 - **What the code does:** no change.
-- **Suggested solution:** lines 357 and 1216: wait two animation frames (the handler runs in `requestAnimationFrame`) instead of 100ms. Line 1310: keep the window for late layout shifts after hydration, or end it on a hydration marker. Check with `--repeat-each=10`.
+- **Suggested solution:** lines 357 and 1322: wait two animation frames (the handler runs in `requestAnimationFrame`) instead of 100ms. Line 1416: keep the window for late layout shifts after hydration, or end it on a hydration marker. Check with `--repeat-each=10`.
 
 ### IMP-97 URL format, home and article
 

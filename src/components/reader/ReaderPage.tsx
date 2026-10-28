@@ -169,6 +169,7 @@ export function ReaderPage({ lang, article, readNext }: Props) {
                   layout="rail"
                   lang={lang}
                   storyId={story.id}
+                  storySlug={story.slug}
                 />
               </div>
             </aside>
@@ -198,7 +199,13 @@ export function ReaderPage({ lang, article, readNext }: Props) {
       </main>
 
       <Footer lang={lang} />
-      <ReadingTools {...share} layout="dock" lang={lang} storyId={story.id} />
+      <ReadingTools
+        {...share}
+        layout="dock"
+        lang={lang}
+        storyId={story.id}
+        storySlug={story.slug}
+      />
       <SelectionShare title={story.title} t={t} />
       <Toaster />
     </ReaderRoot>
