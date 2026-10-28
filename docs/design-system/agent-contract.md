@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.17 · 28 October 2026 · Category formats (DR-415): Section 1 spec versions; Section 3 category page row. Before: Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
+Version 2.18 · 28 October 2026 · Dev process (`task/dev-process`): Section 3 other-page row and Section 11 items 1 to 3 name `page/` and `task/` branches and the progress file. Before: Category formats (DR-415): Section 1 spec versions; Section 3 category page row. Before: Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -48,7 +48,7 @@ If this contract and a foundation document do not agree, follow the foundation d
 | Article page layout and spacing | Approved, checkpoint 1 (DR-385, DR-386, DR-387) | `spacing-layout-system.md` Section 7A |
 | Article page components | Approved, checkpoint 1 (DR-390): C-27 to C-42 | `component-system.md` Section 7, Article page |
 | Category page layout | Green spec-log items (CL-01 to CL-08, CL-19, CL-20) and the RankedList `columns` variant (C-07, tajmin 27 Oct 2026); every red item is decided: DR-402 to DR-409 (amend DR-44, DR-51, DR-144 to DR-147, DR-153, DR-299, DR-300, DR-398 for this page). Formats: DR-415 (spec log `category-formats.md` CF-01 to CF-08; CF-06 PageTitle band, U-50 approved) | `spacing-layout-system.md` Section 7B, `docs/spec-log/category.md`, `docs/spec-log/category-formats.md` |
-| Other page layout and components | Defined per page in the browser (DR-370) | Build from the page brief `docs/briefs/<page>.md`; write changes in the page spec log. `spacing-layout-system.md` Section 14.2 lists the open items |
+| Other page layout and components | Defined per page in the browser (DR-370) | Build from the brief `docs/briefs/<name>.md`; log each change in the progress file `docs/progress/<name>.md`; the spec log is made from it at the final checkpoint. `spacing-layout-system.md` Section 14.2 lists the open items |
 
 The homepage is locked (DR-370), except P-5 most read, which moved to the RankedList layout of the category page (IMP-99). Start a new page only with its brief (`AGENTS.md` Section 9).
 
@@ -304,7 +304,7 @@ Before you finish a task:
 
 ## 11. How to change this contract
 
-1. Edit the files in `docs/design-system/` only on a page branch. First write each spec change in the page spec log `docs/spec-log/<page>.md` (`AGENTS.md` Section 9, DR-372).
-2. The `design-reviewer` agent checks the spec log against the diff at the final checkpoint (`/checkpoint`). tajmin's merge of the page pull request approves the green items. Red items go to tajmin as flags.
-3. At the final checkpoint, the coding agent writes the green items into the foundation documents in this folder on the page branch, so they go in the same pull request. A hook allows spec edits only on a `page/` branch, so nothing changes after the merge. Before the merge, a project thread rebuilds this contract (`gen_contract.py` rebuilds the rule index and stops if a rule ID in this contract does not exist) and records the decisions in the project decision register, which is not in this repo (DR-251).
+1. Edit the files in `docs/design-system/` only on a `page/` or `task/` branch. Log each new token, gap or extension in the progress file `docs/progress/<name>.md` while you build; at the final checkpoint `/checkpoint` makes the spec log `docs/spec-log/<name>.md` from it (`AGENTS.md` Section 9, DR-372).
+2. The `design-reviewer` agent checks the spec log against the diff at the final checkpoint (`/checkpoint`). tajmin's merge of the pull request approves the green items. Red items go to tajmin as flags.
+3. At the final checkpoint, the coding agent writes the green items into the foundation documents in this folder on the branch, so they go in the same pull request. A hook allows spec edits only on a `page/` or `task/` branch, so nothing changes after the merge. Before the merge, a project thread rebuilds this contract (`gen_contract.py` rebuilds the rule index and stops if a rule ID in this contract does not exist) and records the decisions in the project decision register, which is not in this repo (DR-251).
 4. The blueprint thread changes the contract template only for Sections 1 to 4 and 6 to 11.

@@ -13,7 +13,7 @@ A task is one branch, one short brief and one progress file, like a page (`AGENT
 
 - an issue ID (`IMP-`, `U-`, `DOC-`, `T-` and the others in `docs/ISSUES.md`), with or without more words
 - only words: what to change and where, for example "headline size on the story card in English"
-- empty: ask tajmin what to change and where, then go on
+- empty: before step 1, ask tajmin what to change and where. Wait for the answer, then start at step 1 with it
 
 ## 1. Understand
 
