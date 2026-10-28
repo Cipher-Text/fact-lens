@@ -34,6 +34,11 @@ type StoryCardProps = {
   eyebrow?: boolean;
   /** The Eyebrow mode (C-08): format in mixed lists (DR-417). */
   eyebrowMode?: EyebrowMode;
+  /**
+   * dated only, on an analysis story: the format Eyebrow above the title at every width
+   * (More stories; tajmin, 28 Oct 2026). News stories show none.
+   */
+  formatLabel?: boolean;
   /** Shows the summary when the story has one. */
   summary?: boolean;
   titleAs?: "h3" | "h4";
@@ -87,6 +92,7 @@ export function StoryCard({
   split: splitKind = "third",
   eyebrow = true,
   eyebrowMode,
+  formatLabel = false,
   summary = true,
   titleAs: Title = "h3",
   eager = false,
@@ -94,6 +100,7 @@ export function StoryCard({
 }: StoryCardProps) {
   const showSummary = summary && Boolean(story.summary);
   const dated = layout === "dated";
+  const analysisLabel = dated && formatLabel && story.format === "analysis";
   return (
     <article
       data-story-card
@@ -113,6 +120,14 @@ export function StoryCard({
               story={story}
               strings={strings}
               mode={eyebrowMode}
+              className="mb-(--space-lead-eyebrow-title)"
+            />
+          ) : null}
+          {analysisLabel ? (
+            <Eyebrow
+              story={story}
+              strings={strings}
+              mode="format"
               className="mb-(--space-lead-eyebrow-title)"
             />
           ) : null}

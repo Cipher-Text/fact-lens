@@ -40,8 +40,9 @@ export function CategoryCardList({ stories, t }: ListProps) {
 /**
  * CategoryMoreStoriesList: the More stories list (tajmin, after checkpoint 5): one StoryCard
  * per story in the dated layout (C-24: date | title and deck | image from 600, the basic
- * image card on phones; the date is the time only), Divider.item between the rows. No
- * Eyebrow (DR-153).
+ * image card on phones; the date is the time only), Divider.item between the rows. News
+ * rows show no Eyebrow (DR-153). An analysis row shows the format Eyebrow above the title
+ * at every width (tajmin, 28 Oct 2026).
  */
 export function CategoryMoreStoriesList({ stories, t }: ListProps) {
   return (
@@ -55,6 +56,7 @@ export function CategoryMoreStoriesList({ stories, t }: ListProps) {
             ratio="16:9"
             size="md"
             eyebrow={false}
+            formatLabel
           />
         </li>
       ))}

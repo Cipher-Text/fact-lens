@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.16 · 27 October 2026 · Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
+Version 2.17 · 28 October 2026 · Category formats (DR-415): Section 1 spec versions; Section 3 category page row. Before: Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.16, `typography-system.md` v2.19, `spacing-layout-system.md` v2.26, `component-system.md` v1.21 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.16, `typography-system.md` v2.20, `spacing-layout-system.md` v2.28, `component-system.md` v1.24 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -47,7 +47,7 @@ If this contract and a foundation document do not agree, follow the foundation d
 | Homepage components, radius, icons, motion | Approved for prototype run 4. The footer is provisional | `component-system.md` |
 | Article page layout and spacing | Approved, checkpoint 1 (DR-385, DR-386, DR-387) | `spacing-layout-system.md` Section 7A |
 | Article page components | Approved, checkpoint 1 (DR-390): C-27 to C-42 | `component-system.md` Section 7, Article page |
-| Category page layout | Green spec-log items (CL-01 to CL-08, CL-19, CL-20) and the RankedList `columns` variant (C-07, tajmin 27 Oct 2026); every red item is decided: DR-402 to DR-409 (amend DR-44, DR-51, DR-144 to DR-147, DR-153, DR-299, DR-300, DR-398 for this page) | `spacing-layout-system.md` Section 7B, `docs/spec-log/category.md` |
+| Category page layout | Green spec-log items (CL-01 to CL-08, CL-19, CL-20) and the RankedList `columns` variant (C-07, tajmin 27 Oct 2026); every red item is decided: DR-402 to DR-409 (amend DR-44, DR-51, DR-144 to DR-147, DR-153, DR-299, DR-300, DR-398 for this page). Formats: DR-415 (spec log `category-formats.md` CF-01 to CF-05, CF-07, CF-08; CF-06 PageTitle band open, U-50) | `spacing-layout-system.md` Section 7B, `docs/spec-log/category.md`, `docs/spec-log/category-formats.md` |
 | Other page layout and components | Defined per page in the browser (DR-370) | Build from the page brief `docs/briefs/<page>.md`; write changes in the page spec log. `spacing-layout-system.md` Section 14.2 lists the open items |
 
 The homepage is locked (DR-370), except P-5 most read, which moved to the RankedList layout of the category page (IMP-99). Start a new page only with its brief (`AGENTS.md` Section 9).

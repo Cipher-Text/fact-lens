@@ -203,13 +203,17 @@ export function getHomepage(
 
 const LATEST_COUNT = 5;
 const CARD_COUNT = 3;
+// At most 5 stories per block of the analysis and opinion row (tajmin, 28 Oct 2026).
+const FORMAT_BLOCK_COUNT = 5;
 // The top 5, as on the homepage (tajmin, checkpoint 4).
 const MOST_READ_COUNT = 5;
 
 /**
- * A category page in one language (spacing-layout-system.md 7B). Stories are newest first:
- * the feature story is the newest with an image, the rail takes the next 5, the card rows the
- * next 3 with an image, and More news the rest. Most read comes from the mock ranking.
+ * A category page in one language (spacing-layout-system.md 7B, DR-415). Stories are newest
+ * first. The main stream is news only: the feature story is the newest news story with an
+ * image, the rail takes the next 5, the card rows the next 3 with an image. The analysis and
+ * opinion row takes up to 5 of each. More stories is the news and analysis not shown above,
+ * never opinion. Most read comes from the mock ranking.
  */
 export function getCategoryPage(
   category: CategoryId,
@@ -219,15 +223,23 @@ export function getCategoryPage(
     .filter((def) => def.category === category)
     .map((def) => toStory(def, lang))
     .sort(newestFirst);
-  const feature = all.find((story) => story.image) ?? null;
-  const rest = all.filter((story) => story !== feature);
+  const news = all.filter((story) => story.format === "news");
+  const feature = news.find((story) => story.image) ?? null;
+  const rest = news.filter((story) => story !== feature);
   const latest = rest.slice(0, LATEST_COUNT);
   const cards = rest
     .slice(LATEST_COUNT)
     .filter((story) => story.image)
     .slice(0, CARD_COUNT);
-  const more = rest.filter(
-    (story) => !latest.includes(story) && !cards.includes(story),
+  const analysis = all
+    .filter((story) => story.format === "analysis")
+    .slice(0, FORMAT_BLOCK_COUNT);
+  const opinion = all
+    .filter((story) => story.format === "opinion")
+    .slice(0, FORMAT_BLOCK_COUNT);
+  const shown = new Set([feature, ...latest, ...cards, ...analysis]);
+  const more = all.filter(
+    (story) => story.format !== "opinion" && !shown.has(story),
   );
   return {
     lang,
@@ -235,6 +247,8 @@ export function getCategoryPage(
     feature,
     latest,
     cards,
+    analysis,
+    opinion,
     mostRead: getStories(
       categoryMostRead[category].slice(0, MOST_READ_COUNT),
       lang,

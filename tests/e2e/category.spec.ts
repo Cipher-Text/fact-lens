@@ -7,19 +7,25 @@ import { setTheme } from "./theme";
 // The category page, /[lang]/category/[id] (spacing-layout-system.md 7B): page order, the
 // feature section with the rail (LAY-05), the card rows, most read in the columns layout, More stories
 // with load more, 404, keyboard and axe, in Bangla and English (COL-13, TYP-03, LAY-02,
-// LAY-06, LAY-07, LAY-09 to LAY-14, LAY-17, CPT-05, CPT-06, DR-153, DR-181).
+// LAY-06, LAY-07, LAY-09 to LAY-14, LAY-17, CPT-05, CPT-06, DR-153, DR-181). The formats
+// (DR-415): the main stream is news only, the analysis and opinion row is above Most read,
+// More stories has no opinion and no story shows twice.
 
 const PAGES = [
   {
     path: "/category/economy",
     lang: "bn",
     title: "অর্থনীতি ও বাণিজ্য",
+    analysis: "বিশ্লেষণ",
+    opinion: "মতামত",
     loadMore: "আরও লোড করুন",
   },
   {
     path: "/en/category/economy",
     lang: "en",
     title: "Economy and Trade",
+    analysis: "Analysis",
+    opinion: "Opinion",
     loadMore: "Load more",
   },
 ] as const;
@@ -66,16 +72,19 @@ for (const p of PAGES) {
           (el) =>
             el.getAttribute("data-section") ??
             el.getAttribute("data-ad-slot") ??
-            (el.hasAttribute("data-note") ? "note" : null) ??
             el.tagName.toLowerCase(),
         ),
       );
-      // The missing translation note keeps an empty status region (DR-401, U-48).
+      // The title band is the first row of main (C-43); the missing translation note keeps
+      // an empty status region inside it, above the title (DR-401, U-48).
+      await expect(
+        page.locator("main > [data-page-title] [data-note][role=status]"),
+      ).toHaveCount(1);
       expect(order).toEqual([
-        "note",
         "header",
         "category-feature",
         "ad-band",
+        "category-formats",
         "most-read",
         "ad-band",
         "category-more",
@@ -178,6 +187,92 @@ for (const p of PAGES) {
       });
     }
 
+    test("analysis and opinion row: two blocks above Most read, opinion as quote rows", async ({
+      page,
+    }) => {
+      const prefix = p.lang === "en" ? "/en" : "";
+      const row = section(page, "category-formats");
+      const blocks = row.locator("[data-category-block]");
+      for (const width of [360, 600, 1280]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        await expect(blocks).toHaveCount(2);
+        const analysis = row.locator('[data-category-block="analysis"]');
+        const opinion = row.locator('[data-category-block="opinion"]');
+        await expect(analysis.getByRole("heading", { level: 2 })).toHaveText(
+          p.analysis,
+        );
+        await expect(opinion.getByRole("heading", { level: 2 })).toHaveText(
+          p.opinion,
+        );
+        // Analysis at the start, Opinion at the end from 600; stacked on phones (LAY-07).
+        const a = await box(analysis);
+        const o = await box(opinion);
+        if (width < 600) {
+          expect(Math.abs(o.x - a.x)).toBeLessThanOrEqual(1);
+          expect(o.y).toBeGreaterThanOrEqual(a.y + a.height - 1);
+        } else {
+          expect(o.x).toBeGreaterThan(a.x + a.width - 1);
+          expect(Math.abs(o.y - a.y)).toBeLessThanOrEqual(1);
+        }
+        // The blocks stay in the wrapper column, as More stories (the rail is empty).
+        const wrapper = await box(page.locator("[data-category-more-wrapper]"));
+        expect(Math.abs(a.x - wrapper.x)).toBeLessThanOrEqual(1);
+        expect(o.x + o.width).toBeLessThanOrEqual(
+          wrapper.x + wrapper.width + 1,
+        );
+      }
+      // Up to 5 stories a block; opinion has no image and shows the author (P-4 rows).
+      expect(
+        await row.locator('[data-category-block="analysis"] article').count(),
+      ).toBeLessThanOrEqual(5);
+      const opinionRows = row.locator('[data-category-block="opinion"] li');
+      expect(await opinionRows.count()).toBeGreaterThan(0);
+      expect(await opinionRows.count()).toBeLessThanOrEqual(5);
+      await expect(
+        row.locator('[data-category-block="opinion"] .story-media'),
+      ).toHaveCount(0);
+      await expect(
+        row.locator('[data-category-block="opinion"] [data-author]'),
+      ).toHaveCount(await opinionRows.count());
+      // The MoreLinks go to the format hubs.
+      for (const format of ["analysis", "opinion"]) {
+        await expect(
+          row.locator(
+            `[data-category-block="${format}"] a[href="${prefix}/${format}"]`,
+          ),
+        ).toHaveCount(1);
+      }
+    });
+
+    test("no story shows twice, and More stories has no opinion", async ({
+      page,
+    }) => {
+      await page.goto(p.path);
+      // Show every More story first.
+      const button = page.getByRole("button", {
+        name: p.loadMore,
+        exact: true,
+      });
+      while ((await button.count()) > 0) await button.click();
+      const hrefs = (name: string) =>
+        section(page, name)
+          .locator("h3 a")
+          .evaluateAll((links) => links.map((a) => a.getAttribute("href")));
+      const shown = [
+        ...(await hrefs("category-feature")),
+        ...(await hrefs("category-formats")),
+        ...(await hrefs("category-more")),
+      ];
+      expect(shown.length).toBeGreaterThan(0);
+      expect(new Set(shown).size).toBe(shown.length);
+      const opinion = await section(page, "category-formats")
+        .locator('[data-category-block="opinion"] h3 a')
+        .evaluateAll((links) => links.map((a) => a.getAttribute("href")));
+      const more = await hrefs("category-more");
+      for (const href of opinion) expect(more).not.toContain(href);
+    });
+
     test("load more adds 10, moves focus to the first new story, and goes when none are left", async ({
       page,
     }) => {
@@ -265,6 +360,84 @@ test("every category page builds in both languages", async ({ page }) => {
       const response = await page.goto(`${prefix}/category/${id}`);
       expect(response?.status(), `${prefix}/category/${id}`).toBe(200);
       await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+    }
+  }
+});
+
+test("sparse (7.3): security has no opinion, so the row shows Analysis only, at its size", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  for (const prefix of ["", "/en"]) {
+    await page.goto(`${prefix}/category/security`);
+    const row = page.locator('[data-section="category-formats"]');
+    await expect(row.locator("[data-category-block]")).toHaveCount(1);
+    await expect(
+      row.locator('[data-category-block="analysis"] article'),
+    ).toHaveCount(5);
+    // The block keeps its half of the row; the other half stays empty.
+    const block = await row.locator("[data-category-block]").boundingBox();
+    const grid = await row.locator("[data-grouped-row]").boundingBox();
+    expect(block!.width).toBeLessThan(grid!.width / 2 + 1);
+  }
+});
+
+test("the title band: full width, the title in the shell, under the ad-top row", async ({
+  page,
+}) => {
+  for (const width of [360, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/en/category/security");
+    const band = page.locator("main > [data-page-title]");
+    const b = await box(band);
+    const ad = await box(page.locator('[data-ad-slot="ad-top"]'));
+    const clientWidth = await page.evaluate(
+      () => document.documentElement.clientWidth,
+    );
+    expect(b.x).toBe(0);
+    expect(Math.abs(b.width - clientWidth)).toBeLessThanOrEqual(1);
+    expect(Math.abs(b.y - (ad.y + ad.height))).toBeLessThanOrEqual(1);
+    // The panel band color differs from the page (surface-elevated, DR-264).
+    const [bandBg, pageBg] = await band.evaluate((el) => [
+      getComputedStyle(el).backgroundColor,
+      getComputedStyle(document.body).backgroundColor,
+    ]);
+    expect(bandBg).not.toBe(pageBg);
+    // The title lines up with the feature section.
+    const h1 = await box(band.getByRole("heading", { level: 1 }));
+    const wrapper = await box(page.locator("[data-category-wrapper]"));
+    expect(Math.abs(h1.x - wrapper.x)).toBeLessThanOrEqual(1);
+  }
+});
+
+test("More stories: an analysis row shows the format Eyebrow above the title at every width; news rows none", async ({
+  page,
+}) => {
+  for (const prefix of ["", "/en"]) {
+    const label = prefix ? "Analysis" : "বিশ্লেষণ";
+    const rows = page.locator(
+      '[data-section="category-more"] [data-story-card]',
+    );
+    const eyebrows = rows.locator(".type-eyebrow");
+    await page.goto(`${prefix}/category/security`);
+    // One analysis row, in the first 10, so it shows without load more.
+    await expect(eyebrows).toHaveCount(1);
+    expect(
+      await rows.evaluateAll((cards) =>
+        cards.findIndex((c) => c.querySelector(".type-eyebrow")),
+      ),
+    ).toBeLessThan(10);
+    const analysisRow = rows.filter({ has: page.locator(".type-eyebrow") });
+    const eyebrow = analysisRow.getByRole("link", { name: label, exact: true });
+    await expect(eyebrow).toHaveAttribute("href", `${prefix}/analysis`);
+    await expect(analysisRow.locator("[data-chip]")).toHaveCount(0);
+    for (const width of [360, 600, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(eyebrow).toBeVisible();
+      const eyebrowBox = await box(eyebrow);
+      const title = await box(analysisRow.locator("h3"));
+      expect(eyebrowBox.y).toBeLessThan(title.y);
+      expect(Math.abs(eyebrowBox.x - title.x)).toBeLessThanOrEqual(1);
     }
   }
 });

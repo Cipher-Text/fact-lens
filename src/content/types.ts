@@ -139,11 +139,13 @@ export type HomepageVariant = "full" | "sparse";
 export interface CategoryPage {
   lang: Lang;
   category: CategoryId;
-  feature: Story | null; // the feature story: the newest story with an image
-  latest: Story[]; // the next 5 newest, for the rail
-  cards: Story[]; // 3 image stories, one per row
+  feature: Story | null; // the feature story: the newest news story with an image
+  latest: Story[]; // the next 5 newest news stories, for the rail
+  cards: Story[]; // 3 news stories with an image, one per row
+  analysis: Story[]; // up to 5, newest first, for the analysis block (DR-415)
+  opinion: Story[]; // up to 5, newest first, for the opinion block (DR-415)
   mostRead: Story[]; // ranked, rank set
-  more: Story[]; // the rest, newest first; the page shows 10 at a time
+  more: Story[]; // news and analysis not shown above, newest first; never opinion. 10 at a time
 }
 
 /** The four ad slots (spacing-layout-system.md 9). `ad-inline` is for article pages, later. */

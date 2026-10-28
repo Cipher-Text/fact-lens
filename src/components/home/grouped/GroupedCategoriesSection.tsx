@@ -7,10 +7,14 @@ import { Shell } from "@/components/layout/Shell";
 import { WithRail } from "@/components/layout/WithRail";
 import { Wrapper } from "@/components/layout/Wrapper";
 import type { CategoryBlock as CategoryBlockData, Lang, Poll } from "@/content";
-import type { Dictionary } from "@/i18n";
+import { localizedPath, type Dictionary } from "@/i18n";
 
 import { CategoryBlock } from "./CategoryBlock";
 import { DailyPoll } from "./DailyPoll";
+
+/** One row of CategoryBlocks: 1 per row on phones, 2 from 600 (LAY-07). The category page uses it too. */
+export const groupedRow =
+  "grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-(--grid-row-gap) sm:grid-cols-2";
 
 /** The homepage has 3 ad-inset slots or fewer (spacing-layout-system.md Section 9). */
 export const MAX_INSETS = 3;
@@ -73,15 +77,14 @@ export function GroupedCategoriesSection({
               {insets[index] ? (
                 <AdSlot variant="inset" lang={lang} strings={t.ads} />
               ) : null}
-              <div
-                data-grouped-row
-                className="grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-(--grid-row-gap) sm:grid-cols-2"
-              >
+              <div data-grouped-row className={groupedRow}>
                 {row.map((block) => (
                   <CategoryBlock
                     key={block.category}
-                    lang={lang}
-                    block={block}
+                    name={block.category}
+                    heading={t.categories[block.category]}
+                    href={localizedPath(lang, `/category/${block.category}`)}
+                    stories={block.stories}
                     t={t}
                   />
                 ))}
