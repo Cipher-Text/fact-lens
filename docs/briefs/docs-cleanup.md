@@ -25,4 +25,4 @@ DR-370 to DR-377 (work flow), `agent-contract.md` Section 11 (how the contract c
 
 ## Test files
 
-None: no `src/` change. Check: `git grep` finds no path to a deleted file outside changelog lines; `pnpm check` passes.
+None: comments only in `src/` and `tests/`. Check: `git grep` finds no path to a deleted file outside changelog and version lines, the header lines of the kept spec logs (history), and this brief and progress file; `pnpm check` passes.

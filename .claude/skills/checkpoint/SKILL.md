@@ -46,3 +46,5 @@ Give tajmin:
 - Items to mark: Keep, Fix now or Later
 
 Then stop. Commit only when tajmin says so: one commit on the branch, subject `<name>: <what>`, rule IDs on the second line, no agent attribution (`AGENTS.md` Section 9).
+
+After tajmin merges the PR, do `AGENTS.md` Section 9 step 6 on `dev`: the full Chromium e2e, `docs/STATUS.md`, and delete the brief and the progress file (the spec log stays). Commit and push on tajmin's yes.

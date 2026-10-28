@@ -15,7 +15,7 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: PR #19 open; spec logs kept, rule text changed and pushed; waiting for tajmin's merge
+- State: PR #19 open, second review fixes pushed; waiting for tajmin's merge
 - Next step: after the merge, `AGENTS.md` Section 9 step 6 on `dev` (delete this brief and progress file; keep the spec logs)
 - Open questions to tajmin: none
 - Uncommitted: no
@@ -25,6 +25,7 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 | Date | Decision | Source |
 | --- | --- | --- |
 | 29 Oct 2026 | Clean up the redundant md files of earlier runs | tajmin, chat: "I also can see redundant md files from the previous runs. plan a cleanup." |
+| 29 Oct 2026 | The after-merge rule (`AGENTS.md` Section 9 step 6, `agent-contract.md` Section 11 item 1) as a process rule approved in chat, no spec-log item | tajmin, chat: "yes go ahead." (plan), "Yes, keep logs" (rule text now) |
 | 29 Oct 2026 | Restore the spec logs; keep them after the merge (only the brief and progress file are deleted) | tajmin, chat: "restore the spec logs and commit.", then "Yes, keep logs" |
 | 29 Oct 2026 | Also delete the merged `page/` and `task/` branches, local and remote | tajmin, chat: "Yes, plus branches" |
 | 29 Oct 2026 | Run the proposed plan as `/task docs-cleanup`: delete (not archive), spec-log template, fix spec references, after-merge delete rule | tajmin, chat: "yes go ahead." (to the plan with delete as the first option) |
@@ -43,7 +44,7 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - `src/` and `tests/` comments only: `LatestPageView.tsx`, `content/types.ts`, `tests/e2e/latest.spec.ts` cite layout 7D, not `docs/briefs/latest.md`
 - `docs/STATUS.md`: Branch line; spec versions; no spec log file name in the latest bullet
 - Branches deleted local and remote (all in `origin/dev`, local equal to remote): `page/article-parallel`, `page/category`, `page/category-formats`, `page/category-review`, `page/latest`, `page/url-format`, `task/dev-process`. Kept: `page/category-v2` (not merged, commit caf1e9f, no PR), asked tajmin
-- Spec log: none (no spec item: text and process only)
+- Spec log: none. The spec edits are text and version lines only (no rule, value or token). The process rule in `agent-contract.md` Section 11 item 1 and `AGENTS.md` Section 9 step 6 is approved by tajmin in chat, not by a spec-log item: "yes go ahead." (29 Oct 2026, to the plan that named the rule) and "Yes, keep logs" (29 Oct 2026, the rule as it is now). See Decisions
 - Checks: `pnpm check` passed (320 unit tests). E2e not run: comments only in `src/` and `tests/`
 - Design review (design-reviewer): pass, no blockers. Nits fixed in `AGENTS.md`: step 5 says the specs do not change after the merge (was "Nothing changes"); step 6 says its commit is the only one made on `dev` itself. Changelog names of deleted files stay as history
 
@@ -69,3 +70,14 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - Version lines (agent-contract 2.20, component-system 1.26, spacing-layout 2.30) and the layout 2.30 changelog: the reason is now "the spec text names a spec log by its page and item IDs, not by its file path"
 - `docs/spec-log/TEMPLATE.md`, `README.md`, `docs/ISSUES.md` (1.4 line, intro bullet), `docs/STATUS.md` (open items bullet), this brief: say the spec logs are kept
 - The spec body text is unchanged: it names the logs without paths, which still reads right
+
+### PR #19 second review (29 Oct 2026)
+
+- tajmin, chat, 29 Oct 2026: "check the review again"
+- Stale brief paths in comments (missed in checkpoint 1): `CategoryFormatsSection.tsx` and `category.test.tsx` cite layout 7B.1 (were brief `category-formats.md`); `content/content.test.ts` (a `describe` name) and `tests/e2e/text-size.spec.ts` cite layout 7D (were brief `latest.md`). No test logic change
+- `agent-contract.md` Section 11 item 1: says where the logs are (`docs/spec-log/`, e.g. the "Latest spec log" is `latest.md`)
+- `.claude/skills/checkpoint/SKILL.md`: a line after the report: step 6 on `dev` after the merge (brief and progress file deleted, spec log stays)
+- Brief "Test files": the `git grep` check leaves out changelog and version lines, the header lines of the kept spec logs and this task's own brief and progress file
+- Rule approval recorded (Decisions; checkpoint 1 "Spec log" line)
+- PR body corrected: 9 files deleted, spec logs kept
+- Not changed: the review notes written before the logs were restored ("delete the 7 logs", the lost `category.md` Later note: the log is kept, so nothing is lost); U-51 row stays with status Fixed (`ISSUES.md` keeps rows, checkpoint step 6); DOC-57 old line numbers (outside this PR)

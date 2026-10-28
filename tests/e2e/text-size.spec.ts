@@ -21,7 +21,7 @@ test.describe("200% browser text size", () => {
   for (const p of [
     { name: "bn", path: "/" },
     { name: "en", path: "/en" },
-    // The Latest page (brief latest.md).
+    // The Latest page (layout 7D).
     { name: "latest bn", path: "/latest" },
     { name: "latest en", path: "/en/latest" },
   ]) {

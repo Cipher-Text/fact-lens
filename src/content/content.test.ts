@@ -524,7 +524,7 @@ describe("category pages", () => {
   }
 });
 
-describe("latest page (layout 7C.2 Paths, News hub row; brief latest.md)", () => {
+describe("latest page (layout 7C.2 Paths, News hub row; layout 7D)", () => {
   const news = stories.filter((def) => def.format === "news");
 
   for (const lang of langs) {
