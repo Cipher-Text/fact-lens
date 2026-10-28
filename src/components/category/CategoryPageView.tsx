@@ -9,6 +9,7 @@ import { getDictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 import { CategoryFeatureSection } from "./CategoryFeatureSection";
+import { CategoryFormatsSection } from "./CategoryFormatsSection";
 import { CategoryMoreStoriesSection } from "./CategoryMoreStoriesSection";
 import { MissingTranslationNote } from "./MissingTranslationNote";
 
@@ -20,7 +21,11 @@ type Props = {
 export function CategoryPageView({ page }: Props) {
   const { lang, category } = page;
   const t = getDictionary(lang);
-  const afterAd = page.feature !== null || page.mostRead.length > 0;
+  const formats = page.analysis.length > 0 || page.opinion.length > 0;
+  // More stories follows an ad row only when Most read or the feature ad row is the row
+  // before it; after the formats row it follows a section (LAY-12).
+  const afterAd =
+    page.mostRead.length > 0 || (page.feature !== null && !formats);
 
   return (
     <>
@@ -32,14 +37,18 @@ export function CategoryPageView({ page }: Props) {
       <main
         id="main"
         tabIndex={-1}
-        className="pt-(--space-page-start) pb-(--space-section) focus-visible:outline-none"
+        className="pb-(--space-section) focus-visible:outline-none"
       >
-        {/* After the language switch from an article in one language only (DR-401). It
-            reads the URL in the browser; the page stays static. */}
-        <MissingTranslationNote lang={lang} text={t.language.onlyInOther} />
+        {/* The title band is the first row of main, under the ad-top row; it takes the
+            place of space-page-start (tajmin, 28 Oct 2026). The missing translation note
+            sits in the band, above the title (DR-401): it reads the URL in the browser; the
+            page stays static. */}
         <PageTitle
           title={t.categories[category]}
-          className="pb-(--space-section-title-after)"
+          note={
+            <MissingTranslationNote lang={lang} text={t.language.onlyInOther} />
+          }
+          className="mb-(--space-module)"
         />
         {/* CategoryFeatureSection holds the feature story and the card rows, then its ad row. A section with
             no stories also hides its ad row (7.3, LAY-13). The space before the ad row
@@ -56,6 +65,20 @@ export function CategoryPageView({ page }: Props) {
             <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
+        {/* Analysis and opinion, directly above Most read (DR-415). After an ad row:
+            space-module above (LAY-12); space-section to Most read. */}
+        {formats ? (
+          <CategoryFormatsSection
+            lang={lang}
+            analysis={page.analysis}
+            opinion={page.opinion}
+            t={t}
+            className={cn(
+              page.feature && "pt-(--space-module)",
+              "pb-(--space-section)",
+            )}
+          />
+        ) : null}
         {/* Most read in this category: P-5 with RankedList columns (C-07: from 1024 the list
             in the end two thirds, 1 to 3 then 4 and 5, no rule between items), then its ad
             row. After an ad row: space-module above (LAY-12). */}
@@ -66,7 +89,7 @@ export function CategoryPageView({ page }: Props) {
               stories={page.mostRead}
               t={t}
               className={cn(
-                page.feature && "pt-(--space-module)",
+                page.feature && !formats && "pt-(--space-module)",
                 "pb-(--space-module)",
               )}
             />

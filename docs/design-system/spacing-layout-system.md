@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.27 · 28 October 2026 · URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -407,9 +407,10 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 | --- | --- | --- |
 | Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18), unchanged. The category items link to the category pages; the open category is the current item (C-18, C-19) |
 | `ad-top` | Ad container | As on the homepage (Section 9) |
-| Page title | `Shell` | `PageTitle` (C-43): the category name, the page `h1`; space-section-title-after below |
+| Page title | `Shell` | `PageTitle` (C-43): the category name, the page `h1`, in the `surface` band (full width, the content in the shell, first row of `main` under `ad-top`); space-module below |
 | `CategoryFeatureSection` | `Shell`, `WithRail` | A hidden `h2` names the section. Wrapper: the feature story as an `OverlapCard` (C-02, `feature`, no eyebrow), then 3 card rows (`CategoryCardList`). Rail: `SectionHeading` and the 5 newest stories after the feature story as a `StoryList` (C-03 of C-25) |
 | `ad-band` | Ad container | After `CategoryFeatureSection` |
+| `CategoryFormatsSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | The analysis and opinion row (DR-415): one row of two CategoryBlocks (C-23), Analysis at the start, Opinion at the end; 1 per row on phones, 2 from 600 (`LAY-07`). Up to 5 stories per block. `space-module` above (after the ad band, `LAY-12`), `space-section` to Most read |
 | Most read | `Shell` | The top 5 of the category: `MostReadSection` with RankedList (C-07), as on the homepage |
 | `ad-band` | Ad container | After most read |
 | `CategoryMoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | `CategoryMoreStoriesList`: the older stories as StoryCard `dated` (C-24), Divider.item between them, 10 at a time; Divider.rule (C-22) and the load more `Button` |
@@ -419,14 +420,14 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 
 - **CategoryFeatureSection.** Laid out as HeroSection: from 1024 the rail is beside the wrapper; below 1024 it goes under the whole wrapper (`LAY-05`). With no rail stories the wrapper spans the shell (Section 7.3, DR-271).
 - **Card rows.** `StoryCard` (C-24) row, 16:9 image at the end, text : image = 2 : 1, with the summary; `Divider.item` between the rows, measured to the image top (DR-268, DR-350). One per row at every width (`LAY-07`, DR-409).
-- **Formats.** The page lists every story of the category, opinion and op-ed included (DR-408 amends DR-398).
-- **No Eyebrow.** No card on the page shows the Eyebrow: the page title names the category (DR-153).
+- **Formats.** The main stream is news only: the feature story, the rail and the card rows. Analysis and opinion have their own row, `CategoryFormatsSection`, directly above Most read, up to 5 of each, newest first. More stories lists the news and analysis that no section above shows, never opinion, newest first. No story shows twice on the page (DR-415, replaces DR-408).
+- **No Eyebrow.** No card on the page shows the Eyebrow: the page title names the category (DR-153). One exception: an analysis row in More stories shows the C-08 `format` Eyebrow above the title at every width (DR-415, spec log `category-formats.md` CF-07).
 - **Spacing.** `main` starts with `space-page-start` and ends with `space-section`. The space before an ad band belongs to the section above it (`space-module`), and the section after an ad band starts with `space-module` (`LAY-12`).
 - **Load more.** A list shows 10 stories. Each press of the C-12 primary `Button` adds the next 10 and moves focus to the title link of the first added story. The button goes when no stories are left (`COL-13`).
 
 ### 7B.3 Sparse content
 
-A section with no stories is removed with its ad band (Section 7.3, `LAY-13`).
+A section with no stories is removed with its ad band (Section 7.3, `LAY-13`). In `CategoryFormatsSection` an empty block is not shown and the other keeps its size, the other half of the row empty (P-3); with both empty the row is removed. The blocks show what the category has: no fill-in.
 
 ## 7C. URLs
 
@@ -961,6 +962,10 @@ Test these content cases:
 The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.28 (28 October 2026)**
+
+- Category formats (DR-415, IMP-118, spec log `category-formats.md`): 7B.1 adds `CategoryFormatsSection` above Most read; 7B.2 Formats replaces DR-408 (news-only main stream, More stories without opinion and repeats) and the No Eyebrow rule names the analysis row exception; 7B.3 names the sparse rows. 7B.1 Page title: the C-43 PageTitle band (CF-06, U-50 approved by tajmin, 28 Oct 2026).
 
 **2.27 (28 October 2026)**
 

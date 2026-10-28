@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -116,8 +116,9 @@ Category page sections (`spacing-layout-system.md` 7B, DR-402). In page order, b
 | `CategoryFeatureSection` | Hidden heading | `CategoryFeatureSection.featureStory` | OverlapCard (C-02, `feature`, no eyebrow) | The feature story in the wrapper |
 |  |  | `CategoryFeatureSection.cards` | `CategoryCardList`: 3 × StoryCard (C-24, row, 16:9, md, third, summary) | Card rows under the feature story, 1 per row at every width |
 |  | সর্বশেষ / Latest | `CategoryFeatureSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | In the rail |
+| `CategoryFormatsSection` | বিশ্লেষণ / Analysis, মতামত / Opinion (block headings) | `CategoryFormatsSection.blocks` | 2 × CategoryBlock (C-23): Analysis (featureStory StoryCard + StoryList), Opinion (`OpinionRows`, the C-06 quote rows) | Directly above Most read, up to 5 stories per block; 1 block per row on phones, 2 from 600 (DR-415) |
 | `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07) | The top 5 of the category |
-| `CategoryMoreStoriesSection` | আরও পড়ুন / More stories | `CategoryMoreStoriesSection.list` | `CategoryMoreStoriesList`: StoryCard (C-24, `dated`), 10 at a time | 1 per row; Divider.rule and the load more Button (C-12) |
+| `CategoryMoreStoriesSection` | আরও পড়ুন / More stories | `CategoryMoreStoriesSection.list` | `CategoryMoreStoriesList`: StoryCard (C-24, `dated`), 10 at a time | 1 per row; Divider.rule and the load more Button (C-12). News and analysis, never opinion (DR-415) |
 
 Helper parts. They are not sections or numbered components; use these names in code (DR-286).
 
@@ -295,6 +296,7 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--space-lead-eyebrow-title` | 0.5rem (8px) | same | same | LeadStory: eyebrow to title | DR-92 |
 | `--space-lead-summary-meta` | 1rem (16px) | same | same | LeadStory: summary to meta | DR-92 |
 | `--space-eyebrow-separator` | 0.5rem (8px) | same | same | C-08 `Eyebrow.separator`: the inline gap on each side of the two-part middle dot (tajmin, 28 Oct 2026; spec log url-format UF-04) | DR-416 |
+| `--space-page-title-band` | 1.5rem (24px) | 2rem (32px) | 2.5rem (40px) | C-43 PageTitle band: the block inset above and below the content. Not the LAY-20 panel band values (tajmin, 28 Oct 2026; spec log category-formats CF-06) | DR-415 |
 | `--color-meta` | #6E6862 (light, 5.2:1 on background, 4.8:1 on surface-alt) | #A3A3A3 (dark, unchanged) |  | Metadata text and its separator. Same value as ink-muted: #6E6862 is the light ink-muted value for all muted text (captions, labels, ad label), replacing #4F4B48 | DR-100 |
 | `--bar-section` | 2.5rem x 0.5rem (40 x 8px) | 2.5rem x 0.5rem (40 x 8px) | 3rem x 0.5rem (48 x 8px) | Section divider bar, width x height (DR-262). Columns: phone / 600-1023 / 1024 and up (page breakpoints). 48 x 6 under 1024  | DR-103 |
 | `--space-card-overlap` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same (DR-109: every width) | same (46px at 464, 58px at 584) | How far a story card text block covers its image: 10% of the card width, 40 to 64px. Same percent rule as the lead (DR-89) | DR-105, DR-109 |
@@ -342,6 +344,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --button-icon-gap: 0.5rem;
   --top-bar-inset: 0.625rem;
   --space-lead-panel-start: 0;
+  --space-page-title-band: 1.5rem;
   --story-feature-media-min: 26.25rem;
   --story-feature-media-max: 34.8125rem;
   --story-feature-media-share: 0.5;
@@ -357,7 +360,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
 }
 
 @media (min-width: 37.5rem) {
-  :root { --top-bar-inset: 1.125rem; --rank-list-gap: 1.75rem; }
+  :root { --top-bar-inset: 1.125rem; --rank-list-gap: 1.75rem; --space-page-title-band: 2rem; }
 }
 
 @media (min-width: 48rem) {
@@ -372,6 +375,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
     --rank-chip-size: 2.75rem;
     --rank-chip-digit-size: 2rem;
     --rank-chip-digit-weight: 600;
+    --space-page-title-band: 2.5rem;
   }
 }
 
@@ -597,7 +601,7 @@ Shared card from the merge (DR-93): one story with an image and text. Draws ever
 | --- | --- | --- | --- |
 | stack | P-2 featureStory under 768 (3:2, md, summary); CategoryBlock featureStory (3:2, md, summary, DR-152) | RegionSlider.panel first story (3:2, sm) | P-2 rail image story in the 304 rail beside (16:9, sm, DR-121) |
 | row | P-2 rail image story when the rail stacks, phones too (16:9, sm, third, DR-121) | P-4 AnalysisSection compact rows (16:9, sm, eyebrow, third) | P-2 featureStory from 768 (3:2, md, summary, feature) |
-| dated | Category page More stories, stacked (16:9, md, summary, no eyebrow) | Same, three columns from 600 | Same |
+| dated | Category page More stories, stacked (16:9, md, summary, no eyebrow; an analysis story shows the C-08 `format` Eyebrow above the title, `formatLabel`, DR-415) | Same, three columns from 600 | Same |
 
 **Content.**
 
@@ -735,7 +739,7 @@ The analysis column (left) of বিশ্লেষণ ও মতামত (P-4)
 
 **Status:** Approved · **Decisions:** DR-52, DR-76, DR-101, DR-110, DR-112, DR-113, DR-299, DR-300, DR-301, DR-351
 
-The opinion column (right) of বিশ্লেষণ ও মতামত (P-4): a মতামত chip, then 5 opinion pieces as quote rows.
+The opinion column (right) of বিশ্লেষণ ও মতামত (P-4): a মতামত chip, then 5 opinion pieces as quote rows. The quote rows are the part `OpinionRows`; the category page Opinion block (C-23, DR-415) uses them under its own heading, without the chip.
 
 **Variants.** None.
 
@@ -773,18 +777,20 @@ The opinion column (right) of বিশ্লেষণ ও মতামত (P-4)
 
 #### C-23 CategoryBlock
 
-**Status:** Approved · **Decisions:** DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351
+**Status:** Approved · **Decisions:** DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351; category page use: DR-415 (spec log `category-formats.md` CF-03)
 
 One category inside the grouped categories section (P-3): heading, a feature story with image, 2 text rows and আরও দেখুন. Rows of two blocks, an ad-inset between rows, a rail with DailyPoll (C-26). NewsletterSignup (C-14) joins the rail after prototype run 2 (DR-239).
 
 **Variants.** None. The section grid switches columns at the page breakpoints: 2 blocks per row from 600, 1 on phones.
+
+**On the category page** (`CategoryFormatsSection`, DR-415). The page gives each block its heading, its name (the `category-<name>` id) and its MoreLink target; on the homepage these are the category name, the category id and the category page, so P-3 does not change (DR-370). Two blocks in one row: বিশ্লেষণ / Analysis at the start, মতামত / Opinion at the end, up to 5 stories each. The Analysis block has the featureStory and the rows; the Opinion block replaces them with the `OpinionRows` of C-06 (no image). No ad-inset and no rail content: the blocks are in the wrapper, the rail column is empty. An empty block is not shown and the other keeps its size (layout 7.3).
 
 | Part | Spec |
 | --- | --- |
 | Heading | Section divider (C-22) + category name, h2, plain text, not a link (DR-122) |
 | featureStory (StoryCard) | Image 3:2 on top, 16px, title type-story-title (22 to 26px with the page, DR-152), 8px, summary (17px, 500), 16px, meta. Rule below |
 | Rows | Two text rows: title type-story-title-sm + meta, 16px padding, rule between (StoryList, as in P-2 and the hero). 3 stories per category (DR-126) |
-| MoreLink | আরও দেখুন links to the category page, at the block end edge, pinned to the block bottom so both blocks in a row line up (DR-110, DR-123) |
+| MoreLink | আরও দেখুন links to the category page, at the block end edge, pinned to the block bottom so both blocks in a row line up (DR-110, DR-123). In `CategoryFormatsSection` it links to the format hub, `/analysis` or `/opinion` |
 | ad-inset | Between the two rows of blocks, wrapper width, surface-alt, label বিজ্ঞাপন on a 24px line. 728 x 90 from 1280, 300 x 250 below, phones too. Never after the last row. Space-module above and below belongs to the section |
 | Rail | Daily poll in prototype run 2 (DR-239), then from 1280 the ad-rail slot space-module below it: 300×600 or 300×250, reserve 600 (DR-240 to DR-245). No section divider: plain h2 (DR-128), type-section-title 22px (DR-215). At the top of the 304px rail beside the wrapper from 1024; a full row below the blocks under 1024. After run 2 the newsletter sits above the poll, 64px apart beside the wrapper, 48px when the rail stacks (DR-150) |
 | Column rule | From 1024 (rail beside the wrapper): Divider.column-inset between the wrapper and the rail only, 1px solid, 16px from the top and the bottom, centered in the existing --grid-column-gap. No rule between category blocks (DR-351) |
@@ -1067,24 +1073,27 @@ The heading of every news and category section: the section divider (C-22) with 
 
 #### C-43 PageTitle
 
-**Status:** Approved · **Decisions:** DR-405 (category page spec log CL-14)
+**Status:** Approved · **Decisions:** DR-405 (category page spec log CL-14), DR-415 (category-formats spec log CF-06)
 
-The title of a page that is not the homepage or an article: the page `h1` in the shell. The category page uses it with the category name (`spacing-layout-system.md` 7B). Code: `src/components/layout/PageTitle.tsx`.
+The title of a page that is not the homepage or an article: the page `h1` in a band. The category page uses it with the category name (`spacing-layout-system.md` 7B). Code: `src/components/layout/PageTitle.tsx`.
 
-**Variants.** None.
+**Variants.** None. Every page that has a PageTitle shows the band.
 
 | Part | Spec |
 | --- | --- |
-| `PageTitle.bar` | The Divider.section bar alone, with no rule under it (tajmin): --bar-section-width x --bar-section-height, --color-bar, at the start edge, 16px above the title. aria-hidden |
+| `PageTitle.band` | A `header`. The `surface` background (`color-system.md` 2.1, an exception to `surface-alt` for bands) spans the full width; the content sits in the `Shell`, so it lines up with the page. Block inset `--space-page-title-band` (24px narrow, 32px from 600px, 40px from 1024px), no inline inset (tajmin, 28 Oct 2026). It is the first row of `main`, right under the `ad-top` row, in place of space-page-start |
+| `PageTitle.note` | Optional slot above the divider, in the band: the category page MissingTranslationNote |
+| `PageTitle.divider` | Divider.section (C-22, the bar on the rule), space-section-rule-title to the title, as in SectionHeading |
 | `PageTitle.title` | `h1`, `type-page-title`, ink. No description, no link |
 
-Space after the title: space-section-title-after, set by the page.
+Space after the band: space-module, set by the page.
 
 **Checks.**
 
 - One `h1` on the page.
-- The bar has no rule under it; it is not a SectionHeading.
-- No radius, no border.
+- The band is `surface`, not the page background and not `surface-elevated` (the P-4 and Footer panel bands).
+- The band reaches both edges of the viewport; the title lines up with the page content.
+- No radius, no border, no shadow.
 
 #### C-10 MoreLink
 

@@ -22,6 +22,10 @@
      (CPT-07, DOC-30). */
   --space-lead-panel-start: 0;
 
+  /* PageTitle band (C-43) block inset: 24px under 600px, 32px from 600px, 40px from 1024px
+     (tajmin, 28 Oct 2026). Not the LAY-20 panel band values (40 / 48px), CPT-07. */
+  --space-page-title-band: 1.5rem;
+
   /* StoryCard split feature (C-24, P-2 featureStory): the image column is a share of the
      free width, clamped. 50% from 768 to 1023, 60% from 1024 (DR-118, DR-119). Section 6 has
      no tokens for it (DOC-30). */
@@ -59,6 +63,7 @@
   :root {
     --top-bar-inset: 1.125rem;
     --quote-mark-width: 2.25rem;
+    --space-page-title-band: 2rem;
   }
 }
 
@@ -72,6 +77,7 @@
 @media (min-width: 64rem) {
   :root {
     --quote-mark-width: 2.75rem;
+    --space-page-title-band: 2.5rem;
   }
 }
 

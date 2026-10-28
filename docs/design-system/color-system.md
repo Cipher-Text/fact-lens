@@ -1,6 +1,6 @@
 # Fact Lens Color System
 
-Version 2.16 · 24 October 2026 · Article page, checkpoint 1 (DR-389)
+Version 2.17 · 28 October 2026 · Category formats (spec log `category-formats.md` CF-06): `surface` is also the PageTitle band (C-43). Before: Version 2.16 · 24 October 2026 · Article page, checkpoint 1 (DR-389)
 
 The values are not final. Some colors can change after a few prototype rounds. Run the contrast tests in Section 3 again after each change.
 
@@ -47,7 +47,7 @@ Components use utilities only.
 | Token | Utility | Light | Dark | Use |
 | --- | --- | --- | --- | --- |
 | `background` | `background` | `#FFF9ED` | `#18191E` | Page canvas |
-| `surface` | `surface`, `card` | `#FFFCF7` | `#202126` | Cards |
+| `surface` | `surface`, `card` | `#FFFCF7` | `#202126` | Cards, the PageTitle band (C-43, tajmin 28 Oct 2026: an exception to `surface-alt` for bands) |
 | `surface-alt` | `surface-alt`, `muted`, `secondary` | `#F6EEDF` | `#27292F` | Sections, bands, the no-image placeholder in StoryImage (DR-338) |
 | `surface-elevated` | `surface-elevated`, `popover` | `#FFFFFF` | `#303239` | Menus, dialogs, popovers, the বিশ্লেষণ ও মতামত section |
 
@@ -473,6 +473,7 @@ Examples:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.17 | 2026-10-28 | Category formats (DR-415, spec log `category-formats.md` CF-06): Section 2.1 `surface` is also the PageTitle band (C-43), by tajmin's choice; other bands stay `surface-alt`, the P-4 and Footer panel bands `surface-elevated`. |
 | 2.16 | 2026-10-24 | Article page, checkpoint 1 (DR-385, DR-389): Section 2.9 article page colors (`--color-bar` accents, no page aliases, no wash, base focus outline). COL-02: third-party marks take the text color, no hex. COL-04 and COL-05: the article category is a filled `--color-bar` button, a stated exception. `SectionAnchor` hover wash, a stated exception to the no-wash rule (DR-391). |
 | 2.15 | 2026-10-17 | `border` changed: light `#DDD2C4` to `#CEC7BD`, dark `#3A3D44` to `#494D55`, so divider rules show on every surface, `surface-elevated` in dark included (Section 2.5, Section 5, DR-358). |
 | 2.14 | 2026-10-16 | `--color-theme-control` and `--color-theme-icon` removed; `--color-bar` is the one component color token. Ghost icon buttons and the language link: ink, hover `interactive-hover`, no wash; `accent-subtle` has no hover use; `fill-neutral` for the poll only (Section 2.9, Section 4, DR-349). |

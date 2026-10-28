@@ -365,7 +365,9 @@ export const olderCategoryStories: StoryDef[] = [
   {
     id: "n06axe5",
     slug: "defense-procurement-modernization",
-    format: "news",
+    // Analysis older than the 5 in the analysis block, so More stories shows one analysis
+    // row with its label (tajmin, 28 Oct 2026).
+    format: "analysis",
     category: "security",
     regions: ["south-asia"],
     publishedAt: at("09-02 10:20"),

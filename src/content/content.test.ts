@@ -461,9 +461,11 @@ describe("getStory", () => {
 // The category page (spacing-layout-system.md 7B).
 describe("category pages", () => {
   for (const category of categoryIds) {
-    it(`${category}: 16 stories or more, every section full, More news has a second load`, () => {
+    it(`${category}: 16 stories or more, every section full, formats split (DR-415)`, () => {
       const defs = stories.filter((def) => def.category === category);
       expect(defs.length).toBeGreaterThanOrEqual(16);
+      const count = (format: string) =>
+        defs.filter((def) => def.format === format).length;
       for (const lang of langs) {
         const page = getCategoryPage(category, lang);
         expect(page.feature?.image).toBeTruthy();
@@ -471,16 +473,42 @@ describe("category pages", () => {
         expect(page.cards).toHaveLength(3);
         for (const s of page.cards) expect(s.image).toBeTruthy();
         expect(page.mostRead.map((s) => s.rank)).toEqual([1, 2, 3, 4, 5]);
-        // 10 at a time: more than 10 left gives a second load.
-        expect(page.more.length).toBeGreaterThan(10);
+        // The main stream is news only.
+        for (const s of [page.feature!, ...page.latest, ...page.cards])
+          expect(s.format).toBe("news");
+        // Up to 5 per block, all the category has (no mock fill-in).
+        expect(page.analysis).toHaveLength(Math.min(count("analysis"), 5));
+        expect(page.opinion).toHaveLength(Math.min(count("opinion"), 5));
+        for (const s of page.analysis) expect(s.format).toBe("analysis");
+        for (const s of page.opinion) expect(s.format).toBe("opinion");
+        for (const list of [page.analysis, page.opinion, page.more])
+          expect(list).toEqual(
+            [...list].sort(
+              (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+            ),
+          );
+        // More stories: news and analysis, never opinion.
+        for (const s of page.more) expect(s.format).not.toBe("opinion");
+        // 10 at a time. With news and analysis only (DR-415), geopolitics and economy keep
+        // a second load; economy is the page of the load more e2e test. The others fit in
+        // one load with today's mock data.
+        if (category === "economy" || category === "geopolitics")
+          expect(page.more.length).toBeGreaterThan(10);
+        else expect(page.more.length).toBeLessThanOrEqual(10);
         const shown = [
           page.feature!,
           ...page.latest,
           ...page.cards,
+          ...page.analysis,
+          ...page.opinion,
           ...page.more,
         ];
-        // Every story of the category once, newest first after the feature story, all in it.
-        expect(new Set(shown.map((s) => s.id)).size).toBe(defs.length);
+        // Every news and analysis story of the category once, and the 5 newest opinion
+        // stories: no repeats, none left out. Opinion past the 5th goes to the /opinion
+        // hub, not More stories (DR-415).
+        const expected = defs.length - count("opinion") + page.opinion.length;
+        expect(shown).toHaveLength(expected);
+        expect(new Set(shown.map((s) => s.id)).size).toBe(expected);
         for (const s of [...shown, ...page.mostRead])
           expect(s.category).toBe(category);
       }
