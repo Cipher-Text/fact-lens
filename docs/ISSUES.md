@@ -1,6 +1,6 @@
 # Fact Lens: Issues
 
-Version 1.1 · 27 October 2026 · Fixed, decided and closed items removed (the git history keeps them); the article page open items moved here (IMP-101 to IMP-114)
+Version 1.2 · 28 October 2026 · URL format and category formats merged (PR #15, PR #16): IMP-97, IMP-118 and U-50 removed. Before: Version 1.1 · 27 October 2026 · Fixed, decided and closed items removed (the git history keeps them); the article page open items moved here (IMP-101 to IMP-114)
 
 The one place for every open item, flag and decision on an issue. Read it instead of the git history. Items from `prototype-findings.md` and `PROGRESS.md` (removed 24 October 2026) are copied here with their full text.
 
@@ -40,8 +40,6 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | IMP-93 | PR #7 review | Before hydration (or with JS off) the NavBar items that wrap are cut off but are still in the Tab order | Low | Open |
 | IMP-94 | PR #7 review | Latest with one story at 768 to 1023: the column rule shows beside an empty second column (layout §7.3) | Low | Open |
 | IMP-95 | PR #7 review | `header.spec.ts` uses fixed waits (lines 357, 1216: 100ms; 1310: 500ms) for "nothing changes" checks | Low | Open |
-| IMP-97 | – | URL format, home and article: one `/story/<slug>-<id>` root, formats, South Asia, topics, Eyebrow (task `docs/tasks/url-format.md`) | Medium | Done: PR #15 merged 28 Oct 2026; full Chromium e2e on `dev` 806 passed. Run 2 is IMP-118 |
-| IMP-118 | – | Category page lists opinion and analysis in its main stream; DR-415 wants news only, with analysis and opinion sections before Most read | Medium | Open: built on `page/category-formats` (spec log CF-01 to CF-08), closes when the PR merges |
 | IMP-119 | `page/url-format` final checkpoint | The axe checks on the article page can run while the heading still fades in (rd-rise): color-contrast then reads the metadata at 4.46:1 and fails about 1 run in 5. `url-format.spec.ts` now waits for `document.getAnimations()` to end; `article.spec.ts:91` does not yet | Low | Open |
 | IMP-120 | `page/category-formats` start | DR-415 says the Latest rail is news only on every page; the homepage Latest rail (hero, P-1) is not filtered by format (not checked against the mock data yet). Kept out of run 2 because the homepage is locked (DR-370) | Medium | Open: later, needs a DR-370 exception (tajmin, 28 Oct 2026) |
 | IMP-121 | `page/category-formats` final checkpoint | Mock data: `defense-procurement-modernization` (security) is analysis, so More stories shows one analysis row for the visual check (tajmin, 28 Oct 2026). With DR-415, load more shows only on geopolitics and economy; history, technology and security fit in one load | Low | Open: more analysis per category with the real data |
@@ -214,14 +212,6 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 - **Problem:** the review calls these flaky. They check that nothing changes (no scroll, the bar stays stuck, no layout shift), so they cannot poll for a state; but the 100ms waits stand for "the scroll handler has run", which is one animation frame.
 - **What the code does:** no change.
 - **Suggested solution:** lines 357 and 1322: wait two animation frames (the handler runs in `requestAnimationFrame`) instead of 100ms. Line 1416: keep the window for late layout shifts after hydration, or end it on a hydration marker. Check with `--repeat-each=10`.
-
-### IMP-97 URL format, home and article
-
-- **Found:** URL format thread, 25 Oct 2026; rules changed 28 Oct 2026 · **Severity:** Medium · **Status:** Done: PR #15 merged 28 Oct 2026
-- **Task:** `docs/tasks/url-format.md` gives every rule, the checkpoints and the test files. The paths are in `spacing-layout-system.md` Section 7C.
-- **Problem:** articles use `/story/<slug>` with no id; the content model has `explainer` and a `bangladesh` category; the article end links to `/tag/`; the menu links বিশ্লেষণ and মতামত to a homepage anchor; the Eyebrow has one mode.
-- **Not in it:** the category page formats (IMP-118) and the hub, region and topic pages.
-- **Built:** `/story/<slug>-<id>` with a 301 from a wrong or old slug and a 404 for an unknown id or bare `/story`; formats news, analysis, opinion; South Asia in P-2 and the nav; 8 regions; topics at `/topic/<slug>`; C-08 `format` and `two-part`; missing translation (DR-401). Decisions on the way (tajmin, 28 Oct 2026): `--space-eyebrow-separator` 8px (UF-04); mock data adds the `reserve-indicators` article and region tags so each shown region has 3 stories.
 
 ### IMP-100 Move the hand-drawn 1px rules to Divider.rule
 
