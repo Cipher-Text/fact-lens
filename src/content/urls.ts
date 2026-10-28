@@ -38,14 +38,16 @@ export function slugForId(id: string): string | null {
 }
 
 /**
- * The current path segment for a story URL that is wrong or old: a wrong slug with a
- * known id, or the old root /story/<slug> with no id. Null when the segment is already
- * current, or when no article exists in that language (the page gives a 404).
+ * The current path segment for a story URL that is wrong or old: the old root
+ * /story/<slug> with no id, or a wrong slug with a known id. Null when the segment is
+ * already current, or when no article exists in that language (the page gives a 404).
+ * A whole old slug is matched first: its last word can have the shape of an id (6 to 8
+ * base36 characters), and must not send the reader to the story with that id.
  */
 export function currentStoryRef(ref: string, lang: Lang): string | null {
   const parsed = parseStoryRef(ref);
   const def =
-    (parsed && storyById.get(parsed.id)) ?? storyBySlug.get(ref) ?? null;
+    storyBySlug.get(ref) ?? (parsed && storyById.get(parsed.id)) ?? null;
   if (!def || !articleBySlug.get(def.slug)?.[lang]) return null;
   const current = storyRef(def);
   return current === ref ? null : current;

@@ -518,6 +518,15 @@ describe("article URLs (layout 7C, DR-413)", () => {
     expect(centre).toBeDefined();
   });
 
+  // currentStoryRef matches a whole old slug before its id-shaped last word; this keeps
+  // the data from relying on it (PR #15 review).
+  it("has no slug whose last word is a story id", () => {
+    const ids = new Set(stories.map((s) => s.id));
+    for (const { slug } of stories) {
+      expect(ids.has(slug.split("-").at(-1)!), slug).toBe(false);
+    }
+  });
+
   it("finds the current segment for a wrong slug or the old root", () => {
     expect(currentStoryRef(`wrong-slug-${river.id}`, "bn")).toBe(
       storyRef(river),
