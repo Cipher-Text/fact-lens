@@ -213,7 +213,8 @@ const MOST_READ_COUNT = 5;
  * first. The main stream is news only: the feature story is the newest news story with an
  * image, the rail takes the next 5, the card rows the next 3 with an image. The analysis and
  * opinion row takes up to 5 of each. More stories is the news and analysis not shown above,
- * never opinion. Most read comes from the mock ranking.
+ * never opinion. Opinion past the 5th is not on the category page: it belongs to the
+ * /opinion hub (DR-415). Most read comes from the mock ranking.
  */
 export function getCategoryPage(
   category: CategoryId,

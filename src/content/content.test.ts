@@ -503,9 +503,12 @@ describe("category pages", () => {
           ...page.opinion,
           ...page.more,
         ];
-        // Every story of the category once: no repeats, none left out.
-        expect(shown).toHaveLength(defs.length);
-        expect(new Set(shown.map((s) => s.id)).size).toBe(defs.length);
+        // Every news and analysis story of the category once, and the 5 newest opinion
+        // stories: no repeats, none left out. Opinion past the 5th goes to the /opinion
+        // hub, not More stories (DR-415).
+        const expected = defs.length - count("opinion") + page.opinion.length;
+        expect(shown).toHaveLength(expected);
+        expect(new Set(shown.map((s) => s.id)).size).toBe(expected);
         for (const s of [...shown, ...page.mostRead])
           expect(s.category).toBe(category);
       }

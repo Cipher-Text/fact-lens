@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-05, CF-07, CF-08): Section 3 `CategoryFormatsSection`; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -296,6 +296,7 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--space-lead-eyebrow-title` | 0.5rem (8px) | same | same | LeadStory: eyebrow to title | DR-92 |
 | `--space-lead-summary-meta` | 1rem (16px) | same | same | LeadStory: summary to meta | DR-92 |
 | `--space-eyebrow-separator` | 0.5rem (8px) | same | same | C-08 `Eyebrow.separator`: the inline gap on each side of the two-part middle dot (tajmin, 28 Oct 2026; spec log url-format UF-04) | DR-416 |
+| `--space-page-title-band` | 1.5rem (24px) | 2rem (32px) | 2.5rem (40px) | C-43 PageTitle band: the block inset above and below the content. Not the LAY-20 panel band values (tajmin, 28 Oct 2026; spec log category-formats CF-06) | DR-415 |
 | `--color-meta` | #6E6862 (light, 5.2:1 on background, 4.8:1 on surface-alt) | #A3A3A3 (dark, unchanged) |  | Metadata text and its separator. Same value as ink-muted: #6E6862 is the light ink-muted value for all muted text (captions, labels, ad label), replacing #4F4B48 | DR-100 |
 | `--bar-section` | 2.5rem x 0.5rem (40 x 8px) | 2.5rem x 0.5rem (40 x 8px) | 3rem x 0.5rem (48 x 8px) | Section divider bar, width x height (DR-262). Columns: phone / 600-1023 / 1024 and up (page breakpoints). 48 x 6 under 1024  | DR-103 |
 | `--space-card-overlap` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same (DR-109: every width) | same (46px at 464, 58px at 584) | How far a story card text block covers its image: 10% of the card width, 40 to 64px. Same percent rule as the lead (DR-89) | DR-105, DR-109 |
@@ -343,6 +344,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --button-icon-gap: 0.5rem;
   --top-bar-inset: 0.625rem;
   --space-lead-panel-start: 0;
+  --space-page-title-band: 1.5rem;
   --story-feature-media-min: 26.25rem;
   --story-feature-media-max: 34.8125rem;
   --story-feature-media-share: 0.5;
@@ -358,7 +360,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
 }
 
 @media (min-width: 37.5rem) {
-  :root { --top-bar-inset: 1.125rem; --rank-list-gap: 1.75rem; }
+  :root { --top-bar-inset: 1.125rem; --rank-list-gap: 1.75rem; --space-page-title-band: 2rem; }
 }
 
 @media (min-width: 48rem) {
@@ -373,6 +375,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
     --rank-chip-size: 2.75rem;
     --rank-chip-digit-size: 2rem;
     --rank-chip-digit-weight: 600;
+    --space-page-title-band: 2.5rem;
   }
 }
 
@@ -1070,24 +1073,27 @@ The heading of every news and category section: the section divider (C-22) with 
 
 #### C-43 PageTitle
 
-**Status:** Approved · **Decisions:** DR-405 (category page spec log CL-14)
+**Status:** Approved · **Decisions:** DR-405 (category page spec log CL-14), DR-415 (category-formats spec log CF-06)
 
-The title of a page that is not the homepage or an article: the page `h1` in the shell. The category page uses it with the category name (`spacing-layout-system.md` 7B). Code: `src/components/layout/PageTitle.tsx`.
+The title of a page that is not the homepage or an article: the page `h1` in a band. The category page uses it with the category name (`spacing-layout-system.md` 7B). Code: `src/components/layout/PageTitle.tsx`.
 
-**Variants.** None.
+**Variants.** None. Every page that has a PageTitle shows the band.
 
 | Part | Spec |
 | --- | --- |
-| `PageTitle.bar` | The Divider.section bar alone, with no rule under it (tajmin): --bar-section-width x --bar-section-height, --color-bar, at the start edge, 16px above the title. aria-hidden |
+| `PageTitle.band` | A `header`. The `surface` background spans the full width; the content sits in the `Shell`, so it lines up with the page. Block inset `--space-page-title-band` (24px narrow, 32px from 600px, 40px from 1024px), no inline inset (tajmin, 28 Oct 2026). It is the first row of `main`, right under the `ad-top` row, in place of space-page-start |
+| `PageTitle.note` | Optional slot above the divider, in the band: the category page MissingTranslationNote |
+| `PageTitle.divider` | Divider.section (C-22, the bar on the rule), space-section-rule-title to the title, as in SectionHeading |
 | `PageTitle.title` | `h1`, `type-page-title`, ink. No description, no link |
 
-Space after the title: space-section-title-after, set by the page.
+Space after the band: space-module, set by the page.
 
 **Checks.**
 
 - One `h1` on the page.
-- The bar has no rule under it; it is not a SectionHeading.
-- No radius, no border.
+- The band is `surface`, not the page background and not `surface-elevated` (the P-4 and Footer panel bands).
+- The band reaches both edges of the viewport; the title lines up with the page content.
+- No radius, no border, no shadow.
 
 #### C-10 MoreLink
 

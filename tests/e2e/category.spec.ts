@@ -273,6 +273,8 @@ for (const p of PAGES) {
       for (const href of opinion) expect(more).not.toContain(href);
     });
 
+    // Economy is the page of this test: with news and analysis only in More stories
+    // (DR-415), only economy and geopolitics have a second load in today's mock data.
     test("load more adds 10, moves focus to the first new story, and goes when none are left", async ({
       page,
     }) => {
@@ -385,7 +387,14 @@ test("sparse (7.3): security has no opinion, so the row shows Analysis only, at 
 test("the title band: full width, the title in the shell, under the ad-top row", async ({
   page,
 }) => {
-  for (const width of [360, 1280]) {
+  // Block inset space-page-title-band: 24px under 600, 32px from 600, 40px from 1024.
+  for (const [width, inset] of [
+    [360, "24px"],
+    [600, "32px"],
+    [1023, "32px"],
+    [1024, "40px"],
+    [1280, "40px"],
+  ] as const) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/en/category/security");
     const band = page.locator("main > [data-page-title]");
@@ -397,12 +406,27 @@ test("the title band: full width, the title in the shell, under the ad-top row",
     expect(b.x).toBe(0);
     expect(Math.abs(b.width - clientWidth)).toBeLessThanOrEqual(1);
     expect(Math.abs(b.y - (ad.y + ad.height))).toBeLessThanOrEqual(1);
-    // The panel band color differs from the page (surface-elevated, DR-264).
-    const [bandBg, pageBg] = await band.evaluate((el) => [
-      getComputedStyle(el).backgroundColor,
-      getComputedStyle(document.body).backgroundColor,
-    ]);
+    // The band is surface (tajmin's tweak, flag U-50), not the page background.
+    const [bandBg, pageBg, surface, padTop, padBottom] = await band.evaluate(
+      (el) => {
+        const probe = document.createElement("div");
+        probe.style.backgroundColor = "var(--surface)";
+        document.body.append(probe);
+        const surface = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        const style = getComputedStyle(el);
+        return [
+          style.backgroundColor,
+          getComputedStyle(document.body).backgroundColor,
+          surface,
+          style.paddingTop,
+          style.paddingBottom,
+        ];
+      },
+    );
+    expect(bandBg).toBe(surface);
     expect(bandBg).not.toBe(pageBg);
+    expect([padTop, padBottom]).toEqual([inset, inset]);
     // The title lines up with the feature section.
     const h1 = await box(band.getByRole("heading", { level: 1 }));
     const wrapper = await box(page.locator("[data-category-wrapper]"));
