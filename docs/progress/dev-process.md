@@ -34,6 +34,7 @@ Written after the work, so the branch follows the flow it adds. The template is 
 - Code: `.claude/hooks/protect-files.mjs` (tajmin's edits): `task/` may edit specs; branch from `git rev-parse`; texts say "page/ or task/".
 - Docs: `AGENTS.md` 1.9 Sections 1, 5, 8, 9, 10, 11; `CLAUDE.md`; `docs/STATUS.md`.
 - Spec: `agent-contract.md` 2.18: Section 3 other-page row, Section 11 items 1 to 3 (`page/` or `task/` branch, progress file, spec log at the final checkpoint).
+- Spec log: `docs/spec-log/dev-process.md` DP-01 (contract Section 11) and DP-02 (Section 3 row), both changed rules approved by tajmin.
 - New tokens, components, strings, mock data, tests: none.
 - Tweaks from tajmin: none beyond the decisions above. Review fixes from PR #17 rounds 1 to 5.
 - Gaps and flags: none. Optional: rename `onPageBranch` to `onWorkBranch` in `protect-files.mjs`.
