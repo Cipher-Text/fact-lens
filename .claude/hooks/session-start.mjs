@@ -4,6 +4,7 @@
 // of the progress file docs/progress/<name>.md, so the work goes on after a clear.
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { execFileSync } from "node:child_process";
 
 const root = process.env.CLAUDE_PROJECT_DIR || process.cwd();
 const file = join(root, "docs", "STATUS.md");
@@ -16,9 +17,11 @@ if (existsSync(file)) {
   }
 }
 
+// Ask git for the branch: in a worktree `.git` is a file, not a folder.
+// On a detached HEAD git prints "HEAD", so the hook shows no progress file.
 let branch = "";
 try {
-  branch = readFileSync(join(root, ".git", "HEAD"), "utf8").trim().replace(/^ref: refs\/heads\//, "");
+  branch = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
 } catch {
   branch = "";
 }

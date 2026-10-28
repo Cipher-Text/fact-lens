@@ -165,7 +165,7 @@ A flag gives: what is wrong, what you did, the rule IDs, your proposal and an ex
 
 ## 9. How to work
 
-There are no sprints or tickets. One page or task is one branch, one brief, one progress file and one spec log (`DR-370` to `DR-377`). A page is a new page. A task is any other change: a fix, a UI piece, typography, a token, a component or an open issue.
+There are no sprints or tickets. One page or task is one branch, one brief and one progress file, and a spec log when the work has spec items (`DR-370` to `DR-377`). A page is a new page. A task is any other change: a fix, a UI piece, typography, a token, a component or an open issue.
 
 1. **Start.**
    - Page: tajmin types `/page <name>`. Make `page/<name>` from `dev`. Draft `docs/briefs/<name>.md` (one page at most) with 3 to 6 one-line checkpoints and the test files.
