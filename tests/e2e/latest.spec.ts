@@ -4,7 +4,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
-// The Latest page, /[lang]/latest (brief docs/briefs/latest.md; layout 7C.2 Paths, News hub row: news only):
+// The Latest page, /[lang]/latest (layout 7D; layout 7C.2 Paths, News hub row: news only):
 // page order, the dated StoryCard rows (C-24) with the category Eyebrow (C-08), newest
 // first, 10 first and 10 per load more (C-12), keyboard and axe, in Bangla and English
 // (COL-13, TYP-03, LAY-02, LAY-07, LAY-14, LAY-17, CPT-05, CPT-06, DR-18, T-27).

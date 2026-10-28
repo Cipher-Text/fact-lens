@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -120,13 +120,13 @@ Category page sections (`spacing-layout-system.md` 7B, DR-402). In page order, b
 | `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07) | The top 5 of the category |
 | `MoreStoriesSection` | আরও পড়ুন / More stories | `MoreStoriesSection.list` | `MoreStoriesList`: StoryCard (C-24, `dated`), 10 at a time | 1 per row; Divider.rule and the load more Button (C-12). On the category page: news and analysis, never opinion (DR-415). Shared with the Latest page (`src/components/more-stories/`) |
 
-Latest page sections (`spacing-layout-system.md` 7D, spec log `latest.md` LT-05). In page order, between the top ad and the footer.
+Latest page sections (`spacing-layout-system.md` 7D, Latest spec log LT-05). In page order, between the top ad and the footer.
 
 | Section | Label (Bangla / English) | Item | Component | What |
 | --- | --- | --- | --- | --- |
 | `LatestPageView` | – | – | – | The Latest page template |
 | `PageTitle` (C-43) | সর্বশেষ / Latest | – | – | The page `h1`; it names the list |
-| `MoreStoriesSection` | – (named by the `h1`) | `MoreStoriesSection.list` | `MoreStoriesList`, as on the category page: StoryCard (C-24, `dated`, the C-08 `category` Eyebrow, `h2` titles), 10 at a time | News of every category, newest first (spec log `latest.md` LT-02, renamed from `CategoryMoreStoriesSection`, `CategoryMoreStoriesList`: tajmin, 28 Oct 2026) |
+| `MoreStoriesSection` | – (named by the `h1`) | `MoreStoriesSection.list` | `MoreStoriesList`, as on the category page: StoryCard (C-24, `dated`, the C-08 `category` Eyebrow, `h2` titles), 10 at a time | News of every category, newest first (Latest spec log LT-02, renamed from `CategoryMoreStoriesSection`, `CategoryMoreStoriesList`: tajmin, 28 Oct 2026) |
 
 Helper parts. They are not sections or numbered components; use these names in code (DR-286).
 
@@ -454,7 +454,7 @@ The container rule sets the lead tokens on `.lead-story`, so the `@container` is
 
 Article page tokens (`--rd-*`, `--ad-inline-w`, `--ad-inline-h`) are in `src/styles/reader.css`, scoped under `.rd`. `spacing-layout-system.md` Section 7A lists them (DR-386). The shadcn `Dialog` motion is the `dialog-panel` utility in `components.css` (DR-390).
 
-Load more motion (`spacing-layout-system.md` 7B.2, spec log `latest.md` LT-03): the rows a press adds fade in, and the story image of an added row fades in when it has loaded. Opacity only, the one motion duration (DR-346, DR-284); the base rule removes it with reduced motion (DR-227). In `components.css`:
+Load more motion (`spacing-layout-system.md` 7B.2, Latest spec log LT-03): the rows a press adds fade in, and the story image of an added row fades in when it has loaded. Opacity only, the one motion duration (DR-346, DR-284); the base rule removes it with reduced motion (DR-227). In `components.css`:
 
 ```css
 @keyframes story-added {
@@ -648,7 +648,7 @@ Shared card from the merge (DR-93): one story with an image and text. Draws ever
 - No radius, no card border.
 - Every row layout stacks (image on top, text below) when its container is narrower than 17.5rem (@container, rem-based): at 200% text the rows below 1280 stack; at normal text no row stacks. Check the value in the build (A11Y-18, DR-308).
 - Image loads lazily, except the hero cards (DR-325).
-- `imageFadeIn` (off by default): the image stays transparent over the `surface-alt` slot fill until it has loaded, then fades in (`story-image-fade`). Only the rows a load more press adds use it (spacing-layout 7B.2, spec log `latest.md` LT-03).
+- `imageFadeIn` (off by default): the image stays transparent over the `surface-alt` slot fill until it has loaded, then fades in (`story-image-fade`). Only the rows a load more press adds use it (spacing-layout 7B.2, Latest spec log LT-03).
 - The list around the card draws rules and padding, not the card.
 - Each place matches its approved board.
 
@@ -808,7 +808,7 @@ The opinion column (right) of বিশ্লেষণ ও মতামত (P-4)
 
 #### C-23 CategoryBlock
 
-**Status:** Approved · **Decisions:** DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351; category page use: DR-415 (spec log `category-formats.md` CF-03)
+**Status:** Approved · **Decisions:** DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351; category page use: DR-415 (category formats spec log CF-03)
 
 One category inside the grouped categories section (P-3): heading, a feature story with image, 2 text rows and আরও দেখুন. Rows of two blocks, an ad-inset between rows, a rail with DailyPoll (C-26). NewsletterSignup (C-14) joins the rail after prototype run 2 (DR-239).
 
@@ -850,7 +850,7 @@ One category inside the grouped categories section (P-3): heading, a feature sto
 
 #### C-07 RankedList
 
-**Status:** Approved · **Decisions:** DR-44, DR-148, DR-290, DR-300, DR-403, DR-404 (category spec log CL-18, CL-21, CL-22); one layout on the homepage and the category page (IMP-99, spec log `home-most-read.md` HM-01 to HM-03; amends DR-51, DR-145, DR-299, DR-144, DR-146, DR-147)
+**Status:** Approved · **Decisions:** DR-44, DR-148, DR-290, DR-300, DR-403, DR-404 (category spec log CL-18, CL-21, CL-22); one layout on the homepage and the category page (IMP-99, most read spec log HM-01 to HM-03; amends DR-51, DR-145, DR-299, DR-144, DR-146, DR-147)
 
 Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = rank chip + title (DR-162, was RankItem). One layout on the homepage and the category page (the former `columns` variant; the `grid` layout is removed).
 
@@ -1470,7 +1470,7 @@ The minimum footer (DR-59) after the last ad band. Wireframe V2 look: everything
 
 ### Article page
 
-These sheets come from the accepted page spec log `docs/spec-log/article.md`, checkpoint 1 (DR-385, DR-390). The code is in `src/components/reader/` and `src/styles/reader.css`. Layout, widths and spacing are in `spacing-layout-system.md` Section 7A. Colors are in `color-system.md` Section 2.9.
+These sheets come from the accepted article page spec log, checkpoint 1 (DR-385, DR-390). The code is in `src/components/reader/` and `src/styles/reader.css`. Layout, widths and spacing are in `spacing-layout-system.md` Section 7A. Colors are in `color-system.md` Section 2.9.
 
 #### C-27 ArticleHeader
 

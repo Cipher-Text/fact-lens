@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-// The analysis and opinion row of the category page (DR-415, brief category-formats.md).
+// The analysis and opinion row of the category page (DR-415, layout 7B.1).
 function renderRow(
   category: "economy" | "security",
   lang: "bn" | "en",

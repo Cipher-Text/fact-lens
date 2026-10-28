@@ -17,7 +17,7 @@ type Props = {
 };
 
 /**
- * The analysis and opinion row of the category page (DR-415, brief `category-formats.md`),
+ * The analysis and opinion row of the category page (DR-415, layout 7B.1),
  * directly above Most read. The P-3 layout: one row of two CategoryBlocks (C-23), Analysis
  * at the start and Opinion at the end, 1 per row on phones (LAY-07). Up to 5 stories per
  * block. Analysis keeps the C-23 feature card and StoryList; Opinion uses the OpinionList

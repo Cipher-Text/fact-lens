@@ -12,7 +12,7 @@ type Props = {
 };
 
 /**
- * The Latest page (`docs/briefs/latest.md`): the news hub, news of every category, newest
+ * The Latest page (layout 7D): the news hub, news of every category, newest
  * first (layout 7C.2 Paths, News hub row: news only). Page order: header, ad-top, PageTitle, the list, footer. No ad band
  * (tajmin, 28 Oct 2026).
  */

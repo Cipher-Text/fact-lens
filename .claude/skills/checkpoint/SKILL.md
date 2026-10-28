@@ -18,7 +18,7 @@ Run the `/verify` steps. The test files are in the brief.
 
 ## 3. Spec log
 
-Make or update `docs/spec-log/<name>.md` in the format of `docs/spec-log/category-formats.md` (header, kinds, item table, flags). Take the items from the progress file: each reused rule, new token, new component, new rule and changed rule, with `file:line` from the code now. A changed rule is always a flag. Code changes that are not spec items stay in the progress file only. If the work has no spec item, make no spec log and say so in the report.
+Make or update `docs/spec-log/<name>.md` from `docs/spec-log/TEMPLATE.md` (header, kinds, item table, flags). Take the items from the progress file: each reused rule, new token, new component, new rule and changed rule, with `file:line` from the code now. A changed rule is always a flag. Code changes that are not spec items stay in the progress file only. If the work has no spec item, make no spec log and say so in the report.
 
 ## 4. Review
 
@@ -46,3 +46,5 @@ Give tajmin:
 - Items to mark: Keep, Fix now or Later
 
 Then stop. Commit only when tajmin says so: one commit on the branch, subject `<name>: <what>`, rule IDs on the second line, no agent attribution (`AGENTS.md` Section 9).
+
+After tajmin merges the PR, do `AGENTS.md` Section 9 step 6 on `dev`: the full Chromium e2e, `docs/STATUS.md`, and delete the brief and the progress file (the spec log stays). Commit and push on tajmin's yes.
