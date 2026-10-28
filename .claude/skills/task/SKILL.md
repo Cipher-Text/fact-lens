@@ -26,7 +26,7 @@ A task is one branch, one short brief and one progress file, like a page (`AGENT
 1. Name: the issue ID in lower case, then 2 to 4 words in kebab case, for example `imp-120-format-hub-links`. Without an ID, only the words, for example `english-card-headline`.
 2. If the working tree is not clean, stop and tell tajmin.
 3. Run `git fetch origin dev`. Make the branch: `git switch -c task/<name> origin/dev --no-track`.
-4. In `docs/STATUS.md` "Now", add the line `Task: <name>, in progress (branch task/<name>)`.
+4. In `docs/STATUS.md` "Now", set the `Branch:` bullet to: Branch: `task/<name>`, task <name> in progress.
 
 ## 3. Ask
 

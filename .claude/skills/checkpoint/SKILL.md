@@ -27,7 +27,7 @@ Make or update `docs/spec-log/<name>.md` in the format of `docs/spec-log/categor
 
 ## 5. Specs
 
-With no spec log, skip the spec writes and do only the last sentence of this step (the Section 3 check).
+With no spec log, skip this step: make no edit in `docs/design-system/`, `agent-contract.md` Section 3 included. A change of page or component scope is a spec item, so it always has a spec log.
 
 On the branch, write the green items into `docs/design-system/` (the hook allows it only on a `page/` or `task/` branch). Raise the version line of each changed spec and add a change-log row. Do not write red items. Then update `agent-contract.md` Section 3 if the scope of a page or a component changed.
 
