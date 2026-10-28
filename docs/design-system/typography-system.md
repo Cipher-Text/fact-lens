@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.19 · 27 October 2026 · Homepage most read (IMP-99): `type-rank` retired; the RankedList rank is the chip (`component-system.md` C-07)
+Version 2.20 · 28 October 2026 · URL format (IMP-97): example label দক্ষিণ এশিয়া (DR-412). Before: Homepage most read (IMP-99): `type-rank` retired; the RankedList rank is the chip (`component-system.md` C-07)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -369,7 +369,7 @@ Every homepage text uses a role in this table. Phones use the low end of each fl
 - The opinion quote mark is a decorative SVG icon with `aria-hidden="true"`. It is not a text glyph.
 - Metadata order on every card: time, then reading time. Reading time comes from the optional story field `readingMinutes`. A story with no reading time shows the time only, with no separator (DR-272). Draw the separator with CSS as a 4px square, not a character (`CPT-10`). Put the time in `<time datetime>` and format it per `TYP-17`.
 - Homepage heading outline (DR-275): a hidden `h1` ফ্যাক্ট লেন্স: প্রথম পাতা (English string from `en.ts`); a hidden `h2` names the hero; each section has its `h2`; each story title is an `h3`. The logo is a link, not the `h1`.
-- Each "আরও দেখুন" link has the section name for screen readers, for example "আরও দেখুন: বাংলাদেশ". The visible text stays the same.
+- Each "আরও দেখুন" link has the section name for screen readers, for example "আরও দেখুন: দক্ষিণ এশিয়া". The visible text stays the same.
 - Interface text is in the page language. Take every interface string from one string file per language (`src/i18n/bn.ts`, `src/i18n/en.ts`). A Bangla page has no English interface words.
 - The language switch shows the other language in its own script, with a matching `lang` attribute. Bangla pages: "En" on phones (under 768px), "English" from 768px. English pages: "বাংলা" at every width (DR-174).
 - Language redirect: a remembered English choice (cookie `fl-lang=en`) redirects to `/en` only at `/`. Every other URL, including a shared link, opens in its own language. Never read the browser language (DR-17, DR-270). The proxy runs on every path except `api/` and `_next/`; the `fl-lang` cookie is `Secure` in production; the `?lang=` redirect sends `Cache-Control: no-store` (DR-328).
@@ -1011,6 +1011,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.20 | 2026-10-28 | URL format (IMP-97, `docs/tasks/url-format.md`): the "আরও দেখুন" example in Section 4 names দক্ষিণ এশিয়া, not বাংলাদেশ (DR-412). No value changes. |
 | 2.19 | 2026-10-27 | Homepage most read (IMP-99, spec log `home-most-read.md` HM-03, HM-05): `type-rank` and the `--type-rank-*` tokens retired, with the numeral rules of `rank-list`; the rank is the chip of `component-system.md` C-07, whose `@utility rank-list` is in that file's Section 6 (amends DR-144, DR-146, DR-147). Section 7.1 role map and the most read notes follow. |
 | 2.18 | 2026-10-27 | Category page (tajmin, U-44): Section 3.1 and 8.2 add `--rank-chip-ink-start` and `--rank-chip-ink-end` per language, the ink insets of the RankedList `columns` chip digits (C-07). |
 | 2.17 | 2026-10-24 | Article page, checkpoint 1 (DR-385, DR-388): `type-article-title` 36–48px English, 34–44px Bangla, largest from 1280 (was 40–60 and 38–56). Section 4: the reader size also scales `KeyPoints` and `ContextCard`; a size change eases over `--duration-slide`. Section 7.2: article page role map for the new parts. |

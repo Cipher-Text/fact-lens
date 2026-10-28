@@ -40,7 +40,8 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | IMP-93 | PR #7 review | Before hydration (or with JS off) the NavBar items that wrap are cut off but are still in the Tab order | Low | Open |
 | IMP-94 | PR #7 review | Latest with one story at 768 to 1023: the column rule shows beside an empty second column (layout §7.3) | Low | Open |
 | IMP-95 | PR #7 review | `header.spec.ts` uses fixed waits (lines 357, 1216: 100ms; 1310: 500ms) for "nothing changes" checks | Low | Open |
-| IMP-97 | – | URL change: two article roots and the Eyebrow format | Medium | Open (tajmin, 25 Oct 2026; DR-397, DR-400) |
+| IMP-97 | – | URL format, home and article: one `/story/<slug>-<id>` root, formats, South Asia, topics, Eyebrow (task `docs/tasks/url-format.md`) | Medium | Open: specs written on `page/url-format`, code to do (tajmin, 28 Oct 2026; DR-410 to DR-417) |
+| IMP-118 | – | Category page lists opinion and analysis in its main stream; DR-415 wants news only, with analysis and opinion sections before Most read | Medium | Open: run 2, `page/category-formats` (tajmin, 28 Oct 2026) |
 | IMP-100 | Category page checkpoint | Move the hand-drawn 1px horizontal rules to Divider.rule (C-22): the article rule above the Tags, and the candidates in the detail entry | Medium | Open: to do (tajmin, 27 Oct 2026) |
 | U-47 | `page/home-most-read` checkpoint | 200% text size: layout §13 and the C-07 check say most read stacks; with the one RankedList layout it keeps two list columns from 600 (no sideways scroll, `text-size.spec.ts` passes). Keep two columns and change §13, or set a stacking trigger (spec log HM-04) | Medium | Open (flag) |
 | DOC-56 | `page/home-most-read` checkpoint | `--type-story-title-sm-ink-end` (typography 3.1, "Below the last title line (RankedList)") has no user since RankedList dropped Divider.item (IMP-99); only `tokens.test.ts` reads it. Retire it or name a new user | Low | Open |
@@ -207,19 +208,12 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 - **What the code does:** no change.
 - **Suggested solution:** lines 357 and 1216: wait two animation frames (the handler runs in `requestAnimationFrame`) instead of 100ms. Line 1310: keep the window for late layout shifts after hydration, or end it on a hydration marker. Check with `--repeat-each=10`.
 
-### IMP-97 URL change: two article roots and the Eyebrow format
+### IMP-97 URL format, home and article
 
-- **Found:** URL format thread, 25 Oct 2026 · **Severity:** Medium · **Status:** Open (tajmin, 25 Oct 2026; DR-397, DR-400)
-- **Source:** `src/components/story/links.ts` (`storyHref`), `src/app/[lang]/story/[slug]/`, `src/content/` (mock data), `spacing-layout-system.md` line 303 (`/story/<slug>`).
-- **Problem:** articles use `/story/<slug>` for every format, and the Eyebrow shows the category on every article.
-- **Rules to build:**
-  - News, analysis and explainer: `/story/<slug>-<id>`. Opinion and op-ed: `/opinion/<slug>-<id>`. English adds `/en`.
-  - `<id>` is a short fixed id per article, shared by both languages. One slug for both languages; the Bangla page uses the English slug. The backend makes slugs; mock data gets short ids.
-  - The page is found by `<id>`. A wrong or old slug or root gets a 301 to the current URL. Lowercase Latin, hyphens, no trailing slash.
-  - Bare `/story` and `/opinion` give a 404.
-  - The Eyebrow shows the format (example: Opinion) on analysis, explainer, opinion and op-ed articles. No breadcrumb trail.
-- **Suggested solution:** do it on a `page/` branch, so the spec line in `spacing-layout-system.md` can change with the code. IMP-18 stays: section pages are still 404 pages.
-- **Answers so far (tajmin, 26 Oct 2026):** the format replaces the category in the Eyebrow; it applies everywhere the Eyebrow shows, homepage cards included; op-ed is not built now. Open: the format Eyebrow is a link to a "voices hub" (opinion), but the hub, its URL (bare `/opinion` is a 404) and the analysis and explainer targets are not decided. Its own branch, after the category page.
+- **Found:** URL format thread, 25 Oct 2026; rules changed 28 Oct 2026 · **Severity:** Medium · **Status:** Open: specs written on `page/url-format`, code to do (tajmin, 28 Oct 2026)
+- **Task:** `docs/tasks/url-format.md` gives every rule, the checkpoints and the test files. The paths are in `spacing-layout-system.md` Section 7C.
+- **Problem:** articles use `/story/<slug>` with no id; the content model has `explainer` and a `bangladesh` category; the article end links to `/tag/`; the menu links বিশ্লেষণ and মতামত to a homepage anchor; the Eyebrow has one mode.
+- **Not in it:** the category page formats (IMP-118) and the hub, region and topic pages.
 
 ### IMP-100 Move the hand-drawn 1px rules to Divider.rule
 

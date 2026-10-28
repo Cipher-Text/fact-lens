@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.26 · 27 October 2026 · Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.27 · 28 October 2026 · URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -19,6 +19,7 @@ The wireframes show placement only. They do not give measurements. Use the value
 7. [Homepage](#7-homepage)
 7A. [Article page](#7a-article-page)
 7B. [Category page](#7b-category-page)
+7C. [URLs](#7c-urls)
 8. [Peer rows](#8-peer-rows)
 9. [Ads](#9-ads)
 10. [Layers](#10-layers)
@@ -234,7 +235,7 @@ Search:
 | 4 | Ad band | Ad |
 | 5 | P-4 বিশ্লেষণ ও মতামত (analysis and opinion) | Panel band: full-width background, content in the shell (DR-264) |
 | 6 | Ad band | Ad |
-| 7 | P-2 Featured category (বাংলাদেশ) | Shell |
+| 7 | P-2 Featured region (দক্ষিণ এশিয়া, DR-412) | Shell |
 | 8 | Ad band | Ad |
 | 9 | P-2 Featured category (ভূরাজনীতি) | Shell |
 | 10 | Ad band | Ad |
@@ -301,7 +302,7 @@ Below 600px, the regions are tabs (`tablist`, arrow keys, `aria-selected`). The 
 
 ## 7A. Article page
 
-The article page (`/story/<slug>`, `ReaderPage`) is defined from the accepted page spec log `docs/spec-log/article.md`, checkpoint 1 (DR-385). The code on the article branch is the reference. The page tokens are in `src/styles/reader.css`, scoped under `.rd`. Component looks are in `component-system.md` (C-27 to C-42).
+The article page (`/story/<slug>-<id>`, `ReaderPage`; Section 7C) is defined from the accepted page spec log `docs/spec-log/article.md`, checkpoint 1 (DR-385). The code on the article branch is the reference. The page tokens are in `src/styles/reader.css`, scoped under `.rd`. Component looks are in `component-system.md` (C-27 to C-42).
 
 ### 7A.1 Page order
 
@@ -398,7 +399,7 @@ Print hides the dock, the rail, the `PreferredSourceAlert` row, Read next and th
 
 ## 7B. Category page
 
-The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is defined from the green items of the page spec log `docs/spec-log/category.md` (CL-01 to CL-08, CL-19, CL-20). One template serves the 6 categories; the 12 pages are built at build time and an unknown id is a 404 page. The most read `columns` layout is in the C-07 sheet (CL-10 to CL-12, CL-18, CL-21, CL-22; tajmin, 27 Oct 2026). The page title is C-43 `PageTitle`; the More stories item is StoryCard `dated` (C-24). Every item of that log is decided (tajmin, 27 Oct 2026).
+The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is defined from the green items of the page spec log `docs/spec-log/category.md` (CL-01 to CL-08, CL-19, CL-20). One template serves the 5 categories (Section 7C); the 10 pages are built at build time and an unknown id is a 404 page. The most read `columns` layout is in the C-07 sheet (CL-10 to CL-12, CL-18, CL-21, CL-22; tajmin, 27 Oct 2026). The page title is C-43 `PageTitle`; the More stories item is StoryCard `dated` (C-24). Every item of that log is decided (tajmin, 27 Oct 2026).
 
 ### 7B.1 Page order
 
@@ -426,6 +427,39 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 ### 7B.3 Sparse content
 
 A section with no stories is removed with its ad band (Section 7.3, `LAY-13`).
+
+## 7C. URLs
+
+These rules apply to every page (DR-397, DR-399, DR-401, DR-410 to DR-414). Bangla is at the root; English adds `/en` in front of every path (`AGENTS.md` Section 7).
+
+### 7C.1 Path rules
+
+- Use lowercase Latin letters, digits and hyphens. Do not add a trailing slash, a date or a category to an article path.
+- One slug serves both languages. The Bangla page uses the English slug. The backend makes the slugs.
+- A bare root (`/story`, `/topic`) gives a 404.
+
+### 7C.2 Paths
+
+| Page | Path | Notes |
+| --- | --- | --- |
+| Article | `/story/<slug>-<id>` | Every format (news, analysis, opinion). `<id>`: 6 to 8 base36 characters, fixed, shared by both languages. The page finds the article by `<id>`. A wrong or old slug gets a 301 to the current URL. An unknown `<id>` gives a 404 |
+| Category | `/category/<slug>` | `geopolitics`, `security`, `history`, `economy`, `technology`. Sub-category: `/category/<parent>/<slug>`, two levels at most. Bangladesh is not a category (DR-412) |
+| Region hub | `/regions` | All regions |
+| Region | `/regions/<slug>` | The backend owns the list and the order. Working list: `americas`, `europe`, `russia`, `middle-east`, `south-asia`, `china`, `asia`, `oceania`. Code works with any number of regions (DR-411) |
+| Topic | `/topic/<slug>` | Flat. One key, one Latin slug, a bn and an en label. Do not use the word "tag" (DR-410) |
+| News hub | `/latest` | News only |
+| Analysis hub | `/analysis` | বিশ্লেষণ / Analysis. Flat, no sub-hubs |
+| Opinion hub | `/opinion` | মতামত / Opinion. Flat |
+
+There is no `/opinion/<slug>-<id>`, `/insight`, `/voices` or `/op-ed` path (DR-302, DR-413, DR-414). A path whose page is not built yet gives a 404 until its page branch (IMP-18).
+
+### 7C.3 Formats
+
+The formats are news, analysis and opinion (DR-414). There is no explainer or op-ed format. The format is in the content model and the page presentation, not in the URL.
+
+### 7C.4 Missing translation
+
+When an article is missing in the other language, do not emit an hreflang to that language. The language switch goes to the article's category page in the other language, with a short note ("This story is in Bangla only"). The note text is in `bn.ts` and `en.ts` (DR-401).
 
 ## 8. Peer rows
 
@@ -927,6 +961,10 @@ Test these content cases:
 The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.27 (28 October 2026)**
+
+- URL format (IMP-97, `docs/tasks/url-format.md`): new Section 7C URLs (paths, formats, missing translation). 7A: the article URL is `/story/<slug>-<id>`. 7.1: P-2 row 7 is the South Asia featured region (DR-412). 7B: 5 categories. 7B.2 Formats is unchanged until the category formats run (DR-415).
 
 **2.26 (27 October 2026)**
 
