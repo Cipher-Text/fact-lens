@@ -142,6 +142,9 @@ test.describe("missing translation (DR-401)", () => {
     await expect(page.getByText("This story is in Bangla only.")).toHaveCount(
       0,
     );
+    // The status region is always there, empty, so text added after hydration is
+    // announced (PR #15 review).
+    await expect(page.locator("[data-note] [role=status]")).toHaveText("");
   });
 
   test("an article in both languages keeps the switch to the same article", async ({
