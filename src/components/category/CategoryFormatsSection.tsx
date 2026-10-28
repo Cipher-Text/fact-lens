@@ -22,7 +22,7 @@ type Props = {
  * at the start and Opinion at the end, 1 per row on phones (LAY-07). Up to 5 stories per
  * block. Analysis keeps the C-23 feature card and StoryList; Opinion uses the OpinionList
  * quote rows of P-4 (no image, author line). The blocks stay in the wrapper column and the
- * rail column is empty, as in CategoryMoreStoriesSection, so they have the P-3 widths. An
+ * rail column is empty, as in MoreStoriesSection, so they have the P-3 widths. An
  * empty block is not shown and the other keeps its size (7.3). No Eyebrow (DR-153). The
  * MoreLinks go to the format hubs.
  */

@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.20 · 28 October 2026 · URL format (IMP-97): example label দক্ষিণ এশিয়া (DR-412). Before: Homepage most read (IMP-99): `type-rank` retired; the RankedList rank is the chip (`component-system.md` C-07)
+Version 2.21 · 28 October 2026 · Latest page (spec log `latest.md` LT-04): TYP-17 story time after load more. Before: 2.20 · 28 October 2026 · URL format (IMP-97): example label দক্ষিণ এশিয়া (DR-412). Before: Homepage most read (IMP-99): `type-rank` retired; the RankedList rank is the chip (`component-system.md` C-07)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -279,7 +279,7 @@ Use `Intl.DateTimeFormat` and `Intl.NumberFormat` with `en-GB` or `bn-BD-u-nu-be
 
 - Hours only. No minutes and no days.
 - 24 hours or more: date and 24-hour time in the browser time zone. Add the year only for an earlier year.
-- Put the exact time in `<time datetime>`. The server renders the Dhaka time; a small script (1.5 KB or less, no library; DR-348) writes the reader text on load, every few minutes and when the tab gets focus. Give `<time>` `suppressHydrationWarning`.
+- Put the exact time in `<time datetime>`. The server renders the Dhaka time; a small script (1.5 KB or less, no library; DR-348) writes the reader text on load, every few minutes and when the tab gets focus. A list that adds stories in the browser (load more) runs it at once, before paint, so the added rows never show the server text (`refreshStoryTimes`). Give `<time>` `suppressHydrationWarning`.
 - This applies to every metadata line (hero, Latest, cards).
 
 ### TYP-18 Use utilities, not raw values
@@ -1011,6 +1011,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.21 | 2026-10-28 | Latest page (spec log `latest.md` LT-04): TYP-17 story time: a list that adds stories in the browser runs the script at once (load more). No value changes. |
 | 2.20 | 2026-10-28 | URL format (IMP-97, `docs/tasks/url-format.md`): the "আরও দেখুন" example in Section 4 names দক্ষিণ এশিয়া, not বাংলাদেশ (DR-412). No value changes. |
 | 2.19 | 2026-10-27 | Homepage most read (IMP-99, spec log `home-most-read.md` HM-03, HM-05): `type-rank` and the `--type-rank-*` tokens retired, with the numeral rules of `rank-list`; the rank is the chip of `component-system.md` C-07, whose `@utility rank-list` is in that file's Section 6 (amends DR-144, DR-146, DR-147). Section 7.1 role map and the most read notes follow. |
 | 2.18 | 2026-10-27 | Category page (tajmin, U-44): Section 3.1 and 8.2 add `--rank-chip-ink-start` and `--rank-chip-ink-end` per language, the ink insets of the RankedList `columns` chip digits (C-07). |

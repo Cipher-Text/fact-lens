@@ -53,9 +53,14 @@ export function formatStoryTime(iso: string, lang: string): string {
   return storyTimeText(iso, lang, false, "Asia/Dhaka", "", "", "");
 }
 
+// The name under which the inline script leaves its run function on window, so a list that
+// adds stories after load (load more) can set their reader text at once.
+const RUN_NAME = "flStoryTime";
+
 /**
  * Inline script for the end of <body>. It sets the reader text of every <time data-story-time>.
- * No library. The page language and its three strings are the only data.
+ * No library. The page language and its three strings are the only data. It keeps its run
+ * function on window (refreshStoryTimes).
  */
 export function storyTimeScript(
   lang: string,
@@ -72,7 +77,17 @@ export function storyTimeScript(
     }
   }
   run();
+  window.${RUN_NAME} = run;
   setInterval(run, 300000);
   addEventListener("focus", run);
 })();`;
+}
+
+/**
+ * Sets the reader text of every story time now. Call it after stories are added in the
+ * browser (load more): React renders them with the server text (Dhaka, no relative form),
+ * and the inline script would otherwise reach them only on its next run.
+ */
+export function refreshStoryTimes(): void {
+  (window as unknown as Record<string, (() => void) | undefined>)[RUN_NAME]?.();
 }

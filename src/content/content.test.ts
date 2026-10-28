@@ -16,6 +16,7 @@ import {
   getArticleByRef,
   getCategoryPage,
   getHomepage,
+  getLatestPage,
   getPoll,
   getStory,
   type Homepage,
@@ -521,6 +522,44 @@ describe("category pages", () => {
       for (const id of ids) expect(getStory(id, "bn").category).toBe(category);
     });
   }
+});
+
+describe("latest page (layout 7C.2 Paths, News hub row; brief latest.md)", () => {
+  const news = stories.filter((def) => def.format === "news");
+
+  for (const lang of langs) {
+    it(`${lang}: every news story once, news only, newest first`, () => {
+      const page = getLatestPage(lang);
+      expect(page.lang).toBe(lang);
+      expect(page.stories).toHaveLength(news.length);
+      expect(new Set(page.stories.map((s) => s.id)).size).toBe(news.length);
+      for (const s of page.stories) {
+        expect(s.format).toBe("news");
+        expect(s.lang).toBe(lang);
+        // All categories; no region-only news (tajmin, 28 Oct 2026).
+        expect(categoryIds).toContain(s.category);
+      }
+      expect(page.stories).toEqual(
+        [...page.stories].sort(
+          (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+        ),
+      );
+    });
+  }
+
+  it("has news from every category and enough for 10 first and more than two loads of 10", () => {
+    const page = getLatestPage("bn");
+    expect(page.stories.length).toBeGreaterThan(40);
+    expect(new Set(page.stories.map((s) => s.category))).toEqual(
+      new Set(categoryIds),
+    );
+  });
+
+  it("lists the same stories in the same order in both languages", () => {
+    expect(getLatestPage("en").stories.map((s) => s.id)).toEqual(
+      getLatestPage("bn").stories.map((s) => s.id),
+    );
+  });
 });
 
 describe("article URLs (layout 7C, DR-413)", () => {

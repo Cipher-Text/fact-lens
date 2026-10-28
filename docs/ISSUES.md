@@ -1,12 +1,12 @@
 # Fact Lens: Issues
 
-Version 1.2 · 28 October 2026 · URL format and category formats merged (PR #15, PR #16): IMP-97, IMP-118 and U-50 removed. Before: Version 1.1 · 27 October 2026 · Fixed, decided and closed items removed (the git history keeps them); the article page open items moved here (IMP-101 to IMP-114)
+Version 1.3 · 28 October 2026 · Latest page (`page/latest`): IMP-18 `/latest` part fixed; new U-51 (flag), IMP-122, DOC-59. Before: 1.2 · 28 October 2026 · URL format and category formats merged (PR #15, PR #16): IMP-97, IMP-118 and U-50 removed. Before: Version 1.1 · 27 October 2026 · Fixed, decided and closed items removed (the git history keeps them); the article page open items moved here (IMP-101 to IMP-114)
 
 The one place for every open item, flag and decision on an issue. Read it instead of the git history. Items from `prototype-findings.md` and `PROGRESS.md` (removed 24 October 2026) are copied here with their full text.
 
 ## How to use this file
 
-- Add a row for each new finding with the next free ID of its prefix (U-51, IMP-122, DOC-59, KIT-xx). Add a detail entry below when one line is not enough.
+- Add a row for each new finding with the next free ID of its prefix (U-52, IMP-123, DOC-60, KIT-xx). Add a detail entry below when one line is not enough.
 - This file lists open items only: Open, Open (flag) or Later. When an item is fixed, decided or closed, record the result where it belongs (the spec, the decision register or the commit) and remove the row and its detail entry (tajmin, 27 Oct 2026). The git history keeps the old rows.
 - A flag is an item that needs tajmin's decision (`AGENTS.md` Section 8). Its status is "Open (flag)" until tajmin decides.
 - Page spec logs keep only their open spec items. Open code items of a page are rows here.
@@ -27,7 +27,7 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | U-08 | FL-05 | Logo asset and its role. The dark text logo fails axe contrast until the SVG exists | Medium | Later: logo SVG from the design owner; text stand-in stays (DR-304) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Later: backend integration; labels stay in `src/i18n/` (DR-263) |
 | IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Later: backend integration. Category items go to the category pages (PR #11); region, Regions, বিশ্লেষণ and মতামত items go to `/regions/<slug>`, `/regions`, `/analysis` and `/opinion` (404 until IMP-18). The parent বিশ্লেষণ ও মতামত stays an anchor (DR-331) |
-| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section pages; URL patterns are set (layout 7C), 404s stay for `/latest`, `/analysis`, `/opinion`, `/regions`, `/regions/<slug>`, `/topic/<slug>` and stories with no text. Category part fixed (PR #11) |
+| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section pages; URL patterns are set (layout 7C), 404s stay for `/analysis`, `/opinion`, `/regions`, `/regions/<slug>`, `/topic/<slug>` and stories with no text. Category part fixed (PR #11); `/latest` part fixed on `page/latest` (layout 7D) |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Later: newsletter phase (DR-343) |
 | IMP-33 | R2-03 | Newsletter strings and components stay until the newsletter phase | Low | Later: newsletter phase (DR-343) |
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Later: IA label table; working labels stay (DR-282) |
@@ -65,6 +65,9 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | IMP-111 | Article PR #8 review | `inlineAdPositions` (`ArticleParts.tsx:119`): when the first ad moves past paragraph 10, the second can follow right after it (`LAY-22`). Add a minimum gap and a unit test | Medium | Later |
 | IMP-112 | Article PR #8 review | `Popover.tsx` sets `aria-controls` while the panel is closed and not in the DOM | Low | Later |
 | IMP-113 | Article PR #8 review | Code comments in `src/components/reader/` and `reader.css` cite "tajmin, 24 Oct 2026" for approvals given on 23 Oct 2026 (10 places) | Low | Later |
+| U-51 | `page/latest` final checkpoint | The Latest page reuses `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` (`src/components/category/`) with the options `labelledBy`, `eyebrow`, `titleAs`; the `Category` names sit on a page that is not a category page, and the component-system Section 3 row says "News and analysis, never opinion" under a category heading (N-05; spec log `latest.md` LT-02, red). Rename the shared parts (for example `MoreStoriesSection`, `MoreStoriesList`, moved out of `category/`) or amend the Section 3 row to name the Latest use. Decided (tajmin, 28 Oct 2026: "Rename it."): renamed to `MoreStoriesSection`, `MoreStoriesList` in `src/components/more-stories/`; component-system Section 3, layout 7B.1 and 7D updated | Low | Fixed |
+| IMP-122 | `page/latest` visual QA | At 320 with a classic 15px scrollbar (Windows, headless Chromium), the `ad-top` slot (`--ad-top-w`) ends at 320 while the content width is 305: the page scrolls sideways by 15px on every page. The e2e width tests use overlay scrollbars and pass. Not caused by the Latest page | Low | Open |
+| DOC-59 | `page/latest` design review | `spacing-layout-system.md` changelog (the region slider entry, "phone tab panels fade 200ms out and in") disagrees with 7.4, which says the tab panels fade over `--duration-slide` (450ms, DR-346). The changelog line is history, superseded by DR-346; say so, or leave it | Low | Open |
 | IMP-114 | Article PR #8 review | Article e2e gaps: keyboard and axe at 1280 only (the dock and popovers below 1280 untested); no CLS, reduced-motion or 200% text test; the dock at 320px with 200% text; axe with the dock, a popover and the share dialog open; `SelectionShare`, the toast, popover focus-out. The `#region-` links are filtered out of the DR-331 check, as in `header.spec.ts` | Medium | Later |
 
 ## Details
@@ -120,6 +123,7 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 - **Found:** FL-06 · **Severity:** Low · **Status:** Later: section and story pages; URL patterns are set, 404s stay (run 2 review, no DR)
 - **Choice:** Story headlines link to `/story/<slug>` (`/en/story/<slug>` in English) and the Latest "আরও দেখুন" link to `/latest`. These pages do not exist yet (AGENTS.md Section 1), so they show the 404 page. Real URLs keep the keyboard order and link semantics right.
 - **Category part:** fixed by the category pages (PR #11). Story links and `/latest` stay 404 pages until IMP-97 and the Latest page.
+- **Latest part:** fixed on `page/latest` (28 Oct 2026): the Latest page, `spacing-layout-system.md` 7D.
 - **Suggested solution:** Set the article URL pattern in IMP-97.
 
 ---

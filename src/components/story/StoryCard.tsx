@@ -41,8 +41,10 @@ type StoryCardProps = {
   formatLabel?: boolean;
   /** Shows the summary when the story has one. */
   summary?: boolean;
-  titleAs?: "h3" | "h4";
+  titleAs?: "h2" | "h3" | "h4";
   eager?: boolean;
+  /** Fade the image in when it has loaded (StoryImage fadeIn): rows added by load more. */
+  imageFadeIn?: boolean;
   className?: string;
 };
 
@@ -96,6 +98,7 @@ export function StoryCard({
   summary = true,
   titleAs: Title = "h3",
   eager = false,
+  imageFadeIn = false,
   className,
 }: StoryCardProps) {
   const showSummary = summary && Boolean(story.summary);
@@ -111,6 +114,7 @@ export function StoryCard({
         <StoryImage
           story={story}
           eager={eager}
+          fadeIn={imageFadeIn}
           className="self-start story-media"
           imageClassName={ratioClass[ratio]}
         />

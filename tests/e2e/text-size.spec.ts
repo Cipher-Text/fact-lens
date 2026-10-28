@@ -21,6 +21,9 @@ test.describe("200% browser text size", () => {
   for (const p of [
     { name: "bn", path: "/" },
     { name: "en", path: "/en" },
+    // The Latest page (brief latest.md).
+    { name: "latest bn", path: "/latest" },
+    { name: "latest en", path: "/en/latest" },
   ]) {
     for (const width of WIDTHS) {
       test(`${p.name} at ${width}: nothing scrolls sideways`, async ({

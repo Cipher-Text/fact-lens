@@ -148,6 +148,15 @@ export interface CategoryPage {
   more: Story[]; // news and analysis not shown above, newest first; never opinion. 10 at a time
 }
 
+/**
+ * The Latest page in one language (layout 7C.2 Paths, News hub row; `docs/briefs/latest.md`): the news hub,
+ * every news story of every category, newest first. No analysis or opinion.
+ */
+export interface LatestPage {
+  lang: Lang;
+  stories: Story[]; // 10 first, then 10 per load
+}
+
 /** The four ad slots (spacing-layout-system.md 9). `ad-inline` is for article pages, later. */
 export type AdSlotId = "ad-top" | "ad-band" | "ad-inset" | "ad-rail";
 

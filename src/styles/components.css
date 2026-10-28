@@ -372,6 +372,31 @@
   }
 }
 
+/* Load more (Latest and category More stories; "fade + image fade", tajmin 28 Oct 2026):
+   each row a press adds fades in, opacity only, as the phone region tab panels (DR-284);
+   nothing moves. The first rows do not animate. No fill mode: the end state is the row's own
+   look, so a finished row lets the animation go. Reduced motion: none (base rule). */
+@keyframes story-added {
+  from {
+    opacity: 0;
+  }
+}
+
+@utility story-added {
+  animation: story-added var(--duration-slide) var(--ease-slide);
+}
+
+/* The story image of an added row: transparent over the surface-alt slot until it has
+   loaded, then it fades in, so a lazy image does not snap in after the row (StoryImage
+   fadeIn). Lazy loading stays. Reduced motion: it shows at once (base rule). */
+@utility story-image-fade {
+  opacity: 0;
+  transition: opacity var(--duration-slide) var(--ease-slide);
+  &[data-loaded] {
+    opacity: 1;
+  }
+}
+
 /* One motion (DR-346, DR-349): every slide, fade and height change uses --duration-slide with ease-slide (DR-357).
    Button colors keep the 200ms theme default. The base rule in globals.css sets every
    duration to 0 with reduced motion, so the end state shows at once.
