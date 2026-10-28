@@ -15,10 +15,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: final checkpoint done, waiting for tajmin's commit yes
-- Next step: commit on tajmin's yes, push and open the PR to `dev`
-- Open questions to tajmin: `page/category-v2` (not merged, 1 commit, no PR): keep or delete?
-- Uncommitted: yes, the whole checkpoint
+- State: PR #19 open, review fixes pushed; waiting for tajmin's merge
+- Next step: after the merge, AGENTS.md Section 9 step 6 on `dev`
+- Open questions to tajmin: none (`page/category-v2` kept: tajmin, "Commit and open PR" to the option that keeps it)
+- Uncommitted: no
 
 ## Decisions
 
@@ -45,3 +45,12 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - Spec log: none (no spec item: text and process only)
 - Checks: `pnpm check` passed (320 unit tests). E2e not run: comments only in `src/` and `tests/`
 - Design review (design-reviewer): pass, no blockers. Nits fixed in `AGENTS.md`: step 5 says the specs do not change after the merge (was "Nothing changes"); step 6 says its commit is the only one made on `dev` itself. Changelog names of deleted files stay as history
+
+### PR #19 review fixes (29 Oct 2026)
+
+- tajmin, chat, 29 Oct 2026: "check the review comment in the pr."
+- `docs/STATUS.md` open items bullet: the stale "The spec logs keep only open spec items" now says open spec items are `ISSUES.md` rows and the logs of merged work are deleted
+- `docs/ISSUES.md` 1.4: the intro bullet says rows are self-contained and name no log; U-47, U-48, U-49 drop "spec log HM-04 / UF-06 / UF-02"; U-49 status names layout 7B.2, not CF-07
+- `agent-contract.md` Section 11 item 1 and `AGENTS.md` step 6: a deleted log stays in git history (`git log --all -- docs/spec-log/<name>.md`); the spec text keeps the meaning of each item it cites. So the CL-, CF-, LT-, HM- IDs left in the specs still resolve
+- `AGENTS.md` step 4: the step 6 commit on `dev` is the one exception to "one commit per yes on the branch"
+- Not changed: changelog lines that name deleted files (history, as the review allows); `STATUS.md` shows the task as in progress until the step 6 commit, as the rule says
