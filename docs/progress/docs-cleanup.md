@@ -15,9 +15,9 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: PR #19 open, review fixes pushed; waiting for tajmin's merge
-- Next step: after the merge, AGENTS.md Section 9 step 6 on `dev`
-- Open questions to tajmin: none (`page/category-v2` kept: tajmin, "Commit and open PR" to the option that keeps it)
+- State: PR #19 open; spec logs restored and committed
+- Next step: on tajmin's answer, make the after-merge rule keep the spec logs (or leave it), then the merge
+- Open questions to tajmin: the rule text still says spec logs are deleted after the merge; change it to keep them?
 - Uncommitted: no
 
 ## Decisions
@@ -54,3 +54,9 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - `agent-contract.md` Section 11 item 1 and `AGENTS.md` step 6: a deleted log stays in git history (`git log --all -- docs/spec-log/<name>.md`); the spec text keeps the meaning of each item it cites. So the CL-, CF-, LT-, HM- IDs left in the specs still resolve
 - `AGENTS.md` step 4: the step 6 commit on `dev` is the one exception to "one commit per yes on the branch"
 - Not changed: changelog lines that name deleted files (history, as the review allows); `STATUS.md` shows the task as in progress until the step 6 commit, as the rule says
+
+### Spec logs restored (29 Oct 2026)
+
+- tajmin, chat, 29 Oct 2026: "restore the spec logs and commit."
+- Restored from `origin/dev`, unchanged: `docs/spec-log/` `article`, `category`, `category-formats`, `dev-process`, `home-most-read`, `latest`, `url-format`. `TEMPLATE.md` stays. The other deletions (`docs/tasks/`, the briefs, the progress files) stay deleted
+- Not changed yet (open question to tajmin): the text that says spec logs are deleted after the merge: `AGENTS.md` Section 9 step 6, `agent-contract.md` Section 11 item 1, `docs/spec-log/TEMPLATE.md`, `README.md`, `docs/ISSUES.md` intro bullet, `docs/STATUS.md` open items bullet. The spec body text names the logs without paths ("Latest spec log LT-03"), which still reads right
