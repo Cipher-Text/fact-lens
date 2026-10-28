@@ -1081,7 +1081,7 @@ The title of a page that is not the homepage or an article: the page `h1` in a b
 
 | Part | Spec |
 | --- | --- |
-| `PageTitle.band` | A `header`. The `surface` background spans the full width; the content sits in the `Shell`, so it lines up with the page. Block inset `--space-page-title-band` (24px narrow, 32px from 600px, 40px from 1024px), no inline inset (tajmin, 28 Oct 2026). It is the first row of `main`, right under the `ad-top` row, in place of space-page-start |
+| `PageTitle.band` | A `header`. The `surface` background (`color-system.md` 2.1, an exception to `surface-alt` for bands) spans the full width; the content sits in the `Shell`, so it lines up with the page. Block inset `--space-page-title-band` (24px narrow, 32px from 600px, 40px from 1024px), no inline inset (tajmin, 28 Oct 2026). It is the first row of `main`, right under the `ad-top` row, in place of space-page-start |
 | `PageTitle.note` | Optional slot above the divider, in the band: the category page MissingTranslationNote |
 | `PageTitle.divider` | Divider.section (C-22, the bar on the rule), space-section-rule-title to the title, as in SectionHeading |
 | `PageTitle.title` | `h1`, `type-page-title`, ink. No description, no link |

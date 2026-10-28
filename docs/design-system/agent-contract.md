@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.16, `typography-system.md` v2.20, `spacing-layout-system.md` v2.28, `component-system.md` v1.24 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.17, `typography-system.md` v2.20, `spacing-layout-system.md` v2.28, `component-system.md` v1.24 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -87,7 +87,7 @@ The homepage is locked (DR-370), except P-5 most read, which moved to the Ranked
 
 Each row links to the rule. The rule text is in the foundation document.
 
-### Color (`color-system.md` v2.16, 17 rules)
+### Color (`color-system.md` v2.17, 17 rules)
 
 | ID | Rule |
 | --- | --- |

@@ -1,10 +1,16 @@
 import { render, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { getCategoryPage } from "@/content";
 import { getDictionary } from "@/i18n";
 
 import { CategoryFormatsSection } from "./CategoryFormatsSection";
+import { CategoryPageView } from "./CategoryPageView";
+
+// MissingTranslationNote reads the query string; a plain category link has none.
+vi.mock("next/navigation", () => ({
+  useSearchParams: () => new URLSearchParams(),
+}));
 
 // The analysis and opinion row of the category page (DR-415, brief category-formats.md).
 function renderRow(
@@ -78,5 +84,26 @@ describe("CategoryFormatsSection", () => {
       "opinion",
     ]);
     expect(renderRow("economy", "en", "both").container.innerHTML).toBe("");
+  });
+});
+
+describe("CategoryPageView spacing (LAY-12)", () => {
+  const moreClass = (page: ReturnType<typeof getCategoryPage>) =>
+    render(<CategoryPageView page={page} />)
+      .container.querySelector('[data-section="category-more"]')!
+      .getAttribute("class") ?? "";
+
+  it("More stories takes space-module after an ad row only", () => {
+    const page = getCategoryPage("economy", "en");
+    // Most read and its ad row before More stories.
+    expect(moreClass(page)).toContain("pt-(--space-module)");
+    // No Most read: the formats row, a section, comes before More stories.
+    expect(moreClass({ ...page, mostRead: [] })).not.toContain(
+      "pt-(--space-module)",
+    );
+    // No Most read and no formats row: the feature ad row comes before More stories.
+    expect(
+      moreClass({ ...page, mostRead: [], analysis: [], opinion: [] }),
+    ).toContain("pt-(--space-module)");
   });
 });
