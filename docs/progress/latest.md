@@ -160,3 +160,8 @@ Costs for every option: the focus ring on the first added title fades in with it
 - Decision: tajmin, chat, 28 Oct 2026: "Fix both" (the spec log cells and the brief names; the focus note and IMP-122 stay as they are).
 - Docs: `docs/spec-log/latest.md` LT-01 to LT-05: the `||` between Source and Reviewer is now one `|` (7 cells, as the header).
 - Docs: `docs/briefs/latest.md` names `MoreStoriesList` and `MoreStoriesSection`, with the old names noted (U-51).
+
+### PR #18 second review: Eyebrow wording (28 Oct 2026)
+
+- Review note (N-05, docs only): the `MoreStoriesList` doc comment said news rows show no Eyebrow (DR-153), but the Latest page turns `eyebrow` on. tajmin, chat, 28 Oct 2026: "i think reviewer is right".
+- Code: `src/components/more-stories/MoreStoriesList.tsx` doc comment: no Eyebrow on news rows and the format Eyebrow on analysis rows hold with `eyebrow` off (category page); with `eyebrow` on (Latest) every row shows the category Eyebrow. Comment only, no output change. The review says the `MoreStoriesSection` comment has the same wording; it does not (it names the Latest Eyebrow only), so it is unchanged.

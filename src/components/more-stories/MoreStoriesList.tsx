@@ -17,11 +17,12 @@ type Props = {
 
 /**
  * MoreStoriesList: the More stories list of the category page and the Latest page (tajmin,
- * after checkpoint 5): one StoryCard per story in the dated layout (C-24: date | title and deck | image from 600, the basic
- * image card on phones; the date is the time only), Divider.item between the rows. News
- * rows show no Eyebrow (DR-153). An analysis row shows the format Eyebrow above the title
- * at every width (tajmin, 28 Oct 2026). The Latest page reuses the list with the category
- * Eyebrow on every row (tajmin, 28 Oct 2026).
+ * after checkpoint 5): one StoryCard per story in the dated layout (C-24: date | title and
+ * deck | image from 600, the basic image card on phones; the date is the time only),
+ * Divider.item between the rows. With `eyebrow` off (the category page), news rows show no
+ * Eyebrow (DR-153) and an analysis row shows the format Eyebrow above the title at every
+ * width (tajmin, 28 Oct 2026). With `eyebrow` on (the Latest page, which mixes categories),
+ * every row shows the category Eyebrow (tajmin, 28 Oct 2026).
  */
 export function MoreStoriesList({
   stories,
