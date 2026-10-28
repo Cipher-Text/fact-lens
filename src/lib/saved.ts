@@ -1,7 +1,7 @@
-// Saved stories: a list of slugs in local storage, for this mock.
+// Saved stories: a list of story ids in local storage, for this mock.
 
 /**
- * The stored list of saved slugs. A value that is not valid JSON, or not an array of
+ * The stored list of saved story ids. A value that is not valid JSON, or not an array of
  * strings, reads as an empty list, so a bad value never breaks the page.
  */
 export function parseSaved(raw: string | null): string[] {

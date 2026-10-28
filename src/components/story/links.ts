@@ -1,4 +1,4 @@
-import type { Story } from "@/content";
+import { storyRef, type Story } from "@/content";
 import { localizedPath } from "@/i18n";
 
 // Shared link classes for story parts.
@@ -13,11 +13,16 @@ const headlineBase = "text-ink hover:text-ink-muted";
 export const headlineLink = headlineBase;
 
 /**
- * The story URL. Article pages do not exist yet (AGENTS.md Section 1), so the link
- * leads to a 404 page in the prototype (IMP-18).
+ * The story URL, /story/<slug>-<id> for every format (layout 7C, DR-413). Only stories
+ * with full text have a page; the others lead to a 404 page in the mock (IMP-18).
  */
 export function storyHref(story: Story): string {
-  return localizedPath(story.lang, `/story/${story.slug}`);
+  return localizedPath(story.lang, storyPath(story));
+}
+
+/** The story path without the language prefix. */
+export function storyPath(story: Pick<Story, "slug" | "id">): string {
+  return `/story/${storyRef(story)}`;
 }
 
 /**
@@ -29,4 +34,12 @@ export function categoryHref(
   category: Story["category"],
 ): string {
   return localizedPath(lang, `/category/${category}`);
+}
+
+/** The format hub URL: /analysis or /opinion (layout 7C, DR-414). No hub page yet (IMP-18). */
+export function formatHref(
+  lang: Story["lang"],
+  format: Exclude<Story["format"], "news">,
+): string {
+  return localizedPath(lang, `/${format}`);
 }

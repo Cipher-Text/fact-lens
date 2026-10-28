@@ -17,7 +17,10 @@ const PAGE_SIZE = 10;
 
 type Props = {
   stories: Story[];
-  t: Pick<Dictionary, "categoryPage" | "story" | "categories">;
+  t: Pick<
+    Dictionary,
+    "categoryPage" | "story" | "categories" | "analysisOpinion"
+  >;
   className?: string;
 };
 

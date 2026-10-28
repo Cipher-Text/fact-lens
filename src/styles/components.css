@@ -9,6 +9,9 @@
   --space-lead-overlap: 2rem;
   --space-lead-eyebrow-title: 0.5rem;
   --space-lead-summary-meta: 1rem;
+  /* C-08 Eyebrow.separator: the inline gap on each side of the two-part middle dot. The
+     sheet leaves the token open (CPT-07): proposed at 8px, the Eyebrow-to-title step. */
+  --space-eyebrow-separator: 0.5rem;
   --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);

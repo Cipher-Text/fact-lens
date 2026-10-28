@@ -276,6 +276,89 @@ export const articleDefs: ArticleDef[] = [
         "ফারহানা কবির ঢাকা থেকে ইতিহাস, মহাফেজখানা ও ঐতিহ্য নিয়ে লেখেন।",
     },
   },
+  {
+    // An analysis article: its heading shows the two-part Eyebrow, format · category
+    // (C-08, DR-416). Fictional figures, no real people.
+    slug: "reserve-indicators",
+    author: "tanvir-ahmed",
+    topics: ["foreign-reserves", "regional-cooperation"],
+    bn: {
+      summary:
+        "আমদানি দায়, রপ্তানি আয় আর প্রবাসী আয়ের ধারা একসঙ্গে দেখলে চাপ কমার লক্ষণ আছে, তবে স্বস্তির সময় এখনো আসেনি।",
+      caption: "ব্যাংকের কাউন্টারে বৈদেশিক মুদ্রার নোট গোনা হচ্ছে।",
+      credit: "ছবি: ফ্যাক্ট লেন্স",
+      keyPoints: [
+        "টানা তিন মাস আমদানি দায় পরিশোধের চাপ কমেছে।",
+        "রপ্তানি আয় বেড়েছে, তবে কয়েকটি পণ্যেই তা সীমিত।",
+        "প্রবাসী আয় স্থিতিশীল, কিন্তু মৌসুমি ওঠানামা রয়ে গেছে।",
+      ],
+      body: [
+        {
+          type: "p",
+          text: "কয়েক মাস ধরে ডলারের দাম আর রিজার্ভ নিয়ে উদ্বেগ চলছে। তিনটি সূচক পাশাপাশি রাখলে ছবিটা কিছুটা পরিষ্কার হয়: আমদানি দায়, রপ্তানি আয় এবং প্রবাসী আয়।",
+        },
+        { type: "h2", id: "import-bills", text: "আমদানি দায় কমছে" },
+        {
+          type: "p",
+          text: "বাকিতে আনা পণ্যের দায় পরিশোধের চাপ টানা তিন মাস কমেছে। ব্যবসায়ীরা বলছেন, ঋণপত্র খোলায় কড়াকড়ির কারণে নতুন দায় কম তৈরি হচ্ছে।",
+        },
+        {
+          type: "h2",
+          id: "exports-and-remittances",
+          text: "রপ্তানি ও প্রবাসী আয়",
+        },
+        {
+          type: "p",
+          text: "রপ্তানি আয় বেড়েছে, তবে বৃদ্ধির বড় অংশ কয়েকটি পণ্যে সীমিত। প্রবাসী আয় স্থিতিশীল থাকলেও উৎসবের মাসগুলোর পর তা কিছুটা কমে আসে।",
+        },
+        {
+          type: "p",
+          text: "বিশ্লেষকদের মতে, চাপ কমার লক্ষণ বাস্তব, কিন্তু রিজার্ভ টেকসইভাবে বাড়াতে রপ্তানি পণ্যে বৈচিত্র্য আনাই মূল শর্ত।",
+        },
+      ],
+      authorRole: "অর্থনীতি বিষয়ক বিশ্লেষক",
+      authorBio:
+        "তানভীর আহমেদ ঢাকা থেকে অর্থনীতি, বাণিজ্য ও ব্যাংক খাত নিয়ে লেখেন।",
+    },
+    en: {
+      summary:
+        "Read together, import bills, export earnings and remittances show the pressure easing, but relief has not arrived yet.",
+      caption: "Foreign currency notes being counted at a bank counter.",
+      credit: "Photo: Fact Lens",
+      keyPoints: [
+        "Pressure from import bills has eased for three months in a row.",
+        "Export earnings are up, but the rise rests on a few products.",
+        "Remittances are steady, with seasonal swings.",
+      ],
+      body: [
+        {
+          type: "p",
+          text: "For several months the dollar rate and the reserves have been a worry. Three indicators side by side make the picture clearer: import bills, export earnings and remittances.",
+        },
+        { type: "h2", id: "import-bills", text: "Import bills are falling" },
+        {
+          type: "p",
+          text: "Payments due on goods bought on credit have fallen for three months in a row. Traders say tighter rules on letters of credit mean fewer new bills.",
+        },
+        {
+          type: "h2",
+          id: "exports-and-remittances",
+          text: "Exports and remittances",
+        },
+        {
+          type: "p",
+          text: "Export earnings are up, but most of the rise comes from a few products. Remittances hold steady, though they dip after the festival months.",
+        },
+        {
+          type: "p",
+          text: "Analysts say the easing is real, but more varied exports are the main condition for reserves to grow for good.",
+        },
+      ],
+      authorRole: "Economy analyst",
+      authorBio:
+        "Tanvir Ahmed writes on the economy, trade and banking from Dhaka.",
+    },
+  },
 ];
 
 /** Other stories for the Read next row, by slug. They have no full text. */

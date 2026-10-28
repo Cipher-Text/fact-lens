@@ -73,8 +73,7 @@ export interface HeroContent {
 
 /** What a P-2 section features: a category or a region (DR-412). */
 export type FeaturedSource =
-  | { kind: "category"; id: CategoryId }
-  | { kind: "region"; id: RegionId };
+  { kind: "category"; id: CategoryId } | { kind: "region"; id: RegionId };
 
 /** P-2: lead in the wrapper, one image story and two stories in the rail. */
 export interface FeaturedSection {

@@ -10,7 +10,10 @@ import { homepagePlans } from "./homepage";
 import { ads } from "./ads";
 import { categoryMostRead } from "./category-most-read";
 import {
+  articleLangsOf,
+  currentStoryRef,
   getAd,
+  getArticleByRef,
   getCategoryPage,
   getHomepage,
   getPoll,
@@ -21,6 +24,7 @@ import {
 import { articleDefs } from "./reader-articles";
 import { stories } from "./stories";
 import { topics } from "./topics";
+import { parseStoryRef, storyRef } from "./urls";
 import { regionIds, type CategoryId, type RegionId } from "./types";
 
 const BENGALI = /[ঀ-৿]/;
@@ -60,7 +64,8 @@ describe("story data", () => {
   });
 
   it("gives each story an id of 6 to 8 base36 characters (layout 7C, DR-413)", () => {
-    for (const def of stories) expect(def.id, def.slug).toMatch(/^[0-9a-z]{6,8}$/);
+    for (const def of stories)
+      expect(def.id, def.slug).toMatch(/^[0-9a-z]{6,8}$/);
   });
 
   it("gives each story a unique Latin slug (layout 7C.1)", () => {
@@ -116,7 +121,10 @@ describe("story data", () => {
   it("gives every image alt text in both languages", () => {
     for (const lang of langs) {
       for (const def of stories.filter((s) => s.image)) {
-        expect(getStory(def.slug, lang).image?.alt.trim(), def.slug).toBeTruthy();
+        expect(
+          getStory(def.slug, lang).image?.alt.trim(),
+          def.slug,
+        ).toBeTruthy();
       }
     }
   });
@@ -232,7 +240,10 @@ describe("getHomepage full", () => {
       });
 
       it("has both featured sections with a lead, one image story and two stories", () => {
-        for (const section of [home.featured.southAsia!, home.featured.geopolitics!]) {
+        for (const section of [
+          home.featured.southAsia!,
+          home.featured.geopolitics!,
+        ]) {
           expect(section.lead.image).toBeDefined();
           expect(section.rail).toHaveLength(3);
           expect(section.rail[0].image).toBeDefined();
@@ -287,7 +298,8 @@ describe("getHomepage full", () => {
         expect(ids).not.toContain("oceania");
         for (const block of home.regions!) {
           expect(block.stories.length).toBeGreaterThan(0);
-          for (const s of block.stories) expect(s.regions).toContain(block.region);
+          for (const s of block.stories)
+            expect(s.regions).toContain(block.region);
         }
       });
     });
@@ -481,4 +493,55 @@ describe("category pages", () => {
       for (const id of ids) expect(getStory(id, "bn").category).toBe(category);
     });
   }
+});
+
+describe("article URLs (layout 7C, DR-413)", () => {
+  const river = stories.find((s) => s.slug === "river-data-framework")!;
+  const ledgers = stories.find((s) => s.slug === "old-dhaka-trade-ledgers")!;
+
+  it("builds and splits the segment <slug>-<id>", () => {
+    expect(storyRef(river)).toBe(`river-data-framework-${river.id}`);
+    expect(parseStoryRef(storyRef(river))).toEqual({
+      slug: "river-data-framework",
+      id: river.id,
+    });
+    // "framework" has 9 characters, so it is not an id.
+    expect(parseStoryRef("river-data-framework")).toBeNull();
+  });
+
+  it("sends an old root whose last word looks like an id to the current segment", () => {
+    // "centre" has the shape of an id but is not one.
+    const centre = stories.find((s) => s.slug === "cyber-response-centre")!;
+    expect(parseStoryRef("cyber-response-centre")?.id).toBe("centre");
+    // No full text, so no page: nothing to send the reader to.
+    expect(currentStoryRef("cyber-response-centre", "bn")).toBeNull();
+    expect(centre).toBeDefined();
+  });
+
+  it("finds the current segment for a wrong slug or the old root", () => {
+    expect(currentStoryRef(`wrong-slug-${river.id}`, "bn")).toBe(
+      storyRef(river),
+    );
+    expect(currentStoryRef("river-data-framework", "en")).toBe(storyRef(river));
+  });
+
+  it("leaves a current segment, an unknown id and a missing language alone", () => {
+    expect(currentStoryRef(storyRef(river), "bn")).toBeNull();
+    expect(currentStoryRef("no-such-story-zzzzzzz", "bn")).toBeNull();
+    // Bangla only (DR-401): no English page to send the reader to.
+    expect(currentStoryRef(`old-slug-${ledgers.id}`, "en")).toBeNull();
+    expect(currentStoryRef(`old-slug-${ledgers.id}`, "bn")).toBe(
+      storyRef(ledgers),
+    );
+  });
+
+  it("finds an article by its segment in the languages it exists in (DR-401)", () => {
+    expect(getArticleByRef(storyRef(river), "en")?.story.slug).toBe(
+      "river-data-framework",
+    );
+    expect(getArticleByRef(storyRef(ledgers), "bn")).not.toBeNull();
+    expect(getArticleByRef(storyRef(ledgers), "en")).toBeNull();
+    expect(getArticleByRef(`wrong-${river.id}`, "bn")).toBeNull();
+    expect(articleLangsOf("old-dhaka-trade-ledgers")).toEqual(["bn"]);
+  });
 });

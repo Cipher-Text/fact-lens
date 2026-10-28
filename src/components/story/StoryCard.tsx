@@ -4,7 +4,7 @@ import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-import { Eyebrow } from "./Eyebrow";
+import { Eyebrow, type EyebrowMode } from "./Eyebrow";
 import { headlineLink, storyHref } from "./links";
 import { MetaLine, storyMetaItems } from "./MetaLine";
 import { StoryImage } from "./StoryImage";
@@ -23,7 +23,7 @@ export type StoryCardLayout =
 
 type StoryCardProps = {
   story: Story;
-  strings: Pick<Dictionary, "story" | "categories">;
+  strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
   layout?: StoryCardLayout;
   ratio?: "3:2" | "16:9";
   /** md: type-story-title. sm: type-story-title-sm. */
@@ -32,6 +32,8 @@ type StoryCardProps = {
   split?: "third" | "feature";
   /** The section drops the eyebrow when its heading names the category (DR-114). */
   eyebrow?: boolean;
+  /** The Eyebrow mode (C-08): format in mixed lists (DR-417). */
+  eyebrowMode?: EyebrowMode;
   /** Shows the summary when the story has one. */
   summary?: boolean;
   titleAs?: "h3" | "h4";
@@ -84,6 +86,7 @@ export function StoryCard({
   size = "md",
   split: splitKind = "third",
   eyebrow = true,
+  eyebrowMode,
   summary = true,
   titleAs: Title = "h3",
   eager = false,
@@ -109,6 +112,7 @@ export function StoryCard({
             <Eyebrow
               story={story}
               strings={strings}
+              mode={eyebrowMode}
               className="mb-(--space-lead-eyebrow-title)"
             />
           ) : null}

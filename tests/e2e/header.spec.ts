@@ -508,14 +508,16 @@ for (const p of PAGES) {
         ).toBeLessThanOrEqual(0.5);
         expect(Math.abs(head.x - drawerBox.x - 20)).toBeLessThanOrEqual(0.5);
 
-        // The Regions item reads অঞ্চলসমূহ / Regions (DR-345).
+        // The Regions item reads অঞ্চলসমূহ / Regions (DR-345) and goes to /regions (DR-411).
         await expect(
-          drawer.locator('nav > ul > li a[href="#regions"]'),
+          drawer.locator(
+            `nav > ul > li a[href="${p.path === "/" ? "" : "/en"}/regions"]`,
+          ),
         ).toHaveText(p.regions);
 
-        // Every nav item is in the drawer: 9 rows, Regions with 7 regions (China among
-        // them, DR-19) and Analysis and Opinion with 2 sub-items, no Op-ed (DR-302). All
-        // accordions are closed (DR-181).
+        // Every nav item is in the drawer: 9 rows, Regions with 8 regions (China among
+        // them, DR-19, DR-411) and Analysis and Opinion with 2 sub-items, no Op-ed
+        // (DR-302, DR-414). All accordions are closed (DR-181).
         await expect(drawer.locator("nav > ul > li")).toHaveCount(9);
         const carets = drawer.locator("nav button[aria-expanded]");
         await expect(carets).toHaveCount(2);
@@ -523,7 +525,7 @@ for (const p of PAGES) {
           await expect(caret).toHaveAttribute("aria-expanded", "false");
         await expect(drawer.locator("nav ul ul")).toHaveCount(0);
         for (const caret of await carets.all()) await caret.click();
-        await expect(drawer.locator("nav ul ul a")).toHaveCount(9);
+        await expect(drawer.locator("nav ul ul a")).toHaveCount(10);
         await expect(drawer.locator('a[href*="op-ed"]')).toHaveCount(0);
         // Every # link has a target on the page (DR-331). The region links wait for R3-06:
         // the slider shows 4 of the 7 regions until it uses all of them.
@@ -707,8 +709,8 @@ for (const p of PAGES) {
       page,
     }) => {
       const prefix = p.path === "/" ? "" : "/en";
+      // Bangladesh is not a category (DR-412).
       const ids = [
-        "bangladesh",
         "geopolitics",
         "economy",
         "security",
@@ -1160,8 +1162,62 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 1280, height: 800 });
       await page.goto(p.path);
       await expect(
-        page.locator('[data-nav-row] a[href="#regions"]'),
+        page.locator(
+          `[data-nav-row] a[href="${p.path === "/" ? "" : "/en"}/regions"]`,
+        ),
       ).toHaveText(p.regions);
+    });
+
+    // South Asia takes the place of Bangladesh; Regions, its regions and the Analysis and
+    // Opinion children go to their own URLs (layout 7C, DR-411, DR-412, DR-414). The pages
+    // are not built yet (IMP-18). The parent Analysis and Opinion keeps its # link (flag).
+    test("nav targets: South Asia, regions and the analysis and opinion hubs (DR-414)", async ({
+      page,
+    }) => {
+      const prefix = p.path === "/" ? "" : "/en";
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(p.path);
+      const drawer = page.locator("[data-drawer]");
+      await openWithKeyboard(
+        page.getByRole("button", { name: p.menu, exact: true }),
+        drawer,
+      );
+      // The second row, in the place of Bangladesh. The accordions are closed, so the
+      // South Asia entry under Regions is not in the DOM yet.
+      await expect(
+        drawer.locator(`nav a[href="${prefix}/regions/south-asia"]`),
+      ).toHaveCount(1);
+      await expect(
+        drawer
+          .locator("nav > ul > li")
+          .nth(1)
+          .locator(`a[href="${prefix}/regions/south-asia"]`),
+      ).toHaveCount(1);
+      for (const caret of await drawer
+        .locator("nav button[aria-expanded]")
+        .all())
+        await caret.click();
+      const sub = await drawer
+        .locator("nav ul ul a")
+        .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
+      expect(sub).toEqual([
+        ...[
+          "americas",
+          "europe",
+          "russia",
+          "middle-east",
+          "south-asia",
+          "china",
+          "asia",
+          "oceania",
+        ].map((id) => `${prefix}/regions/${id}`),
+        `${prefix}/analysis`,
+        `${prefix}/opinion`,
+      ]);
+      await expect(drawer.locator('a[href*="bangladesh"]')).toHaveCount(0);
+      await expect(
+        drawer.locator('a[href="#analysis-opinion-title"]'),
+      ).toHaveCount(1);
     });
 
     test("the header has interface text in the page language only (T-27)", async ({

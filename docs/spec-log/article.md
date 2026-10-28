@@ -18,7 +18,6 @@ This log keeps only the open spec items of the article page (tajmin, 27 Oct 2026
 
 | ID | Kind | What | Code (`file:line`) | Rule or token IDs | Source | Reviewer |
 | --- | --- | --- | --- | --- | --- | --- |
-| SL-22 | New component | "Kicker" is the CSS name (`.rd-kicker`) of the `ArticleHeader` row that holds the category; it is the Eyebrow row. Rename it when the heading is rebuilt (IMP-97, the format Eyebrow) | `reader.css` `.rd-kicker` | `N-05`, C-27, component-system §8 | checkpoint 1 | open |
 
 ## Open code items
 

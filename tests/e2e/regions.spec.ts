@@ -630,7 +630,8 @@ for (const p of PAGES) {
           const r = el.getBoundingClientRect();
           const rowBox = el.closest(sel)!.getBoundingClientRect();
           return {
-            name: el.getAttribute("href") ?? el.tagName,
+            // A story can be in more than one region (DR-411): key by panel and href.
+            name: `${el.closest("[data-region]")?.id ?? ""} ${el.getAttribute("href") ?? el.tagName}`,
             // The base outline (COL-13).
             ring: (() => {
               const s = getComputedStyle(el);

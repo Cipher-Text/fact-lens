@@ -23,11 +23,14 @@ import type {
 
 export type * from "./types";
 export { categoryIds, regionIds } from "./types";
+export { currentStoryRef, storyRef } from "./urls";
 
 // The article page (wild card reader): its content goes through this file too (DR-01).
 export {
-  articleLangs,
+  articleLangsOf,
+  articleRefs,
   getArticle,
+  getArticleByRef,
   getReadNext,
   imageFiles,
   type Article,

@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.22 · 28 October 2026 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -294,6 +294,7 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--space-lead-overlap` | 2rem (32px) | clamp(4rem, 10cqi, 6rem) | same (95px at 952) | How far the lead panel covers the image. Scales with the card width, 64 to 96px (65 at 648, 72 at 720) | DR-86, DR-89 |
 | `--space-lead-eyebrow-title` | 0.5rem (8px) | same | same | LeadStory: eyebrow to title | DR-92 |
 | `--space-lead-summary-meta` | 1rem (16px) | same | same | LeadStory: summary to meta | DR-92 |
+| `--space-eyebrow-separator` | 0.5rem (8px) | same | same | C-08 `Eyebrow.separator`: the inline gap on each side of the two-part middle dot (tajmin, 28 Oct 2026; spec log url-format UF-04) | DR-416 |
 | `--color-meta` | #6E6862 (light, 5.2:1 on background, 4.8:1 on surface-alt) | #A3A3A3 (dark, unchanged) |  | Metadata text and its separator. Same value as ink-muted: #6E6862 is the light ink-muted value for all muted text (captions, labels, ad label), replacing #4F4B48 | DR-100 |
 | `--bar-section` | 2.5rem x 0.5rem (40 x 8px) | 2.5rem x 0.5rem (40 x 8px) | 3rem x 0.5rem (48 x 8px) | Section divider bar, width x height (DR-262). Columns: phone / 600-1023 / 1024 and up (page breakpoints). 48 x 6 under 1024  | DR-103 |
 | `--space-card-overlap` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same (DR-109: every width) | same (46px at 464, 58px at 584) | How far a story card text block covers its image: 10% of the card width, 40 to 64px. Same percent rule as the lead (DR-89) | DR-105, DR-109 |
@@ -328,6 +329,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --space-lead-overlap: 2rem;
   --space-lead-eyebrow-title: 0.5rem;
   --space-lead-summary-meta: 1rem;
+  --space-eyebrow-separator: 0.5rem;
   --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);
@@ -867,7 +869,7 @@ The regions section (P-3b): one column per region in a row that slides, previous
 
 **Content.**
 
-- Working list of 6 regions; the editorial team approves names and order (U-07).
+- Working list of 8 regions (DR-411; see Section 8). Labels approved by tajmin, 28 Oct 2026; the backend owns the list and the order. A region with no stories does not show.
 - Long titles wrap; no clamp.
 
 **Accessibility.**
@@ -1133,7 +1135,7 @@ News cards use `category`. Opinion rows (OpinionList.item) have no Eyebrow.
 | Part | Spec |
 | --- | --- |
 | Eyebrow | type-eyebrow: BN 15px 600; EN 14px 700 uppercase, 0.06em. interactive. UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199); focus ring |
-| `Eyebrow.separator` | `two-part` only. A middle dot `·`, `ink-muted`, `aria-hidden="true"`, an inline gap on each side (token: open, propose one under `CPT-07` if none fits) |
+| `Eyebrow.separator` | `two-part` only. A middle dot `·`, `ink-muted`, `aria-hidden="true"`, an inline gap of `--space-eyebrow-separator` (8px) on each side |
 | Wrap | `two-part`: each part wraps as a whole unit; the separator stays with the first part |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1438,7 +1440,7 @@ The article heading: the category, the title, the deck and the metadata line. Th
 
 | Part | Spec |
 | --- | --- |
-| `ArticleHeader.category` | The Eyebrow row: C-08 Eyebrow as text links, no filled button (DR-416, replaces the DR-389 button). News: `category`. Analysis and opinion: `two-part`, format · category. The row is `.rd-kicker` in the CSS until SL-22 |
+| `ArticleHeader.category` | The Eyebrow row: C-08 Eyebrow as text links, no filled button (DR-416, replaces the DR-389 button). News: `category`. Analysis and opinion: `two-part`, format · category. The row is `.rd-category` in the CSS (SL-22 done; spec log url-format UF-05) |
 | `ArticleHeader.title` | `h1`, `type-article-title`, `ink`, `text-wrap: pretty` |
 | `ArticleHeader.deck` | `type-deck`, `ink-secondary`, `measure-deck` |
 | `ArticleHeader.meta` | Published, updated (when there is one) and reading time in one line, `type-metadata`, `--color-meta`, in a `dl`. The `CPT-10` separator (4px square, 10px on each side, `--color-meta`) comes before each item; a line never starts with a square when it wraps |
@@ -1643,8 +1645,7 @@ A short confirmation (link copied, saved). `role="status"`, `aria-live="polite"`
 | --- | --- |
 | Footer (C-21) | Provisional. Run 2 builds the drawn look. The design extension comes after run 2 (CMP-33). |
 | SearchDialog Trending terms | The term source (editorial or analytics) is not decided. Use mock terms. |
-| RegionSlider region list | The backend owns the regions and their order (DR-411). Use the working list of 8: americas, europe, russia, middle-east, south-asia, china, asia, oceania. The bn and en labels for americas, russia, asia and oceania are open (tajmin approves). The code works with any number of regions. |
+| RegionSlider region list | The backend owns the regions and their order (DR-411). Use the working list of 8: americas, europe, russia, middle-east, south-asia, china, asia, oceania. Labels (tajmin, 28 Oct 2026): আমেরিকা / Americas, ইউরোপ / Europe, রাশিয়া / Russia, মধ্যপ্রাচ্য / Middle East, দক্ষিণ এশিয়া / South Asia, চীন / China, এশিয়া / Asia, ওশেনিয়া / Oceania. The code works with any number of regions. |
 | English labels | Working labels until IA-06. |
 | Logo | Text stand-in until the logo file exists (BRD-06). |
-| ArticleHeader category row | The CSS name is `.rd-kicker`; the row is the Eyebrow row. Rename it when the heading is rebuilt (spec log SL-22). |
 | Topic, region and hub pages | Not built; `/topic/<slug>`, `/regions`, `/regions/<slug>`, `/latest`, `/analysis` and `/opinion` lead to a 404 page for now (IMP-18). |

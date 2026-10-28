@@ -1,9 +1,14 @@
 // Read access for the wild card reader page. Joins a story from stories.ts with its
 // full article text from reader-articles.ts.
 import { getStory } from "./index";
-import { articleDefs, readNextSlugs, type ArticleText } from "./reader-articles";
+import {
+  articleDefs,
+  readNextSlugs,
+  type ArticleText,
+} from "./reader-articles";
 import { authors } from "./stories";
 import { topics } from "./topics";
+import { parseStoryRef, refForSlug, slugForId } from "./urls";
 import type { ImageRef, Lang, Story, Topic } from "./types";
 
 export type { ArticleContext, Block } from "./reader-articles";
@@ -36,13 +41,32 @@ export interface ReadNextItem {
 
 const bySlug = new Map(articleDefs.map((def) => [def.slug, def]));
 
-/** The story slugs that have full text, with the languages each one exists in. */
-export const articleLangs: { slug: string; langs: Lang[] }[] = articleDefs.map(
+/**
+ * The articles, each with its URL segment "<slug>-<id>" (layout 7C) and the languages it
+ * exists in (DR-401).
+ */
+export const articleRefs: { ref: string; langs: Lang[] }[] = articleDefs.map(
   (def) => ({
-    slug: def.slug,
+    ref: refForSlug(def.slug),
     langs: (["bn", "en"] as const).filter((lang) => def[lang] !== undefined),
   }),
 );
+
+/**
+ * The article for a URL segment "<slug>-<id>". The id finds the story; a slug that is not
+ * the current one gives null here, because the proxy has already sent a 301 for it.
+ */
+export function getArticleByRef(ref: string, lang: Lang): Article | null {
+  const parsed = parseStoryRef(ref);
+  if (!parsed || slugForId(parsed.id) !== parsed.slug) return null;
+  return getArticle(parsed.slug, lang);
+}
+
+/** The languages an article exists in (DR-401). */
+export function articleLangsOf(slug: string): Lang[] {
+  const def = bySlug.get(slug);
+  return def ? (["bn", "en"] as const).filter((lang) => def[lang]) : [];
+}
 
 /** Two letters for an English name; the first letter, with its vowel sign, for Bangla. */
 function initialsOf(name: string, lang: Lang): string {

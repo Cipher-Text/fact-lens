@@ -10,6 +10,8 @@ export const en: Dictionary = {
     // The switch names the other language in that language (DR-78).
     other: "বাংলা",
     otherShort: "বাংলা",
+    // On the category page, after the switch from an article that has no English text (DR-401).
+    onlyInOther: "This story is in Bangla only.",
   },
   theme: {
     // The name of the switch; it is on when the theme is dark (DR-167).

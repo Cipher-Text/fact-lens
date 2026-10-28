@@ -20,6 +20,11 @@ export const topics = {
     bn: "নদীপথের বাণিজ্য",
     en: "River trade",
   },
+  "foreign-reserves": {
+    slug: "foreign-reserves",
+    bn: "বৈদেশিক মুদ্রার রিজার্ভ",
+    en: "Foreign reserves",
+  },
 } as const;
 
 export type TopicId = keyof typeof topics;

@@ -135,37 +135,11 @@
   max-inline-size: var(--measure-reading-bn);
 }
 
-.rd-kicker {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: var(--type-eyebrow-case);
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: calc(var(--spacing) * 2) calc(var(--spacing) * 4);
-  /* Category to title: 12px (--rd-head-eyebrow-title). */
+.rd-category {
+  /* ArticleHeader.category: the Eyebrow row (C-08 two-part, text links; DR-416). The Eyebrow
+     sets the type. Category to title: 12px (--rd-head-eyebrow-title). Was .rd-kicker (SL-22). */
   margin-bottom: var(--rd-head-eyebrow-title);
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
-}
-/* The category as a brand button: brand fill, on-interactive text (interactive in dark). */
-.rd-cat {
-  display: inline-flex;
-  align-items: center;
-  min-height: calc(var(--spacing) * 9);
-  padding: 0 calc(var(--spacing) * 3.5);
-  background: var(--color-bar);
-  color: var(--on-interactive);
-  text-decoration: none;
-  transition: background-color var(--default-transition-duration);
-}
-.rd-cat:hover {
-  background: var(--interactive-hover);
-}
-.rd-cat:active {
-  background: var(--interactive-pressed);
 }
 
 .rd-title {

@@ -1,6 +1,11 @@
 // Which stories go into which homepage section (spacing-layout-system.md 7.1).
 // "full" fills every section. "sparse" has one sparse case per pattern (7.3).
-import { regionIds, type CategoryId, type HomepageVariant, type RegionId } from "./types";
+import {
+  regionIds,
+  type CategoryId,
+  type HomepageVariant,
+  type RegionId,
+} from "./types";
 
 export interface HomepagePlan {
   hero: { lead: string; top: string[]; latest: string[] } | null;

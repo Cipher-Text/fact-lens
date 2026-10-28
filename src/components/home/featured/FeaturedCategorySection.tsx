@@ -37,9 +37,7 @@ export function FeaturedCategorySection({
 }: FeaturedCategorySectionProps) {
   const { source, lead, rail } = section;
   const label =
-    source.kind === "category"
-      ? t.categories[source.id]
-      : t.regions[source.id];
+    source.kind === "category" ? t.categories[source.id] : t.regions[source.id];
   const sectionId =
     source.kind === "category"
       ? `category-${source.id}`

@@ -250,8 +250,8 @@ for (const p of PAGES) {
 }
 
 test("every category page builds in both languages", async ({ page }) => {
+  // Bangladesh is not a category (DR-412).
   for (const id of [
-    "bangladesh",
     "geopolitics",
     "economy",
     "security",

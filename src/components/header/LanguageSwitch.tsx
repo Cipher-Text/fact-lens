@@ -1,5 +1,6 @@
 import {
   LANG_QUERY,
+  ONLY_IN_QUERY,
   getDictionary,
   localizedPath,
   otherLang,
@@ -10,6 +11,11 @@ type Props = {
   lang: Lang;
   /** The current page path without the language prefix, for example "/latest". */
   path?: string;
+  /**
+   * The page to go to when this page does not exist in the other language: an article in
+   * one language goes to its category page, which shows a note (DR-401).
+   */
+  fallback?: string;
 };
 
 /**
@@ -24,9 +30,11 @@ type Props = {
  * The proxy keeps the choice in a cookie (DR-17). A plain <a>, so it works without
  * JavaScript and the link is never prefetched (a prefetch would set the cookie).
  */
-export function LanguageSwitch({ lang, path = "/" }: Props) {
+export function LanguageSwitch({ lang, path = "/", fallback }: Props) {
   const target = otherLang(lang);
-  const href = `${localizedPath(target, path)}?${LANG_QUERY}=${target}`;
+  const href = fallback
+    ? `${localizedPath(target, fallback)}?${LANG_QUERY}=${target}&${ONLY_IN_QUERY}=${lang}`
+    : `${localizedPath(target, path)}?${LANG_QUERY}=${target}`;
   const t = getDictionary(lang).language;
 
   return (

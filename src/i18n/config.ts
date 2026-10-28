@@ -12,6 +12,11 @@ export const LANG_COOKIE = "fl-lang";
 // The language switch adds this query to its link. The proxy stores it in the cookie.
 export const LANG_QUERY = "lang";
 
+// The language switch on an article that does not exist in the other language goes to the
+// category page with this query, set to the article language, so that page shows a note
+// (DR-401). The proxy keeps it when it removes LANG_QUERY.
+export const ONLY_IN_QUERY = "only";
+
 export function isLang(value: string | null | undefined): value is Lang {
   return value === "bn" || value === "en";
 }

@@ -4,14 +4,16 @@ import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-import { Eyebrow } from "./Eyebrow";
+import { Eyebrow, type EyebrowMode } from "./Eyebrow";
 import { headlineLink, storyHref } from "./links";
 import { MetaLine, storyMetaItems } from "./MetaLine";
 import { StoryImage } from "./StoryImage";
 
 type LeadStoryProps = {
   story: Story;
-  strings: Pick<Dictionary, "story" | "categories">;
+  strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
+  /** The Eyebrow mode (C-08). The hero is a mixed list and sets format (DR-417). */
+  eyebrowMode?: EyebrowMode;
   className?: string;
 };
 
@@ -23,7 +25,12 @@ type LeadStoryProps = {
  * on the panel, never on the photo. The panel grows down (LAY-17); the title is never cut
  * (CPT-08). A story with no image shows the no-image placeholder (StoryImage, DR-338).
  */
-export function LeadStory({ story, strings, className }: LeadStoryProps) {
+export function LeadStory({
+  story,
+  strings,
+  eyebrowMode,
+  className,
+}: LeadStoryProps) {
   return (
     <div className={cn("@container", className)}>
       <article data-lead className="lead-story flex flex-col">
@@ -43,6 +50,7 @@ export function LeadStory({ story, strings, className }: LeadStoryProps) {
             <Eyebrow
               story={story}
               strings={strings}
+              mode={eyebrowMode}
               className="mb-(--space-lead-eyebrow-title)"
             />
             <h3 className="type-story-lead">

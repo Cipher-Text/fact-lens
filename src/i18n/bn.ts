@@ -9,6 +9,8 @@ export const bn = {
     other: "English",
     // The phone top bar has less room (spacing-layout-system.md Section 6).
     otherShort: "En",
+    // On the category page, after the switch from an article that has no Bangla text (DR-401).
+    onlyInOther: "এই খবরটি শুধু ইংরেজিতে আছে।",
   },
   theme: {
     // The name of the switch; it is on when the theme is dark (DR-167).
