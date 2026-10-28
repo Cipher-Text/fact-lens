@@ -181,7 +181,7 @@ There are no sprints or tickets. One page or task is one branch, one brief and o
    **Keep the progress file.** `docs/progress/<name>.md` is the memory of the work: tajmin clears the context often. Update it before you stop: after each checkpoint, after each batch of tweaks and before a question to tajmin. It has everything the work adds, changes or decides, with tajmin's words for each decision (`docs/progress/TEMPLATE.md`). A new session reads it before it changes code.
 
    Build from the shared parts (`Shell`, `Wrapper`, `Rail`, `AdSlot`, `SectionHeading`, the story units). Do not repeat layout utilities in page code.
-3. **Final checkpoint.** Run `/checkpoint` at the last checkpoint, or when tajmin asks, not after each checkpoint: the checks (Section 11), the spec log `docs/spec-log/<name>.md` made from the progress file, the `design-reviewer` subagent, the spec update in `docs/design-system/` from the green items, `docs/STATUS.md`, `docs/ISSUES.md`, and a report. Green spec-log items are approved by tajmin's merge; red items are flags.
+3. **Final checkpoint.** Run `/checkpoint` at the last checkpoint, or when tajmin asks, not after each checkpoint: the checks (Section 11), the spec log `docs/spec-log/<name>.md` made from the progress file (when the work has spec items), the `design-reviewer` subagent, the spec update in `docs/design-system/` from the green items, `docs/STATUS.md`, `docs/ISSUES.md`, and a report. Green spec-log items are approved by tajmin's merge; red items are flags.
 4. **Commit only on tajmin's yes.** One commit per yes on the branch: `<name>: <what>` on the subject line, the rule IDs on the next line. Do not add a `Co-Authored-By` trailer or any other agent attribution; commits and pull requests carry only tajmin's name.
 5. **Pull request.** Open a PR from `page/<name>` or `task/<name>` to `dev`. The design-system updates for the work go in the same PR. When the review shows issues, fix them, but do not commit before tajmin approves. The merge is tajmin's approval. Nothing changes after the merge.
 6. **After the merge.** Run the full `pnpm test:e2e:chromium` on `dev` (the PR changed the specs).
@@ -200,11 +200,11 @@ A task is done when all of these are true:
 
 1. `pnpm check` passes with no new warnings.
 2. Chromium e2e passes on the brief's "Test files" and on every test file the work adds or changes (`pnpm exec playwright test --project=chromium <files>`). Run the full `pnpm test:e2e:chromium` when the work changes the token CSS (`src/styles/`), the layout parts (`src/components/layout/`) or the string tables (`src/i18n/`), and on `dev` after each merge. The run passes, including the axe check, with no serious or critical violations. WebKit runs as a separate report until its failures are fixed; do not let a WebKit failure block the work, and do not skip the test (`DR-289`).
-3. Homepage: each section matches its row in `spacing-layout-system.md` Section 7.2 at every tier, and the sparse cases in Section 7.3. Article page: Section 7A. Other pages: the brief.
+3. Homepage: each section matches its row in `spacing-layout-system.md` Section 7.2 at every tier, and the sparse cases in Section 7.3. Article page: Section 7A. Other pages and tasks: the brief.
 4. Each component passes the checks in its sheet (`component-system.md` Section 7).
 5. The validation widths and content cases in `spacing-layout-system.md` Section 13 show no clipped text and no horizontal scroll.
 6. Bangla and English, light and dark, keyboard focus and 200% zoom work. Supported browsers are in `agent-contract.md` Section 10 (`DR-341`).
-7. The progress file, the spec log, `docs/STATUS.md` and `docs/ISSUES.md` are current.
+7. The progress file, the spec log (when the work has spec items), `docs/STATUS.md` and `docs/ISSUES.md` are current.
 
 ## 12. Summary format
 

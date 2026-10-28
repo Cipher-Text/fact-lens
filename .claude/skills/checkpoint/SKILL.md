@@ -18,16 +18,18 @@ Run the `/verify` steps. The test files are in the brief.
 
 ## 3. Spec log
 
-Make or update `docs/spec-log/<name>.md` in the format of `docs/spec-log/category-formats.md` (header, kinds, item table, flags). Take the items from the progress file: each reused rule, new token, new component, new rule and changed rule, with `file:line` from the code now. A changed rule is always a flag. Code changes that are not spec items stay in the progress file only. If the work has no spec item, make no spec log, say so in the report and skip step 5.
+Make or update `docs/spec-log/<name>.md` in the format of `docs/spec-log/category-formats.md` (header, kinds, item table, flags). Take the items from the progress file: each reused rule, new token, new component, new rule and changed rule, with `file:line` from the code now. A changed rule is always a flag. Code changes that are not spec items stay in the progress file only. If the work has no spec item, make no spec log and say so in the report.
 
 ## 4. Review
 
-1. Ask the `design-reviewer` subagent to review the diff against the rule IDs and to check each spec-log item (matches the diff, naming and scale, no clash, one pattern per kind). It marks each item green or red.
+1. Ask the `design-reviewer` subagent to review the diff against the rule IDs and to check each spec-log item (matches the diff, naming and scale, no clash, one pattern per kind). It marks each item green or red. With no spec log, it reviews the diff against the rule IDs only.
 2. Fix every blocker. Red items go to tajmin as flags.
 
 ## 5. Specs
 
-On the branch, write the green items into `docs/design-system/` (the hook allows it only on a `page/` or `task/` branch). Raise the version line of each changed spec and add a change-log row. Do not write red items. Then update `agent-contract.md` Section 3 if the page scope changed.
+With no spec log, skip the spec writes and do only the last sentence of this step (the Section 3 check).
+
+On the branch, write the green items into `docs/design-system/` (the hook allows it only on a `page/` or `task/` branch). Raise the version line of each changed spec and add a change-log row. Do not write red items. Then update `agent-contract.md` Section 3 if the scope of a page or a component changed.
 
 ## 6. Status
 

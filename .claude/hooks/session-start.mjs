@@ -21,7 +21,7 @@ if (existsSync(file)) {
 // On a detached HEAD git prints "HEAD", so the hook shows no progress file.
 let branch = "";
 try {
-  branch = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+  branch = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
 } catch {
   branch = "";
 }
@@ -33,8 +33,10 @@ if (work) {
   if (existsSync(progress)) {
     const text = readFileSync(progress, "utf8");
     const now = text.match(/## Now[\s\S]*?(?=\n## |$)/);
-    const entries = text.split(/\n(?=### )/).slice(1);
-    const last = entries.length ? entries[entries.length - 1].split(/\n(?=## )/)[0] : "";
+    // Log entries are the ### blocks under "## Log", not the template placeholder.
+    const log = text.match(/\n## Log\n([\s\S]*?)(?=\n## |$)/);
+    const entries = log ? log[1].split(/\n(?=### )/).filter((e) => e.startsWith("### ") && !e.includes("<title>")) : [];
+    const last = entries.length ? entries[entries.length - 1] : "";
     console.log(`Progress (from docs/progress/${name}.md; read the whole file before you change code):`);
     if (now) console.log(now[0].trim());
     if (last) console.log("\nLast log entry:\n" + last.trim());
