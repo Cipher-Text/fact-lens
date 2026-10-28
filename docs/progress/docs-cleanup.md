@@ -15,9 +15,9 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: PR #19 open; spec logs restored and committed
-- Next step: on tajmin's answer, make the after-merge rule keep the spec logs (or leave it), then the merge
-- Open questions to tajmin: the rule text still says spec logs are deleted after the merge; change it to keep them?
+- State: PR #19 open; spec logs kept, rule text changed and pushed; waiting for tajmin's merge
+- Next step: after the merge, `AGENTS.md` Section 9 step 6 on `dev` (delete this brief and progress file; keep the spec logs)
+- Open questions to tajmin: none
 - Uncommitted: no
 
 ## Decisions
@@ -25,6 +25,7 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 | Date | Decision | Source |
 | --- | --- | --- |
 | 29 Oct 2026 | Clean up the redundant md files of earlier runs | tajmin, chat: "I also can see redundant md files from the previous runs. plan a cleanup." |
+| 29 Oct 2026 | Restore the spec logs; keep them after the merge (only the brief and progress file are deleted) | tajmin, chat: "restore the spec logs and commit.", then "Yes, keep logs" |
 | 29 Oct 2026 | Also delete the merged `page/` and `task/` branches, local and remote | tajmin, chat: "Yes, plus branches" |
 | 29 Oct 2026 | Run the proposed plan as `/task docs-cleanup`: delete (not archive), spec-log template, fix spec references, after-merge delete rule | tajmin, chat: "yes go ahead." (to the plan with delete as the first option) |
 
@@ -60,3 +61,11 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - tajmin, chat, 29 Oct 2026: "restore the spec logs and commit."
 - Restored from `origin/dev`, unchanged: `docs/spec-log/` `article`, `category`, `category-formats`, `dev-process`, `home-most-read`, `latest`, `url-format`. `TEMPLATE.md` stays. The other deletions (`docs/tasks/`, the briefs, the progress files) stay deleted
 - Not changed yet (open question to tajmin): the text that says spec logs are deleted after the merge: `AGENTS.md` Section 9 step 6, `agent-contract.md` Section 11 item 1, `docs/spec-log/TEMPLATE.md`, `README.md`, `docs/ISSUES.md` intro bullet, `docs/STATUS.md` open items bullet. The spec body text names the logs without paths ("Latest spec log LT-03"), which still reads right
+
+### Keep the spec logs: rule text (29 Oct 2026)
+
+- tajmin, chat, 29 Oct 2026: "Yes, keep logs" (to: change the after-merge rule so spec logs are kept)
+- `AGENTS.md` Section 9 step 6 and `agent-contract.md` Section 11 item 1: after the merge only the brief and the progress file are deleted (once each open item is an `ISSUES.md` row or in the spec log); the spec log stays as the record of what the work changed in the specs. The `git log --all` lines are gone
+- Version lines (agent-contract 2.20, component-system 1.26, spacing-layout 2.30) and the layout 2.30 changelog: the reason is now "the spec text names a spec log by its page and item IDs, not by its file path"
+- `docs/spec-log/TEMPLATE.md`, `README.md`, `docs/ISSUES.md` (1.4 line, intro bullet), `docs/STATUS.md` (open items bullet), this brief: say the spec logs are kept
+- The spec body text is unchanged: it names the logs without paths, which still reads right

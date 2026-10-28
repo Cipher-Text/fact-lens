@@ -1,6 +1,6 @@
 # Fact Lens: Issues
 
-Version 1.4 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec logs are deleted after the merge, so the rows say what they need and name no log (U-47, U-48, U-49). Before: 1.3 · 28 October 2026 · Latest page (`page/latest`): IMP-18 `/latest` part fixed; new U-51 (flag), IMP-122, DOC-59. Before: 1.2 · 28 October 2026 · URL format and category formats merged (PR #15, PR #16): IMP-97, IMP-118 and U-50 removed. Before: Version 1.1 · 27 October 2026 · Fixed, decided and closed items removed (the git history keeps them); the article page open items moved here (IMP-101 to IMP-114)
+Version 1.4 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the rows say what they need and name no spec-log item (U-47, U-48, U-49). Before: 1.3 · 28 October 2026 · Latest page (`page/latest`): IMP-18 `/latest` part fixed; new U-51 (flag), IMP-122, DOC-59. Before: 1.2 · 28 October 2026 · URL format and category formats merged (PR #15, PR #16): IMP-97, IMP-118 and U-50 removed. Before: Version 1.1 · 27 October 2026 · Fixed, decided and closed items removed (the git history keeps them); the article page open items moved here (IMP-101 to IMP-114)
 
 The one place for every open item, flag and decision on an issue. Read it instead of the git history. Items from `prototype-findings.md` and `PROGRESS.md` (removed 24 October 2026) are copied here with their full text.
 
@@ -9,7 +9,7 @@ The one place for every open item, flag and decision on an issue. Read it instea
 - Add a row for each new finding with the next free ID of its prefix (U-52, IMP-123, DOC-60, KIT-xx). Add a detail entry below when one line is not enough.
 - This file lists open items only: Open, Open (flag) or Later. When an item is fixed, decided or closed, record the result where it belongs (the spec, the decision register or the commit) and remove the row and its detail entry (tajmin, 27 Oct 2026). The git history keeps the old rows.
 - A flag is an item that needs tajmin's decision (`AGENTS.md` Section 8). Its status is "Open (flag)" until tajmin decides.
-- Open spec items and open code items are rows here. The spec log of a page or task is deleted after the merge (`AGENTS.md` Section 9, step 6), so a row says all it needs and does not point to a log.
+- Open spec items and open code items are rows here. A row says all it needs and does not depend on a spec log. The spec log of a page or task stays in `docs/spec-log/` as the record of what the work changed in the specs (`AGENTS.md` Section 9, step 6).
 
 | Prefix | Kind | Who acts |
 | --- | --- | --- |

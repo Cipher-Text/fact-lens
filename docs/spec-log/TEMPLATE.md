@@ -2,7 +2,7 @@
 
 Branch `<page|task>/<name>` · Brief `docs/briefs/<name>.md` · Issue <ID or none> · Started <date>
 
-This log keeps what the work changes in the specs, made from the progress file at the final checkpoint. Open code items are rows in `docs/ISSUES.md`. After the merge, the log is deleted with the brief and the progress file (`AGENTS.md` Section 9, step 6).
+This log keeps what the work changes in the specs, made from the progress file at the final checkpoint. Open code items are rows in `docs/ISSUES.md`. After the merge, the log stays as the record of what the work changed in the specs; the brief and the progress file are deleted (`AGENTS.md` Section 9, step 6).
 
 ## Kinds
 

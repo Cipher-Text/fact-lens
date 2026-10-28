@@ -8,11 +8,11 @@ Remove the md files of merged work and add a rule so they do not pile up again (
 
 ## Where
 
-- Delete: `docs/tasks/` (`home-most-read.md`, `url-format.md`); `docs/briefs/` `category-formats`, `dev-process`, `home-most-read`, `latest`, `url-format`; `docs/progress/` `dev-process`, `latest`; `docs/spec-log/` all 7 logs
+- Delete: `docs/tasks/` (`home-most-read.md`, `url-format.md`); `docs/briefs/` `category-formats`, `dev-process`, `home-most-read`, `latest`, `url-format`; `docs/progress/` `dev-process`, `latest`; spec logs kept (tajmin, 29 Oct 2026: restored)
 - New: `docs/spec-log/TEMPLATE.md` (header, kinds, empty item table, flags), from the `category-formats.md` format
 - `.claude/skills/checkpoint/SKILL.md`: the format example is `TEMPLATE.md`
 - Specs: drop the spec-log file paths and keep the item IDs in `spacing-layout-system.md` 7A, 7B, 7D intros, `component-system.md` article sheets intro, `agent-contract.md` Section 3 rows (with a changelog line each). Old changelog lines stay as history
-- `AGENTS.md` Section 9 step 6, after the merge: delete the brief, progress file and spec log of the merged work once its open items are rows in `docs/ISSUES.md`; also Section 5 folder note if needed
+- `AGENTS.md` Section 9 step 6, after the merge: delete the brief and progress file of the merged work once their open items are rows in `docs/ISSUES.md` or in the spec log; the spec log stays; also Section 5 folder note if needed
 - Keep: `docs/webkit-failures.md`, `.claude/rules/`, `docs/progress/TEMPLATE.md`
 
 ## Rule IDs

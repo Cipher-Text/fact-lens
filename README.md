@@ -45,4 +45,4 @@ This repository is built with Claude Code, under rules that humans and agents sh
 - [`.claude/`](.claude): permissions, hooks that block raw design values, skills (`/page`, `/checkpoint`, `/verify`, `/check-rules`) and review subagents
 - [`docs/STATUS.md`](docs/STATUS.md): the current state
 - [`docs/ISSUES.md`](docs/ISSUES.md): every open item, flag and decided issue
-- `docs/briefs/`, `docs/progress/` and [`docs/spec-log/`](docs/spec-log): the brief, progress file and spec log of the page or task in progress; deleted after the merge (`AGENTS.md` Section 9)
+- `docs/briefs/`, `docs/progress/` and [`docs/spec-log/`](docs/spec-log): the brief and progress file of the page or task in progress (deleted after the merge), and the spec log of each page or task (kept) (`AGENTS.md` Section 9)
