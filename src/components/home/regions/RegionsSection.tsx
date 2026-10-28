@@ -17,6 +17,7 @@ type RegionsSectionProps = {
     | "regionsSection"
     | "regionSlider"
     | "story"
+    | "analysisOpinion"
     | "categories"
     | "common"
   >;

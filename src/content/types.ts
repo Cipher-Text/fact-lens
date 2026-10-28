@@ -4,11 +4,12 @@ import type { Lang } from "@/i18n/config";
 
 export type { Lang };
 
-export type Format = "news" | "analysis" | "opinion" | "explainer";
+// The three formats (DR-414). The format is in the content model, not in the URL.
+export type Format = "news" | "analysis" | "opinion";
 
 // চীন is a region, not a category (DR-19). No fact-check category (DR-18).
+// Bangladesh is not a category: Fact Lens has no domestic news (DR-412).
 export const categoryIds = [
-  "bangladesh",
   "geopolitics",
   "security",
   "history",
@@ -18,14 +19,27 @@ export const categoryIds = [
 
 export type CategoryId = (typeof categoryIds)[number];
 
-export type RegionId =
-  | "china"
-  | "india"
-  | "myanmar"
-  | "middle-east"
-  | "southeast-asia"
-  | "europe"
-  | "africa";
+// The working region list, in order (layout 7C, DR-411). The backend owns the list
+// later; code reads it from here and works with any number of regions.
+export const regionIds = [
+  "americas",
+  "europe",
+  "russia",
+  "middle-east",
+  "south-asia",
+  "china",
+  "asia",
+  "oceania",
+] as const;
+
+export type RegionId = (typeof regionIds)[number];
+
+/** A topic in one language (DR-410). Its page is /topic/<slug>. */
+export interface Topic {
+  id: string;
+  slug: string;
+  label: string;
+}
 
 export interface ImageRef {
   src: string; // /mock/<name>.svg
@@ -40,7 +54,7 @@ export interface Story {
   slug: string;
   format: Format;
   category: CategoryId;
-  region?: RegionId;
+  regions: RegionId[]; // what the story is about, one or more (DR-411)
   title: string;
   summary?: string;
   author?: { name: string; slug: string };
@@ -57,9 +71,13 @@ export interface HeroContent {
   latest: Story[];
 }
 
+/** What a P-2 section features: a category or a region (DR-412). */
+export type FeaturedSource =
+  { kind: "category"; id: CategoryId } | { kind: "region"; id: RegionId };
+
 /** P-2: lead in the wrapper, one image story and two stories in the rail. */
 export interface FeaturedSection {
-  category: CategoryId;
+  source: FeaturedSource;
   lead: Story;
   rail: Story[];
 }
@@ -104,7 +122,7 @@ export interface Homepage {
   hero: HeroContent | null;
   analysisOpinion: AnalysisOpinionSection | null;
   featured: {
-    bangladesh: FeaturedSection | null;
+    southAsia: FeaturedSection | null;
     geopolitics: FeaturedSection | null;
   };
   grouped: { categories: CategoryBlock[]; poll: Poll } | null;

@@ -18,7 +18,7 @@ Change the site to the approved URL format and content model. Do it on every pag
 
 ## 2. Branch
 
-Use `page/url-format` from `dev`. Run `git fetch` first. Use a `page/` branch because the spec hook allows spec edits only there (`AGENTS.md` Section 10).
+Use the existing branch `page/url-format` (`git fetch`, then check it out). It already holds the spec updates of Section 5 (tajmin, 28 Oct 2026): build the code to match them. Use a `page/` branch because the spec hook allows spec edits only there (`AGENTS.md` Section 10).
 
 ## 3. Rules to build
 
@@ -118,9 +118,12 @@ Stop after each one, post a short note, and wait for "next" (`AGENTS.md` Section
 3. **Card Eyebrow** (3.7).
 4. **Homepage South Asia** (3.9).
 5. **Article Eyebrow** (3.8).
-6. **Final checkpoint** (`/checkpoint`): the checks, the spec log, design-reviewer, the specs (Section 5), STATUS and ISSUES.
+6. **Final checkpoint** (`/checkpoint`): the checks, the spec log, design-reviewer, the spec check (Section 5), STATUS and ISSUES.
 
-## 5. Spec and doc updates (final checkpoint, on this branch)
+## 5. Spec and doc updates
+
+The spec items below are **already written** on `page/url-format` (spacing-layout 2.27, component-system 1.22, typography 2.20, `AGENTS.md` Section 7, color-system wording). At the final checkpoint, check that the code matches them, fill in the open values (region labels, separator token) once tajmin approves them, and report any spec that the code shows to be wrong. Still to do at the final checkpoint: the label rows in `bn.ts` / `en.ts`, `docs/STATUS.md`, and closing or narrowing IMP-97.
+
 
 - `spacing-layout-system.md`: add a short **URLs** section (tajmin Q5) with the rules in 3.1 to 3.6 and the hub, region and topic paths. Line 304: `/story/<slug>` becomes `/story/<slug>-<id>`. Line 237: the P-2 example becomes দক্ষিণ এশিয়া. Bump the version and add a changelog row.
 - `component-system.md`: C-08 `format` mode and the article two-part variant; `ArticleHeader.category` (line ~1430) to the two-part text links; `Tags.item` (line ~1539) becomes `Topics.item` with `/topic/<slug>`; C-18 nav order and targets; the RegionSlider list (line ~1635); examples with বাংলাদেশ (lines ~98, ~652, ~1109).

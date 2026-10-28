@@ -23,11 +23,11 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | ID | Found | Title | Severity | Status |
 | --- | --- | --- | --- | --- |
 | U-01 | FL-01 | English category labels | Medium | Later: IA label table (DR-342, DR-282) |
-| U-07 | FL-04 | Region list under অঞ্চল | Medium | Later: IA label table; 7 working regions (DR-342) |
+| U-07 | FL-04 | Region list under অঞ্চল | Medium | Later: the backend owns the list and order (DR-411); 8 working regions, labels approved (tajmin, 28 Oct 2026) |
 | U-08 | FL-05 | Logo asset and its role. The dark text logo fails axe contrast until the SVG exists | Medium | Later: logo SVG from the design owner; text stand-in stays (DR-304) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Later: backend integration; labels stay in `src/i18n/` (DR-263) |
-| IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Later: backend integration. Category items go to the category pages (PR #11); region and Analysis links stay anchors |
-| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section pages; URL patterns are set, 404s stay. Category part fixed (PR #11) |
+| IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Later: backend integration. Category items go to the category pages (PR #11); region, Regions, বিশ্লেষণ and মতামত items go to `/regions/<slug>`, `/regions`, `/analysis` and `/opinion` (404 until IMP-18). The parent বিশ্লেষণ ও মতামত stays an anchor (DR-331) |
+| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section pages; URL patterns are set (layout 7C), 404s stay for `/latest`, `/analysis`, `/opinion`, `/regions`, `/regions/<slug>`, `/topic/<slug>` and stories with no text. Category part fixed (PR #11) |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Later: newsletter phase (DR-343) |
 | IMP-33 | R2-03 | Newsletter strings and components stay until the newsletter phase | Low | Later: newsletter phase (DR-343) |
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Later: IA label table; working labels stay (DR-282) |
@@ -40,9 +40,13 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | IMP-93 | PR #7 review | Before hydration (or with JS off) the NavBar items that wrap are cut off but are still in the Tab order | Low | Open |
 | IMP-94 | PR #7 review | Latest with one story at 768 to 1023: the column rule shows beside an empty second column (layout §7.3) | Low | Open |
 | IMP-95 | PR #7 review | `header.spec.ts` uses fixed waits (lines 357, 1216: 100ms; 1310: 500ms) for "nothing changes" checks | Low | Open |
-| IMP-97 | – | URL change: two article roots and the Eyebrow format | Medium | Open (tajmin, 25 Oct 2026; DR-397, DR-400) |
+| IMP-97 | – | URL format, home and article: one `/story/<slug>-<id>` root, formats, South Asia, topics, Eyebrow (task `docs/tasks/url-format.md`) | Medium | Open: built on `page/url-format` (checkpoints 1 to 5, spec log UF-01 to UF-07); closes when the PR merges. Run 2 is IMP-118 |
+| IMP-118 | – | Category page lists opinion and analysis in its main stream; DR-415 wants news only, with analysis and opinion sections before Most read | Medium | Open: run 2, `page/category-formats` (tajmin, 28 Oct 2026) |
+| IMP-119 | `page/url-format` final checkpoint | The axe checks on the article page can run while the heading still fades in (rd-rise): color-contrast then reads the metadata at 4.46:1 and fails about 1 run in 5. `url-format.spec.ts` now waits for `document.getAnimations()` to end; `article.spec.ts:91` does not yet | Low | Open |
 | IMP-100 | Category page checkpoint | Move the hand-drawn 1px horizontal rules to Divider.rule (C-22): the article rule above the Tags, and the candidates in the detail entry | Medium | Open: to do (tajmin, 27 Oct 2026) |
 | U-47 | `page/home-most-read` checkpoint | 200% text size: layout §13 and the C-07 check say most read stacks; with the one RankedList layout it keeps two list columns from 600 (no sideways scroll, `text-size.spec.ts` passes). Keep two columns and change §13, or set a stacking trigger (spec log HM-04) | Medium | Open (flag) |
+| U-48 | `page/url-format` final checkpoint | `MissingTranslationNote` (DR-401) has no sheet: neutral `type-ui-sm` `ink-secondary` line above the category page title, `--space-module` below (`src/components/category/MissingTranslationNote.tsx`; spec log UF-06). The page is static, so the text comes in after hydration and pushes the title down (layout shift, PR #15 review); the empty status region is in the server HTML so the text is announced. To stop the shift: make the category route read `searchParams` (dynamic), or have the sheet place the note where it moves nothing | Low | Open (flag) |
+| U-49 | `page/url-format` final checkpoint | C-08 `format` mode: the code uses it on the hero lead and top stories only; the sheet also names region columns and More stories, which show no Eyebrow (DR-153, DR-370). Read next keeps `category`. Change the sheet or add the Eyebrow (spec log UF-02) | Medium | Open (flag): tajmin fixes later |
 | DOC-56 | `page/home-most-read` checkpoint | `--type-story-title-sm-ink-end` (typography 3.1, "Below the last title line (RankedList)") has no user since RankedList dropped Divider.item (IMP-99); only `tokens.test.ts` reads it. Retire it or name a new user | Low | Open |
 | IMP-115 | `page/home-most-read` visual QA | Homepage `/` and `/en` at 768 with the root font size at 200%: the page scrolls sideways (scrollWidth 936 for 753): Featured story media and the Regions row. Category pages do not. `text-size.spec.ts` passes; check how it sets the text size. Not caused by IMP-99 | Medium | Open |
 | IMP-98 | Category page checkpoint | `regions.spec.ts:579` axe at 360 fails in the full Chromium run (`scrollable-region-focusable` on the phone tab list) and passes when run alone: timing before hydration | Low | Open |
@@ -202,24 +206,18 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 ### IMP-95 Fixed waits in the header tests
 
 - **Found:** PR #7 review (claude-review), 18 Oct 2026 · **Severity:** Low · **Status:** Open (fix planned later)
-- **Source:** `tests/e2e/header.spec.ts:357`, `:1216` (100ms), `:1310` (500ms); IMP-86 (flaky under load).
+- **Source:** `tests/e2e/header.spec.ts:357`, `:1322` (100ms), `:1416` (500ms); IMP-86 (flaky under load).
 - **Problem:** the review calls these flaky. They check that nothing changes (no scroll, the bar stays stuck, no layout shift), so they cannot poll for a state; but the 100ms waits stand for "the scroll handler has run", which is one animation frame.
 - **What the code does:** no change.
-- **Suggested solution:** lines 357 and 1216: wait two animation frames (the handler runs in `requestAnimationFrame`) instead of 100ms. Line 1310: keep the window for late layout shifts after hydration, or end it on a hydration marker. Check with `--repeat-each=10`.
+- **Suggested solution:** lines 357 and 1322: wait two animation frames (the handler runs in `requestAnimationFrame`) instead of 100ms. Line 1416: keep the window for late layout shifts after hydration, or end it on a hydration marker. Check with `--repeat-each=10`.
 
-### IMP-97 URL change: two article roots and the Eyebrow format
+### IMP-97 URL format, home and article
 
-- **Found:** URL format thread, 25 Oct 2026 · **Severity:** Medium · **Status:** Open (tajmin, 25 Oct 2026; DR-397, DR-400)
-- **Source:** `src/components/story/links.ts` (`storyHref`), `src/app/[lang]/story/[slug]/`, `src/content/` (mock data), `spacing-layout-system.md` line 303 (`/story/<slug>`).
-- **Problem:** articles use `/story/<slug>` for every format, and the Eyebrow shows the category on every article.
-- **Rules to build:**
-  - News, analysis and explainer: `/story/<slug>-<id>`. Opinion and op-ed: `/opinion/<slug>-<id>`. English adds `/en`.
-  - `<id>` is a short fixed id per article, shared by both languages. One slug for both languages; the Bangla page uses the English slug. The backend makes slugs; mock data gets short ids.
-  - The page is found by `<id>`. A wrong or old slug or root gets a 301 to the current URL. Lowercase Latin, hyphens, no trailing slash.
-  - Bare `/story` and `/opinion` give a 404.
-  - The Eyebrow shows the format (example: Opinion) on analysis, explainer, opinion and op-ed articles. No breadcrumb trail.
-- **Suggested solution:** do it on a `page/` branch, so the spec line in `spacing-layout-system.md` can change with the code. IMP-18 stays: section pages are still 404 pages.
-- **Answers so far (tajmin, 26 Oct 2026):** the format replaces the category in the Eyebrow; it applies everywhere the Eyebrow shows, homepage cards included; op-ed is not built now. Open: the format Eyebrow is a link to a "voices hub" (opinion), but the hub, its URL (bare `/opinion` is a 404) and the analysis and explainer targets are not decided. Its own branch, after the category page.
+- **Found:** URL format thread, 25 Oct 2026; rules changed 28 Oct 2026 · **Severity:** Medium · **Status:** Open: built on `page/url-format`, closes when the PR merges (28 Oct 2026)
+- **Task:** `docs/tasks/url-format.md` gives every rule, the checkpoints and the test files. The paths are in `spacing-layout-system.md` Section 7C.
+- **Problem:** articles use `/story/<slug>` with no id; the content model has `explainer` and a `bangladesh` category; the article end links to `/tag/`; the menu links বিশ্লেষণ and মতামত to a homepage anchor; the Eyebrow has one mode.
+- **Not in it:** the category page formats (IMP-118) and the hub, region and topic pages.
+- **Built:** `/story/<slug>-<id>` with a 301 from a wrong or old slug and a 404 for an unknown id or bare `/story`; formats news, analysis, opinion; South Asia in P-2 and the nav; 8 regions; topics at `/topic/<slug>`; C-08 `format` and `two-part`; missing translation (DR-401). Decisions on the way (tajmin, 28 Oct 2026): `--space-eyebrow-separator` 8px (UF-04); mock data adds the `reserve-indicators` article and region tags so each shown region has 3 stories.
 
 ### IMP-100 Move the hand-drawn 1px rules to Divider.rule
 

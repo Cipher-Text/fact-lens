@@ -5,7 +5,7 @@ import type { Dictionary } from "@/i18n";
 
 type ListProps = {
   stories: Story[];
-  t: Pick<Dictionary, "story" | "categories">;
+  t: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
 };
 
 /**

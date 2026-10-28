@@ -181,12 +181,22 @@ for (const p of PAGES) {
       await expect
         .poll(async () => Math.round((await box(nav)).height))
         .toBe(45);
-      await nav.locator('a[href="#regions"]').click();
+      // The one # link left in the nav is the parent Analysis and Opinion: Regions goes to
+      // /regions now (DR-411, DR-414). The English NavBar hides that last item for lack of
+      // room at every width (DR-359), so the link is clicked in the Drawer.
+      const drawer = page.locator("[data-drawer]");
+      await openWithKeyboard(
+        page.getByRole("button", { name: p.menu, exact: true }),
+        drawer,
+      );
+      await drawer.locator('a[href="#analysis-opinion-title"]').first().click();
       await expect(page.locator("html")).toHaveAttribute("data-bar-stuck", "");
       await expect(nav).toBeHidden();
       // The target stops at the bar bottom + 16px: 64 + 16.
       await expect
-        .poll(async () => Math.round((await box(page.locator("#regions"))).y))
+        .poll(async () =>
+          Math.round((await box(page.locator("#analysis-opinion-title"))).y),
+        )
         .toBe(80);
     });
 

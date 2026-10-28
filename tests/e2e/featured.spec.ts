@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from "@playwright/test";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
-// R2-10: P-2 FeaturedCategorySection for বাংলাদেশ and ভূরাজনীতি (component-system.md P-2,
+// R2-10: P-2 FeaturedCategorySection for দক্ষিণ এশিয়া and ভূরাজনীতি (component-system.md P-2,
 // C-24, C-03; spacing-layout-system.md 7.1 to 7.3, 13; DR-118, DR-119, DR-121, DR-122,
 // DR-123, LAY-03, LAY-05, LAY-12, LAY-13).
 
@@ -11,21 +11,32 @@ const PAGES = [
   {
     path: "/",
     lang: "bn",
-    titles: { bangladesh: "বাংলাদেশ", geopolitics: "ভূরাজনীতি ও কূটনীতি" },
+    titles: {
+      "south-asia": "দক্ষিণ এশিয়া",
+      geopolitics: "ভূরাজনীতি ও কূটনীতি",
+    },
     more: (title: string) => `আরও দেখুন: ${title}`,
   },
   {
     path: "/en",
     lang: "en",
     titles: {
-      bangladesh: "Bangladesh",
+      "south-asia": "South Asia",
       geopolitics: "Geopolitics and Diplomacy",
     },
     more: (title: string) => `See more: ${title}`,
   },
 ] as const;
 
-const CATEGORIES = ["bangladesh", "geopolitics"] as const;
+// The region দক্ষিণ এশিয়া takes the place of বাংলাদেশ (DR-412), then the category ভূরাজনীতি.
+const CATEGORIES = ["south-asia", "geopolitics"] as const;
+
+// The section id, its anchor, and the আরও দেখুন target. The region section is not
+// region-south-asia: that is the RegionSlider panel id (tajmin, 28 Oct 2026).
+const SECTIONS = {
+  "south-asia": { id: "featured-south-asia", more: "/regions/south-asia" },
+  geopolitics: { id: "category-geopolitics", more: "/category/geopolitics" },
+} as const;
 
 const WIDTHS = [
   320, 360, 600, 767, 768, 834, 1023, 1024, 1180, 1279, 1280, 1366, 1440, 1920,
@@ -42,8 +53,8 @@ const WRAPPER: Record<number, number> = {
   1920: 944,
 };
 
-const section = (page: Page, category: string) =>
-  page.locator(`[data-section="featured"][data-category="${category}"]`);
+const section = (page: Page, category: keyof typeof SECTIONS) =>
+  page.locator(`[data-section="featured"]#${SECTIONS[category].id}`);
 
 async function box(locator: Locator) {
   const b = await locator.boundingBox();
@@ -179,7 +190,7 @@ for (const p of PAGES) {
           await expect(more).toHaveCount(1);
           await expect(more).toHaveAttribute(
             "href",
-            `${p.lang === "bn" ? "" : "/en"}/category/${category}`,
+            `${p.lang === "bn" ? "" : "/en"}${SECTIONS[category].more}`,
           );
           const m = await box(more);
           expect(m.y).toBeGreaterThan(
@@ -235,7 +246,7 @@ for (const p of PAGES) {
       }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(`${p.path}?content=sparse`);
-        const s = section(page, "bangladesh");
+        const s = section(page, "south-asia");
         await expect(s.locator("[data-featured-rail]")).toHaveCount(0);
         expect(
           Math.round((await box(s.locator("[data-featured-wrapper]"))).width),
@@ -259,7 +270,7 @@ for (const p of PAGES) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
         for (const category of CATEGORIES) {
-          const section = page.locator(`[data-category="${category}"]`);
+          const section = page.locator(`#${SECTIONS[category].id}`);
           const cards = [
             {
               card: section.locator("[data-featured-wrapper] article"),
@@ -309,7 +320,7 @@ for (const p of PAGES) {
       await page.goto(p.path);
       for (const category of CATEGORIES) {
         const s = section(page, category);
-        await expect(s).toHaveAttribute("id", `category-${category}`);
+        await expect(s).toHaveAttribute("id", SECTIONS[category].id);
         await expect(
           s.getByRole("heading", { level: 2, name: p.titles[category] }),
         ).toBeVisible();
@@ -363,14 +374,14 @@ for (const p of PAGES) {
   });
 }
 
-test("page order: P-4, ad, বাংলাদেশ, ad, ভূরাজনীতি, ad (7.1)", async ({
+test("page order: P-4, ad, দক্ষিণ এশিয়া, ad, ভূরাজনীতি, ad (7.1)", async ({
   page,
 }) => {
   await page.goto("/");
   const main = page.locator("main > *");
   await expect(main.nth(3)).toHaveAttribute("data-section", "analysis-opinion");
   await expect(main.nth(4)).toHaveAttribute("data-ad-slot", "ad-band");
-  await expect(main.nth(5)).toHaveAttribute("data-category", "bangladesh");
+  await expect(main.nth(5)).toHaveAttribute("id", "featured-south-asia");
   await expect(main.nth(6)).toHaveAttribute("data-ad-slot", "ad-band");
   await expect(main.nth(7)).toHaveAttribute("data-category", "geopolitics");
   await expect(main.nth(8)).toHaveAttribute("data-ad-slot", "ad-band");

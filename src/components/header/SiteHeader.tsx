@@ -15,6 +15,8 @@ type Props = {
   lang: Lang;
   /** The current page path without the language prefix, for the language switch. */
   path?: string;
+  /** Where the language switch goes when this page has no other-language version (DR-401). */
+  switchFallback?: string;
 };
 
 /**
@@ -32,7 +34,7 @@ type Props = {
  * ThemeButton (one ThemeButton at every width, DR-349). No subscribe button (DR-188). The logo is a text stand-in in brand color until
  * the logo file exists (BRD-06, COL-04, U-08). The logo type is `type-logo` (DR-306).
  */
-export function SiteHeader({ lang, path = "/" }: Props) {
+export function SiteHeader({ lang, path = "/", switchFallback }: Props) {
   const t = getDictionary(lang);
   const items = getNavItems(t, lang, path);
   const home = localizedPath(lang);
@@ -67,7 +69,7 @@ export function SiteHeader({ lang, path = "/" }: Props) {
         }
         end={
           <>
-            <LanguageSwitch lang={lang} path={path} />
+            <LanguageSwitch lang={lang} path={path} fallback={switchFallback} />
             <ThemeButton strings={t.theme} />
           </>
         }

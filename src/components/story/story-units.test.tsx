@@ -12,7 +12,7 @@ import { StoryListItem } from "./StoryListItem";
 
 const bn = getDictionary("bn");
 const withImage = getStory("deep-sea-port-trial-ship", "bn");
-const longNoImage = getStory("primary-teacher-training", "bn");
+const longNoImage = getStory("royal-family-genealogy", "bn");
 
 // DR-338: a flat surface-alt fill at the slot ratio. No image, no mark, no text.
 function expectPlaceholder(container: HTMLElement) {

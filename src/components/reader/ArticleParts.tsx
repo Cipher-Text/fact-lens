@@ -7,6 +7,7 @@ import {
   type ArticleContext,
   type Block,
   type ReadNextItem,
+  type Topic,
 } from "@/content";
 import { Badge } from "@/components/ui/badge";
 import { SectionHeading } from "@/components/layout/SectionHeading";
@@ -185,31 +186,27 @@ export function PreferredSourceAlert({ t }: { t: ReaderStrings }) {
   );
 }
 
-/** The tags: shadcn Badge links (tajmin, 24 Oct 2026). Tag pages do not exist yet, so the
- *  links lead to a 404 page, like the homepage story links. */
-export function Tags({
-  tags,
+/** C-34 Topics: shadcn Badge links (tajmin, 24 Oct 2026; DR-410). Topic pages do not
+ *  exist yet, so the links lead to a 404 page, like the homepage story links (IMP-18). */
+export function Topics({
+  topics,
   t,
   lang,
 }: {
-  tags: string[];
+  topics: Topic[];
   t: ReaderStrings;
   lang: Lang;
 }) {
   return (
-    <div className="rd-tags">
-      <p className="rd-eyebrow">{t.tags}</p>
+    <div className="rd-topics">
+      <p className="rd-eyebrow">{t.topics}</p>
       <ul>
-        {tags.map((tag) => (
-          <li key={tag}>
+        {topics.map((topic) => (
+          <li key={topic.id}>
             <Badge
-              render={
-                <a
-                  href={localizedPath(lang, `/tag/${encodeURIComponent(tag)}`)}
-                />
-              }
+              render={<a href={localizedPath(lang, `/topic/${topic.slug}`)} />}
             >
-              {tag}
+              {topic.label}
             </Badge>
           </li>
         ))}

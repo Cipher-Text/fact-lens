@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { currentStoryRef } from "@/content";
+
 import {
   LANG_COOKIE,
   LANG_QUERY,
@@ -13,6 +15,9 @@ const ONE_YEAR = 60 * 60 * 24 * 365;
 
 // A path with a file extension is a file from public/ (images, icons). It keeps its URL.
 const FILE_PATH = /\.[^/]+$/;
+
+// An article path, /story/<slug>-<id>, after the language prefix (layout 7C).
+const STORY_PATH = /^\/story\/([^/]+)$/;
 
 // Bangla at the root URL, English under /en (DR-17).
 // The language comes from the URL and the reader's own choice only.
@@ -48,6 +53,17 @@ export function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = stripLang(pathname);
     return NextResponse.redirect(url, 308);
+  }
+
+  // A wrong or old slug gets a 301 to the current URL (DR-413). A 301, not the 308 of
+  // Next.js permanentRedirect(), so it is done here and not in the page.
+  const lang = isLang(first) ? first : defaultLang;
+  const story = STORY_PATH.exec(stripLang(pathname));
+  const current = story && currentStoryRef(story[1], lang);
+  if (current) {
+    const url = request.nextUrl.clone();
+    url.pathname = localizedPath(lang, `/story/${current}`);
+    return NextResponse.redirect(url, 301);
   }
 
   if (isLang(first)) return NextResponse.next();

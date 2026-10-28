@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 import { CategoryFeatureSection } from "./CategoryFeatureSection";
 import { CategoryMoreStoriesSection } from "./CategoryMoreStoriesSection";
+import { MissingTranslationNote } from "./MissingTranslationNote";
 
 type Props = {
   page: CategoryPage;
@@ -33,6 +34,9 @@ export function CategoryPageView({ page }: Props) {
         tabIndex={-1}
         className="pt-(--space-page-start) pb-(--space-section) focus-visible:outline-none"
       >
+        {/* After the language switch from an article in one language only (DR-401). It
+            reads the URL in the browser; the page stays static. */}
+        <MissingTranslationNote lang={lang} text={t.language.onlyInOther} />
         <PageTitle
           title={t.categories[category]}
           className="pb-(--space-section-title-after)"

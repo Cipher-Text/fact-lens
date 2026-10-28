@@ -4,20 +4,22 @@ import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-import { Eyebrow } from "./Eyebrow";
+import { Eyebrow, type EyebrowMode } from "./Eyebrow";
 import { headlineLink, storyHref } from "./links";
 import { MetaLine, storyMetaItems } from "./MetaLine";
 import { StoryImage } from "./StoryImage";
 
 type OverlapCardProps = {
   story: Story;
-  strings: Pick<Dictionary, "story" | "categories">;
+  strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
   /** The color of the section under the card: the text block repeats it (C-02). Page color in the hero, surface-elevated in P-4. */
   surface?: "background" | "elevated";
   /** Load the image without lazy loading: cards near the top of the page (hero). */
   eager?: boolean;
   /** The page drops the eyebrow when its title names the category (DR-114, DR-153). */
   eyebrow?: boolean;
+  /** The Eyebrow mode (C-08): format in mixed lists (DR-417). */
+  eyebrowMode?: EyebrowMode;
   /**
    * The feature story of its section (CategoryFeatureSection): the title takes type-story-lead and the text block
    * ends with --space-lead-panel, as the C-01 panel does.
@@ -40,6 +42,7 @@ export function OverlapCard({
   surface = "background",
   eager = false,
   eyebrow = true,
+  eyebrowMode,
   feature = false,
   className,
 }: OverlapCardProps) {
@@ -59,6 +62,7 @@ export function OverlapCard({
           <Eyebrow
             story={story}
             strings={strings}
+            mode={eyebrowMode}
             className="mb-(--space-lead-eyebrow-title)"
           />
         ) : null}

@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Divider, dividerItem } from "@/components/layout/Divider";
 import { SectionHeading } from "@/components/layout/SectionHeading";
-import { getHomepage } from "@/content";
+import { getHomepage, getStory } from "@/content";
 import { bn } from "@/i18n/bn";
 import { en } from "@/i18n/en";
 
@@ -103,6 +103,80 @@ describe("Eyebrow (C-08)", () => {
     );
     expect(link.className).not.toMatch(NO_ROUNDING);
     expect(link.parentElement).toHaveClass("type-eyebrow");
+  });
+
+  // DR-417: format mode in mixed lists. Analysis cards link the format hub; news cards keep
+  // the category.
+  for (const [lang, t] of [
+    ["bn", bn],
+    ["en", en],
+  ] as const) {
+    const prefix = lang === "en" ? "/en" : "";
+    it(`format mode links an analysis story to ${prefix}/analysis (${lang})`, () => {
+      const story = getStory("joint-border-patrol-rules", lang);
+      expect(story.format).toBe("analysis");
+      render(<Eyebrow story={story} strings={t} mode="format" />);
+      const links = screen.getAllByRole("link");
+      expect(links).toHaveLength(1);
+      expect(links[0]).toHaveAccessibleName(t.analysisOpinion.analysis);
+      expect(links[0]).toHaveAttribute("href", `${prefix}/analysis`);
+      expect(links[0]).toHaveClass("text-interactive");
+    });
+
+    it(`format mode keeps the category on a news story (${lang})`, () => {
+      const story = getStory("river-data-framework", lang);
+      expect(story.format).toBe("news");
+      render(<Eyebrow story={story} strings={t} mode="format" />);
+      expect(screen.getByRole("link")).toHaveAttribute(
+        "href",
+        `${prefix}/category/${story.category}`,
+      );
+    });
+  }
+
+  // DR-416: two-part on article pages. Analysis and opinion: format, separator, category.
+  for (const [slug, format] of [
+    ["reserve-indicators", "analysis"],
+    ["opinion-climate-finance", "opinion"],
+  ] as const) {
+    it(`two-part mode links the ${format} hub, then the category`, () => {
+      const story = getStory(slug, "bn");
+      expect(story.format).toBe(format);
+      const { container } = render(
+        <Eyebrow story={story} strings={bn} mode="two-part" />,
+      );
+      const links = screen.getAllByRole("link");
+      expect(links.map((a) => a.getAttribute("href"))).toEqual([
+        `/${format}`,
+        `/category/${story.category}`,
+      ]);
+      expect(links[0]).toHaveAccessibleName(bn.analysisOpinion[format]);
+      expect(links[1]).toHaveAccessibleName(bn.categories[story.category]);
+      const separator = container.querySelector("[data-eyebrow-separator]")!;
+      expect(separator).toHaveTextContent("·");
+      expect(separator).toHaveAttribute("aria-hidden", "true");
+      expect(separator).toHaveClass("text-ink-muted");
+      // The separator stays with the first part when the row wraps.
+      expect(separator.parentElement).toContainElement(links[0]);
+      for (const link of links) expect(link.className).not.toMatch(NO_ROUNDING);
+    });
+  }
+
+  it("two-part mode shows the category only on a news story", () => {
+    const story = getStory("river-data-framework", "en");
+    const { container } = render(
+      <Eyebrow story={story} strings={en} mode="two-part" />,
+    );
+    expect(screen.getAllByRole("link")).toHaveLength(1);
+    expect(container.querySelector("[data-eyebrow-separator]")).toBeNull();
+  });
+
+  it("category mode keeps the category on an analysis story (analysis sections)", () => {
+    const story = getStory("joint-border-patrol-rules", "en");
+    render(<Eyebrow story={story} strings={en} />);
+    expect(screen.getByRole("link")).toHaveAccessibleName(
+      en.categories[story.category],
+    );
   });
 });
 

@@ -74,7 +74,7 @@ Components use utilities only.
 
 | Token | Utility | Light | Dark | Use |
 | --- | --- | --- | --- | --- |
-| `accent-soft` | `accent-soft` | `#EDCEC4` | `#3A201A` | Tags, selected cards |
+| `accent-soft` | `accent-soft` | `#EDCEC4` | `#3A201A` | Topics, selected cards |
 | `accent-subtle` | `accent-subtle`, `accent` | `#F6E6E0` | `#281B18` | Callouts |
 
 ### 2.5 Borders

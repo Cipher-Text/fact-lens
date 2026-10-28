@@ -141,6 +141,7 @@ Before you do one of the things in `agent-contract.md` Section 8 ("If you are ab
 - When the reader selects a language, keep the choice in a cookie (`fl-lang`). The remembered English choice redirects to `/en` only at `/`, with `Cache-Control: private, no-store`. Shared links open in their own language. Do not read the browser language (`DR-270`, `DR-328`).
 - Every interface string comes from `src/i18n/bn.ts` or `src/i18n/en.ts`. Both files have the same keys. Do not write interface text in a component.
 - Format dates and numbers with `Intl` and the page language. Bangla pages use Bangla digits.
+- Paths (article, category, region, topic, hubs) follow `spacing-layout-system.md` Section 7C. An article is `/story/<slug>-<id>` for every format.
 
 ## 8. Gaps in the design system
 

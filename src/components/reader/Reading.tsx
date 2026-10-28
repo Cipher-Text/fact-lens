@@ -73,9 +73,15 @@ function MinutesLeft({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
 export function ReadingTools({
   layout,
   lang,
-  slug,
+  storyId,
+  storySlug,
   ...share
-}: ShareProps & { layout: "rail" | "dock"; lang: "bn" | "en"; slug: string }) {
+}: ShareProps & {
+  layout: "rail" | "dock";
+  lang: "bn" | "en";
+  storyId: string;
+  storySlug: string;
+}) {
   const { t } = share;
   const percent = useReading((s) => s.percent);
   const started = useReading((s) => s.started);
@@ -90,7 +96,7 @@ export function ReadingTools({
         <span className="rd-dock__sep" aria-hidden="true" />
         <TextSize t={t} side="top" />
         <ShareDialog {...share} />
-        <SaveButton slug={slug} t={t} />
+        <SaveButton storyId={storyId} storySlug={storySlug} t={t} />
       </div>
     );
   }
@@ -122,7 +128,7 @@ export function ReadingTools({
         <div className="rd-tools__row">
           <ShareDialog {...share} />
           <CopyLinkButton path={share.path} t={t} />
-          <SaveButton slug={slug} t={t} />
+          <SaveButton storyId={storyId} storySlug={storySlug} t={t} />
         </div>
       </div>
     </div>

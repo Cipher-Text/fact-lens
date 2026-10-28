@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.21 · 27 October 2026 · Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -65,7 +65,7 @@ This file is the only home of the component specs (DR-372, DR-377). To change it
 | C-31 | `ContextCard` | Article page | Approved | DR-383, DR-386, DR-388, DR-390 |
 | C-32 | `PreferredSourceAlert` | Article page | Approved | DR-386, DR-389, DR-390 |
 | C-33 | `ArticleBody` | Article page | Approved | DR-386, DR-387, DR-388, DR-390 |
-| C-34 | `Tags` | Article page | Approved | DR-390 |
+| C-34 | `Topics` | Article page | Approved | DR-390, DR-410 |
 | C-35 | `ReadingTools` | Article page | Approved | DR-386, DR-390 |
 | C-36 | `ProgressButton` | Article page | Approved | DR-390 |
 | C-37 | `TextSize` | Article page | Approved | DR-388, DR-390 |
@@ -95,7 +95,7 @@ In page order. The pattern ID links to `spacing-layout-system.md` Section 7.2.
 | — | `AdSlot variant="band"` | – | – | AdSlot | After every section except where layout §7.1 says no |
 | P-4 | `AnalysisSection` | বিশ্লেষণ ও মতামত / Analysis and opinion | `AnalysisSection.analysis` | FeatureStory (OverlapCard) + StoryList (2 × StoryCard row, 16:9, sm, third) + MoreLink | Start column. Eyebrow shows the story category |
 |  |  |  | `AnalysisSection.opinion` | Chip মতামত + OpinionList (5 items) + MoreLink | End column |
-| P-2 | `FeaturedCategorySection` | Category name, for example বাংলাদেশ, ভূরাজনীতি ও কূটনীতি / Bangladesh, Geopolitics and Diplomacy | `FeaturedCategorySection.featureStory` | StoryCard (row from 768, 3:2, md, split feature, summary) | The feature story in the wrapper |
+| P-2 | `FeaturedCategorySection` | Category or region name, for example দক্ষিণ এশিয়া, ভূরাজনীতি ও কূটনীতি / South Asia, Geopolitics and Diplomacy | `FeaturedCategorySection.featureStory` | StoryCard (row from 768, 3:2, md, split feature, summary) | The feature story in the wrapper |
 |  |  |  | `FeaturedCategorySection.rail` | StoryCard (stack beside, row third when stacked; 16:9, sm) + StoryList (2 × StoryListItem) | One image story and two text items |
 |  |  |  | `FeaturedCategorySection.more` | MoreLink | আরও দেখুন, section end |
 | P-3 | `GroupedCategoriesSection` | None (each block has its own label) / None | `GroupedCategoriesSection.blocks` | 4 × CategoryBlock (C-23), 2 per row from 600 | One block per category |
@@ -172,7 +172,9 @@ Interface labels come from `src/i18n/bn.ts` and `src/i18n/en.ts`. English labels
 | শীর্ষ খবর | Top stories | HeroSection, hidden h2 |
 | সর্বশেষ | Latest | HeroSection.latest |
 | বিশ্লেষণ ও মতামত | Analysis and opinion | AnalysisSection |
-| মতামত | Opinion | Chip in AnalysisSection.opinion |
+| মতামত | Opinion | Chip in AnalysisSection.opinion; Drawer item; Eyebrow `format` (opinion articles) |
+| বিশ্লেষণ | Analysis | Drawer item; Eyebrow `format` (DR-414, DR-417) |
+| দক্ষিণ এশিয়া | South Asia | NavBar and Drawer item, P-2 featured region (DR-412) |
 | সর্বাধিক পঠিত | Most read | MostReadSection |
 | অঞ্চলসমূহ | Regions | RegionsSection heading; NavBar and Drawer item (DR-345) |
 | নিউজলেটার | Newsletter | NewsletterSignup |
@@ -247,7 +249,7 @@ Align a standalone link (a link on its own line, such as আরও দেখু�
 
 ### CPT-16 Restyle a shadcn component when you add it
 
-Restyle a shadcn/ui component when you add it. After shadcn add, change the file to the Fact Lens sheet before use: remove radius, shadow, dark: classes, opacity modifiers (/50), ring-3, leading-none, text-sm and text-xs, size-4 icons and the active translate. Give the parts the typography roles (typography §7.3) and the color tokens. Keep the behavior (focus, keys, aria). Use Button, Input, Drawer (SearchDialog, from the top), Sheet (Drawer), Collapsible (Drawer.accordion), Tabs (phone region chips), RadioGroup (DailyPoll), Switch (theme controls), Alert (PreferredSourceAlert), Badge (Tags), Card (ContextCard) and Dialog (ShareDialog) (DR-390). Do not use Carousel, NavigationMenu or Separator. Keep the shadcn base-nova preset (Base UI). (DR-236)
+Restyle a shadcn/ui component when you add it. After shadcn add, change the file to the Fact Lens sheet before use: remove radius, shadow, dark: classes, opacity modifiers (/50), ring-3, leading-none, text-sm and text-xs, size-4 icons and the active translate. Give the parts the typography roles (typography §7.3) and the color tokens. Keep the behavior (focus, keys, aria). Use Button, Input, Drawer (SearchDialog, from the top), Sheet (Drawer), Collapsible (Drawer.accordion), Tabs (phone region chips), RadioGroup (DailyPoll), Switch (theme controls), Alert (PreferredSourceAlert), Badge (Topics), Card (ContextCard) and Dialog (ShareDialog) (DR-390). Do not use Carousel, NavigationMenu or Separator. Keep the shadcn base-nova preset (Base UI). (DR-236)
 
 ### N-01 Name each section with Section at the end
 
@@ -292,6 +294,7 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--space-lead-overlap` | 2rem (32px) | clamp(4rem, 10cqi, 6rem) | same (95px at 952) | How far the lead panel covers the image. Scales with the card width, 64 to 96px (65 at 648, 72 at 720) | DR-86, DR-89 |
 | `--space-lead-eyebrow-title` | 0.5rem (8px) | same | same | LeadStory: eyebrow to title | DR-92 |
 | `--space-lead-summary-meta` | 1rem (16px) | same | same | LeadStory: summary to meta | DR-92 |
+| `--space-eyebrow-separator` | 0.5rem (8px) | same | same | C-08 `Eyebrow.separator`: the inline gap on each side of the two-part middle dot (tajmin, 28 Oct 2026; spec log url-format UF-04) | DR-416 |
 | `--color-meta` | #6E6862 (light, 5.2:1 on background, 4.8:1 on surface-alt) | #A3A3A3 (dark, unchanged) |  | Metadata text and its separator. Same value as ink-muted: #6E6862 is the light ink-muted value for all muted text (captions, labels, ad label), replacing #4F4B48 | DR-100 |
 | `--bar-section` | 2.5rem x 0.5rem (40 x 8px) | 2.5rem x 0.5rem (40 x 8px) | 3rem x 0.5rem (48 x 8px) | Section divider bar, width x height (DR-262). Columns: phone / 600-1023 / 1024 and up (page breakpoints). 48 x 6 under 1024  | DR-103 |
 | `--space-card-overlap` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same (DR-109: every width) | same (46px at 464, 58px at 584) | How far a story card text block covers its image: 10% of the card width, 40 to 64px. Same percent rule as the lead (DR-89) | DR-105, DR-109 |
@@ -326,6 +329,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --space-lead-overlap: 2rem;
   --space-lead-eyebrow-title: 0.5rem;
   --space-lead-summary-meta: 1rem;
+  --space-eyebrow-separator: 0.5rem;
   --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);
@@ -649,7 +653,7 @@ Shared card from the merge (DR-93): one story as a text row, title + meta, no im
 
 **Status:** Approved · **Decisions:** DR-93, DR-101, DR-103, DR-108, DR-110, DR-118, DR-119, DR-121, DR-122, DR-123, DR-300
 
-The featured category section (P-2: বাংলাদেশ, ভূরাজনীতি): a FeatureStory in the wrapper and a rail with one image story and 2 text rows. Was the C-04 sheet CategoryLead (DR-162).
+The featured section (P-2: the region দক্ষিণ এশিয়া, the category ভূরাজনীতি; DR-412): a FeatureStory in the wrapper and a rail with one image story and 2 text rows. Was the C-04 sheet CategoryLead (DR-162).
 
 **Variants.** None. Each card is one CSS grid with named areas (body, media). The page breakpoint switches the columns and areas; the markup does not change.
 
@@ -865,7 +869,7 @@ The regions section (P-3b): one column per region in a row that slides, previous
 
 **Content.**
 
-- Working list of 6 regions; the editorial team approves names and order (U-07).
+- Working list of 8 regions (DR-411; see Section 8). Labels approved by tajmin, 28 Oct 2026; the backend owns the list and the order. A region with no stories does not show.
 - Long titles wrap; no clamp.
 
 **Accessibility.**
@@ -1003,7 +1007,7 @@ A thin rule that separates list rows, sections, modules and (option) columns. Di
 | --- | --- |
 | `Divider.item` | 1px dotted rule, border color: square 1 x 1px dots with a 2px gap in every browser (DR-351). Draw it with a repeating gradient, not border-style dotted (browsers differ): background-image: repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 3px); height 1px. Full width of the list, except OpinionList: the text column only (DR-351). 16px space each side (space-list-item), measured to the text ink, not the line box (DR-350): the list takes the ink inset of its roles off its padding (typography §3.1, DR-355). Check: per list, the median space is 16px ±1; each rule is 16px ±3 (the ink depends on the letters, DR-355). Between rows only; no rule after the last row |
 | `Divider.section` | 2px solid rule, border color. A bar sits on the rule at the start and shares its bottom edge (the rule runs along the bar bottom). Bar color: brand (light), interactive (dark). Bar size: --bar-section. 12px from the rule to the heading (space-section-rule-title) |
-| `Divider.rule` | 1px solid horizontal rule, border color (--divider-rule), the full width of its container. The shared part wherever one plain 1px rule is needed: not between list rows (Divider.item) and not under a section heading (Divider.section). The space on each side belongs to the caller and is the same on both sides. A component, `<Divider variant="rule" />`, aria-hidden. Used on the category page above load more (`spacing-layout-system.md` 7B). To move to it: the article page rule above the Tags, and the other hand-drawn rules in IMP-100 |
+| `Divider.rule` | 1px solid horizontal rule, border color (--divider-rule), the full width of its container. The shared part wherever one plain 1px rule is needed: not between list rows (Divider.item) and not under a section heading (Divider.section). The space on each side belongs to the caller and is the same on both sides. A component, `<Divider variant="rule" />`, aria-hidden. Used on the category page above load more (`spacing-layout-system.md` 7B). To move to it: the article page rule above the Topics, and the other hand-drawn rules in IMP-100 |
 | `Divider.column` | 1px solid vertical rule, border color, centered in the column gap. Two versions: column-inset (16px from the top and bottom) and column-full (full height). Placed (DR-351, DR-355): column-inset in P-4 between analysis and opinion (from 768), in P-3 between the wrapper and the rail (from 1024), and between the two HeroSection.latest columns (768 to 1023). Always centered in the gap; no pixel split. column-full is not used on the homepage |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1106,7 +1110,7 @@ The আরও দেখুন link: one per section, at the end of the section a
 
 **Accessibility.**
 
-- Accessible name gives the target when the label is short: aria-label "আরও দেখুন: বাংলাদেশ" (draft).
+- Accessible name gives the target when the label is short: aria-label "আরও দেখুন: দক্ষিণ এশিয়া" (draft).
 
 **Checks.**
 
@@ -1116,15 +1120,23 @@ The আরও দেখুন link: one per section, at the end of the section a
 
 #### C-08 Eyebrow
 
-**Status:** Approved · **Decisions:** DR-112, DR-153, DR-163
+**Status:** Approved · **Decisions:** DR-112, DR-153, DR-163, DR-416, DR-417
 
-The category label above a story title. A link to the category page. Off when the section heading already names the category (DR-153, CMP-19).
+The label above a story title. A link to the category page, or to the format hub. Off when the section heading already names the category (DR-153, CMP-19).
 
-**Variants.** None. No Breaking label in this slot (DR-279).
+**Variants.** No Breaking label in this slot (DR-279).
+
+- `category` (default): the story's category, a link to `/category/<slug>`.
+- `format`: বিশ্লেষণ / Analysis, a link to `/analysis`. Use it on analysis cards in mixed lists: the homepage lead, top stories, region columns and More stories. Inside an analysis section or the `/analysis` hub, use `category` (DR-417).
+- `two-part` (article pages only, DR-416): on analysis and opinion articles, the format link, a separator, then the category link, for example বিশ্লেষণ · অর্থনীতি ও বাণিজ্য. The format links to `/analysis` or `/opinion`. News articles show `category` only. Cards and list items never use `two-part`.
+
+News cards use `category`. Opinion rows (OpinionList.item) have no Eyebrow.
 
 | Part | Spec |
 | --- | --- |
 | Eyebrow | type-eyebrow: BN 15px 600; EN 14px 700 uppercase, 0.06em. interactive. UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199); focus ring |
+| `Eyebrow.separator` | `two-part` only. A middle dot `·`, `ink-muted`, `aria-hidden="true"`, an inline gap of `--space-eyebrow-separator` (8px) on each side |
+| Wrap | `two-part`: each part wraps as a whole unit; the separator stays with the first part |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
@@ -1132,7 +1144,8 @@ The category label above a story title. A link to the category page. Off when th
 
 **Content.**
 
-- The story's own primary category, never the section name and never Fact Check (DR-18).
+- `category`: the story's own primary category, never the section name and never Fact Check (DR-18).
+- `format`: the format label from `bn.ts` / `en.ts`, never a free text.
 
 **Accessibility.**
 
@@ -1298,7 +1311,7 @@ The row of section links under the TopBar, from 1280 only. Sticky with the TopBa
 | `NavBar.item` | type-nav (typography §7.4, DR-346): Bangla 16px weight 600 (DR-295), English 14px weight 600. The role changes by :lang; no lang-bn variant. Ink, 28px apart (gap-7), centered in the shell (DR-170), row min-h-11 (44px, --nav-row-height; LAY-17, DR-349). The 44px row does not include the 1px bottom rule: 45px in total (DR-349). UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199) |
 | `NavBar.rules` | No rule between TopBar and NavBar: the TopBar drops its bottom rule while the NavBar shows below it; the NavBar keeps a 1px rule at its bottom. When only the TopBar shows, its 1px bottom rule returns (DR-173). Hide (DR-349): the NavBar is part of the sticky site header. When the page scrolls past it, html gets data-bar-stuck and the NavBar slides up under the TopBar (transform, --duration-slide (450ms) ease-slide, DR-346) and is hidden (inert, not in the tab order); it shows again only at the page top. No motion with reduced motion (the NavBar hides at once). The TopBar reads data-bar-stuck (DR-287) |
 | `NavBar.current` | interactive text + 3px line (border-b-3, --color-bar) at the row bottom, aria-current page (aria-[current=page]:text-interactive). Home is current on the homepage; a category item is current on its category page |
-| `NavBar.item` link | A category item links to its category page, `/category/<id>` (`/en/category/<id>`). Regions and Analysis and Opinion link to their homepage sections (DR-331) |
+| `NavBar.item` link | A category item links to its category page, `/category/<id>` (`/en/category/<id>`). দক্ষিণ এশিয়া / South Asia (in the place of the old Bangladesh item) links to `/regions/south-asia`. Regions links to `/regions`, each region to `/regions/<slug>`. The children বিশ্লেষণ and মতামত link to `/analysis` and `/opinion` (DR-414). The parent বিশ্লেষণ ও মতামত links to its homepage section (DR-331; open flag, no rule yet). See `spacing-layout-system.md` Section 7C |
 | Surface | Band full width in the page color; the items and the 1px border rule at the bottom are in the shell (DR-357). The item list is one row tall (max-height --nav-row-height, overflow hidden), so the page does not move when the items that do not fit are hidden (LAY-17 exception, DR-359) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1427,7 +1440,7 @@ The article heading: the category, the title, the deck and the metadata line. Th
 
 | Part | Spec |
 | --- | --- |
-| `ArticleHeader.category` | A link to the category page, drawn as a filled button: `--color-bar` fill, `on-interactive` text, `type-eyebrow`; min height 36px, inline padding 14px; hover `interactive-hover`, pressed `interactive-pressed` (`COL-04` exception, DR-389). The row that holds it is the Eyebrow row (`.rd-kicker` in the CSS) |
+| `ArticleHeader.category` | The Eyebrow row: C-08 Eyebrow as text links, no filled button (DR-416, replaces the DR-389 button). News: `category`. Analysis and opinion: `two-part`, format · category. The row is `.rd-category` in the CSS (SL-22 done; spec log url-format UF-05) |
 | `ArticleHeader.title` | `h1`, `type-article-title`, `ink`, `text-wrap: pretty` |
 | `ArticleHeader.deck` | `type-deck`, `ink-secondary`, `measure-deck` |
 | `ArticleHeader.meta` | Published, updated (when there is one) and reading time in one line, `type-metadata`, `--color-meta`, in a `dl`. The `CPT-10` separator (4px square, 10px on each side, `--color-meta`) comes before each item; a line never starts with a square when it wraps |
@@ -1527,16 +1540,16 @@ The article text: paragraphs, `h2` headings, figures, lists, `ContextCard` and `
 | Figure | Full column width, own ratio, `space-module` above and below |
 | `ad-inline` | `AdSlot variant="inline"` between two paragraphs only (`LAY-22`) |
 
-#### C-34 Tags
+#### C-34 Topics
 
-**Status:** Approved · **Decisions:** DR-390
+**Status:** Approved · **Decisions:** DR-390, DR-410
 
-The story tags after the body, below a 1px `border` rule with `space-module` on each side.
+The story topics after the body. Do not use the word "tag" (DR-410), below a 1px `border` rule with `space-module` on each side.
 
 | Part | Spec |
 | --- | --- |
 | Label | `type-eyebrow`, `ink-muted` |
-| `Tags.item` | A shadcn `Badge` link, variant outline: 1px `border`, `type-eyebrow` no uppercase, `ink`; hover `interactive-hover`, pressed `interactive-pressed`. 8px gap. Links to `/tag/<tag>` (the tag page is not built yet) |
+| `Topics.item` | A shadcn `Badge` link, variant outline: 1px `border`, `type-eyebrow` no uppercase, `ink`; hover `interactive-hover`, pressed `interactive-pressed`. 8px gap. Links to `/topic/<slug>` (the topic page is not built yet). The label is the topic's bn or en label |
 
 #### C-35 ReadingTools
 
@@ -1632,8 +1645,7 @@ A short confirmation (link copied, saved). `role="status"`, `aria-live="polite"`
 | --- | --- |
 | Footer (C-21) | Provisional. Run 2 builds the drawn look. The design extension comes after run 2 (CMP-33). |
 | SearchDialog Trending terms | The term source (editorial or analytics) is not decided. Use mock terms. |
-| RegionSlider region list | The editorial team sets the regions and their order (U-07). Use the 7 working regions as built (bn.ts). The final list and order go in the IA label table (DR-342). |
+| RegionSlider region list | The backend owns the regions and their order (DR-411). Use the working list of 8: americas, europe, russia, middle-east, south-asia, china, asia, oceania. Labels (tajmin, 28 Oct 2026): আমেরিকা / Americas, ইউরোপ / Europe, রাশিয়া / Russia, মধ্যপ্রাচ্য / Middle East, দক্ষিণ এশিয়া / South Asia, চীন / China, এশিয়া / Asia, ওশেনিয়া / Oceania. The code works with any number of regions. |
 | English labels | Working labels until IA-06. |
 | Logo | Text stand-in until the logo file exists (BRD-06). |
-| ArticleHeader category row | The CSS name is `.rd-kicker`; the row is the Eyebrow row. Rename it when the heading is rebuilt (spec log SL-22). |
-| Tag pages | Not built; `Tags` links lead to a 404 page for now. |
+| Topic, region and hub pages | Not built; `/topic/<slug>`, `/regions`, `/regions/<slug>`, `/latest`, `/analysis` and `/opinion` lead to a 404 page for now (IMP-18). |

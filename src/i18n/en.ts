@@ -10,6 +10,8 @@ export const en: Dictionary = {
     // The switch names the other language in that language (DR-78).
     other: "বাংলা",
     otherShort: "বাংলা",
+    // On the category page, after the switch from an article that has no English text (DR-401).
+    onlyInOther: "This story is in Bangla only.",
   },
   theme: {
     // The name of the switch; it is on when the theme is dark (DR-167).
@@ -112,8 +114,8 @@ export const en: Dictionary = {
     linkedin: "LinkedIn",
   },
   // Working labels until the IA label table exists (IA-06, U-01).
+  // Bangladesh is not a category (DR-412).
   categories: {
-    bangladesh: "Bangladesh",
     geopolitics: "Geopolitics and Diplomacy",
     security: "Security and Conflict",
     history: "History and Context",
@@ -125,15 +127,17 @@ export const en: Dictionary = {
   regionsSection: {
     title: "Regions",
   },
-  // Entries under Regions. Working labels until the IA table exists (U-01).
+  // Entries under Regions, in the order of the working list (layout 7C, DR-411).
+  // Labels approved by tajmin, 28 Oct 2026. Working labels until IA-06 (U-01).
   regions: {
-    china: "China",
-    india: "India",
-    myanmar: "Myanmar",
-    "middle-east": "Middle East",
-    "southeast-asia": "Southeast Asia",
+    americas: "Americas",
     europe: "Europe",
-    africa: "Africa",
+    russia: "Russia",
+    "middle-east": "Middle East",
+    "south-asia": "South Asia",
+    china: "China",
+    asia: "Asia",
+    oceania: "Oceania",
   },
   // The article page (wild card reader).
   reader: {
@@ -180,7 +184,7 @@ export const en: Dictionary = {
     googleCardTitle: "Make Fact Lens a preferred source on Google",
     googleCardText:
       "See more of our reporting in Top Stories when you search. It takes one click, and you can remove it at any time.",
-    tags: "Topics",
+    topics: "Topics",
     readNext: "More stories",
     networks: {
       whatsapp: "WhatsApp",

@@ -7,7 +7,8 @@ import { setTheme } from "./theme";
 // the keyboard on the share dialog and the text size radio group, the band and inline
 // ads, and the header # links. The header, footer and top ad are the homepage parts.
 
-const SLUG = "river-data-framework";
+// The URL segment is <slug>-<id> (layout 7C, DR-413).
+const SLUG = "river-data-framework-t3txcff";
 const PAGES = [
   {
     lang: "bn",

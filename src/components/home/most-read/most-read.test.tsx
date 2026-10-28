@@ -81,11 +81,11 @@ describe("MostReadSection (P-5)", () => {
     });
   });
 
-  it("links each title to its story in the page language", () => {
+  it("links each title to its story in the page language, /story/<slug>-<id> (DR-413)", () => {
     const { stories } = renderSection("en");
     const links = screen.getAllByRole("link");
     expect(links.map((a) => a.getAttribute("href"))).toEqual(
-      stories.map((s) => `/en/story/${s.slug}`),
+      stories.map((s) => `/en/story/${s.slug}-${s.id}`),
     );
     for (const heading of screen.getAllByRole("heading", { level: 3 })) {
       expect(heading.className).toContain("type-story-title-sm");

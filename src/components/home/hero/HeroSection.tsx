@@ -31,14 +31,20 @@ export function HeroSection({ lang, hero, t, className }: HeroSectionProps) {
 
   const wrapper = (
     <Wrapper data-hero-wrapper className="flex flex-col gap-y-(--grid-row-gap)">
-      <LeadStory story={hero.lead} strings={t} />
+      <LeadStory story={hero.lead} strings={t} eyebrowMode="format" />
       {top.length > 0 ? (
         <PeerRow
           data-top-stories
           className={cn("items-start", top.length === 1 && "sm:grid-cols-1")}
         >
           {top.map((story) => (
-            <OverlapCard key={story.id} story={story} strings={t} eager />
+            <OverlapCard
+              key={story.id}
+              story={story}
+              strings={t}
+              eyebrowMode="format"
+              eager
+            />
           ))}
         </PeerRow>
       ) : null}

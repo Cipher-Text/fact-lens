@@ -66,10 +66,13 @@ for (const p of PAGES) {
           (el) =>
             el.getAttribute("data-section") ??
             el.getAttribute("data-ad-slot") ??
+            (el.hasAttribute("data-note") ? "note" : null) ??
             el.tagName.toLowerCase(),
         ),
       );
+      // The missing translation note keeps an empty status region (DR-401, U-48).
       expect(order).toEqual([
+        "note",
         "header",
         "category-feature",
         "ad-band",
@@ -250,8 +253,8 @@ for (const p of PAGES) {
 }
 
 test("every category page builds in both languages", async ({ page }) => {
+  // Bangladesh is not a category (DR-412).
   for (const id of [
-    "bangladesh",
     "geopolitics",
     "economy",
     "security",

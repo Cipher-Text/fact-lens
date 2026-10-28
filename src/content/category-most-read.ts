@@ -3,16 +3,6 @@
 import type { CategoryId } from "./types";
 
 export const categoryMostRead: Record<CategoryId, string[]> = {
-  bangladesh: [
-    "dhaka-single-ticket",
-    "river-data-framework",
-    "chattogram-rain-warning",
-    "textile-export-standards",
-    "dhaka-water-crisis-solutions",
-    "coastal-embankment-project",
-    "primary-teacher-training",
-    "port-automation-plan",
-  ],
   geopolitics: [
     "small-state-balancing",
     "regional-security-pact",
