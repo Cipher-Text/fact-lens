@@ -15,10 +15,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: Final checkpoint done, waiting for tajmin's commit yes
-- Next step: on yes, one commit `reader-size-script: ...` on the branch, then the PR to `dev`
+- State: PR 21 open; the review fix is uncommitted, waiting for tajmin's commit yes
+- Next step: on yes, commit the review fix and push to PR 21
 - Open questions to tajmin: none
-- Uncommitted: yes, all of the work
+- Uncommitted: yes, the review fix in `tests/e2e/article.spec.ts` and this file
 
 ## Decisions
 
@@ -54,3 +54,9 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - `visual-qa`: not run. The change has no visual effect; the behaviour was checked in the dev browser (tajmin's steps).
 - `design-reviewer`: pass, no blockers. Note kept as is: `isArticlePath` also matches a 404 under `/story/`, so a hard load there sets `data-reader-size`; no effect, because `--reader-scale` is used only by the article type classes.
 - No spec items: no spec log, no edit in `docs/design-system/`. `docs/ISSUES.md`: no row (the error had no row, and the work found nothing new).
+
+### PR 21 review (30 Oct 2026)
+
+- Committed 3809c86 and opened PR 21 to `dev` on tajmin's "Yes, commit" and "Push and open PR".
+- claude-review: no blockers. Inline note: in "the stored text size is not set on the homepage (TYP-15)", `not.toHaveAttribute` passes at once, before hydration. Fix: the test now sets 1280 and waits for the regions slider to drop its tab roles (the page is hydrated), then checks. Chromium `article.spec.ts`: 50 passed.
+- Review note not acted on: "the docs dates say 30 Oct, the session date is 29 Oct". The PR time was 29 Oct 20:03 UTC, which is 30 Oct in Dhaka, so the dates stay.

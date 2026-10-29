@@ -171,7 +171,13 @@ for (const p of PAGES) {
       await page.addInitScript(() => {
         window.localStorage.setItem("rd-text-size", "2");
       });
+      await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.home);
+      // From 600, the regions slider drops its tab roles once the client code runs: the
+      // page is hydrated, so a size set late would show here too.
+      await expect(
+        page.locator('[data-section="regions"] [role="tabpanel"]'),
+      ).toHaveCount(0);
       await expect(page.locator("html")).not.toHaveAttribute(
         "data-reader-size",
         /.*/,
