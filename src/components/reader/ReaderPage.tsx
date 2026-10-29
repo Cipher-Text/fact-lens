@@ -12,7 +12,6 @@ import { StoryTime } from "@/components/story/StoryTime";
 
 import type { Article, ReadNextItem } from "@/content";
 import { formatNumber } from "@/lib/format";
-import { readerSizeScript } from "@/lib/reader-size";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
 import {
@@ -53,8 +52,6 @@ export function ReaderPage({ lang, article, readNext }: Props) {
 
   return (
     <ReaderRoot minutes={article.readingMinutes} category={story.category}>
-      {/* Sets the stored text size on <html> before the first paint. */}
-      <script dangerouslySetInnerHTML={{ __html: readerSizeScript }} />
       <SkipLink label={site.header.skipLink} />
       <SiteHeader
         lang={lang}

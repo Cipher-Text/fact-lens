@@ -165,6 +165,50 @@ for (const p of PAGES) {
       );
     });
 
+    test("the stored text size is not set on the homepage (TYP-15)", async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        window.localStorage.setItem("rd-text-size", "2");
+      });
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.home);
+      // From 600, the regions slider drops its tab roles once the client code runs: the
+      // page is hydrated, so a size set late would show here too.
+      await expect(
+        page.locator('[data-section="regions"] [role="tabpanel"]'),
+      ).toHaveCount(0);
+      await expect(page.locator("html")).not.toHaveAttribute(
+        "data-reader-size",
+        /.*/,
+      );
+    });
+
+    // tajmin's steps: the homepage, then a click on the lead story. React logs an error
+    // when the client creates a <script> (task reader-size-script).
+    test("a click on the lead story logs no script tag error", async ({
+      page,
+    }) => {
+      const errors: string[] = [];
+      page.on("console", (message) => {
+        if (message.type() === "error") errors.push(message.text());
+      });
+      await page.addInitScript(() => {
+        window.localStorage.setItem("rd-text-size", "2");
+      });
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.home);
+      await page.locator(".type-story-lead a").click();
+      await expect(page).toHaveURL(/\/story\//);
+      await expect(page.locator("[data-reader-title]")).toBeVisible();
+      // ReaderRoot sets the stored size after a client link.
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-reader-size",
+        "xl",
+      );
+      expect(errors.filter((text) => text.includes("script tag"))).toEqual([]);
+    });
+
     test("a section heading is named by its text only", async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
