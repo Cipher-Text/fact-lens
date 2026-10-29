@@ -90,3 +90,8 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - `docs/STATUS.md` Now and spec versions; `docs/ISSUES.md` 1.5: IMP-18 `/topic/<slug>` part fixed
 - Visual check (visual-qa): no layout faults at 320 to 1440 in bn and en, light and dark; the list and band line up with `/latest`
 - Reviewer notes kept here: `rivers` has exactly 10 only with `south-asian-connectivity-corridor` and `southern-silk-route` tagged; the unit test fails if a later edit changes the counts (on purpose)
+
+### PR #20 (30 Oct 2026)
+
+- Pushed `page/topic`, opened PR #20 to `dev` (tajmin: "Push and PR")
+- `AGENTS.md` Section 5: the folders `src/app/[lang]/topic/[slug]/` and `src/components/topic/`, and `more-stories/` names the topic page (tajmin: "Yes, add it")
