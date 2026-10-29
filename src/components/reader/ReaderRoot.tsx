@@ -67,8 +67,9 @@ export function ReaderRoot({ minutes, category, className, children }: Props) {
   const size = useReading((s) => s.size);
   const done = useReading((s) => s.done);
 
-  // The inline script has set the stored size on <html> before the first paint. Read it
-  // into the store before paint too, so the size controls match and nothing re-flows.
+  // On a full load, the layout script has set the stored size on <html> before the first
+  // paint; after a client link, only the effect below sets it. Read it into the store
+  // before paint too, so the size controls match and nothing re-flows.
   useLayoutEffect(() => {
     resetReading(minutes);
     const stored = readStoredSize();

@@ -15,10 +15,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: PR 21 open; the review fix is uncommitted, waiting for tajmin's commit yes
-- Next step: on yes, commit the review fix and push to PR 21
+- State: PR 21 open; the second review fix (a comment) is uncommitted, waiting for tajmin's commit yes
+- Next step: on yes, commit and push to PR 21
 - Open questions to tajmin: none
-- Uncommitted: yes, the review fix in `tests/e2e/article.spec.ts` and this file
+- Uncommitted: yes, the comment in `src/components/reader/ReaderRoot.tsx` and this file
 
 ## Decisions
 
@@ -60,3 +60,5 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - Committed 3809c86 and opened PR 21 to `dev` on tajmin's "Yes, commit" and "Push and open PR".
 - claude-review: no blockers. Inline note: in "the stored text size is not set on the homepage (TYP-15)", `not.toHaveAttribute` passes at once, before hydration. Fix: the test now sets 1280 and waits for the regions slider to drop its tab roles (the page is hydrated), then checks. Chromium `article.spec.ts`: 50 passed.
 - Review note not acted on: "the docs dates say 30 Oct, the session date is 29 Oct". The PR time was 29 Oct 20:03 UTC, which is 30 Oct in Dhaka, so the dates stay.
+- Committed d8bb513 (the homepage test fix) and pushed, on tajmin's "Commit and push".
+- Second claude-review (on d8bb513): no blockers. Note acted on: the `ReaderRoot` comment above the first `useLayoutEffect` now says the layout script sets the size on a full load, and only the effect after a client link. Inline note on `isArticlePath` inlined through `toString`: no change needed (the bot says so too).
