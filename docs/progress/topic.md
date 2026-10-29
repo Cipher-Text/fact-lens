@@ -17,7 +17,7 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 - State: Final checkpoint done and committed on `page/topic` (tajmin, 30 Oct 2026: "Yes, commit")
 - Next step: push and the PR to `dev`; after the merge, `AGENTS.md` Section 9 step 6 on `dev` (full Chromium e2e, including the run deferred from docs-cleanup)
-- Open questions to tajmin: confirm the 404 for an unknown topic slug (the brief default, never answered)
+- Open questions to tajmin: none
 - Uncommitted: no
 
 ## Decisions
@@ -33,7 +33,7 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 | 30 Oct 2026 | Test cases on purpose within 4 topics: one with more than 10 (`regional-cooperation`, about 14) for load more, one with exactly 10 (no Button); `rivers` has the 10. The sparse case (3 each) is `archives`, `river-trade`, `foreign-reserves`; `monsoon` and `flood-forecasting` get their 3 from stories of `rivers` and `regional-cooperation`, so the links stay few | tajmin, chat: "one topic with more than 10 news and analysis stories (for example regional-cooperation, about 14), to test load more / one topic with exactly 10, so it shows no button - all within 4 topics"; "(archives, river-trade, foreign-reserves) - test sparse case here? dont need a load of mock data" |
 | 30 Oct 2026 | No label: the PageTitle shows the topic name only, as on the category and Latest pages. The label variations (A to F) and "Topic ›" were dropped; U-52 removed | tajmin, chat: "Lets keep it simple. Only page title. no label" |
 | 30 Oct 2026 | Brief approved | tajmin, chat: "Yes, build" |
-| 30 Oct 2026 | Static pages for every topic in bn and en; an unknown slug is a 404 (proposal, not answered: taken as the default of the category and Latest pages) | Brief |
+| 30 Oct 2026 | Static pages for every topic in bn and en; an unknown slug shows the 404 page (was the brief default; confirmed after the commit) | tajmin, chat: "for an unknown topic slug, show 404 page" |
 
 ## Log
 
