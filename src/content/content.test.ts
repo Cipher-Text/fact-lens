@@ -17,6 +17,8 @@ import {
   getCategoryPage,
   getHomepage,
   getLatestPage,
+  getTopicPage,
+  getTopicSlugs,
   getPoll,
   getStory,
   type Homepage,
@@ -205,8 +207,12 @@ describe("story data", () => {
       expect(topic.en, id).not.toMatch(BENGALI);
     }
     for (const def of articleDefs) {
-      expect(def.topics.length, def.slug).toBeGreaterThan(0);
-      for (const id of def.topics) expect(topics[id], def.slug).toBeDefined();
+      const story = stories.find((s) => s.slug === def.slug)!;
+      expect(story.topics?.length, def.slug).toBeGreaterThan(0);
+    }
+    for (const def of stories) {
+      for (const id of def.topics ?? [])
+        expect(topics[id], def.slug).toBeDefined();
     }
   });
 });
@@ -559,6 +565,72 @@ describe("latest page (layout 7C.2 Paths, News hub row; layout 7D)", () => {
     expect(getLatestPage("en").stories.map((s) => s.id)).toEqual(
       getLatestPage("bn").stories.map((s) => s.id),
     );
+  });
+});
+
+describe("topic page (layout 7C.2 Paths, Topic row; DR-410)", () => {
+  // The test cases on purpose (tajmin, 30 Oct 2026): load more, exactly 10, sparse.
+  const counts: Record<string, number> = {
+    "regional-cooperation": 14,
+    rivers: 10,
+    archives: 3,
+    "river-trade": 3,
+    "foreign-reserves": 3,
+    monsoon: 3,
+    "flood-forecasting": 3,
+  };
+
+  it("has a page for every topic, with the test counts of news and analysis", () => {
+    expect(getTopicSlugs().sort()).toEqual(Object.keys(counts).sort());
+    for (const [slug, count] of Object.entries(counts)) {
+      expect(getTopicPage("bn", slug)?.stories, slug).toHaveLength(count);
+    }
+  });
+
+  for (const lang of langs) {
+    it(`${lang}: the topic label, news and analysis only, newest first, no repeats`, () => {
+      for (const slug of getTopicSlugs()) {
+        const page = getTopicPage(lang, slug)!;
+        expect(page.lang).toBe(lang);
+        expect(page.topic.slug).toBe(slug);
+        expect(page.topic.label).toBe(
+          Object.values(topics).find((t) => t.slug === slug)![lang],
+        );
+        expect(new Set(page.stories.map((s) => s.id)).size).toBe(
+          page.stories.length,
+        );
+        for (const s of page.stories) {
+          expect(s.format, s.slug).not.toBe("opinion");
+          expect(s.lang).toBe(lang);
+        }
+        expect(page.stories).toEqual(
+          [...page.stories].sort(
+            (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+          ),
+        );
+      }
+    });
+  }
+
+  it("mixes news and analysis on the load more topic", () => {
+    const formats = getTopicPage("bn", "regional-cooperation")!.stories.map(
+      (s) => s.format,
+    );
+    expect(formats).toContain("news");
+    expect(formats).toContain("analysis");
+  });
+
+  it("lists the same stories in the same order in both languages", () => {
+    for (const slug of getTopicSlugs()) {
+      expect(getTopicPage("en", slug)!.stories.map((s) => s.id)).toEqual(
+        getTopicPage("bn", slug)!.stories.map((s) => s.id),
+      );
+    }
+  });
+
+  it("has no page for an unknown slug", () => {
+    expect(getTopicPage("bn", "no-such-topic")).toBeUndefined();
+    expect(getTopicPage("en", "Rivers")).toBeUndefined();
   });
 });
 

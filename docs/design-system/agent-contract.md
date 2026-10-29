@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.20 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path; Section 3 rows link the specs, not the logs; Section 11 item 1 adds the spec-log template, and after the merge the brief and the progress file are deleted while the spec log stays. Before: 2.19 · 28 October 2026 · Latest page (spec log `latest.md`): Section 1 spec versions; Section 3 Latest page row. Before: 2.18 · 28 October 2026 · Dev process (`task/dev-process`): Section 3 other-page row and Section 11 items 1 to 3 name `page/` and `task/` branches and the progress file. Before: Category formats (DR-415): Section 1 spec versions; Section 3 category page row. Before: Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
+Version 2.21 · 30 October 2026 · Topic page: Section 1 names layout 2.31 and component-system 1.27; Section 3 adds the topic page layout row. Before: 2.20 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path; Section 3 rows link the specs, not the logs; Section 11 item 1 adds the spec-log template, and after the merge the brief and the progress file are deleted while the spec log stays. Before: 2.19 · 28 October 2026 · Latest page (spec log `latest.md`): Section 1 spec versions; Section 3 Latest page row. Before: 2.18 · 28 October 2026 · Dev process (`task/dev-process`): Section 3 other-page row and Section 11 items 1 to 3 name `page/` and `task/` branches and the progress file. Before: Category formats (DR-415): Section 1 spec versions; Section 3 category page row. Before: Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.17, `typography-system.md` v2.21, `spacing-layout-system.md` v2.30, `component-system.md` v1.26 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.17, `typography-system.md` v2.21, `spacing-layout-system.md` v2.31, `component-system.md` v1.27 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -49,6 +49,7 @@ If this contract and a foundation document do not agree, follow the foundation d
 | Article page components | Approved, checkpoint 1 (DR-390): C-27 to C-42 | `component-system.md` Section 7, Article page |
 | Category page layout | Green spec-log items (CL-01 to CL-08, CL-19, CL-20) and the RankedList `columns` variant (C-07, tajmin 27 Oct 2026); every red item is decided: DR-402 to DR-409 (amend DR-44, DR-51, DR-144 to DR-147, DR-153, DR-299, DR-300, DR-398 for this page). Formats: DR-415 (category formats spec log CF-01 to CF-08; CF-06 PageTitle band, U-50 approved) | `spacing-layout-system.md` Section 7B |
 | Latest page layout | Green spec-log items LT-01, LT-03 to LT-05 (tajmin, 28 Oct 2026); LT-02 decided: the reused parts are `MoreStoriesSection`, `MoreStoriesList` (tajmin, 28 Oct 2026) | `spacing-layout-system.md` Section 7D |
+| Topic page layout | Green spec-log items TP-01 to TP-05 (tajmin, 29 and 30 Oct 2026) | `spacing-layout-system.md` Section 7E |
 | Other page layout and components | Defined per page in the browser (DR-370) | Build from the brief `docs/briefs/<name>.md`; log each change in the progress file `docs/progress/<name>.md`; the spec log is made from it at the final checkpoint. `spacing-layout-system.md` Section 14.2 lists the open items |
 
 The homepage is locked (DR-370), except P-5 most read, which moved to the RankedList layout of the category page (IMP-99). Start a new page only with its brief (`AGENTS.md` Section 9).

@@ -5,6 +5,7 @@ import { categoryMostRead } from "./category-most-read";
 import { homepagePlans } from "./homepage";
 import { dailyPoll } from "./poll";
 import { authors, imageFiles, stories, type StoryDef } from "./stories";
+import { topics, type TopicId } from "./topics";
 import { trendingTerms } from "./trending";
 import type {
   Ad,
@@ -20,6 +21,7 @@ import type {
   Poll,
   RegionId,
   Story,
+  TopicPage,
 } from "./types";
 
 export type * from "./types";
@@ -269,6 +271,26 @@ export function getLatestPage(lang: Lang): LatestPage {
     lang,
     stories: stories
       .filter((def) => def.format === "news")
+      .map((def) => toStory(def, lang))
+      .sort(newestFirst),
+  };
+}
+
+/** Every topic slug, for the static topic pages (layout 7C.2 Paths, Topic row). */
+export function getTopicSlugs(): string[] {
+  return Object.values(topics).map((topic) => topic.slug);
+}
+
+/** The topic page, or undefined for an unknown slug (a 404 page). */
+export function getTopicPage(lang: Lang, slug: string): TopicPage | undefined {
+  const entry = Object.entries(topics).find(([, topic]) => topic.slug === slug);
+  if (!entry) return undefined;
+  const id = entry[0] as TopicId;
+  return {
+    lang,
+    topic: { id, slug, label: entry[1][lang] },
+    stories: stories
+      .filter((def) => def.format !== "opinion" && def.topics?.includes(id))
       .map((def) => toStory(def, lang))
       .sort(newestFirst),
   };

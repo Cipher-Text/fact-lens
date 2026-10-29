@@ -4,6 +4,7 @@
 // translation share one id. Components read stories through ./index.ts only.
 import { categoryStories } from "./category-stories";
 import { olderCategoryStories } from "./category-stories-older";
+import type { TopicId } from "./topics";
 import type { CategoryId, Format, RegionId } from "./types";
 
 type ImageFile = keyof typeof imageFiles;
@@ -29,6 +30,9 @@ export interface StoryDef {
   category: CategoryId;
   /** What the story is about, not the dateline. One or more (DR-411). */
   regions: RegionId[];
+  /** Topic keys from topics.ts, shared by both languages (DR-410). Opinion keeps its topics
+   *  for the article page; the topic page lists news and analysis only. */
+  topics?: TopicId[];
   publishedAt: string;
   readingMinutes?: number;
   image?: ImageFile;
@@ -62,6 +66,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "geopolitics",
     regions: ["south-asia"],
+    topics: ["rivers", "monsoon", "flood-forecasting", "regional-cooperation"],
     publishedAt: at("10-07 09:15"),
     readingMinutes: 6,
     image: "wide",
@@ -158,6 +163,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "economy",
     regions: ["south-asia", "americas", "europe"],
+    topics: ["foreign-reserves"],
     publishedAt: at("10-07 10:05"),
     bn: { title: "রপ্তানি আয়ে সেপ্টেম্বরে ৭ শতাংশ প্রবৃদ্ধি" },
     en: { title: "Export earnings grow 7 percent in September" },
@@ -168,6 +174,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "geopolitics",
     regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-07 09:50"),
     bn: {
       title: "আঞ্চলিক সংযোগ ফোরামে যোগ দিতে পররাষ্ট্রসচিব কাঠমান্ডু যাচ্ছেন",
@@ -207,6 +214,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "history",
     regions: ["south-asia"],
+    topics: ["archives"],
     publishedAt: at("10-07 07:30"),
     bn: { title: "মুক্তিযুদ্ধ নিয়ে বিদেশি সংবাদপত্রের সংগ্রহ এখন অনলাইনে" },
     en: {
@@ -246,6 +254,7 @@ export const stories: StoryDef[] = [
     format: "analysis",
     category: "economy",
     regions: ["south-asia"],
+    topics: ["regional-cooperation", "foreign-reserves"],
     publishedAt: at("10-06 20:00"),
     readingMinutes: 7,
     image: "classic",
@@ -369,6 +378,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "geopolitics",
     regions: ["south-asia", "asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-07 06:45"),
     readingMinutes: 6,
     image: "wide",
@@ -392,6 +402,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "geopolitics",
     regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-06 22:10"),
     readingMinutes: 4,
     image: "classic",
@@ -423,6 +434,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "geopolitics",
     regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-06 14:30"),
     readingMinutes: 3,
     bn: { title: "ভিসা সহজ করতে দুই প্রতিবেশীর যৌথ কমিটি" },
@@ -489,6 +501,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "history",
     regions: ["south-asia"],
+    topics: ["archives", "river-trade"],
     publishedAt: at("10-06 16:30"),
     readingMinutes: 5,
     image: "classic",
@@ -511,6 +524,7 @@ export const stories: StoryDef[] = [
     format: "analysis",
     category: "history",
     regions: ["south-asia"],
+    topics: ["rivers", "river-trade"],
     publishedAt: at("10-06 10:00"),
     readingMinutes: 8,
     bn: {
@@ -575,6 +589,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "economy",
     regions: ["south-asia", "middle-east"],
+    topics: ["foreign-reserves"],
     publishedAt: at("10-06 12:40"),
     readingMinutes: 3,
     bn: { title: "প্রবাসী আয় পাঠাতে নতুন ডিজিটাল চ্যানেল, কমবে খরচ" },
@@ -621,6 +636,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "technology",
     regions: ["south-asia"],
+    topics: ["rivers"],
     publishedAt: at("10-05 17:00"),
     readingMinutes: 4,
     bn: { title: "দুর্গম চরে স্যাটেলাইট ইন্টারনেটের পরীক্ষামূলক সংযোগ" },
@@ -678,6 +694,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "geopolitics",
     regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-07 04:30"),
     readingMinutes: 4,
     image: "classic",
@@ -707,6 +724,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "economy",
     regions: ["asia"],
+    topics: ["rivers", "river-trade"],
     publishedAt: at("10-06 19:00"),
     readingMinutes: 4,
     bn: { title: "মিয়ানমার সীমান্তে নৌপথে বাণিজ্য আবার শুরুর উদ্যোগ" },
@@ -761,6 +779,7 @@ export const stories: StoryDef[] = [
     format: "news",
     category: "economy",
     regions: ["asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-06 09:00"),
     readingMinutes: 4,
     image: "classic",

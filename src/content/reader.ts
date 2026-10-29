@@ -6,7 +6,7 @@ import {
   readNextSlugs,
   type ArticleText,
 } from "./reader-articles";
-import { authors } from "./stories";
+import { authors, stories } from "./stories";
 import { topics } from "./topics";
 import { parseStoryRef, refForSlug, slugForId } from "./urls";
 import type { ImageRef, Lang, Story, Topic } from "./types";
@@ -40,6 +40,8 @@ export interface ReadNextItem {
 }
 
 const bySlug = new Map(articleDefs.map((def) => [def.slug, def]));
+// The topics belong to the story, so the article page and the topic page share them (DR-410).
+const topicsBySlug = new Map(stories.map((def) => [def.slug, def.topics]));
 
 /**
  * The articles, each with its URL segment "<slug>-<id>" (layout 7C) and the languages it
@@ -119,7 +121,7 @@ export function getArticle(slug: string, lang: Lang): Article | null {
       initials: initialsOf(name, lang),
     },
     readingMinutes: story.readingMinutes ?? computed,
-    topics: def.topics.map((id) => ({
+    topics: (topicsBySlug.get(slug) ?? []).map((id) => ({
       id,
       slug: topics[id].slug,
       label: topics[id][lang],

@@ -5,7 +5,6 @@
 // Fictional but realistic: no real people and no real events.
 
 import type { imageFiles } from "./stories";
-import type { TopicId } from "./topics";
 
 /** A placeholder image file from stories.ts (16:9, 3:2 or 4:3). */
 export type ImageFile = keyof typeof imageFiles;
@@ -49,8 +48,6 @@ export interface ArticleDef {
   author:
     "farhana-kabir" | "tanvir-ahmed" | "rashed-hossain" | "mehnaz-chowdhury";
   updatedAt?: string;
-  /** Topic keys from topics.ts; both languages share them (DR-410). */
-  topics: TopicId[];
   /** An article may exist in one language only (DR-401). */
   bn?: ArticleText;
   en?: ArticleText;
@@ -67,7 +64,6 @@ export const articleDefs: ArticleDef[] = [
     slug: "river-data-framework",
     author: "rashed-hossain",
     updatedAt: at("10-07 13:40"),
-    topics: ["rivers", "monsoon", "flood-forecasting", "regional-cooperation"],
     en: {
       dateline: "Dhaka",
       caption:
@@ -246,7 +242,6 @@ export const articleDefs: ArticleDef[] = [
     // no hreflang to English (DR-401, tajmin 28 Oct 2026).
     slug: "old-dhaka-trade-ledgers",
     author: "farhana-kabir",
-    topics: ["archives", "river-trade"],
     bn: {
       dateline: "ঢাকা",
       caption:
@@ -281,7 +276,6 @@ export const articleDefs: ArticleDef[] = [
     // (C-08, DR-416). Fictional figures, no real people.
     slug: "reserve-indicators",
     author: "tanvir-ahmed",
-    topics: ["foreign-reserves", "regional-cooperation"],
     bn: {
       summary:
         "আমদানি দায়, রপ্তানি আয় আর প্রবাসী আয়ের ধারা একসঙ্গে দেখলে চাপ কমার লক্ষণ আছে, তবে স্বস্তির সময় এখনো আসেনি।",

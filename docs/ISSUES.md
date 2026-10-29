@@ -1,6 +1,6 @@
 # Fact Lens: Issues
 
-Version 1.4 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the rows say what they need and name no spec-log item (U-47, U-48, U-49). Before: 1.3 · 28 October 2026 · Latest page (`page/latest`): IMP-18 `/latest` part fixed; new U-51 (flag), IMP-122, DOC-59. Before: 1.2 · 28 October 2026 · URL format and category formats merged (PR #15, PR #16): IMP-97, IMP-118 and U-50 removed. Before: Version 1.1 · 27 October 2026 · Fixed, decided and closed items removed (the git history keeps them); the article page open items moved here (IMP-101 to IMP-114)
+Version 1.5 · 30 October 2026 · Topic page (`page/topic`): IMP-18 `/topic/<slug>` part fixed. Before: 1.4 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the rows say what they need and name no spec-log item (U-47, U-48, U-49). Before: 1.3 · 28 October 2026 · Latest page (`page/latest`): IMP-18 `/latest` part fixed; new U-51 (flag), IMP-122, DOC-59. Before: 1.2 · 28 October 2026 · URL format and category formats merged (PR #15, PR #16): IMP-97, IMP-118 and U-50 removed. Before: Version 1.1 · 27 October 2026 · Fixed, decided and closed items removed (the git history keeps them); the article page open items moved here (IMP-101 to IMP-114)
 
 The one place for every open item, flag and decision on an issue. Read it instead of the git history. Items from `prototype-findings.md` and `PROGRESS.md` (removed 24 October 2026) are copied here with their full text.
 
@@ -27,7 +27,7 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | U-08 | FL-05 | Logo asset and its role. The dark text logo fails axe contrast until the SVG exists | Medium | Later: logo SVG from the design owner; text stand-in stays (DR-304) |
 | IMP-12 | FL-04 | Category and region labels are interface strings | Low | Later: backend integration; labels stay in `src/i18n/` (DR-263) |
 | IMP-14 | FL-05 | Nav, region and Subscribe links go to homepage anchors | Low | Later: backend integration. Category items go to the category pages (PR #11); region, Regions, বিশ্লেষণ and মতামত items go to `/regions/<slug>`, `/regions`, `/analysis` and `/opinion` (404 until IMP-18). The parent বিশ্লেষণ ও মতামত stays an anchor (DR-331) |
-| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section pages; URL patterns are set (layout 7C), 404s stay for `/analysis`, `/opinion`, `/regions`, `/regions/<slug>`, `/topic/<slug>` and stories with no text. Category part fixed (PR #11); `/latest` part fixed on `page/latest` (layout 7D) |
+| IMP-18 | FL-06 | Story and Latest links lead to 404 pages | Low | Later: section pages; URL patterns are set (layout 7C), 404s stay for `/analysis`, `/opinion`, `/regions`, `/regions/<slug>` and stories with no text. Category part fixed (PR #11); `/latest` part fixed on `page/latest` (layout 7D); `/topic/<slug>` part fixed on `page/topic` (layout 7E) |
 | IMP-25 | FL-09 | Mock newsletter: own email check, 0.8s sending state, no email sent | Low | Later: newsletter phase (DR-343) |
 | IMP-33 | R2-03 | Newsletter strings and components stay until the newsletter phase | Low | Later: newsletter phase (DR-343) |
 | IMP-41 | R2-05 | The nav uses the working category labels; C-18 lists shorter ones | Medium | Later: IA label table; working labels stay (DR-282) |
