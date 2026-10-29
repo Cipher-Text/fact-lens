@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.27 · 30 October 2026 · Topic page (Topic spec log TP-03 to TP-05): Section 3 topic page sections and `TopicPageView`; C-24 `dated`: the format label only on a row with no Eyebrow; C-34 and Section 8: the topic page is built. Before: 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -118,7 +118,7 @@ Category page sections (`spacing-layout-system.md` 7B, DR-402). In page order, b
 |  | সর্বশেষ / Latest | `CategoryFeatureSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | In the rail |
 | `CategoryFormatsSection` | বিশ্লেষণ / Analysis, মতামত / Opinion (block headings) | `CategoryFormatsSection.blocks` | 2 × CategoryBlock (C-23): Analysis (featureStory StoryCard + StoryList), Opinion (`OpinionRows`, the C-06 quote rows) | Directly above Most read, up to 5 stories per block; 1 block per row on phones, 2 from 600 (DR-415) |
 | `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07) | The top 5 of the category |
-| `MoreStoriesSection` | আরও পড়ুন / More stories | `MoreStoriesSection.list` | `MoreStoriesList`: StoryCard (C-24, `dated`), 10 at a time | 1 per row; Divider.rule and the load more Button (C-12). On the category page: news and analysis, never opinion (DR-415). Shared with the Latest page (`src/components/more-stories/`) |
+| `MoreStoriesSection` | আরও পড়ুন / More stories | `MoreStoriesSection.list` | `MoreStoriesList`: StoryCard (C-24, `dated`), 10 at a time | 1 per row; Divider.rule and the load more Button (C-12). On the category page: news and analysis, never opinion (DR-415). Shared with the Latest and topic pages (`src/components/more-stories/`) |
 
 Latest page sections (`spacing-layout-system.md` 7D, Latest spec log LT-05). In page order, between the top ad and the footer.
 
@@ -127,6 +127,14 @@ Latest page sections (`spacing-layout-system.md` 7D, Latest spec log LT-05). In 
 | `LatestPageView` | – | – | – | The Latest page template |
 | `PageTitle` (C-43) | সর্বশেষ / Latest | – | – | The page `h1`; it names the list |
 | `MoreStoriesSection` | – (named by the `h1`) | `MoreStoriesSection.list` | `MoreStoriesList`, as on the category page: StoryCard (C-24, `dated`, the C-08 `category` Eyebrow, `h2` titles), 10 at a time | News of every category, newest first (Latest spec log LT-02, renamed from `CategoryMoreStoriesSection`, `CategoryMoreStoriesList`: tajmin, 28 Oct 2026) |
+
+Topic page sections (`spacing-layout-system.md` 7E, Topic spec log TP-03, TP-05). In page order, between the top ad and the footer.
+
+| Section | Label (Bangla / English) | Item | Component | What |
+| --- | --- | --- | --- | --- |
+| `TopicPageView` | – | – | – | The topic page template, one for every topic |
+| `PageTitle` (C-43) | The topic label | – | – | The page `h1`; it names the list. No label above it |
+| `MoreStoriesSection` | – (named by the `h1`) | `MoreStoriesSection.list` | `MoreStoriesList`, as on the Latest page: StoryCard (C-24, `dated`, the C-08 `format` Eyebrow, `h2` titles), 10 at a time | News and analysis of the topic, newest first, never opinion (tajmin, 29 and 30 Oct 2026) |
 
 Helper parts. They are not sections or numbered components; use these names in code (DR-286).
 
@@ -631,7 +639,7 @@ Shared card from the merge (DR-93): one story with an image and text. Draws ever
 | --- | --- | --- | --- |
 | stack | P-2 featureStory under 768 (3:2, md, summary); CategoryBlock featureStory (3:2, md, summary, DR-152) | RegionSlider.panel first story (3:2, sm) | P-2 rail image story in the 304 rail beside (16:9, sm, DR-121) |
 | row | P-2 rail image story when the rail stacks, phones too (16:9, sm, third, DR-121) | P-4 AnalysisSection compact rows (16:9, sm, eyebrow, third) | P-2 featureStory from 768 (3:2, md, summary, feature) |
-| dated | Category page More stories, stacked (16:9, md, summary, no eyebrow; an analysis story shows the C-08 `format` Eyebrow above the title, `formatLabel`, DR-415) | Same, three columns from 600 | Same |
+| dated | Category page More stories, stacked (16:9, md, summary, no eyebrow; an analysis story shows the C-08 `format` Eyebrow above the title, `formatLabel`, DR-415). With the Eyebrow on (Latest: `category`; topic page: `format`), the row shows that one Eyebrow and no second format label (Topic spec log TP-04) | Same, three columns from 600 | Same |
 
 **Content.**
 
@@ -1589,7 +1597,7 @@ The story topics after the body. Do not use the word "tag" (DR-410), below a 1px
 | Part | Spec |
 | --- | --- |
 | Label | `type-eyebrow`, `ink-muted` |
-| `Topics.item` | A shadcn `Badge` link, variant outline: 1px `border`, `type-eyebrow` no uppercase, `ink`; hover `interactive-hover`, pressed `interactive-pressed`. 8px gap. Links to `/topic/<slug>` (the topic page is not built yet). The label is the topic's bn or en label |
+| `Topics.item` | A shadcn `Badge` link, variant outline: 1px `border`, `type-eyebrow` no uppercase, `ink`; hover `interactive-hover`, pressed `interactive-pressed`. 8px gap. Links to `/topic/<slug>`, the topic page (`spacing-layout-system.md` 7E). The label is the topic's bn or en label |
 
 #### C-35 ReadingTools
 
@@ -1688,4 +1696,4 @@ A short confirmation (link copied, saved). `role="status"`, `aria-live="polite"`
 | RegionSlider region list | The backend owns the regions and their order (DR-411). Use the working list of 8: americas, europe, russia, middle-east, south-asia, china, asia, oceania. Labels (tajmin, 28 Oct 2026): আমেরিকা / Americas, ইউরোপ / Europe, রাশিয়া / Russia, মধ্যপ্রাচ্য / Middle East, দক্ষিণ এশিয়া / South Asia, চীন / China, এশিয়া / Asia, ওশেনিয়া / Oceania. The code works with any number of regions. |
 | English labels | Working labels until IA-06. |
 | Logo | Text stand-in until the logo file exists (BRD-06). |
-| Topic, region and hub pages | Not built; `/topic/<slug>`, `/regions`, `/regions/<slug>`, `/analysis` and `/opinion` lead to a 404 page for now (IMP-18). `/latest` is built (`spacing-layout-system.md` 7D). |
+| Region and hub pages | Not built; `/regions`, `/regions/<slug>`, `/analysis` and `/opinion` lead to a 404 page for now (IMP-18). `/latest` and `/topic/<slug>` are built (`spacing-layout-system.md` 7D, 7E). |

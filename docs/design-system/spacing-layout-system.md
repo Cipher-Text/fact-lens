@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -447,7 +447,7 @@ These rules apply to every page (DR-397, DR-399, DR-401, DR-410 to DR-414). Bang
 | Category | `/category/<slug>` | `geopolitics`, `security`, `history`, `economy`, `technology`. Sub-category: `/category/<parent>/<slug>`, two levels at most. Bangladesh is not a category (DR-412) |
 | Region hub | `/regions` | All regions |
 | Region | `/regions/<slug>` | The backend owns the list and the order. Working list: `americas`, `europe`, `russia`, `middle-east`, `south-asia`, `china`, `asia`, `oceania`. Code works with any number of regions (DR-411) |
-| Topic | `/topic/<slug>` | Flat. One key, one Latin slug, a bn and an en label. Do not use the word "tag" (DR-410) |
+| Topic | `/topic/<slug>` | Flat. One key, one Latin slug, a bn and an en label. Do not use the word "tag" (DR-410). The page: Section 7E |
 | News hub | `/latest` | News only |
 | Analysis hub | `/analysis` | বিশ্লেষণ / Analysis. Flat, no sub-hubs |
 | Opinion hub | `/opinion` | মতামত / Opinion. Flat |
@@ -485,6 +485,32 @@ The Latest page (`/latest`, `/en/latest`, `LatestPageView`) is the news hub of S
 ### 7D.3 Sparse content
 
 With no news the list is not shown (Section 7.3). With 10 stories or fewer there is no Button.
+
+## 7E. Topic page
+
+The topic page (`/topic/<slug>`, `/en/topic/<slug>`, `TopicPageView`) is the Topic row of Section 7C.2. Defined from the Topic spec log TP-01 to TP-03 (tajmin, 29 and 30 Oct 2026). The pages are built at build time for every topic in bn and en; an unknown slug gives a 404 page (7C.1).
+
+### 7E.1 Page order
+
+As the Latest page (7D.1), with these differences:
+
+| Row | Container | Content |
+| --- | --- | --- |
+| Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18), unchanged. No item is current. The language link keeps the topic |
+| `ad-top` | Ad container | As on the homepage (Section 9). The page has no `ad-band` |
+| Page title | `Shell` | `PageTitle` (C-43): the topic label, the page `h1`, in the `surface` band. No label above it (tajmin, 30 Oct 2026); `space-module` below |
+| `MoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | `MoreStoriesList` (StoryCard `dated`, C-24; Divider.item; Divider.rule and the load more `Button`), named by the `h1`, `h2` titles. The C-08 Eyebrow in `format` mode on every row: a news row shows its category, an analysis row বিশ্লেষণ / Analysis (DR-417; tajmin, 30 Oct 2026). DR-153 does not apply: the page mixes categories |
+| Footer | As on the homepage | `Footer` (C-21) |
+
+### 7E.2 Content and load more
+
+- The news and analysis stories of the topic, newest first, no repeats. No opinion (tajmin, 29 Oct 2026). A story carries its topics; the article Topics (C-34) show the same topics (DR-410).
+- 10 stories first, then 10 per press, as 7B.2 Load more, with its motion and story time.
+- `main` starts with the title band and ends with `space-section`, as 7D.2.
+
+### 7E.3 Sparse content
+
+As 7D.3: with no news or analysis the list is not shown; with 10 stories or fewer there is no Button.
 
 ## 8. Peer rows
 
@@ -983,9 +1009,13 @@ Test these content cases:
 
 ### 14.2 Article and other pages
 
-The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
+The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. The Latest page is in Section 7D and the topic page in Section 7E. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.31 (30 October 2026)**
+
+- Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E (page order, content, sparse); the 7C.2 Topic row names it.
 
 **2.30 (29 October 2026)**
 

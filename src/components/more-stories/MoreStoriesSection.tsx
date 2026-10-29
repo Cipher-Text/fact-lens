@@ -8,6 +8,7 @@ import { Shell } from "@/components/layout/Shell";
 import { WithRail } from "@/components/layout/WithRail";
 import { Wrapper } from "@/components/layout/Wrapper";
 import { Button } from "@/components/story/Button";
+import type { EyebrowMode } from "@/components/story/Eyebrow";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { refreshStoryTimes } from "@/lib/story-time";
@@ -20,11 +21,15 @@ type Props = {
   stories: Story[];
   /**
    * The id of a heading outside the section that names it (the Latest page h1). Then the
-   * section shows no SectionHeading of its own, and data-section is "latest".
+   * section shows no SectionHeading of its own, and data-section is `section`.
    */
   labelledBy?: string;
+  /** With `labelledBy`: the data-section name, "latest" (default) or "topic". */
+  section?: "latest" | "topic";
   /** The category Eyebrow on every row (the Latest page). */
   eyebrow?: boolean;
+  /** With `eyebrow` on: "format" shows the format on analysis rows (the topic page). */
+  eyebrowMode?: EyebrowMode;
   t: Pick<
     Dictionary,
     "categoryPage" | "story" | "categories" | "analysisOpinion"
@@ -47,7 +52,9 @@ type Props = {
 export function MoreStoriesSection({
   stories,
   labelledBy,
+  section = "latest",
   eyebrow = false,
+  eyebrowMode,
   t,
   className,
 }: Props) {
@@ -83,7 +90,7 @@ export function MoreStoriesSection({
     <Shell
       as="section"
       aria-labelledby={labelledBy ?? "category-more-title"}
-      data-section={labelledBy ? "latest" : "category-more"}
+      data-section={labelledBy ? section : "category-more"}
       className={className}
     >
       <WithRail>
@@ -99,6 +106,7 @@ export function MoreStoriesSection({
               stories={shown}
               t={t}
               eyebrow={eyebrow}
+              eyebrowMode={eyebrowMode}
               titleAs={labelledBy ? "h2" : "h3"}
               addedFrom={PAGE_SIZE}
             />

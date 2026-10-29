@@ -157,6 +157,16 @@ export interface LatestPage {
   stories: Story[]; // 10 first, then 10 per load
 }
 
+/**
+ * A topic page in one language (layout 7C.2 Paths, Topic row; DR-410): the news and analysis
+ * stories of one topic, newest first. No opinion (tajmin, 29 Oct 2026).
+ */
+export interface TopicPage {
+  lang: Lang;
+  topic: Topic;
+  stories: Story[]; // 10 first, then 10 per load
+}
+
 /** The four ad slots (spacing-layout-system.md 9). `ad-inline` is for article pages, later. */
 export type AdSlotId = "ad-top" | "ad-band" | "ad-inset" | "ad-rail";
 

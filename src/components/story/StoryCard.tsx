@@ -36,7 +36,8 @@ type StoryCardProps = {
   eyebrowMode?: EyebrowMode;
   /**
    * dated only, on an analysis story: the format Eyebrow above the title at every width
-   * (More stories; tajmin, 28 Oct 2026). News stories show none.
+   * (More stories; tajmin, 28 Oct 2026). News stories show none. With `eyebrow` on, the
+   * Eyebrow itself shows the format (the topic page), so this adds no second label.
    */
   formatLabel?: boolean;
   /** Shows the summary when the story has one. */
@@ -103,7 +104,8 @@ export function StoryCard({
 }: StoryCardProps) {
   const showSummary = summary && Boolean(story.summary);
   const dated = layout === "dated";
-  const analysisLabel = dated && formatLabel && story.format === "analysis";
+  const analysisLabel =
+    dated && formatLabel && !eyebrow && story.format === "analysis";
   return (
     <article
       data-story-card
