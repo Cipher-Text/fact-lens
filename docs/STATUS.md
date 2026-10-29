@@ -6,7 +6,7 @@ The current state of the repository. It replaces `PROGRESS.md`, `HANDOVER.md`, `
 
 ## Now
 
-- Branch: `dev`, no page or task in progress.
+- Branch: `task/reader-size-script`, task reader-size-script: final checkpoint done, waiting for tajmin's commit yes. The console error "Encountered a script tag while rendering React component" (a client link to an article) is fixed: the reader size script runs once from the root layout `<head>`, on article paths only. Full Chromium e2e on the branch (30 Oct 2026): 922 passed.
 - Pages done: homepage (locked, DR-370, except P-5 most read: PR #14), article page `/[lang]/story/[slug]` (PR #8, hotfixes PR #9 and #10), category page `/[lang]/category/[id]` (PR #11), url-format (PR #15), category-formats (PR #16) the Latest page `/[lang]/latest` (PR #18) and the topic page `/[lang]/topic/[slug]` (PR #20).
 - Specs in `docs/design-system/`: color 2.17, typography 2.21, layout 2.31, component-system 1.27, agent-contract 2.21.
 - url-format (IMP-97, run 1 of 2) merged (PR #15, 28 Oct 2026): `/story/<slug>-<id>` with 301 and 404s, formats, South Asia, 8 regions, topics, C-08 `format` and `two-part`, missing translation (DR-401). Full Chromium e2e on `dev`: 806 passed.
