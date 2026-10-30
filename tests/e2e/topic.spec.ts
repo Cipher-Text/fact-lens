@@ -205,6 +205,16 @@ for (const p of PAGES) {
       }
     });
 
+    // DR-432 (layout 7E): below 3 stories a topic page is noindex, follow; from 3 it sets no
+    // robots rule. Every mock topic has 3 stories or more, so the noindex case is in the
+    // unit test (src/lib/seo.test.ts).
+    test("robots: 3 stories or more set no noindex", async ({ page }) => {
+      for (const slug of ["regional-cooperation", "archives"]) {
+        await page.goto(`${p.prefix}/topic/${slug}`);
+        await expect(page.locator('meta[name="robots"]'), slug).toHaveCount(0);
+      }
+    });
+
     test("the language switch keeps the topic", async ({ page }) => {
       await page.goto(path);
       // The TopBar language link goes to the same topic in the other language (DR-270).

@@ -222,7 +222,41 @@ for (const prefix of ["", "/en"]) {
         "href",
         `${prefix}/category/economy`,
       );
-      await expect(row.locator("[data-eyebrow-separator]")).toHaveText("·");
+      // The separator is the CPT-10 square in the Eyebrow color (DR-435): 4px, 10px each
+      // side, centered on the row, and it keeps its color while a link is hovered.
+      const separator = row.locator("[data-eyebrow-separator]");
+      await expect(separator).toHaveText("");
+      const drawn = () =>
+        separator.evaluate((el) => {
+          const s = getComputedStyle(el);
+          const link = el.previousElementSibling!;
+          const a = el.getBoundingClientRect();
+          const b = link.getBoundingClientRect();
+          return {
+            width: a.width,
+            height: a.height,
+            marginStart: parseFloat(s.marginInlineStart),
+            marginEnd: parseFloat(s.marginInlineEnd),
+            radius: s.borderRadius,
+            bg: s.backgroundColor,
+            linkColor: getComputedStyle(link).color,
+            centerOffset: Math.abs(
+              a.top + a.height / 2 - (b.top + b.height / 2),
+            ),
+          };
+        });
+      const before = await drawn();
+      expect(before).toMatchObject({
+        width: 4,
+        height: 4,
+        marginStart: 10,
+        marginEnd: 10,
+        radius: "0px",
+      });
+      expect(before.bg).toBe(before.linkColor);
+      expect(before.centerOffset).toBeLessThanOrEqual(1);
+      await links.nth(0).hover();
+      expect((await drawn()).bg).toBe(before.bg);
       for (const i of [0, 1]) {
         expect(
           await links

@@ -153,9 +153,11 @@ describe("Eyebrow (C-08)", () => {
       expect(links[0]).toHaveAccessibleName(bn.analysisOpinion[format]);
       expect(links[1]).toHaveAccessibleName(bn.categories[story.category]);
       const separator = container.querySelector("[data-eyebrow-separator]")!;
-      expect(separator).toHaveTextContent("·");
+      // CPT-10 drawn square in the Eyebrow color (DR-435), not a glyph.
+      expect(separator).toBeEmptyDOMElement();
       expect(separator).toHaveAttribute("aria-hidden", "true");
-      expect(separator).toHaveClass("text-ink-muted");
+      expect(separator).toHaveClass("mx-2.5", "size-1", "bg-interactive");
+      expect(separator.closest("a")).toBeNull();
       // The separator stays with the first part when the row wraps.
       expect(separator.parentElement).toContainElement(links[0]);
       for (const link of links) expect(link.className).not.toMatch(NO_ROUNDING);

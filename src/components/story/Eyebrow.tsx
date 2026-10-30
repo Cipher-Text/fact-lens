@@ -44,10 +44,13 @@ export function Eyebrow({
   );
 
   if (mode === "two-part" && story.format !== "news") {
-    // Each part wraps as a whole unit; the separator stays with the first part (C-08).
+    // Each part wraps as a whole unit; the separator stays with the first part (C-08). The
+    // separator is the CPT-10 square in the Eyebrow color (DR-435): 4px, no radius, 10px each
+    // side, centered, aria-hidden. It sits outside the links, so it keeps its color on hover
+    // and press.
     return (
-      <p className={cn("flex flex-wrap type-eyebrow", className)}>
-        <span>
+      <p className={cn("flex flex-wrap items-center type-eyebrow", className)}>
+        <span className="inline-flex items-center">
           <Link
             href={formatHref(story.lang, story.format)}
             className={linkClass}
@@ -57,10 +60,8 @@ export function Eyebrow({
           <span
             aria-hidden="true"
             data-eyebrow-separator
-            className="mx-(--space-eyebrow-separator) text-ink-muted"
-          >
-            ·
-          </span>
+            className="mx-2.5 size-1 shrink-0 bg-interactive"
+          />
         </span>
         {categoryLink}
       </p>
