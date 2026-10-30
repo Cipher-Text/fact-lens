@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.27 · 30 October 2026 · Topic page (Topic spec log TP-03 to TP-05): Section 3 topic page sections and `TopicPageView`; C-24 `dated`: the format label only on a row with no Eyebrow; C-34 and Section 8: the topic page is built. Before: 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.28 · 30 October 2026 · XC fixes (spec log xc-fixes XF-01 to XF-09): Section 6 `--color-page-title-band`, `--quote-mark-width`, `--divider-column-inset`, `--rd-anchor-size` rows, `--space-eyebrow-separator` retired; CPT-07 helper variables; CPT-10 the separator takes the text color of its line; C-08 the CPT-10 separator, `format` in the hero and the region columns (category on news, DR-433 as amended), More stories; C-43 names the band token; C-25 `eyebrowMode`; DR-133 and DR-135 only on C-14 (C-12, C-23). Before: 1.27 · 30 October 2026 · Topic page (Topic spec log TP-03 to TP-05): Section 3 topic page sections and `TopicPageView`; C-24 `dated`: the format label only on a row with no Eyebrow; C-34 and Section 8: the topic page is built. Before: 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -39,7 +39,7 @@ This file is the only home of the component specs (DR-372, DR-377). To change it
 | P-2 | `FeaturedCategorySection` | Sections | Approved | DR-93, DR-101, DR-103, DR-108, DR-110, DR-118, DR-119, DR-121, DR-122, DR-123, DR-300 |
 | P-4 | `AnalysisSection` | Sections | Approved | DR-52, DR-76, DR-93, DR-101, DR-108, DR-110, DR-111, DR-205, DR-224, DR-264, DR-268, DR-300, DR-351 |
 | C-06 | `OpinionList` | Section components | Approved | DR-52, DR-76, DR-101, DR-110, DR-112, DR-113, DR-299, DR-300, DR-301, DR-351 |
-| C-23 | `CategoryBlock` | Section components | Approved | DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351 |
+| C-23 | `CategoryBlock` | Section components | Approved | DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351 |
 | C-07 | `RankedList` | Section components | Approved | DR-44, DR-148, DR-290, DR-300, DR-403, DR-404; one layout on the homepage and the category page (IMP-99) |
 | C-15 | `RegionSlider` | Section parts | Approved | DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236, DR-284, DR-291, DR-318 |
 | C-16 | `AdSlot` | Section parts | Approved | DR-127, DR-163, DR-197, DR-206, DR-207, DR-233, DR-240, DR-241, DR-242, DR-245, ad proposal (approved 5 Oct), DR-315, DR-387 |
@@ -52,7 +52,7 @@ This file is the only home of the component specs (DR-372, DR-377). To change it
 | C-08 | `Eyebrow` | Small parts | Approved | DR-112, DR-153, DR-163 |
 | C-09 | `MetaLine` | Small parts | Approved | DR-96, DR-98, DR-100, DR-101, DR-166 |
 | C-11 | `Chip` | Small parts | Approved | DR-112, DR-140, DR-163, DR-222, DR-279 |
-| C-12 | `Button` | Small parts | Approved | DR-133, DR-138, DR-140, DR-163, DR-165, DR-167, DR-168, DR-169, DR-208, DR-225, DR-227, DR-235, DR-237, DR-303, DR-349 |
+| C-12 | `Button` | Small parts | Approved | DR-138, DR-140, DR-163, DR-165, DR-167, DR-168, DR-169, DR-208, DR-225, DR-227, DR-235, DR-237, DR-303, DR-349 |
 | C-17 | `TopBar` | Page chrome | Approved | DR-21, DR-41, DR-42, DR-43, DR-165, DR-167, DR-170, DR-171, DR-174, DR-176, DR-177, DR-179, DR-180, DR-234, DR-265, DR-269, DR-287, DR-294, DR-295, DR-306, DR-349 |
 | C-18 | `NavBar` | Page chrome | Approved | DR-41, DR-157, DR-223, DR-287, DR-295, DR-349 |
 | C-19 | `Drawer` | Page chrome | Approved | DR-21, DR-41, DR-56, DR-170, DR-181, DR-182, DR-185, DR-188, DR-223, DR-226, DR-227, DR-228, DR-280, DR-295, DR-302, DR-306, DR-331, DR-349 |
@@ -232,6 +232,8 @@ Do not put a border around a card. Use space, rules and the brand bar to separat
 
 Use only the tokens of the color, typography and layout specs, the component tokens below and the Tailwind 4px scale classes (LAY-21). A value that one component uses is a scale class in that component (gap-7, min-h-13); a token only for a value that two or more components share or that is not a scale step. Do not use arbitrary values (p-[22px]). (LAY-01, LAY-21, DR-223)
 
+A variable that only computes from named tokens is a helper; it needs a code comment naming its sources, not a spec row (DR-437). Examples: `--list-ink-start`, `--divider-item-start`, `--logo-stuck-scale`.
+
 ### CPT-08 Do not cut a news title
 
 Do not cut a news title with "…". Let it wrap. (Method)
@@ -242,7 +244,7 @@ Give insets and overlaps that follow an image as a share of the container width 
 
 ### CPT-10 Draw the metadata separator
 
-Separate items in a metadata line with a drawn separator: 4px square (no radius), in the metadata text color, centered on the line, 10px space each side, aria-hidden. Do not type the dot as a character (it sits differently in Bangla and English fonts). No vertical lines or pipes. (DR-98, DR-166)
+Separate items in a metadata line with a drawn separator: 4px square (no radius), centered on the line, 10px space each side, aria-hidden. The separator takes the text color of its line. Do not type the dot as a character (it sits differently in Bangla and English fonts). No vertical lines or pipes. (DR-98, DR-166)
 
 ### CPT-11 Keep the story text hierarchy
 
@@ -306,12 +308,12 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | --- | --- | --- | --- | --- | --- |
 | `--bar-brand` | 6px | 8px | 10px | Thickness of the brand bar on LeadStory | DR-86 |
 | `--color-bar` | brand (light) / interactive (dark) |  |  | Color of the brand bar | DR-86 |
+| `--color-page-title-band` | surface (light) / surface (dark) |  |  | C-43 PageTitle band background. Class `bg-(--color-page-title-band)`, as `--color-bar`; no `@theme` utility (tajmin, 30 Oct 2026) | DR-424, DR-425 |
 | `--space-lead-inset` | start 0, end 2rem (32px) | clamp(2rem, 4.2cqi, 2.5rem) | same (40px at 952) | Image edge to panel edge, each side. Scales with the card width, 32 to 40px | DR-86, DR-89 |
 | `--space-lead-panel` | 1rem top and end, 0 at the start | 1.5rem (24px) | 2rem (32px) | Padding inside the lead panel | DR-86 |
 | `--space-lead-overlap` | 2rem (32px) | clamp(4rem, 10cqi, 6rem) | same (95px at 952) | How far the lead panel covers the image. Scales with the card width, 64 to 96px (65 at 648, 72 at 720) | DR-86, DR-89 |
 | `--space-lead-eyebrow-title` | 0.5rem (8px) | same | same | LeadStory: eyebrow to title | DR-92 |
 | `--space-lead-summary-meta` | 1rem (16px) | same | same | LeadStory: summary to meta | DR-92 |
-| `--space-eyebrow-separator` | 0.5rem (8px) | same | same | C-08 `Eyebrow.separator`: the inline gap on each side of the two-part middle dot (tajmin, 28 Oct 2026; spec log url-format UF-04) | DR-416 |
 | `--space-page-title-band` | 1.5rem (24px) | 2rem (32px) | 2.5rem (40px) | C-43 PageTitle band: the block inset above and below the content. Not the LAY-20 panel band values (tajmin, 28 Oct 2026; spec log category-formats CF-06) | DR-415 |
 | `--color-meta` | #6E6862 (light, 5.2:1 on background, 4.8:1 on surface-alt) | #A3A3A3 (dark, unchanged) |  | Metadata text and its separator. Same value as ink-muted: #6E6862 is the light ink-muted value for all muted text (captions, labels, ad label), replacing #4F4B48 | DR-100 |
 | `--bar-section` | 2.5rem x 0.5rem (40 x 8px) | 2.5rem x 0.5rem (40 x 8px) | 3rem x 0.5rem (48 x 8px) | Section divider bar, width x height (DR-262). Columns: phone / 600-1023 / 1024 and up (page breakpoints). 48 x 6 under 1024  | DR-103 |
@@ -333,6 +335,9 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--rank-chip-digit-weight` | 700 | same | 600 from 1024 | RankedList: the chip digits | category spec log CL-10 |
 | `--rank-list-gap` | 1.5rem (24px) | 1.75rem (28px) from 600 | 2rem (32px) from 1280 | RankedList: the space between items, which have no rule | category spec log CL-12 |
 | `--divider-rule` | 1px | same | same | Rule weight of Divider.item, Divider.rule and Divider.column (C-22) | DR-262, DR-351, DR-405 |
+| `--divider-column-inset` | 1rem (16px) | same | same | Divider.column-inset (C-22): the rule distance from the top and the bottom of the column | DR-351 |
+| `--quote-mark-width` | 1.75rem (28px) | 2.25rem (36px) from 600 | 2.75rem (44px) from 1024 | OpinionList (C-06): the quote mark width; it also sets where the item rule starts (`--divider-item-start`, a helper) | DR-351 |
+| `--rd-anchor-size` | max(1.3em, 1.5rem) | same | same | Article page `SectionAnchor` button size (C-27 to C-42), scoped on `.rd-anchor` in `reader.css` | DR-391 |
 
 In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-height`, and `--space-lead-inset` is the pair `--space-lead-inset-start` and `--space-lead-inset-end`.
 
@@ -347,11 +352,11 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --space-lead-overlap: 2rem;
   --space-lead-eyebrow-title: 0.5rem;
   --space-lead-summary-meta: 1rem;
-  --space-eyebrow-separator: 0.5rem;
   --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);
   --color-meta: var(--ink-muted);
+  --color-page-title-band: var(--surface);
   --button-height: 3rem;
   --button-padding: 1.25rem;
   --icon-button-size: 2.75rem;
@@ -365,6 +370,8 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --story-feature-media-max: 34.8125rem;
   --story-feature-media-share: 0.5;
   --divider-rule: 1px;
+  --divider-column-inset: 1rem;
+  --quote-mark-width: 1.75rem;
   --rank-chip-size: 2.25rem;
   --rank-chip-digit-size: 1.5rem;
   --rank-chip-digit-weight: 700;
@@ -373,10 +380,11 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
 
 .dark {
   --color-bar: var(--interactive);
+  --color-page-title-band: var(--surface);
 }
 
 @media (min-width: 37.5rem) {
-  :root { --top-bar-inset: 1.125rem; --rank-list-gap: 1.75rem; --space-page-title-band: 2rem; }
+  :root { --top-bar-inset: 1.125rem; --rank-list-gap: 1.75rem; --space-page-title-band: 2rem; --quote-mark-width: 2.25rem; }
 }
 
 @media (min-width: 48rem) {
@@ -392,6 +400,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
     --rank-chip-digit-size: 2rem;
     --rank-chip-digit-weight: 600;
     --space-page-title-band: 2.5rem;
+    --quote-mark-width: 2.75rem;
   }
 }
 
@@ -458,7 +467,7 @@ The container rule sets the lead tokens on `.lead-story`, so the `@container` is
 
 ```
 
-`--color-bar` is the one allowed component color token (color §2.9, DR-294, DR-349). The NewsletterSignup colors (after prototype run 2, DR-239) are in `color-system.md` Section 2.9.
+`--color-bar` and `--color-page-title-band` are the two allowed component color tokens (color §2.9, DR-294, DR-349, DR-425); each only points at a color token. The NewsletterSignup colors (after prototype run 2, DR-239) are in `color-system.md` Section 2.9.
 
 Article page tokens (`--rd-*`, `--ad-inline-w`, `--ad-inline-h`) are in `src/styles/reader.css`, scoped under `.rd`. `spacing-layout-system.md` Section 7A lists them (DR-386). The shadcn `Dialog` motion is the `dialog-panel` utility in `components.css` (DR-390).
 
@@ -662,9 +671,11 @@ Shared card from the merge (DR-93): one story with an image and text. Draws ever
 
 #### C-25 StoryListItem
 
-**Status:** Approved · **Decisions:** DR-93, DR-101, DR-102, DR-126, DR-153
+**Status:** Approved · **Decisions:** DR-93, DR-101, DR-102, DR-126, DR-153, DR-433
 
 Shared card from the merge (DR-93): one story as a text row, title + meta, no image.
+
+`eyebrowMode` (optional): the C-08 Eyebrow in that mode above the title, `--space-lead-eyebrow-title` to the title; none when unset. The homepage region columns set `format` (DR-433, amended 30 Oct 2026); every other list leaves it unset.
 
 **Variants.** None. The meta content changes by place (category and time in Latest; time and read time elsewhere).
 
@@ -816,7 +827,7 @@ The opinion column (right) of বিশ্লেষণ ও মতামত (P-4)
 
 #### C-23 CategoryBlock
 
-**Status:** Approved · **Decisions:** DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-135, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351; category page use: DR-415 (category formats spec log CF-03)
+**Status:** Approved · **Decisions:** DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351; category page use: DR-415 (category formats spec log CF-03)
 
 One category inside the grouped categories section (P-3): heading, a feature story with image, 2 text rows and আরও দেখুন. Rows of two blocks, an ad-inset between rows, a rail with DailyPoll (C-26). NewsletterSignup (C-14) joins the rail after prototype run 2 (DR-239).
 
@@ -894,7 +905,7 @@ Most read (P-5): the 5 most read stories as a numbered list. RankedList.item = r
 
 #### C-15 RegionSlider
 
-**Status:** Approved · **Decisions:** DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236, DR-284, DR-291, DR-318
+**Status:** Approved · **Decisions:** DR-19, DR-140, DR-141, DR-142, DR-143, DR-151, DR-227, DR-236, DR-284, DR-291, DR-318, DR-433 (amended 30 Oct 2026)
 
 The regions section (P-3b): one column per region in a row that slides, previous / next buttons at the heading end; chips (tabs) on phones.
 
@@ -904,7 +915,7 @@ The regions section (P-3b): one column per region in a row that slides, previous
 | --- | --- |
 | Heading | Section divider (C-22) + অঞ্চলসমূহ, h2, not a link (DR-159) |
 | Buttons | Previous / next at the end of the heading line, 44px squares, interactive fill, on-interactive chevron. Shown whenever more regions exist than are in view (DR-140); CSS hides them when every region fits, no script count (DR-318). At an end: aria-disabled, surface-alt fill, ink-disabled chevron |
-| `RegionSlider.panel` | Region name h3 type-story-title-sm, 3:2 image, 3 stories (title type-story-title-sm + meta), rules between. No আরও দেখুন per column |
+| `RegionSlider.panel` | Region name h3 type-story-title-sm, 3:2 image, 3 stories (C-08 Eyebrow in `format` mode, title type-story-title-sm + meta), rules between. The Eyebrow: the category on news, বিশ্লেষণ / Analysis on analysis (DR-433, amended by tajmin 30 Oct 2026). No আরও দেখুন per column |
 | Section link | আরও দেখুন at the section end, end edge, every width; links to the regions page (DR-142, DR-160) |
 | Chips | Phones only: shadcn Tabs (CPT-16): Tabs, TabsList and TabsTab only; the panels are the slider columns, not Tabs.Panel, which hides them from 600 (DR-348), tabs 44px, as wide as the label, 8px gap, outline (1px border-interactive, no fill); selected = interactive fill; no white chips (DR-140). One panel, h3 visually hidden |
 
@@ -1112,7 +1123,7 @@ The heading of every news and category section: the section divider (C-22) with 
 
 #### C-43 PageTitle
 
-**Status:** Approved · **Decisions:** DR-405 (category page spec log CL-14), DR-415 (category-formats spec log CF-06)
+**Status:** Approved · **Decisions:** DR-405 (category page spec log CL-14), DR-415 (category-formats spec log CF-06), DR-424, DR-425 (xc-fixes spec log XF-01)
 
 The title of a page that is not the homepage or an article: the page `h1` in a band. The category page uses it with the category name (`spacing-layout-system.md` 7B). Code: `src/components/layout/PageTitle.tsx`.
 
@@ -1120,7 +1131,7 @@ The title of a page that is not the homepage or an article: the page `h1` in a b
 
 | Part | Spec |
 | --- | --- |
-| `PageTitle.band` | A `header`. The `surface` background (`color-system.md` 2.1, an exception to `surface-alt` for bands) spans the full width; the content sits in the `Shell`, so it lines up with the page. Block inset `--space-page-title-band` (24px narrow, 32px from 600px, 40px from 1024px), no inline inset (tajmin, 28 Oct 2026). It is the first row of `main`, right under the `ad-top` row, in place of space-page-start |
+| `PageTitle.band` | A `header`. The background is `--color-page-title-band` (`surface` in light and dark, `color-system.md` 2.9), class `bg-(--color-page-title-band)`; it spans the full width; the content sits in the `Shell`, so it lines up with the page. Block inset `--space-page-title-band` (24px narrow, 32px from 600px, 40px from 1024px), no inline inset (tajmin, 28 Oct 2026). It is the first row of `main`, right under the `ad-top` row, in place of space-page-start |
 | `PageTitle.note` | Optional slot above the divider, in the band: the category page MissingTranslationNote |
 | `PageTitle.divider` | Divider.section (C-22, the bar on the rule), space-section-rule-title to the title, as in SectionHeading |
 | `PageTitle.title` | `h1`, `type-page-title`, ink. No description, no link |
@@ -1130,7 +1141,7 @@ Space after the band: space-module, set by the page.
 **Checks.**
 
 - One `h1` on the page.
-- The band is `surface`, not the page background and not `surface-elevated` (the P-4 and Footer panel bands).
+- The band is `--color-page-title-band` (`surface`), not the page background and not `surface-elevated` (the P-4 and Footer panel bands).
 - The band reaches both edges of the viewport; the title lines up with the page content.
 - No radius, no border, no shadow.
 
@@ -1168,22 +1179,22 @@ The আরও দেখুন link: one per section, at the end of the section a
 
 #### C-08 Eyebrow
 
-**Status:** Approved · **Decisions:** DR-112, DR-153, DR-163, DR-416, DR-417
+**Status:** Approved · **Decisions:** DR-112, DR-153, DR-163, DR-416, DR-417, DR-418, DR-433 (amended 30 Oct 2026), DR-435
 
 The label above a story title. A link to the category page, or to the format hub. Off when the section heading already names the category (DR-153, CMP-19).
 
 **Variants.** No Breaking label in this slot (DR-279).
 
 - `category` (default): the story's category, a link to `/category/<slug>`.
-- `format`: বিশ্লেষণ / Analysis, a link to `/analysis`. Use it on analysis cards in mixed lists: the homepage lead, top stories, region columns and More stories. Inside an analysis section or the `/analysis` hub, use `category` (DR-417).
-- `two-part` (article pages only, DR-416): on analysis and opinion articles, the format link, a separator, then the category link, for example বিশ্লেষণ · অর্থনীতি ও বাণিজ্য. The format links to `/analysis` or `/opinion`. News articles show `category` only. Cards and list items never use `two-part`.
+- `format`: on an analysis story বিশ্লেষণ / Analysis, a link to `/analysis`; on any other story its category. Mixed lists use it on every story: the homepage hero (lead and top stories, DR-417), the homepage region columns (the image card and the text rows; news shows its category, tajmin 30 Oct 2026, amends the news part of DR-433) and the topic page. More stories on the category page shows it on analysis rows only; news rows have no Eyebrow, the page title names the category (DR-153, category formats spec log CF-07; tajmin 30 Oct 2026). Inside an analysis section or the `/analysis` hub, use `category` (DR-417).
+- `two-part` (article pages only, DR-416, amended by DR-418): on analysis and opinion articles, the format link, a separator, then the category link, for example বিশ্লেষণ · অর্থনীতি ও বাণিজ্য. The format links to `/analysis` or `/opinion`. News articles show `category` only. Cards and list items never use `two-part`.
 
 News cards use `category`. Opinion rows (OpinionList.item) have no Eyebrow.
 
 | Part | Spec |
 | --- | --- |
 | Eyebrow | type-eyebrow: BN 15px 600; EN 14px 700 uppercase, 0.06em. interactive. UI link: hover interactive-hover, pressed interactive-pressed, no underline (COL-06, DR-199); focus ring |
-| `Eyebrow.separator` | `two-part` only. A middle dot `·`, `ink-muted`, `aria-hidden="true"`, an inline gap of `--space-eyebrow-separator` (8px) on each side |
+| `Eyebrow.separator` | `two-part` only. The CPT-10 separator: a drawn 4px square, no radius, 10px on each side, vertically centered, `aria-hidden="true"`, in the Eyebrow color (`interactive`). It sits outside the links: it keeps its color on hover and press (DR-435) |
 | Wrap | `two-part`: each part wraps as a whole unit; the separator stays with the first part |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
@@ -1267,7 +1278,7 @@ A short square label or a filter button. Three variants.
 
 #### C-12 Button
 
-**Status:** Approved · **Decisions:** DR-133, DR-138, DR-140, DR-163, DR-165, DR-167, DR-168, DR-169, DR-208, DR-225, DR-227, DR-235, DR-237, DR-303, DR-349
+**Status:** Approved · **Decisions:** DR-138, DR-140, DR-163, DR-165, DR-167, DR-168, DR-169, DR-208, DR-225, DR-227, DR-235, DR-237, DR-303, DR-349
 
 Button (text) and IconButton (icon only). Square, no border, no shadow.
 

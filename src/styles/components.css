@@ -9,13 +9,12 @@
   --space-lead-overlap: 2rem;
   --space-lead-eyebrow-title: 0.5rem;
   --space-lead-summary-meta: 1rem;
-  /* C-08 Eyebrow.separator: the inline gap on each side of the two-part middle dot. The
-     sheet leaves the token open (CPT-07): proposed at 8px, the Eyebrow-to-title step. */
-  --space-eyebrow-separator: 0.5rem;
   --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);
   --color-meta: var(--ink-muted);
+  /* PageTitle band (C-43): surface in light and dark (DR-424, DR-425). */
+  --color-page-title-band: var(--surface);
 
   /* LeadStory panel padding at the start side: 0 on narrow (text lines up with the image
      edge), the panel padding from 600px. C-01 gives the values; Section 6 has no token
@@ -47,12 +46,13 @@
 
 .dark {
   --color-bar: var(--interactive);
+  --color-page-title-band: var(--surface);
 }
 
-/* Divider (C-22, DR-351). --divider-rule is in Section 6: the rule weight of Divider.item,
-   Divider.rule and Divider.column. Section 6 has no tokens for the other values (CPT-07):
-   the column-inset distance from the top and the bottom, and the OpinionList quote mark
-   width (C-06: 28 / 36 / 44px), which also sets where the OpinionList item rule starts. */
+/* Divider (C-22, DR-351), component-system Section 6: --divider-rule, the rule weight of
+   Divider.item, Divider.rule and Divider.column; --divider-column-inset, the column-inset
+   distance from the top and the bottom; --quote-mark-width, the OpinionList quote mark width
+   (C-06: 28 / 36 / 44px), which also sets where the OpinionList item rule starts. */
 :root {
   --divider-rule: 1px;
   --divider-column-inset: 1rem;
@@ -126,7 +126,8 @@
 /* TopBar.logo when stuck: 24px; phones keep 20px (C-17). Each ratio is 24px over the
    type-logo size of that tier (typography §3: 28px from 768, 32px from 1024). Change them
    with those sizes; header.spec.ts checks the drawn 24px. A length / length calc would tie
-   them, but Safari does not support it yet. */
+   them, but Safari does not support it yet. --logo-stuck-scale is a helper (DR-437): its
+   sources are --type-logo-size at each tier and the 24px stuck logo of C-17. */
 :root {
   --logo-stuck-scale: 1;
 }
@@ -509,7 +510,9 @@
 }
 
 /* The ink at the top of the items of a list (DR-350). Set it on the list (and on a
-   StoryList that is itself a row after a card). Items that start with a title: */
+   StoryList that is itself a row after a card). --list-ink-start is a helper (DR-437): it
+   only takes a named token, --type-story-title-sm-ink-start or 0. Items that start with a
+   title: */
 @utility list-ink-title-meta {
   --list-ink-start: var(--type-story-title-sm-ink-start);
 }
@@ -592,7 +595,8 @@
   }
 }
 
-/* OpinionList: the item rule spans the text column only, not the quote mark (DR-351). */
+/* OpinionList: the item rule spans the text column only, not the quote mark (DR-351).
+   --divider-item-start is a helper (DR-437): --quote-mark-width plus --grid-column-gap. */
 @utility opinion-rule-start {
   --divider-item-start: calc(var(--quote-mark-width) + var(--grid-column-gap));
 }

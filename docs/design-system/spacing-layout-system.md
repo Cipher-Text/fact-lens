@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.32 · 30 October 2026 · XC fixes (spec log xc-fixes XF-04 to XF-08): 7B.1 and 7B.3 fixed halves in `CategoryFormatsSection` (DR-436); 7B.2 `main` starts with the title band (as 7D.2); 7E.2 noindex, follow below 3 stories, no `?page` (DR-432); DR citations in 7.1, 7B.1, 7C, Section 10 (DR-420, DR-419, DR-418, DR-393). Before: 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -227,6 +227,8 @@ Search:
 
 ### 7.1 Page order
 
+Decisions: DR-420.
+
 | # | Row | Container |
 | --- | --- | --- |
 | 1 | Header | Full / shell |
@@ -403,6 +405,8 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 
 ### 7B.1 Page order
 
+Decisions: DR-419, DR-436.
+
 | Row | Container | Content |
 | --- | --- | --- |
 | Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18), unchanged. The category items link to the category pages; the open category is the current item (C-18, C-19) |
@@ -410,7 +414,7 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 | Page title | `Shell` | `PageTitle` (C-43): the category name, the page `h1`, in the `surface` band (full width, the content in the shell, first row of `main` under `ad-top`); space-module below |
 | `CategoryFeatureSection` | `Shell`, `WithRail` | A hidden `h2` names the section. Wrapper: the feature story as an `OverlapCard` (C-02, `feature`, no eyebrow), then 3 card rows (`CategoryCardList`). Rail: `SectionHeading` and the 5 newest stories after the feature story as a `StoryList` (C-03 of C-25) |
 | `ad-band` | Ad container | After `CategoryFeatureSection` |
-| `CategoryFormatsSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | The analysis and opinion row (DR-415): one row of two CategoryBlocks (C-23), Analysis at the start, Opinion at the end; 1 per row on phones, 2 from 600 (`LAY-07`). Up to 5 stories per block. `space-module` above (after the ad band, `LAY-12`), `space-section` to Most read |
+| `CategoryFormatsSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | The analysis and opinion row (DR-415): one row of two CategoryBlocks (C-23), Analysis always at the start, Opinion always at the end, fixed halves (DR-436); 1 per row on phones, 2 from 600 (`LAY-07`). Up to 5 stories per block. `space-module` above (after the ad band, `LAY-12`), `space-section` to Most read |
 | Most read | `Shell` | The top 5 of the category: `MostReadSection` with RankedList (C-07), as on the homepage |
 | `ad-band` | Ad container | After most read |
 | `MoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | `MoreStoriesList`: the older stories as StoryCard `dated` (C-24), Divider.item between them, 10 at a time; Divider.rule (C-22) and the load more `Button` |
@@ -422,16 +426,16 @@ The category page (`/category/<id>`, `/en/category/<id>`, `CategoryPageView`) is
 - **Card rows.** `StoryCard` (C-24) row, 16:9 image at the end, text : image = 2 : 1, with the summary; `Divider.item` between the rows, measured to the image top (DR-268, DR-350). One per row at every width (`LAY-07`, DR-409).
 - **Formats.** The main stream is news only: the feature story, the rail and the card rows. Analysis and opinion have their own row, `CategoryFormatsSection`, directly above Most read, up to 5 of each, newest first. More stories lists the news and analysis that no section above shows, never opinion, newest first. No story shows twice on the page (DR-415, replaces DR-408).
 - **No Eyebrow.** No card on the page shows the Eyebrow: the page title names the category (DR-153). One exception: an analysis row in More stories shows the C-08 `format` Eyebrow above the title at every width (DR-415, category formats spec log CF-07).
-- **Spacing.** `main` starts with `space-page-start` and ends with `space-section`. The space before an ad band belongs to the section above it (`space-module`), and the section after an ad band starts with `space-module` (`LAY-12`).
+- **Spacing.** `main` starts with the title band (in place of `space-page-start`, as 7D.2) and ends with `space-section`. The space before an ad band belongs to the section above it (`space-module`), and the section after an ad band starts with `space-module` (`LAY-12`).
 - **Load more.** A list shows 10 stories. Each press of the C-12 primary `Button` adds the next 10 and moves focus to the title link of the first added story. The button goes when no stories are left (`COL-13`). The added rows fade in (opacity, `--duration-slide`, `ease-slide`, no stagger; nothing moves), and the story image of an added row fades in when it has loaded; lazy loading stays. The first rows do not animate. No motion with reduced motion (DR-227). The added rows show the reader story time at once (`TYP-17`). Component CSS: `component-system.md` Section 6 (Latest spec log LT-03, LT-04; tajmin, 28 Oct 2026).
 
 ### 7B.3 Sparse content
 
-A section with no stories is removed with its ad band (Section 7.3, `LAY-13`). In `CategoryFormatsSection` an empty block is not shown and the other keeps its size, the other half of the row empty (P-3); with both empty the row is removed. The blocks show what the category has: no fill-in.
+A section with no stories is removed with its ad band (Section 7.3, `LAY-13`). In `CategoryFormatsSection` the halves are fixed: an empty block is not shown and leaves its own half empty; the other block keeps its size and its place (Analysis at the start, Opinion at the end). On phones, one block per row, the empty half takes no row. With both empty the row is removed (DR-436). The blocks show what the category has: no fill-in.
 
 ## 7C. URLs
 
-These rules apply to every page (DR-397, DR-399, DR-401, DR-410 to DR-414). Bangla is at the root; English adds `/en` in front of every path (`AGENTS.md` Section 7).
+These rules apply to every page (DR-397, DR-399, DR-401, DR-410 to DR-414, DR-418). Bangla is at the root; English adds `/en` in front of every path (`AGENTS.md` Section 7).
 
 ### 7C.1 Path rules
 
@@ -507,6 +511,8 @@ As the Latest page (7D.1), with these differences:
 - The news and analysis stories of the topic, newest first, no repeats. No opinion (tajmin, 29 Oct 2026). A story carries its topics; the article Topics (C-34) show the same topics (DR-410).
 - 10 stories first, then 10 per press, as 7B.2 Load more, with its motion and story time.
 - `main` starts with the title band and ends with `space-section`, as 7D.2.
+- A topic page with fewer than 3 stories is `noindex, follow` (robots meta); from 3 stories it sets no robots rule (DR-432).
+- The list pages (category More stories, Latest, topic) use load more, not `?page=` URLs (DR-432).
 
 ### 7E.3 Sparse content
 
@@ -581,6 +587,8 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 - Deferred until after launch: native units in story lists, takeovers, page skins, header bidding.
 
 ## 10. Layers
+
+Decisions: DR-393.
 
 | Token | Value | Use |
 | --- | --- | --- |
@@ -1012,6 +1020,10 @@ Test these content cases:
 The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. The Latest page is in Section 7D and the topic page in Section 7E. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.32 (30 October 2026)**
+
+- XC fixes (spec log xc-fixes): 7B.1 and 7B.3 the `CategoryFormatsSection` halves are fixed, an empty block leaves its half empty (DR-436, XC-11); 7B.2 Spacing: `main` starts with the title band, as 7D.2 (XC-03); 7E.2 noindex, follow below 3 stories and load more, no `?page` (DR-432, XC-02); decision citations DR-420 (7.1), DR-419 (7B.1), DR-418 (7C), DR-393 (Section 10) (XC-05).
 
 **2.31 (30 October 2026)**
 

@@ -3,14 +3,21 @@ import Link from "next/link";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 
+import { Eyebrow, type EyebrowMode } from "./Eyebrow";
 import { headlineLink, storyHref } from "./links";
 import { MetaLine, storyMetaItems } from "./MetaLine";
 
 type StoryListItemProps = {
   story: Story;
-  strings: Pick<Dictionary, "story" | "categories">;
+  strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
   /** category-time: Latest. time-reading: every other list (C-25). */
   meta?: "category-time" | "time-reading";
+  /**
+   * The C-08 Eyebrow above the title, in this mode; none when unset. The homepage region
+   * columns use `format`: the category on news, বিশ্লেষণ / Analysis on analysis (DR-433, as
+   * amended by tajmin, 30 Oct 2026).
+   */
+  eyebrowMode?: EyebrowMode;
   titleAs?: "h3" | "h4";
 };
 
@@ -23,6 +30,7 @@ export function StoryListItem({
   story,
   strings,
   meta = "time-reading",
+  eyebrowMode,
   titleAs: Title = "h3",
 }: StoryListItemProps) {
   const items = storyMetaItems(story, strings.story, {
@@ -35,6 +43,14 @@ export function StoryListItem({
   }
   return (
     <article data-story-list-item>
+      {eyebrowMode ? (
+        <Eyebrow
+          story={story}
+          strings={strings}
+          mode={eyebrowMode}
+          className="mb-(--space-lead-eyebrow-title)"
+        />
+      ) : null}
       <Title className="type-story-title-sm">
         <Link href={storyHref(story)} className={headlineLink}>
           {story.title}

@@ -384,6 +384,35 @@ test("sparse (7.3): security has no opinion, so the row shows Analysis only, at 
   }
 });
 
+// DR-436 (layout 7B.1, 7B.3): fixed halves, Analysis at the start, Opinion at the end. An empty
+// block leaves its own half empty; the other block keeps its place. On phones the empty half
+// takes no row.
+test("fixed halves: an empty block leaves its half empty", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/category/security");
+  const row = page.locator('[data-section="category-formats"]');
+  const grid = (await row.locator("[data-grouped-row]").boundingBox())!;
+  const analysis = (await row
+    .locator('[data-category-block="analysis"]')
+    .boundingBox())!;
+  const empty = row.locator('[data-empty-half="opinion"]');
+  await expect(empty).toHaveCount(1);
+  await expect(empty).toBeEmpty();
+  const half = (await empty.boundingBox())!;
+  // Analysis at the start, the empty opinion half at the end, side by side.
+  expect(Math.abs(analysis.x - grid.x)).toBeLessThanOrEqual(1);
+  expect(half.x).toBeGreaterThan(analysis.x + analysis.width);
+  expect(Math.abs(half.y - analysis.y)).toBeLessThanOrEqual(1);
+  // Phone: one block per row, and the empty half is not shown, so it adds no gap.
+  await page.setViewportSize({ width: 360, height: 800 });
+  await expect(empty).toBeHidden();
+  const g = (await row.locator("[data-grouped-row]").boundingBox())!;
+  const a = (await row
+    .locator('[data-category-block="analysis"]')
+    .boundingBox())!;
+  expect(Math.abs(g.y + g.height - (a.y + a.height))).toBeLessThanOrEqual(1);
+});
+
 test("the title band: full width, the title in the shell, under the ad-top row", async ({
   page,
 }) => {
@@ -406,7 +435,7 @@ test("the title band: full width, the title in the shell, under the ad-top row",
     expect(b.x).toBe(0);
     expect(Math.abs(b.width - clientWidth)).toBeLessThanOrEqual(1);
     expect(Math.abs(b.y - (ad.y + ad.height))).toBeLessThanOrEqual(1);
-    // The band is surface (tajmin's tweak, flag U-50), not the page background.
+    // The band is --color-page-title-band, surface (DR-424, DR-425), not the page background.
     const [bandBg, pageBg, surface, padTop, padBottom] = await band.evaluate(
       (el) => {
         const probe = document.createElement("div");

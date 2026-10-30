@@ -19,7 +19,7 @@ A task is one branch, one short brief and one progress file, like a page (`AGENT
 
 1. If there is an issue ID, read its row in `docs/ISSUES.md`. If there is no such row, tell tajmin and stop.
 2. Find the code and the specs the change touches: the components, `src/styles/`, the sheets in `component-system.md` Section 7, and the rule IDs. Read `agent-contract.md` Sections 1 to 4 and only the spec sections that the change needs.
-3. If the change touches the homepage, it is locked (`DR-370`, except P-5 most read). Say so in the questions; do not plan the change without tajmin's yes.
+3. If the change touches the homepage, name its sections (P- IDs) in the brief. The homepage changes like any page (`DR-434`).
 
 ## 2. Name and branch
 

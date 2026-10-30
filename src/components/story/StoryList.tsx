@@ -11,7 +11,7 @@ import { StoryListItem } from "./StoryListItem";
 
 type StoryListProps = {
   stories: Story[];
-  strings: Pick<Dictionary, "story" | "categories">;
+  strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
   /**
    * 1: one column. 2: two columns from 768 to 1023px, column-first, with a 24px gap and rules
    * inside a column only (DR-125); one column elsewhere. 2 is the Latest list under the hero.

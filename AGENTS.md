@@ -1,6 +1,6 @@
 # Fact Lens Frontend: Agent Instructions
 
-Version 1.10 · 29 October 2026 · For the production frontend (M2). No sprints or tickets
+Version 1.11 · 30 October 2026 · For the production frontend (M2). No sprints or tickets
 
 These instructions are for every coding agent (Claude Code, Codex, Cursor and others) and for human developers. Read all of this file before you change code.
 
@@ -13,7 +13,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 | Current work | M2 production build, one page or task at a time (Section 9). State: `docs/STATUS.md`. Open items and flags: `docs/ISSUES.md` |
 | Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
 | Data | Mock data only. Do not connect a backend (`DR-01`) |
-| Pages | Homepage, article page and category page are done; the homepage is locked (`DR-370`), except P-5 most read (IMP-99). Start a new page only with its brief (Section 9) |
+| Pages | Homepage, article page and category page are done. The homepage changes like any page: a branch, checkpoints and a spec log (`DR-434`). Start a new page only with its brief (Section 9) |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |
 
 ## 2. Authority

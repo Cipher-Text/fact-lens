@@ -247,6 +247,33 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
     expect(container.querySelector("[data-reading-time]")).not.toBeNull();
   });
 
+  it("eyebrowMode format: the category on news, Analysis on analysis (DR-417, DR-433)", () => {
+    const analysis = getStory("chip-supply-map", "bn");
+    expect(analysis.format).toBe("analysis");
+    const { container, rerender } = render(
+      <StoryListItem story={analysis} strings={bn} eyebrowMode="format" />,
+    );
+    const eyebrow = () => container.querySelector("p.type-eyebrow")!;
+    expect(eyebrow()).toHaveTextContent(bn.analysisOpinion.analysis);
+    expect(within(eyebrow() as HTMLElement).getByRole("link")).toHaveAttribute(
+      "href",
+      "/analysis",
+    );
+    expect(eyebrow().nextElementSibling!.tagName).toBe("H3");
+    rerender(
+      <StoryListItem story={latest[0]} strings={bn} eyebrowMode="format" />,
+    );
+    expect(latest[0].format).toBe("news");
+    expect(eyebrow()).toHaveTextContent(bn.categories[latest[0].category]);
+    expect(within(eyebrow() as HTMLElement).getByRole("link")).toHaveAttribute(
+      "href",
+      `/category/${latest[0].category}`,
+    );
+    // No mode: no Eyebrow (every other list).
+    rerender(<StoryListItem story={analysis} strings={bn} />);
+    expect(container.querySelector("p.type-eyebrow")).toBeNull();
+  });
+
   it("makes an h3 with one link and no Breaking label (COL-11, DR-279)", () => {
     const { container } = render(
       <StoryListItem story={latest[0]} strings={bn} />,
