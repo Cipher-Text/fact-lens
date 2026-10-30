@@ -47,6 +47,8 @@ export function CategoryFormatsSection({
           <div data-grouped-row className={groupedRow}>
             {blocks.map(({ format, stories }) =>
               stories.length === 0 ? (
+                // sm:block matches the sm:grid-cols-2 of groupedRow: below 600 the row is
+                // one column, so the empty half must take no row. Change them together.
                 <div
                   key={format}
                   data-empty-half={format}

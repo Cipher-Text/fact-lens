@@ -15,10 +15,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: final checkpoint done, waiting for tajmin's commit yes
+- State: PR #22 open; review fixes committed and pushed (tajmin, 17:40: "do all these in one go"); waiting for tajmin's merge
 - Next step: checkpoint 5: commit on tajmin's yes, then push and the PR to `dev` on yes
 - Open questions to tajmin: none. U-53 (P-4 halves) is an open flag to decide later
-- Uncommitted: yes, checkpoints 1 to 3, the brief and this file
+- Uncommitted: only this line (after the commit)
 
 ## Decisions
 
@@ -112,3 +112,11 @@ tajmin, 30 Oct 2026: "ok" (keeps the class form, starts checkpoint 3).
 - design-reviewer: no code blockers; XF-01, XF-03 to XF-10 green; XF-02 red (CPT-10 said the metadata color). Fixed in the spec: CPT-10 names the `two-part` Eyebrow separator in the Eyebrow color (DR-435). Notes kept as is: the `two-part` example in C-08 and the ArticleHeader row write "·" in prose; old changelog lines name `--space-eyebrow-separator` (history).
 - After the report (tajmin, 17:28: "1. ok 2. whats 421? 3. yes", via the project assistant): CPT-10 is one general sentence, "The separator takes the text color of its line" (the Eyebrow special case removed; XF-02 green); the spec log lists the DR-417 amendment (More stories) next to DR-433; DR-421 waits for tajmin. Not committed.
 - DR-421: no citation (tajmin, 17:29: "no issues. keep as it is now."). Not committed.
+
+### PR #22 review (30 Oct 2026), not committed
+
+- tajmin, 17:37: "check the review comments in the pr". Review: no blockers; one Fix, three Notes.
+- Fix (RegionsSection list ink, DR-350): already measured (U-52 audit, 15.7 to 16.0px, target 16) and closed by tajmin with no change. No code change.
+- Note (CategoryFormatsSection `hidden sm:block` tied to `groupedRow`): code comment added; `tests/e2e/category.spec.ts` fixed halves test now runs `/` and `/en` at 600 and 1280 (side by side) and 360 and 599 (no gap). 2 passed.
+- Note (separator `mx-2.5 size-1` in rem grows at 200% text): same classes as the MetaLine CPT-10 separator; no change.
+- Note (topic noindex only unit-tested): tajmin, 17:40: "do all these in one go". New `src/app/[lang]/topic/[slug]/metadata.test.ts`: `generateMetadata` with a mocked `getTopicPage`, 2 stories noindex, follow; 3 stories no robots. Mock content unchanged. Spec log XF-07 names it.
