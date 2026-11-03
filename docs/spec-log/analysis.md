@@ -40,3 +40,11 @@ This log keeps what the work changes in the specs, made from the progress file a
 None open. The six Changed rule items (AN-07, AN-11 to AN-14, AN-16) were red flags at the final checkpoint; tajmin approved them after the PR 23 review (4 Nov 2026: "Add the spec changes"). Written into the specs on `page/analysis`: typography 2.22 (3.1 `type-deck` and `type-story-lead`, Section 8 CSS, TYP-12 and TYP-13 exceptions), layout 2.33 (Section 9 `ad-rail`, 7F.1), component-system 1.29 (C-16 `railFrom`, C-18, C-19, C-43 `PageTitle.description`, Section 6 `story-split-lead`), agent-contract 2.23 (Sections 1, 3, 5). Green items AN-01 to AN-06, AN-08 to AN-10 and AN-15 were written at the final checkpoint.
 
 Still open, not a spec item: the English NavBar hides the Analysis item at 1280 for lack of room (U-60).
+
+## Test changes from AN-16
+
+Not spec items; kept here so the removals stay visible (PR 23 review, 4 Nov 2026).
+
+- `tests/e2e/article.spec.ts` (DR-331): the test that every `#` header link points to a target on the homepage is now "header links go to pages: no # link is left". The target check has no replacement: the nav has no `#` link. If a `#` nav link comes back, the target check comes back with it.
+- `tests/e2e/header.spec.ts` (DR-330): "a drawer link closes the drawer and moves focus to its target" is now "a drawer link closes the drawer and opens its page". The Drawer focus to a `#` target is not tested now (IMP-124).
+- `tests/e2e/motion.spec.ts` (DR-265): the `--scroll-offset` test follows the real SkipLink (`#main`, C-17) with Tab and Enter, in place of the Drawer `#` link: `main` stops at the bar bottom + 16px with the NavBar hidden.

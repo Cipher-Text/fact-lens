@@ -205,3 +205,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - Spec log: the six items green (tajmin's approval); no flag open. ISSUES: U-55 to U-59 removed; U-60 keeps only the English NavBar at 1280 (hidden up to about 1365px).
 - Review points not changed: `mt-3` on the description is a scale class used by one component, which CPT-07 allows (a token only for shared or off-scale values); `37.5rem` in the media query is the `sm` breakpoint written as the specs write it (`@media (min-width: 37.5rem)` in the spec CSS); no overflow at 1024 and 1180 in bn is already in `analysis.spec.ts` (the 15 widths).
 - tajmin asked where `mt-3` and `37.5rem` are and whether they follow the spec convention (answered: `PageTitle.tsx` description gap, a one-component scale step per CPT-07, the same 12px as the article `--rd-head-title-deck`; `typography.css` and typography Section 8, the rem breakpoint form of the spec CSS, `width <` as layout Section 12). tajmin: "Keep mt-3" (4 Nov 2026). No change.
+
+### PR 23 second review (4 Nov 2026)
+
+- tajmin: "Check comments again." Second review (1 fix, 2 notes):
+  - Fix: `motion.spec.ts` --scroll-offset test used a link made in the test. Now it follows the real SkipLink (`#main`) with Tab and Enter; `main` stops at 80px, NavBar hidden. bn and en: 2 passed.
+  - Note: the DR-331 article test and the DR-330 drawer test changes are now listed in the spec log section "Test changes from AN-16".
+  - Note (AN-13): measured on the dev server, bn and en at 360 / 768 / 1280: article deck bn 18 / 18.9 / 20px, en 18 / 19.3 / 21px; the analysis description the same; lead title (category feature and analysis hero) 22px at 360, bn 33.3 / 40px, en 35.3 / 42px at 768 / 1280; no side scroll. The article (320 / 768 / 1280) and category (13 widths) e2e ran in the full Chromium run after AN-13 (977 passed).
