@@ -65,7 +65,15 @@ type AdSlotProps = {
   variant: AdSlotVariant;
   lang: Lang;
   strings: Dictionary["ads"];
+  /**
+   * rail only: the tier it shows from. xl (1280, the homepage P-3 rail, DR-245) or lg (1024,
+   * the analysis hub mosaic rail, beside the wrapper from 1024; tajmin, 4 Nov 2026).
+   */
+  railFrom?: "lg" | "xl";
 };
+
+// The rail row from 1024 (railFrom lg). Whole strings so Tailwind finds them.
+const railFromLg = "hidden lg:grid justify-items-center";
 
 /**
  * AdSlot (C-16): one ad row. A surface-alt band with a 24px label line, then the
@@ -75,7 +83,12 @@ type AdSlotProps = {
  * current tier. Only `top` loads at once; the others are lazy (9.1). Not a landmark: a
  * div with no aria-label; the visible label names the slot and is not hidden (DR-266).
  */
-export function AdSlot({ variant, lang, strings }: AdSlotProps) {
+export function AdSlot({
+  variant,
+  lang,
+  strings,
+  railFrom = "xl",
+}: AdSlotProps) {
   const { slot, sources, fallback } = tiers[variant];
   const ad = getAd(slot, lang);
   const bySize = new Map(
@@ -88,7 +101,12 @@ export function AdSlot({ variant, lang, strings }: AdSlotProps) {
   return (
     <div
       data-ad-slot={variant === "inline" ? "ad-inline" : slot}
-      className={cn(rowClass[variant], "bg-surface-alt")}
+      className={cn(
+        variant === "rail" && railFrom === "lg"
+          ? railFromLg
+          : rowClass[variant],
+        "bg-surface-alt",
+      )}
     >
       <p className="flex min-h-(--ad-label) items-center type-eyebrow text-ink-muted">
         {strings.label}

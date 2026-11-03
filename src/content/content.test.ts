@@ -16,6 +16,7 @@ import {
   getArticleByRef,
   getCategoryPage,
   getHomepage,
+  getAnalysisPage,
   getLatestPage,
   getTopicPage,
   getTopicSlugs,
@@ -565,6 +566,42 @@ describe("latest page (layout 7C.2 Paths, News hub row; layout 7D)", () => {
     expect(getLatestPage("en").stories.map((s) => s.id)).toEqual(
       getLatestPage("bn").stories.map((s) => s.id),
     );
+  });
+});
+
+describe("analysis hub (layout 7C.2 Paths, Analysis hub row)", () => {
+  const analysis = stories.filter((def) => def.format === "analysis");
+
+  for (const lang of langs) {
+    it(`${lang}: every analysis story once, analysis only, newest first; lead, top 4, the rest`, () => {
+      const page = getAnalysisPage(lang);
+      expect(page.lang).toBe(lang);
+      const all = [page.lead!, ...page.top, ...page.more];
+      expect(all).toHaveLength(analysis.length);
+      expect(new Set(all.map((s) => s.id)).size).toBe(analysis.length);
+      for (const s of all) {
+        expect(s.format).toBe("analysis");
+        expect(s.lang).toBe(lang);
+      }
+      expect(all).toEqual(
+        [...all].sort(
+          (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+        ),
+      );
+      expect(page.top).toHaveLength(4);
+    });
+  }
+
+  it("has more than 10 list stories, so load more shows", () => {
+    expect(getAnalysisPage("bn").more.length).toBeGreaterThan(10);
+  });
+
+  it("lists the same stories in the same order in both languages", () => {
+    const ids = (lang: "bn" | "en") => {
+      const page = getAnalysisPage(lang);
+      return [page.lead!, ...page.top, ...page.more].map((s) => s.id);
+    };
+    expect(ids("en")).toEqual(ids("bn"));
   });
 });
 

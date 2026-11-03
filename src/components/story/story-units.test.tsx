@@ -177,6 +177,17 @@ describe("StoryCard (C-24)", () => {
     );
   });
 
+  it.each([
+    ["lead", "type-story-lead"],
+    ["md", "type-story-title"],
+    ["sm", "type-story-title-sm"],
+  ] as const)("size %s sets the title role %s", (size, role) => {
+    render(<StoryCard story={withImage} strings={bn} size={size} />);
+    const title = screen.getByRole("heading", { level: 3 });
+    expect(title).toHaveClass(role);
+    expect(title.className.match(/type-story-\S+/g)).toEqual([role]);
+  });
+
   it("drops the eyebrow and the summary when the section asks", () => {
     const { container } = render(
       <StoryCard

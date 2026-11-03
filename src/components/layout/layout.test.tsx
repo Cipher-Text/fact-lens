@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { Divider } from "./Divider";
+import { PageTitle } from "./PageTitle";
 import { PeerCard, PeerRow } from "./PeerRow";
 import { Rail } from "./Rail";
 import { SectionHeading } from "./SectionHeading";
@@ -90,5 +91,38 @@ describe("PeerRow and PeerCard", () => {
     expect(card.tagName).toBe("LI");
     expect(card).toHaveClass("peer-card");
     expect(card.style.getPropertyValue("--card-parts")).toBe("5");
+  });
+});
+
+describe("PageTitle (C-43)", () => {
+  it("shows no description by default", () => {
+    const { container } = render(<PageTitle title="Latest" />);
+    expect(container.querySelector("[data-page-title-description]")).toBeNull();
+    expect(container.querySelector("[data-page-title] p")).toBeNull();
+  });
+
+  it("puts the description below the h1, in the band: type-deck, ink-secondary, no measure cap (analysis hub)", () => {
+    const { container } = render(
+      <PageTitle title="Analysis" description="In-depth analysis" />,
+    );
+    const h1 = screen.getByRole("heading", { level: 1 });
+    const description = container.querySelector(
+      "[data-page-title-description]",
+    )!;
+    expect(description.tagName).toBe("P");
+    expect(description).toHaveTextContent("In-depth analysis");
+    expect(description).toHaveClass(
+      "mt-3",
+      "max-inline-none",
+      "type-deck",
+      "text-ink-secondary",
+    );
+    expect(
+      h1.compareDocumentPosition(description) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(container.querySelector("[data-page-title]")).toContainElement(
+      description as HTMLElement,
+    );
   });
 });

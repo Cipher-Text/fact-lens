@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.32 · 30 October 2026 · XC fixes (spec log xc-fixes XF-04 to XF-08): 7B.1 and 7B.3 fixed halves in `CategoryFormatsSection` (DR-436); 7B.2 `main` starts with the title band (as 7D.2); 7E.2 noindex, follow below 3 stories, no `?page` (DR-432); DR citations in 7.1, 7B.1, 7C, Section 10 (DR-420, DR-419, DR-418, DR-393). Before: 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.33 · 4 November 2026 · Analysis hub (spec log analysis AN-01, AN-02, AN-04, AN-08, AN-10): Section 7F (new), the analysis hub page order, content and sparse cases; 7C.2 Analysis hub row names 7F. The flags AN-07, AN-11 to AN-14 are not written. Before: 2.32 · 30 October 2026 · XC fixes (spec log xc-fixes XF-04 to XF-08): 7B.1 and 7B.3 fixed halves in `CategoryFormatsSection` (DR-436); 7B.2 `main` starts with the title band (as 7D.2); 7E.2 noindex, follow below 3 stories, no `?page` (DR-432); DR citations in 7.1, 7B.1, 7C, Section 10 (DR-420, DR-419, DR-418, DR-393). Before: 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -453,7 +453,7 @@ These rules apply to every page (DR-397, DR-399, DR-401, DR-410 to DR-414, DR-41
 | Region | `/regions/<slug>` | The backend owns the list and the order. Working list: `americas`, `europe`, `russia`, `middle-east`, `south-asia`, `china`, `asia`, `oceania`. Code works with any number of regions (DR-411) |
 | Topic | `/topic/<slug>` | Flat. One key, one Latin slug, a bn and an en label. Do not use the word "tag" (DR-410). The page: Section 7E |
 | News hub | `/latest` | News only |
-| Analysis hub | `/analysis` | বিশ্লেষণ / Analysis. Flat, no sub-hubs |
+| Analysis hub | `/analysis` | বিশ্লেষণ / Analysis. Flat, no sub-hubs. Analysis only. The page: Section 7F |
 | Opinion hub | `/opinion` | মতামত / Opinion. Flat |
 
 There is no `/opinion/<slug>-<id>`, `/insight`, `/voices` or `/op-ed` path (DR-302, DR-413, DR-414). A path whose page is not built yet gives a 404 until its page branch (IMP-18).
@@ -517,6 +517,37 @@ As the Latest page (7D.1), with these differences:
 ### 7E.3 Sparse content
 
 As 7D.3: with no news or analysis the list is not shown; with 10 stories or fewer there is no Button.
+
+## 7F. Analysis hub
+
+The analysis hub (`/analysis`, `/en/analysis`, `AnalysisPageView`) is the Analysis hub row of Section 7C.2. Defined from the Analysis spec log AN-01, AN-02, AN-04, AN-08, AN-10 (tajmin, 2 to 4 Nov 2026). The page is built at build time for bn and en. It should stand out from the news hub (7D).
+
+### 7F.1 Page order
+
+| Row | Container | Content |
+| --- | --- | --- |
+| Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18); the বিশ্লেষণ / Analysis nav item is the open flag AN-16 |
+| `ad-top` | Ad container | As on the homepage (Section 9) |
+| Page title | `Shell` | `PageTitle` (C-43): বিশ্লেষণ / Analysis, the page `h1`, in the `surface` band; `space-module` below. The description below the title is the open flag AN-12 |
+| `AnalysisHeroSection` | `Shell`, no rail | The newest analysis story: StoryCard (C-24) `row-from-md`, 3:2, `feature` split with `story-split-lead` (text : image = 1 : 2, no image cap), size `lead`, the C-08 `category` Eyebrow (DR-417), summary, meta, eager image (DR-325). Image first under 768; from 768 the text at the start and the image at the end. A hidden `h2`, the title an `h3` |
+| Rule | `Shell` | Divider.rule (C-22), `space-module` on each side. Only when the mosaic follows the hero |
+| `AnalysisTopSection` | `Shell`, `WithRail` | Wrapper: the next 4 stories as OverlapCard (C-02, the C-08 `category` Eyebrow) in a PeerRow, 1 per row below 600, 2 from 600 (LAY-07), each card flows on its own (DR-99); `--space-analysis-top-row-gap` between the rows. A hidden `h2`. Rail: AdSlot `rail` (the tier it shows from is the open flag AN-11). Divider.column-full between the wrapper and the rail from 1024 (C-22). `space-module` before the `ad-band` (LAY-12) |
+| `ad-band` | Ad container | As on the homepage (Section 9) |
+| `MoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | As on the category page (7B): its SectionHeading আরও পড়ুন / More stories, `MoreStoriesList` (StoryCard `dated`, C-24, `h3` titles), the C-08 `category` Eyebrow on every row (DR-417; DR-153 does not apply). `space-module` above, after the ad row (LAY-12) |
+| Footer | As on the homepage | `Footer` (C-21) |
+
+### 7F.2 Content and load more
+
+- Every analysis story, newest first, no repeats. No news, no opinion. The hero is the newest, the mosaic the next 4, More stories the rest. Whether the hero and the mosaic are editor picks or the newest is not decided; the newest stands in (tajmin, 2 Nov 2026).
+- More stories: 10 first, then 10 per press, as 7B.2 Load more, with its motion and story time.
+- `main` starts with the title band and ends with `space-section`, as 7D.2. No robots rule.
+
+### 7F.3 Sparse content
+
+- 1 story: the hero only; as the last row it adds no space.
+- 2 to 5 stories: the mosaic shows what there is (1 to 4 cards); no `ad-band`, no More stories (Section 7.3, LAY-13).
+- No mosaic stories but list stories: the `ad-band` follows the hero (`space-module` before it); no rule.
+- With 10 list stories or fewer there is no Button.
 
 ## 8. Peer rows
 

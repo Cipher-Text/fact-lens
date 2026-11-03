@@ -26,8 +26,11 @@ type StoryCardProps = {
   strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
   layout?: StoryCardLayout;
   ratio?: "3:2" | "16:9";
-  /** md: type-story-title. sm: type-story-title-sm. */
-  size?: "md" | "sm";
+  /**
+   * lead: type-story-lead, as the category page feature story (the analysis hub hero).
+   * md: type-story-title. sm: type-story-title-sm.
+   */
+  size?: "lead" | "md" | "sm";
   /** Row only. third: text 2fr, image 1fr. feature: the clamped image column of P-2. */
   split?: "third" | "feature";
   /** The section drops the eyebrow when its heading names the category (DR-114). */
@@ -50,6 +53,12 @@ type StoryCardProps = {
 };
 
 const ratioClass = { "3:2": "aspect-3/2", "16:9": "aspect-video" } as const;
+
+const titleClass = {
+  lead: "type-story-lead",
+  md: "type-story-title",
+  sm: "type-story-title-sm",
+} as const;
 
 // The grid areas media and body place the parts, no `order` (LAY-14). The media is first in
 // the markup at every layout (C-24, DR-267); a row layout puts it at the end. The utilities
@@ -137,11 +146,7 @@ export function StoryCard({
               className="mb-(--space-lead-eyebrow-title)"
             />
           ) : null}
-          <Title
-            className={
-              size === "md" ? "type-story-title" : "type-story-title-sm"
-            }
-          >
+          <Title className={titleClass[size]}>
             <Link href={storyHref(story)} className={headlineLink}>
               {story.title}
             </Link>

@@ -275,7 +275,8 @@ function DrawerItem({
                   <Link
                     href={child.href}
                     onClick={onNavigate}
-                    className="flex min-h-11 items-center ps-4 type-ui-sm text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed"
+                    aria-current={child.current ? "page" : undefined}
+                    className="flex min-h-11 items-center ps-4 type-ui-sm text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed aria-[current=page]:text-interactive"
                   >
                     {child.label}
                   </Link>

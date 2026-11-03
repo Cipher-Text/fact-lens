@@ -29,6 +29,23 @@ describe("AdSlot", () => {
     });
   }
 
+  it("rail shows from 1280 by default and from 1024 with railFrom lg (the analysis hub)", () => {
+    const row = (railFrom?: "lg" | "xl") =>
+      render(
+        <AdSlot
+          variant="rail"
+          railFrom={railFrom}
+          lang="en"
+          strings={en.ads}
+        />,
+      ).container.firstElementChild as HTMLElement;
+    expect(row()).toHaveClass("hidden", "xl:grid");
+    expect(row("xl")).toHaveClass("hidden", "xl:grid");
+    const lg = row("lg");
+    expect(lg).toHaveClass("hidden", "lg:grid", "bg-surface-alt");
+    expect(lg).not.toHaveClass("xl:grid");
+  });
+
   it("is not a landmark; the visible label is in the page language (C-16, DR-266)", () => {
     const { container } = render(
       <AdSlot variant="band" lang="bn" strings={bn.ads} />,

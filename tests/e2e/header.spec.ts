@@ -446,7 +446,7 @@ for (const p of PAGES) {
       await expect(page.locator("main#main")).toHaveAttribute("tabindex", "-1");
     });
 
-    test("nav row items are type-nav: 16px 600 on Bangla pages, 14px 600 on English pages; every # link has a target (DR-346, DR-331)", async ({
+    test("nav row items are type-nav: 16px 600 on Bangla pages, 14px 600 on English pages; no # link is left (DR-346)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1280, height: 800 });
@@ -457,12 +457,9 @@ for (const p of PAGES) {
         "font-size",
         p.lang === "bn" ? "16px" : "14px",
       );
-      const hrefs = await page
-        .locator('[data-nav-row] a[href^="#"]:not([href^="#region-"])')
-        .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
-      expect(hrefs.length).toBeGreaterThan(0);
-      for (const href of hrefs)
-        await expect(page.locator(href), href).toHaveCount(1);
+      // Every item goes to a page: the Analysis item replaced the parent Analysis and
+      // Opinion # link (DR-331; tajmin, 4 Nov 2026).
+      await expect(page.locator('[data-nav-row] a[href^="#"]')).toHaveCount(0);
     });
 
     for (const width of [360, 1280]) {
@@ -516,24 +513,20 @@ for (const p of PAGES) {
         ).toHaveText(p.regions);
 
         // Every nav item is in the drawer: 9 rows, Regions with 8 regions (China among
-        // them, DR-19, DR-411) and Analysis and Opinion with 2 sub-items, no Op-ed
-        // (DR-302, DR-414). All accordions are closed (DR-181).
+        // them, DR-19, DR-411); Analysis has no sub-items and there is no Opinion item
+        // (tajmin, 4 Nov 2026), no Op-ed (DR-302, DR-414). The accordion is closed (DR-181).
         await expect(drawer.locator("nav > ul > li")).toHaveCount(9);
         const carets = drawer.locator("nav button[aria-expanded]");
-        await expect(carets).toHaveCount(2);
+        await expect(carets).toHaveCount(1);
         for (const caret of await carets.all())
           await expect(caret).toHaveAttribute("aria-expanded", "false");
         await expect(drawer.locator("nav ul ul")).toHaveCount(0);
         for (const caret of await carets.all()) await caret.click();
-        await expect(drawer.locator("nav ul ul a")).toHaveCount(10);
+        await expect(drawer.locator("nav ul ul a")).toHaveCount(8);
         await expect(drawer.locator('a[href*="op-ed"]')).toHaveCount(0);
-        // Every # link has a target on the page (DR-331). The region links wait for R3-06:
-        // the slider shows 4 of the 7 regions until it uses all of them.
-        const hrefs = await drawer
-          .locator('nav a[href^="#"]:not([href^="#region-"])')
-          .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
-        for (const href of hrefs)
-          await expect(page.locator(href), href).toHaveCount(1);
+        await expect(drawer.locator('a[href*="opinion"]')).toHaveCount(0);
+        // Every item goes to a page: no # link is left (tajmin, 4 Nov 2026).
+        await expect(drawer.locator('nav a[href^="#"]')).toHaveCount(0);
 
         // The social band is pinned at the bottom, with the 5 links of the footer.
         const social = drawer.locator("[data-social]");
@@ -679,7 +672,7 @@ for (const p of PAGES) {
       expect(await activeLabel(page)).toBe(p.menu);
     });
 
-    test("a drawer link closes the drawer and moves focus to its target", async ({
+    test("a drawer link closes the drawer and opens its page", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
@@ -687,18 +680,11 @@ for (const p of PAGES) {
       const menu = page.getByRole("button", { name: p.menu, exact: true });
       const drawer = page.locator("[data-drawer]");
       await openWithKeyboard(menu, drawer);
-      // The target is the Analysis and Opinion heading: the category items go to the
-      // category pages now (spacing-layout-system.md 7B), so this is a link to a place on the page.
-      await drawer
-        .locator('nav a[href="#analysis-opinion-title"]')
-        .first()
-        .click();
+      // Every nav item goes to a page; no # link is left (tajmin, 4 Nov 2026).
+      const hub = p.path === "/" ? "/analysis" : "/en/analysis";
+      await drawer.locator(`nav a[href="${hub}"]`).click();
+      await expect(page).toHaveURL(hub);
       await expectClosed(drawer);
-      const target = page.locator("#analysis-opinion-title");
-      await expect(target).toBeFocused();
-      // The target keeps no tabindex once focus has left it (DR-330).
-      await page.keyboard.press("Tab");
-      await expect(target).not.toHaveAttribute("tabindex");
       // The scroll lock is gone with the drawer.
       await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
     });
@@ -1168,10 +1154,10 @@ for (const p of PAGES) {
       ).toHaveText(p.regions);
     });
 
-    // South Asia takes the place of Bangladesh; Regions, its regions and the Analysis and
-    // Opinion children go to their own URLs (layout 7C, DR-411, DR-412, DR-414). The pages
-    // are not built yet (IMP-18). The parent Analysis and Opinion keeps its # link (flag).
-    test("nav targets: South Asia, regions and the analysis and opinion hubs (DR-414)", async ({
+    // South Asia takes the place of Bangladesh; Regions and its regions go to their own URLs
+    // (layout 7C, DR-411, DR-412); those pages are not built yet (IMP-18). Analysis is one
+    // item to the analysis hub; Opinion is on hold, no item (tajmin, 4 Nov 2026).
+    test("nav targets: South Asia, regions and the analysis hub (DR-414)", async ({
       page,
     }) => {
       const prefix = p.path === "/" ? "" : "/en";
@@ -1211,13 +1197,13 @@ for (const p of PAGES) {
           "asia",
           "oceania",
         ].map((id) => `${prefix}/regions/${id}`),
-        `${prefix}/analysis`,
-        `${prefix}/opinion`,
       ]);
       await expect(drawer.locator('a[href*="bangladesh"]')).toHaveCount(0);
       await expect(
-        drawer.locator('a[href="#analysis-opinion-title"]'),
-      ).toHaveCount(1);
+        drawer.locator("nav > ul > li").last().locator("a"),
+      ).toHaveAttribute("href", `${prefix}/analysis`);
+      await expect(drawer.locator('a[href*="opinion"]')).toHaveCount(0);
+      await expect(drawer.locator('nav a[href^="#"]')).toHaveCount(0);
     });
 
     test("the header has interface text in the page language only (T-27)", async ({

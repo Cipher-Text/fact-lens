@@ -31,6 +31,14 @@
   --story-feature-media-min: 26.25rem;
   --story-feature-media-max: 34.8125rem;
   --story-feature-media-share: 0.5;
+  /* The analysis hub hero (tajmin, 3 Nov 2026): the feature split across the full shell,
+     text : image = 1 : 2 at every width from 768, no image cap. Used through
+     story-split-lead on the hero only (CPT-07). */
+  --story-analysis-lead-media-share: calc(2 / 3);
+  --story-analysis-lead-media-max: 100%;
+  /* The analysis hub mosaic: the gap between the two card rows. The row gap, and 32px from
+     1280 (tajmin, 4 Nov 2026; CPT-07). */
+  --space-analysis-top-row-gap: var(--grid-row-gap);
 
   /* Buttons (Section 6 table, DR-208) */
   --button-height: 3rem;
@@ -232,6 +240,18 @@
     grid-template-columns: minmax(0, 1fr);
     column-gap: 0;
     row-gap: var(--space-story-media-text);
+  }
+}
+
+/* The feature split of the analysis hub hero: the image takes 2 / 3 of the row (minus the
+   gap), uncapped; the 420px min stays (tajmin, 3 Nov 2026). The title fills its lines up to
+   the gap before the image: pretty in place of the type-story-lead balance (TYP-13), which
+   left the lines short of the gap (tajmin, 4 Nov 2026). */
+@utility story-split-lead {
+  --story-feature-media-share: var(--story-analysis-lead-media-share);
+  --story-feature-media-max: var(--story-analysis-lead-media-max);
+  & :is(h2, h3, h4) {
+    text-wrap: pretty;
   }
 }
 
@@ -558,6 +578,7 @@
 @media (min-width: 80rem) {
   :root {
     --rank-list-gap: 2rem;
+    --space-analysis-top-row-gap: 2rem;
   }
 }
 
@@ -642,6 +663,25 @@
       content: "";
       position: absolute;
       inset-block: var(--divider-column-inset);
+      inset-inline-end: calc(
+        var(--measure-rail) + var(--grid-column-gap) / 2 - var(--divider-rule) /
+          2
+      );
+      width: var(--divider-rule);
+      background-color: var(--color-border);
+    }
+  }
+}
+
+/* divider-column-rail-full: Divider.column-full (C-22: full height) between the wrapper and
+   the rail, from 1024. The analysis hub mosaic (tajmin, 4 Nov 2026). */
+@utility divider-column-rail-full {
+  position: relative;
+  @media (width >= 64rem) {
+    &::after {
+      content: "";
+      position: absolute;
+      inset-block: 0;
       inset-inline-end: calc(
         var(--measure-rail) + var(--grid-column-gap) / 2 - var(--divider-rule) /
           2
