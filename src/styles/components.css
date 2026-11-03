@@ -656,13 +656,15 @@
   }
 }
 
+/* --divider-column-block is a helper: the rule distance from the top and the bottom, from
+   --divider-column-inset (column-inset), or 0 with divider-column-full (column-full). */
 @utility divider-column-rail {
   position: relative;
   @media (width >= 64rem) {
     &::after {
       content: "";
       position: absolute;
-      inset-block: var(--divider-column-inset);
+      inset-block: var(--divider-column-block, var(--divider-column-inset));
       inset-inline-end: calc(
         var(--measure-rail) + var(--grid-column-gap) / 2 - var(--divider-rule) /
           2
@@ -673,21 +675,8 @@
   }
 }
 
-/* divider-column-rail-full: Divider.column-full (C-22: full height) between the wrapper and
-   the rail, from 1024. The analysis hub mosaic (tajmin, 4 Nov 2026). */
-@utility divider-column-rail-full {
-  position: relative;
-  @media (width >= 64rem) {
-    &::after {
-      content: "";
-      position: absolute;
-      inset-block: 0;
-      inset-inline-end: calc(
-        var(--measure-rail) + var(--grid-column-gap) / 2 - var(--divider-rule) /
-          2
-      );
-      width: var(--divider-rule);
-      background-color: var(--color-border);
-    }
-  }
+/* divider-column-full: Divider.column-full (C-22: full height). Add it to divider-column-rail
+   to run the rule the full height of the grid: the analysis hub mosaic (tajmin, 4 Nov 2026). */
+@utility divider-column-full {
+  --divider-column-block: 0;
 }

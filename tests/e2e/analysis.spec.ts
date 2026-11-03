@@ -160,6 +160,26 @@ for (const p of PAGES) {
         );
         expect(rounded).toBe(0);
 
+        // PageTitle.description has no measure (TYP-12 exception, AN-12): max-inline-size
+        // none, not the type-deck measure, and as wide as the shell content.
+        const description = await page
+          .locator("[data-page-title-description]")
+          .evaluate((el) => {
+            const shell = el.parentElement!;
+            const s = getComputedStyle(shell);
+            return {
+              max: getComputedStyle(el).maxInlineSize,
+              width: Math.round(el.getBoundingClientRect().width),
+              shell: Math.round(
+                shell.clientWidth -
+                  parseFloat(s.paddingInlineStart) -
+                  parseFloat(s.paddingInlineEnd),
+              ),
+            };
+          });
+        expect(description.max).toBe("none");
+        expect(description.width).toBe(description.shell);
+
         // Hero: image first under 768; from 768 text at the start, image at the end, the
         // image about 2 / 3 of the row.
         const media = await box(hero(page).locator(".story-media"));
@@ -209,6 +229,14 @@ for (const p of PAGES) {
             Math.round(reserve.height),
           ]).toEqual([300, 600]);
           expect(Math.round((await box(railAd)).height)).toBe(624);
+          // Divider.column-full: the rail rule runs the full height of the grid (C-22).
+          const rule = await page
+            .locator('[data-section="analysis-top"] .with-rail')
+            .evaluate((grid) => {
+              const after = getComputedStyle(grid, "::after");
+              return [after.top, after.bottom, after.width];
+            });
+          expect(rule).toEqual(["0px", "0px", "1px"]);
           const wrapper = await box(
             page.locator("[data-analysis-top-wrapper]"),
           );

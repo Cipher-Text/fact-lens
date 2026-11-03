@@ -461,20 +461,12 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   }
 }
 
-/* Divider.column-full (C-22) between the wrapper and the rail, from 1024: the analysis hub
-   mosaic (Analysis spec log AN-10) */
-@utility divider-column-rail-full {
-  position: relative;
-  @media (width >= 64rem) {
-    &::after {
-      content: "";
-      position: absolute;
-      inset-block: 0;
-      inset-inline-end: calc(var(--measure-rail) + var(--grid-column-gap) / 2 - var(--divider-rule) / 2);
-      width: var(--divider-rule);
-      background-color: var(--color-border);
-    }
-  }
+/* Divider.column-full (C-22): add divider-column-full to divider-column-rail and the rule
+   between the wrapper and the rail runs the full height, from 1024: the analysis hub mosaic
+   (Analysis spec log AN-10). divider-column-rail reads the helper --divider-column-block
+   for its inset-block, falling back to --divider-column-inset (column-inset); this sets it to 0. */
+@utility divider-column-full {
+  --divider-column-block: 0;
 }
 
 /* Named utilities instead of arbitrary variants (DR-287) */
@@ -1107,7 +1099,7 @@ A thin rule that separates list rows, sections, modules and (option) columns. Di
 | `Divider.item` | 1px dotted rule, border color: square 1 x 1px dots with a 2px gap in every browser (DR-351). Draw it with a repeating gradient, not border-style dotted (browsers differ): background-image: repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 3px); height 1px. Full width of the list, except OpinionList: the text column only (DR-351). 16px space each side (space-list-item), measured to the text ink, not the line box (DR-350): the list takes the ink inset of its roles off its padding (typography §3.1, DR-355). Check: per list, the median space is 16px ±1; each rule is 16px ±3 (the ink depends on the letters, DR-355). Between rows only; no rule after the last row |
 | `Divider.section` | 2px solid rule, border color. A bar sits on the rule at the start and shares its bottom edge (the rule runs along the bar bottom). Bar color: brand (light), interactive (dark). Bar size: --bar-section. 12px from the rule to the heading (space-section-rule-title) |
 | `Divider.rule` | 1px solid horizontal rule, border color (--divider-rule), the full width of its container. The shared part wherever one plain 1px rule is needed: not between list rows (Divider.item) and not under a section heading (Divider.section). The space on each side belongs to the caller and is the same on both sides. A component, `<Divider variant="rule" />`, aria-hidden. Used on the category page above load more (`spacing-layout-system.md` 7B). To move to it: the article page rule above the Topics, and the other hand-drawn rules in IMP-100 |
-| `Divider.column` | 1px solid vertical rule, border color, centered in the column gap. Two versions: column-inset (16px from the top and bottom) and column-full (full height). Placed (DR-351, DR-355): column-inset in P-4 between analysis and opinion (from 768), in P-3 between the wrapper and the rail (from 1024), and between the two HeroSection.latest columns (768 to 1023). Always centered in the gap; no pixel split. column-full is not used on the homepage; it is placed between the wrapper and the rail of the analysis hub mosaic (from 1024, `divider-column-rail-full`, Section 6; Analysis spec log AN-10) |
+| `Divider.column` | 1px solid vertical rule, border color, centered in the column gap. Two versions: column-inset (16px from the top and bottom) and column-full (full height). Placed (DR-351, DR-355): column-inset in P-4 between analysis and opinion (from 768), in P-3 between the wrapper and the rail (from 1024), and between the two HeroSection.latest columns (768 to 1023). Always centered in the gap; no pixel split. column-full is not used on the homepage; it is placed between the wrapper and the rail of the analysis hub mosaic (from 1024, `divider-column-rail divider-column-full`, Section 6; Analysis spec log AN-10) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |

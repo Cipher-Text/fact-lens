@@ -17,7 +17,7 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 - State: PR #23 open to `dev`. The PR 23 review fixes (spec changes) are uncommitted, waiting for tajmin's commit yes.
 - Next step: on tajmin's yes, one commit and push to PR #23. After the merge: AGENTS.md Section 9 step 6.
-- Open: U-60 (English NavBar at 1280), IMP-124 (DR-330 Drawer # code).
+- Open: U-60 (English NavBar at 1280).
 - Uncommitted: the spec changes below.
 
 ## Decisions
@@ -224,3 +224,13 @@ This file is the memory of the work. tajmin clears the context often; a new sess
   - Specs: layout 2.33 Sections 7.2 (hide list, P-3 row, P-3 rail), 9 (`ad-rail` row, notes), 12.2 CSS, the DR-245 note amended, 7F.1; component-system 1.29 C-16 (rail variant, creative), C-23 rail row, Section 3 P-3 `adRail`; agent-contract DR-239 row. Spec log AN-11 rewritten.
 - Checks: lint, unit tests, full `pnpm test:e2e:chromium` 977 passed.
 - tajmin: "you should have updated the outdated pr message" → the PR 23 description is rewritten to the current state (all items green, the rail ad on every page from 1024, the nav, specs incl. typography 2.22, the three review rounds, open U-60 and IMP-124). `pnpm check` passed after the rail ad change. From now on, update the PR description with each push that changes what it says.
+
+### PR 23 fourth review (4 Nov 2026)
+
+- tajmin: "check the review comments again. some of them are not marked outdated. a couple of items have been raised again, including test gap for TYP-12 exception AN-12". 13 review threads, none resolved; 3 outdated (code changed). The others stay "not outdated" because their lines did not change: the rule changes were approved in the specs, not in the code.
+- New in this round:
+  - Test gap AN-12 (`PageTitle.tsx`): `type-deck` and `max-inline-none` both set `max-inline-size`; only class names were tested. `analysis.spec.ts` layout test now asserts the computed `max-inline-size: none` and that the description is as wide as the shell content, at all 15 widths, bn and en.
+  - DR-330 drawer test (`header.spec.ts`, raised again): the Drawer `onNavigate` focus code has no test (IMP-124). Waiting for tajmin: a component test of `onNavigate`, or remove the code.
+  - Reuse note: `divider-column-rail-full` repeated the `::after` of `divider-column-rail`. Now `divider-column-rail` reads the helper `--divider-column-block` (fallback `--divider-column-inset`), and `divider-column-full` sets it to 0; `dividerColumn.railFull` = `divider-column-rail divider-column-full`. Spec CSS (component-system Section 6, C-22 row) and spec log AN-10 follow. `analysis.spec.ts` asserts the rule top 0, bottom 0, 1px from 1024; the homepage P-3 inset rule is checked by `grouped.spec.ts` (`columnRule`). Unit 164 passed; analysis and grouped e2e 116 passed.
+- tajmin asked whether the DR-330 test is required (answered: only if the code stays). tajmin: "remove the code. we are not using any # link" → `src/components/header/Drawer.tsx`: `linkTarget`, `addedTabIndex`, the `onOpenChangeComplete` focus handler and `finalFocus` are removed; `onNavigate` only closes the Drawer (focus returns to the menu button as on any close); the doc comment says every nav item goes to a page. No spec text described the behaviour. IMP-124 removed from `docs/ISSUES.md`; spec log "Test changes from AN-16" says the code went with the test. Unit 356 passed; header, motion, analysis, article, small-parts e2e 253 passed; `pnpm check` passed.
+- Full `pnpm test:e2e:chromium` after the fourth-review changes: 977 passed.

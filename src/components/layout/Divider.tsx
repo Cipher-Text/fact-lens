@@ -31,7 +31,7 @@ export const listInk = {
 export const dividerColumn = {
   split: "divider-column-split",
   rail: "divider-column-rail",
-  railFull: "divider-column-rail-full",
+  railFull: "divider-column-rail divider-column-full",
   columns: "divider-column-columns",
 } as const;
 

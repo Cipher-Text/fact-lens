@@ -135,7 +135,8 @@ describe("AnalysisPageView", () => {
     const { main } = rows(full);
     const top = main.querySelector('[data-section="analysis-top"]')!;
     expect(top.querySelector(".with-rail")).toHaveClass(
-      "divider-column-rail-full",
+      "divider-column-rail",
+      "divider-column-full",
     );
     expect(top.querySelector("[data-analysis-top-rail]")).toHaveClass(
       "max-lg:hidden",
