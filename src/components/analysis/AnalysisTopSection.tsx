@@ -23,8 +23,8 @@ type Props = {
  * (C-08, DR-417). 1 card per row below 600px, 2 from 600px (LAY-07); each card flows on its
  * own (DR-99). No rules within the grid; the rows are --space-analysis-top-row-gap apart (the
  * row gap, 32px from 1280; tajmin, 4 Nov 2026). A hidden h2 names the section.
- * Rail: the ad-rail slot from 1024, whenever the rail is beside the wrapper (tajmin, 4 Nov
- * 2026; the homepage P-3 rail ad stays from 1280, DR-245). Below 1024 the Rail is not drawn,
+ * Rail: the ad-rail slot, which shows whenever the rail is beside the wrapper, from 1024, as
+ * on every page (C-16; tajmin, 4 Nov 2026). Below 1024 the Rail is not drawn,
  * so it adds no row. From 1024 a 1px full-height column rule
  * (Divider.column-full) sits in the middle of the gap between the wrapper and the rail
  * (tajmin, 4 Nov 2026).
@@ -57,7 +57,7 @@ export function AnalysisTopSection({ lang, stories, t, className }: Props) {
           </PeerRow>
         </Wrapper>
         <Rail data-analysis-top-rail className="max-lg:hidden">
-          <AdSlot variant="rail" railFrom="lg" lang={lang} strings={t.ads} />
+          <AdSlot variant="rail" lang={lang} strings={t.ads} />
         </Rail>
       </WithRail>
     </Shell>

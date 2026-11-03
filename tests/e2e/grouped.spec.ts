@@ -177,12 +177,12 @@ for (const p of PAGES) {
           `${space}px`,
         );
 
-        // Rail: the poll, then from 1280 the rail ad space-module below it, never ad
-        // colors in the poll (7.4, DR-239, DR-242).
+        // Rail: the poll, then from 1024 (the rail is a column) the rail ad space-module
+        // below it, never ad colors in the poll (7.4, DR-239, DR-242; tajmin, 4 Nov 2026).
         const poll = await box(rail.locator("[data-poll]"));
         expect(Math.round(poll.y)).toBe(Math.round(r.y));
         const railAd = rail.locator('[data-ad-slot="ad-rail"]');
-        if (width >= 1280) {
+        if (width >= 1024) {
           const ad = await box(railAd);
           expect(Math.round(ad.height)).toBe(624); // 600 + 24px label line
           expect(Math.round(ad.width)).toBe(304);

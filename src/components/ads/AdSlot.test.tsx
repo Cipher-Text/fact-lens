@@ -29,23 +29,6 @@ describe("AdSlot", () => {
     });
   }
 
-  it("rail shows from 1280 by default and from 1024 with railFrom lg (the analysis hub)", () => {
-    const row = (railFrom?: "lg" | "xl") =>
-      render(
-        <AdSlot
-          variant="rail"
-          railFrom={railFrom}
-          lang="en"
-          strings={en.ads}
-        />,
-      ).container.firstElementChild as HTMLElement;
-    expect(row()).toHaveClass("hidden", "xl:grid");
-    expect(row("xl")).toHaveClass("hidden", "xl:grid");
-    const lg = row("lg");
-    expect(lg).toHaveClass("hidden", "lg:grid", "bg-surface-alt");
-    expect(lg).not.toHaveClass("xl:grid");
-  });
-
   it("is not a landmark; the visible label is in the page language (C-16, DR-266)", () => {
     const { container } = render(
       <AdSlot variant="band" lang="bn" strings={bn.ads} />,
@@ -101,12 +84,13 @@ describe("AdSlot", () => {
     }
   });
 
-  it("hides the rail under 1280 and shows its 300x600 creative from 1280 (DR-245)", () => {
+  it("hides the rail under 1024 and shows its 300x600 creative whenever the rail is a column, from 1024", () => {
     const { container } = render(
       <AdSlot variant="rail" lang="en" strings={en.ads} />,
     );
     const row = container.firstElementChild as HTMLElement;
-    expect(row).toHaveClass("hidden", "xl:grid");
+    expect(row).toHaveClass("hidden", "lg:grid");
+    expect(row).not.toHaveClass("xl:grid");
     expect(container.querySelector("img")).toHaveAttribute(
       "src",
       "/mock/ad-300x600.svg",

@@ -212,3 +212,14 @@ This file is the memory of the work. tajmin clears the context often; a new sess
   - Fix: `motion.spec.ts` --scroll-offset test used a link made in the test. Now it follows the real SkipLink (`#main`) with Tab and Enter; `main` stops at 80px, NavBar hidden. bn and en: 2 passed.
   - Note: the DR-331 article test and the DR-330 drawer test changes are now listed in the spec log section "Test changes from AN-16".
   - Note (AN-13): measured on the dev server, bn and en at 360 / 768 / 1280: article deck bn 18 / 18.9 / 20px, en 18 / 19.3 / 21px; the analysis description the same; lead title (category feature and analysis hero) 22px at 360, bn 33.3 / 40px, en 35.3 / 42px at 768 / 1280; no side scroll. The article (320 / 768 / 1280) and category (13 widths) e2e ran in the full Chromium run after AN-13 (977 passed).
+
+### PR 23 third review: the rail ad (4 Nov 2026)
+
+- Review blocker (`AdSlot.tsx`, LAY-10, LAY-19): with `railFrom="lg"` the rail row showed from 1024, but `--ad-rail-w` and `--ad-rail-h` were set only from 1280 (`layout.css`), so from 1024 to 1279 the creative box had no reserved size. The e2e only checked visibility.
+- tajmin: "check the review comment. lets make this ad behavior available for any page at whatever breakpoint the rail is displayed fro" → the rail ad follows the rail column on every page:
+  - `src/components/ads/AdSlot.tsx`: `rowClass.rail` is `hidden lg:grid justify-items-center` (was `xl:grid`); the `railFrom` prop and `railFromLg` are removed.
+  - `src/styles/layout.css`: `--ad-rail-w` 300px and `--ad-rail-h` 600px move from the 80rem block to the 64rem block.
+  - `AnalysisTopSection`: `<AdSlot variant="rail">` with no prop. `GroupedCategoriesSection` (homepage P-3): the rail ad now shows from 1024 below the poll (was 1280; amends DR-245). Comments updated in both.
+  - Tests: `AdSlot.test.tsx` (the railFrom test removed with the prop; the rail test: hidden under 1024, `lg:grid`); `grouped.test.tsx` (`lg:grid`); `grouped.spec.ts` (rail ad 304 x 624 space-module below the poll from 1024); `page.spec.ts` (hidden under 1024); `ads.spec.ts` comment; `analysis.spec.ts` (from 1024 the reserved box is 300 x 600 and the row 624). Chromium: analysis, ads, page, grouped 176 passed.
+  - Specs: layout 2.33 Sections 7.2 (hide list, P-3 row, P-3 rail), 9 (`ad-rail` row, notes), 12.2 CSS, the DR-245 note amended, 7F.1; component-system 1.29 C-16 (rail variant, creative), C-23 rail row, Section 3 P-3 `adRail`; agent-contract DR-239 row. Spec log AN-11 rewritten.
+- Checks: lint, unit tests, full `pnpm test:e2e:chromium` 977 passed.

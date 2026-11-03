@@ -202,6 +202,13 @@ for (const p of PAGES) {
           await expect(railAd).toBeHidden();
         } else {
           await expect(railAd).toBeVisible();
+          // The reserved 300 x 600 box under the 24px label line (LAY-10, LAY-19).
+          const reserve = await box(railAd.locator("a").first().locator(".."));
+          expect([
+            Math.round(reserve.width),
+            Math.round(reserve.height),
+          ]).toEqual([300, 600]);
+          expect(Math.round((await box(railAd)).height)).toBe(624);
           const wrapper = await box(
             page.locator("[data-analysis-top-wrapper]"),
           );

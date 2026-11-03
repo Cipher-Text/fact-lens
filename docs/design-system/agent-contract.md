@@ -238,7 +238,7 @@ These decisions are not in the foundation documents, but every build must obey t
 | `DR-87` | No rounded corners and no card borders, no exception (`CPT-05`, DR-349) |
 | `DR-162` | Use the approved component and section names (`component-system.md` Section 3) |
 | `DR-188` | No subscribe button in the header or the drawer |
-| `DR-239` | Do not build `NewsletterSignup` in prototype run 4. The P-3 rail holds the `DailyPoll`, and from 1280px the `ad-rail` slot below it (DR-240, DR-245). Run 4 has no sign-up point |
+| `DR-239` | Do not build `NewsletterSignup` in prototype run 4. The P-3 rail holds the `DailyPoll`, and from 1024px, when the rail is a column, the `ad-rail` slot below it (DR-240; amends DR-245, Analysis spec log AN-11). Run 4 has no sign-up point |
 | `DR-193` | The footer is provisional. Build the drawn look |
 | `DR-356` | The gap between analysis and opinion (P-4) is `--space-analysis-gap` (32 / 48 / 64px), not `--grid-column-gap`. It is the one stated exception to the column gap |
 
