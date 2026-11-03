@@ -63,6 +63,16 @@ export const bn = {
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
   },
+  // The analysis hub /analysis (layout 7C.2, Analysis hub row). The title is analysisOpinion.analysis.
+  analysisPage: {
+    // Visually hidden name of the mosaic.
+    top: "শীর্ষ বিশ্লেষণ",
+    // Visually hidden name of the hero.
+    lead: "প্রধান বিশ্লেষণ",
+    // The short line below the page title (tajmin, 3 Nov 2026).
+    description:
+      "ফ্যাক্ট লেন্স টিমের বিশ্লেষণ, ব্যাখ্যামূলক প্রতিবেদন ও বিস্তারিত ফিচার",
+  },
   // P-5.
   mostRead: {
     title: "সর্বাধিক পঠিত",

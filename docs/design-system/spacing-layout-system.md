@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.32 · 30 October 2026 · XC fixes (spec log xc-fixes XF-04 to XF-08): 7B.1 and 7B.3 fixed halves in `CategoryFormatsSection` (DR-436); 7B.2 `main` starts with the title band (as 7D.2); 7E.2 noindex, follow below 3 stories, no `?page` (DR-432); DR citations in 7.1, 7B.1, 7C, Section 10 (DR-420, DR-419, DR-418, DR-393). Before: 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.33 · 4 November 2026 · Analysis hub (spec log analysis AN-01, AN-02, AN-04, AN-08, AN-10): Section 7F (new), the analysis hub page order, content and sparse cases; 7C.2 Analysis hub row names 7F. Then, approved by tajmin (4 Nov 2026: "Add the spec changes"; after the third PR 23 review: "make this ad behavior available for any page at whatever breakpoint the rail is displayed from"): `ad-rail` shows whenever the rail is a column, from 1024, on every page, the homepage P-3 included (amends DR-245), with `--ad-rail-w` and `--ad-rail-h` in the 64rem block (Sections 7.2, 9, 12.2) (AN-11); 7F.1 the description (AN-12) and the Analysis nav item (AN-16). Before: 2.32 · 30 October 2026 · XC fixes (spec log xc-fixes XF-04 to XF-08): 7B.1 and 7B.3 fixed halves in `CategoryFormatsSection` (DR-436); 7B.2 `main` starts with the title band (as 7D.2); 7E.2 noindex, follow below 3 stories, no `?page` (DR-432); DR citations in 7.1, 7B.1, 7C, Section 10 (DR-420, DR-419, DR-418, DR-393). Before: 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -262,7 +262,7 @@ The section heading row is a component. It is not a pattern.
 
 The hero, featured category and grouped category sections use the same wrapper + rail layout. The rail is always 304px.
 
-Every width shows the same sections in the same order. CSS changes only the layout. Hide nothing per device except the nav row, the slider buttons and the `ad-rail` slot under 1280 (DR-244, DR-245).
+Every width shows the same sections in the same order. CSS changes only the layout. Hide nothing per device except the nav row, the slider buttons and the `ad-rail` slot under 1024, where the rail is not a column (DR-244; Analysis spec log AN-11; tajmin, 4 Nov 2026)
 
 ### 7.3 Sparse content
 
@@ -270,7 +270,7 @@ Every width shows the same sections in the same order. CSS changes only the layo
 | --- | --- |
 | P-1 | One top story spans the wrapper. Latest shows the items that exist |
 | P-2 | No rail stories: the wrapper spans the shell |
-| P-3 | P-3 always has two category rows, so the `ad-rail` always shows from 1280 (DR-243, DR-245). Odd number of categories: the last category keeps its size. The other half of the row stays empty |
+| P-3 | P-3 always has two category rows, so the `ad-rail` always shows from 1024, when the rail is a column (DR-243; Analysis spec log AN-11; tajmin, 4 Nov 2026). Odd number of categories: the last category keeps its size. The other half of the row stays empty |
 | P-3b | All regions fit in view: no buttons (DR-140). A region with no stories is not shown |
 | P-4 | One column is empty: the other column spans the shell |
 | P-5 | Show the items that exist |
@@ -296,7 +296,7 @@ The component sheets in `component-system.md` give the looks and sizes. This sec
 
 Below 600px, the regions are tabs (`tablist`, arrow keys, `aria-selected`). The tabs are outline chips; the selected chip has the interactive fill (DR-140). A chip is as wide as its label and 44px tall or more. The selected chip scrolls into view. One region panel shows. A chip press fades the current panel out, then fades the new panel in, each over `--duration-slide`, `ease-slide`; opacity only, nothing moves (DR-346: one motion duration). With reduced motion the panel changes at once (DR-284).
 
-**P-3 rail: daily poll.** In prototype run 2 the rail holds the daily poll only (`DailyPoll`, C-26, DR-239): heading, one question, 2 to 4 options, a vote button, then the results as one bar per option. One vote per browser. Mock data. No section divider (DR-128). It never uses the ad label or ad colors. It has no panel: it sits on `background` with no inset, like every section (DR-273). From 1024px the poll is at the top of the 304px rail. From 1280px the `ad-rail` slot is `space-module` below it (Section 9, DR-240, DR-242, DR-245). Below 1024px it takes the full row below the blocks, with the question at the start and the options at the end. From 1024 a 1px column rule (Divider.column-inset) sits in the middle of the column gap between the wrapper and the rail; there is no rule between category blocks (DR-351).
+**P-3 rail: daily poll.** In prototype run 2 the rail holds the daily poll only (`DailyPoll`, C-26, DR-239): heading, one question, 2 to 4 options, a vote button, then the results as one bar per option. One vote per browser. Mock data. No section divider (DR-128). It never uses the ad label or ad colors. It has no panel: it sits on `background` with no inset, like every section (DR-273). From 1024px the poll is at the top of the 304px rail. From 1024px the `ad-rail` slot is `space-module` below it (Section 9, DR-240, DR-242; Analysis spec log AN-11; tajmin, 4 Nov 2026). Below 1024px it takes the full row below the blocks, with the question at the start and the options at the end. From 1024 a 1px column rule (Divider.column-inset) sits in the middle of the column gap between the wrapper and the rail; there is no rule between category blocks (DR-351).
 
 **Newsletter (after prototype run 2).** `NewsletterSignup` (C-14) is paused for run 2 and comes in a later phase (DR-239). Its spec stays: heading, one line of text, email field with an attached button, privacy link, and error, sending and done states (DR-129 to DR-137, DR-229). In that phase it is at the top of the rail with `space-rail-modules` between it and the poll; at 600–1023px it is a full row with the heading on top, then the text line and the form side by side (DR-135).
 
@@ -453,7 +453,7 @@ These rules apply to every page (DR-397, DR-399, DR-401, DR-410 to DR-414, DR-41
 | Region | `/regions/<slug>` | The backend owns the list and the order. Working list: `americas`, `europe`, `russia`, `middle-east`, `south-asia`, `china`, `asia`, `oceania`. Code works with any number of regions (DR-411) |
 | Topic | `/topic/<slug>` | Flat. One key, one Latin slug, a bn and an en label. Do not use the word "tag" (DR-410). The page: Section 7E |
 | News hub | `/latest` | News only |
-| Analysis hub | `/analysis` | বিশ্লেষণ / Analysis. Flat, no sub-hubs |
+| Analysis hub | `/analysis` | বিশ্লেষণ / Analysis. Flat, no sub-hubs. Analysis only. The page: Section 7F |
 | Opinion hub | `/opinion` | মতামত / Opinion. Flat |
 
 There is no `/opinion/<slug>-<id>`, `/insight`, `/voices` or `/op-ed` path (DR-302, DR-413, DR-414). A path whose page is not built yet gives a 404 until its page branch (IMP-18).
@@ -518,6 +518,37 @@ As the Latest page (7D.1), with these differences:
 
 As 7D.3: with no news or analysis the list is not shown; with 10 stories or fewer there is no Button.
 
+## 7F. Analysis hub
+
+The analysis hub (`/analysis`, `/en/analysis`, `AnalysisPageView`) is the Analysis hub row of Section 7C.2. Defined from the Analysis spec log AN-01, AN-02, AN-04, AN-08, AN-10 (tajmin, 2 to 4 Nov 2026). The page is built at build time for bn and en. It should stand out from the news hub (7D).
+
+### 7F.1 Page order
+
+| Row | Container | Content |
+| --- | --- | --- |
+| Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18). বিশ্লেষণ / Analysis is the current item in the NavBar and the Drawer (C-18, C-19) |
+| `ad-top` | Ad container | As on the homepage (Section 9) |
+| Page title | `Shell` | `PageTitle` (C-43): বিশ্লেষণ / Analysis, the page `h1`, in the `surface` band, with `PageTitle.description` below the title (C-43; ফ্যাক্ট লেন্স টিমের বিশ্লেষণ, ব্যাখ্যামূলক প্রতিবেদন ও বিস্তারিত ফিচার / In-depth analysis, explanatory journalism and long-form narratives by Fact Lens Team); `space-module` below |
+| `AnalysisHeroSection` | `Shell`, no rail | The newest analysis story: StoryCard (C-24) `row-from-md`, 3:2, `feature` split with `story-split-lead` (text : image = 1 : 2, no image cap), size `lead`, the C-08 `category` Eyebrow (DR-417), summary, meta, eager image (DR-325). Image first under 768; from 768 the text at the start and the image at the end. A hidden `h2`, the title an `h3` |
+| Rule | `Shell` | Divider.rule (C-22), `space-module` on each side. Only when the mosaic follows the hero |
+| `AnalysisTopSection` | `Shell`, `WithRail` | Wrapper: the next 4 stories as OverlapCard (C-02, the C-08 `category` Eyebrow) in a PeerRow, 1 per row below 600, 2 from 600 (LAY-07), each card flows on its own (DR-99); `--space-analysis-top-row-gap` between the rows. A hidden `h2`. Rail: AdSlot `rail`, from 1024 as on every page (Section 9); below 1024 the Rail is not drawn. Divider.column-full between the wrapper and the rail from 1024 (C-22). `space-module` before the `ad-band` (LAY-12) |
+| `ad-band` | Ad container | As on the homepage (Section 9) |
+| `MoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | As on the category page (7B): its SectionHeading আরও পড়ুন / More stories, `MoreStoriesList` (StoryCard `dated`, C-24, `h3` titles), the C-08 `category` Eyebrow on every row (DR-417; DR-153 does not apply). `space-module` above, after the ad row (LAY-12) |
+| Footer | As on the homepage | `Footer` (C-21) |
+
+### 7F.2 Content and load more
+
+- Every analysis story, newest first, no repeats. No news, no opinion. The hero is the newest, the mosaic the next 4, More stories the rest. Whether the hero and the mosaic are editor picks or the newest is not decided; the newest stands in (tajmin, 2 Nov 2026).
+- More stories: 10 first, then 10 per press, as 7B.2 Load more, with its motion and story time.
+- `main` starts with the title band and ends with `space-section`, as 7D.2. No robots rule.
+
+### 7F.3 Sparse content
+
+- 1 story: the hero only; as the last row it adds no space.
+- 2 to 5 stories: the mosaic shows what there is (1 to 4 cards); no `ad-band`, no More stories (Section 7.3, LAY-13).
+- No mosaic stories but list stories: the `ad-band` follows the hero (`space-module` before it); no rule.
+- With 10 list stories or fewer there is no Button.
+
 ## 8. Peer rows
 
 A peer row is a row of cards with equal rank.
@@ -538,7 +569,7 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 | `ad-top` | Below the header (below the nav row from 1280), above the hero (DR-295) | 320×100 or 320×50 | 728×90 | 970×250, 970×90 or 728×90 | 100 / 90 / 250 |
 | `ad-band` | After the hero, Opinion, each featured category and Most read | 336×280 (from 336px), 300×250 below 336px | 728×90 (DR-315) | 970×250, 970×90 or 728×90 | 280 / 90 / 250 |
 | `ad-inset` | Between category rows in P-3, at wrapper width. No full-width row. Full screen width under 332px | 300×250 | 300×250 | 300×250; 728×90 from 1280 | 250; 90 from 1280 |
-| `ad-rail` | Homepage P-3 rail, below the poll (DR-240). Article pages later | – | – | From 1280 only: 300×600 or 300×250 (DR-241, DR-245) | 600 from 1280 |
+| `ad-rail` | Any rail: the homepage P-3 rail, below the poll (DR-240); the analysis hub mosaic rail (7F). Article pages later | – | – | Whenever the rail is a column beside the wrapper: from 1024 (`WithRail`, LAY-05), on every page (Analysis spec log AN-11; tajmin, 4 Nov 2026). 300×600 or 300×250 (DR-241) | 600 from 1024 |
 | `ad-inline` | Article body, between two paragraphs (`LAY-22`) | 300×250 | 300×250 | 300×250 | 250 |
 
 - The slot names follow the `AdSlot` variants: `ad-top` is `variant="top"`, `ad-band` is `variant="band"`, `ad-inset` is `variant="inset"`, `ad-inline` is `variant="inline"` (DR-162, DR-197, DR-387).
@@ -551,7 +582,7 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 - No ad is sticky or fixed at any width.
 - The homepage has 3 `ad-inset` slots or fewer. Rows after the third inset have no ad between them.
 - Place one `ad-inset` between rows of category blocks: after every row but the last, 3 or fewer (DR-348; on phones one block is a row, so A, B, ad, C, D). Do not place one after a row that has only text stories. The server sets the count; there is no run-time height check (DR-276).
-- The homepage has one rail ad: `ad-rail` in the P-3 rail, below the poll, from 1280 only (DR-240, DR-245). Under 1280 there is no rail ad. It is `space-module` below the poll (DR-242). The 300×250 creative sits at the top of the 600 reserve (DR-241).
+- The homepage has one rail ad: `ad-rail` in the P-3 rail, below the poll, from 1024, when the rail is a column (DR-240; Analysis spec log AN-11; tajmin, 4 Nov 2026). Under 1024 there is no rail ad. It is `space-module` below the poll (DR-242). The 300×250 creative sits at the top of the 600 reserve (DR-241).
 - Ad space is 30% of the page height or less. The phone estimate is approximately 20%.
 - Phase 1: static images from direct-sold networks, no timed refresh. Phase 2: programmatic fill (Google Ad Manager) in the same slots.
 
@@ -560,7 +591,7 @@ This section is the full ad system: slots, sizes, loading and serving. Sizes fol
 - Reserve the creative height in CSS (`min-height`) for each tier. Do not set the height in JavaScript.
 - Request every size listed for the slot and the tier.
 - Load `ad-top` first. Never lazy-load `ad-top`. Lazy-load all other slots.
-- The `ad-rail` slot is in the HTML at every width and hidden under 1280. Lazy-load does not request a hidden slot (DR-244, DR-245).
+- The `ad-rail` slot is in the HTML at every width and hidden under 1024. Lazy-load does not request a hidden slot (DR-244; Analysis spec log AN-11; tajmin, 4 Nov 2026)
 - Phase 1: when no campaign is booked for `ad-top`, the server leaves the band out of the page. The server knows the bookings before it builds the page, so nothing moves after load (DR-250). When a campaign is booked, `ad-top` never collapses.
 - Phase 2: what `ad-top` shows when Ad Manager has no fill (house ad) is decided with Phase 2 (ADS-09).
 - When another slot has no ad before it nears the viewport, collapse the whole row, label included.
@@ -828,6 +859,8 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
     --ad-top-w: 970px;
     --ad-top-h: 250px;
     --ad-band-h: 250px;
+    --ad-rail-w: 300px;
+    --ad-rail-h: 600px;
   }
 }
 
@@ -837,8 +870,6 @@ Section 12.1 also removes the Tailwind defaults that the rules do not allow, and
     --space-analysis-gap: 4rem;
     --ad-inset-w: 728px;
     --ad-inset-h: 90px;
-    --ad-rail-w: 300px;
-    --ad-rail-h: 600px;
   }
 }
 
@@ -1137,7 +1168,7 @@ The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and
 
 - `ad-rail` size: 300×600 or 300×250, reserve 600 + label (DR-241). Gap to the poll: `space-module` (DR-242).
 - P-3 always has two category rows; the `ad-rail` always shows (DR-243). `ad-rail` under 1280 joins the hide-per-device list in §7.2 (DR-244).
-- `ad-rail` from 1280 only, not 1024 (DR-245). Tokens `--ad-rail-w` 300px, `--ad-rail-h` 600px in the 80rem block (§12.2, LAY-19).
+- `ad-rail` from 1280 only, not 1024 (DR-245). Tokens `--ad-rail-w` 300px, `--ad-rail-h` 600px in the 80rem block (§12.2, LAY-19). Amended Analysis spec log AN-11; tajmin, 4 Nov 2026: from 1024 on every page, whenever the rail is a column; the tokens are in the 64rem block.
 
 **2.9 (10 October 2026)**
 

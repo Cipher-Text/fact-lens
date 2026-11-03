@@ -158,6 +158,18 @@ export interface LatestPage {
 }
 
 /**
+ * The analysis hub in one language (layout 7C.2 Paths, Analysis hub row): analysis stories
+ * only, newest first, no repeats. The lead is the newest, the top the next 4, more the rest.
+ * Editor picks or the newest for the lead and the top: not decided (tajmin, 2 Nov 2026).
+ */
+export interface AnalysisPage {
+  lang: Lang;
+  lead: Story | null;
+  top: Story[]; // up to 4
+  more: Story[]; // 10 first, then 10 per load
+}
+
+/**
  * A topic page in one language (layout 7C.2 Paths, Topic row; DR-410): the news and analysis
  * stories of one topic, newest first. No opinion (tajmin, 29 Oct 2026).
  */

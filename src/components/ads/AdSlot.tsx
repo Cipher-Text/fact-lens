@@ -43,12 +43,14 @@ const tiers: Record<
 };
 
 // The row: top and band are full-width rows, inset is at wrapper width, rail is the rail
-// box, shown from 1280 only (DR-245). `ad-row` and `ad-inset` come from layout.css.
+// box, shown whenever the rail is a column beside the wrapper: from 1024, as WithRail
+// (LAY-05), on every page (tajmin, 4 Nov 2026; was from 1280, DR-245). `ad-row` and
+// `ad-inset` come from layout.css.
 const rowClass: Record<AdSlotVariant, string> = {
   top: "ad-row",
   band: "ad-row",
   inset: "ad-inset",
-  rail: "hidden xl:grid justify-items-center",
+  rail: "hidden lg:grid justify-items-center",
   inline: "ad-inset",
 };
 

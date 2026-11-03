@@ -25,11 +25,13 @@ export const listInk = {
  * gap, 16px from the top and the bottom. Put it on the grid; the gap does not change.
  * split: two equal columns, from 768 (P-4). rail: the wrapper and the rail, from 1024 (P-3).
  * columns: the two CSS columns of the Latest list, 768 to 1023 (C-03, DR-355).
- * column-full is not used on the homepage.
+ * railFull: Divider.column-full (full height) between the wrapper and the rail, from 1024: the
+ * analysis hub mosaic (tajmin, 4 Nov 2026). column-full is not used on the homepage.
  */
 export const dividerColumn = {
   split: "divider-column-split",
   rail: "divider-column-rail",
+  railFull: "divider-column-rail divider-column-full",
   columns: "divider-column-columns",
 } as const;
 

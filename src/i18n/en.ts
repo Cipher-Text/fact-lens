@@ -64,6 +64,16 @@ export const en: Dictionary = {
     analysis: "Analysis",
     opinion: "Opinion",
   },
+  // The analysis hub /analysis (layout 7C.2, Analysis hub row). The title is analysisOpinion.analysis.
+  analysisPage: {
+    // Visually hidden name of the mosaic.
+    top: "Top analysis",
+    // Visually hidden name of the hero.
+    lead: "Lead analysis",
+    // The short line below the page title (tajmin, 3 Nov 2026).
+    description:
+      "In-depth analysis, explanatory journalism and long-form narratives by Fact Lens Team",
+  },
   // P-5 Most read (spacing-layout-system.md 7.2).
   mostRead: {
     title: "Most read",

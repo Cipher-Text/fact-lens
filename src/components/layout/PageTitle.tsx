@@ -10,13 +10,19 @@ type Props = {
   id?: string;
   /** A line above the brand bar, in the band: the category page MissingTranslationNote. */
   note?: ReactNode;
+  /** A short line below the title, in the band: the analysis hub (tajmin, 2 Nov 2026). */
+  description?: string;
   className?: string;
 };
 
 /**
  * PageTitle: the title of a page that is not the homepage or an article, as the page h1,
  * type-page-title, with Divider.section (C-22, the bar on the rule) above it and
- * space-section-rule-title between, as in SectionHeading. No description. Sheet: C-43.
+ * space-section-rule-title between, as in SectionHeading. Sheet: C-43. The optional
+ * description sits below the title: type-deck (EN 18 to 21px, BN 18 to 20px; tajmin, 3 Nov
+ * 2026), ink-secondary, 12px after the title as the article deck (tajmin, 2 Nov 2026). No
+ * measure cap: it runs the width of the shell and wraps only when the shell is narrower
+ * (tajmin, 3 Nov 2026: "dont wrap the text").
  * A band (tajmin 28 Oct 2026): --color-page-title-band, surface in light and dark (DR-424,
  * DR-425; color-system 2.9), spans the full width and the content sits in the shell, so it
  * lines up with the page. Block inset only, space-page-title-band: 24px under 600px, 32px
@@ -24,7 +30,7 @@ type Props = {
  * ad-top row: it takes the place of space-page-start. The page sets the space after it.
  * Every page that has a PageTitle shows the band.
  */
-export function PageTitle({ title, id, note, className }: Props) {
+export function PageTitle({ title, id, note, description, className }: Props) {
   return (
     <header
       data-page-title
@@ -42,6 +48,14 @@ export function PageTitle({ title, id, note, className }: Props) {
         >
           {title}
         </h1>
+        {description ? (
+          <p
+            data-page-title-description
+            className="mt-3 type-deck text-ink-secondary max-inline-none"
+          >
+            {description}
+          </p>
+        ) : null}
       </Shell>
     </header>
   );

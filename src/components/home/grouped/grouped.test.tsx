@@ -106,10 +106,11 @@ describe("GroupedCategoriesSection (P-3)", () => {
     expect(
       [...rail.children].map((el) => el.getAttribute("data-ad-slot") ?? "poll"),
     ).toEqual(["poll", "ad-rail"]);
-    // The rail ad is in the HTML at every width and hidden under 1280 (9.1, DR-244).
+    // The rail ad is in the HTML at every width and hidden until the rail is a column,
+    // from 1024 (9.1, DR-244; tajmin, 4 Nov 2026).
     expect(rail.querySelector('[data-ad-slot="ad-rail"]')).toHaveClass(
       "hidden",
-      "xl:grid",
+      "lg:grid",
     );
     expect(rail.querySelector("[data-poll]")!.innerHTML).not.toMatch(
       /(^|[\s"])bg-surface-alt/,

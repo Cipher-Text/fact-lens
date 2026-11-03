@@ -10,6 +10,7 @@ import { trendingTerms } from "./trending";
 import type {
   Ad,
   AdSlotId,
+  AnalysisPage,
   CategoryId,
   CategoryPage,
   FeaturedSection,
@@ -273,6 +274,24 @@ export function getLatestPage(lang: Lang): LatestPage {
       .filter((def) => def.format === "news")
       .map((def) => toStory(def, lang))
       .sort(newestFirst),
+  };
+}
+
+/**
+ * The analysis hub in one language (layout 7C.2 Paths, Analysis hub row). Every analysis
+ * story, newest first: the newest is the lead, the next 4 the top, the rest More stories.
+ * The newest stands in until the editor picks are decided (tajmin, 2 Nov 2026).
+ */
+export function getAnalysisPage(lang: Lang): AnalysisPage {
+  const all = stories
+    .filter((def) => def.format === "analysis")
+    .map((def) => toStory(def, lang))
+    .sort(newestFirst);
+  return {
+    lang,
+    lead: all[0] ?? null,
+    top: all.slice(1, 5),
+    more: all.slice(5),
   };
 }
 

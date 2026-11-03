@@ -109,6 +109,8 @@
     --ad-top-w: 970px;
     --ad-top-h: 250px;
     --ad-band-h: 250px;
+    --ad-rail-w: 300px;
+    --ad-rail-h: 600px;
   }
 }
 
@@ -118,8 +120,6 @@
     --space-analysis-gap: 4rem;
     --ad-inset-w: 728px;
     --ad-inset-h: 90px;
-    --ad-rail-w: 300px;
-    --ad-rail-h: 600px;
   }
 }
 

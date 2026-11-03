@@ -181,22 +181,19 @@ for (const p of PAGES) {
       await expect
         .poll(async () => Math.round((await box(nav)).height))
         .toBe(45);
-      // The one # link left in the nav is the parent Analysis and Opinion: Regions goes to
-      // /regions now (DR-411, DR-414). The English NavBar hides that last item for lack of
-      // room at every width (DR-359), so the link is clicked in the Drawer.
-      const drawer = page.locator("[data-drawer]");
-      await openWithKeyboard(
-        page.getByRole("button", { name: p.menu, exact: true }),
-        drawer,
-      );
-      await drawer.locator('a[href="#analysis-opinion-title"]').first().click();
+      // The nav has no # link since the Analysis item goes to the hub (tajmin, 4 Nov 2026).
+      // The real # link of every page is the SkipLink to #main (C-17): reach it with Tab,
+      // press Enter.
+      await page.keyboard.press("Tab");
+      const skip = page.locator("[data-skip-link]");
+      await expect(skip).toBeFocused();
+      await page.keyboard.press("Enter");
+      await expect(page.locator("main#main")).toBeFocused();
       await expect(page.locator("html")).toHaveAttribute("data-bar-stuck", "");
       await expect(nav).toBeHidden();
       // The target stops at the bar bottom + 16px: 64 + 16.
       await expect
-        .poll(async () =>
-          Math.round((await box(page.locator("#analysis-opinion-title"))).y),
-        )
+        .poll(async () => Math.round((await box(page.locator("main#main"))).y))
         .toBe(80);
     });
 

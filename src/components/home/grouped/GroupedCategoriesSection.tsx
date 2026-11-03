@@ -55,8 +55,9 @@ function pairs<T>(items: T[]): T[][] {
  * rows of two categories (one per row on phones, LAY-07) with an ad-inset between rows,
  * at wrapper width; 3 or fewer, none after a text-only row (DR-276). An odd last category keeps
  * its size and the other half of its row stays empty (7.3). The rail has the daily poll
- * (DR-239) and, from 1280px, the ad-rail space-module below it (DR-240, DR-242); below
- * 1024px the rail is under the wrapper (LAY-05). The source order is the phone reading
+ * (DR-239) and, from 1024px, when the rail is a column, the ad-rail space-module below it
+ * (DR-240, DR-242; tajmin, 4 Nov 2026, was from 1280); below 1024px the rail is under the
+ * wrapper, with no rail ad (LAY-05). The source order is the phone reading
  * order: A, B, ad, C, D, poll (LAY-14).
  */
 export function GroupedCategoriesSection({
