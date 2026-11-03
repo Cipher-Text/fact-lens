@@ -15,10 +15,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: Final checkpoint done, waiting for tajmin's commit yes.
-- Next step: on tajmin's yes, one commit on the branch, then the PR to `dev`. After the merge: AGENTS.md Section 9 step 6.
-- Open: flags U-55 to U-60 and IMP-124 in `docs/ISSUES.md` (the changed rules AN-07, AN-11 to AN-14 and AN-16 need tajmin's yes; the DR-330 Drawer # code has no user).
-- Uncommitted: yes: everything on the branch.
+- State: PR #23 open to `dev`. The PR 23 review fixes (spec changes) are uncommitted, waiting for tajmin's commit yes.
+- Next step: on tajmin's yes, one commit and push to PR #23. After the merge: AGENTS.md Section 9 step 6.
+- Open: U-60 (English NavBar at 1280), IMP-124 (DR-330 Drawer # code).
+- Uncommitted: the spec changes below.
 
 ## Decisions
 
@@ -194,3 +194,14 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - Measured (en, 1280): the NavBar hides Analysis for lack of room, also on /en/analysis; from 1366 it shows. bn shows it at 1280. In U-60.
 - Spec log: AN-15 amended (no child is current today), AN-16 new, Changed rule, red (U-60). `component-system.md` C-19 and layout 7F.1 no longer name the Analysis child.
 - Checks after the nav change: lint, 357 unit tests; full `pnpm test:e2e:chromium` 975 passed, 2 failed: `article.spec.ts` "header section links point to targets on the homepage (DR-331)" (bn, en) needed a # link in the nav. It is now "header links go to pages: no # link is left (DR-331)"; `article.spec.ts` 50 passed. design-reviewer: pass.
+
+### PR 23 review (4 Nov 2026)
+
+- The automated review on PR 23 (`claude[bot]`, 1 summary, 6 inline comments) asked, for each of AN-07, AN-11 to AN-14 and AN-16: drop the code until tajmin approves, or approve and put the spec change in this PR. tajmin: "Check the review comments from the PR. Add the spec changes." → approved; written into the specs:
+  - typography 2.22: 3.1 `type-deck` EN 18–21px, BN 18–20px and the Section 8 CSS (AN-13); 3.1 `type-story-lead` below 600 and the Section 8 media query (AN-14); TYP-12 exception for the PageTitle description (AN-12); TYP-13 exception for the hero title (AN-07).
+  - component-system 1.29: C-16 `railFrom` (AN-11); C-18 `NavBar.item` link and `NavBar.current`, C-19 Sub-items (AN-16); C-43 `PageTitle.description` part (AN-12); Section 6 `story-split-lead` with `text-wrap: pretty` (AN-07); Section 3 PageTitle row.
+  - layout 2.33: Section 9 `ad-rail` row (AN-11); 7F.1 header, page title and mosaic rows.
+  - agent-contract 2.23: Sections 1 and 5 typography 2.22; Section 3 analysis row.
+- Spec log: the six items green (tajmin's approval); no flag open. ISSUES: U-55 to U-59 removed; U-60 keeps only the English NavBar at 1280 (hidden up to about 1365px).
+- Review points not changed: `mt-3` on the description is a scale class used by one component, which CPT-07 allows (a token only for shared or off-scale values); `37.5rem` in the media query is the `sm` breakpoint written as the specs write it (`@media (min-width: 37.5rem)` in the spec CSS); no overflow at 1024 and 1180 in bn is already in `analysis.spec.ts` (the 15 widths).
+- tajmin asked where `mt-3` and `37.5rem` are and whether they follow the spec convention (answered: `PageTitle.tsx` description gap, a one-component scale step per CPT-07, the same 12px as the article `--rd-head-title-deck`; `typography.css` and typography Section 8, the rem breakpoint form of the spec CSS, `width <` as layout Section 12). tajmin: "Keep mt-3" (4 Nov 2026). No change.

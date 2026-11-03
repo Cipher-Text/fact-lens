@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.21 · 28 October 2026 · Latest page (spec log `latest.md` LT-04): TYP-17 story time after load more. Before: 2.20 · 28 October 2026 · URL format (IMP-97): example label দক্ষিণ এশিয়া (DR-412). Before: Homepage most read (IMP-99): `type-rank` retired; the RankedList rank is the chip (`component-system.md` C-07)
+Version 2.22 · 4 November 2026 · Analysis hub (spec log analysis AN-07, AN-12 to AN-14; tajmin, 4 Nov 2026): `type-deck` EN 18–21px, BN 18–20px (3.1, Section 8); `type-story-lead` takes the `type-story-title` metrics below 600 (3.1, Section 8); TYP-12 and TYP-13 exceptions for the analysis hub. Before: 2.21 · 28 October 2026 · Latest page (spec log `latest.md` LT-04): TYP-17 story time after load more. Before: 2.20 · 28 October 2026 · URL format (IMP-97): example label দক্ষিণ এশিয়া (DR-412). Before: Homepage most read (IMP-99): `type-rank` retired; the RankedList rank is the chip (`component-system.md` C-07)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -86,11 +86,11 @@ Tracking for Bangla is 0 in every role.
 | `type-display` | Serif | 44–64px | 600 | 1.02 | -0.03em | 40–56px | 600 | 1.16 | Brand moments, special pages |
 | `type-page-title` | Serif | 34–48px | 600 | 1.06 | -0.025em | 32–44px | 600 | 1.18 | Section and category page titles |
 | `type-article-title` | Serif | 36–48px | 600 | 1.06 | -0.025em | 34–44px | 600 | 1.18 | The article headline (h1). Largest from 1280 (DR-388) |
-| `type-story-lead` | Serif | 30–42px | 600 | 1.08 | -0.02em | 28–40px | 600 | 1.2 | Lead story on the homepage |
+| `type-story-lead` | Serif | 30–42px | 600 | 1.08 | -0.02em | 28–40px | 600 | 1.2 | Lead story on the homepage, the category feature, the analysis hub hero. Below 600 it takes the `type-story-title` size, line height and tracking, so the lead and the cards read alike on phones (Analysis spec log AN-14) |
 | `type-story-title-lg` | Serif | 26–34px | 600 | 1.12 | -0.015em | 26–32px | 600 | 1.22 | Second-level story in a lead group (not on the homepage) |
 | `type-story-title` | Serif | 22–26px | 600 | 1.16 | -0.01em | 22–26px | 600 | 1.26 | Standard story card |
 | `type-story-title-sm` | Serif | 18–20px | 600 | 1.2 | -0.005em | 18–20px | 600 | 1.3 | Compact cards and lists |
-| `type-deck` | Serif | 18–22px | 400 | 1.45 | 0 | 18–21px | 400 | 1.55 | Standfirst under the article title |
+| `type-deck` | Serif | 18–21px | 400 | 1.45 | 0 | 18–20px | 400 | 1.55 | Standfirst under the article title; the PageTitle description (C-43). EN was 18–22px, BN 18–21px (Analysis spec log AN-13) |
 | `type-summary` | Serif | 16px | 500 | 1.5 | 0 | 17px | 500 | 1.6 | Short summary on story cards and the lead story (DR-97) |
 | `type-article-body` | Serif | 17–18px | 400 | 1.68 | 0 | 18–19px | 400 | 1.76 | Article paragraphs and lists |
 | `type-article-h2` | Serif | 28–36px | 600 | 1.15 | -0.015em | 26–34px | 600 | 1.28 | Subheading in the article |
@@ -245,11 +245,11 @@ Use `font-optical-sizing: auto`. Do not set optical-size values in components.
 
 ### TYP-12 Keep line length in the measures
 
-Put article text in `measure-reading-en` or `measure-reading-bn`. Do not let the deck, summary or article title go wider than their measure (Section 5).
+Put article text in `measure-reading-en` or `measure-reading-bn`. Do not let the deck, summary or article title go wider than their measure (Section 5). Exception: the PageTitle description (C-43) has no measure (`max-inline-none`); it runs the shell width and wraps only when the shell is narrower (Analysis spec log AN-12).
 
 ### TYP-13 Balance large headings only
 
-Use `text-wrap: balance` on display, page title, article title, lead story, large story title and pull quote. Do not use it on body text, metadata, captions or interface text.
+Use `text-wrap: balance` on display, page title, article title, lead story, large story title and pull quote. Do not use it on body text, metadata, captions or interface text. Exception: the analysis hub hero title (`story-split-lead`, component-system Section 6) uses `text-wrap: pretty`, so its lines fill up to the gap before the image (Analysis spec log AN-07).
 
 ### TYP-14 Use the color tokens for text color
 
@@ -537,7 +537,7 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-story-title-sm-weight: 600;
   --type-story-title-sm-line: 1.2;
   --type-story-title-sm-tracking: -0.005em;
-  --type-deck-size: clamp(1.125rem, 1.027rem + 0.435vw, 1.375rem);
+  --type-deck-size: clamp(1.125rem, 1.052rem + 0.326vw, 1.312rem);
   --type-deck-weight: 400;
   --type-deck-line: 1.45;
   --type-deck-tracking: 0;
@@ -648,7 +648,7 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-story-title-sm-weight: 600;
   --type-story-title-sm-line: 1.3;
   --type-story-title-sm-tracking: 0;
-  --type-deck-size: clamp(1.125rem, 1.052rem + 0.326vw, 1.312rem);
+  --type-deck-size: clamp(1.125rem, 1.076rem + 0.217vw, 1.25rem);
   --type-deck-weight: 400;
   --type-deck-line: 1.55;
   --type-deck-tracking: 0;
@@ -719,6 +719,16 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --type-input-weight: 400;
   --type-input-line: 1.5;
   --type-input-tracking: 0;
+}
+
+/* Below 600 the lead story role takes the story title metrics (Analysis spec log AN-14). */
+@media (width < 37.5rem) {
+  :lang(en),
+  :lang(bn) {
+    --type-story-lead-size: var(--type-story-title-size);
+    --type-story-lead-line: var(--type-story-title-line);
+    --type-story-lead-tracking: var(--type-story-title-tracking);
+  }
 }
 
 [data-reader-size="lg"] { --reader-scale: 1.2; }
