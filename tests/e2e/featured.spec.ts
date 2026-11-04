@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { sideTitleFits } from "./side-title";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
@@ -74,26 +75,6 @@ async function expectNoBlockingAxe(page: Page) {
     .filter((v) => v.nodes.length > 0)
     .filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(blocking, JSON.stringify(blocking, null, 2)).toEqual([]);
-}
-
-// The StoryCard side title fits its text column (DR-464: the image is 2 / 3 of the card,
-// no text minimum). The h3 does not scroll sideways and the body stays inside the card
-// (TYP-08, TYP-09, LAY-02, LAY-17). 200% text is out of scope (tajmin, 4 Nov 2026).
-async function sideTitleFits(card: Locator) {
-  const m = await card.evaluate((el) => {
-    const h3 = el.querySelector("h3")!;
-    const body = el.querySelector(".story-body")!.getBoundingClientRect();
-    const c = el.getBoundingClientRect();
-    return {
-      scroll: h3.scrollWidth,
-      client: h3.clientWidth,
-      start: body.left - c.left,
-      end: c.right - body.right,
-    };
-  });
-  expect(m.scroll).toBeLessThanOrEqual(m.client);
-  expect(m.start).toBeGreaterThanOrEqual(-0.5);
-  expect(m.end).toBeGreaterThanOrEqual(-0.5);
 }
 
 for (const p of PAGES) {
