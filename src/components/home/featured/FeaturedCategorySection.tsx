@@ -19,11 +19,11 @@ type FeaturedCategorySectionProps = {
 
 /**
  * P-2 FeaturedCategorySection (component-system.md P-2; spacing-layout-system.md 7.2, 7.3).
- * Wrapper: the feature story, a StoryCard that is one column under 768px (image first) and
- * text beside the image from 768px. Rail: one image story and two text rows. From 1024px the
- * rail is 304px beside the wrapper; below, it is under the wrapper (LAY-05). The rail image
- * story is a row (text 2 : 1 image) until 1024px and a stack in the 304px rail. No rail
- * stories: the wrapper spans the shell. One MoreLink at the section end (DR-110, DR-123).
+ * Wrapper: the feature story, the StoryCard `side`: one column under 768px (image first),
+ * text : image = 1 : 2 from 768px (DR-451). Rail: a text StoryList of 3 rows, no image (the
+ * former rail image story is the first row; IMP-125). From 1024px the rail is 304px beside
+ * the wrapper; below, it is under the wrapper (LAY-05). No rail stories: the wrapper spans
+ * the shell. One MoreLink at the section end (DR-110, DR-123).
  * The heading is plain text (DR-122). The section id is the anchor of the nav links (IMP-14).
  * The section features a category or a region (DR-412): the heading, the id and the
  * MoreLink target come from its source. A region section is `featured-<region>`, because
@@ -47,19 +47,10 @@ export function FeaturedCategorySection({
       ? `/category/${source.id}`
       : `/regions/${source.id}`;
   const titleId = `${sectionId}-title`;
-  const [imageStory, ...textStories] = rail;
 
   const wrapper = (
     <Wrapper data-featured-wrapper>
-      <StoryCard
-        story={lead}
-        strings={t}
-        layout="row-from-md"
-        ratio="3:2"
-        size="md"
-        split="feature"
-        eyebrow={false}
-      />
+      <StoryCard story={lead} strings={t} variant="side" eyebrow={false} />
     </Wrapper>
   );
 
@@ -74,27 +65,11 @@ export function FeaturedCategorySection({
       className={className}
     >
       <SectionHeading id={titleId}>{label}</SectionHeading>
-      {imageStory ? (
+      {rail.length > 0 ? (
         <WithRail>
           {wrapper}
           <Rail data-featured-rail>
-            <StoryCard
-              story={imageStory}
-              strings={t}
-              layout="row-until-lg"
-              ratio="16:9"
-              size="sm"
-              split="third"
-              eyebrow={false}
-              summary={false}
-            />
-            {textStories.length > 0 ? (
-              <StoryList
-                stories={textStories}
-                strings={t}
-                className={dividerItem}
-              />
-            ) : null}
+            <StoryList stories={rail} strings={t} className={dividerItem} />
           </Rail>
         </WithRail>
       ) : (

@@ -55,9 +55,7 @@ export function CategoryBlock({
             <StoryCard
               story={feature}
               strings={t}
-              layout="stack"
-              ratio="3:2"
-              size="md"
+              variant="top"
               eyebrow={false}
             />
           ) : null}

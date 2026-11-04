@@ -3,13 +3,13 @@
   --bar-brand: 0.375rem;
   --bar-section-width: 2.5rem;
   --bar-section-height: 0.5rem;
-  --space-lead-inset-start: 0;
-  --space-lead-inset-end: 2rem;
-  --space-lead-panel: 1rem;
-  --space-lead-overlap: 2rem;
-  --space-lead-eyebrow-title: 0.5rem;
-  --space-lead-summary-meta: 1rem;
-  --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
+  --space-inset-large-start: 0;
+  --space-inset-large-end: 2rem;
+  --space-panel-large: 1rem;
+  --space-overlap-large: 2rem;
+  --space-story-eyebrow-title: 0.5rem;
+  --space-story-summary-meta: 1rem;
+  --space-overlap: clamp(2.5rem, 10cqi, 4rem);
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);
   --color-meta: var(--ink-muted);
@@ -19,23 +19,18 @@
   /* LeadStory panel padding at the start side: 0 on narrow (text lines up with the image
      edge), the panel padding from 600px. C-01 gives the values; Section 6 has no token
      (CPT-07, DOC-30). */
-  --space-lead-panel-start: 0;
+  --space-panel-large-start: 0;
 
   /* PageTitle band (C-43) block inset: 24px under 600px, 32px from 600px, 40px from 1024px
      (tajmin, 28 Oct 2026). Not the LAY-20 panel band values (40 / 48px), CPT-07. */
   --space-page-title-band: 1.5rem;
 
-  /* StoryCard split feature (C-24, P-2 featureStory): the image column is a share of the
-     free width, clamped. 50% from 768 to 1023, 60% from 1024 (DR-118, DR-119). Section 6 has
-     no tokens for it (DOC-30). */
-  --story-feature-media-min: 26.25rem;
-  --story-feature-media-max: 34.8125rem;
-  --story-feature-media-share: 0.5;
-  /* The analysis hub hero (tajmin, 3 Nov 2026): the feature split across the full shell,
-     text : image = 1 : 2 at every width from 768, no image cap. Used through
-     story-split-lead on the hero only (CPT-07). */
-  --story-analysis-lead-media-share: calc(2 / 3);
-  --story-analysis-lead-media-max: 100%;
+  /* StoryCard side (C-24, DR-451, DR-453): text at the start, the image at the end. The image
+     column is 2 / 3 of the free width (text : image = 1 : 2), at least 420px, no cap
+     (tajmin, 3 Nov 2026: the analysis hub cover; P-2 featured category feature, DR-451).
+     Section 6 has no tokens for it (CPT-07). */
+  --story-side-media-min: 26.25rem;
+  --story-side-media-share: calc(2 / 3);
   /* The analysis hub mosaic: the gap between the two card rows. The row gap, and 32px from
      1280 (tajmin, 4 Nov 2026; CPT-07). */
   --space-analysis-top-row-gap: var(--grid-row-gap);
@@ -176,45 +171,44 @@
 @media (min-width: 64rem) {
   :root {
     --bar-section-width: 3rem;
-    --story-feature-media-share: 0.6;
   }
 }
 
-/* LeadStory root: container-type: inline-size. .overlap-feature is the OverlapCard feature
-   body (CategoryFeatureSection): the card is its container, so --space-lead-panel steps with the card
+/* LeadStory root: container-type: inline-size. .overlap-large is the OverlapCard large
+   body (CategoryCoverSection): the card is its container, so --space-panel-large steps with the card
    width as in LeadStory (tajmin, category page). */
 @container (width >= 600px) {
   .lead-story,
-  .overlap-feature {
+  .overlap-large {
     --bar-brand: 0.5rem;
-    --space-lead-inset-start: clamp(2rem, 4.2cqi, 2.5rem);
-    --space-lead-inset-end: clamp(2rem, 4.2cqi, 2.5rem);
-    --space-lead-panel: 1.5rem;
-    --space-lead-overlap: clamp(4rem, 10cqi, 6rem);
+    --space-inset-large-start: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-inset-large-end: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-panel-large: 1.5rem;
+    --space-overlap-large: clamp(4rem, 10cqi, 6rem);
   }
 }
 
 @container (width >= 880px) {
   .lead-story,
-  .overlap-feature {
+  .overlap-large {
     --bar-brand: 0.625rem;
-    --space-lead-panel: 2rem;
+    --space-panel-large: 2rem;
   }
 }
 
 @container (width >= 600px) {
   .lead-story {
-    --space-lead-panel-start: var(--space-lead-panel);
+    --space-panel-large-start: var(--space-panel-large);
   }
 }
 
-/* StoryCard layout (C-24). The card root is the container (CPT-04); the grid inside it has
-   a media area and a body area (DR-267: the media is first in the markup, no `order`).
-   story-stacked puts the media above the body. story-split-third and story-split-feature put
+/* StoryCard variants (C-24, DR-451, DR-453). The card root is the container (CPT-04); the
+   grid inside it has a media area and a body area (DR-267: the media is first in the markup,
+   no `order`). story-top puts the media above the body. story-thumbnail and story-side put
    the text at the start and the image at the end, with --grid-column-gap between them
    (DR-300). A row stacks when the container is narrower than 17.5rem, which is what happens
    at 200% text; the width is in rem so it grows with the text (DR-308, A11Y-18). Tracks use
-   minmax(0, ...) so a long word does not widen a column (P-2 checks). */
+   minmax(0, ...) so a long word does not widen a column. */
 @utility story-media {
   grid-area: media;
 }
@@ -223,14 +217,15 @@
   grid-area: body;
 }
 
-@utility story-stacked {
+@utility story-top {
   grid-template-areas: "media" "body";
   grid-template-columns: minmax(0, 1fr);
   column-gap: 0;
   row-gap: var(--space-story-media-text);
 }
 
-@utility story-split-third {
+/* thumbnail: text 2fr, image 1fr. */
+@utility story-thumbnail {
   grid-template-areas: "body media";
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   column-gap: var(--grid-column-gap);
@@ -243,29 +238,23 @@
   }
 }
 
-/* The feature split of the analysis hub hero: the image takes 2 / 3 of the row (minus the
-   gap), uncapped; the 420px min stays (tajmin, 3 Nov 2026). The title fills its lines up to
-   the gap before the image: pretty in place of the text-4xl balance (TYP-13), which
-   left the lines short of the gap (tajmin, 4 Nov 2026). */
-@utility story-split-lead {
-  --story-feature-media-share: var(--story-analysis-lead-media-share);
-  --story-feature-media-max: var(--story-analysis-lead-media-max);
-  & :is(h2, h3, h4) {
-    text-wrap: pretty;
-  }
-}
-
-@utility story-split-feature {
+/* side: the image takes 2 / 3 of the row (minus the gap), at least 420px, uncapped. The
+   title fills its lines up to the gap before the image: pretty in place of the text-4xl
+   balance (TYP-13), which left the lines short of the gap (tajmin, 4 Nov 2026). The section
+   stacks it below 768 with story-top (StoryCard). */
+@utility story-side {
   grid-template-areas: "body media";
   grid-template-columns:
     minmax(0, 1fr)
-    clamp(
-      var(--story-feature-media-min),
-      calc((100% - var(--grid-column-gap)) * var(--story-feature-media-share)),
-      var(--story-feature-media-max)
+    max(
+      var(--story-side-media-min),
+      calc((100% - var(--grid-column-gap)) * var(--story-side-media-share))
     );
   column-gap: var(--grid-column-gap);
   row-gap: 0;
+  & :is(h2, h3, h4) {
+    text-wrap: pretty;
+  }
   @container (width < 17.5rem) {
     grid-template-areas: "media" "body";
     grid-template-columns: minmax(0, 1fr);
@@ -287,7 +276,7 @@
     margin-block-start: var(--space-story-media-text);
   }
   & > .story-date {
-    margin-block-start: var(--space-lead-summary-meta);
+    margin-block-start: var(--space-story-summary-meta);
   }
   @media (width >= 37.5rem) {
     grid-template-areas: "date body media";
@@ -308,7 +297,7 @@
         margin-block-start: var(--space-story-media-text);
       }
       & > .story-date {
-        margin-block-start: var(--space-lead-summary-meta);
+        margin-block-start: var(--space-story-summary-meta);
       }
     }
   }

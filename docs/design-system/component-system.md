@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.29 · 4 November 2026 · Analysis hub (spec log analysis AN-03 to AN-06, AN-08 to AN-10, AN-15): Section 3 analysis hub sections and `AnalysisPageView`, `AnalysisHeroSection`, `AnalysisTopSection`; Section 6 `--story-analysis-lead-media-share`, `--story-analysis-lead-media-max`, `--space-analysis-top-row-gap` and `story-split-lead`; C-02 the analysis mosaic; C-24 size `lead` and the analysis hero; C-22 the first column-full place and its CSS; C-19 the current child link. Then, approved by tajmin (4 Nov 2026: "Add the spec changes"): C-16 the rail variant shows whenever the rail is a column, from 1024, on every page (AN-11, amends DR-245), C-18 and C-19 the one Analysis item (AN-16), C-43 `PageTitle.description` (AN-12), `story-split-lead` title wrap (AN-07). Before: 1.28 · 30 October 2026 · XC fixes (spec log xc-fixes XF-01 to XF-09): Section 6 `--color-page-title-band`, `--quote-mark-width`, `--divider-column-inset`, `--rd-anchor-size` rows, `--space-eyebrow-separator` retired; CPT-07 helper variables; CPT-10 the separator takes the text color of its line; C-08 the CPT-10 separator, `format` in the hero and the region columns (category on news, DR-433 as amended), More stories; C-43 names the band token; C-25 `eyebrowMode`; DR-133 and DR-135 only on C-14 (C-12, C-23). Before: 1.27 · 30 October 2026 · Topic page (Topic spec log TP-03 to TP-05): Section 3 topic page sections and `TopicPageView`; C-24 `dated`: the format label only on a row with no Eyebrow; C-34 and Section 8: the topic page is built. Before: 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.30 · 5 November 2026 · Story roles and card variants (IMP-125 spec log IM-01 to IM-10; DR-450, DR-451, DR-453): N-06 story role names (lead, cover, top stories, feature); Section 3 `CategoryCoverSection`, `AnalysisCoverSection`, the P-2 rail as 3 text rows; Section 6 the `--space-story-*`, `--space-panel-large*`, `--space-inset-large-*`, `--space-overlap(-large)` names, `.overlap-large`, `--story-side-media-min` and `--story-side-media-share` replace the feature and analysis-lead media tokens, `story-side` replaces `story-split-lead`; C-02 option `large`; C-24 one `variant` prop (`top`, `thumbnail`, `side`, `dated`) with the title size per variant and `large`, every image 3:2; P-2 the `side` feature (1 : 2, no cap) and the text rail. Before: 1.29 · 4 November 2026 · Analysis hub (spec log analysis AN-03 to AN-06, AN-08 to AN-10, AN-15): Section 3 analysis hub sections and `AnalysisPageView`, `AnalysisHeroSection`, `AnalysisTopSection`; Section 6 `--story-analysis-lead-media-share`, `--story-analysis-lead-media-max`, `--space-analysis-top-row-gap` and `story-split-lead`; C-02 the analysis mosaic; C-24 size `lead` and the analysis hero; C-22 the first column-full place and its CSS; C-19 the current child link. Then, approved by tajmin (4 Nov 2026: "Add the spec changes"): C-16 the rail variant shows whenever the rail is a column, from 1024, on every page (AN-11, amends DR-245), C-18 and C-19 the one Analysis item (AN-16), C-43 `PageTitle.description` (AN-12), `story-split-lead` title wrap (AN-07). Before: 1.28 · 30 October 2026 · XC fixes (spec log xc-fixes XF-01 to XF-09): Section 6 `--color-page-title-band`, `--quote-mark-width`, `--divider-column-inset`, `--rd-anchor-size` rows, `--space-eyebrow-separator` retired; CPT-07 helper variables; CPT-10 the separator takes the text color of its line; C-08 the CPT-10 separator, `format` in the hero and the region columns (category on news, DR-433 as amended), More stories; C-43 names the band token; C-25 `eyebrowMode`; DR-133 and DR-135 only on C-14 (C-12, C-23). Before: 1.27 · 30 October 2026 · Topic page (Topic spec log TP-03 to TP-05): Section 3 topic page sections and `TopicPageView`; C-24 `dated`: the format label only on a row with no Eyebrow; C-34 and Section 8: the topic page is built. Before: 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -34,9 +34,9 @@ This file is the only home of the component specs (DR-372, DR-377). To change it
 | C-01 | `LeadStory` | Story units | Approved | DR-86, DR-87, DR-325 |
 | C-02 | `OverlapCard` | Story units (shared cards) | Approved | DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109, DR-325 |
 | C-03 | `StoryList` | Story units (shared cards) | Approved | DR-93, DR-96, DR-98, DR-101, DR-102, DR-124, DR-125, DR-300, DR-350 |
-| C-24 | `StoryCard` | Story units (shared cards) | Approved | DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153, DR-267, DR-283, DR-300, DR-308, DR-325; layout dated (27 Oct 2026) |
+| C-24 | `StoryCard` | Story units (shared cards) | Approved | DR-93, DR-108, DR-126, DR-152, DR-153, DR-267, DR-283, DR-300, DR-308, DR-325; layout dated (27 Oct 2026); variants DR-451, DR-453 (5 Nov 2026) |
 | C-25 | `StoryListItem` | Story units (shared cards) | Approved | DR-93, DR-101, DR-102, DR-126, DR-153 |
-| P-2 | `FeaturedCategorySection` | Sections | Approved | DR-93, DR-101, DR-103, DR-108, DR-110, DR-118, DR-119, DR-121, DR-122, DR-123, DR-300 |
+| P-2 | `FeaturedCategorySection` | Sections | Approved | DR-93, DR-101, DR-103, DR-108, DR-110, DR-122, DR-123, DR-300, DR-451 |
 | P-4 | `AnalysisSection` | Sections | Approved | DR-52, DR-76, DR-93, DR-101, DR-108, DR-110, DR-111, DR-205, DR-224, DR-264, DR-268, DR-300, DR-351 |
 | C-06 | `OpinionList` | Section components | Approved | DR-52, DR-76, DR-101, DR-110, DR-112, DR-113, DR-299, DR-300, DR-301, DR-351 |
 | C-23 | `CategoryBlock` | Section components | Approved | DR-53, DR-93, DR-101, DR-103, DR-110, DR-122, DR-123, DR-126, DR-127, DR-128, DR-134, DR-138, DR-139, DR-152, DR-239, DR-240, DR-245, DR-351 |
@@ -93,10 +93,10 @@ In page order. The pattern ID links to `spacing-layout-system.md` Section 7.2.
 |  |  |  | `HeroSection.topStories` | 2 × OverlapCard (C-02) | The two top stories under the lead |
 |  |  |  | `HeroSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | সর্বশেষ / Latest, in the rail. 2 columns at 768 to 1023px. আরও দেখুন to the Latest page (DR-350) |
 | — | `AdSlot variant="band"` | – | – | AdSlot | After every section except where layout §7.1 says no |
-| P-4 | `AnalysisSection` | বিশ্লেষণ ও মতামত / Analysis and opinion | `AnalysisSection.analysis` | FeatureStory (OverlapCard) + StoryList (2 × StoryCard row, 16:9, sm, third) + MoreLink | Start column. Eyebrow shows the story category |
+| P-4 | `AnalysisSection` | বিশ্লেষণ ও মতামত / Analysis and opinion | `AnalysisSection.analysis` | FeatureStory (OverlapCard) + StoryList (2 × StoryCard `thumbnail`) + MoreLink | Start column. Eyebrow shows the story category |
 |  |  |  | `AnalysisSection.opinion` | Chip মতামত + OpinionList (5 items) + MoreLink | End column |
-| P-2 | `FeaturedCategorySection` | Category or region name, for example দক্ষিণ এশিয়া, ভূরাজনীতি ও কূটনীতি / South Asia, Geopolitics and Diplomacy | `FeaturedCategorySection.featureStory` | StoryCard (row from 768, 3:2, md, split feature, summary) | The feature story in the wrapper |
-|  |  |  | `FeaturedCategorySection.rail` | StoryCard (stack beside, row third when stacked; 16:9, sm) + StoryList (2 × StoryListItem) | One image story and two text items |
+| P-2 | `FeaturedCategorySection` | Category or region name, for example দক্ষিণ এশিয়া, ভূরাজনীতি ও কূটনীতি / South Asia, Geopolitics and Diplomacy | `FeaturedCategorySection.featureStory` | StoryCard (`side`, summary) | The feature story in the wrapper |
+|  |  |  | `FeaturedCategorySection.rail` | StoryList (3 × StoryListItem) | Three text items, no image story (IMP-125 spec log IM-10) |
 |  |  |  | `FeaturedCategorySection.more` | MoreLink | আরও দেখুন, section end |
 | P-3 | `GroupedCategoriesSection` | None (each block has its own label) / None | `GroupedCategoriesSection.blocks` | 4 × CategoryBlock (C-23), 2 per row from 600 | One block per category |
 |  |  |  | `GroupedCategoriesSection.adInset` | AdSlot variant="inset" | Between the two rows of blocks, wrapper width |
@@ -113,9 +113,9 @@ Category page sections (`spacing-layout-system.md` 7B, DR-402). In page order, b
 | --- | --- | --- | --- | --- |
 | `CategoryPageView` | – | – | – | The page template for every category |
 | `PageTitle` (C-43) | Category name | – | – | The page `h1` |
-| `CategoryFeatureSection` | Hidden heading | `CategoryFeatureSection.featureStory` | OverlapCard (C-02, `feature`, no eyebrow) | The feature story in the wrapper |
-|  |  | `CategoryFeatureSection.cards` | `CategoryCardList`: 3 × StoryCard (C-24, row, 16:9, md, third, summary) | Card rows under the feature story, 1 per row at every width |
-|  | সর্বশেষ / Latest | `CategoryFeatureSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | In the rail |
+| `CategoryCoverSection` | Hidden heading | `CategoryCoverSection.coverStory` | OverlapCard (C-02, `large`, no eyebrow) | The cover story in the wrapper |
+|  |  | `CategoryCoverSection.cards` | `CategoryCardList`: 3 × StoryCard (C-24, `thumbnail`, summary) | Card rows under the cover story, 1 per row at every width |
+|  | সর্বশেষ / Latest | `CategoryCoverSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | In the rail |
 | `CategoryFormatsSection` | বিশ্লেষণ / Analysis, মতামত / Opinion (block headings) | `CategoryFormatsSection.blocks` | 2 × CategoryBlock (C-23): Analysis (featureStory StoryCard + StoryList), Opinion (`OpinionRows`, the C-06 quote rows) | Directly above Most read, up to 5 stories per block; 1 block per row on phones, 2 from 600 (DR-415) |
 | `MostReadSection` | সর্বাধিক পঠিত / Most read | `MostReadSection.list` | RankedList (C-07) | The top 5 of the category |
 | `MoreStoriesSection` | আরও পড়ুন / More stories | `MoreStoriesSection.list` | `MoreStoriesList`: StoryCard (C-24, `dated`), 10 at a time | 1 per row; Divider.rule and the load more Button (C-12). On the category page: news and analysis, never opinion (DR-415). Shared with the Latest and topic pages (`src/components/more-stories/`) |
@@ -142,7 +142,7 @@ Analysis hub sections (`spacing-layout-system.md` 7F, Analysis spec log AN-03). 
 | --- | --- | --- | --- | --- |
 | `AnalysisPageView` | – | – | – | The analysis hub template |
 | `PageTitle` (C-43) | বিশ্লেষণ / Analysis | – | – | The page `h1`, with `PageTitle.description` below it |
-| `AnalysisHeroSection` | – (hidden `h2` প্রধান বিশ্লেষণ / Lead analysis; `data-section="analysis-lead"`) | – | StoryCard (C-24, `row-from-md`, 3:2, `feature` split, size `lead`, the C-08 `category` Eyebrow, `story-split-lead`) | The newest analysis story, across the shell, no rail |
+| `AnalysisCoverSection` | – (hidden `h2` প্রধান বিশ্লেষণ / Lead analysis, `analysisPage.cover`; `data-section="analysis-cover"`) | – | StoryCard (C-24, `side`, `large`, the C-08 `category` Eyebrow) | The newest analysis story, across the shell, no rail |
 | `AnalysisTopSection` | – (hidden `h2` শীর্ষ বিশ্লেষণ / Top analysis; `data-section="analysis-top"`) | – | OverlapCard (C-02, the C-08 `category` Eyebrow) in a PeerRow, 2 x 2; the Rail with AdSlot `rail` | The next 4 analysis stories, in the wrapper of `WithRail`; Divider.column-full between the wrapper and the rail from 1024 |
 | `MoreStoriesSection` | আরও পড়ুন / More stories | `MoreStoriesSection.list` | `MoreStoriesList`, as on the category page: StoryCard (C-24, `dated`, the C-08 `category` Eyebrow, `h3` titles), 10 at a time | The rest of the analysis stories, newest first |
 
@@ -300,6 +300,17 @@ Make a part that two or more components use its own component, with its own C-ID
 
 Use the names and words of Section 3 of this document in specs, briefs, canvas boards, code and chat. (DR-162, DR-259)
 
+### N-06 Name a story by its role
+
+A story on a page has one of four roles. Name a section, a part or an option by the role, not by the page or the place.
+
+- Lead: the main story of the homepage, the LeadStory (C-01) of HeroSection (P-1).
+- Cover: the main story of any other page, for example `CategoryCoverSection` and `AnalysisCoverSection`. Its card takes the option `large` (OverlapCard C-02, StoryCard C-24).
+- Top stories: the next stories after the lead or the cover, for example the hero top stories and `AnalysisTopSection`.
+- Feature: the bigger story in a homepage section, for example `FeaturedCategorySection.featureStory` and the CategoryBlock first story.
+
+A card names its look by a variant (StoryCard `top`, `thumbnail`, `side`, `dated`) and a size option (`large`), never by a role. (DR-450, DR-451, DR-453; IMP-125 spec log IM-01)
+
 ## 5. Container sizes
 
 A component sets `container-type: inline-size` on its root and reacts to its own width (`CPT-04`). The narrow style is the base. `@container (width >= 600px)` is medium. `@container (width >= 880px)` is wide. The page layout keeps the viewport breakpoints. Some sheets switch at a page breakpoint; the sheet says so.
@@ -319,15 +330,15 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--bar-brand` | 6px | 8px | 10px | Thickness of the brand bar on LeadStory | DR-86 |
 | `--color-bar` | brand (light) / interactive (dark) |  |  | Color of the brand bar | DR-86 |
 | `--color-page-title-band` | surface (light) / surface (dark) |  |  | C-43 PageTitle band background. Class `bg-(--color-page-title-band)`, as `--color-bar`; no `@theme` utility (tajmin, 30 Oct 2026) | DR-424, DR-425 |
-| `--space-lead-inset` | start 0, end 2rem (32px) | clamp(2rem, 4.2cqi, 2.5rem) | same (40px at 952) | Image edge to panel edge, each side. Scales with the card width, 32 to 40px | DR-86, DR-89 |
-| `--space-lead-panel` | 1rem top and end, 0 at the start | 1.5rem (24px) | 2rem (32px) | Padding inside the lead panel | DR-86 |
-| `--space-lead-overlap` | 2rem (32px) | clamp(4rem, 10cqi, 6rem) | same (95px at 952) | How far the lead panel covers the image. Scales with the card width, 64 to 96px (65 at 648, 72 at 720) | DR-86, DR-89 |
-| `--space-lead-eyebrow-title` | 0.5rem (8px) | same | same | LeadStory: eyebrow to title | DR-92 |
-| `--space-lead-summary-meta` | 1rem (16px) | same | same | LeadStory: summary to meta | DR-92 |
+| `--space-inset-large` | start 0, end 2rem (32px) | clamp(2rem, 4.2cqi, 2.5rem) | same (40px at 952) | Image edge to the large panel edge, each side. Scales with the card width, 32 to 40px | DR-86, DR-89, DR-453 |
+| `--space-panel-large` | 1rem top and end, 0 at the start | 1.5rem (24px) | 2rem (32px) | Padding inside the large panel (LeadStory, OverlapCard `large`) | DR-86, DR-453 |
+| `--space-overlap-large` | 2rem (32px) | clamp(4rem, 10cqi, 6rem) | same (95px at 952) | How far the large panel covers the image. Scales with the card width, 64 to 96px (65 at 648, 72 at 720) | DR-86, DR-89, DR-453 |
+| `--space-story-eyebrow-title` | 0.5rem (8px) | same | same | Every story unit: eyebrow to title | DR-92, DR-453 |
+| `--space-story-summary-meta` | 1rem (16px) | same | same | LeadStory, OverlapCard, StoryCard: summary to meta | DR-92, DR-453 |
 | `--space-page-title-band` | 1.5rem (24px) | 2rem (32px) | 2.5rem (40px) | C-43 PageTitle band: the block inset above and below the content. Not the LAY-20 panel band values (tajmin, 28 Oct 2026; spec log category-formats CF-06) | DR-415 |
 | `--color-meta` | #6E6862 (light, 5.2:1 on background, 4.8:1 on surface-alt) | #A3A3A3 (dark, unchanged) |  | Metadata text and its separator. Same value as ink-muted: #6E6862 is the light ink-muted value for all muted text (captions, labels, ad label), replacing #4F4B48 | DR-100 |
 | `--bar-section` | 2.5rem x 0.5rem (40 x 8px) | 2.5rem x 0.5rem (40 x 8px) | 3rem x 0.5rem (48 x 8px) | Section divider bar, width x height (DR-262). Columns: phone / 600-1023 / 1024 and up (page breakpoints). 48 x 6 under 1024  | DR-103 |
-| `--space-card-overlap` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same (DR-109: every width) | same (46px at 464, 58px at 584) | How far a story card text block covers its image: 10% of the card width, 40 to 64px. Same percent rule as the lead (DR-89) | DR-105, DR-109 |
+| `--space-overlap` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same (DR-109: every width) | same (46px at 464, 58px at 584) | How far a story card text block covers its image: 10% of the card width, 40 to 64px. Same percent rule as the lead (DR-89) | DR-105, DR-109, DR-453 |
 | `--space-card-notch` | clamp(2.5rem, 10cqi, 4rem): 40px at 328 | same | same (46px at 464, 58px at 584) | Image left visible at the end side of an overlap card: 10% of the card width, 40 to 64px | DR-105, DR-109 |
 | `--button-height` | 3rem (48px) | same | same | Button height at every width | DR-208 |
 | `--button-padding` | 1.25rem (20px) | same | same | Button side padding | DR-208 |
@@ -336,12 +347,9 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--icon-size` | 1.25rem (20px) | same | same | Icon size in buttons and icon buttons, every width | DR-208 |
 | `--button-icon-gap` | 0.5rem (8px) | same | same | Space between a button label and its icon | DR-208 |
 | `--top-bar-inset` | 0.625rem (10px) | 1.125rem (18px) at 600; 1rem (16px) from 768 |  | TopBar side padding = page gutter minus the controls inner space (C-17): (32 - 20) / 2 = 6 under 768, (36 - 20) / 2 = 8 from 768 (DR-349). Columns: phone / 600 and 768 up | DR-294, DR-349 |
-| `--space-lead-panel-start` | 0 | var(--space-lead-panel) | same | Lead panel padding at the start side (container width 600 and up) | DR-297 |
-| `--story-feature-media-min` | 26.25rem (420px) | same | same | Feature split: smallest image column (C-24, P-2) | DR-297 |
-| `--story-feature-media-max` | 34.8125rem (557px) | same | same | Feature split: largest image column | DR-297 |
-| `--story-feature-media-share` | 0.5 | same | 0.6 from 1024 | Feature split: image share of the row (minus one column gap) | DR-297 |
-| `--story-analysis-lead-media-share` | calc(2 / 3) | same | same | The analysis hub hero (C-24 feature split): image share of the row, text : image = 1 : 2. Set on the card by `story-split-lead` | Analysis spec log AN-05 |
-| `--story-analysis-lead-media-max` | 100% | same | same | The analysis hub hero: no cap on the image column (the 420px min stays). Set by `story-split-lead` | Analysis spec log AN-05 |
+| `--space-panel-large-start` | 0 | var(--space-panel-large) | same | Large panel padding at the start side (container width 600 and up) | DR-297, DR-453 |
+| `--story-side-media-min` | 26.25rem (420px) | same | same | StoryCard `side` (C-24): smallest image column | DR-453; IMP-125 spec log IM-08 |
+| `--story-side-media-share` | calc(2 / 3) | same | same | StoryCard `side`: image share of the row (minus one column gap), text : image = 1 : 2, no cap | DR-451, DR-453; IMP-125 spec log IM-08 |
 | `--space-analysis-top-row-gap` | var(--grid-row-gap) | same | 2rem (32px) from 1280 | The analysis hub mosaic: the gap between the two card rows | Analysis spec log AN-09 |
 | `--rank-chip-size` | 2.25rem (36px) | same | 2.75rem (44px) from 1024 | RankedList: the square rank chip | category spec log CL-10 |
 | `--rank-chip-digit-size` | 1.5rem (24px) | same | 2rem (32px) from 1024 | RankedList: the chip digits | category spec log CL-10 |
@@ -352,20 +360,20 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--quote-mark-width` | 1.75rem (28px) | 2.25rem (36px) from 600 | 2.75rem (44px) from 1024 | OpinionList (C-06): the quote mark width; it also sets where the item rule starts (`--divider-item-start`, a helper) | DR-351 |
 | `--rd-anchor-size` | max(1.3em, 1.5rem) | same | same | Article page `SectionAnchor` button size (C-27 to C-42), scoped on `.rd-anchor` in `reader.css` | DR-391 |
 
-In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-height`, and `--space-lead-inset` is the pair `--space-lead-inset-start` and `--space-lead-inset-end`.
+In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-height`, and `--space-inset-large` is the pair `--space-inset-large-start` and `--space-inset-large-end`.
 
 ```css
 :root {
   --bar-brand: 0.375rem;
   --bar-section-width: 2.5rem;
   --bar-section-height: 0.5rem;
-  --space-lead-inset-start: 0;
-  --space-lead-inset-end: 2rem;
-  --space-lead-panel: 1rem;
-  --space-lead-overlap: 2rem;
-  --space-lead-eyebrow-title: 0.5rem;
-  --space-lead-summary-meta: 1rem;
-  --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
+  --space-inset-large-start: 0;
+  --space-inset-large-end: 2rem;
+  --space-panel-large: 1rem;
+  --space-overlap-large: 2rem;
+  --space-story-eyebrow-title: 0.5rem;
+  --space-story-summary-meta: 1rem;
+  --space-overlap: clamp(2.5rem, 10cqi, 4rem);
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);
   --color-meta: var(--ink-muted);
@@ -377,13 +385,10 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --icon-size: 1.25rem;
   --button-icon-gap: 0.5rem;
   --top-bar-inset: 0.625rem;
-  --space-lead-panel-start: 0;
+  --space-panel-large-start: 0;
   --space-page-title-band: 1.5rem;
-  --story-feature-media-min: 26.25rem;
-  --story-feature-media-max: 34.8125rem;
-  --story-feature-media-share: 0.5;
-  --story-analysis-lead-media-share: calc(2 / 3);
-  --story-analysis-lead-media-max: 100%;
+  --story-side-media-min: 26.25rem;
+  --story-side-media-share: calc(2 / 3);
   --space-analysis-top-row-gap: var(--grid-row-gap);
   --divider-rule: 1px;
   --divider-column-inset: 1rem;
@@ -411,7 +416,6 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   :root {
     --bar-section-width: 3rem;
     --bar-section-height: 0.5rem;
-    --story-feature-media-share: 0.6;
     --rank-chip-size: 2.75rem;
     --rank-chip-digit-size: 2rem;
     --rank-chip-digit-weight: 600;
@@ -424,40 +428,50 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   :root { --rank-list-gap: 2rem; --space-analysis-top-row-gap: 2rem; }
 }
 
-/* LeadStory root: container-type: inline-size. .overlap-feature is the OverlapCard
-   feature body (C-02): the card is its container */
+/* LeadStory root: container-type: inline-size. .overlap-large is the OverlapCard
+   large body (C-02): the card is its container */
 @container (width >= 600px) {
   .lead-story,
-  .overlap-feature {
+  .overlap-large {
     --bar-brand: 0.5rem;
-    --space-lead-inset-start: clamp(2rem, 4.2cqi, 2.5rem);
-    --space-lead-inset-end: clamp(2rem, 4.2cqi, 2.5rem);
-    --space-lead-panel: 1.5rem;
-    --space-lead-panel-start: var(--space-lead-panel);
-    --space-lead-overlap: clamp(4rem, 10cqi, 6rem);
+    --space-inset-large-start: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-inset-large-end: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-panel-large: 1.5rem;
+    --space-panel-large-start: var(--space-panel-large);
+    --space-overlap-large: clamp(4rem, 10cqi, 6rem);
   }
 }
 
 @container (width >= 880px) {
   .lead-story,
-  .overlap-feature {
+  .overlap-large {
     --bar-brand: 0.625rem;
-    --space-lead-panel: 2rem;
-    --space-lead-panel-start: var(--space-lead-panel);
+    --space-panel-large: 2rem;
+    --space-panel-large-start: var(--space-panel-large);
   }
 }
 
-/* Feature split: image column width (C-24, P-2) */
-/* clamp(var(--story-feature-media-min), calc((100% - var(--grid-column-gap)) * var(--story-feature-media-share)), var(--story-feature-media-max)) */
-
-/* The analysis hub hero: text : image = 1 : 2, no image cap (Analysis spec log AN-05).
-   The title wraps pretty, not balance, so its lines fill up to the gap before the image
-   (TYP-13 exception, Analysis spec log AN-07). */
-@utility story-split-lead {
-  --story-feature-media-share: var(--story-analysis-lead-media-share);
-  --story-feature-media-max: var(--story-analysis-lead-media-max);
+/* StoryCard side (C-24): the image column is 2 / 3 of the row minus the gap, at least
+   420px, no cap. The title wraps pretty, not balance, so its lines fill up to the gap
+   before the image (TYP-13 exception, Analysis spec log AN-07). Stacks under 17.5rem. */
+@utility story-side {
+  grid-template-areas: "body media";
+  grid-template-columns:
+    minmax(0, 1fr)
+    max(
+      var(--story-side-media-min),
+      calc((100% - var(--grid-column-gap)) * var(--story-side-media-share))
+    );
+  column-gap: var(--grid-column-gap);
+  row-gap: 0;
   & :is(h2, h3, h4) {
     text-wrap: pretty;
+  }
+  @container (width < 17.5rem) {
+    grid-template-areas: "media" "body";
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: var(--space-story-media-text);
   }
 }
 
@@ -498,7 +512,7 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
     margin-block: calc(-1 * var(--rank-chip-ink-start)) calc(-1 * var(--rank-chip-ink-end));
   }
 }
-The container rule sets the lead tokens on `.lead-story`, so the `@container` is the parent of `.lead-story`, not the card itself (DR-297). The feature split utilities `story-split-third` and `story-split-feature` and the poll utility `poll-layout` are in `components.css` (DR-297, DR-298).
+The container rule sets the lead tokens on `.lead-story`, so the `@container` is the parent of `.lead-story`, not the card itself (DR-297). The StoryCard variant utilities `story-top`, `story-thumbnail` and `story-dated` (C-24) and the poll utility `poll-layout` are in `components.css` (DR-297, DR-298).
 
 ```
 
@@ -549,13 +563,13 @@ The one lead story of the whole site, in the homepage hero (P-1) only (DR-155). 
 | `LeadStory.title` | type-story-lead, ink, text-wrap balance, max measure-article-title. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
 | `LeadStory.summary` | Optional. type-summary at weight 500 (DR-97), ink-secondary, max measure-deck |
 | `LeadStory.meta` | type-metadata at weight 400 (DR-96), --color-meta |
-| Spacing | Eyebrow to title --space-lead-eyebrow-title (8px); title to summary space-story-title-summary (8px); summary to meta --space-lead-summary-meta (16px) |
+| Spacing | Eyebrow to title --space-story-eyebrow-title (8px); title to summary space-story-title-summary (8px); summary to meta --space-story-summary-meta (16px) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
 | Image | Full width | Full width | Full width |
 | Brand bar | 6px, top of the panel | 8px, top of the panel | 10px, top of the panel |
-| Panel | Covers the image by 32px. Starts at the image start edge (left in Bangla and English); 32px of image shows at the end side. Padding 16px top and end, 0 at the start, so text lines up with the image edge | Covers the image by --space-lead-overlap (10% of the card width, min 64px). Inset --space-lead-inset each side (centered, 32px). Padding 24px | Covers the image by --space-lead-overlap (95px at 952). Inset --space-lead-inset (4.2%, max 40px). Padding 32px |
+| Panel | Covers the image by 32px. Starts at the image start edge (left in Bangla and English); 32px of image shows at the end side. Padding 16px top and end, 0 at the start, so text lines up with the image edge | Covers the image by --space-overlap-large (10% of the card width, min 64px). Inset --space-inset-large each side (centered, 32px). Padding 24px | Covers the image by --space-overlap-large (95px at 952). Inset --space-inset-large (4.2%, max 40px). Padding 32px |
 | Title | type-story-lead | Same | Same, capped by measure-article-title |
 | Summary, meta | Shown | Shown | Shown |
 
@@ -585,27 +599,27 @@ The one lead story of the whole site, in the homepage hero (P-1) only (DR-155). 
 
 #### C-02 OverlapCard
 
-**Status:** Approved · **Decisions:** DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109, DR-325; `feature` and `eyebrow` (DR-407)
+**Status:** Approved · **Decisions:** DR-91, DR-93, DR-97, DR-98, DR-99, DR-105, DR-106, DR-109, DR-325; `large` (was `feature`, DR-407, DR-451, DR-453) and `eyebrow` (DR-407)
 
-The image-led story card with the text block over the image bottom. Used for the two stories under the lead in the hero (P-1), the first story of the analysis column (P-4) the feature story of the category page (`CategoryFeatureSection`, `feature`) and the 2 x 2 mosaic of the analysis hub (`AnalysisTopSection`, not `feature`, the C-08 `category` Eyebrow; Analysis spec log AN-08). First shared card of the DR-93 merge (DR-106).
+The image-led story card with the text block over the image bottom. Used for the two stories under the lead in the hero (P-1), the first story of the analysis column (P-4) the cover story of the category page (`CategoryCoverSection`, `large`) and the 2 x 2 mosaic of the analysis hub (`AnalysisTopSection`, not `large`, the C-08 `category` Eyebrow; Analysis spec log AN-08). First shared card of the DR-93 merge (DR-106).
 
-**Variants.** surface: background (hero) | elevated (P-4). Sets the text block color to the section background (DR-283). feature: the feature story of a section (category page): the title in type-story-lead, and the body ends with --space-lead-panel, which steps with the card width as in LeadStory (the `.overlap-feature` container rule, Section 6). eyebrow: false drops the Eyebrow when the page title names the category (DR-153).
+**Variants.** surface: background (hero) | elevated (P-4). Sets the text block color to the section background (DR-283). large: the cover story of a page (N-06; category page): the cover title (`font-editorial text-4xl font-semibold text-balance`), and the body ends with --space-panel-large, which steps with the card width as in LeadStory (the `.overlap-large` container rule, Section 6). eyebrow: false drops the Eyebrow when the page title names the category (DR-153).
 
 | Part | Spec |
 | --- | --- |
 | `OverlapCard.media` | Image, 16:9, square corners (StoryImage). No image: the no-image placeholder (DR-338) |
-| `OverlapCard.body` | Text block in the background color of its section (page color in the hero, surface-elevated in P-4), no border. Covers the image bottom by --space-card-overlap from the start edge, stops --space-card-notch short of the end edge |
+| `OverlapCard.body` | Text block in the background color of its section (page color in the hero, surface-elevated in P-4), no border. Covers the image bottom by --space-overlap from the start edge, stops --space-card-notch short of the end edge |
 | `OverlapCard.eyebrow` | Category: type-eyebrow, interactive (link) |
-| `OverlapCard.title` | type-story-title (feature: type-story-lead), ink, h3. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
+| `OverlapCard.title` | Card title `font-editorial text-2xl font-semibold` (large: the cover title `text-4xl`), ink, h3. News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
 | `OverlapCard.summary` | Optional. type-summary at weight 500 (DR-97), ink-secondary |
 | `OverlapCard.meta` | type-metadata at weight 400 (DR-96), --color-meta |
 | Spacing | Same gaps as LeadStory: 8 / 8 / 16px (DR-92) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| Body | Same look as every width: overlap and notch 40px at 328 (DR-109, replaces DR-94) | Covers the image by --space-card-overlap (10% of card width, 46px at 464); --space-card-notch (10%) of image shows at the end side; padding 16px top and end, 0 at the start (DR-105) | Same |
+| Body | Same look as every width: overlap and notch 40px at 328 (DR-109, replaces DR-94) | Covers the image by --space-overlap (10% of card width, 46px at 464); --space-card-notch (10%) of image shows at the end side; padding 16px top and end, 0 at the start (DR-105) | Same |
 | Title | type-story-title | Same | Same |
-| Place | Phone: stacked under the lead. 768: pair, 348px each. 1024: pair, 312px. 1366: pair, 464px. Category page: one feature card, the wrapper width |  |  |
+| Place | Phone: stacked under the lead. 768: pair, 348px each. 1024: pair, 312px. 1366: pair, 464px. Category page: one `large` card, the wrapper width |  |  |
 
 **Content.**
 
@@ -621,7 +635,7 @@ The image-led story card with the text block over the image bottom. Used for the
 **Checks.**
 
 - No border and border-radius 0.
-- Body covers the image by --space-card-overlap and leaves --space-card-notch of image at the end side (46px each on a 464px card, 40px on a 328px card).
+- Body covers the image by --space-overlap and leaves --space-card-notch of image at the end side (46px each on a 464px card, 40px on a 328px card).
 
 #### C-03 StoryList
 
@@ -666,24 +680,34 @@ Shared list (DR-162, was LatestList): a ul of story items with 16px padding and 
 
 #### C-24 StoryCard
 
-**Status:** Approved · **Decisions:** DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153, DR-267, DR-283, DR-300, DR-308, DR-325; layout dated: DR-406
+**Status:** Approved · **Decisions:** DR-93, DR-108, DR-118, DR-119, DR-121, DR-126, DR-152, DR-153, DR-267, DR-283, DR-300, DR-308, DR-325; layout dated: DR-406; variants: DR-451, DR-453 (IMP-125 spec log IM-05 to IM-07)
 
 Shared card from the merge (DR-93): one story with an image and text. Draws every image story that is not a LeadStory or an OverlapCard. Takes over the working name StoryRow (DR-121). Merge approved (DR-153): no approved look changes.
 
-**Variants.** layout: stack | row | row-from-md | row-until-lg | dated (the section sets it; a layout value changes only the grid, never the markup order, DR-283). ratio: 3:2 | 16:9. size: lead (type-story-lead, the analysis hub hero; Analysis spec log AN-06) | md (type-story-title) | sm (type-story-title-sm, 18 to 20px). split, row only: third (2fr 1fr, DR-108) | feature (DR-118, DR-119 clamp); both use --grid-column-gap between text and image (DR-300). The analysis hub hero adds `story-split-lead` to the feature split: text : image = 1 : 2, no image cap (Analysis spec log AN-04, AN-05). eyebrow and summary optional.
+**Variants.** One prop, `variant` (the section sets it; a variant changes only the grid and the title, never the markup order, DR-283). The variant sets the title size, not the card width (DR-459, amends DR-451):
+
+| Variant | Grid (utility) | Title |
+| --- | --- | --- |
+| `top` (default) | Image above the text (`story-top`) | Card title `font-editorial text-2xl font-semibold` |
+| `thumbnail` | Text at the start, image at the end, 2fr 1fr (`story-thumbnail`, DR-108) | List title `font-editorial text-lg font-semibold` |
+| `side` | Under 768: as `top`. From 768: text at the start, image at the end; the image column is 2 / 3 of the row minus the gap, at least 420px, no cap (`md:story-side`, `--story-side-media-min`, `--story-side-media-share`); the title wraps `pretty` (AN-07) | Card title; with `large`, the cover title `font-editorial text-4xl font-semibold text-balance` |
+| `dated` | The date column, the text, the image (`story-dated`, DR-406) | Card title |
+
+Option `large`, on `side` only: the cover story of a page (N-06; the analysis hub cover). Every row uses --grid-column-gap between text and image (DR-300). Every StoryCard image is 3:2 (DR-453); there is no ratio prop. eyebrow and summary optional.
 
 | Part | Spec |
 | --- | --- |
-| `StoryCard.media` | Image, ratio prop, square corners, grid area media. Link with tabindex -1 and aria-hidden |
-| `StoryCard.body` | Grid area body. Markup order follows LAY-14: stack has media then body; row has media then body in the DOM and the grid places the image at the end (DR-267). Eyebrow (optional), title h3, summary (optional, 500), meta. Title: News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
-| Spacing | stack: media, 16px, body. Eyebrow to title 8px; title to summary 8px; summary to meta 16px; title to meta 8px when no summary |
-| `StoryCard.date` | dated only: the meta line in its own grid area, the time only (no reading time). Under 600px: media, space-story-media-text, body, space-lead-summary-meta, date. From 600px: three columns, date (8rem) \| body \| media, body : media = 2 : 1, --grid-column-gap between them, all three top-aligned. Stacks as under 600px when the card is narrower than 17.5rem (DR-308) |
+| `StoryCard.media` | Image 3:2 (`aspect-3/2`), square corners, grid area media. Link with tabindex -1 and aria-hidden |
+| `StoryCard.body` | Grid area body. Markup order follows LAY-14: `top` has media then body; a row has media then body in the DOM and the grid places the image at the end (DR-267). Eyebrow (optional), title h3, summary (optional, 500), meta. Title: News link: hover ink-muted, no pressed color, no underline (COL-06, DR-199) |
+| Spacing | `top`: media, 16px, body. Eyebrow to title 8px; title to summary 8px; summary to meta 16px; title to meta 8px when no summary |
+| `StoryCard.date` | dated only: the meta line in its own grid area, the time only (no reading time). Under 600px: media, space-story-media-text, body, --space-story-summary-meta, date. From 600px: three columns, date (8rem) \| body \| media, body : media = 2 : 1, --grid-column-gap between them, all three top-aligned. Stacks as under 600px when the card is narrower than 17.5rem (DR-308) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| stack | P-2 featureStory under 768 (3:2, md, summary); CategoryBlock featureStory (3:2, md, summary, DR-152) | RegionSlider.panel first story (3:2, sm) | P-2 rail image story in the 304 rail beside (16:9, sm, DR-121) |
-| row | P-2 rail image story when the rail stacks, phones too (16:9, sm, third, DR-121) | P-4 AnalysisSection compact rows (16:9, sm, eyebrow, third) | P-2 featureStory from 768 (3:2, md, summary, feature) |
-| dated | Category page More stories, stacked (16:9, md, summary, no eyebrow; an analysis story shows the C-08 `format` Eyebrow above the title, `formatLabel`, DR-415). With the Eyebrow on (Latest: `category`; topic page: `format`), the row shows that one Eyebrow and no second format label (Topic spec log TP-04) | Same, three columns from 600 | Same |
+| top | CategoryBlock featureStory (summary, DR-152); article related stories | RegionSlider.panel first story (P-6; card title, DR-459) | Same |
+| thumbnail | P-4 AnalysisSection compact rows (eyebrow, no summary); category page cards (`CategoryCardList`, summary; list title, DR-459) | Same | Same |
+| side | P-2 featureStory and the analysis hub cover (`large`): stacked under 768 | From 768: text : image = 1 : 2 | Same |
+| dated | Category page More stories, stacked (summary, no eyebrow; an analysis story shows the C-08 `format` Eyebrow above the title, `formatLabel`, DR-415). With the Eyebrow on (Latest: `category`; topic page: `format`), the row shows that one Eyebrow and no second format label (Topic spec log TP-04) | Same, three columns from 600 | Same |
 
 **Content.**
 
@@ -693,12 +717,12 @@ Shared card from the merge (DR-93): one story with an image and text. Draws ever
 **Accessibility.**
 
 - Each story is an article with an h3 title link; one tab stop per story.
-- Markup order = reading order (LAY-14, DR-267): the image comes before the text in the markup at every layout; in row layout grid areas place the image at the end (no order property).
+- Markup order = reading order (LAY-14, DR-267): the image comes before the text in the markup in every variant; in a row the grid areas place the image at the end (no order property).
 
 **Checks.**
 
 - No radius, no card border.
-- Every row layout stacks (image on top, text below) when its container is narrower than 17.5rem (@container, rem-based): at 200% text the rows below 1280 stack; at normal text no row stacks. Check the value in the build (A11Y-18, DR-308).
+- Every row variant (`thumbnail`, `side`, `dated`) stacks (image on top, text below) when its container is narrower than 17.5rem (@container, rem-based): at 200% text the rows below 1280 stack; at normal text no row stacks. Check the value in the build (A11Y-18, DR-308).
 - Image loads lazily, except the hero cards (DR-325).
 - `imageFadeIn` (off by default): the image stays transparent over the `surface-alt` slot fill until it has loaded, then fades in (`story-image-fade`). Only the rows a load more press adds use it (spacing-layout 7B.2, Latest spec log LT-03).
 - The list around the card draws rules and padding, not the card.
@@ -710,7 +734,7 @@ Shared card from the merge (DR-93): one story with an image and text. Draws ever
 
 Shared card from the merge (DR-93): one story as a text row, title + meta, no image.
 
-`eyebrowMode` (optional): the C-08 Eyebrow in that mode above the title, `--space-lead-eyebrow-title` to the title; none when unset. The homepage region columns set `format` (DR-433, amended 30 Oct 2026); every other list leaves it unset.
+`eyebrowMode` (optional): the C-08 Eyebrow in that mode above the title, `--space-story-eyebrow-title` to the title; none when unset. The homepage region columns set `format` (DR-433, amended 30 Oct 2026); every other list leaves it unset.
 
 **Variants.** None. The meta content changes by place (category and time in Latest; time and read time elsewhere).
 
@@ -740,27 +764,24 @@ Shared card from the merge (DR-93): one story as a text row, title + meta, no im
 
 #### P-2 FeaturedCategorySection
 
-**Status:** Approved · **Decisions:** DR-93, DR-101, DR-103, DR-108, DR-110, DR-118, DR-119, DR-121, DR-122, DR-123, DR-300
+**Status:** Approved · **Decisions:** DR-93, DR-101, DR-103, DR-108, DR-110, DR-122, DR-123, DR-300, DR-451 (amends DR-118, DR-119, DR-121)
 
-The featured section (P-2: the region দক্ষিণ এশিয়া, the category ভূরাজনীতি; DR-412): a FeatureStory in the wrapper and a rail with one image story and 2 text rows. Was the C-04 sheet CategoryLead (DR-162).
+The featured section (P-2: the region দক্ষিণ এশিয়া, the category ভূরাজনীতি; DR-412): a FeatureStory in the wrapper and a rail with 3 text rows, no image story (DR-451; IMP-125 spec log IM-10). Was the C-04 sheet CategoryLead (DR-162).
 
 **Variants.** None. Each card is one CSS grid with named areas (body, media). The page breakpoint switches the columns and areas; the markup does not change.
 
 | Part | Spec |
 | --- | --- |
 | Heading | Section divider (C-22) + category name, h2, plain text, not a link (DR-122) |
-| featureStory (StoryCard) | Grid, areas body + media, top aligned, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). From 768: text left, image right; image min 420px, max 557px; 50% of the free width from 768 to 1023 (DR-119), 60% from 1024 (DR-118): minmax(0, 1fr) clamp(26.25rem, calc((100% - var(--grid-column-gap)) * 0.5 \| 0.6), 34.8125rem). Under 768: one column, image on top, 16px, text below (no overlap). Image 3:2. Title type-story-title (fluid 22 to 26px), summary (500), meta. No eyebrow. Not an OverlapCard |
-| rail StoryCard, rail beside | Grid, areas media / body in one column: 16:9 image, 16px, title type-story-title-sm (18 to 20px, 600), 8px, meta. Rule below |
-| rail StoryCard, rail below | Grid 2fr 1fr, areas body media: text at the start, 16:9 image at the end, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300), 16px padding (same as the AnalysisSection rows, DR-108). Rule below |
-| rail StoryList (2 × StoryListItem) | Title type-story-title-sm + meta, 16px padding, rule between rows (StoryList) |
+| featureStory (StoryCard `side`) | Grid, areas body + media, top aligned, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). From 768: text at the start, image at the end; the image column is 2 / 3 of the row minus the gap, at least 420px, no cap: minmax(0, 1fr) max(26.25rem, calc((100% - var(--grid-column-gap)) * 2 / 3)) (DR-451, IMP-125 spec log IM-09; replaces the DR-118, DR-119 clamp). Under 768: one column, image on top, 16px, text below (no overlap). Image 3:2. Card title (`text-2xl`, 20 to 24px), wraps `pretty`, summary (500), meta. No eyebrow. Not an OverlapCard |
+| rail StoryList (3 × StoryListItem) | The first 3 rail stories, no image: list title (`text-lg`) + meta, 16px padding, rule between rows (StoryList, IMP-125 spec log IM-10; replaces the DR-121 rail image story) |
 | MoreLink | আরও দেখুন links to the category page: one per section, below the feature story and the rail, at the section end edge (DR-110, DR-123) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| featureStory | Under 768 (phone and 600 to 767): one column, image then text | 768 to 1023: text : image 276 : 420 at 768, 408 : 420 at 900, 475 : 476 at 1023 (DR-119) | 1024 and up: 204 : 420 at 1024, 280 : 420 at 1100, 352 : 527 at 1279, 352 : 528 at 1280, 371 : 557 at 1328+ |
-| featureStory title | 22px | 24px at 768 | 25px at 1024, 26px from 1280 |
+| featureStory | Under 768 (phone and 600 to 767): one column, image then text | 768 to 1023: text, then the image at 2 / 3 of the row minus the gap (420px or more) | 1024 and up: the same rule; at 1024 the 420px minimum holds and the text column is about 204px |
+| featureStory title | Card title, 20 to 24px | Same | Same |
 | Rail | Below the feature story, stacked | Below the feature story, full width, stacked | 304px rail beside the wrapper from 1024 |
-| Rail image story | Row: text left, image right, 2 : 1 (DR-121) | Row: text left, image right, 2 : 1 | 304 rail beside: image on top, text below  |
 
 **Content.**
 
@@ -792,7 +813,7 @@ The analysis column (left) of বিশ্লেষণ ও মতামত (P-4)
 | --- | --- |
 | Section background | Panel band (layout §5.3, DR-264): surface-elevated across the full viewport width; the content stays in the shell (page gutter, 1280px max). Block inset from panel-inset only: 40px under 600px, 48px from 600px; no inline inset. space-module outside as margin (DR-205) |
 | Column rule | From 768 (columns side by side): Divider.column-inset between analysis and opinion, 1px solid, border color, 16px from the top and the bottom, centered in the gap. The gap is --space-analysis-gap: 32px at 768 to 1023, 48px at 1024 to 1279, 64px from 1280, a stated exception to --grid-column-gap (layout §3.1, DR-356) |
-| featureStory (OverlapCard) | OverlapCard (C-02): image 16:9, text block covers the image bottom by --space-card-overlap (10% of card width), notch --space-card-notch (10%) at the end side; text block background = section background (surface-elevated). Eyebrow, title, summary (500), meta |
+| featureStory (OverlapCard) | OverlapCard (C-02): image 16:9, text block covers the image bottom by --space-overlap (10% of card width), notch --space-card-notch (10%) at the end side; text block background = section background (surface-elevated). Eyebrow, title, summary (500), meta |
 | StoryList (2 × StoryCard row) | Grid: text at the start, 16:9 image at the end, text : image = 2 : 1 (grid 2fr 1fr) at every width, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). At 200% browser text size the rows stack: image on top, text below, no sideways scroll (DR-81). Eyebrow, title type-story-title-sm (18 to 20px, 600), meta. No summary. Divider.item (C-22) between the rows, the same as every list (DR-268) |
 | Eyebrow | The story category (not the word বিশ্লেষণ on every item) |
 | MoreLink | আরও দেখুন below the column, aligned to the column end (right) edge, with a right caret (DR-110, C-10) |

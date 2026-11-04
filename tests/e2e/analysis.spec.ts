@@ -38,7 +38,7 @@ const WIDTHS = [
   1920,
 ];
 
-const hero = (page: Page) => page.locator('[data-section="analysis-lead"]');
+const hero = (page: Page) => page.locator('[data-section="analysis-cover"]');
 const mosaic = (page: Page) =>
   page.locator('[data-section="analysis-top"] [data-overlap-card]');
 const more = (page: Page) =>
@@ -82,14 +82,14 @@ for (const p of PAGES) {
           (el) =>
             el.getAttribute("data-section") ??
             el.getAttribute("data-ad-slot") ??
-            (el.hasAttribute("data-analysis-lead-rule")
+            (el.hasAttribute("data-analysis-cover-rule")
               ? "rule"
               : el.tagName.toLowerCase()),
         ),
       );
       expect(order).toEqual([
         "header",
-        "analysis-lead",
+        "analysis-cover",
         "rule",
         "analysis-top",
         "ad-band",
@@ -199,7 +199,7 @@ for (const p of PAGES) {
         // (typography 3.1, tajmin, 4 Nov 2026).
         const sizes = await page.evaluate(() =>
           [
-            '[data-section="analysis-lead"] h3',
+            '[data-section="analysis-cover"] h3',
             '[data-section="analysis-top"] h3',
           ].map((s) =>
             parseFloat(getComputedStyle(document.querySelector(s)!).fontSize),

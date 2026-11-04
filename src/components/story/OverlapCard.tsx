@@ -21,16 +21,16 @@ type OverlapCardProps = {
   /** The Eyebrow mode (C-08): format in mixed lists (DR-417). */
   eyebrowMode?: EyebrowMode;
   /**
-   * The feature story of its section (CategoryFeatureSection): the title takes text-4xl and the text block
-   * ends with --space-lead-panel, as the C-01 panel does.
+   * The cover story of its section (CategoryCoverSection; option large, DR-451, DR-453): the title takes text-4xl and the text block
+   * ends with --space-panel-large, as the C-01 panel does.
    */
-  feature?: boolean;
+  large?: boolean;
   className?: string;
 };
 
 /**
  * C-02 OverlapCard: the image-led story card. The text block covers the image bottom by
- * --space-card-overlap (10% of the card width, 40 to 64px) from the start edge and stops
+ * --space-overlap (10% of the card width, 40 to 64px) from the start edge and stops
  * --space-card-notch short of the end edge, so the corner of the image shows. The card is
  * the container, so cqi means the card width (CPT-04, CPT-09). Each card flows on its own, with
  * no shared rows (DR-99). The body grows down (LAY-17); the title is never cut (CPT-08). A story with
@@ -43,7 +43,7 @@ export function OverlapCard({
   eager = false,
   eyebrow = true,
   eyebrowMode,
-  feature = false,
+  large = false,
   className,
 }: OverlapCardProps) {
   return (
@@ -54,8 +54,8 @@ export function OverlapCard({
         className={cn(
           "relative ps-0 pe-4",
           surface === "elevated" ? "bg-surface-elevated" : "bg-background",
-          "me-(--space-card-notch) -mt-(--space-card-overlap) pt-4",
-          feature && "overlap-feature pb-(--space-lead-panel)",
+          "me-(--space-card-notch) -mt-(--space-overlap) pt-4",
+          large && "overlap-large pb-(--space-panel-large)",
         )}
       >
         {eyebrow ? (
@@ -63,12 +63,12 @@ export function OverlapCard({
             story={story}
             strings={strings}
             mode={eyebrowMode}
-            className="mb-(--space-lead-eyebrow-title)"
+            className="mb-(--space-story-eyebrow-title)"
           />
         ) : null}
         <h3
           className={
-            feature
+            large
               ? "font-editorial text-4xl font-semibold text-balance"
               : "font-editorial text-2xl font-semibold"
           }
@@ -89,7 +89,7 @@ export function OverlapCard({
           items={storyMetaItems(story, strings.story)}
           className={
             story.summary
-              ? "mt-(--space-lead-summary-meta)"
+              ? "mt-(--space-story-summary-meta)"
               : "mt-(--space-story-title-meta)"
           }
         />

@@ -476,13 +476,13 @@ describe("category pages", () => {
         defs.filter((def) => def.format === format).length;
       for (const lang of langs) {
         const page = getCategoryPage(category, lang);
-        expect(page.feature?.image).toBeTruthy();
+        expect(page.cover?.image).toBeTruthy();
         expect(page.latest).toHaveLength(5);
         expect(page.cards).toHaveLength(3);
         for (const s of page.cards) expect(s.image).toBeTruthy();
         expect(page.mostRead.map((s) => s.rank)).toEqual([1, 2, 3, 4, 5]);
         // The main stream is news only.
-        for (const s of [page.feature!, ...page.latest, ...page.cards])
+        for (const s of [page.cover!, ...page.latest, ...page.cards])
           expect(s.format).toBe("news");
         // Up to 5 per block, all the category has (no mock fill-in).
         expect(page.analysis).toHaveLength(Math.min(count("analysis"), 5));
@@ -504,7 +504,7 @@ describe("category pages", () => {
           expect(page.more.length).toBeGreaterThan(10);
         else expect(page.more.length).toBeLessThanOrEqual(10);
         const shown = [
-          page.feature!,
+          page.cover!,
           ...page.latest,
           ...page.cards,
           ...page.analysis,

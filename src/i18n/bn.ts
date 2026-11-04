@@ -50,8 +50,8 @@ export const bn = {
   },
   // The category page (spacing-layout-system.md 7B).
   categoryPage: {
-    // Visually hidden name of CategoryFeatureSection.
-    feature: "প্রধান খবর",
+    // Visually hidden name of CategoryCoverSection.
+    cover: "প্রধান খবর",
     latest: "সর্বশেষ",
     // Older stories under the most read section, 10 at a time.
     moreStories: "আরও পড়ুন",
@@ -67,8 +67,8 @@ export const bn = {
   analysisPage: {
     // Visually hidden name of the mosaic.
     top: "শীর্ষ বিশ্লেষণ",
-    // Visually hidden name of the hero.
-    lead: "প্রধান বিশ্লেষণ",
+    // Visually hidden name of the cover (AnalysisCoverSection).
+    cover: "প্রধান বিশ্লেষণ",
     // The short line below the page title (tajmin, 3 Nov 2026).
     description:
       "ফ্যাক্ট লেন্স টিমের বিশ্লেষণ, ব্যাখ্যামূলক প্রতিবেদন ও বিস্তারিত ফিচার",

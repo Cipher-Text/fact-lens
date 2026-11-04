@@ -34,10 +34,7 @@ export function AnalysisList({ lang, stories, strings }: AnalysisListProps) {
             <StoryCard
               story={story}
               strings={strings}
-              layout="row"
-              ratio="16:9"
-              size="sm"
-              split="third"
+              variant="thumbnail"
               summary={false}
             />
           </li>

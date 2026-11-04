@@ -57,15 +57,15 @@ describe("FeaturedCategorySection (P-2)", () => {
     ).toEqual(["wrapper", "rail"]);
   });
 
-  it("draws the feature story as a StoryCard: stack under 768, row from 768, no eyebrow (C-24, P-2)", () => {
+  it("draws the feature story as the StoryCard side: stack under 768, side from 768, no eyebrow (C-24, P-2, DR-451)", () => {
     const { container } = renderSection("bn", full.southAsia!);
     const card = container.querySelector(
       "[data-featured-wrapper] [data-story-card]",
     ) as HTMLElement;
-    expect(card).toHaveAttribute("data-layout", "row-from-md");
+    expect(card).toHaveAttribute("data-variant", "side");
     const grid = card.firstElementChild as HTMLElement;
     expect(card).toHaveClass("@container");
-    expect(grid.className).toContain("md:story-split-feature");
+    expect(grid.className).toContain("md:story-side");
     expect(card.innerHTML).not.toMatch(/\border-/);
     // Image before the text in the markup; the grid puts the image at the end (LAY-14, DR-267).
     expect(grid.children[0]).toHaveAttribute("data-story-media");
@@ -79,19 +79,13 @@ describe("FeaturedCategorySection (P-2)", () => {
     expect(card.querySelector("[data-eyebrow]")).toBeNull();
   });
 
-  it("has one image story and two text rows in the rail (C-24, C-03)", () => {
+  it("has a text StoryList of 3 rows in the rail, no image story (C-03, IMP-125)", () => {
     const { container } = renderSection("bn", full.southAsia!);
     const rail = container.querySelector("[data-featured-rail]") as HTMLElement;
-    const card = rail.querySelector("[data-story-card]") as HTMLElement;
-    expect(card).toHaveAttribute("data-layout", "row-until-lg");
-    expect(card.querySelector("[data-story-media] img")).toHaveClass(
-      "aspect-video",
-    );
-    expect(within(card).getByRole("heading", { level: 3 })).toHaveClass(
-      "text-lg",
-    );
+    expect(rail.querySelector("[data-story-card]")).toBeNull();
+    expect(rail.querySelector("[data-story-media]")).toBeNull();
     const items = within(rail).getAllByRole("listitem");
-    expect(items).toHaveLength(2);
+    expect(items).toHaveLength(3);
     for (const li of items) {
       expect(li.querySelector("img")).toBeNull();
       expect(within(li).getByRole("heading", { level: 3 })).toHaveClass(

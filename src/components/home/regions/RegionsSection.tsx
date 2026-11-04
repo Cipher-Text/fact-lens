@@ -65,8 +65,7 @@ export function RegionsSection({
                   <StoryCard
                     story={lead}
                     strings={t}
-                    ratio="3:2"
-                    size="sm"
+                    variant="top"
                     eyebrowMode="format"
                     summary={false}
                     titleAs="h4"

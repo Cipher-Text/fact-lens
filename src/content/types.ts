@@ -139,7 +139,7 @@ export type HomepageVariant = "full" | "sparse";
 export interface CategoryPage {
   lang: Lang;
   category: CategoryId;
-  feature: Story | null; // the feature story: the newest news story with an image
+  cover: Story | null; // the cover story: the newest news story with an image
   latest: Story[]; // the next 5 newest news stories, for the rail
   cards: Story[]; // 3 news stories with an image, one per row
   analysis: Story[]; // up to 5, newest first, for the analysis block (DR-415)

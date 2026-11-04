@@ -124,8 +124,8 @@ for (const p of PAGES) {
 
           // Feature story: one column under 768, image first, 16px to the text (P-2).
           // From 768 the text is at the start and the image at the end, top aligned, with
-          // the image 50% (768 to 1023, DR-119) or 60% (from 1024, DR-118) of the free
-          // width, between 420 and 557px.
+          // the image 2 / 3 of the free width, at least 420px, no cap (StoryCard side,
+          // DR-451, DR-453).
           const i = await box(featureImage);
           const t = await box(featureText);
           expect(Math.round((i.width / i.height) * 100)).toBe(150); // 3:2
@@ -134,11 +134,7 @@ for (const p of PAGES) {
             expect(Math.round(t.y)).toBe(Math.round(i.y + i.height + 16));
             expect(Math.round(t.x)).toBe(Math.round(i.x));
           } else {
-            const share = width >= 1024 ? 0.6 : 0.5;
-            const expected = Math.min(
-              557,
-              Math.max(420, (w.width - columnGap) * share),
-            );
+            const expected = Math.max(420, ((w.width - columnGap) * 2) / 3);
             expect(Math.abs(i.width - expected)).toBeLessThanOrEqual(1);
             expect(Math.round(t.y)).toBe(Math.round(i.y));
             expect(Math.round(i.x + i.width)).toBe(Math.round(w.x + w.width));
@@ -146,42 +142,22 @@ for (const p of PAGES) {
           }
 
           // The image link is as tall as its image, so the focus ring fits (COL-13).
-          for (const media of [
-            featureImage.locator("xpath=.."),
-            rail.locator("[data-story-media]"),
-          ]) {
+          for (const media of [featureImage.locator("xpath=..")]) {
             const link = await box(media);
             const img = await box(media.locator("img"));
             expect(Math.abs(link.height - img.height)).toBeLessThanOrEqual(1);
           }
 
-          // Rail: one image story, then two text rows with a rule between (C-24, C-03).
-          const card = rail.locator("[data-story-card]");
-          const cardImage = card.locator("[data-story-media] img");
-          const cardText = card.locator(".story-body");
+          // Rail: a text StoryList of 3 rows with a rule between, no image (C-03, IMP-125).
+          await expect(rail.locator("[data-story-card]")).toHaveCount(0);
           const rows = rail.locator("[data-story-list] > li");
-          await expect(rows).toHaveCount(2);
-          await expect(rows.locator("img")).toHaveCount(0);
-          const ci = await box(cardImage);
-          const ct = await box(cardText);
-          expect(Math.round((ci.width / ci.height) * 100)).toBe(178); // 16:9
-          if (width >= 1024) {
-            // In the 304px rail: image on top, 16px, text below.
-            expect(Math.round(ci.width)).toBe(304);
-            expect(Math.round(ct.y)).toBe(Math.round(ci.y + ci.height + 16));
-          } else {
-            // Row 2 : 1, --grid-column-gap between them (DR-300), text at the start, image at the end (DR-121).
-            const imageWidth = (r.width - columnGap) / 3;
-            expect(Math.abs(ci.width - imageWidth)).toBeLessThanOrEqual(1);
-            expect(Math.round(ct.y)).toBe(Math.round(ci.y));
-            expect(Math.round(ci.x + ci.width)).toBe(Math.round(r.x + r.width));
-            expect(Math.round(ci.x - (ct.x + ct.width))).toBe(columnGap);
+          await expect(rows).toHaveCount(3);
+          await expect(rows.locator("img, [data-story-media]")).toHaveCount(0);
+          for (let n = 1; n < 3; n++) {
+            const above = await box(rows.nth(n - 1));
+            const row = await box(rows.nth(n));
+            expect(row.y).toBeGreaterThan(above.y + above.height);
           }
-          const cardBox = await box(card);
-          const firstRow = await box(rows.nth(0));
-          const secondRow = await box(rows.nth(1));
-          expect(firstRow.y).toBeGreaterThan(cardBox.y + cardBox.height);
-          expect(secondRow.y).toBeGreaterThan(firstRow.y + firstRow.height);
 
           // One আরও দেখুন link below the wrapper and the rail, at the end edge (DR-123).
           const more = s.getByRole("link", {
@@ -275,12 +251,6 @@ for (const p of PAGES) {
             {
               card: section.locator("[data-featured-wrapper] article"),
               row: width >= 768,
-            },
-            {
-              card: section.locator(
-                "[data-featured-rail] article[data-story-card]",
-              ),
-              row: width < 1024,
             },
           ];
           for (const { card, row } of cards) {

@@ -48,7 +48,7 @@ export function StoryListItem({
           story={story}
           strings={strings}
           mode={eyebrowMode}
-          className="mb-(--space-lead-eyebrow-title)"
+          className="mb-(--space-story-eyebrow-title)"
         />
       ) : null}
       <Title className="font-editorial text-lg font-semibold">

@@ -100,8 +100,7 @@ test.describe("200% browser text size", () => {
           );
           return [...document.querySelectorAll("[data-story-card]")]
             .filter((card) => {
-              const layout = card.getAttribute("data-layout") ?? "";
-              return layout === "row" || layout === "row-until-lg";
+              return card.getAttribute("data-variant") === "thumbnail";
             })
             .map((card) => {
               const media = card
@@ -120,8 +119,6 @@ test.describe("200% browser text size", () => {
             });
         });
         for (const card of cards) {
-          // A row-until-lg card stacks from 1024 by its layout, not by its width.
-          if (width >= 1024 && card.stacked) continue;
           expect(card.stacked, JSON.stringify(card)).toBe(
             card.width < card.limit,
           );
