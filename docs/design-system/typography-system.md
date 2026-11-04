@@ -512,8 +512,6 @@ Load only the families above. Do not load fonts from a CSS `@import` or another 
 Put this in `src/styles/typography.css`. For the import order, see `spacing-layout-system.md` Section 12.5 (DR-339). It defines the line length caps (Section 5.1). It works with Tailwind 4.
 
 ```css
-/* Remove the Tailwind default font families, text sizes and weights (TYP-01, TYP-06, DR-235).
-   Only the Fact Lens roles and the weights 400 to 700 exist. */
 /* Remove the Tailwind default font families, text sizes, line heights and weights
    (TYP-01, TYP-06, DR-235). Only the Fact Lens scale and the weights 400 to 700 exist. */
 @theme {

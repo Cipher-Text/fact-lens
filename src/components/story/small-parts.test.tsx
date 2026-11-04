@@ -102,7 +102,14 @@ describe("Eyebrow (C-08)", () => {
       "active:text-interactive-pressed",
     );
     expect(link.className).not.toMatch(NO_ROUNDING);
-    expect(link.parentElement).toHaveClass("case-eyebrow");
+    expect(link.parentElement).toHaveClass(
+      "font-ui",
+      "text-xs",
+      "leading-tight",
+      "font-eyebrow",
+      "tracking-eyebrow",
+      "case-eyebrow",
+    );
   });
 
   // DR-417: format mode in mixed lists. Analysis cards link the format hub; news cards keep
@@ -209,7 +216,7 @@ describe("MetaLine (C-09)", () => {
       "text-(--color-meta)",
     );
     expect(container.firstElementChild!.className).not.toMatch(
-      /font-(?:medium|semibold|bold)/,
+      /\bfont-(?!ui\b|normal\b)/,
     );
   });
 
@@ -258,7 +265,10 @@ describe("Button (C-12)", () => {
       "px-(--button-padding)",
       "bg-interactive",
       "text-on-interactive",
+      "font-ui",
       "text-xs",
+      "leading-tight",
+      "font-semibold",
       "whitespace-nowrap",
       "not-aria-disabled:hover:bg-interactive-hover",
       "not-aria-disabled:active:bg-interactive-pressed",

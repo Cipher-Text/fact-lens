@@ -6,7 +6,7 @@ The one place for every open item, flag and decision on an issue. Read it instea
 
 ## How to use this file
 
-- Add a row for each new finding with the next free ID of its prefix (U-62, IMP-126, DOC-60, KIT-xx). Add a detail entry below when one line is not enough.
+- Add a row for each new finding with the next free ID of its prefix (U-62, IMP-127, DOC-61, KIT-xx). Add a detail entry below when one line is not enough.
 - This file lists open items only: Open, Open (flag) or Later. When an item is fixed, decided or closed, record the result where it belongs (the spec, the decision register or the commit) and remove the row and its detail entry (tajmin, 27 Oct 2026). The git history keeps the old rows.
 - A flag is an item that needs tajmin's decision (`AGENTS.md` Section 8). Its status is "Open (flag)" until tajmin decides.
 - Open spec items and open code items are rows here. A row says all it needs and does not depend on a spec log. The spec log of a page or task stays in `docs/spec-log/` as the record of what the work changed in the specs (`AGENTS.md` Section 9, step 6).
@@ -71,6 +71,8 @@ Severity: High (breaks a rule or shows wrong output to readers), Medium (works n
 | DOC-59 | `page/latest` design review | `spacing-layout-system.md` changelog (the region slider entry, "phone tab panels fade 200ms out and in") disagrees with 7.4, which says the tab panels fade over `--duration-slide` (450ms, DR-346). The changelog line is history, superseded by DR-346; say so, or leave it | Low | Open |
 | IMP-114 | Article PR #8 review | Article e2e gaps: keyboard and axe at 1280 only (the dock and popovers below 1280 untested); no CLS, reduced-motion or 200% text test; the dock at 320px with 200% text; axe with the dock, a popover and the share dialog open; `SelectionShare`, the toast, popover focus-out. The `#region-` links are filtered out of the DR-331 check, as in `header.spec.ts` | Medium | Later |
 | IMP-123 | XC-02 cross-check (30 Oct 2026) | Backend: sitemaps at the M2 backend connection stage (DR-432). Article sitemap: `src/app/sitemap.ts` reads a backend endpoint that lists the article URLs (`/story/<slug>-<id>`, bn and en) and their update times. A news sitemap of the articles of the last 2 days, monthly archive sitemaps, and one sitemap index that names them. Mock data has no endpoint, so nothing is built now | Medium | Later: backend connection, M2 (DR-432) |
+| IMP-126 | PR #24 review (type-scale) | Ink insets not measured again for the new scale (DR-355): `--text-lg-ink-start`, `--text-lg-ink-end` and `--text-xs-ink-end` keep the shares measured for the old 18–20px list title and the 0.01em metadata. The list title is now 16–20px and metadata tracking is 0. Measure them from the fonts in both languages and change the shares in `typography.css` and typography 3.4. Affects the Divider.item space (`--list-ink-start`) and the MetaLine pull-up in `components.css` | Medium | Open |
+| DOC-60 | PR #24 review (type-scale) | `component-system.md` names roles as `type-<role>` (for example `type-eyebrow`, `type-story-title-sm`) in about 90 places. Typography 3.2 says to read an old name as its role. Rename them to the role names or the class sets of typography 3.2 | Low | Open |
 
 ## Details
 

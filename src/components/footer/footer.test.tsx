@@ -75,8 +75,15 @@ describe("Footer (spacing-layout-system.md 7.4, DR-59)", () => {
 
       it("shows the copyright line in metadata size and ink-muted", () => {
         render(<Footer lang={c.lang} />);
-        const line = screen.getByRole("contentinfo").querySelector("p.text-xs");
-        expect(line?.className).toContain("text-ink-muted");
+        const line = screen
+          .getByRole("contentinfo")
+          .querySelector("p[data-copyright]");
+        expect(line).toHaveClass(
+          "font-ui",
+          "text-xs",
+          "font-normal",
+          "text-ink-muted",
+        );
         expect(line?.textContent).toMatch(c.copyright);
       });
 

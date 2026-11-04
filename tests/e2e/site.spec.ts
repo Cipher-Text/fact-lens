@@ -204,8 +204,8 @@ test.describe("fonts (typography-system.md Section 8.1)", () => {
         const family = (selector: string) =>
           getComputedStyle(document.querySelector(selector)!).fontFamily;
         return {
-          serif: family("main .text-2xl"),
-          sans: family("main .text-xs"),
+          serif: family("main article h3"),
+          sans: family("main [data-meta-line]"),
           loaded: [
             ...new Set(
               [...document.fonts]

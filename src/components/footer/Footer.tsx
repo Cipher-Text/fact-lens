@@ -75,7 +75,10 @@ export function Footer({ lang }: Props) {
               ))}
             </ul>
           </nav>
-          <p className="font-ui text-xs font-normal text-ink-muted">
+          <p
+            data-copyright
+            className="font-ui text-xs font-normal text-ink-muted"
+          >
             {fill(strings.copyright, {
               year: formatYear(dhakaYear(), lang),
               name: t.site.name,

@@ -15,6 +15,7 @@ const CHECKS = [
   { re: /\b(?:bg|text|border|ring|fill|stroke|outline|from|to|via)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|black|white)(?:-\d{2,3})?\b/, rule: "COL-01", say: "Tailwind palette color; use a Fact Lens token" },
   { re: /\bdark:(?=[\w\[!-])/, rule: "COL-03", say: "dark: variant; theme logic lives in the tokens" },
   { re: /\b(?:text|leading|tracking|font)-\[/, rule: "TYP-18", say: "arbitrary type value; use the scale classes (text-xs to text-7xl, text-section, text-nav)" },
+  { re: /(?<![\w-])text-(?:[89]xl|\d{2,}xl|[2-9]xs)(?![\w-])/, rule: "TYP-01", say: "not a step of the type scale; use text-xs to text-7xl, text-section or text-nav" },
   { re: /(?<![\w-])type-(?!logo(?:-sm)?(?![\w-]))[a-z]+(?:-[a-z0-9]+)*(?![\w-])/, rule: "TYP-01", say: "retired type-* role utility; use the scale classes (typography-system.md Section 3)" },
   { re: /\b[a-z-]+-\[[^\]]*\d(?:px|rem|em)\]/, rule: "LAY-01", say: "arbitrary size; use a spacing or container token" },
   { re: /\b2xl:/, rule: "LAY-06", say: "2xl tier; there is no 2xl" },
