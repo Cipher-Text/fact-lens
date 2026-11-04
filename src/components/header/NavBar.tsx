@@ -19,7 +19,7 @@ type Props = {
  * items that fit on one line and hides the rest. There is no "More" item: every item is in
  * the Drawer (DR-255). A hidden item leaves the tab order.
  *
- * NavBar.item: type-nav, 16px 600 on Bangla pages and 14px 600 on English pages; the role
+ * NavBar.item: text-nav, 16px 600 on Bangla pages and 14px 600 on English pages; the role
  * changes by :lang, with no language variant here (DR-346). The row is 44px
  * (`--nav-row-height`) and the 1px rule at its bottom makes 45px in total (DR-349).
  *
@@ -115,7 +115,7 @@ export function NavBar({ items, label }: Props) {
                 href={item.href}
                 aria-current={item.current ? "page" : undefined}
                 className={cn(
-                  "inline-flex min-h-(--nav-row-height) items-center type-nav aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar)",
+                  "inline-flex min-h-(--nav-row-height) items-center font-ui text-nav font-semibold aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar)",
                   uiLink,
                 )}
               >

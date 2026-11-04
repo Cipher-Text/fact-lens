@@ -97,7 +97,7 @@ describe("AnalysisSection (P-4)", () => {
     expect(rows).toHaveLength(2);
     for (const row of rows) {
       expect(row).toHaveAttribute("data-layout", "row");
-      expect(row.querySelector(".type-summary")).toBeNull();
+      expect(row.querySelector("[data-summary]")).toBeNull();
     }
     // Every story has an image slot: the mock story with none shows the placeholder (DR-338).
     expect(analysis.querySelectorAll("[data-story-media]")).toHaveLength(3);

@@ -44,11 +44,9 @@ describe("HeroSection (P-1)", () => {
 
   it("uses the role mapping of typography-system.md 7.1", () => {
     const { container } = renderHero("en", getHomepage("en").hero!);
-    expect(container.querySelector("[data-lead] h3")).toHaveClass(
-      "type-story-lead",
-    );
+    expect(container.querySelector("[data-lead] h3")).toHaveClass("text-4xl");
     for (const h of container.querySelectorAll("[data-top-stories] h3"))
-      expect(h).toHaveClass("type-story-title");
+      expect(h).toHaveClass("text-2xl");
   });
 
   it("lets one top story span the wrapper (7.3)", () => {

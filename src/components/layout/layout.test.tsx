@@ -67,7 +67,7 @@ describe("SectionHeading", () => {
     render(<SectionHeading id="bd">বাংলাদেশ</SectionHeading>);
     const heading = screen.getByRole("heading", { level: 2, name: "বাংলাদেশ" });
     expect(heading).toHaveAttribute("id", "bd");
-    expect(heading).toHaveClass("type-section-title", "text-ink");
+    expect(heading).toHaveClass("text-section", "text-ink");
   });
 
   it("can be a level 3 heading", () => {
@@ -101,7 +101,7 @@ describe("PageTitle (C-43)", () => {
     expect(container.querySelector("[data-page-title] p")).toBeNull();
   });
 
-  it("puts the description below the h1, in the band: type-deck, ink-secondary, no measure cap (analysis hub)", () => {
+  it("puts the description below the h1, in the band: text-lg (deck), ink-secondary, no measure cap (analysis hub)", () => {
     const { container } = render(
       <PageTitle title="Analysis" description="In-depth analysis" />,
     );
@@ -113,8 +113,9 @@ describe("PageTitle (C-43)", () => {
     expect(description).toHaveTextContent("In-depth analysis");
     expect(description).toHaveClass(
       "mt-3",
-      "max-inline-none",
-      "type-deck",
+      "font-editorial",
+      "text-lg",
+      "leading-relaxed",
       "text-ink-secondary",
     );
     expect(

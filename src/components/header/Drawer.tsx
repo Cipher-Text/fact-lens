@@ -190,7 +190,7 @@ type ItemProps = {
   strings: Dictionary["header"];
 };
 
-// Drawer.item: type-ui 600, rows min-h-13 (52px), a 1px rule under every category row,
+// Drawer.item: text-sm 600, rows min-h-13 (52px), a 1px rule under every category row,
 // inside the panel inset. Drawer.accordion: the label links to the category; a 44px caret
 // button (ghost, size default) at the end opens the child list below the row; the caret
 // points down and turns up when the group is open (accordion-caret). The child group sits on the page
@@ -214,7 +214,7 @@ function DrawerItem({
             aria-current={item.current ? "page" : undefined}
             data-drawer-item
             className={cn(
-              "flex min-h-13 flex-1 items-center type-ui font-semibold",
+              "flex min-h-13 flex-1 items-center font-ui text-sm font-semibold",
               uiLink,
             )}
           >
@@ -243,7 +243,7 @@ function DrawerItem({
                     href={child.href}
                     onClick={onNavigate}
                     aria-current={child.current ? "page" : undefined}
-                    className="flex min-h-11 items-center ps-4 type-ui-sm text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed aria-[current=page]:text-interactive"
+                    className="flex min-h-11 items-center ps-4 font-ui text-xs font-medium text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed aria-[current=page]:text-interactive"
                   >
                     {child.label}
                   </Link>

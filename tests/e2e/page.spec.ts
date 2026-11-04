@@ -94,7 +94,7 @@ test("section headings have the divider above them: border rule, brand bar, 12px
   await setTheme(page, "light");
   await page.goto("/en");
   const heading = page.locator(
-    '[data-section="most-read"] .type-section-title',
+    '[data-section="most-read"] [data-section-title]',
   );
   const divider = page.locator('[data-section="most-read"] [data-divider]');
   const style = await divider.evaluate((el) => {

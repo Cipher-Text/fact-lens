@@ -53,13 +53,16 @@ export function LeadStory({
               mode={eyebrowMode}
               className="mb-(--space-lead-eyebrow-title)"
             />
-            <h3 className="type-story-lead">
+            <h3 className="font-editorial text-4xl font-semibold text-balance">
               <Link href={storyHref(story)} className={headlineLink}>
                 {story.title}
               </Link>
             </h3>
             {story.summary ? (
-              <p className="mt-(--space-story-title-summary) type-summary text-ink-secondary">
+              <p
+                data-summary
+                className="mt-(--space-story-title-summary) max-w-(--measure-deck) font-editorial text-sm leading-relaxed font-medium text-ink-secondary"
+              >
                 {story.summary}
               </p>
             ) : null}

@@ -74,9 +74,9 @@ describe("FeaturedCategorySection (P-2)", () => {
       "aspect-3/2",
     );
     expect(within(card).getByRole("heading", { level: 3 })).toHaveClass(
-      "type-story-title",
+      "text-2xl",
     );
-    expect(card.querySelector(".type-eyebrow")).toBeNull();
+    expect(card.querySelector("[data-eyebrow]")).toBeNull();
   });
 
   it("has one image story and two text rows in the rail (C-24, C-03)", () => {
@@ -88,14 +88,14 @@ describe("FeaturedCategorySection (P-2)", () => {
       "aspect-video",
     );
     expect(within(card).getByRole("heading", { level: 3 })).toHaveClass(
-      "type-story-title-sm",
+      "text-lg",
     );
     const items = within(rail).getAllByRole("listitem");
     expect(items).toHaveLength(2);
     for (const li of items) {
       expect(li.querySelector("img")).toBeNull();
       expect(within(li).getByRole("heading", { level: 3 })).toHaveClass(
-        "type-story-title-sm",
+        "text-lg",
       );
     }
   });

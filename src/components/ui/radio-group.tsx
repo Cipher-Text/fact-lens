@@ -27,7 +27,7 @@ function RadioGroupItem({
     <RadioPrimitive.Root
       data-slot="radio-group-item"
       className={cn(
-        "flex min-h-12 w-full cursor-pointer items-center gap-3 text-start type-ui text-ink",
+        "flex min-h-12 w-full cursor-pointer items-center gap-3 text-start font-ui text-sm font-medium text-ink",
         className,
       )}
       {...props}

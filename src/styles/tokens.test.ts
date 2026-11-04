@@ -97,9 +97,9 @@ describe("ink inset tokens (DR-355)", () => {
   it("typography.css defines the three §3.1 tokens for English and Bangla", () => {
     const css = files.find((f) => f.name === "styles/typography.css")!.text;
     for (const token of [
-      "--type-story-title-sm-ink-start",
-      "--type-story-title-sm-ink-end",
-      "--type-metadata-ink-end",
+      "--text-lg-ink-start",
+      "--text-lg-ink-end",
+      "--text-xs-ink-end",
     ]) {
       expect(css.split(`${token}:`).length - 1, token).toBe(2);
     }

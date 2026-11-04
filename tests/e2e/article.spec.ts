@@ -198,7 +198,7 @@ for (const p of PAGES) {
       });
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.home);
-      await page.locator(".type-story-lead a").click();
+      await page.locator("[data-lead] h3 a").click();
       await expect(page).toHaveURL(/\/story\//);
       await expect(page.locator("[data-reader-title]")).toBeVisible();
       // ReaderRoot sets the stored size after a client link.

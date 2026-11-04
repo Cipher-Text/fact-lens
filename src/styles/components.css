@@ -245,7 +245,7 @@
 
 /* The feature split of the analysis hub hero: the image takes 2 / 3 of the row (minus the
    gap), uncapped; the 420px min stays (tajmin, 3 Nov 2026). The title fills its lines up to
-   the gap before the image: pretty in place of the type-story-lead balance (TYP-13), which
+   the gap before the image: pretty in place of the text-4xl balance (TYP-13), which
    left the lines short of the gap (tajmin, 4 Nov 2026). */
 @utility story-split-lead {
   --story-feature-media-share: var(--story-analysis-lead-media-share);
@@ -525,16 +525,16 @@
    The last item of a list keeps its line box: space-more-link is not measured to the ink. */
 @layer components {
   :where(:has(+ .divider-item)) [data-meta-line] {
-    margin-block-end: calc(-1 * var(--type-metadata-ink-end));
+    margin-block-end: calc(-1 * var(--text-xs-ink-end));
   }
 }
 
 /* The ink at the top of the items of a list (DR-350). Set it on the list (and on a
    StoryList that is itself a row after a card). --list-ink-start is a helper (DR-437): it
-   only takes a named token, --type-story-title-sm-ink-start or 0. Items that start with a
+   only takes a named token, --text-lg-ink-start or 0. Items that start with a
    title: */
 @utility list-ink-title-meta {
-  --list-ink-start: var(--type-story-title-sm-ink-start);
+  --list-ink-start: var(--text-lg-ink-start);
 }
 
 /* Cards with an image at the top (the AnalysisSection rows): the image is the first ink. */

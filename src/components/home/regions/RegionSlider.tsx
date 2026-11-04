@@ -305,7 +305,7 @@ export function RegionSlider({ title, regions, strings }: RegionSliderProps) {
                 readers there. */}
             <h3
               id={`region-${region.id}-title`}
-              className="mb-(--space-story-media-text) type-story-title-sm text-ink max-sm:sr-only"
+              className="mb-(--space-story-media-text) font-editorial text-lg font-semibold text-ink max-sm:sr-only"
             >
               {region.label}
             </h3>

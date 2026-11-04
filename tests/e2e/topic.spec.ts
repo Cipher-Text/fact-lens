@@ -108,7 +108,7 @@ for (const p of PAGES) {
       await expect(cards(page)).toHaveCount(14);
       const rows = await cards(page).evaluateAll((els) =>
         els.map((card) => ({
-          eyebrows: [...card.querySelectorAll(".type-eyebrow a")].map(
+          eyebrows: [...card.querySelectorAll("[data-eyebrow] a")].map(
             (a) => a.getAttribute("href") ?? "",
           ),
           time: card.querySelector("time")?.getAttribute("datetime") ?? "",

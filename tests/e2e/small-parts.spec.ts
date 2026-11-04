@@ -233,7 +233,7 @@ for (const { path, more } of PAGES) {
       await page.goto(path);
       for (const link of [
         page.getByRole("link", { name: more }).first(),
-        page.locator("p.type-eyebrow a").first(),
+        page.locator("p[data-eyebrow] a").first(),
       ]) {
         await link.focus();
         await page.keyboard.press("Shift+Tab");
@@ -259,7 +259,7 @@ for (const { path, more } of PAGES) {
     }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(path);
-      const link = page.locator("p.type-eyebrow a").first();
+      const link = page.locator("p[data-eyebrow] a").first();
       await expect(link).toBeVisible();
       expect(await link.evaluate((el) => getComputedStyle(el).color)).toBe(
         await token(page, "--interactive"),

@@ -1,10 +1,10 @@
 # Fact Lens Typography System
 
-Version 2.22 · 4 November 2026 · Analysis hub (spec log analysis AN-07, AN-12 to AN-14; tajmin, 4 Nov 2026): `type-deck` EN 18–21px, BN 18–20px (3.1, Section 8); `type-story-lead` takes the `type-story-title` metrics below 600 (3.1, Section 8); TYP-12 and TYP-13 exceptions for the analysis hub. Before: 2.21 · 28 October 2026 · Latest page (spec log `latest.md` LT-04): TYP-17 story time after load more. Before: 2.20 · 28 October 2026 · URL format (IMP-97): example label দক্ষিণ এশিয়া (DR-412). Before: Homepage most read (IMP-99): `type-rank` retired; the RankedList rank is the chip (`component-system.md` C-07)
+Version 2.23 · 4 November 2026 · Type scale (DR-454, DR-455, DR-456): one size scale with Tailwind names, `text-xs` to `text-7xl` and `text-section`, replaces the 25 `type-*` role utilities (Section 3). A role is a set of classes (Section 3.2). Before: 2.22 · 4 November 2026 · Analysis hub (spec log analysis AN-07, AN-12 to AN-14)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
-Fact Lens publishes in Bangla and English. Each language has its own fonts and metrics, but both languages use the same role names.
+Fact Lens publishes in Bangla and English. Each language has its own fonts and metrics, but both languages use the same scale steps and role names.
 
 The values are approved for prototype run 2. Section 9 lists what to check in the prototype. Some values can change after that check.
 
@@ -12,7 +12,7 @@ The values are approved for prototype run 2. Section 9 lists what to check in th
 
 1. [How to use this document](#1-how-to-use-this-document)
 2. [Fonts](#2-fonts)
-3. [Role table](#3-role-table)
+3. [Type scale and roles](#3-type-scale-and-roles)
 4. [Reader sizes](#4-reader-sizes)
 5. [Measures](#5-measures)
 6. [Rules](#6-rules)
@@ -24,7 +24,7 @@ The values are approved for prototype run 2. Section 9 lists what to check in th
 
 ## 1. How to use this document
 
-- Find the role for a text element in the **role table** (Section 3). Each role has one name and one set of values per language.
+- Find the role for a text element in the **role map** (Section 3.2). Each role has one name and one set of classes. The classes take the values of the **scale** (Section 3.1) for the page language.
 - Follow the **rules** (Section 6). Each rule has a stable ID, for example `TYP-04`. Use the ID in reviews, prompts and commit messages.
 - Copy the **CSS** in Section 8 into the app. Do not type values by hand.
 
@@ -33,10 +33,10 @@ The typography model has three layers:
 | Layer | What it holds | Who uses it |
 | --- | --- | --- |
 | Font family | Four font files | `fonts.ts` only |
-| Role token | Size, weight, line height and tracking per role and language, for example `--type-deck-size` | `typography.css` |
-| Utility | A Tailwind class per role, for example `type-deck` | Components |
+| Step token | Size, line height and tracking per scale step and language, for example `--text-lg-size` | `typography.css` |
+| Class | The scale classes (`text-lg`) with the family and weight classes (`font-editorial`, `font-semibold`). A role is a set of classes (Section 3.2) | Components |
 
-Components use utilities only.
+Components use the classes only.
 
 Typography sets the font, size, weight, line height, tracking and line length caps. It does not set color, spacing or container width. For color, see `color-system.md`. For spacing and grid, see `spacing-layout-system.md`.
 
@@ -75,84 +75,125 @@ The `lang` attribute selects the stack. Each Bangla stack includes the English f
 
 Load italic for Source Serif 4 only. Bangla fonts have no italic.
 
-## 3. Role table
+## 3. Type scale and roles
 
-There are 24 roles. Fluid sizes grow from a 360px viewport to a 1280px viewport, then stop. The page shell also stops at 1280px. Section 8.2 gives the `clamp()` values.
+### 3.1 Scale
 
-Tracking for Bangla is 0 in every role.
+The scale has 12 size steps. Each step is a Tailwind 4 text class: it sets the font size, the line height and the tracking. Family and weight come from other classes (Section 3.2).
 
-| Role | Family | English size | Weight | Line height | Tracking | Bangla size | Weight | Line height | Use |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `type-display` | Serif | 44–64px | 600 | 1.02 | -0.03em | 40–56px | 600 | 1.16 | Brand moments, special pages |
-| `type-page-title` | Serif | 34–48px | 600 | 1.06 | -0.025em | 32–44px | 600 | 1.18 | Section and category page titles |
-| `type-article-title` | Serif | 36–48px | 600 | 1.06 | -0.025em | 34–44px | 600 | 1.18 | The article headline (h1). Largest from 1280 (DR-388) |
-| `type-story-lead` | Serif | 30–42px | 600 | 1.08 | -0.02em | 28–40px | 600 | 1.2 | Lead story on the homepage, the category feature, the analysis hub hero. Below 600 it takes the `type-story-title` size, line height and tracking, so the lead and the cards read alike on phones (Analysis spec log AN-14) |
-| `type-story-title-lg` | Serif | 26–34px | 600 | 1.12 | -0.015em | 26–32px | 600 | 1.22 | Second-level story in a lead group (not on the homepage) |
-| `type-story-title` | Serif | 22–26px | 600 | 1.16 | -0.01em | 22–26px | 600 | 1.26 | Standard story card |
-| `type-story-title-sm` | Serif | 18–20px | 600 | 1.2 | -0.005em | 18–20px | 600 | 1.3 | Compact cards and lists |
-| `type-deck` | Serif | 18–21px | 400 | 1.45 | 0 | 18–20px | 400 | 1.55 | Standfirst under the article title; the PageTitle description (C-43). EN was 18–22px, BN 18–21px (Analysis spec log AN-13) |
-| `type-summary` | Serif | 16px | 500 | 1.5 | 0 | 17px | 500 | 1.6 | Short summary on story cards and the lead story (DR-97) |
-| `type-article-body` | Serif | 17–18px | 400 | 1.68 | 0 | 18–19px | 400 | 1.76 | Article paragraphs and lists |
-| `type-article-h2` | Serif | 28–36px | 600 | 1.15 | -0.015em | 26–34px | 600 | 1.28 | Subheading in the article |
-| `type-article-h3` | Serif | 22–28px | 600 | 1.22 | -0.01em | 22–26px | 600 | 1.34 | Minor subheading in the article |
-| `type-blockquote` | Serif | 18–22px | 400 | 1.6 | 0 | 19–22px | 500 | 1.68 | Quoted text in the article |
-| `type-pullquote` | Serif | 28–36px | 500 | 1.2 | -0.015em | 26–34px | 500 | 1.32 | Pulled quote in the article |
-| `type-section-title` | Serif | 22px | 600 | 1.25 | -0.01em | 22px | 600 | 1.3 | Homepage section heading (`SectionHeading`, DR-163) |
-| `type-logo` | Serif | 20px; 28px from 768; 32px from 1024. When the bar is stuck: drawn at 24px by a transform (C-17), not by font size | 700 | 1 | 0 | same | 700 | 1.1 | Logo text stand-in in the TopBar until the logo file exists (BRD-06, BRD-09, DR-295, DR-306). `type-logo-sm` = the same role at 24px for the Footer and `Drawer.head` |
-| `type-eyebrow` | Sans | 14px | 700 | 1.2 | 0.06em | 15px | 600 | 1.35 | Category and label above a headline |
-| `type-metadata` | Sans | 14px | 400 | 1.4 | 0.01em | 15px | 400 | 1.5 | Byline, date, reading time. One size per language on the page (DR-96, DR-101) |
-| `type-caption` | Sans | 14px | 400 | 1.5 | 0 | 15px | 400 | 1.6 | Image and figure captions |
-| `type-ui` | Sans | 16px | 500 | 1.4 | 0 | 16px | 500 | 1.5 | Standard interface text |
-| `type-ui-sm` | Sans | 14px | 500 | 1.4 | 0 | 15px | 500 | 1.5 | Navigation, tabs, menus, tooltips |
-| `type-nav` | Sans | 14px | 600 | 1.4 | 0 | 16px | 600 | 1.5 | NavBar items (DR-295, DR-346). The size changes by `:lang`; no language variant in the component |
-| `type-button` | Sans | 14px | 600 | 1.2 | 0 | 15px | 600 | 1.35 | Button labels (`Button`, C-12). Same size at every width (DR-208) |
-| `type-input` | Sans | 16px | 400 | 1.4 | 0 | 16px | 400 | 1.5 | Form input values |
+- The sizes are the same in English and Bangla, except `text-xs` and `text-7xl`.
+- Fluid sizes grow from a 360px viewport to a 1280px viewport, then stop. The page shell also stops at 1280px. Section 8.2 gives the `clamp()` values.
+- Tracking for Bangla is 0 at every step.
+
+| Class | Size, English | Size, Bangla | Line height, EN / BN | Tracking, EN | Roles |
+| --- | --- | --- | --- | --- | --- |
+| `text-xs` | 14px | 15px | 1.4 / 1.5 | 0 | Metadata, caption, ui-sm, eyebrow, button, nav (English) |
+| `text-sm` | 16px | 16px | 1.4 / 1.5 | 0 | ui, input, summary, nav (Bangla) |
+| `text-base` | 17–18px | 17–18px | 1.68 / 1.76 | 0 | Article body |
+| `text-lg` | 16–20px | 16–20px | 1.2 / 1.3 | -0.005em | List title, poll question, deck |
+| `text-xl` | 18–22px | 18–22px | 1.22 / 1.34 | -0.01em | Article h3, `KeyPoints` and `ContextCard` headings, blockquote |
+| `text-2xl` | 20–24px | 20–24px | 1.16 / 1.26 | -0.01em | Card title |
+| `text-3xl` | 22–30px | 22–30px | 1.15 / 1.28 | -0.015em | Article h2, pull quote |
+| `text-4xl` | 24–36px | 24–36px | 1.08 / 1.2 | -0.02em | Lead title and cover title |
+| `text-5xl` | 26–38px | 26–38px | 1.06 / 1.18 | -0.025em | Article title |
+| `text-6xl` | 28–40px | 28–40px | 1.06 / 1.18 | -0.025em | Page title (`PageTitle`, C-43). It is larger than the article title |
+| `text-7xl` | 44–64px | 40–56px | 1.02 / 1.16 | -0.03em | Display. Not in use now |
+| `text-section` | 22px | 22px | 1.25 / 1.3 | -0.01em | Section title (`SectionHeading`, the `DailyPoll` head, the shadcn card and dialog titles) |
+
+Two line height classes change the line height of a step:
+
+| Class | English | Bangla | Roles |
+| --- | --- | --- | --- |
+| `leading-tight` | 1.2 | 1.35 | Eyebrow, button |
+| `leading-relaxed` | 1.5 | 1.6 | Deck, summary, caption, blockquote |
 
 Notes:
 
-- In English, `type-eyebrow` is uppercase on `Eyebrow` and `Chip` only. Other uses add `normal-case` (DR-216). Bangla has no case.
-- `type-blockquote` is italic in English. In Bangla it uses weight 500.
+- Below 600px (`width < 37.5rem`), `text-4xl` takes the `text-2xl` size, line height and tracking. The lead and the cover then read as the cards on phones (Analysis spec log AN-14).
+- `text-nav` is the nav step: `text-xs` in English, `text-sm` in Bangla. The language choice is in the token, not in the NavBar (DR-346).
+- The logo keeps its own classes, `type-logo` and `type-logo-sm` (Section 3.3).
 
-### 3.1 Ink inset
+### 3.2 Role map
 
-The space next to a `Divider.item` rule is measured to the text ink, not to the line box (C-22, DR-350). The ink inset is the blank space between the line box edge and the ink of a role, as a share of the role size. It was measured from the fonts. Only the roles that stand next to a rule have a value (DR-355).
+A role is a set of classes. Put all the classes of the role on the element. Use `font-editorial` (serif) or `font-ui` (sans) for the family, as in Section 2.1. Older documents name a role `type-<role>`, for example `type-eyebrow`. Read that name as the role in this table.
+
+| Role | Old name | Classes | Weight | Other |
+| --- | --- | --- | --- | --- |
+| Display | `type-display` | `font-editorial text-7xl font-semibold text-balance` | 600 | |
+| Page title | `type-page-title` | `font-editorial text-6xl font-semibold text-balance` | 600 | |
+| Article title | `type-article-title` | `font-editorial text-5xl font-semibold text-balance` | 600 | Cap `measure-article-title` (Section 5.1). On the article page `.rd-title` in `reader.css` sets these values |
+| Lead title, cover title | `type-story-lead` | `font-editorial text-4xl font-semibold text-balance` | 600 | One role: `LeadStory`, the category cover (`OverlapCard` feature), the analysis hub cover (`StoryCard` size `lead`) |
+| Card title | `type-story-title` | `font-editorial text-2xl font-semibold` | 600 | `OverlapCard`, `StoryCard` size `md` |
+| List title | `type-story-title-sm` | `font-editorial text-lg font-semibold` | 600 | `StoryCard` size `sm`, `StoryListItem`, `RankedList`, `OpinionList`, region panels, poll question |
+| Deck | `type-deck` | `font-editorial text-lg leading-relaxed font-normal` | 400 | Cap `measure-deck`. The PageTitle description has no cap (TYP-12) |
+| Summary | `type-summary` | `font-editorial text-sm leading-relaxed font-medium` | 500 | Cap `measure-deck` |
+| Article body | `type-article-body` | `font-editorial text-base font-normal` | 400 | Reader scale and floor (Section 4) |
+| Article h2 | `type-article-h2` | `font-editorial text-3xl font-semibold` | 600 | Reader scale |
+| Article h3 | `type-article-h3` | `font-editorial text-xl font-semibold` | 600 | Reader scale |
+| Blockquote | `type-blockquote` | `font-editorial text-xl leading-relaxed` | 400 EN, 500 BN (`--blockquote-weight`) | Italic in English (`--blockquote-style`). Reader scale |
+| Pull quote | `type-pullquote` | `font-editorial text-3xl font-medium text-balance` | 500 | Reader scale |
+| Section title | `type-section-title` | `font-editorial text-section font-semibold` | 600 | |
+| Eyebrow | `type-eyebrow` | `font-ui text-xs leading-tight font-eyebrow` | 700 EN, 600 BN (`--eyebrow-weight`) | `Eyebrow` and `Chip` only: add `tracking-eyebrow case-eyebrow` (English uppercase, 0.06em; DR-216). The article page labels in `reader.css` follow the same rule: the category (`.rd-eyebrow`), the rail title and the popover label take `--eyebrow-tracking` and `--eyebrow-case`; the `ContextCard` part label takes `--eyebrow-tracking` with no case |
+| Metadata | `type-metadata` | `font-ui text-xs font-normal` | 400 | |
+| Caption | `type-caption` | `font-ui text-xs leading-relaxed font-normal` | 400 | Reader scale in the article |
+| UI | `type-ui` | `font-ui text-sm font-medium` | 500 | |
+| UI small | `type-ui-sm` | `font-ui text-xs font-medium` | 500 | |
+| Nav | `type-nav` | `font-ui text-nav font-semibold` | 600 | Section 7.4 |
+| Button | `type-button` | `font-ui text-xs leading-tight font-semibold` | 600 | Same size at every width (DR-208) |
+| Input | `type-input` | `font-ui text-sm font-normal` | 400 | |
+| Logo | `type-logo`, `type-logo-sm` | `type-logo`, `type-logo-sm` | 700 | Section 3.3 |
+
+A role "at weight 600" in Section 7 takes `font-semibold` in place of the weight of the role. `type-story-title-lg` is retired: no component used it.
+
+Add `cn()` from `src/lib/utils.ts` when you merge classes. It knows the steps `text-section` and `text-nav`, the weight `font-eyebrow` and the tracking `tracking-eyebrow`. The default merge tables do not know them.
+
+### 3.3 Logo
+
+| Class | Size | Weight | Line height, EN / BN | Use |
+| --- | --- | --- | --- | --- |
+| `type-logo` | 20px; 28px from 768; 32px from 1024. When the bar is stuck: drawn at 24px by a transform (C-17), not by font size | 700 | 1 / 1.1 | Logo text stand-in in the TopBar until the logo file exists (BRD-06, BRD-09, DR-295, DR-306) |
+| `type-logo-sm` | 24px | 700 | 1 / 1.1 | The same role for the Footer and `Drawer.head` |
+
+### 3.4 Ink inset
+
+The space next to a `Divider.item` rule is measured to the text ink, not to the line box (C-22, DR-350). The ink inset is the blank space between the line box edge and the ink of a step, as a share of the step size. It was measured from the fonts. Only the steps that stand next to a rule have a value (DR-355).
 
 | Token | English | Bangla | Use |
 | --- | --- | --- | --- |
-| `--type-story-title-sm-ink-start` | 0.2 | 0.03 | Above the first title line of a list item |
-| `--type-story-title-sm-ink-end` | 0.12 | 0.25 | Below the last title line (RankedList) |
-| `--type-metadata-ink-end` | 0.18 | 0.33 | Below the meta line of the item above a rule |
+| `--text-lg-ink-start` | 0.2 | 0.03 | Above the first list title line of a list item |
+| `--text-lg-ink-end` | 0.12 | 0.25 | Below the last list title line (RankedList) |
+| `--text-xs-ink-end` | 0.18 | 0.33 | Below the meta line of the item above a rule |
 | `--rank-chip-ink-start` | 0.205em | 0.17em | Above the ink of the serif digits in the RankedList chip (C-07), so the chip centers the ink. Measured at both chip sizes and weights |
 | `--rank-chip-ink-end` | 0.143em | 0.19em | Below the ink of the same digits |
 
-Change these values with the fonts or the role sizes. Section 8.2 gives the CSS.
+The shares were measured at the old list title size (18–20px). Measure them again for the `text-lg` list title (16–20px; Section 10). Change these values with the fonts or the step sizes. Section 8.2 gives the CSS.
 
 ## 4. Reader sizes
 
 The article page has a reader size control with three steps.
 
-| Step | Scale | Body, English | Body, Bangla | H3, English | H3, Bangla |
-| --- | --- | --- | --- | --- | --- |
-| A (default) | 1 | 18px | 19px | 28px | 26px |
-| A+ | 1.2 | 21.6px | 22.8px | 33.6px | 31.2px |
-| A++ | 1.4 | 25.2px | 26.6px | 39.2px | 36.4px |
+| Step | Scale | Body | H3 |
+| --- | --- | --- | --- |
+| A (default) | 1 | 18px | 22px |
+| A+ | 1.2 | 21.6px | 26.4px |
+| A++ | 1.4 | 25.2px | 30.8px |
 
-Values are at the 1280px shell. On a 360px screen the body starts at 17px English and 18px Bangla.
+Values are at the 1280px shell, the same in English and Bangla. On a 360px screen the body starts at 17px.
 
-The scale changes all text inside the article body (`TYP-15`):
+The scale changes all text inside the article body (`TYP-15`). `reader.css` multiplies the step size by `--reader-scale` on these elements:
 
-- `type-article-body` (paragraphs and lists)
-- `type-article-h2`, `type-article-h3`
-- `type-blockquote`, `type-pullquote`
-- `type-caption` inside the article
+- article body (paragraphs and lists, `text-base`)
+- article h2 (`text-3xl`) and article h3 (`text-xl`)
+- blockquote (`text-xl`) and pull quote (`text-3xl`)
+- caption (`text-xs`) inside the article
 
-On the article page the scale also changes the `KeyPoints` and `ContextCard` headings (`type-article-h3`), their text and the key point numbers (`type-article-body`) (DR-388).
+On the article page the scale also changes the `KeyPoints` and `ContextCard` headings (article h3), their text and the key point numbers (article body) (DR-388).
 
 The scale does not change the article title, deck, metadata, navigation, buttons, header, footer or ads.
 
 A reader size change eases the text to its new size over `--duration-slide` with `--ease-slide`. With reduced motion the size changes at once (DR-388).
 
-The body has a floor of 17px English and 18px Bangla at every step.
+The body has a floor of 17px (`--type-body-min`) in both languages at every step (DR-455).
 
 Keep the reader setting on the device (local storage). Default to A.
 
@@ -167,12 +208,12 @@ Two kinds of width exist (`LAY-04`). Each kind has one owner.
 
 ### 5.1 Line length caps
 
-A cap is a maximum line length for one role. The `type-*` utility applies the cap as `max-inline-size` only. It does not set `width`, margin or padding. When the container is narrower than the cap, the container applies.
+A cap is a maximum line length for one role. The role applies the cap as `max-inline-size` only (`max-w-(--measure-deck)` in a component, `max-inline-size` in `reader.css`). It does not set `width`, margin or padding. When the container is narrower than the cap, the container applies.
 
 | Token | Value | Roles |
 | --- | --- | --- |
-| `measure-article-title` | 56rem (896px) | `type-article-title` |
-| `measure-deck` | 36rem (576px) | `type-deck`, `type-summary` |
+| `measure-article-title` | 56rem (896px) | Article title |
+| `measure-deck` | 36rem (576px) | Deck, summary |
 
 Use rem for caps. Do not use `ch`, because the `ch` width is different in Bangla and English fonts.
 
@@ -192,9 +233,9 @@ The lead summary stops at 576px (`measure-deck`), so it keeps approximately 60�
 
 ## 6. Rules
 
-### TYP-01 Use only the roles in Section 3
+### TYP-01 Use only the scale classes
 
-Do not add new sizes or roles. If no role fits, ask for a new role.
+Use only the scale classes of Section 3.1 and the role classes of Section 3.2. Do not add a size, a step or a role. If no role fits, ask for a new role.
 
 ### TYP-02 Use the role to select serif or sans
 
@@ -210,7 +251,7 @@ Use `:lang(bn)` in `typography.css`. Do not check the language in a component to
 
 ### TYP-05 Do not copy English metrics to Bangla
 
-Use the Bangla line height in the role table. Use tracking 0 for Bangla. Do not use uppercase or letter spacing on Bangla labels.
+Use the Bangla line height of the scale (Section 3.1). Use tracking 0 for Bangla. Do not use uppercase or letter spacing on Bangla labels.
 
 Reason: Bangla vowel signs go above and below the line. English line heights make them touch.
 
@@ -240,12 +281,11 @@ Use `font-optical-sizing: auto`. Do not set optical-size values in components.
 | --- | --- |
 | English interface text, labels, metadata, captions | 14px |
 | Bangla interface text, labels, metadata, captions | 15px |
-| English article body | 17px |
-| Bangla article body | 18px |
+| Article body, both languages | 17px (DR-455) |
 
 ### TYP-12 Keep line length in the measures
 
-Put article text in `measure-reading-en` or `measure-reading-bn`. Do not let the deck, summary or article title go wider than their measure (Section 5). Exception: the PageTitle description (C-43) has no measure (`max-inline-none`); it runs the shell width and wraps only when the shell is narrower (Analysis spec log AN-12).
+Put article text in `measure-reading-en` or `measure-reading-bn`. Do not let the deck, summary or article title go wider than their measure (Section 5). Exception: the PageTitle description (C-43) has no measure; it runs the shell width and wraps only when the shell is narrower (Analysis spec log AN-12).
 
 ### TYP-13 Balance large headings only
 
@@ -284,7 +324,7 @@ Use `Intl.DateTimeFormat` and `Intl.NumberFormat` with `en-GB` or `bn-BD-u-nu-be
 
 ### TYP-18 Use utilities, not raw values
 
-Use `type-*` utilities. Do not write `text-[57px]` or `leading-[1.07]` in a component. If a raw value is necessary, write the reason in the component.
+Use only the scale classes (Section 3.1) and the role classes (Section 3.2). Do not write `text-[57px]`, `leading-[1.07]` or another arbitrary type value in a component. If a raw value is necessary, write the reason in the component.
 
 ### TYP-19 Let Fact Lens roles override shadcn/ui
 
@@ -318,50 +358,50 @@ Set `overflow-wrap: break-word` on `body`. A word breaks only when it alone is w
 
 ### 7.1 Homepage
 
-The component names are in `component-system.md` Section 3.
+The component names are in `component-system.md` Section 3. The role names are in Section 3.2.
 
-| Element | Role |
+| Element | Role (Section 3.2) |
 | --- | --- |
-| Lead story headline (`LeadStory`) | `type-story-lead` |
-| Top story in the hero (`OverlapCard`) | `type-story-title` (T-37) |
-| Feature story of a section or a `CategoryBlock` | `type-story-title` (DR-152) |
-| `StoryCard` size `sm`, `StoryListItem`, every region panel story (DR-254) | `type-story-title-sm` |
-| Card summary | `type-summary` |
-| Section heading (`SectionHeading`) | `type-section-title` |
+| Lead story headline (`LeadStory`); category cover (`OverlapCard` feature); analysis hub cover (`StoryCard` size `lead`) | lead title (`text-4xl`) |
+| Top story in the hero (`OverlapCard`) | card title (T-37) |
+| Feature story of a section or a `CategoryBlock` | card title (DR-152) |
+| `StoryCard` size `sm`, `StoryListItem`, every region panel story (DR-254) | list title |
+| Card summary | summary |
+| Section heading (`SectionHeading`) | section title |
 | Logo text stand-in: TopBar; Footer and `Drawer.head` | `type-logo`; `type-logo-sm` (DR-306) |
-| Region name in a region panel | `type-story-title-sm` |
-| Category label (`Eyebrow`) | `type-eyebrow` |
-| Time, author (`MetaLine`) | `type-metadata` |
+| Region name in a region panel | list title |
+| Category label (`Eyebrow`) | eyebrow |
+| Time, author (`MetaLine`) | metadata |
 | Most read rank chip | The chip digits: `--rank-chip-*` (`component-system.md` C-07, Section 6) |
-| Most read title | `type-story-title-sm` |
-| Opinion title | `type-story-title-sm` |
-| Opinion author and time | `type-metadata`, author in 600 |
-| Opinion chip মতামত (`Chip` label) | `type-eyebrow` on `brand` (dark: `interactive`), `text-on-interactive`. Not a link. The analysis column has no chip |
-| Region chip (`Chip` filter) | `type-ui-sm` |
-| "আরও দেখুন" link (`MoreLink`) | `type-ui-sm` at weight 600, `text-interactive` (DR-216) |
-| Ad label | `type-eyebrow` at weight 600, `normal-case`, `text-ink-muted` (DR-216) |
-| Poll heading; newsletter heading after prototype run 2 (DR-239) | `type-section-title` (DR-215) |
-| Newsletter text line (after prototype run 2, DR-239) | `type-ui` |
-| Email field | `type-input` |
-| Vote button ভোট দিন (`Button` primary) | `type-button` |
-| Poll question (`legend`) | `type-story-title-sm` |
-| Poll options and result labels (with the own-vote tag) | `type-ui` |
-| Poll percent, vote total | `type-ui-sm`, tabular digits in the page language |
-| Privacy link (after prototype run 2, DR-239) | `type-ui-sm` at weight 600 (DR-216) |
-| Form error and done messages | `type-ui-sm` |
-| Top bar language link | `type-ui-sm` at weight 600 |
-| Search clear button মুছুন (`Button` text) | `type-button` |
-| Trending label ট্রেন্ডিং | `type-ui-sm` at weight 600, `text-ink-muted` |
-| Trending terms | `type-ui-sm` at weight 600, `text-interactive`, no underline (`COL-06`, DR-216) |
-| Footer links | `type-ui-sm` at weight 600 (DR-216) |
-| Footer copyright | `type-metadata` |
+| Most read title | list title |
+| Opinion title | list title |
+| Opinion author and time | metadata, author in 600 |
+| Opinion chip মতামত (`Chip` label) | eyebrow on `brand` (dark: `interactive`), `text-on-interactive`. Not a link. The analysis column has no chip |
+| Region chip (`Chip` filter) | UI small |
+| "আরও দেখুন" link (`MoreLink`) | UI small at weight 600, `text-interactive` (DR-216) |
+| Ad label | eyebrow at weight 600, `normal-case`, `text-ink-muted` (DR-216) |
+| Poll heading; newsletter heading after prototype run 2 (DR-239) | section title (DR-215) |
+| Newsletter text line (after prototype run 2, DR-239) | UI |
+| Email field | input |
+| Vote button ভোট দিন (`Button` primary) | button |
+| Poll question (`legend`) | list title |
+| Poll options and result labels (with the own-vote tag) | UI |
+| Poll percent, vote total | UI small, tabular digits in the page language |
+| Privacy link (after prototype run 2, DR-239) | UI small at weight 600 (DR-216) |
+| Form error and done messages | UI small |
+| Top bar language link | UI small at weight 600 |
+| Search clear button মুছুন (`Button` text) | button |
+| Trending label ট্রেন্ডিং | UI small at weight 600, `text-ink-muted` |
+| Trending terms | UI small at weight 600, `text-interactive`, no underline (`COL-06`, DR-216) |
+| Footer links | UI small at weight 600 (DR-216) |
+| Footer copyright | metadata |
 
 Every homepage text uses a role in this table. Phones use the low end of each fluid role, so the hierarchy is the same at every width.
 
 **Most read rank.**
 
 - The list is an `<ol>`. The rank comes from the data (the backend most-read query), not from a CSS counter. React writes it in a `<span aria-hidden="true">` at the start of each item: Bangla digits on Bangla pages (১), Latin digits on English pages (1). No leading zero (DR-290).
-- The rank is a square chip with serif digits in both languages (Source Serif 4, Noto Serif Bengali): sizes, weights and colors in `component-system.md` C-07 and Section 6; the ink insets in Section 3.1. `type-rank` is retired (IMP-99; amends DR-144, DR-146, DR-147).
+- The rank is a square chip with serif digits in both languages (Source Serif 4, Noto Serif Bengali): sizes, weights and colors in `component-system.md` C-07 and Section 6; the ink insets in Section 3.4. `type-rank` is retired (IMP-99; amends DR-144, DR-146, DR-147).
 - The CSS is `@utility rank-list` in `component-system.md` Section 6. Put the class on the `<ol>`: `<ol class="rank-list">` (DR-217).
 
 **Other homepage rules.**
@@ -382,29 +422,29 @@ Story prominence comes from the role, layout, image size, position and white spa
 
 ### 7.2 Article page
 
-| Element | Role |
+| Element | Role (Section 3.2) |
 | --- | --- |
-| Category | `type-eyebrow` |
-| Headline (`h1`) | `type-article-title` |
-| Deck | `type-deck` |
-| Byline, date, reading time | `type-metadata` |
-| Paragraphs and lists | `type-article-body` |
-| Subheadings (`h2`, `h3`) | `type-article-h2`, `type-article-h3` |
-| Quotation | `type-blockquote` |
-| Pull quote | `type-pullquote` |
-| Image caption | `type-caption` |
-| Category in the heading (`ArticleHeader`, a filled button) | `type-eyebrow` |
-| Metadata line under the deck | `type-metadata`, `--color-meta` |
-| Byline name; role | `type-ui`; `type-metadata` |
-| Avatar initials, text size glyphs (A, A+, A++) | `type-button` |
-| `KeyPoints` and `ContextCard` headings | `type-article-h3` |
-| Key point text and numbers; `ContextCard` parts | `type-article-body` |
-| `KeyPoints` note, `ContextCard` teaser | `type-metadata` |
-| `ContextCard` part labels | `type-eyebrow`, no uppercase (DR-216) |
-| Rail title, popover label | `type-eyebrow` |
-| Contents links | `type-nav` |
-| Minutes left (rail); progress percent, dock line, selection bar, toast | `type-metadata` with `type-ui-sm`; `type-ui-sm` |
-| Read next heading | `type-section-title` |
+| Category | eyebrow |
+| Headline (`h1`) | article title |
+| Deck | deck |
+| Byline, date, reading time | metadata |
+| Paragraphs and lists | article body |
+| Subheadings (`h2`, `h3`) | article h2, article h3 |
+| Quotation | blockquote |
+| Pull quote | pull quote |
+| Image caption | caption |
+| Category in the heading (`ArticleHeader`, a filled button) | eyebrow |
+| Metadata line under the deck | metadata, `--color-meta` |
+| Byline name; role | UI; metadata |
+| Avatar initials, text size glyphs (A, A+, A++) | button |
+| `KeyPoints` and `ContextCard` headings | article h3 |
+| Key point text and numbers; `ContextCard` parts | article body |
+| `KeyPoints` note, `ContextCard` teaser | metadata |
+| `ContextCard` part labels | eyebrow, no uppercase (DR-216) |
+| Rail title, popover label | eyebrow |
+| Contents links | nav |
+| Minutes left (rail); progress percent, dock line, selection bar, toast | metadata with UI small; UI small |
+| Read next heading | section title |
 
 Paragraph gap is 1.1em. Do not indent paragraphs. The spacing tokens in `spacing-layout-system.md` set the space around headings.
 
@@ -412,17 +452,17 @@ Paragraph gap is 1.1em. Do not indent paragraphs. The spacing tokens in `spacing
 
 | Component | Role |
 | --- | --- |
-| Button | `type-button` |
-| Input, Textarea | `type-input` |
-| Select trigger, Navigation menu | `type-ui` |
-| Dropdown item, Tabs, Tooltip, Toast, Breadcrumb | `type-ui-sm` |
-| Dialog title | `type-ui` with weight 600 |
-| Dialog description | `type-ui-sm` |
-| Badge | `type-eyebrow` |
+| Button | button |
+| Input, Textarea | input |
+| Select trigger, Navigation menu | UI |
+| Dropdown item, Tabs, Tooltip, Toast, Breadcrumb | UI small |
+| Card title, Dialog title | section title (`text-section`) |
+| Card description, Dialog description | UI |
+| Badge | eyebrow |
 
 ### 7.4 Navigation
 
-Use `type-nav` for the nav row (from 1280px): 16px on Bangla pages, 14px on English pages, weight 600 (DR-295, DR-346). Use `type-ui` with weight 600 for the drawer (all widths). Use `type-ui-sm` with weight 500 for drawer sub-items. Do not use serif in navigation.
+Use the nav role for the nav row (from 1280px): `font-ui text-nav font-semibold`. `text-nav` is `text-sm` (16px) on Bangla pages and `text-xs` (14px) on English pages, weight 600 (DR-295, DR-346). Use UI with weight 600 for the drawer (all widths). Use UI small with weight 500 for drawer sub-items. Do not use serif in navigation.
 
 ## 8. Implementation
 
@@ -472,11 +512,13 @@ Load only the families above. Do not load fonts from a CSS `@import` or another 
 Put this in `src/styles/typography.css`. For the import order, see `spacing-layout-system.md` Section 12.5 (DR-339). It defines the line length caps (Section 5.1). It works with Tailwind 4.
 
 ```css
-/* Remove the Tailwind default font families, text sizes and weights (TYP-01, TYP-06, DR-235).
-   Only the Fact Lens roles and the weights 400 to 700 exist. */
+/* Remove the Tailwind default font families, text sizes, line heights and weights
+   (TYP-01, TYP-06, DR-235). Only the Fact Lens scale and the weights 400 to 700 exist. */
 @theme {
   --font-*: initial;
   --text-*: initial;
+  --leading-*: initial;
+  --tracking-*: initial;
   --font-weight-*: initial;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -485,9 +527,58 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   --default-font-family: var(--font-ui-active);
 }
 
+/* The type scale (Section 3, DR-454 to DR-456). Inline, so each class reads the
+   language token of its own element (TYP-04): text-xs on an English block in a Bangla
+   page takes the English value. */
 @theme inline {
   --font-editorial: var(--font-editorial-active);
   --font-ui: var(--font-ui-active);
+  --font-weight-eyebrow: var(--eyebrow-weight);
+
+  --text-xs: var(--text-xs-size);
+  --text-xs--line-height: var(--text-xs-line);
+  --text-xs--letter-spacing: var(--text-xs-tracking);
+  --text-sm: var(--text-sm-size);
+  --text-sm--line-height: var(--text-sm-line);
+  --text-sm--letter-spacing: var(--text-sm-tracking);
+  --text-base: var(--text-base-size);
+  --text-base--line-height: var(--text-base-line);
+  --text-base--letter-spacing: var(--text-base-tracking);
+  --text-lg: var(--text-lg-size);
+  --text-lg--line-height: var(--text-lg-line);
+  --text-lg--letter-spacing: var(--text-lg-tracking);
+  --text-xl: var(--text-xl-size);
+  --text-xl--line-height: var(--text-xl-line);
+  --text-xl--letter-spacing: var(--text-xl-tracking);
+  --text-2xl: var(--text-2xl-size);
+  --text-2xl--line-height: var(--text-2xl-line);
+  --text-2xl--letter-spacing: var(--text-2xl-tracking);
+  --text-3xl: var(--text-3xl-size);
+  --text-3xl--line-height: var(--text-3xl-line);
+  --text-3xl--letter-spacing: var(--text-3xl-tracking);
+  --text-4xl: var(--text-4xl-size);
+  --text-4xl--line-height: var(--text-4xl-line);
+  --text-4xl--letter-spacing: var(--text-4xl-tracking);
+  --text-5xl: var(--text-5xl-size);
+  --text-5xl--line-height: var(--text-5xl-line);
+  --text-5xl--letter-spacing: var(--text-5xl-tracking);
+  --text-6xl: var(--text-6xl-size);
+  --text-6xl--line-height: var(--text-6xl-line);
+  --text-6xl--letter-spacing: var(--text-6xl-tracking);
+  --text-7xl: var(--text-7xl-size);
+  --text-7xl--line-height: var(--text-7xl-line);
+  --text-7xl--letter-spacing: var(--text-7xl-tracking);
+  --text-section: var(--text-section-size);
+  --text-section--line-height: var(--text-section-line);
+  --text-section--letter-spacing: var(--text-section-tracking);
+  /* Nav: text-xs in English, text-sm in Bangla. The language choice is in the token, not
+     in the NavBar (TYP-04, DR-346). */
+  --text-nav: var(--nav-size);
+  --text-nav--line-height: var(--nav-line);
+
+  --leading-tight: var(--leading-tight-value);
+  --leading-relaxed: var(--leading-relaxed-value);
+  --tracking-eyebrow: var(--eyebrow-tracking);
 }
 
 :root {
@@ -496,243 +587,163 @@ Put this in `src/styles/typography.css`. For the import order, see `spacing-layo
   /* Line length caps (Section 5.1). Typography owns these tokens. */
   --measure-article-title: 56rem;
   --measure-deck: 36rem;
+
+  /* Article body floor, both languages (TYP-11, DR-455) */
+  --type-body-min: 1.0625rem;
+
+  /* Sizes that are the same in both languages. Fluid from 360 to 1280px. */
+  --text-sm-size: 1rem;
+  --text-base-size: clamp(1.062rem, 1.038rem + 0.1087vw, 1.125rem);
+  --text-lg-size: clamp(1rem, 0.9022rem + 0.4348vw, 1.25rem);
+  --text-xl-size: clamp(1.125rem, 1.027rem + 0.4348vw, 1.375rem);
+  --text-2xl-size: clamp(1.25rem, 1.152rem + 0.4348vw, 1.5rem);
+  --text-3xl-size: clamp(1.375rem, 1.179rem + 0.8696vw, 1.875rem);
+  --text-4xl-size: clamp(1.5rem, 1.207rem + 1.304vw, 2.25rem);
+  --text-5xl-size: clamp(1.625rem, 1.332rem + 1.304vw, 2.375rem);
+  --text-6xl-size: clamp(1.75rem, 1.457rem + 1.304vw, 2.5rem);
+  --text-section-size: 1.375rem;
 }
 
 /* English values. :lang(en) gives an English block on a Bangla page English type (TYP-03, DR-203).
    Language-free tokens stay on :root only: a :lang(en) copy of --reader-scale would reset the reader size. */
 :root,
 :lang(en) {
-  --font-editorial-active: var(--font-source-serif), Georgia, "Times New Roman", serif;
-  --font-ui-active: var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-editorial-active:
+    var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --font-ui-active:
+    var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial,
+    sans-serif;
 
-  --type-body-min: 1.0625rem;
-  --type-eyebrow-case: uppercase;
-  --type-blockquote-style: italic;
+  --text-xs-size: 0.875rem;
+  --text-7xl-size: clamp(2.75rem, 2.261rem + 2.174vw, 4rem);
 
-  --type-display-size: clamp(2.75rem, 2.261rem + 2.174vw, 4rem);
-  --type-display-weight: 600;
-  --type-display-line: 1.02;
-  --type-display-tracking: -0.03em;
-  --type-page-title-size: clamp(2.125rem, 1.783rem + 1.522vw, 3rem);
-  --type-page-title-weight: 600;
-  --type-page-title-line: 1.06;
-  --type-page-title-tracking: -0.025em;
-  --type-article-title-size: clamp(2.25rem, 1.957rem + 1.304vw, 3rem);
-  --type-article-title-weight: 600;
-  --type-article-title-line: 1.06;
-  --type-article-title-tracking: -0.025em;
-  --type-story-lead-size: clamp(1.875rem, 1.582rem + 1.304vw, 2.625rem);
-  --type-story-lead-weight: 600;
-  --type-story-lead-line: 1.08;
-  --type-story-lead-tracking: -0.02em;
-  --type-story-title-lg-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
-  --type-story-title-lg-weight: 600;
-  --type-story-title-lg-line: 1.12;
-  --type-story-title-lg-tracking: -0.015em;
-  --type-story-title-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
-  --type-story-title-weight: 600;
-  --type-story-title-line: 1.16;
-  --type-story-title-tracking: -0.01em;
-  --type-story-title-sm-size: clamp(1.125rem, 1.076rem + 0.217vw, 1.25rem);
-  --type-story-title-sm-weight: 600;
-  --type-story-title-sm-line: 1.2;
-  --type-story-title-sm-tracking: -0.005em;
-  --type-deck-size: clamp(1.125rem, 1.052rem + 0.326vw, 1.312rem);
-  --type-deck-weight: 400;
-  --type-deck-line: 1.45;
-  --type-deck-tracking: 0;
-  --type-summary-size: 1rem;
-  --type-summary-weight: 500;
-  --type-summary-line: 1.5;
-  --type-summary-tracking: 0;
-  --type-article-body-size: clamp(1.062rem, 1.038rem + 0.109vw, 1.125rem);
-  --type-article-body-weight: 400;
-  --type-article-body-line: 1.68;
-  --type-article-body-tracking: 0;
-  --type-article-h2-size: clamp(1.75rem, 1.554rem + 0.87vw, 2.25rem);
-  --type-article-h2-weight: 600;
-  --type-article-h2-line: 1.15;
-  --type-article-h2-tracking: -0.015em;
-  --type-article-h3-size: clamp(1.375rem, 1.228rem + 0.652vw, 1.75rem);
-  --type-article-h3-weight: 600;
-  --type-article-h3-line: 1.22;
-  --type-article-h3-tracking: -0.01em;
-  --type-blockquote-size: clamp(1.125rem, 1.027rem + 0.435vw, 1.375rem);
-  --type-blockquote-weight: 400;
-  --type-blockquote-line: 1.6;
-  --type-blockquote-tracking: 0;
-  --type-pullquote-size: clamp(1.75rem, 1.554rem + 0.87vw, 2.25rem);
-  --type-pullquote-weight: 500;
-  --type-pullquote-line: 1.2;
-  --type-pullquote-tracking: -0.015em;
-  --type-section-title-size: 1.375rem;
-  --type-section-title-weight: 600;
-  --type-section-title-line: 1.25;
-  --type-section-title-tracking: -0.01em;
-  --type-eyebrow-size: 0.875rem;
-  --type-eyebrow-weight: 700;
-  --type-eyebrow-line: 1.2;
-  --type-eyebrow-tracking: 0.06em;
-  --type-metadata-size: 0.875rem;
-  --type-metadata-weight: 400;
-  --type-metadata-line: 1.4;
-  --type-metadata-tracking: 0.01em;
-  /* Ink inset (Section 3.1, DR-355) */
-  --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.2);
-  --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.12);
-  --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.18);
+  --text-xs-line: 1.4;
+  --text-sm-line: 1.4;
+  --text-base-line: 1.68;
+  --text-lg-line: 1.2;
+  --text-xl-line: 1.22;
+  --text-2xl-line: 1.16;
+  --text-3xl-line: 1.15;
+  --text-4xl-line: 1.08;
+  --text-5xl-line: 1.06;
+  --text-6xl-line: 1.06;
+  --text-7xl-line: 1.02;
+  --text-section-line: 1.25;
+  --leading-tight-value: 1.2;
+  --leading-relaxed-value: 1.5;
+
+  --text-xs-tracking: 0;
+  --text-sm-tracking: 0;
+  --text-base-tracking: 0;
+  --text-lg-tracking: -0.005em;
+  --text-xl-tracking: -0.01em;
+  --text-2xl-tracking: -0.01em;
+  --text-3xl-tracking: -0.015em;
+  --text-4xl-tracking: -0.02em;
+  --text-5xl-tracking: -0.025em;
+  --text-6xl-tracking: -0.025em;
+  --text-7xl-tracking: -0.03em;
+  --text-section-tracking: -0.01em;
+
+  --nav-size: var(--text-xs-size);
+  --nav-line: var(--text-xs-line);
+  --eyebrow-weight: 700;
+  --eyebrow-tracking: 0.06em;
+  --eyebrow-case: uppercase;
+  --blockquote-weight: 400;
+  --blockquote-style: italic;
+
+  /* Ink inset (Section 3.4, DR-355): the list title (text-lg) and metadata (text-xs) */
+  --text-lg-ink-start: calc(var(--text-lg-size) * 0.2);
+  --text-lg-ink-end: calc(var(--text-lg-size) * 0.12);
+  --text-xs-ink-end: calc(var(--text-xs-size) * 0.18);
   /* RankedList chip digits, a share of the digit size (components.css) */
   --rank-chip-ink-start: 0.205em;
   --rank-chip-ink-end: 0.143em;
-  --type-caption-size: 0.875rem;
-  --type-caption-weight: 400;
-  --type-caption-line: 1.5;
-  --type-caption-tracking: 0;
-  --type-ui-size: 1rem;
-  --type-ui-weight: 500;
-  --type-ui-line: 1.4;
-  --type-ui-tracking: 0;
-  --type-ui-sm-size: 0.875rem;
-  --type-ui-sm-weight: 500;
-  --type-ui-sm-line: 1.4;
-  --type-ui-sm-tracking: 0;
-  --type-nav-size: 0.875rem;
-  --type-nav-weight: 600;
-  --type-nav-line: 1.4;
-  --type-button-size: 0.875rem;
-  --type-button-weight: 600;
-  --type-button-line: 1.2;
-  --type-button-tracking: 0;
+
   --type-logo-size: 1.25rem;
   --type-logo-weight: 700;
   --type-logo-line: 1;
-  --type-input-size: 1rem;
-  --type-input-weight: 400;
-  --type-input-line: 1.4;
-  --type-input-tracking: 0;
 }
 
 :lang(bn) {
-  --font-editorial-active: var(--font-noto-serif-bengali), var(--font-source-serif), "Noto Serif", serif;
-  --font-ui-active: var(--font-noto-sans-bengali), var(--font-plus-jakarta), "Nirmala UI", sans-serif;
+  --font-editorial-active:
+    var(--font-noto-serif-bengali), var(--font-source-serif), "Noto Serif",
+    serif;
+  --font-ui-active:
+    var(--font-noto-sans-bengali), var(--font-plus-jakarta), "Nirmala UI",
+    sans-serif;
 
-  --type-body-min: 1.125rem;
-  --type-eyebrow-case: none;
-  --type-blockquote-style: normal;
+  --text-xs-size: 0.9375rem;
+  --text-7xl-size: clamp(2.5rem, 2.109rem + 1.739vw, 3.5rem);
 
-  --type-display-size: clamp(2.5rem, 2.109rem + 1.739vw, 3.5rem);
-  --type-display-weight: 600;
-  --type-display-line: 1.16;
-  --type-display-tracking: 0;
-  --type-page-title-size: clamp(2rem, 1.707rem + 1.304vw, 2.75rem);
-  --type-page-title-weight: 600;
-  --type-page-title-line: 1.18;
-  --type-page-title-tracking: 0;
-  --type-article-title-size: clamp(2.125rem, 1.88rem + 1.087vw, 2.75rem);
-  --type-article-title-weight: 600;
-  --type-article-title-line: 1.18;
-  --type-article-title-tracking: 0;
-  --type-story-lead-size: clamp(1.75rem, 1.457rem + 1.304vw, 2.5rem);
-  --type-story-lead-weight: 600;
-  --type-story-lead-line: 1.2;
-  --type-story-lead-tracking: 0;
-  --type-story-title-lg-size: clamp(1.625rem, 1.478rem + 0.652vw, 2rem);
-  --type-story-title-lg-weight: 600;
-  --type-story-title-lg-line: 1.22;
-  --type-story-title-lg-tracking: 0;
-  --type-story-title-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
-  --type-story-title-weight: 600;
-  --type-story-title-line: 1.26;
-  --type-story-title-tracking: 0;
-  --type-story-title-sm-size: clamp(1.125rem, 1.076rem + 0.217vw, 1.25rem);
-  --type-story-title-sm-weight: 600;
-  --type-story-title-sm-line: 1.3;
-  --type-story-title-sm-tracking: 0;
-  --type-deck-size: clamp(1.125rem, 1.076rem + 0.217vw, 1.25rem);
-  --type-deck-weight: 400;
-  --type-deck-line: 1.55;
-  --type-deck-tracking: 0;
-  --type-summary-size: 1.0625rem;
-  --type-summary-weight: 500;
-  --type-summary-line: 1.6;
-  --type-summary-tracking: 0;
-  --type-article-body-size: clamp(1.125rem, 1.101rem + 0.109vw, 1.188rem);
-  --type-article-body-weight: 400;
-  --type-article-body-line: 1.76;
-  --type-article-body-tracking: 0;
-  --type-article-h2-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
-  --type-article-h2-weight: 600;
-  --type-article-h2-line: 1.28;
-  --type-article-h2-tracking: 0;
-  --type-article-h3-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
-  --type-article-h3-weight: 600;
-  --type-article-h3-line: 1.34;
-  --type-article-h3-tracking: 0;
-  --type-blockquote-size: clamp(1.188rem, 1.114rem + 0.326vw, 1.375rem);
-  --type-blockquote-weight: 500;
-  --type-blockquote-line: 1.68;
-  --type-blockquote-tracking: 0;
-  --type-pullquote-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
-  --type-pullquote-weight: 500;
-  --type-pullquote-line: 1.32;
-  --type-pullquote-tracking: 0;
-  --type-section-title-size: 1.375rem;
-  --type-section-title-weight: 600;
-  --type-section-title-line: 1.3;
-  --type-section-title-tracking: 0;
-  --type-eyebrow-size: 0.9375rem;
-  --type-eyebrow-weight: 600;
-  --type-eyebrow-line: 1.35;
-  --type-eyebrow-tracking: 0;
-  --type-metadata-size: 0.9375rem;
-  --type-metadata-weight: 400;
-  --type-metadata-line: 1.5;
-  --type-metadata-tracking: 0;
-  /* Ink inset (Section 3.1, DR-355) */
-  --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.03);
-  --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.25);
-  --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.33);
+  --text-xs-line: 1.5;
+  --text-sm-line: 1.5;
+  --text-base-line: 1.76;
+  --text-lg-line: 1.3;
+  --text-xl-line: 1.34;
+  --text-2xl-line: 1.26;
+  --text-3xl-line: 1.28;
+  --text-4xl-line: 1.2;
+  --text-5xl-line: 1.18;
+  --text-6xl-line: 1.18;
+  --text-7xl-line: 1.16;
+  --text-section-line: 1.3;
+  --leading-tight-value: 1.35;
+  --leading-relaxed-value: 1.6;
+
+  /* Bangla tracking is 0 at every step (TYP-05) */
+  --text-xs-tracking: 0;
+  --text-sm-tracking: 0;
+  --text-base-tracking: 0;
+  --text-lg-tracking: 0;
+  --text-xl-tracking: 0;
+  --text-2xl-tracking: 0;
+  --text-3xl-tracking: 0;
+  --text-4xl-tracking: 0;
+  --text-5xl-tracking: 0;
+  --text-6xl-tracking: 0;
+  --text-7xl-tracking: 0;
+  --text-section-tracking: 0;
+
+  --nav-size: var(--text-sm-size);
+  --nav-line: var(--text-sm-line);
+  --eyebrow-weight: 600;
+  --eyebrow-tracking: 0;
+  --eyebrow-case: none;
+  --blockquote-weight: 500;
+  --blockquote-style: normal;
+
+  /* Ink inset (Section 3.4, DR-355) */
+  --text-lg-ink-start: calc(var(--text-lg-size) * 0.03);
+  --text-lg-ink-end: calc(var(--text-lg-size) * 0.25);
+  --text-xs-ink-end: calc(var(--text-xs-size) * 0.33);
   /* RankedList chip digits, a share of the digit size (components.css) */
   --rank-chip-ink-start: 0.17em;
   --rank-chip-ink-end: 0.19em;
-  --type-caption-size: 0.9375rem;
-  --type-caption-weight: 400;
-  --type-caption-line: 1.6;
-  --type-caption-tracking: 0;
-  --type-ui-size: 1rem;
-  --type-ui-weight: 500;
-  --type-ui-line: 1.5;
-  --type-ui-tracking: 0;
-  --type-ui-sm-size: 0.9375rem;
-  --type-ui-sm-weight: 500;
-  --type-ui-sm-line: 1.5;
-  --type-ui-sm-tracking: 0;
-  --type-nav-size: 1rem;
-  --type-nav-weight: 600;
-  --type-nav-line: 1.5;
-  --type-button-size: 0.9375rem;
-  --type-button-weight: 600;
-  --type-button-line: 1.35;
-  --type-button-tracking: 0;
+
   --type-logo-line: 1.1;
-  --type-input-size: 1rem;
-  --type-input-weight: 400;
-  --type-input-line: 1.5;
-  --type-input-tracking: 0;
 }
 
-/* Below 600 the lead story role takes the story title metrics (Analysis spec log AN-14). */
+/* Below 600 the lead and cover step (text-4xl) takes the card title step (text-2xl), so
+   the lead and the cards read alike on phones (tajmin, 4 Nov 2026). From 600 text-4xl
+   keeps its own curve. */
 @media (width < 37.5rem) {
+  :root,
   :lang(en),
   :lang(bn) {
-    --type-story-lead-size: var(--type-story-title-size);
-    --type-story-lead-line: var(--type-story-title-line);
-    --type-story-lead-tracking: var(--type-story-title-tracking);
+    --text-4xl-size: var(--text-2xl-size);
+    --text-4xl-line: var(--text-2xl-line);
+    --text-4xl-tracking: var(--text-2xl-tracking);
   }
 }
 
-[data-reader-size="lg"] { --reader-scale: 1.2; }
-[data-reader-size="xl"] { --reader-scale: 1.4; }
+[data-reader-size="lg"] {
+  --reader-scale: 1.2;
+}
+[data-reader-size="xl"] {
+  --reader-scale: 1.4;
+}
 
 body {
   font-family: var(--font-ui-active);
@@ -743,145 +754,24 @@ body {
 
 @media (min-width: 48rem) {
   :root,
-  :lang(en) { --type-logo-size: 1.75rem; }
+  :lang(en) {
+    --type-logo-size: 1.75rem;
+  }
 }
 
 @media (min-width: 64rem) {
   :root,
-  :lang(en) { --type-logo-size: 2rem; }
+  :lang(en) {
+    --type-logo-size: 2rem;
+  }
 }
 
-:lang(bn) em { font-style: normal; font-weight: 600; }
-:lang(bn) strong { font-weight: 700; }
-
-@utility type-display {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-display-size);
-  font-weight: var(--type-display-weight);
-  line-height: var(--type-display-line);
-  letter-spacing: var(--type-display-tracking);
-  text-wrap: balance;
+:lang(bn) em {
+  font-style: normal;
+  font-weight: 600;
 }
-
-@utility type-page-title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-page-title-size);
-  font-weight: var(--type-page-title-weight);
-  line-height: var(--type-page-title-line);
-  letter-spacing: var(--type-page-title-tracking);
-  text-wrap: balance;
-}
-
-@utility type-article-title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-article-title-size);
-  font-weight: var(--type-article-title-weight);
-  line-height: var(--type-article-title-line);
-  letter-spacing: var(--type-article-title-tracking);
-  text-wrap: balance;
-  max-inline-size: var(--measure-article-title);
-}
-
-@utility type-story-lead {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-lead-size);
-  font-weight: var(--type-story-lead-weight);
-  line-height: var(--type-story-lead-line);
-  letter-spacing: var(--type-story-lead-tracking);
-  text-wrap: balance;
-}
-
-@utility type-story-title-lg {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-title-lg-size);
-  font-weight: var(--type-story-title-lg-weight);
-  line-height: var(--type-story-title-lg-line);
-  letter-spacing: var(--type-story-title-lg-tracking);
-  text-wrap: balance;
-}
-
-@utility type-story-title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-title-size);
-  font-weight: var(--type-story-title-weight);
-  line-height: var(--type-story-title-line);
-  letter-spacing: var(--type-story-title-tracking);
-}
-
-@utility type-story-title-sm {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-title-sm-size);
-  font-weight: var(--type-story-title-sm-weight);
-  line-height: var(--type-story-title-sm-line);
-  letter-spacing: var(--type-story-title-sm-tracking);
-}
-
-@utility type-deck {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-deck-size);
-  font-weight: var(--type-deck-weight);
-  line-height: var(--type-deck-line);
-  letter-spacing: var(--type-deck-tracking);
-  max-inline-size: var(--measure-deck);
-}
-
-@utility type-summary {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-summary-size);
-  font-weight: var(--type-summary-weight);
-  line-height: var(--type-summary-line);
-  letter-spacing: var(--type-summary-tracking);
-  max-inline-size: var(--measure-deck);
-}
-
-@utility type-article-body {
-  font-family: var(--font-editorial-active);
-  font-size: max(var(--type-body-min), calc(var(--type-article-body-size) * var(--reader-scale)));
-  font-weight: var(--type-article-body-weight);
-  line-height: var(--type-article-body-line);
-  letter-spacing: var(--type-article-body-tracking);
-}
-
-@utility type-article-h2 {
-  font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
-  font-weight: var(--type-article-h2-weight);
-  line-height: var(--type-article-h2-line);
-  letter-spacing: var(--type-article-h2-tracking);
-}
-
-@utility type-article-h3 {
-  font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-article-h3-size) * var(--reader-scale));
-  font-weight: var(--type-article-h3-weight);
-  line-height: var(--type-article-h3-line);
-  letter-spacing: var(--type-article-h3-tracking);
-}
-
-@utility type-blockquote {
-  font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-blockquote-size) * var(--reader-scale));
-  font-weight: var(--type-blockquote-weight);
-  line-height: var(--type-blockquote-line);
-  letter-spacing: var(--type-blockquote-tracking);
-  font-style: var(--type-blockquote-style);
-}
-
-@utility type-pullquote {
-  font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-pullquote-size) * var(--reader-scale));
-  font-weight: var(--type-pullquote-weight);
-  line-height: var(--type-pullquote-line);
-  letter-spacing: var(--type-pullquote-tracking);
-  text-wrap: balance;
-}
-
-@utility type-section-title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-section-title-size);
-  font-weight: var(--type-section-title-weight);
-  line-height: var(--type-section-title-line);
-  letter-spacing: var(--type-section-title-tracking);
+:lang(bn) strong {
+  font-weight: 700;
 }
 
 @utility type-logo {
@@ -899,86 +789,37 @@ body {
   line-height: var(--type-logo-line);
 }
 
-@utility type-eyebrow {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: var(--type-eyebrow-case);
-}
-
-@utility type-metadata {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
-}
-
-@utility type-caption {
-  font-family: var(--font-ui-active);
-  font-size: calc(var(--type-caption-size) * var(--reader-scale));
-  font-weight: var(--type-caption-weight);
-  line-height: var(--type-caption-line);
-  letter-spacing: var(--type-caption-tracking);
-}
-
-@utility type-ui {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-ui-size);
-  font-weight: var(--type-ui-weight);
-  line-height: var(--type-ui-line);
-  letter-spacing: var(--type-ui-tracking);
-}
-
-@utility type-ui-sm {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-ui-sm-weight);
-  line-height: var(--type-ui-sm-line);
-  letter-spacing: var(--type-ui-sm-tracking);
-}
-
-@utility type-nav {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-nav-size);
-  font-weight: var(--type-nav-weight);
-  line-height: var(--type-nav-line);
-}
-
-@utility type-button {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-button-size);
-  font-weight: var(--type-button-weight);
-  line-height: var(--type-button-line);
-  letter-spacing: var(--type-button-tracking);
-}
-
-@utility type-input {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-input-size);
-  font-weight: var(--type-input-weight);
-  line-height: var(--type-input-line);
-  letter-spacing: var(--type-input-tracking);
+/* Eyebrow and Chip only: uppercase in English, no case in Bangla (DR-216). */
+@utility case-eyebrow {
+  text-transform: var(--eyebrow-case);
 }
 ```
 
 Put `data-reader-size` on the article element, not on `<html>`. Then only the article text scales.
 
+The steps use `@theme inline`, so each class reads the language token of its own element: an English block on a Bangla page takes the English values (TYP-03, TYP-04). The reader scale is not in the classes. `reader.css` applies it to the elements of Section 4, for example:
+
+```css
+.rd-prose p {
+  font-size: max(var(--type-body-min), calc(var(--text-base-size) * var(--reader-scale)));
+  line-height: var(--text-base-line);
+}
+.rd-prose h2 {
+  font-size: calc(var(--text-3xl-size) * var(--reader-scale));
+  line-height: var(--text-3xl-line);
+  letter-spacing: var(--text-3xl-tracking);
+}
+```
+
 ### 8.3 Usage
 
 ```tsx
-<article lang="bn" data-reader-size="lg">
-  {/* Layout sets the column: measure-reading-bn */}
-  <span className="type-eyebrow text-interactive">বিশ্লেষণ</span>
-  <h1 className="type-article-title text-ink">…</h1>
-  <p className="type-deck text-ink-secondary">…</p>
-  <p className="type-metadata text-ink-muted">…</p>
-  <p className="type-article-body text-ink-secondary">
-    … <a className="text-interactive underline underline-offset-[0.2em]" href="…">…</a> …
-  </p>
-</article>
+<section lang="bn">
+  <p className="font-ui text-xs leading-tight font-eyebrow tracking-eyebrow case-eyebrow text-interactive">বিশ্লেষণ</p>
+  <h3 className="font-editorial text-4xl font-semibold text-balance text-ink">…</h3>
+  <p className="font-editorial text-sm leading-relaxed font-medium max-w-(--measure-deck) text-ink-secondary">…</p>
+  <p className="font-ui text-xs font-normal text-(--color-meta)">…</p>
+</section>
 ```
 
 ### 8.4 Files
@@ -987,7 +828,9 @@ Put `data-reader-size` on the article element, not on `<html>`. Then only the ar
 | --- | --- |
 | `src/app/fonts.ts` | Font loading (Section 8.1) |
 | `src/styles/colors.css` | Color tokens (`color-system.md`) |
-| `src/styles/typography.css` | Typography tokens and utilities (Section 8.2) |
+| `src/styles/typography.css` | Typography tokens, the scale and the logo utilities (Section 8.2) |
+| `src/styles/reader.css` | The article page type, with the reader scale (Section 4) |
+| `src/lib/utils.ts` | `cn()`, with the scale steps in its merge tables (Section 3.2) |
 | `src/app/globals.css` | The imports and base rules (`spacing-layout-system.md` Sections 12.4 and 12.5) |
 | `src/components/ui/` | shadcn/ui components |
 | `src/components/editorial/` | Story and article components |
@@ -1000,12 +843,12 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 | --- | --- | --- |
 | Hero | Lead looks dominant at 1024px (648px wrapper). Bangla rail titles fit at 304px | Fluid wrapper + 304px rail (Section 5.2) |
 | Article title | Line height and tracking look tight in both languages | EN 1.06 / −0.025em, BN 1.18. Test EN 1.12 / −0.015em. Width: `measure-article-title` 56rem. |
-| Article headings at A++ | H2 at A++ (50px EN, 48px BN) comes close to the article title (60px, 56px) | Reader scale 1.4 |
+| Article headings at A++ | H2 at A++ (42px) comes close to the article title (38px) | Reader scale 1.4 |
 | Bangla article body | Line height can be too loose | 1.76. Test 1.70. |
 | Bangla small text | Eyebrow, metadata and caption are easy to see | 15px |
-| Source Serif 4 | Source Serif 4 has a larger x-height than Newsreader, so text looks larger at the same size. Check body 18px and the headline sizes. | Role table |
-| Rail titles | Bangla rail titles and summaries in the 304px rail | `type-story-title-sm` 18–20px, `type-summary` |
-| Hero titles | The two top stories use `type-story-title`, so the lead title leads at 1024px (T-37, DR-85) | `type-story-title` 22–26px |
+| Source Serif 4 | Source Serif 4 has a larger x-height than Newsreader, so text looks larger at the same size. Check body 18px and the headline sizes. | Scale (Section 3.1) |
+| Rail titles | Bangla rail titles and summaries in the 304px rail | List title `text-lg` 16–20px, summary `text-sm` |
+| Hero titles | The two top stories use the card title, so the lead title leads at 1024px (T-37, DR-85) | Card title `text-2xl` 20–24px |
 | Reader sizes | A+ and A++ are clearly different and the layout does not break | 1, 1.2, 1.4 |
 | Colors | Some colors can change after prototype rounds. See `color-system.md` Section 6. | `color-system.md` v2.1 |
 
@@ -1016,11 +859,13 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 | Load only the fonts for the page language (for example no Bangla fonts on English pages) | After a performance measurement |
 | Typography for charts and data | When the Data/Visual format starts |
 | Print styles | Before release v1 |
+| Measure the ink insets again for the `text-lg` list title (16–20px) and `text-xs` metadata (Section 3.4, DR-355) | Next layout pass |
 
 ## 11. Changelog
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.23 | 2026-11-04 | Type scale (DR-454, DR-455, DR-456). Section 3: one scale of Tailwind 4 text classes, `text-xs` to `text-7xl` and `text-section`, with `leading-tight`, `leading-relaxed` and `text-nav`; a role is a set of classes (role map 3.2); the 25 `type-*` role utilities and the `--type-*-size`, `-weight`, `-line`, `-tracking` tokens are retired; `type-logo` and `type-logo-sm` stay (3.3); `type-story-title-lg` retired. New values: card title 20–24px, list title 16–20px, lead and cover title 24–36px, article title 26–38px, page title 28–40px (larger than the article title), article h2 22–30px, h3 18–22px, deck 16–20px with line height 1.5 / 1.6, summary 16px in both languages, metadata tracking 0. Section 3.4: ink inset tokens renamed `--text-lg-ink-*`, `--text-xs-ink-end`, shares kept. Section 4: body 18px and h3 22px at 1280 in both languages; floor 17px in both languages (TYP-11). TYP-01 and TYP-18: use only the scale classes. Section 7 names roles. Section 8.2 CSS. |
 | 2.21 | 2026-10-28 | Latest page (spec log `latest.md` LT-04): TYP-17 story time: a list that adds stories in the browser runs the script at once (load more). No value changes. |
 | 2.20 | 2026-10-28 | URL format (IMP-97, `docs/tasks/url-format.md`): the "আরও দেখুন" example in Section 4 names দক্ষিণ এশিয়া, not বাংলাদেশ (DR-412). No value changes. |
 | 2.19 | 2026-10-27 | Homepage most read (IMP-99, spec log `home-most-read.md` HM-03, HM-05): `type-rank` and the `--type-rank-*` tokens retired, with the numeral rules of `rank-list`; the rank is the chip of `component-system.md` C-07, whose `@utility rank-list` is in that file's Section 6 (amends DR-144, DR-146, DR-147). Section 7.1 role map and the most read notes follow. |

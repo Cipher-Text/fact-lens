@@ -24,7 +24,11 @@ type Props = {
  */
 export function MissingTranslationNote({ lang, text }: Props) {
   return (
-    <p data-note role="status" className="type-ui-sm text-ink-secondary">
+    <p
+      data-note
+      role="status"
+      className="font-ui text-xs font-medium text-ink-secondary"
+    >
       <Suspense fallback={null}>
         <NoteText lang={lang} text={text} />
       </Suspense>

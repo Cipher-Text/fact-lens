@@ -50,7 +50,7 @@ describe("SectionHeading (C-13)", () => {
       <SectionHeading id="x">Latest</SectionHeading>,
     );
     const heading = screen.getByRole("heading", { level: 2, name: "Latest" });
-    expect(heading).toHaveClass("type-section-title");
+    expect(heading).toHaveClass("text-section");
     expect(heading.querySelector("a")).toBeNull();
     expect(container.querySelector("[data-divider]")).not.toBeNull();
   });
@@ -73,7 +73,7 @@ describe("MoreLink (C-10)", () => {
     expect(link.parentElement).toHaveClass("text-end");
     expect(link).toHaveClass(
       "min-h-11",
-      "type-ui-sm",
+      "text-xs",
       "font-semibold",
       "text-interactive",
       "hover:text-interactive-hover",
@@ -102,7 +102,14 @@ describe("Eyebrow (C-08)", () => {
       "active:text-interactive-pressed",
     );
     expect(link.className).not.toMatch(NO_ROUNDING);
-    expect(link.parentElement).toHaveClass("type-eyebrow");
+    expect(link.parentElement).toHaveClass(
+      "font-ui",
+      "text-xs",
+      "leading-tight",
+      "font-eyebrow",
+      "tracking-eyebrow",
+      "case-eyebrow",
+    );
   });
 
   // DR-417: format mode in mixed lists. Analysis cards link the format hub; news cards keep
@@ -203,10 +210,14 @@ describe("MetaLine (C-09)", () => {
     const { container } = render(<MetaLine items={["A"]} />);
     expect(container.querySelector("[data-meta-separator]")).toBeNull();
     expect(container.firstElementChild).toHaveClass(
-      "type-metadata",
+      "font-ui",
+      "text-xs",
+      "font-normal",
       "text-(--color-meta)",
     );
-    expect(container.firstElementChild!.className).not.toMatch(/font-/);
+    expect(container.firstElementChild!.className).not.toMatch(
+      /\bfont-(?!ui\b|normal\b)/,
+    );
   });
 
   it("shows the time only, with no separator, when the story has no reading time (DR-272)", () => {
@@ -254,7 +265,10 @@ describe("Button (C-12)", () => {
       "px-(--button-padding)",
       "bg-interactive",
       "text-on-interactive",
-      "type-button",
+      "font-ui",
+      "text-xs",
+      "leading-tight",
+      "font-semibold",
       "whitespace-nowrap",
       "not-aria-disabled:hover:bg-interactive-hover",
       "not-aria-disabled:active:bg-interactive-pressed",

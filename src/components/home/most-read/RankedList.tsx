@@ -47,7 +47,7 @@ export function RankedList({ lang, stories, className }: RankedListProps) {
           <span aria-hidden="true">
             <span>{formatNumber(story.rank ?? index + 1, lang)}</span>
           </span>
-          <h3 className="type-story-title-sm">
+          <h3 className="font-editorial text-lg font-semibold">
             <Link href={storyHref(story)} className={headlineLink}>
               {story.title}
             </Link>

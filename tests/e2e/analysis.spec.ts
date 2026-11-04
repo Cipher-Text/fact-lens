@@ -123,7 +123,7 @@ for (const p of PAGES) {
       const rows = await cards.evaluateAll((els) =>
         els.map((card) => ({
           href: card.querySelector("h3 a")?.getAttribute("href") ?? "",
-          eyebrows: [...card.querySelectorAll(".type-eyebrow a")].map(
+          eyebrows: [...card.querySelectorAll("[data-eyebrow] a")].map(
             (a) => a.getAttribute("href") ?? "",
           ),
           time: card.querySelector("time")?.getAttribute("datetime") ?? "",
@@ -161,7 +161,7 @@ for (const p of PAGES) {
         expect(rounded).toBe(0);
 
         // PageTitle.description has no measure (TYP-12 exception, AN-12): max-inline-size
-        // none, not the type-deck measure, and as wide as the shell content.
+        // none, not the text-lg (deck) measure, and as wide as the shell content.
         const description = await page
           .locator("[data-page-title-description]")
           .evaluate((el) => {
