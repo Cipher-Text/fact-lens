@@ -136,7 +136,8 @@ for (const path of PAGES) {
         // --grid-column-gap: 16px, 24px from 768, 32px from 1280 (spacing-layout-system.md §3).
         const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
 
-        // Feature split: stack under 768, text then clamped image column from 768.
+        // side: stack under 768; from 768 the text, then the image at 2 / 3 of the free width,
+        // at least 420px, no cap (DR-451, DR-453).
         const feature = page.locator('[data-case="feature"]');
         const fImg = await box(feature.locator("img"));
         const fText = await box(feature.locator("h3"));
@@ -144,15 +145,14 @@ for (const path of PAGES) {
           expect(fImg.y + fImg.height).toBeLessThanOrEqual(fText.y);
           expect(Math.round(fImg.width)).toBe(Math.round(wrapperWidth));
         } else {
-          const share = width >= 1024 ? 0.6 : 0.5;
           expect(fImg.x).toBeGreaterThan(fText.x);
           expect(fImg.width).toBeCloseTo(
-            clamp(420, (wrapperWidth - columnGap) * share, 557),
+            Math.max(420, ((wrapperWidth - columnGap) * 2) / 3),
             0,
           );
         }
 
-        // Row, third: text 2fr, image 1fr, --grid-column-gap between them (DR-300).
+        // thumbnail: text 2fr, image 1fr, --grid-column-gap between them (DR-300).
         const row = page.locator('[data-case="row"]');
         const rImg = await box(row.locator("img"));
         const rText = await box(row.locator("h3"));
@@ -168,15 +168,12 @@ for (const path of PAGES) {
         expect(nImg.x).toBeGreaterThan(nTitle.x);
         expect(nImg.width).toBeCloseTo((wrapperWidth - columnGap) / 3, 0);
 
-        // Rail image story: row under 1024, stack in the 304px rail from 1024.
+        // top in the rail: the image above the text at every width, 304px wide from 1024.
         const rail = page.locator('[data-case="rail"]');
         const railImg = await box(rail.locator("img"));
         const railText = await box(rail.locator("h3"));
-        if (width < 1024) expect(railImg.x).toBeGreaterThan(railText.x);
-        else {
-          expect(railImg.y + railImg.height).toBeLessThanOrEqual(railText.y);
-          expect(Math.round(railImg.width)).toBe(304);
-        }
+        expect(railImg.y + railImg.height).toBeLessThanOrEqual(railText.y);
+        if (width >= 1024) expect(Math.round(railImg.width)).toBe(304);
       });
 
       test("StoryList: one column, two column-first from 768 to 1023", async ({

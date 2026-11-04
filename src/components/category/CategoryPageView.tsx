@@ -9,7 +9,7 @@ import type { CategoryPage } from "@/content";
 import { getDictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-import { CategoryFeatureSection } from "./CategoryFeatureSection";
+import { CategoryCoverSection } from "./CategoryCoverSection";
 import { CategoryFormatsSection } from "./CategoryFormatsSection";
 import { MissingTranslationNote } from "./MissingTranslationNote";
 
@@ -22,10 +22,9 @@ export function CategoryPageView({ page }: Props) {
   const { lang, category } = page;
   const t = getDictionary(lang);
   const formats = page.analysis.length > 0 || page.opinion.length > 0;
-  // More stories follows an ad row only when Most read or the feature ad row is the row
+  // More stories follows an ad row only when Most read or the cover ad row is the row
   // before it; after the formats row it follows a section (LAY-12).
-  const afterAd =
-    page.mostRead.length > 0 || (page.feature !== null && !formats);
+  const afterAd = page.mostRead.length > 0 || (page.cover !== null && !formats);
 
   return (
     <>
@@ -50,13 +49,13 @@ export function CategoryPageView({ page }: Props) {
           }
           className="mb-(--space-module)"
         />
-        {/* CategoryFeatureSection holds the feature story and the card rows, then its ad row. A section with
+        {/* CategoryCoverSection holds the cover story and the card rows, then its ad row. A section with
             no stories also hides its ad row (7.3, LAY-13). The space before the ad row
             belongs to the section (LAY-12). */}
-        {page.feature ? (
+        {page.cover ? (
           <>
-            <CategoryFeatureSection
-              feature={page.feature}
+            <CategoryCoverSection
+              cover={page.cover}
               latest={page.latest}
               cards={page.cards}
               t={t}
@@ -74,7 +73,7 @@ export function CategoryPageView({ page }: Props) {
             opinion={page.opinion}
             t={t}
             className={cn(
-              page.feature && "pt-(--space-module)",
+              page.cover && "pt-(--space-module)",
               "pb-(--space-section)",
             )}
           />
@@ -89,7 +88,7 @@ export function CategoryPageView({ page }: Props) {
               stories={page.mostRead}
               t={t}
               className={cn(
-                page.feature && !formats && "pt-(--space-module)",
+                page.cover && !formats && "pt-(--space-module)",
                 "pb-(--space-module)",
               )}
             />

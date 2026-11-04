@@ -36,7 +36,7 @@ function rows(page: AnalysisPage) {
       (el) =>
         el.getAttribute("data-section") ??
         el.getAttribute("data-ad-slot") ??
-        (el.hasAttribute("data-analysis-lead-rule")
+        (el.hasAttribute("data-analysis-cover-rule")
           ? "rule"
           : el.tagName.toLowerCase()),
     ),
@@ -50,7 +50,7 @@ describe("AnalysisPageView", () => {
     const { main, order, cls } = rows(full);
     expect(order).toEqual([
       "header",
-      "analysis-lead",
+      "analysis-cover",
       "rule",
       "analysis-top",
       "ad-band",
@@ -67,7 +67,7 @@ describe("AnalysisPageView", () => {
       ),
     ).toHaveLength(4);
     // space-module on each side of the rule and before the ad band (LAY-12).
-    expect(cls('[data-section="analysis-lead"]')).toContain(
+    expect(cls('[data-section="analysis-cover"]')).toContain(
       "pb-(--space-module)",
     );
     expect(cls('[data-section="analysis-top"]')).toContain(
@@ -83,8 +83,8 @@ describe("AnalysisPageView", () => {
 
   it("1 story: the hero only, the last row adds no space", () => {
     const { order, cls } = rows(view(1, 0, 0));
-    expect(order).toEqual(["header", "analysis-lead"]);
-    expect(cls('[data-section="analysis-lead"]')).not.toContain("pb-");
+    expect(order).toEqual(["header", "analysis-cover"]);
+    expect(cls('[data-section="analysis-cover"]')).not.toContain("pb-");
   });
 
   it.each([1, 2, 3])(
@@ -93,7 +93,7 @@ describe("AnalysisPageView", () => {
       const { main, order, cls } = rows(view(1, top, 0));
       expect(order).toEqual([
         "header",
-        "analysis-lead",
+        "analysis-cover",
         "rule",
         "analysis-top",
       ]);
@@ -108,24 +108,26 @@ describe("AnalysisPageView", () => {
     const { order, cls } = rows(view(1, 0, 3));
     expect(order).toEqual([
       "header",
-      "analysis-lead",
+      "analysis-cover",
       "ad-band",
       "category-more",
     ]);
-    expect(cls('[data-section="analysis-lead"]')).toContain(
+    expect(cls('[data-section="analysis-cover"]')).toContain(
       "pb-(--space-module)",
     );
   });
 
-  it("the hero is the feature StoryCard: size lead, 3:2, category Eyebrow, eager image", () => {
+  it("the cover is the StoryCard side with large: 3:2, the cover title, category Eyebrow (DR-451)", () => {
     const { main } = rows(full);
-    const hero = main.querySelector('[data-section="analysis-lead"]')!;
+    const hero = main.querySelector('[data-section="analysis-cover"]')!;
     expect(hero.querySelector("h2")).toHaveClass("sr-only");
     const card = hero.querySelector("[data-story-card]")!;
-    expect(card).toHaveClass("story-split-lead");
-    expect(card.firstElementChild!.className).toContain(
-      "md:story-split-feature",
-    );
+    expect(card).toHaveAttribute("data-variant", "side");
+    expect(card).toHaveAttribute("data-large");
+    expect(card.firstElementChild!.className).toContain("md:story-side");
+    expect(
+      hero.querySelector("[data-story-media] .aspect-3\\/2"),
+    ).not.toBeNull();
     expect(hero.querySelector("h3")).toHaveClass("text-4xl");
     const eyebrow = hero.querySelector("[data-eyebrow] a");
     expect(eyebrow?.getAttribute("href")).toMatch(/^\/en\/category\//);

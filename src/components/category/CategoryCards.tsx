@@ -9,12 +9,12 @@ type ListProps = {
 };
 
 /**
- * The card row list: one StoryCard row per story, text at the start and the 16:9 image at
- * the end, text : image = 2 : 1 (C-24 row, split third), with the summary. Divider.item
+ * The card row list: one StoryCard row per story, text at the start and the 3:2 image at
+ * the end, text : image = 2 : 1 (C-24 `thumbnail`), with the summary. Divider.item
  * between the rows, as in AnalysisList (DR-268); the rows start with the image top, so the
  * item space is measured to it (DR-350). No Eyebrow: the page title names the category
- * (DR-153). The card rows (spacing-layout-system.md 7B) sit under the feature story in
- * the CategoryFeatureSection wrapper, as the top stories do in HeroSection; More stories
+ * (DR-153). The card rows (spacing-layout-system.md 7B) sit under the cover story in
+ * the CategoryCoverSection wrapper, as the top stories do in HeroSection; More stories
  * used the same list (tajmin's tweak at checkpoint 5), now MoreStoriesList.
  */
 export function CategoryCardList({ stories, t }: ListProps) {
@@ -25,10 +25,7 @@ export function CategoryCardList({ stories, t }: ListProps) {
           <StoryCard
             story={story}
             strings={t}
-            layout="row"
-            ratio="16:9"
-            size="md"
-            split="third"
+            variant="thumbnail"
             eyebrow={false}
           />
         </li>

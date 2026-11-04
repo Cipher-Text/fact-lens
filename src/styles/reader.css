@@ -17,7 +17,7 @@
   /* Heading gaps: the story-unit tokens plus one 4px step where they read tight under
      the article title. tajmin, 23 Oct 2026. */
   --rd-head-eyebrow-title: calc(
-    var(--space-lead-eyebrow-title) + calc(var(--spacing) * 1)
+    var(--space-story-eyebrow-title) + calc(var(--spacing) * 1)
   ); /* 12px */
   --rd-head-title-deck: calc(
     var(--space-story-title-summary) + calc(var(--spacing) * 1)

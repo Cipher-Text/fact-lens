@@ -49,9 +49,7 @@ export function MoreStoriesList({
             <StoryCard
               story={story}
               strings={t}
-              layout="dated"
-              ratio="16:9"
-              size="md"
+              variant="dated"
               eyebrow={eyebrow}
               eyebrowMode={eyebrowMode}
               formatLabel

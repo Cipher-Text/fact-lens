@@ -39,7 +39,7 @@ describe("LeadStory (C-01)", () => {
     );
     expect(container.querySelector("[data-lead-panel]")).toHaveClass(
       "bg-background",
-      "-mt-(--space-lead-overlap)",
+      "-mt-(--space-overlap-large)",
     );
   });
 
@@ -55,8 +55,8 @@ describe("LeadStory (C-01)", () => {
     );
     expectPlaceholder(container);
     expect(container.querySelector("[data-lead-panel]")).toHaveClass(
-      "-mt-(--space-lead-overlap)",
-      "me-(--space-lead-inset-end)",
+      "-mt-(--space-overlap-large)",
+      "me-(--space-inset-large-end)",
     );
   });
 });
@@ -82,7 +82,7 @@ describe("StoryImage (DR-338, DR-325)", () => {
     const { container } = render(<StoryCard story={withImage} strings={bn} />);
     fireEvent.error(container.querySelector("img")!);
     expectPlaceholder(container);
-    expect(container.querySelector("span.aspect-video")).not.toBeNull();
+    expect(container.querySelector("span.aspect-3\\/2")).not.toBeNull();
   });
 });
 
@@ -93,7 +93,7 @@ describe("OverlapCard (C-02)", () => {
     );
     const body = container.querySelector("[data-overlap-body]")!;
     expect(body).toHaveClass(
-      "-mt-(--space-card-overlap)",
+      "-mt-(--space-overlap)",
       "me-(--space-card-notch)",
       "bg-background",
     );
@@ -115,16 +115,16 @@ describe("OverlapCard (C-02)", () => {
     );
     expectPlaceholder(container);
     expect(container.querySelector("[data-overlap-body]")).toHaveClass(
-      "-mt-(--space-card-overlap)",
+      "-mt-(--space-overlap)",
       "me-(--space-card-notch)",
     );
   });
 });
 
 describe("StoryCard (C-24)", () => {
-  it("puts the image before the text in the markup at every layout, with no order class (LAY-14, DR-267)", () => {
+  it("puts the image before the text in the markup in every variant, with no order class (LAY-14, DR-267)", () => {
     const { container } = render(
-      <StoryCard story={withImage} strings={bn} layout="row" />,
+      <StoryCard story={withImage} strings={bn} variant="thumbnail" />,
     );
     const grid =
       container.querySelector("[data-story-card]")!.firstElementChild!;
@@ -134,16 +134,15 @@ describe("StoryCard (C-24)", () => {
   });
 
   it.each([
-    ["stack", "story-stacked"],
-    ["row", "story-split-third"],
-    ["row-from-md", "md:story-split-third"],
-    ["row-until-lg", "lg:story-stacked"],
+    ["top", "story-top"],
+    ["thumbnail", "story-thumbnail"],
+    ["side", "md:story-side"],
     ["dated", "story-dated"],
   ] as const)(
-    "sets layout %s on the grid inside the container",
-    (layout, grid) => {
+    "sets variant %s on the grid inside the container",
+    (variant, grid) => {
       const { container } = render(
-        <StoryCard story={withImage} strings={bn} layout={layout} />,
+        <StoryCard story={withImage} strings={bn} variant={variant} />,
       );
       const card = container.querySelector("[data-story-card]")!;
       expect(card).toHaveClass("@container");
@@ -154,34 +153,55 @@ describe("StoryCard (C-24)", () => {
     },
   );
 
-  it("uses the feature split, the ratio and the size", () => {
+  it("side stacks under 768 and puts the image at the end from 768; every image is 3:2 (DR-453)", () => {
     const { container } = render(
-      <StoryCard
-        story={withImage}
-        strings={bn}
-        layout="row-from-md"
-        split="feature"
-        ratio="3:2"
-        size="sm"
-      />,
+      <StoryCard story={withImage} strings={bn} variant="side" />,
     );
-    expect(
-      container.querySelector("[data-story-card]")!.firstElementChild!
-        .className,
-    ).toContain("md:story-split-feature");
+    const grid =
+      container.querySelector("[data-story-card]")!.firstElementChild!;
+    expect(grid).toHaveClass("story-top", "md:story-side");
     expect(container.querySelector("img")).toHaveClass("aspect-3/2");
-    expect(screen.getByRole("heading", { level: 3 })).toHaveClass("text-lg");
+    expect(container.innerHTML).not.toContain("aspect-video");
   });
 
   it.each([
-    ["lead", "text-4xl"],
-    ["md", "text-2xl"],
-    ["sm", "text-lg"],
-  ] as const)("size %s sets the title role %s", (size, role) => {
-    render(<StoryCard story={withImage} strings={bn} size={size} />);
+    ["top", false, "text-2xl"],
+    ["thumbnail", false, "text-lg"],
+    ["side", false, "text-2xl"],
+    ["dated", false, "text-2xl"],
+    ["side", true, "text-4xl"],
+  ] as const)(
+    "variant %s (large %s) sets the title role %s (tajmin, 5 Nov 2026)",
+    (variant, large, role) => {
+      render(
+        variant === "side" ? (
+          <StoryCard
+            story={withImage}
+            strings={bn}
+            variant={variant}
+            large={large}
+          />
+        ) : (
+          <StoryCard story={withImage} strings={bn} variant={variant} />
+        ),
+      );
+      const title = screen.getByRole("heading", { level: 3 });
+      expect(title).toHaveClass(role);
+      expect(title.className.match(/\btext-(?:4xl|2xl|lg)\b/g)).toEqual([role]);
+    },
+  );
+
+  it("large is the side option only: on another variant the variant title stays (C-24)", () => {
+    const { container } = render(
+      // @ts-expect-error The type accepts large with variant="side" only (PR 25 review).
+      <StoryCard story={withImage} strings={bn} variant="thumbnail" large />,
+    );
     const title = screen.getByRole("heading", { level: 3 });
-    expect(title).toHaveClass(role);
-    expect(title.className.match(/\btext-(?:4xl|2xl|lg)\b/g)).toEqual([role]);
+    expect(title).toHaveClass("text-lg");
+    expect(title.className.match(/\btext-(?:4xl|2xl|lg)\b/g)).toEqual(["text-lg"]);
+    expect(
+      container.querySelector("[data-story-card]")!.hasAttribute("data-large"),
+    ).toBe(false);
   });
 
   it("drops the eyebrow and the summary when the section asks", () => {
@@ -202,7 +222,7 @@ describe("StoryCard (C-24)", () => {
       <StoryCard
         story={withImage}
         strings={bn}
-        layout="dated"
+        variant="dated"
         eyebrow={false}
       />,
     );
@@ -220,9 +240,9 @@ describe("StoryCard (C-24)", () => {
     expect(container.querySelector("[data-eyebrow]")).toBeNull();
   });
 
-  it("shows the no-image placeholder for a story with no image, in the row layout, whole title (DR-338)", () => {
+  it("shows the no-image placeholder for a story with no image, in the thumbnail variant, whole title (DR-338)", () => {
     const { container } = render(
-      <StoryCard story={longNoImage} strings={bn} layout="row" />,
+      <StoryCard story={longNoImage} strings={bn} variant="thumbnail" />,
     );
     expectPlaceholder(container);
     expect(

@@ -69,23 +69,20 @@ export default async function StoryUnitsPage({
               <StoryCard
                 story={longWithImage}
                 strings={t}
-                ratio="3:2"
                 eyebrow={false}
-                layout="row-from-md"
-                split="feature"
+                variant="side"
               />
             </div>
             <div data-case="row">
               <StoryCard
                 story={longWithImage}
                 strings={t}
-                size="sm"
                 summary={false}
-                layout="row"
+                variant="thumbnail"
               />
             </div>
             <div data-case="no-image">
-              <StoryCard story={longNoImage} strings={t} layout="row" />
+              <StoryCard story={longNoImage} strings={t} variant="thumbnail" />
             </div>
           </Wrapper>
           <Rail>
@@ -93,9 +90,8 @@ export default async function StoryUnitsPage({
               <StoryCard
                 story={longWithImage}
                 strings={t}
-                size="sm"
                 summary={false}
-                layout="row-until-lg"
+                variant="top"
               />
             </div>
           </Rail>

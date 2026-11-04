@@ -51,8 +51,8 @@ export const en: Dictionary = {
   },
   // The category page (spacing-layout-system.md 7B).
   categoryPage: {
-    // Visually hidden name of CategoryFeatureSection.
-    feature: "Top story",
+    // Visually hidden name of CategoryCoverSection.
+    cover: "Top story",
     latest: "Latest",
     // Older stories under the most read section, 10 at a time.
     moreStories: "More stories",
@@ -68,8 +68,8 @@ export const en: Dictionary = {
   analysisPage: {
     // Visually hidden name of the mosaic.
     top: "Top analysis",
-    // Visually hidden name of the hero.
-    lead: "Lead analysis",
+    // Visually hidden name of the cover (AnalysisCoverSection).
+    cover: "Main analysis",
     // The short line below the page title (tajmin, 3 Nov 2026).
     description:
       "In-depth analysis, explanatory journalism and long-form narratives by Fact Lens Team",

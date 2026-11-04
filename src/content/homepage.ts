@@ -57,7 +57,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
     featured: {
       southAsia: {
         lead: "cross-border-water-project",
-        // One image story, then two stories.
+        // Three text stories in the rail (IMP-125, DR-451).
         rail: [
           "regional-maritime-patrol-accord",
           "regional-economic-integration-prospects",

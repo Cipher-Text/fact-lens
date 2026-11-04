@@ -5,7 +5,7 @@ import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // The category page, /[lang]/category/[id] (spacing-layout-system.md 7B): page order, the
-// feature section with the rail (LAY-05), the card rows, most read in the columns layout, More stories
+// cover section with the rail (LAY-05), the card rows, most read in the columns layout, More stories
 // with load more, 404, keyboard and axe, in Bangla and English (COL-13, TYP-03, LAY-02,
 // LAY-06, LAY-07, LAY-09 to LAY-14, LAY-17, CPT-05, CPT-06, DR-153, DR-181). The formats
 // (DR-415): the main stream is news only, the analysis and opinion row is above Most read,
@@ -82,7 +82,7 @@ for (const p of PAGES) {
       ).toHaveCount(1);
       expect(order).toEqual([
         "header",
-        "category-feature",
+        "category-cover",
         "ad-band",
         "category-formats",
         "most-read",
@@ -92,9 +92,9 @@ for (const p of PAGES) {
       // The top ad row is under the site header, outside main (DR-295).
       await expect(page.locator('[data-ad-slot="ad-top"]')).toHaveCount(1);
 
-      // CategoryFeatureSection: the feature story, the 3 card rows and the latest 5 in the rail.
+      // CategoryCoverSection: the cover story, the 3 card rows and the latest 5 in the rail.
       await expect(
-        section(page, "category-feature").locator("[data-latest] li"),
+        section(page, "category-cover").locator("[data-latest] li"),
       ).toHaveCount(5);
       await expect(
         page.locator("[data-category-wrapper] > ul > li"),
@@ -260,7 +260,7 @@ for (const p of PAGES) {
           .locator("h3 a")
           .evaluateAll((links) => links.map((a) => a.getAttribute("href")));
       const shown = [
-        ...(await hrefs("category-feature")),
+        ...(await hrefs("category-cover")),
         ...(await hrefs("category-formats")),
         ...(await hrefs("category-more")),
       ];
@@ -468,7 +468,7 @@ test("the title band: full width, the title in the shell, under the ad-top row",
     expect(bandBg).toBe(surface);
     expect(bandBg).not.toBe(pageBg);
     expect([padTop, padBottom]).toEqual([inset, inset]);
-    // The title lines up with the feature section.
+    // The title lines up with the cover section.
     const h1 = await box(band.getByRole("heading", { level: 1 }));
     const wrapper = await box(page.locator("[data-category-wrapper]"));
     expect(Math.abs(h1.x - wrapper.x)).toBeLessThanOrEqual(1);

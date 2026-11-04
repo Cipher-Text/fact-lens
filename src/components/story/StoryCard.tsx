@@ -10,29 +10,37 @@ import { MetaLine, storyMetaItems } from "./MetaLine";
 import { StoryImage } from "./StoryImage";
 
 /**
- * Where the image sits. The section sets it at the page breakpoints (C-24):
- * stack: image above the text. row: text at the start, image at the end.
- * row-from-md: stack under 768px, row from 768px (P-2 feature story).
- * row-until-lg: row under 1024px, stack from 1024px (P-2 rail image story).
+ * The card variant (C-24, DR-451, DR-453). The variant sets where the image sits and the
+ * title size (tajmin, 5 Nov 2026: "map against variant"), not the card width:
+ * top: the image above the text; card title.
+ * thumbnail: text at the start, a small image at the end (text : image = 2 : 1); list title.
+ * side: stacked as top under 768px; from 768px text at the start, the image at the end
+ * (text : image = 1 : 2, no cap); card title, or the cover title with `large`.
  * dated: the image, the text, then the date under 600px; from 600px three columns, the date,
- * the text, the image (category page More stories; tajmin, 27 Oct 2026). The date is the
- * time only, no reading time.
+ * the text, the image (More stories; tajmin, 27 Oct 2026). The date is the time only, no
+ * reading time. Card title.
+ * Every StoryCard image is 3:2 (DR-453).
  */
-export type StoryCardLayout =
-  "stack" | "row" | "row-from-md" | "row-until-lg" | "dated";
+export type StoryCardVariant = "top" | "thumbnail" | "side" | "dated";
 
-type StoryCardProps = {
+/**
+ * `large` is the `side` option only (C-24): the type accepts it with `variant="side"` and no
+ * other variant. The component keeps a runtime guard as well.
+ */
+type StoryCardVariantProps =
+  | {
+      variant: "side";
+      /** The cover story of its section, the cover title (the analysis hub cover). */
+      large?: boolean;
+    }
+  | {
+      variant?: Exclude<StoryCardVariant, "side">;
+      large?: never;
+    };
+
+type StoryCardProps = StoryCardVariantProps & {
   story: Story;
   strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
-  layout?: StoryCardLayout;
-  ratio?: "3:2" | "16:9";
-  /**
-   * lead: text-4xl, as the category page feature story (the analysis hub hero).
-   * md: text-2xl. sm: text-lg.
-   */
-  size?: "lead" | "md" | "sm";
-  /** Row only. third: text 2fr, image 1fr. feature: the clamped image column of P-2. */
-  split?: "third" | "feature";
   /** The section drops the eyebrow when its heading names the category (DR-114). */
   eyebrow?: boolean;
   /** The Eyebrow mode (C-08): format in mixed lists (DR-417). */
@@ -52,41 +60,26 @@ type StoryCardProps = {
   className?: string;
 };
 
-const ratioClass = { "3:2": "aspect-3/2", "16:9": "aspect-video" } as const;
-
-const titleClass = {
-  lead: "font-editorial text-4xl text-balance font-semibold",
-  md: "font-editorial text-2xl font-semibold",
-  sm: "font-editorial text-lg font-semibold",
-} as const;
+// The title role of each variant (typography-system.md 3.2).
+const cardTitle = "font-editorial text-2xl font-semibold";
+const titleClass: Record<StoryCardVariant, string> = {
+  top: cardTitle,
+  thumbnail: "font-editorial text-lg font-semibold",
+  side: cardTitle,
+  dated: cardTitle,
+};
+const coverTitle = "font-editorial text-4xl text-balance font-semibold";
 
 // The grid areas media and body place the parts, no `order` (LAY-14). The media is first in
-// the markup at every layout (C-24, DR-267); a row layout puts it at the end. The utilities
-// are in components.css and stack a row when the card is narrower than 17.5rem (DR-308).
-// Class names are whole strings so Tailwind finds them.
-const split = {
-  third: "story-split-third",
-  feature: "story-split-feature",
-} as const;
-const splitFromMd = {
-  third: "md:story-split-third",
-  feature: "md:story-split-feature",
-} as const;
-
-function gridClass(layout: StoryCardLayout, kind: "third" | "feature") {
-  switch (layout) {
-    case "stack":
-      return "story-stacked";
-    case "row":
-      return split[kind];
-    case "row-from-md":
-      return `story-stacked ${splitFromMd[kind]}`;
-    case "row-until-lg":
-      return `${split[kind]} lg:story-stacked`;
-    case "dated":
-      return "story-dated";
-  }
-}
+// the markup in every variant (C-24, DR-267); a row puts it at the end. The utilities are in
+// components.css and stack a row when the card is narrower than 17.5rem (DR-308). Class
+// names are whole strings so Tailwind finds them.
+const gridClass: Record<StoryCardVariant, string> = {
+  top: "story-top",
+  thumbnail: "story-thumbnail",
+  side: "story-top md:story-side",
+  dated: "story-dated",
+};
 
 /**
  * C-24 StoryCard: one story with an image and text. Every image story that is not a
@@ -98,10 +91,8 @@ function gridClass(layout: StoryCardLayout, kind: "third" | "feature") {
 export function StoryCard({
   story,
   strings,
-  layout = "stack",
-  ratio = "16:9",
-  size = "md",
-  split: splitKind = "third",
+  variant = "top",
+  large = false,
   eyebrow = true,
   eyebrowMode,
   formatLabel = false,
@@ -112,22 +103,23 @@ export function StoryCard({
   className,
 }: StoryCardProps) {
   const showSummary = summary && Boolean(story.summary);
-  const dated = layout === "dated";
+  const dated = variant === "dated";
   const analysisLabel =
     dated && formatLabel && !eyebrow && story.format === "analysis";
   return (
     <article
       data-story-card
-      data-layout={layout}
+      data-variant={variant}
+      data-large={large && variant === "side" ? "" : undefined}
       className={cn("@container", className)}
     >
-      <div className={cn("grid", gridClass(layout, splitKind))}>
+      <div className={cn("grid", gridClass[variant])}>
         <StoryImage
           story={story}
           eager={eager}
           fadeIn={imageFadeIn}
           className="self-start story-media"
-          imageClassName={ratioClass[ratio]}
+          imageClassName="aspect-3/2"
         />
         <div className="min-w-0 story-body">
           {eyebrow ? (
@@ -135,7 +127,7 @@ export function StoryCard({
               story={story}
               strings={strings}
               mode={eyebrowMode}
-              className="mb-(--space-lead-eyebrow-title)"
+              className="mb-(--space-story-eyebrow-title)"
             />
           ) : null}
           {analysisLabel ? (
@@ -143,10 +135,14 @@ export function StoryCard({
               story={story}
               strings={strings}
               mode="format"
-              className="mb-(--space-lead-eyebrow-title)"
+              className="mb-(--space-story-eyebrow-title)"
             />
           ) : null}
-          <Title className={titleClass[size]}>
+          <Title
+            className={
+              large && variant === "side" ? coverTitle : titleClass[variant]
+            }
+          >
             <Link href={storyHref(story)} className={headlineLink}>
               {story.title}
             </Link>
@@ -164,7 +160,7 @@ export function StoryCard({
               items={storyMetaItems(story, strings.story)}
               className={
                 showSummary
-                  ? "mt-(--space-lead-summary-meta)"
+                  ? "mt-(--space-story-summary-meta)"
                   : "mt-(--space-story-title-meta)"
               }
             />

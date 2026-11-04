@@ -65,14 +65,14 @@ describe("HeroSection (P-1)", () => {
       container.querySelector("[data-lead] [data-placeholder]"),
     ).not.toBeNull();
     expect(container.querySelector("[data-lead-panel]")!.className).toContain(
-      "-mt-(--space-lead-overlap)",
+      "-mt-(--space-overlap-large)",
     );
   });
 
   it("overlaps the lead image by the C-01 tokens, on the page color, and grows down (LAY-17)", () => {
     const { container } = renderHero("bn", full);
     const panel = container.querySelector("[data-lead-panel]")!;
-    expect(panel.className).toContain("-mt-(--space-lead-overlap)");
+    expect(panel.className).toContain("-mt-(--space-overlap-large)");
     expect(panel.className).toContain("bg-background");
     expect(panel.className).not.toMatch(/\b(h|max-h)-/);
   });

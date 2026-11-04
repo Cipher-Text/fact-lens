@@ -10,7 +10,7 @@ import type { AnalysisPage } from "@/content";
 import { getDictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-import { AnalysisHeroSection } from "./AnalysisHeroSection";
+import { AnalysisCoverSection } from "./AnalysisCoverSection";
 import { AnalysisTopSection } from "./AnalysisTopSection";
 
 type Props = {
@@ -54,7 +54,7 @@ export function AnalysisPageView({ page }: Props) {
             before the rule, or before the ad band (LAY-12); as the last row it adds
             none: main ends with space-section. */}
         {page.lead ? (
-          <AnalysisHeroSection
+          <AnalysisCoverSection
             story={page.lead}
             t={t}
             className={cn(
@@ -65,7 +65,7 @@ export function AnalysisPageView({ page }: Props) {
         {/* Divider.rule (1px solid) between the hero and the mosaic, space-module on each
             side (tajmin, 4 Nov 2026). Before the ad band there is no rule. */}
         {page.lead && page.top.length > 0 ? (
-          <Shell data-analysis-lead-rule>
+          <Shell data-analysis-cover-rule>
             <Divider variant="rule" />
           </Shell>
         ) : null}

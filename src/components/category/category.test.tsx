@@ -101,7 +101,7 @@ describe("CategoryPageView spacing (LAY-12)", () => {
     expect(moreClass({ ...page, mostRead: [] })).not.toContain(
       "pt-(--space-module)",
     );
-    // No Most read and no formats row: the feature ad row comes before More stories.
+    // No Most read and no formats row: the cover ad row comes before More stories.
     expect(
       moreClass({ ...page, mostRead: [], analysis: [], opinion: [] }),
     ).toContain("pt-(--space-module)");

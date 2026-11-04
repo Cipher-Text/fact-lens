@@ -214,7 +214,7 @@ const MOST_READ_COUNT = 5;
 
 /**
  * A category page in one language (spacing-layout-system.md 7B, DR-415). Stories are newest
- * first. The main stream is news only: the feature story is the newest news story with an
+ * first. The main stream is news only: the cover story is the newest news story with an
  * image, the rail takes the next 5, the card rows the next 3 with an image. The analysis and
  * opinion row takes up to 5 of each. More stories is the news and analysis not shown above,
  * never opinion. Opinion past the 5th is not on the category page: it belongs to the
@@ -229,8 +229,8 @@ export function getCategoryPage(
     .map((def) => toStory(def, lang))
     .sort(newestFirst);
   const news = all.filter((story) => story.format === "news");
-  const feature = news.find((story) => story.image) ?? null;
-  const rest = news.filter((story) => story !== feature);
+  const cover = news.find((story) => story.image) ?? null;
+  const rest = news.filter((story) => story !== cover);
   const latest = rest.slice(0, LATEST_COUNT);
   const cards = rest
     .slice(LATEST_COUNT)
@@ -242,14 +242,14 @@ export function getCategoryPage(
   const opinion = all
     .filter((story) => story.format === "opinion")
     .slice(0, FORMAT_BLOCK_COUNT);
-  const shown = new Set([feature, ...latest, ...cards, ...analysis]);
+  const shown = new Set([cover, ...latest, ...cards, ...analysis]);
   const more = all.filter(
     (story) => story.format !== "opinion" && !shown.has(story),
   );
   return {
     lang,
     category,
-    feature,
+    cover,
     latest,
     cards,
     analysis,

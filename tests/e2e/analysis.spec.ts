@@ -5,8 +5,8 @@ import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // The analysis hub, /[lang]/analysis (layout 7C.2 Paths, Analysis hub row): analysis only,
-// newest first. Page order: the PageTitle band with the description (C-43), the hero (the
-// feature StoryCard, C-24, size lead, text : image 1 : 2 from 768), the 2 x 2 OverlapCard
+// newest first. Page order: the PageTitle band with the description (C-43), the cover
+// (StoryCard `side` with `large`, C-24, text : image 1 : 2 from 768), the 2 x 2 OverlapCard
 // mosaic (C-02) with the ad rail from 1024 (C-16), the ad band, More stories (10 then 10,
 // C-12); the category Eyebrow everywhere (C-08, DR-417). Keyboard and axe, in Bangla and
 // English (COL-13, TYP-03, LAY-02, LAY-07, LAY-12, LAY-14, CPT-05, CPT-06, DR-18, T-27).
@@ -38,7 +38,7 @@ const WIDTHS = [
   1920,
 ];
 
-const hero = (page: Page) => page.locator('[data-section="analysis-lead"]');
+const hero = (page: Page) => page.locator('[data-section="analysis-cover"]');
 const mosaic = (page: Page) =>
   page.locator('[data-section="analysis-top"] [data-overlap-card]');
 const more = (page: Page) =>
@@ -82,14 +82,14 @@ for (const p of PAGES) {
           (el) =>
             el.getAttribute("data-section") ??
             el.getAttribute("data-ad-slot") ??
-            (el.hasAttribute("data-analysis-lead-rule")
+            (el.hasAttribute("data-analysis-cover-rule")
               ? "rule"
               : el.tagName.toLowerCase()),
         ),
       );
       expect(order).toEqual([
         "header",
-        "analysis-lead",
+        "analysis-cover",
         "rule",
         "analysis-top",
         "ad-band",
@@ -199,7 +199,7 @@ for (const p of PAGES) {
         // (typography 3.1, tajmin, 4 Nov 2026).
         const sizes = await page.evaluate(() =>
           [
-            '[data-section="analysis-lead"] h3',
+            '[data-section="analysis-cover"] h3',
             '[data-section="analysis-top"] h3',
           ].map((s) =>
             parseFloat(getComputedStyle(document.querySelector(s)!).fontSize),

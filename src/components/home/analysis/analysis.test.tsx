@@ -96,7 +96,7 @@ describe("AnalysisSection (P-4)", () => {
     const rows = analysis.querySelectorAll("[data-story-card]");
     expect(rows).toHaveLength(2);
     for (const row of rows) {
-      expect(row).toHaveAttribute("data-layout", "row");
+      expect(row).toHaveAttribute("data-variant", "thumbnail");
       expect(row.querySelector("[data-summary]")).toBeNull();
     }
     // Every story has an image slot: the mock story with none shows the placeholder (DR-338).

@@ -1,6 +1,6 @@
 # Fact Lens Typography System
 
-Version 2.23 · 4 November 2026 · Type scale (DR-454, DR-455, DR-456): one size scale with Tailwind names, `text-xs` to `text-7xl` and `text-section`, replaces the 25 `type-*` role utilities (Section 3). A role is a set of classes (Section 3.2). Before: 2.22 · 4 November 2026 · Analysis hub (spec log analysis AN-07, AN-12 to AN-14)
+Version 2.24 · 5 November 2026 · Story card variants (IMP-125 spec log IM-06): the title role follows the StoryCard variant (3.2, 7.1; TYP-13 exception names `story-side`). Before: 2.23 · 4 November 2026 · Type scale (DR-454, DR-455, DR-456): one size scale with Tailwind names, `text-xs` to `text-7xl` and `text-section`, replaces the 25 `type-*` role utilities (Section 3). A role is a set of classes (Section 3.2). Before: 2.22 · 4 November 2026 · Analysis hub (spec log analysis AN-07, AN-12 to AN-14)
 
 This document is the single source for Fact Lens typography. It is for designers, developers and AI agents. Other documents link to the role table in Section 3. They do not copy values.
 
@@ -122,9 +122,9 @@ A role is a set of classes. Put all the classes of the role on the element. Use 
 | Display | `type-display` | `font-editorial text-7xl font-semibold text-balance` | 600 | |
 | Page title | `type-page-title` | `font-editorial text-6xl font-semibold text-balance` | 600 | |
 | Article title | `type-article-title` | `font-editorial text-5xl font-semibold text-balance` | 600 | Cap `measure-article-title` (Section 5.1). On the article page `.rd-title` in `reader.css` sets these values |
-| Lead title, cover title | `type-story-lead` | `font-editorial text-4xl font-semibold text-balance` | 600 | One role: `LeadStory`, the category cover (`OverlapCard` feature), the analysis hub cover (`StoryCard` size `lead`) |
-| Card title | `type-story-title` | `font-editorial text-2xl font-semibold` | 600 | `OverlapCard`, `StoryCard` size `md` |
-| List title | `type-story-title-sm` | `font-editorial text-lg font-semibold` | 600 | `StoryCard` size `sm`, `StoryListItem`, `RankedList`, `OpinionList`, region panels, poll question |
+| Lead title, cover title | `type-story-lead` | `font-editorial text-4xl font-semibold text-balance` | 600 | One role: `LeadStory`, the category cover (`OverlapCard` `large`), the analysis hub cover (`StoryCard` `side` with `large`) |
+| Card title | `type-story-title` | `font-editorial text-2xl font-semibold` | 600 | `OverlapCard`, `StoryCard` `top`, `side` and `dated` (component-system C-24) |
+| List title | `type-story-title-sm` | `font-editorial text-lg font-semibold` | 600 | `StoryCard` `thumbnail`, `StoryListItem`, `RankedList`, `OpinionList`, region panel lists, poll question |
 | Deck | `type-deck` | `font-editorial text-lg leading-relaxed font-normal` | 400 | Cap `measure-deck`. The PageTitle description has no cap (TYP-12) |
 | Summary | `type-summary` | `font-editorial text-sm leading-relaxed font-medium` | 500 | Cap `measure-deck` |
 | Article body | `type-article-body` | `font-editorial text-base font-normal` | 400 | Reader scale and floor (Section 4) |
@@ -289,7 +289,7 @@ Put article text in `measure-reading-en` or `measure-reading-bn`. Do not let the
 
 ### TYP-13 Balance large headings only
 
-Use `text-wrap: balance` on display, page title, article title, lead story, large story title and pull quote. Do not use it on body text, metadata, captions or interface text. Exception: the analysis hub hero title (`story-split-lead`, component-system Section 6) uses `text-wrap: pretty`, so its lines fill up to the gap before the image (Analysis spec log AN-07).
+Use `text-wrap: balance` on display, page title, article title, lead story, large story title and pull quote. Do not use it on body text, metadata, captions or interface text. Exception: the StoryCard `side` title (`story-side`, component-system Section 6; the analysis hub cover and the P-2 feature) uses `text-wrap: pretty`, so its lines fill up to the gap before the image (Analysis spec log AN-07).
 
 ### TYP-14 Use the color tokens for text color
 
@@ -362,10 +362,10 @@ The component names are in `component-system.md` Section 3. The role names are i
 
 | Element | Role (Section 3.2) |
 | --- | --- |
-| Lead story headline (`LeadStory`); category cover (`OverlapCard` feature); analysis hub cover (`StoryCard` size `lead`) | lead title (`text-4xl`) |
+| Lead story headline (`LeadStory`); category cover (`OverlapCard` `large`); analysis hub cover (`StoryCard` `side` with `large`) | lead title (`text-4xl`) |
 | Top story in the hero (`OverlapCard`) | card title (T-37) |
 | Feature story of a section or a `CategoryBlock` | card title (DR-152) |
-| `StoryCard` size `sm`, `StoryListItem`, every region panel story (DR-254) | list title |
+| `StoryCard` `thumbnail`, `StoryListItem`, the region panel list rows (DR-254) | list title. The region panel first story is a StoryCard `top`: card title (DR-459) |
 | Card summary | summary |
 | Section heading (`SectionHeading`) | section title |
 | Logo text stand-in: TopBar; Footer and `Drawer.head` | `type-logo`; `type-logo-sm` (DR-306) |
@@ -865,6 +865,7 @@ Check these items in the first prototype, in English and Bangla, on desktop and 
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.24 | 2026-11-05 | Story card variants (IMP-125 spec log IM-06, DR-459): Section 3.2 and 7.1 name the title role by the StoryCard variant (`top`, `side`, `dated` card title; `thumbnail` list title; `side` with `large` the cover title); the P-6 region first story takes the card title; TYP-13 exception is the `story-side` title |
 | 2.23 | 2026-11-04 | Type scale (DR-454, DR-455, DR-456). Section 3: one scale of Tailwind 4 text classes, `text-xs` to `text-7xl` and `text-section`, with `leading-tight`, `leading-relaxed` and `text-nav`; a role is a set of classes (role map 3.2); the 25 `type-*` role utilities and the `--type-*-size`, `-weight`, `-line`, `-tracking` tokens are retired; `type-logo` and `type-logo-sm` stay (3.3); `type-story-title-lg` retired. New values: card title 20–24px, list title 16–20px, lead and cover title 24–36px, article title 26–38px, page title 28–40px (larger than the article title), article h2 22–30px, h3 18–22px, deck 16–20px with line height 1.5 / 1.6, summary 16px in both languages, metadata tracking 0. Section 3.4: ink inset tokens renamed `--text-lg-ink-*`, `--text-xs-ink-end`, shares kept. Section 4: body 18px and h3 22px at 1280 in both languages; floor 17px in both languages (TYP-11). TYP-01 and TYP-18: use only the scale classes. Section 7 names roles. Section 8.2 CSS. |
 | 2.21 | 2026-10-28 | Latest page (spec log `latest.md` LT-04): TYP-17 story time: a list that adds stories in the browser runs the script at once (load more). No value changes. |
 | 2.20 | 2026-10-28 | URL format (IMP-97, `docs/tasks/url-format.md`): the "আরও দেখুন" example in Section 4 names দক্ষিণ এশিয়া, not বাংলাদেশ (DR-412). No value changes. |
