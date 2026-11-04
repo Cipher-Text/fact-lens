@@ -4,6 +4,7 @@
 // translation share one id. Components read stories through ./index.ts only.
 import { categoryStories } from "./category-stories";
 import { olderCategoryStories } from "./category-stories-older";
+import { regionStories } from "./region-stories";
 import type { TopicId } from "./topics";
 import type { CategoryId, Format, RegionId } from "./types";
 
@@ -643,8 +644,8 @@ export const stories: StoryDef[] = [
     en: { title: "Satellite internet reaches remote river islands in a trial" },
   },
 
-  // Regions. চীন is a region, not a category (DR-19). Russia and Oceania have no
-  // stories, so they do not show.
+  // Regions. চীন is a region, not a category (DR-19). Oceania has no
+  // stories, so it does not show.
   {
     id: "dhe3tgp",
     slug: "china-renewables-understanding",
@@ -837,4 +838,6 @@ export const stories: StoryDef[] = [
   // The category pages (spacing-layout-system.md 7B).
   ...categoryStories,
   ...olderCategoryStories,
+  // The region hub (page/regions).
+  ...regionStories,
 ];

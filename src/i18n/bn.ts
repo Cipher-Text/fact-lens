@@ -63,6 +63,14 @@ export const bn = {
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
   },
+  // The region hub /regions (layout 7C.2, Region hub row). The title is regionsSection.title.
+  regionsPage: {
+    // Visually hidden name of the cover (RegionsCoverSection).
+    cover: "প্রধান খবর",
+    latest: "সর্বশেষ",
+    // The short line below the page title (page/regions brief, tajmin, 4 Nov 2026).
+    description: "বিশ্বের প্রতিটি অঞ্চলের খবর ও বিশ্লেষণ",
+  },
   // The analysis hub /analysis (layout 7C.2, Analysis hub row). The title is analysisOpinion.analysis.
   analysisPage: {
     // Visually hidden name of the mosaic.

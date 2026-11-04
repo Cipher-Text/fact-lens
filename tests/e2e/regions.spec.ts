@@ -28,8 +28,9 @@ const WIDTHS = [
   320, 360, 599, 600, 767, 768, 834, 1023, 1024, 1180, 1280, 1366, 1440, 1920,
 ];
 
-// Full content: 6 regions with stories (আফ্রিকা has none and is not shown).
-const REGION_COUNT = 6;
+// Full content: 7 regions with stories; Oceania has none and is not shown (7.3). Russia
+// has stories since the region hub mock (page/regions, 5 Nov 2026).
+const REGION_COUNT = 7;
 
 // Regions in view (C-15, DR-140, DR-141).
 const inViewAt = (width: number) => (width >= 1280 ? 4 : width >= 1024 ? 3 : 2);

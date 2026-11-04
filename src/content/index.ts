@@ -21,9 +21,11 @@ import type {
   LatestPage,
   Poll,
   RegionId,
+  RegionsPage,
   Story,
   TopicPage,
 } from "./types";
+import { regionIds } from "./types";
 
 export type * from "./types";
 export { categoryIds, regionIds } from "./types";
@@ -292,6 +294,47 @@ export function getAnalysisPage(lang: Lang): AnalysisPage {
     cover: all[0] ?? null,
     top: all.slice(1, 5),
     more: all.slice(5),
+  };
+}
+
+// Stories per region block on the region hub: the feature story and a list of 3, as a
+// homepage CategoryBlock (C-23, DR-126).
+const REGION_BLOCK_STORIES = 4;
+
+/** The newest story with an image first (a block's feature story), then the rest in order. */
+function imageFirst(list: Story[]): Story[] {
+  const feature = list.find((story) => story.image);
+  return feature ? [feature, ...list.filter((s) => s !== feature)] : list;
+}
+
+/**
+ * The region hub in one language (layout 7C.2 Paths, Region hub row). The cover is the
+ * newest story with a region and an image (a cover has an image, as the hero, DR-91); the
+ * Latest rail the 5 newest of the others. Each region block takes the 4
+ * newest stories of its region, news and analysis, no opinion; its feature story is the
+ * newest of them with an image. Repeats across the page are
+ * an editorial and backend decision (tajmin, 4 Nov 2026), so the mock does not remove them.
+ */
+export function getRegionsPage(lang: Lang): RegionsPage {
+  const all = stories
+    .filter((def) => def.format !== "opinion" && def.regions.length > 0)
+    .map((def) => toStory(def, lang))
+    .sort(newestFirst);
+  const cover = all.find((story) => story.image) ?? null;
+  return {
+    lang,
+    cover,
+    latest: all.filter((story) => story !== cover).slice(0, 5),
+    regions: regionIds
+      .map((region) => ({
+        region,
+        stories: imageFirst(
+          getRegionStories(region, lang).filter(
+            (story) => story.format !== "opinion",
+          ),
+        ).slice(0, REGION_BLOCK_STORIES),
+      }))
+      .filter((block) => block.stories.length > 0),
   };
 }
 

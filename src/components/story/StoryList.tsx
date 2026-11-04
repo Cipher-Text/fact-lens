@@ -7,6 +7,7 @@ import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
+import type { EyebrowMode } from "./Eyebrow";
 import { StoryListItem } from "./StoryListItem";
 
 type StoryListProps = {
@@ -21,6 +22,9 @@ type StoryListProps = {
    */
   columns?: 1 | 2;
   meta?: "category-time" | "time-reading";
+  /** The C-08 Eyebrow on every row, in this mode; none when unset (C-25). The region hub
+   * blocks use `two-part` (tajmin, 5 Nov 2026). */
+  eyebrowMode?: EyebrowMode;
   titleAs?: "h3" | "h4";
   className?: string;
 };
@@ -40,6 +44,7 @@ export function StoryList({
   strings,
   columns = 1,
   meta,
+  eyebrowMode,
   titleAs,
   className,
 }: StoryListProps) {
@@ -71,6 +76,7 @@ export function StoryList({
             story={story}
             strings={strings}
             meta={meta}
+            eyebrowMode={eyebrowMode}
             titleAs={titleAs}
           />
         </li>

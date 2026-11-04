@@ -170,6 +170,19 @@ export interface AnalysisPage {
 }
 
 /**
+ * The region hub in one language (layout 7C.2 Paths, Region hub row; page/regions brief):
+ * the cover with a Latest rail, then one block per region with stories, in the region order.
+ * The cover and the blocks are editorial and backend decisions (tajmin, 4 Nov 2026); the
+ * mock takes the newest story with a region as the cover and repeats are allowed.
+ */
+export interface RegionsPage {
+  lang: Lang;
+  cover: Story | null;
+  latest: Story[]; // up to 5, the newest stories with any region
+  regions: RegionBlock[]; // regions with no stories are left out (layout 7.3)
+}
+
+/**
  * A topic page in one language (layout 7C.2 Paths, Topic row; DR-410): the news and analysis
  * stories of one topic, newest first. No opinion (tajmin, 29 Oct 2026).
  */

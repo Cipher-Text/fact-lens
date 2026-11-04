@@ -5,6 +5,7 @@ import { SectionHeading } from "@/components/layout/SectionHeading";
 import { MoreLink } from "@/components/story/MoreLink";
 import { StoryCard } from "@/components/story/StoryCard";
 import { StoryList } from "@/components/story/StoryList";
+import type { EyebrowMode } from "@/components/story/Eyebrow";
 import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 
@@ -16,6 +17,12 @@ type CategoryBlockProps = {
   href: string;
   stories: Story[];
   t: Dictionary;
+  /**
+   * The C-08 Eyebrow on every story, in this mode; none when unset (the heading names the
+   * category, DR-114). The region hub blocks use `two-part`: the heading names the region,
+   * and the stories mix categories (tajmin, 5 Nov 2026).
+   */
+  eyebrowMode?: EyebrowMode;
   /** Replaces the feature story and the StoryList: the category page opinion block uses the
    * OpinionList quote rows (tajmin, 28 Oct 2026). */
   children?: ReactNode;
@@ -37,6 +44,7 @@ export function CategoryBlock({
   href,
   stories,
   t,
+  eyebrowMode,
   children,
 }: CategoryBlockProps) {
   const [feature, ...rest] = stories;
@@ -56,11 +64,17 @@ export function CategoryBlock({
               story={feature}
               strings={t}
               variant="top"
-              eyebrow={false}
+              eyebrow={!!eyebrowMode}
+              eyebrowMode={eyebrowMode}
             />
           ) : null}
           {rest.length > 0 ? (
-            <StoryList stories={rest} strings={t} className={dividerItem} />
+            <StoryList
+              stories={rest}
+              strings={t}
+              eyebrowMode={eyebrowMode}
+              className={dividerItem}
+            />
           ) : null}
         </>
       )}
