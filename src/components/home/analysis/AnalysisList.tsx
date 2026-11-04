@@ -17,9 +17,10 @@ type AnalysisListProps = {
 /**
  * P-4 AnalysisSection, the analysis column (component-system.md P-4): the first story is an
  * OverlapCard on the section background (surface-elevated), then compact rows (StoryCard
- * thumbnail, 3:2, list title, text : image = 2 : 1, eyebrow, no summary). No chip and no heading on this
- * column. The stories sit in one list with Divider.item between them (DR-268); the rows start
- * with the image, so the item space is measured to the image top (DR-350). Titles are h3.
+ * thumbnail, 3:2, list title, text : image = 2 : 1, eyebrow, no summary). No chip and no
+ * heading on this column. The stories sit in one list with Divider.item between them
+ * (DR-268); the rows start with the image, so the item space is measured to the image top
+ * (DR-350). Titles are h3.
  */
 export function AnalysisList({ lang, stories, strings }: AnalysisListProps) {
   const [feature, ...compact] = stories;
