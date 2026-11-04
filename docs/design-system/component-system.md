@@ -142,7 +142,7 @@ Analysis hub sections (`spacing-layout-system.md` 7F, Analysis spec log AN-03). 
 | --- | --- | --- | --- | --- |
 | `AnalysisPageView` | – | – | – | The analysis hub template |
 | `PageTitle` (C-43) | বিশ্লেষণ / Analysis | – | – | The page `h1`, with `PageTitle.description` below it |
-| `AnalysisCoverSection` | – (hidden `h2` প্রধান বিশ্লেষণ / Lead analysis, `analysisPage.cover`; `data-section="analysis-cover"`) | – | StoryCard (C-24, `side`, `large`, the C-08 `category` Eyebrow) | The newest analysis story, across the shell, no rail |
+| `AnalysisCoverSection` | – (hidden `h2` প্রধান বিশ্লেষণ / Main analysis (tajmin, 4 Nov 2026, PR 25 review), `analysisPage.cover`; `data-section="analysis-cover"`) | – | StoryCard (C-24, `side`, `large`, the C-08 `category` Eyebrow) | The newest analysis story, across the shell, no rail |
 | `AnalysisTopSection` | – (hidden `h2` শীর্ষ বিশ্লেষণ / Top analysis; `data-section="analysis-top"`) | – | OverlapCard (C-02, the C-08 `category` Eyebrow) in a PeerRow, 2 x 2; the Rail with AdSlot `rail` | The next 4 analysis stories, in the wrapper of `WithRail`; Divider.column-full between the wrapper and the rail from 1024 |
 | `MoreStoriesSection` | আরও পড়ুন / More stories | `MoreStoriesSection.list` | `MoreStoriesList`, as on the category page: StoryCard (C-24, `dated`, the C-08 `category` Eyebrow, `h3` titles), 10 at a time | The rest of the analysis stories, newest first |
 

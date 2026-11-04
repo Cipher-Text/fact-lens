@@ -22,7 +22,7 @@ export function CategoryPageView({ page }: Props) {
   const { lang, category } = page;
   const t = getDictionary(lang);
   const formats = page.analysis.length > 0 || page.opinion.length > 0;
-  // More stories follows an ad row only when Most read or the feature ad row is the row
+  // More stories follows an ad row only when Most read or the cover ad row is the row
   // before it; after the formats row it follows a section (LAY-12).
   const afterAd = page.mostRead.length > 0 || (page.cover !== null && !formats);
 

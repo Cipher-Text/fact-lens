@@ -5,8 +5,8 @@ import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
 // The analysis hub, /[lang]/analysis (layout 7C.2 Paths, Analysis hub row): analysis only,
-// newest first. Page order: the PageTitle band with the description (C-43), the hero (the
-// feature StoryCard, C-24, size lead, text : image 1 : 2 from 768), the 2 x 2 OverlapCard
+// newest first. Page order: the PageTitle band with the description (C-43), the cover
+// (StoryCard `side` with `large`, C-24, text : image 1 : 2 from 768), the 2 x 2 OverlapCard
 // mosaic (C-02) with the ad rail from 1024 (C-16), the ad band, More stories (10 then 10,
 // C-12); the category Eyebrow everywhere (C-08, DR-417). Keyboard and axe, in Bangla and
 // English (COL-13, TYP-03, LAY-02, LAY-07, LAY-12, LAY-14, CPT-05, CPT-06, DR-18, T-27).

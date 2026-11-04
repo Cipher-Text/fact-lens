@@ -69,7 +69,7 @@ export const en: Dictionary = {
     // Visually hidden name of the mosaic.
     top: "Top analysis",
     // Visually hidden name of the cover (AnalysisCoverSection).
-    cover: "Lead analysis",
+    cover: "Main analysis",
     // The short line below the page title (tajmin, 3 Nov 2026).
     description:
       "In-depth analysis, explanatory journalism and long-form narratives by Fact Lens Team",

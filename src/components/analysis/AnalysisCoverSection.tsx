@@ -10,12 +10,10 @@ type Props = {
 };
 
 /**
- * The hero of the analysis hub: one lead story across the shell, no rail (tajmin, 2 Nov
- * 2026). The card is the P-2 feature story (C-24 `row-from-md`, 3:2, `feature` split), with
- * the title in text-4xl as the category page feature story (size lead; tajmin, 4 Nov
- * 2026):
- * one column under 768px, image first; from 768px the text at the start and the image at
- * the end, text : image = 1 : 2 with no image cap (StoryCard `side` with `large`; tajmin, 3 Nov 2026; DR-451).
+ * The cover of the analysis hub (N-06): one cover story across the shell, no rail (tajmin,
+ * 2 Nov 2026). The card is StoryCard `side` with `large` (C-24, DR-451): the cover title
+ * (text-4xl), one column under 768px, image first; from 768px the text at the start and the
+ * 3:2 image at the end, text : image = 1 : 2 with no image cap (tajmin, 3 Nov 2026).
  * It adds the `category` Eyebrow: inside the /analysis hub the Eyebrow is the category
  * (C-08, DR-417). A hidden h2 names the section; the title is an h3. The image is above the
  * fold, so it loads eagerly (DR-325).
