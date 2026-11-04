@@ -6,8 +6,9 @@ import { setTheme } from "./theme";
 
 // The analysis hub, /[lang]/analysis (layout 7C.2 Paths, Analysis hub row): analysis only,
 // newest first. Page order: the PageTitle band with the description (C-43), the cover
-// (StoryCard `side` with `large`, C-24, the image 2 / 3 of the card width from 768, DR-464), the 2 x 2 OverlapCard
-// mosaic (C-02) with the ad rail from 1024 (C-16), the ad band, More stories (10 then 10,
+// (StoryCard `side` with `large`, C-24, the image 2 / 3 of the card width from 768,
+// DR-464), the 2 x 2 OverlapCard mosaic (C-02) with the ad rail from 1024 (C-16), the ad
+// band, More stories (10 then 10,
 // C-12); the category Eyebrow everywhere (C-08, DR-417). Keyboard and axe, in Bangla and
 // English (COL-13, TYP-03, LAY-02, LAY-07, LAY-12, LAY-14, CPT-05, CPT-06, DR-18, T-27).
 
@@ -48,6 +49,26 @@ async function box(locator: Locator) {
   const b = await locator.boundingBox();
   if (!b) throw new Error("element has no box");
   return b;
+}
+
+// The StoryCard side title fits its text column (DR-464: the image is 2 / 3 of the card,
+// no text minimum). The h3 does not scroll sideways and the body stays inside the card
+// (TYP-08, TYP-09, LAY-02, LAY-17). 200% text is out of scope (tajmin, 4 Nov 2026).
+async function sideTitleFits(card: Locator) {
+  const m = await card.evaluate((el) => {
+    const h3 = el.querySelector("h3")!;
+    const body = el.querySelector(".story-body")!.getBoundingClientRect();
+    const c = el.getBoundingClientRect();
+    return {
+      scroll: h3.scrollWidth,
+      client: h3.clientWidth,
+      start: body.left - c.left,
+      end: c.right - body.right,
+    };
+  });
+  expect(m.scroll).toBeLessThanOrEqual(m.client);
+  expect(m.start).toBeGreaterThanOrEqual(-0.5);
+  expect(m.end).toBeGreaterThanOrEqual(-0.5);
 }
 
 async function expectNoBlockingAxe(page: Page) {
@@ -244,6 +265,17 @@ for (const p of PAGES) {
             wrapper.x + wrapper.width - 1,
           );
         }
+      });
+    }
+
+    for (const width of [768, 1024, 1280]) {
+      test(`the cover title fits its text column at ${width} (DR-464)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        await waitForNavRow(page);
+        await sideTitleFits(hero(page).locator("[data-story-card]"));
       });
     }
 

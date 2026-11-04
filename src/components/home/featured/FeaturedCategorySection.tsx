@@ -20,10 +20,10 @@ type FeaturedCategorySectionProps = {
 /**
  * P-2 FeaturedCategorySection (component-system.md P-2; spacing-layout-system.md 7.2, 7.3).
  * Wrapper: the feature story, the StoryCard `side`: one column under 768px (image first),
- * from 768px the image 2 / 3 of the card width (DR-451, DR-464). Rail: a text StoryList of 3 rows, no image (the
- * former rail image story is the first row; IMP-125). From 1024px the rail is 304px beside
- * the wrapper; below, it is under the wrapper (LAY-05). No rail stories: the wrapper spans
- * the shell. One MoreLink at the section end (DR-110, DR-123).
+ * from 768px the image 2 / 3 of the card width (DR-451, DR-464). Rail: a text StoryList of
+ * 3 rows, no image (the former rail image story is the first row; IMP-125). From 1024px the
+ * rail is 304px beside the wrapper; below, it is under the wrapper (LAY-05). No rail
+ * stories: the wrapper spans the shell. One MoreLink at the section end (DR-110, DR-123).
  * The heading is plain text (DR-122). The section id is the anchor of the nav links (IMP-14).
  * The section features a category or a region (DR-412): the heading, the id and the
  * MoreLink target come from its source. A region section is `featured-<region>`, because

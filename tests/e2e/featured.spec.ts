@@ -76,6 +76,26 @@ async function expectNoBlockingAxe(page: Page) {
   expect(blocking, JSON.stringify(blocking, null, 2)).toEqual([]);
 }
 
+// The StoryCard side title fits its text column (DR-464: the image is 2 / 3 of the card,
+// no text minimum). The h3 does not scroll sideways and the body stays inside the card
+// (TYP-08, TYP-09, LAY-02, LAY-17). 200% text is out of scope (tajmin, 4 Nov 2026).
+async function sideTitleFits(card: Locator) {
+  const m = await card.evaluate((el) => {
+    const h3 = el.querySelector("h3")!;
+    const body = el.querySelector(".story-body")!.getBoundingClientRect();
+    const c = el.getBoundingClientRect();
+    return {
+      scroll: h3.scrollWidth,
+      client: h3.clientWidth,
+      start: body.left - c.left,
+      end: c.right - body.right,
+    };
+  });
+  expect(m.scroll).toBeLessThanOrEqual(m.client);
+  expect(m.start).toBeGreaterThanOrEqual(-0.5);
+  expect(m.end).toBeGreaterThanOrEqual(-0.5);
+}
+
 for (const p of PAGES) {
   test.describe(`featured categories ${p.path}`, () => {
     for (const width of WIDTHS) {
@@ -217,6 +237,23 @@ for (const p of PAGES) {
             return [style.paddingTop, style.paddingBottom];
           });
           expect(padding).toEqual([`${space}px`, `${space}px`]);
+        }
+      });
+    }
+
+    for (const width of [768, 1024, 1280]) {
+      test(`the feature story title fits its text column at ${width} (DR-464)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        await waitForNavRow(page);
+        for (const category of CATEGORIES) {
+          await sideTitleFits(
+            section(page, category).locator(
+              "[data-featured-wrapper] [data-story-card]",
+            ),
+          );
         }
       });
     }
