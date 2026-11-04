@@ -1,6 +1,6 @@
 # Fact Lens Component System
 
-Version 1.30 · 5 November 2026 · Story roles and card variants (IMP-125 spec log IM-01 to IM-10; DR-450, DR-451, DR-453): N-06 story role names (lead, cover, top stories, feature); Section 3 `CategoryCoverSection`, `AnalysisCoverSection`, the P-2 rail as 3 text rows; Section 6 the `--space-story-*`, `--space-panel-large*`, `--space-inset-large-*`, `--space-overlap(-large)` names, `.overlap-large`, `--story-side-media-min` and `--story-side-media-share` replace the feature and analysis-lead media tokens, `story-side` replaces `story-split-lead`; C-02 option `large`; C-24 one `variant` prop (`top`, `thumbnail`, `side`, `dated`) with the title size per variant and `large`, every image 3:2; P-2 the `side` feature (1 : 2, no cap) and the text rail. Before: 1.29 · 4 November 2026 · Analysis hub (spec log analysis AN-03 to AN-06, AN-08 to AN-10, AN-15): Section 3 analysis hub sections and `AnalysisPageView`, `AnalysisHeroSection`, `AnalysisTopSection`; Section 6 `--story-analysis-lead-media-share`, `--story-analysis-lead-media-max`, `--space-analysis-top-row-gap` and `story-split-lead`; C-02 the analysis mosaic; C-24 size `lead` and the analysis hero; C-22 the first column-full place and its CSS; C-19 the current child link. Then, approved by tajmin (4 Nov 2026: "Add the spec changes"): C-16 the rail variant shows whenever the rail is a column, from 1024, on every page (AN-11, amends DR-245), C-18 and C-19 the one Analysis item (AN-16), C-43 `PageTitle.description` (AN-12), `story-split-lead` title wrap (AN-07). Before: 1.28 · 30 October 2026 · XC fixes (spec log xc-fixes XF-01 to XF-09): Section 6 `--color-page-title-band`, `--quote-mark-width`, `--divider-column-inset`, `--rd-anchor-size` rows, `--space-eyebrow-separator` retired; CPT-07 helper variables; CPT-10 the separator takes the text color of its line; C-08 the CPT-10 separator, `format` in the hero and the region columns (category on news, DR-433 as amended), More stories; C-43 names the band token; C-25 `eyebrowMode`; DR-133 and DR-135 only on C-14 (C-12, C-23). Before: 1.27 · 30 October 2026 · Topic page (Topic spec log TP-03 to TP-05): Section 3 topic page sections and `TopicPageView`; C-24 `dated`: the format label only on a row with no Eyebrow; C-34 and Section 8: the topic page is built. Before: 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
+Version 1.31 · 5 November 2026 · IMP-125 follow-up (spec log imp-125-followup FU-01 to FU-07; DR-464 to DR-470): C-24 `side` and the P-2 feature story: the image column is 2 / 3 of the whole card width, no minimum and no maximum (DR-464), and the title wraps pretty, also with `large`, no `text-balance` (DR-468); Section 6 `--story-side-media-min` removed and `story-side` updated; the C-24 places table: `top` adds the category page analysis block and names the P-6 region first story at every width; Section 3 the category cover hidden name is প্রধান খবর / Main story (DR-469). N-06 stays as written (DR-466). Version 1.30 covered IMP-125 spec log IM-01 to IM-11. Before: 1.30 · 5 November 2026 · Story roles and card variants (IMP-125 spec log IM-01 to IM-10; DR-450, DR-451, DR-453): N-06 story role names (lead, cover, top stories, feature); Section 3 `CategoryCoverSection`, `AnalysisCoverSection`, the P-2 rail as 3 text rows; Section 6 the `--space-story-*`, `--space-panel-large*`, `--space-inset-large-*`, `--space-overlap(-large)` names, `.overlap-large`, `--story-side-media-min` and `--story-side-media-share` replace the feature and analysis-lead media tokens, `story-side` replaces `story-split-lead`; C-02 option `large`; C-24 one `variant` prop (`top`, `thumbnail`, `side`, `dated`) with the title size per variant and `large`, every image 3:2; P-2 the `side` feature (1 : 2, no cap) and the text rail. Before: 1.29 · 4 November 2026 · Analysis hub (spec log analysis AN-03 to AN-06, AN-08 to AN-10, AN-15): Section 3 analysis hub sections and `AnalysisPageView`, `AnalysisHeroSection`, `AnalysisTopSection`; Section 6 `--story-analysis-lead-media-share`, `--story-analysis-lead-media-max`, `--space-analysis-top-row-gap` and `story-split-lead`; C-02 the analysis mosaic; C-24 size `lead` and the analysis hero; C-22 the first column-full place and its CSS; C-19 the current child link. Then, approved by tajmin (4 Nov 2026: "Add the spec changes"): C-16 the rail variant shows whenever the rail is a column, from 1024, on every page (AN-11, amends DR-245), C-18 and C-19 the one Analysis item (AN-16), C-43 `PageTitle.description` (AN-12), `story-split-lead` title wrap (AN-07). Before: 1.28 · 30 October 2026 · XC fixes (spec log xc-fixes XF-01 to XF-09): Section 6 `--color-page-title-band`, `--quote-mark-width`, `--divider-column-inset`, `--rd-anchor-size` rows, `--space-eyebrow-separator` retired; CPT-07 helper variables; CPT-10 the separator takes the text color of its line; C-08 the CPT-10 separator, `format` in the hero and the region columns (category on news, DR-433 as amended), More stories; C-43 names the band token; C-25 `eyebrowMode`; DR-133 and DR-135 only on C-14 (C-12, C-23). Before: 1.27 · 30 October 2026 · Topic page (Topic spec log TP-03 to TP-05): Section 3 topic page sections and `TopicPageView`; C-24 `dated`: the format label only on a row with no Eyebrow; C-34 and Section 8: the topic page is built. Before: 1.26 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (Sections 3, 6 and 7: Latest, category formats, most read, article page). No rule changes. Before: 1.25 · 28 October 2026 · Latest page (spec log `latest.md` LT-02, LT-03, LT-05): Section 3 `LatestPageView`, and `CategoryMoreStoriesSection`, `CategoryMoreStoriesList` renamed `MoreStoriesSection`, `MoreStoriesList` (LT-02); Section 6 load more motion (`story-added`, `story-image-fade`); C-24 `imageFadeIn`. Before: 1.24 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01 to CF-08): Section 3 `CategoryFormatsSection`; C-43 PageTitle is a `surface` band with Divider.section and `--space-page-title-band` (24 / 32 / 40px) in Section 6; C-23 takes its heading, name and link from the page, and a body; C-06 `OpinionRows`; C-24 `dated` shows the format Eyebrow on an analysis story. Before: Version 1.23 · 28 October 2026 · URL format build (spec log `url-format.md` UF-04, UF-05): `--space-eyebrow-separator` (8px) in Section 6 and C-08; `.rd-category` replaces `.rd-kicker`; the 8 region labels in C-15 and Section 8. Before: Version 1.22 · URL format (IMP-97, `docs/tasks/url-format.md`): C-08 `format` mode and the article two-part Eyebrow; ArticleHeader.category is text links, not a button; C-34 Tags becomes Topics (`/topic/<slug>`); C-18 targets; South Asia replaces Bangladesh. Before: Homepage most read (IMP-99, spec log `home-most-read.md` HM-01 to HM-03, HM-05): C-07 RankedList has one layout, the rank chip, on the homepage and the category page; `@utility rank-list` in Section 6; DR-299 no longer covers RankedList
 
 This document is the single source for the homepage and article page components: their names, parts, variants, sizes per width, content rules, accessibility and checks. It is for designers, developers and AI agents.
 
@@ -113,7 +113,7 @@ Category page sections (`spacing-layout-system.md` 7B, DR-402). In page order, b
 | --- | --- | --- | --- | --- |
 | `CategoryPageView` | – | – | – | The page template for every category |
 | `PageTitle` (C-43) | Category name | – | – | The page `h1` |
-| `CategoryCoverSection` | Hidden heading | `CategoryCoverSection.coverStory` | OverlapCard (C-02, `large`, no eyebrow) | The cover story in the wrapper |
+| `CategoryCoverSection` | – (hidden `h2` প্রধান খবর / Main story, `categoryPage.cover`; DR-469) | `CategoryCoverSection.coverStory` | OverlapCard (C-02, `large`, no eyebrow) | The cover story in the wrapper |
 |  |  | `CategoryCoverSection.cards` | `CategoryCardList`: 3 × StoryCard (C-24, `thumbnail`, summary) | Card rows under the cover story, 1 per row at every width |
 |  | সর্বশেষ / Latest | `CategoryCoverSection.latest` | SectionHeading + StoryList (5 × StoryListItem) | In the rail |
 | `CategoryFormatsSection` | বিশ্লেষণ / Analysis, মতামত / Opinion (block headings) | `CategoryFormatsSection.blocks` | 2 × CategoryBlock (C-23): Analysis (featureStory StoryCard + StoryList), Opinion (`OpinionRows`, the C-06 quote rows) | Directly above Most read, up to 5 stories per block; 1 block per row on phones, 2 from 600 (DR-415) |
@@ -348,8 +348,7 @@ These tokens add to the tokens of the three foundation documents. Put them in `s
 | `--button-icon-gap` | 0.5rem (8px) | same | same | Space between a button label and its icon | DR-208 |
 | `--top-bar-inset` | 0.625rem (10px) | 1.125rem (18px) at 600; 1rem (16px) from 768 |  | TopBar side padding = page gutter minus the controls inner space (C-17): (32 - 20) / 2 = 6 under 768, (36 - 20) / 2 = 8 from 768 (DR-349). Columns: phone / 600 and 768 up | DR-294, DR-349 |
 | `--space-panel-large-start` | 0 | var(--space-panel-large) | same | Large panel padding at the start side (container width 600 and up) | DR-297, DR-453 |
-| `--story-side-media-min` | 26.25rem (420px) | same | same | StoryCard `side` (C-24): smallest image column | DR-453; IMP-125 spec log IM-08 |
-| `--story-side-media-share` | calc(2 / 3) | same | same | StoryCard `side`: image share of the row (minus one column gap), text : image = 1 : 2, no cap | DR-451, DR-453; IMP-125 spec log IM-08 |
+| `--story-side-media-share` | calc(2 / 3) | same | same | StoryCard `side`: image share of the whole card width, no minimum and no maximum; the text takes the rest minus one column gap | DR-451, DR-464; IMP-125 spec log IM-08, imp-125-followup FU-01 |
 | `--space-analysis-top-row-gap` | var(--grid-row-gap) | same | 2rem (32px) from 1280 | The analysis hub mosaic: the gap between the two card rows | Analysis spec log AN-09 |
 | `--rank-chip-size` | 2.25rem (36px) | same | 2.75rem (44px) from 1024 | RankedList: the square rank chip | category spec log CL-10 |
 | `--rank-chip-digit-size` | 1.5rem (24px) | same | 2rem (32px) from 1024 | RankedList: the chip digits | category spec log CL-10 |
@@ -387,7 +386,6 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   --top-bar-inset: 0.625rem;
   --space-panel-large-start: 0;
   --space-page-title-band: 1.5rem;
-  --story-side-media-min: 26.25rem;
   --story-side-media-share: calc(2 / 3);
   --space-analysis-top-row-gap: var(--grid-row-gap);
   --divider-rule: 1px;
@@ -451,17 +449,13 @@ In CSS, `--bar-section` is the pair `--bar-section-width` and `--bar-section-hei
   }
 }
 
-/* StoryCard side (C-24): the image column is 2 / 3 of the row minus the gap, at least
-   420px, no cap. The title wraps pretty, not balance, so its lines fill up to the gap
-   before the image (TYP-13 exception, Analysis spec log AN-07). Stacks under 17.5rem. */
+/* StoryCard side (C-24): the image column is 2 / 3 of the whole card width, no minimum
+   and no maximum; the text takes the rest minus the gap (DR-464). The title wraps pretty,
+   not balance, also with large, so its lines fill up to the gap before the image (TYP-13
+   exception, Analysis spec log AN-07, DR-468). Stacks under 17.5rem. */
 @utility story-side {
   grid-template-areas: "body media";
-  grid-template-columns:
-    minmax(0, 1fr)
-    max(
-      var(--story-side-media-min),
-      calc((100% - var(--grid-column-gap)) * var(--story-side-media-share))
-    );
+  grid-template-columns: minmax(0, 1fr) calc(100% * var(--story-side-media-share));
   column-gap: var(--grid-column-gap);
   row-gap: 0;
   & :is(h2, h3, h4) {
@@ -690,7 +684,7 @@ Shared card from the merge (DR-93): one story with an image and text. Draws ever
 | --- | --- | --- |
 | `top` (default) | Image above the text (`story-top`) | Card title `font-editorial text-2xl font-semibold` |
 | `thumbnail` | Text at the start, image at the end, 2fr 1fr (`story-thumbnail`, DR-108) | List title `font-editorial text-lg font-semibold` |
-| `side` | Under 768: as `top`. From 768: text at the start, image at the end; the image column is 2 / 3 of the row minus the gap, at least 420px, no cap (`md:story-side`, `--story-side-media-min`, `--story-side-media-share`); the title wraps `pretty` (AN-07) | Card title; with `large`, the cover title `font-editorial text-4xl font-semibold text-balance` |
+| `side` | Under 768: as `top`. From 768: text at the start, image at the end; the image column is 2 / 3 of the whole card width, no minimum and no maximum; the text takes the rest minus the gap (`md:story-side`, `--story-side-media-share`, DR-464); the title wraps `pretty`, also with `large` (AN-07, DR-468) | Card title; with `large`, the cover title `font-editorial text-4xl font-semibold` (no `text-balance`, DR-468) |
 | `dated` | The date column, the text, the image (`story-dated`, DR-406) | Card title |
 
 Option `large`, on `side` only: the cover story of a page (N-06; the analysis hub cover). Every row uses --grid-column-gap between text and image (DR-300). Every StoryCard image is 3:2 (DR-453); there is no ratio prop. eyebrow and summary optional.
@@ -704,9 +698,9 @@ Option `large`, on `side` only: the cover story of a page (N-06; the analysis hu
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| top | CategoryBlock featureStory (summary, DR-152); article related stories | RegionSlider.panel first story (P-6; card title, DR-459) | Same |
+| top | CategoryBlock featureStory (summary, DR-152); the category page analysis block (`CategoryFormatsSection`, CategoryBlock first story); RegionSlider.panel first story (P-6; card title, DR-459); article related stories | Same | Same |
 | thumbnail | P-4 AnalysisSection compact rows (eyebrow, no summary); category page cards (`CategoryCardList`, summary; list title, DR-459) | Same | Same |
-| side | P-2 featureStory and the analysis hub cover (`large`): stacked under 768 | From 768: text : image = 1 : 2 | Same |
+| side | P-2 featureStory and the analysis hub cover (`large`): stacked under 768 | From 768: text at the start, the image 2 / 3 of the card width (DR-464) | Same |
 | dated | Category page More stories, stacked (summary, no eyebrow; an analysis story shows the C-08 `format` Eyebrow above the title, `formatLabel`, DR-415). With the Eyebrow on (Latest: `category`; topic page: `format`), the row shows that one Eyebrow and no second format label (Topic spec log TP-04) | Same, three columns from 600 | Same |
 
 **Content.**
@@ -773,13 +767,13 @@ The featured section (P-2: the region দক্ষিণ এশিয়া, the
 | Part | Spec |
 | --- | --- |
 | Heading | Section divider (C-22) + category name, h2, plain text, not a link (DR-122) |
-| featureStory (StoryCard `side`) | Grid, areas body + media, top aligned, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). From 768: text at the start, image at the end; the image column is 2 / 3 of the row minus the gap, at least 420px, no cap: minmax(0, 1fr) max(26.25rem, calc((100% - var(--grid-column-gap)) * 2 / 3)) (DR-451, IMP-125 spec log IM-09; replaces the DR-118, DR-119 clamp). Under 768: one column, image on top, 16px, text below (no overlap). Image 3:2. Card title (`text-2xl`, 20 to 24px), wraps `pretty`, summary (500), meta. No eyebrow. Not an OverlapCard |
+| featureStory (StoryCard `side`) | Grid, areas body + media, top aligned, gap --grid-column-gap (16px under 768, 24px from 768, 32px from 1280, DR-300). From 768: text at the start, image at the end; the image column is 2 / 3 of the whole card width, no minimum and no maximum; the text takes the rest minus the gap: minmax(0, 1fr) calc(100% * 2 / 3) (DR-451, DR-464, IMP-125 spec log IM-09, imp-125-followup FU-01; replaces the DR-118, DR-119 clamp). Under 768: one column, image on top, 16px, text below (no overlap). Image 3:2. Card title (`text-2xl`, 20 to 24px), wraps `pretty`, summary (500), meta. No eyebrow. Not an OverlapCard |
 | rail StoryList (3 × StoryListItem) | The first 3 rail stories, no image: list title (`text-lg`) + meta, 16px padding, rule between rows (StoryList, IMP-125 spec log IM-10; replaces the DR-121 rail image story) |
 | MoreLink | আরও দেখুন links to the category page: one per section, below the feature story and the rail, at the section end edge (DR-110, DR-123) |
 
 | Part | Phone or narrow | Tablet or medium | Desktop or wide |
 | --- | --- | --- | --- |
-| featureStory | Under 768 (phone and 600 to 767): one column, image then text | 768 to 1023: text, then the image at 2 / 3 of the row minus the gap (420px or more) | 1024 and up: the same rule; at 1024 the 420px minimum holds and the text column is about 204px |
+| featureStory | Under 768 (phone and 600 to 767): one column, image then text | 768 to 1023: text, then the image at 2 / 3 of the card width | 1024 and up: the same rule (DR-464) |
 | featureStory title | Card title, 20 to 24px | Same | Same |
 | Rail | Below the feature story, stacked | Below the feature story, full width, stacked | 304px rail beside the wrapper from 1024 |
 

@@ -52,7 +52,7 @@ export const en: Dictionary = {
   // The category page (spacing-layout-system.md 7B).
   categoryPage: {
     // Visually hidden name of CategoryCoverSection.
-    cover: "Top story",
+    cover: "Main story",
     latest: "Latest",
     // Older stories under the most read section, 10 at a time.
     moreStories: "More stories",

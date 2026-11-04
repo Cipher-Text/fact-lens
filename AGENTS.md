@@ -80,9 +80,9 @@ src/
   components/
     ui/                    shadcn/ui primitives, restyled after add (CPT-16): Sheet (Drawer), Drawer (SearchDialog, from the top), Collapsible, Tabs, RadioGroup
     layout/                Shell, Wrapper, Rail, WithRail, PeerRow, SectionHeading, Divider, PageTitle
-    category/              Category page: CategoryPageView, CategoryFeatureSection, CategoryCards, CategoryFormatsSection
+    category/              Category page: CategoryPageView, CategoryCoverSection, CategoryCards, CategoryFormatsSection
     latest/                Latest page: LatestPageView (the list is MoreStoriesSection)
-    analysis/              Analysis hub: AnalysisPageView, AnalysisHeroSection, AnalysisTopSection
+    analysis/              Analysis hub: AnalysisPageView, AnalysisCoverSection, AnalysisTopSection
     topic/                 Topic page: TopicPageView (the list is MoreStoriesSection)
     more-stories/          MoreStoriesSection, MoreStoriesList: the load more list of the category, Latest and topic pages
     header/                SiteHeader, TopBar, NavBar, Drawer (shadcn Sheet), SearchDialog (shadcn Drawer), ThemeButton (DR-280, DR-349)

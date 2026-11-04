@@ -18,10 +18,10 @@ vi.mock("next/navigation", () => ({
 
 const full = getAnalysisPage("en");
 
-function view(lead: number, top: number, more: number): AnalysisPage {
+function view(cover: number, top: number, more: number): AnalysisPage {
   return {
     ...full,
-    lead: lead ? full.lead : null,
+    cover: cover ? full.cover : null,
     top: full.top.slice(0, top),
     more: full.more.slice(0, more),
   };

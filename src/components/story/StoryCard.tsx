@@ -15,7 +15,7 @@ import { StoryImage } from "./StoryImage";
  * top: the image above the text; card title.
  * thumbnail: text at the start, a small image at the end (text : image = 2 : 1); list title.
  * side: stacked as top under 768px; from 768px text at the start, the image at the end
- * (text : image = 1 : 2, no cap); card title, or the cover title with `large`.
+ * (the image 2 / 3 of the card width, DR-464); card title, or the cover title with `large`.
  * dated: the image, the text, then the date under 600px; from 600px three columns, the date,
  * the text, the image (More stories; tajmin, 27 Oct 2026). The date is the time only, no
  * reading time. Card title.
@@ -68,7 +68,8 @@ const titleClass: Record<StoryCardVariant, string> = {
   side: cardTitle,
   dated: cardTitle,
 };
-const coverTitle = "font-editorial text-4xl text-balance font-semibold";
+// The cover title with `large`: no text-balance; story-side wraps it pretty (DR-468, TYP-13).
+const coverTitle = "font-editorial text-4xl font-semibold";
 
 // The grid areas media and body place the parts, no `order` (LAY-14). The media is first in
 // the markup in every variant (C-24, DR-267); a row puts it at the end. The utilities are in

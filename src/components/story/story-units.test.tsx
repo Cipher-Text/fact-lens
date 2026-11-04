@@ -191,6 +191,13 @@ describe("StoryCard (C-24)", () => {
     },
   );
 
+  it("side with large wraps pretty: no text-balance on the cover title (DR-468, TYP-13)", () => {
+    render(<StoryCard story={withImage} strings={bn} variant="side" large />);
+    const title = screen.getByRole("heading", { level: 3 });
+    expect(title).toHaveClass("text-4xl");
+    expect(title).not.toHaveClass("text-balance");
+  });
+
   it("large is the side option only: on another variant the variant title stays (C-24)", () => {
     const { container } = render(
       // @ts-expect-error The type accepts large with variant="side" only (PR 25 review).
@@ -198,7 +205,9 @@ describe("StoryCard (C-24)", () => {
     );
     const title = screen.getByRole("heading", { level: 3 });
     expect(title).toHaveClass("text-lg");
-    expect(title.className.match(/\btext-(?:4xl|2xl|lg)\b/g)).toEqual(["text-lg"]);
+    expect(title.className.match(/\btext-(?:4xl|2xl|lg)\b/g)).toEqual([
+      "text-lg",
+    ]);
     expect(
       container.querySelector("[data-story-card]")!.hasAttribute("data-large"),
     ).toBe(false);

@@ -32,7 +32,7 @@ describe("HeroSection (P-1)", () => {
   });
 
   it("shows two top-story cards at most (DR-44)", () => {
-    const extra = getHomepage("bn").featured.southAsia!.lead;
+    const extra = getHomepage("bn").featured.southAsia!.feature;
     const { container } = renderHero("bn", {
       ...full,
       top: [...full.top, extra],
