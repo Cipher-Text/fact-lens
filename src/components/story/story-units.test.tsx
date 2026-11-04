@@ -170,24 +170,39 @@ describe("StoryCard (C-24)", () => {
     ["side", false, "text-2xl"],
     ["dated", false, "text-2xl"],
     ["side", true, "text-4xl"],
-    // large is the side option only: on another variant the variant title stays.
-    ["thumbnail", true, "text-lg"],
   ] as const)(
     "variant %s (large %s) sets the title role %s (tajmin, 5 Nov 2026)",
     (variant, large, role) => {
       render(
-        <StoryCard
-          story={withImage}
-          strings={bn}
-          variant={variant}
-          large={large}
-        />,
+        variant === "side" ? (
+          <StoryCard
+            story={withImage}
+            strings={bn}
+            variant={variant}
+            large={large}
+          />
+        ) : (
+          <StoryCard story={withImage} strings={bn} variant={variant} />
+        ),
       );
       const title = screen.getByRole("heading", { level: 3 });
       expect(title).toHaveClass(role);
       expect(title.className.match(/\btext-(?:4xl|2xl|lg)\b/g)).toEqual([role]);
     },
   );
+
+  it("large is the side option only: on another variant the variant title stays (C-24)", () => {
+    const { container } = render(
+      // @ts-expect-error The type accepts large with variant="side" only (PR 25 review).
+      <StoryCard story={withImage} strings={bn} variant="thumbnail" large />,
+    );
+    const title = screen.getByRole("heading", { level: 3 });
+    expect(title).toHaveClass("text-lg");
+    expect(title.className.match(/\btext-(?:4xl|2xl|lg)\b/g)).toEqual(["text-lg"]);
+    expect(
+      container.querySelector("[data-story-card]")!.hasAttribute("data-large"),
+    ).toBe(false);
+  });
 
   it("drops the eyebrow and the summary when the section asks", () => {
     const { container } = render(

@@ -158,6 +158,19 @@ for (const p of PAGES) {
             const row = await box(rows.nth(n));
             expect(row.y).toBeGreaterThan(above.y + above.height);
           }
+          // Divider.item (C-22): a rule drawn above rows 2 and 3, none above the first row.
+          const ruled = await rows.evaluateAll((items) =>
+            items.map((li) => {
+              const s = getComputedStyle(li, "::before");
+              return (
+                li.classList.contains("divider-item") &&
+                s.content !== "none" &&
+                s.display !== "none" &&
+                parseFloat(s.height) > 0
+              );
+            }),
+          );
+          expect(ruled).toEqual([false, true, true]);
 
           // One আরও দেখুন link below the wrapper and the rail, at the end edge (DR-123).
           const more = s.getByRole("link", {

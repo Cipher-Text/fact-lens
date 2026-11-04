@@ -23,12 +23,24 @@ import { StoryImage } from "./StoryImage";
  */
 export type StoryCardVariant = "top" | "thumbnail" | "side" | "dated";
 
-type StoryCardProps = {
+/**
+ * `large` is the `side` option only (C-24): the type accepts it with `variant="side"` and no
+ * other variant. The component keeps a runtime guard as well.
+ */
+type StoryCardVariantProps =
+  | {
+      variant: "side";
+      /** The cover story of its section, the cover title (the analysis hub cover). */
+      large?: boolean;
+    }
+  | {
+      variant?: Exclude<StoryCardVariant, "side">;
+      large?: never;
+    };
+
+type StoryCardProps = StoryCardVariantProps & {
   story: Story;
   strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
-  variant?: StoryCardVariant;
-  /** side only: the cover story of its section, the cover title (the analysis hub cover). */
-  large?: boolean;
   /** The section drops the eyebrow when its heading names the category (DR-114). */
   eyebrow?: boolean;
   /** The Eyebrow mode (C-08): format in mixed lists (DR-417). */
