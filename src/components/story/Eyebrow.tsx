@@ -50,6 +50,7 @@ export function Eyebrow({
     // and press.
     return (
       <p
+        data-eyebrow
         className={cn(
           "flex flex-wrap items-center font-ui text-xs leading-tight font-eyebrow tracking-eyebrow case-eyebrow",
           className,
@@ -75,6 +76,7 @@ export function Eyebrow({
 
   return (
     <p
+      data-eyebrow
       className={cn(
         "font-ui text-xs leading-tight font-eyebrow tracking-eyebrow case-eyebrow",
         className,

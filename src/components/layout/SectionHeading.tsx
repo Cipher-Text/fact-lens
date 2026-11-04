@@ -30,6 +30,7 @@ export function SectionHeading({
   const title = (
     <Tag
       id={id}
+      data-section-title
       className="min-w-0 font-editorial text-section font-semibold text-ink"
     >
       {children}

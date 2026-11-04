@@ -127,7 +127,7 @@ describe("AnalysisPageView", () => {
       "md:story-split-feature",
     );
     expect(hero.querySelector("h3")).toHaveClass("text-4xl");
-    const eyebrow = hero.querySelector(".case-eyebrow a");
+    const eyebrow = hero.querySelector("[data-eyebrow] a");
     expect(eyebrow?.getAttribute("href")).toMatch(/^\/en\/category\//);
   });
 

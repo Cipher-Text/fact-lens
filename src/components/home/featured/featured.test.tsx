@@ -76,7 +76,7 @@ describe("FeaturedCategorySection (P-2)", () => {
     expect(within(card).getByRole("heading", { level: 3 })).toHaveClass(
       "text-2xl",
     );
-    expect(card.querySelector(".case-eyebrow")).toBeNull();
+    expect(card.querySelector("[data-eyebrow]")).toBeNull();
   });
 
   it("has one image story and two text rows in the rail (C-24, C-03)", () => {

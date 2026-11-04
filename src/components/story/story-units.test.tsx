@@ -193,8 +193,8 @@ describe("StoryCard (C-24)", () => {
         summary={false}
       />,
     );
-    expect(container.querySelector(".case-eyebrow")).toBeNull();
-    expect(container.querySelector(".leading-relaxed")).toBeNull();
+    expect(container.querySelector("[data-eyebrow]")).toBeNull();
+    expect(container.querySelector("[data-summary]")).toBeNull();
   });
 
   it("dated: the image, the text, then the date in its own area, time only (category page, tajmin)", () => {
@@ -217,7 +217,7 @@ describe("StoryCard (C-24)", () => {
     expect(container.querySelectorAll("[data-reading-time]")).toHaveLength(0);
     expect(grid.children[1].querySelector("time")).toBeNull();
     expect(grid.children[2].querySelector("time")).not.toBeNull();
-    expect(container.querySelector(".case-eyebrow")).toBeNull();
+    expect(container.querySelector("[data-eyebrow]")).toBeNull();
   });
 
   it("shows the no-image placeholder for a story with no image, in the row layout, whole title (DR-338)", () => {
@@ -260,7 +260,7 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
     const { container, rerender } = render(
       <StoryListItem story={analysis} strings={bn} eyebrowMode="format" />,
     );
-    const eyebrow = () => container.querySelector("p.case-eyebrow")!;
+    const eyebrow = () => container.querySelector("p[data-eyebrow]")!;
     expect(eyebrow()).toHaveTextContent(bn.analysisOpinion.analysis);
     expect(within(eyebrow() as HTMLElement).getByRole("link")).toHaveAttribute(
       "href",
@@ -278,7 +278,7 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
     );
     // No mode: no Eyebrow (every other list).
     rerender(<StoryListItem story={analysis} strings={bn} />);
-    expect(container.querySelector("p.case-eyebrow")).toBeNull();
+    expect(container.querySelector("p[data-eyebrow]")).toBeNull();
   });
 
   it("makes an h3 with one link and no Breaking label (COL-11, DR-279)", () => {

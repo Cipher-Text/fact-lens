@@ -123,7 +123,7 @@ for (const p of PAGES) {
       const rows = await cards.evaluateAll((els) =>
         els.map((card) => ({
           href: card.querySelector("h3 a")?.getAttribute("href") ?? "",
-          eyebrows: [...card.querySelectorAll(".case-eyebrow a")].map(
+          eyebrows: [...card.querySelectorAll("[data-eyebrow] a")].map(
             (a) => a.getAttribute("href") ?? "",
           ),
           time: card.querySelector("time")?.getAttribute("datetime") ?? "",

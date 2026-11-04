@@ -152,7 +152,10 @@ export function StoryCard({
             </Link>
           </Title>
           {showSummary ? (
-            <p className="mt-(--space-story-title-summary) max-w-(--measure-deck) font-editorial text-sm leading-relaxed font-medium text-ink-secondary">
+            <p
+              data-summary
+              className="mt-(--space-story-title-summary) max-w-(--measure-deck) font-editorial text-sm leading-relaxed font-medium text-ink-secondary"
+            >
               {story.summary}
             </p>
           ) : null}

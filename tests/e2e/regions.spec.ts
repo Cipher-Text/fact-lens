@@ -685,7 +685,7 @@ for (const [prefix, label] of [
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto(prefix || "/");
     const eyebrows = (region: string) =>
-      page.locator(`[data-region="${region}"] p.case-eyebrow a`);
+      page.locator(`[data-region="${region}"] p[data-eyebrow] a`);
     const analysisHref = `${prefix}/analysis`;
     const categoryHref = new RegExp(`^${prefix}/category/`);
     for (const [region, analysisAt] of [
@@ -710,7 +710,7 @@ for (const [prefix, label] of [
     for (const item of ["[data-story-card]", "[data-story-list-item]"]) {
       const story = page.locator(`[data-region="americas"] ${item}`).first();
       const before = await story.evaluate((el) => {
-        const eyebrow = el.querySelector("p.case-eyebrow")!;
+        const eyebrow = el.querySelector("p[data-eyebrow]")!;
         const title = el.querySelector("h4")!;
         return Boolean(
           eyebrow.compareDocumentPosition(title) &
