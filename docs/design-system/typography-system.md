@@ -133,7 +133,7 @@ A role is a set of classes. Put all the classes of the role on the element. Use 
 | Blockquote | `type-blockquote` | `font-editorial text-xl leading-relaxed` | 400 EN, 500 BN (`--blockquote-weight`) | Italic in English (`--blockquote-style`). Reader scale |
 | Pull quote | `type-pullquote` | `font-editorial text-3xl font-medium text-balance` | 500 | Reader scale |
 | Section title | `type-section-title` | `font-editorial text-section font-semibold` | 600 | |
-| Eyebrow | `type-eyebrow` | `font-ui text-xs leading-tight font-eyebrow` | 700 EN, 600 BN (`--eyebrow-weight`) | `Eyebrow` and `Chip` only: add `tracking-eyebrow case-eyebrow` (English uppercase, 0.06em; DR-216) |
+| Eyebrow | `type-eyebrow` | `font-ui text-xs leading-tight font-eyebrow` | 700 EN, 600 BN (`--eyebrow-weight`) | `Eyebrow` and `Chip` only: add `tracking-eyebrow case-eyebrow` (English uppercase, 0.06em; DR-216). The article page labels in `reader.css` follow the same rule: the category (`.rd-eyebrow`), the rail title and the popover label take `--eyebrow-tracking` and `--eyebrow-case`; the `ContextCard` part label takes `--eyebrow-tracking` with no case |
 | Metadata | `type-metadata` | `font-ui text-xs font-normal` | 400 | |
 | Caption | `type-caption` | `font-ui text-xs leading-relaxed font-normal` | 400 | Reader scale in the article |
 | UI | `type-ui` | `font-ui text-sm font-medium` | 500 | |

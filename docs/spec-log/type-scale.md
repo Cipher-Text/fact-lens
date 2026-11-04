@@ -29,6 +29,7 @@ This log keeps what the work changes in the specs. Open code items are rows in `
 | TS-09 | Changed rule | Deck line height 1.5 / 1.6 (was 1.45 / 1.55); metadata tracking 0 (was 0.01em) | `src/styles/typography.css` | typography 3.1 | tajmin, 4 Nov 2026: "no issues" | |
 | TS-10 | Reuse | Article title: `text-wrap: balance` and the `measure-article-title` cap in `.rd-title` (the code had `pretty` and no cap) | `src/styles/reader.css` | TYP-12, TYP-13 | Spec | |
 | TS-12 | Reuse | Summary keeps the `measure-deck` cap (36rem) as a class, `max-w-(--measure-deck)`, in `LeadStory`, `StoryCard` and `OverlapCard`. The old `type-summary` utility carried the same cap, so the line length does not change | `src/components/story/StoryCard.tsx`, `OverlapCard.tsx`, `LeadStory.tsx` | TYP-12; typography 5.1 | Spec | |
+| TS-13 | Reuse | The article page labels in `reader.css` keep the eyebrow tracking and case (category, rail title, popover label; the ContextCard label tracking only), as before. Typography 3.2 names them next to Eyebrow and Chip. `reader.css` weights use the `--font-weight-*` tokens in place of numbers | `src/styles/reader.css` | DR-216, TYP-06 | PR #24 review; tajmin, 4 Nov 2026: "Go with A" | |
 | TS-11 | Reuse | Ad label at weight 600 with no uppercase, as typography 7.1 says (the code had the eyebrow 700 and uppercase) | `src/components/ads/AdSlot.tsx` | DR-216 | Spec | |
 
 ## Flags

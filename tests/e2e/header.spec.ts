@@ -446,7 +446,7 @@ for (const p of PAGES) {
       await expect(page.locator("main#main")).toHaveAttribute("tabindex", "-1");
     });
 
-    test("nav row items are type-nav: 16px 600 on Bangla pages, 14px 600 on English pages; no # link is left (DR-346)", async ({
+    test("nav row items are text-nav: 16px 600 on Bangla pages, 14px 600 on English pages; no # link is left (DR-346)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1280, height: 800 });

@@ -104,7 +104,7 @@
 .rd-iconbtn__glyph {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--leading-tight-value);
 }
 
@@ -145,7 +145,7 @@
 .rd-title {
   font-family: var(--font-editorial-active);
   font-size: var(--text-5xl-size);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--text-5xl-line);
   letter-spacing: var(--text-5xl-tracking);
   max-inline-size: var(--measure-article-title);
@@ -157,7 +157,7 @@
 .rd-summary {
   font-family: var(--font-editorial-active);
   font-size: var(--text-lg-size);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-relaxed-value);
   letter-spacing: var(--text-lg-tracking);
   max-inline-size: var(--measure-deck);
@@ -186,7 +186,7 @@
   margin: 0 0 0 calc(var(--spacing) * -6);
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   color: var(--color-meta);
@@ -235,7 +235,7 @@
 .rd-byline__name {
   font-family: var(--font-ui-active);
   font-size: var(--text-sm-size);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: var(--text-sm-line);
   letter-spacing: var(--text-sm-tracking);
 }
@@ -245,7 +245,7 @@
 .rd-byline__role {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   margin-top: calc(var(--spacing) * 0.5) !important;
@@ -255,7 +255,7 @@
 .rd-avatar {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--leading-tight-value);
   letter-spacing: var(--text-xs-tracking);
   display: grid;
@@ -352,7 +352,7 @@
 .rd-caption {
   font-family: var(--font-ui-active);
   font-size: calc(var(--text-xs-size) * var(--reader-scale));
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-relaxed-value);
   letter-spacing: var(--text-xs-tracking);
   margin: var(--space-media-caption) 0 0;
@@ -443,7 +443,7 @@
 .rd-tools__meta {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   display: grid;
@@ -454,7 +454,7 @@
 .rd-tools__meta strong {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   color: var(--ink);
@@ -509,7 +509,7 @@
 .rd-toc__link {
   font-family: var(--font-ui-active);
   font-size: var(--nav-size);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--nav-line);
   display: block;
   padding: calc(var(--spacing) * 2) 0;
@@ -547,7 +547,7 @@
 .rd-points__title {
   font-family: var(--font-editorial-active);
   font-size: calc(var(--text-xl-size) * var(--reader-scale));
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--text-xl-line);
   letter-spacing: var(--text-xl-tracking);
   display: flex;
@@ -564,7 +564,7 @@
 .rd-points__note {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   color: var(--ink-muted);
@@ -597,7 +597,7 @@
     var(--type-body-min),
     calc(var(--text-base-size) * var(--reader-scale))
   );
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-base-line);
   letter-spacing: var(--text-base-tracking);
   color: var(--color-bar);
@@ -610,7 +610,7 @@
     var(--type-body-min),
     calc(var(--text-base-size) * var(--reader-scale))
   );
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-base-line);
   letter-spacing: var(--text-base-tracking);
   margin: 0;
@@ -656,7 +656,7 @@
 .rd-prose .rd-context__title {
   font-family: var(--font-editorial-active);
   font-size: calc(var(--text-xl-size) * var(--reader-scale));
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--text-xl-line);
   letter-spacing: var(--text-xl-tracking);
   margin: 0;
@@ -666,7 +666,7 @@
 .rd-context__teaser {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   margin: 0;
@@ -693,7 +693,7 @@
     var(--type-body-min),
     calc(var(--text-base-size) * var(--reader-scale))
   );
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-base-line);
   letter-spacing: var(--text-base-tracking);
   margin: 0 0 1.1em;
@@ -709,7 +709,7 @@
     var(--type-body-min),
     calc(var(--text-base-size) * var(--reader-scale))
   );
-  font-weight: 400;
+  font-weight: var(--font-weight-normal);
   line-height: var(--text-base-line);
   letter-spacing: var(--text-base-tracking);
   /* Body text ink-secondary, headlines ink (TYP-14). */
@@ -753,7 +753,7 @@
 .rd-prose h2 {
   font-family: var(--font-editorial-active);
   font-size: calc(var(--text-3xl-size) * var(--reader-scale));
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--text-3xl-line);
   letter-spacing: var(--text-3xl-tracking);
   margin: 0;
@@ -892,7 +892,7 @@
 .rd-progressbtn__pct {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   display: grid;
@@ -1018,7 +1018,7 @@ html:has(
 .rd-dock__meta {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   /* min-width 0 and wrapping keep the fixed dock inside 320px at 200% text and with long
@@ -1081,7 +1081,7 @@ html:has(
 .rd .rd-size {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--leading-tight-value);
   letter-spacing: var(--text-xs-tracking);
   display: grid;
@@ -1217,7 +1217,7 @@ html:has(
   color: inherit;
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   line-height: var(--text-xs-line);
   text-decoration: none;
 }
@@ -1234,7 +1234,7 @@ html:has(
 .rd-toast {
   font-family: var(--font-ui-active);
   font-size: var(--text-xs-size);
-  font-weight: 500;
+  font-weight: var(--font-weight-medium);
   line-height: var(--text-xs-line);
   letter-spacing: var(--text-xs-tracking);
   position: fixed;
