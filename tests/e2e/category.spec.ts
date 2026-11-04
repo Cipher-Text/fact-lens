@@ -483,16 +483,16 @@ test("More stories: an analysis row shows the format Eyebrow above the title at 
     const rows = page.locator(
       '[data-section="category-more"] [data-story-card]',
     );
-    const eyebrows = rows.locator(".type-eyebrow");
+    const eyebrows = rows.locator(".case-eyebrow");
     await page.goto(`${prefix}/category/security`);
     // One analysis row, in the first 10, so it shows without load more.
     await expect(eyebrows).toHaveCount(1);
     expect(
       await rows.evaluateAll((cards) =>
-        cards.findIndex((c) => c.querySelector(".type-eyebrow")),
+        cards.findIndex((c) => c.querySelector(".case-eyebrow")),
       ),
     ).toBeLessThan(10);
-    const analysisRow = rows.filter({ has: page.locator(".type-eyebrow") });
+    const analysisRow = rows.filter({ has: page.locator(".case-eyebrow") });
     const eyebrow = analysisRow.getByRole("link", { name: label, exact: true });
     await expect(eyebrow).toHaveAttribute("href", `${prefix}/analysis`);
     await expect(analysisRow.locator("[data-chip]")).toHaveCount(0);

@@ -59,7 +59,7 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
           id={`${poll.id}-title`}
           tabIndex={-1}
           data-poll-part="heading"
-          className="type-section-title text-ink"
+          className="font-editorial text-section font-semibold text-ink"
         >
           {strings.title}
         </h2>
@@ -67,7 +67,7 @@ export function DailyPoll({ poll, strings }: DailyPollProps) {
         <fieldset className="contents">
           <legend
             data-poll-part="question"
-            className="type-story-title-sm text-ink"
+            className="font-editorial text-lg font-semibold text-ink"
           >
             {poll.question}
           </legend>
@@ -137,7 +137,7 @@ function PollResults({ poll, vote, strings }: PollResultsProps) {
               data-poll-result={vote ? result.id : undefined}
               className="flex flex-col gap-2"
             >
-              <span className="type-ui text-ink">
+              <span className="font-ui text-sm font-medium text-ink">
                 {labels.get(result.id)}
                 {mine ? ` · ${strings.yourVote}` : null}
               </span>
@@ -150,7 +150,7 @@ function PollResults({ poll, vote, strings }: PollResultsProps) {
           );
         })}
       </ul>
-      <p className="mt-4 type-ui-sm text-ink-muted tabular-nums">
+      <p className="mt-4 font-ui text-xs font-medium text-ink-muted tabular-nums">
         {fill(strings.total, { count: formatNumber(total, poll.lang) })}
       </p>
     </div>
@@ -200,7 +200,7 @@ function PollBar({ percent, mine, text }: PollBarProps) {
       />
       <span
         ref={number}
-        className="relative type-ui-sm text-ink tabular-nums data-over:text-background"
+        className="relative font-ui text-xs font-medium text-ink tabular-nums data-over:text-background"
       >
         {text}
       </span>

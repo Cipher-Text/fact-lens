@@ -14,7 +14,7 @@ type MetaLineProps = {
 };
 
 /**
- * C-09 MetaLine: type-metadata at weight 400 in --color-meta, one size per language
+ * C-09 MetaLine: text-xs (metadata) at weight 400 in --color-meta, one size per language
  * (CPT-12). Items are joined by a drawn separator: a 4px square, no radius, 10px each
  * side, centered, aria-hidden (CPT-10). The line wraps between items.
  */
@@ -23,7 +23,7 @@ export function MetaLine({ items, className }: MetaLineProps) {
     <p
       data-meta-line
       className={cn(
-        "flex flex-wrap items-center type-metadata text-(--color-meta) tabular-nums",
+        "flex flex-wrap items-center font-ui text-xs font-normal text-(--color-meta) tabular-nums",
         className,
       )}
     >

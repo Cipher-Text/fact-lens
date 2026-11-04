@@ -59,11 +59,11 @@
 
 .rd-eyebrow {
   font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: var(--type-eyebrow-case);
+  font-size: var(--text-xs-size);
+  font-weight: var(--eyebrow-weight);
+  line-height: var(--leading-tight-value);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: var(--eyebrow-case);
   margin: 0 0 calc(var(--spacing) * 3);
   color: var(--ink-muted);
 }
@@ -99,13 +99,13 @@
   width: var(--icon-size);
   height: var(--icon-size);
 }
-/* A letter in place of an icon (the text size button): type-button, the same weight as
+/* A letter in place of an icon (the text size button): text-xs (button), the same weight as
    the button labels. */
 .rd-iconbtn__glyph {
   font-family: var(--font-ui-active);
-  font-size: var(--type-button-size);
-  font-weight: var(--type-button-weight);
-  line-height: var(--type-button-line);
+  font-size: var(--text-xs-size);
+  font-weight: 600;
+  line-height: var(--leading-tight-value);
 }
 
 /* ---------- Hero ---------- */
@@ -144,21 +144,22 @@
 
 .rd-title {
   font-family: var(--font-editorial-active);
-  font-size: var(--type-article-title-size);
-  font-weight: var(--type-article-title-weight);
-  line-height: var(--type-article-title-line);
-  letter-spacing: var(--type-article-title-tracking);
+  font-size: var(--text-5xl-size);
+  font-weight: 600;
+  line-height: var(--text-5xl-line);
+  letter-spacing: var(--text-5xl-tracking);
+  max-inline-size: var(--measure-article-title);
   margin: 0;
-  text-wrap: pretty;
+  text-wrap: balance; /* TYP-13 */
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
 
 .rd-summary {
   font-family: var(--font-editorial-active);
-  font-size: var(--type-deck-size);
-  font-weight: var(--type-deck-weight);
-  line-height: var(--type-deck-line);
-  letter-spacing: var(--type-deck-tracking);
+  font-size: var(--text-lg-size);
+  font-weight: 400;
+  line-height: var(--leading-relaxed-value);
+  letter-spacing: var(--text-lg-tracking);
   max-inline-size: var(--measure-deck);
   /* Title to deck: 12px (--rd-head-title-deck). */
   margin: var(--rd-head-title-deck) 0 0;
@@ -184,10 +185,10 @@
   row-gap: calc(var(--spacing) * 1);
   margin: 0 0 0 calc(var(--spacing) * -6);
   font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   color: var(--color-meta);
 }
 .rd-stamp {
@@ -233,30 +234,30 @@
 }
 .rd-byline__name {
   font-family: var(--font-ui-active);
-  font-size: var(--type-ui-size);
-  font-weight: var(--type-ui-weight);
-  line-height: var(--type-ui-line);
-  letter-spacing: var(--type-ui-tracking);
+  font-size: var(--text-sm-size);
+  font-weight: 500;
+  line-height: var(--text-sm-line);
+  letter-spacing: var(--text-sm-tracking);
 }
 .rd-byline__by {
   color: var(--ink-muted);
 }
 .rd-byline__role {
   font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   margin-top: calc(var(--spacing) * 0.5) !important;
   color: var(--ink-muted);
 }
 
 .rd-avatar {
   font-family: var(--font-ui-active);
-  font-size: var(--type-button-size);
-  font-weight: var(--type-button-weight);
-  line-height: var(--type-button-line);
-  letter-spacing: var(--type-button-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 600;
+  line-height: var(--leading-tight-value);
+  letter-spacing: var(--text-xs-tracking);
   display: grid;
   flex: none;
   place-items: center;
@@ -350,10 +351,10 @@
 
 .rd-caption {
   font-family: var(--font-ui-active);
-  font-size: var(--type-caption-size);
-  font-weight: var(--type-caption-weight);
-  line-height: var(--type-caption-line);
-  letter-spacing: var(--type-caption-tracking);
+  font-size: calc(var(--text-xs-size) * var(--reader-scale));
+  font-weight: 400;
+  line-height: var(--leading-relaxed-value);
+  letter-spacing: var(--text-xs-tracking);
   margin: var(--space-media-caption) 0 0;
   color: var(--ink-muted);
 }
@@ -422,11 +423,11 @@
 }
 .rd-rail__title {
   font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: var(--type-eyebrow-case);
+  font-size: var(--text-xs-size);
+  font-weight: var(--eyebrow-weight);
+  line-height: var(--leading-tight-value);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: var(--eyebrow-case);
   margin: 0 0 calc(var(--spacing) * 3.5);
   color: var(--ink-muted);
 }
@@ -441,10 +442,10 @@
 }
 .rd-tools__meta {
   font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   display: grid;
   gap: calc(var(--spacing) * 0.5);
   margin: 0;
@@ -452,10 +453,10 @@
 }
 .rd-tools__meta strong {
   font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-ui-sm-weight);
-  line-height: var(--type-ui-sm-line);
-  letter-spacing: var(--type-ui-sm-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   color: var(--ink);
 }
 .rd-tools__row {
@@ -507,9 +508,9 @@
 }
 .rd-toc__link {
   font-family: var(--font-ui-active);
-  font-size: var(--type-nav-size);
-  font-weight: var(--type-nav-weight);
-  line-height: var(--type-nav-line);
+  font-size: var(--nav-size);
+  font-weight: 600;
+  line-height: var(--nav-line);
   display: block;
   padding: calc(var(--spacing) * 2) 0;
   color: var(--ink-muted);
@@ -541,14 +542,14 @@
   gap: calc(var(--spacing) * 1) calc(var(--spacing) * 4);
   margin-bottom: var(--space-section-title-after);
 }
-/* The box heading is a minor subheading in the article: type-article-h3, with the reader
+/* The box heading is a minor subheading in the article: text-xl, with the reader
    size (TYP-15), headline ink (TYP-14). */
 .rd-points__title {
   font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-article-h3-size) * var(--reader-scale));
-  font-weight: var(--type-article-h3-weight);
-  line-height: var(--type-article-h3-line);
-  letter-spacing: var(--type-article-h3-tracking);
+  font-size: calc(var(--text-xl-size) * var(--reader-scale));
+  font-weight: 600;
+  line-height: var(--text-xl-line);
+  letter-spacing: var(--text-xl-tracking);
   display: flex;
   align-items: center;
   gap: calc(var(--spacing) * 2);
@@ -562,10 +563,10 @@
 }
 .rd-points__note {
   font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   color: var(--ink-muted);
 }
 .rd-points ol {
@@ -590,28 +591,28 @@
   border-bottom: 1px dotted var(--border);
 }
 .rd-points__n {
-  /* The item number is part of the list: type-article-body, so it sits on the line. */
+  /* The item number is part of the list: text-base, so it sits on the line. */
   font-family: var(--font-editorial-active);
   font-size: max(
     var(--type-body-min),
-    calc(var(--type-article-body-size) * var(--reader-scale))
+    calc(var(--text-base-size) * var(--reader-scale))
   );
-  font-weight: var(--type-article-body-weight);
-  line-height: var(--type-article-body-line);
-  letter-spacing: var(--type-article-body-tracking);
+  font-weight: 400;
+  line-height: var(--text-base-line);
+  letter-spacing: var(--text-base-tracking);
   color: var(--color-bar);
   font-variant-numeric: tabular-nums;
 }
 .rd-points p {
-  /* Lists in the article: type-article-body (typography-system.md 7.2). */
+  /* Lists in the article: text-base (typography-system.md 7.2). */
   font-family: var(--font-editorial-active);
   font-size: max(
     var(--type-body-min),
-    calc(var(--type-article-body-size) * var(--reader-scale))
+    calc(var(--text-base-size) * var(--reader-scale))
   );
-  font-weight: var(--type-article-body-weight);
-  line-height: var(--type-article-body-line);
-  letter-spacing: var(--type-article-body-tracking);
+  font-weight: 400;
+  line-height: var(--text-base-line);
+  letter-spacing: var(--text-base-tracking);
   margin: 0;
   color: var(--ink-secondary);
 }
@@ -651,23 +652,23 @@
   width: var(--icon-size);
   height: var(--icon-size);
 }
-/* Same role as the key points heading: type-article-h3. */
+/* Same role as the key points heading: text-xl. */
 .rd-prose .rd-context__title {
   font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-article-h3-size) * var(--reader-scale));
-  font-weight: var(--type-article-h3-weight);
-  line-height: var(--type-article-h3-line);
-  letter-spacing: var(--type-article-h3-tracking);
+  font-size: calc(var(--text-xl-size) * var(--reader-scale));
+  font-weight: 600;
+  line-height: var(--text-xl-line);
+  letter-spacing: var(--text-xl-tracking);
   margin: 0;
   color: var(--ink);
 }
-/* The teaser line: type-metadata, muted (TYP-14). */
+/* The teaser line: text-xs (metadata), muted (TYP-14). */
 .rd-context__teaser {
   font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 400;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   margin: 0;
   color: var(--ink-muted);
 }
@@ -677,10 +678,10 @@
 }
 .rd-context__label {
   font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: var(--eyebrow-weight);
+  line-height: var(--leading-tight-value);
+  letter-spacing: var(--eyebrow-tracking);
   /* Uppercase only on Eyebrow and Chip (DR-216). */
   text-transform: none;
   margin: 0 0 calc(var(--spacing) * 2);
@@ -690,11 +691,11 @@
   font-family: var(--font-editorial-active);
   font-size: max(
     var(--type-body-min),
-    calc(var(--type-article-body-size) * var(--reader-scale))
+    calc(var(--text-base-size) * var(--reader-scale))
   );
-  font-weight: var(--type-article-body-weight);
-  line-height: var(--type-article-body-line);
-  letter-spacing: var(--type-article-body-tracking);
+  font-weight: 400;
+  line-height: var(--text-base-line);
+  letter-spacing: var(--text-base-tracking);
   margin: 0 0 1.1em;
 }
 .rd-prose .rd-context__part p:last-child {
@@ -706,11 +707,11 @@
   font-family: var(--font-editorial-active);
   font-size: max(
     var(--type-body-min),
-    calc(var(--type-article-body-size) * var(--reader-scale))
+    calc(var(--text-base-size) * var(--reader-scale))
   );
-  font-weight: var(--type-article-body-weight);
-  line-height: var(--type-article-body-line);
-  letter-spacing: var(--type-article-body-tracking);
+  font-weight: 400;
+  line-height: var(--text-base-line);
+  letter-spacing: var(--text-base-tracking);
   /* Body text ink-secondary, headlines ink (TYP-14). */
   color: var(--ink-secondary);
 }
@@ -751,10 +752,10 @@
 }
 .rd-prose h2 {
   font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
-  font-weight: var(--type-article-h2-weight);
-  line-height: var(--type-article-h2-line);
-  letter-spacing: var(--type-article-h2-tracking);
+  font-size: calc(var(--text-3xl-size) * var(--reader-scale));
+  font-weight: 600;
+  line-height: var(--text-3xl-line);
+  letter-spacing: var(--text-3xl-tracking);
   margin: 0;
   color: var(--ink);
   scroll-margin-top: calc(var(--rd-bar-h) + calc(var(--spacing) * 7));
@@ -765,8 +766,8 @@
    heading type so the line boxes match. */
 .rd-section-head {
   font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
-  line-height: var(--type-article-h2-line);
+  font-size: calc(var(--text-3xl-size) * var(--reader-scale));
+  line-height: var(--text-3xl-line);
   /* Space around headings from the spacing tokens (typography-system.md 7.2): a module
      gap before, the heading-to-content gap after. */
   margin: var(--space-module) 0 var(--space-section-title-after);
@@ -846,7 +847,7 @@
   content: "";
   position: absolute;
   left: 0.2em;
-  top: calc((var(--type-article-body-line) * 1em - var(--rd-bullet)) / 2);
+  top: calc((var(--text-base-line) * 1em - var(--rd-bullet)) / 2);
   width: var(--rd-bullet);
   height: var(--rd-bullet);
   background: currentColor;
@@ -890,10 +891,10 @@
 }
 .rd-progressbtn__pct {
   font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-ui-sm-weight);
-  line-height: var(--type-ui-sm-line);
-  letter-spacing: var(--type-ui-sm-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   display: grid;
   place-items: center;
   font-variant-numeric: tabular-nums;
@@ -1016,10 +1017,10 @@ html:has(
 }
 .rd-dock__meta {
   font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-ui-sm-weight);
-  line-height: var(--type-ui-sm-line);
-  letter-spacing: var(--type-ui-sm-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   /* min-width 0 and wrapping keep the fixed dock inside 320px at 200% text and with long
      Bangla text: the text wraps, it is not clipped or made smaller (LAY-02, TYP-09). */
   flex: 1;
@@ -1060,11 +1061,11 @@ html:has(
 }
 .rd-pop__label {
   font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: var(--type-eyebrow-case);
+  font-size: var(--text-xs-size);
+  font-weight: var(--eyebrow-weight);
+  line-height: var(--leading-tight-value);
+  letter-spacing: var(--eyebrow-tracking);
+  text-transform: var(--eyebrow-case);
   margin: 0;
   padding: calc(var(--spacing) * 2) calc(var(--spacing) * 2.5)
     calc(var(--spacing) * 2.5);
@@ -1075,14 +1076,14 @@ html:has(
   gap: calc(var(--spacing) * 2);
   padding: 0 calc(var(--spacing) * 1) calc(var(--spacing) * 1.5);
 }
-/* One glyph size for every step (+ and ++ mark the larger ones): type-button, the role
+/* One glyph size for every step (+ and ++ mark the larger ones): text-xs (button), the role
    for control labels. (.rd .rd-size wins over the .rd button font reset.) */
 .rd .rd-size {
   font-family: var(--font-ui-active);
-  font-size: var(--type-button-size);
-  font-weight: var(--type-button-weight);
-  line-height: var(--type-button-line);
-  letter-spacing: var(--type-button-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 600;
+  line-height: var(--leading-tight-value);
+  letter-spacing: var(--text-xs-tracking);
   display: grid;
   place-items: center;
   width: var(--icon-button-size);
@@ -1215,9 +1216,9 @@ html:has(
   background: transparent;
   color: inherit;
   font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-button-weight);
-  line-height: var(--type-ui-sm-line);
+  font-size: var(--text-xs-size);
+  font-weight: 600;
+  line-height: var(--text-xs-line);
   text-decoration: none;
 }
 .rd-selbar button:hover,
@@ -1232,10 +1233,10 @@ html:has(
 
 .rd-toast {
   font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-ui-sm-weight);
-  line-height: var(--type-ui-sm-line);
-  letter-spacing: var(--type-ui-sm-tracking);
+  font-size: var(--text-xs-size);
+  font-weight: 500;
+  line-height: var(--text-xs-line);
+  letter-spacing: var(--text-xs-tracking);
   position: fixed;
   z-index: var(--z-toast);
   left: 50%;

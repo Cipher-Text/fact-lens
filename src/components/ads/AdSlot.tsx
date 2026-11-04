@@ -92,7 +92,7 @@ export function AdSlot({ variant, lang, strings }: AdSlotProps) {
       data-ad-slot={variant === "inline" ? "ad-inline" : slot}
       className={cn(rowClass[variant], "bg-surface-alt")}
     >
-      <p className="flex min-h-(--ad-label) items-center type-eyebrow text-ink-muted">
+      <p className="flex min-h-(--ad-label) items-center font-ui text-xs leading-tight font-semibold text-ink-muted">
         {strings.label}
       </p>
       <div className={cn("flex justify-center", boxClass[variant])}>

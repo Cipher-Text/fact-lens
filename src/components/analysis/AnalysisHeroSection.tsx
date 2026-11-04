@@ -12,7 +12,7 @@ type Props = {
 /**
  * The hero of the analysis hub: one lead story across the shell, no rail (tajmin, 2 Nov
  * 2026). The card is the P-2 feature story (C-24 `row-from-md`, 3:2, `feature` split), with
- * the title in type-story-lead as the category page feature story (size lead; tajmin, 4 Nov
+ * the title in text-4xl as the category page feature story (size lead; tajmin, 4 Nov
  * 2026):
  * one column under 768px, image first; from 768px the text at the start and the image at
  * the end, text : image = 1 : 2 with no image cap (`story-split-lead`; tajmin, 3 Nov 2026).

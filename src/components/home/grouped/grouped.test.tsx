@@ -84,14 +84,14 @@ describe("GroupedCategoriesSection (P-3)", () => {
     const feature = section.querySelector("[data-story-card]")!;
     expect(
       within(feature as HTMLElement).getByRole("heading", { level: 3 }),
-    ).toHaveClass("type-story-title");
+    ).toHaveClass("text-2xl");
     expect(feature.querySelector("img")).not.toBeNull();
     expect(feature.className).not.toMatch(/rounded|border/);
     const items = within(section).getAllByRole("listitem");
     expect(items).toHaveLength(2);
     for (const li of items) {
       expect(within(li).getByRole("heading", { level: 3 })).toHaveClass(
-        "type-story-title-sm",
+        "text-lg",
       );
     }
     // The block heading is plain text, not a link (DR-122).

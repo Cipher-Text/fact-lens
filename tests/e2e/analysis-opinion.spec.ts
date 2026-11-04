@@ -344,7 +344,7 @@ test.describe("sheet checks (P-4, C-02, C-06, C-24)", () => {
           expect(Math.round(((rowBox.width - columnGap) * 1) / 3)).toBe(
             Math.round(img.width),
           );
-          await expect(row.locator(".type-summary")).toHaveCount(0);
+          await expect(row.locator(".leading-relaxed")).toHaveCount(0);
         }
 
         // Every story title is an h3 with one link (P-4, C-06).

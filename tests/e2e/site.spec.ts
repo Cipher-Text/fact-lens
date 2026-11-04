@@ -125,9 +125,7 @@ test.describe("heading outline (DR-275)", () => {
       await expect(
         hero.getByRole("heading", { level: 2 }).first(),
       ).toBeAttached();
-      await expect(page.locator("[data-lead] h3.type-story-lead")).toHaveCount(
-        1,
-      );
+      await expect(page.locator("[data-lead] h3.text-4xl")).toHaveCount(1);
     });
   }
 });
@@ -206,8 +204,8 @@ test.describe("fonts (typography-system.md Section 8.1)", () => {
         const family = (selector: string) =>
           getComputedStyle(document.querySelector(selector)!).fontFamily;
         return {
-          serif: family("main .type-story-title"),
-          sans: family("main .type-metadata"),
+          serif: family("main .text-2xl"),
+          sans: family("main .text-xs"),
           loaded: [
             ...new Set(
               [...document.fonts]

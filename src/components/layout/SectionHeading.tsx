@@ -28,7 +28,10 @@ export function SectionHeading({
   children,
 }: SectionHeadingProps) {
   const title = (
-    <Tag id={id} className="min-w-0 type-section-title text-ink">
+    <Tag
+      id={id}
+      className="min-w-0 font-editorial text-section font-semibold text-ink"
+    >
       {children}
     </Tag>
   );

@@ -24,7 +24,7 @@ type StoryListItemProps = {
 /**
  * C-25 StoryListItem: one story as a text row, title and meta, no image. The parent list
  * draws the padding and the rule between rows (Divider item). The title is one link in
- * type-story-title-sm and wraps; it is never cut (CPT-08). It has no Breaking label (COL-11, DR-279).
+ * text-lg and wraps; it is never cut (CPT-08). It has no Breaking label (COL-11, DR-279).
  */
 export function StoryListItem({
   story,
@@ -51,7 +51,7 @@ export function StoryListItem({
           className="mb-(--space-lead-eyebrow-title)"
         />
       ) : null}
-      <Title className="type-story-title-sm">
+      <Title className="font-editorial text-lg font-semibold">
         <Link href={storyHref(story)} className={headlineLink}>
           {story.title}
         </Link>

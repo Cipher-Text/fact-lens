@@ -53,7 +53,7 @@ export function OpinionRows({ stories }: { stories: Story[] }) {
           <article className="flex items-start gap-x-(--grid-column-gap)">
             <QuoteMark />
             <div className="min-w-0 flex-1">
-              <h3 className="type-story-title-sm">
+              <h3 className="font-editorial text-lg font-semibold">
                 <Link href={storyHref(story)} className={headlineLink}>
                   {story.title}
                 </Link>
@@ -61,7 +61,7 @@ export function OpinionRows({ stories }: { stories: Story[] }) {
               {story.author ? (
                 <p
                   data-author
-                  className="mt-(--space-story-title-meta) type-metadata font-semibold text-ink-secondary"
+                  className="mt-(--space-story-title-meta) font-ui text-xs font-semibold text-ink-secondary"
                 >
                   {story.author.name}
                 </p>
@@ -69,7 +69,7 @@ export function OpinionRows({ stories }: { stories: Story[] }) {
               <p
                 data-time
                 data-meta-line
-                className="type-metadata text-ink-muted"
+                className="font-ui text-xs font-normal text-ink-muted"
               >
                 <StoryTime story={story} />
               </p>

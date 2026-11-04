@@ -28,7 +28,7 @@ describe("LeadStory (C-01)", () => {
   it("has an h3 title with one link, an aria-hidden image link, the bar and the panel", () => {
     const { container } = render(<LeadStory story={withImage} strings={bn} />);
     const h2 = screen.getByRole("heading", { level: 3 });
-    expect(h2).toHaveClass("type-story-lead");
+    expect(h2).toHaveClass("text-4xl");
     expect(within(h2).getAllByRole("link")).toHaveLength(1);
     const media = container.querySelector("[data-story-media]")!;
     expect(media).toHaveAttribute("tabindex", "-1");
@@ -97,9 +97,7 @@ describe("OverlapCard (C-02)", () => {
       "me-(--space-card-notch)",
       "bg-background",
     );
-    expect(screen.getByRole("heading", { level: 3 })).toHaveClass(
-      "type-story-title",
-    );
+    expect(screen.getByRole("heading", { level: 3 })).toHaveClass("text-2xl");
   });
 
   it("takes the section color for the text block", () => {
@@ -172,20 +170,18 @@ describe("StoryCard (C-24)", () => {
         .className,
     ).toContain("md:story-split-feature");
     expect(container.querySelector("img")).toHaveClass("aspect-3/2");
-    expect(screen.getByRole("heading", { level: 3 })).toHaveClass(
-      "type-story-title-sm",
-    );
+    expect(screen.getByRole("heading", { level: 3 })).toHaveClass("text-lg");
   });
 
   it.each([
-    ["lead", "type-story-lead"],
-    ["md", "type-story-title"],
-    ["sm", "type-story-title-sm"],
+    ["lead", "text-4xl"],
+    ["md", "text-2xl"],
+    ["sm", "text-lg"],
   ] as const)("size %s sets the title role %s", (size, role) => {
     render(<StoryCard story={withImage} strings={bn} size={size} />);
     const title = screen.getByRole("heading", { level: 3 });
     expect(title).toHaveClass(role);
-    expect(title.className.match(/type-story-\S+/g)).toEqual([role]);
+    expect(title.className.match(/\btext-(?:4xl|2xl|lg)\b/g)).toEqual([role]);
   });
 
   it("drops the eyebrow and the summary when the section asks", () => {
@@ -197,8 +193,8 @@ describe("StoryCard (C-24)", () => {
         summary={false}
       />,
     );
-    expect(container.querySelector(".type-eyebrow")).toBeNull();
-    expect(container.querySelector(".type-summary")).toBeNull();
+    expect(container.querySelector(".case-eyebrow")).toBeNull();
+    expect(container.querySelector(".leading-relaxed")).toBeNull();
   });
 
   it("dated: the image, the text, then the date in its own area, time only (category page, tajmin)", () => {
@@ -221,7 +217,7 @@ describe("StoryCard (C-24)", () => {
     expect(container.querySelectorAll("[data-reading-time]")).toHaveLength(0);
     expect(grid.children[1].querySelector("time")).toBeNull();
     expect(grid.children[2].querySelector("time")).not.toBeNull();
-    expect(container.querySelector(".type-eyebrow")).toBeNull();
+    expect(container.querySelector(".case-eyebrow")).toBeNull();
   });
 
   it("shows the no-image placeholder for a story with no image, in the row layout, whole title (DR-338)", () => {
@@ -264,7 +260,7 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
     const { container, rerender } = render(
       <StoryListItem story={analysis} strings={bn} eyebrowMode="format" />,
     );
-    const eyebrow = () => container.querySelector("p.type-eyebrow")!;
+    const eyebrow = () => container.querySelector("p.case-eyebrow")!;
     expect(eyebrow()).toHaveTextContent(bn.analysisOpinion.analysis);
     expect(within(eyebrow() as HTMLElement).getByRole("link")).toHaveAttribute(
       "href",
@@ -282,7 +278,7 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
     );
     // No mode: no Eyebrow (every other list).
     rerender(<StoryListItem story={analysis} strings={bn} />);
-    expect(container.querySelector("p.type-eyebrow")).toBeNull();
+    expect(container.querySelector("p.case-eyebrow")).toBeNull();
   });
 
   it("makes an h3 with one link and no Breaking label (COL-11, DR-279)", () => {
@@ -290,7 +286,7 @@ describe("StoryListItem and StoryList (C-25, C-03)", () => {
       <StoryListItem story={latest[0]} strings={bn} />,
     );
     const h3 = screen.getByRole("heading", { level: 3 });
-    expect(h3).toHaveClass("type-story-title-sm");
+    expect(h3).toHaveClass("text-lg");
     expect(within(h3).getAllByRole("link")).toHaveLength(1);
     expect(container.querySelector("[data-chip]")).toBeNull();
   });

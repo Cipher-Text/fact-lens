@@ -73,7 +73,7 @@ export function SearchForm({
             setSubmitted(false);
           }}
           className={cn(
-            "h-full min-w-0 flex-1 bg-transparent type-input text-ink placeholder:text-ink-muted",
+            "h-full min-w-0 flex-1 bg-transparent font-ui text-sm font-normal text-ink placeholder:text-ink-muted",
             size === "dialog" ? "px-4" : "px-3",
           )}
           {...fieldProps}
@@ -107,12 +107,15 @@ export function SearchForm({
           />
         ) : null}
       </div>
-      <p role="status" className="type-ui-sm text-ink-secondary not-empty:mt-3">
+      <p
+        role="status"
+        className="font-ui text-xs font-medium text-ink-secondary not-empty:mt-3"
+      >
         {submitted ? strings.searchUnavailable : null}
       </p>
       {trendingTerms?.length ? (
         <div className="mt-6 flex flex-wrap items-center">
-          <h2 className="me-6 type-ui-sm font-semibold text-ink-muted">
+          <h2 className="me-6 font-ui text-xs font-semibold text-ink-muted">
             {strings.trending}
           </h2>
           <ul className="flex flex-wrap items-center" data-trending>
@@ -130,7 +133,7 @@ export function SearchForm({
                     setValue(term);
                     setSubmitted(true);
                   }}
-                  className="inline-flex min-h-11 items-center type-ui-sm font-semibold text-interactive hover:text-interactive-hover active:text-interactive-pressed"
+                  className="inline-flex min-h-11 items-center font-ui text-xs font-semibold text-interactive hover:text-interactive-hover active:text-interactive-pressed"
                 >
                   {term}
                 </button>

@@ -88,7 +88,7 @@ describe("MostReadSection (P-5)", () => {
       stories.map((s) => `/en/story/${s.slug}-${s.id}`),
     );
     for (const heading of screen.getAllByRole("heading", { level: 3 })) {
-      expect(heading.className).toContain("type-story-title-sm");
+      expect(heading.className).toContain("text-lg");
     }
   });
 

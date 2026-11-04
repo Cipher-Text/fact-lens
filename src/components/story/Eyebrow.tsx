@@ -26,7 +26,7 @@ const linkClass =
   "text-interactive hover:text-interactive-hover active:text-interactive-pressed";
 
 /**
- * C-08 Eyebrow: the label above a story title, in type-eyebrow and interactive color; hover
+ * C-08 Eyebrow: the label above a story title, in text-xs (eyebrow) and interactive color; hover
  * and pressed colors, no underline, no background, no border. No Breaking or Live label
  * (COL-11, DR-279). The parent leaves the Eyebrow out when the section heading already names
  * the category (DR-114). It comes before the title in the DOM.
@@ -49,7 +49,12 @@ export function Eyebrow({
     // side, centered, aria-hidden. It sits outside the links, so it keeps its color on hover
     // and press.
     return (
-      <p className={cn("flex flex-wrap items-center type-eyebrow", className)}>
+      <p
+        className={cn(
+          "flex flex-wrap items-center font-ui text-xs leading-tight font-eyebrow tracking-eyebrow case-eyebrow",
+          className,
+        )}
+      >
         <span className="inline-flex items-center">
           <Link
             href={formatHref(story.lang, story.format)}
@@ -69,7 +74,12 @@ export function Eyebrow({
   }
 
   return (
-    <p className={cn("type-eyebrow", className)}>
+    <p
+      className={cn(
+        "font-ui text-xs leading-tight font-eyebrow tracking-eyebrow case-eyebrow",
+        className,
+      )}
+    >
       {mode === "format" && story.format === "analysis" ? (
         <Link href={formatHref(story.lang, "analysis")} className={linkClass}>
           {strings.analysisOpinion.analysis}

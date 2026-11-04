@@ -1459,7 +1459,7 @@ for (const p of PAGES) {
     }
 
     for (const width of [360, 1280]) {
-      test(`stuck logo keeps its font size and scales by transform; language link is type-ui-sm 600 at ${width} (C-17, DR-355, DOC-44)`, async ({
+      test(`stuck logo keeps its font size and scales by transform; language link is text-xs 600 at ${width} (C-17, DR-355, DOC-44)`, async ({
         page,
       }) => {
         await page.setViewportSize({ width, height: 900 });
@@ -1480,7 +1480,7 @@ for (const p of PAGES) {
         const link = page.locator("[data-top-bar] a[hreflang]");
         const font = await link.evaluate((el) => {
           const probe = document.createElement("span");
-          probe.className = "type-ui-sm";
+          probe.className = "font-ui text-xs";
           probe.lang = el.getAttribute("lang")!;
           el.parentElement!.append(probe);
           const read = (node: Element) => {

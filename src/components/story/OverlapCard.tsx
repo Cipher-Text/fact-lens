@@ -21,7 +21,7 @@ type OverlapCardProps = {
   /** The Eyebrow mode (C-08): format in mixed lists (DR-417). */
   eyebrowMode?: EyebrowMode;
   /**
-   * The feature story of its section (CategoryFeatureSection): the title takes type-story-lead and the text block
+   * The feature story of its section (CategoryFeatureSection): the title takes text-4xl and the text block
    * ends with --space-lead-panel, as the C-01 panel does.
    */
   feature?: boolean;
@@ -66,13 +66,19 @@ export function OverlapCard({
             className="mb-(--space-lead-eyebrow-title)"
           />
         ) : null}
-        <h3 className={feature ? "type-story-lead" : "type-story-title"}>
+        <h3
+          className={
+            feature
+              ? "font-editorial text-4xl font-semibold text-balance"
+              : "font-editorial text-2xl font-semibold"
+          }
+        >
           <Link href={storyHref(story)} className={headlineLink}>
             {story.title}
           </Link>
         </h3>
         {story.summary ? (
-          <p className="mt-(--space-story-title-summary) type-summary text-ink-secondary">
+          <p className="mt-(--space-story-title-summary) max-w-(--measure-deck) font-editorial text-sm leading-relaxed font-medium text-ink-secondary">
             {story.summary}
           </p>
         ) : null}

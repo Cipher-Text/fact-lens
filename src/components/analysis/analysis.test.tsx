@@ -126,8 +126,8 @@ describe("AnalysisPageView", () => {
     expect(card.firstElementChild!.className).toContain(
       "md:story-split-feature",
     );
-    expect(hero.querySelector("h3")).toHaveClass("type-story-lead");
-    const eyebrow = hero.querySelector(".type-eyebrow a");
+    expect(hero.querySelector("h3")).toHaveClass("text-4xl");
+    const eyebrow = hero.querySelector(".case-eyebrow a");
     expect(eyebrow?.getAttribute("href")).toMatch(/^\/en\/category\//);
   });
 

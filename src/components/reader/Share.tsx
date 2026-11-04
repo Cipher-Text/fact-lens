@@ -134,7 +134,7 @@ export function ShareDialog({ path, title, summary, t }: ShareProps) {
           {networks.map((network) => (
             <li key={network}>
               <a
-                className="rd-sharedlg__option type-ui-sm text-ink"
+                className="rd-sharedlg__option font-ui text-xs font-medium text-ink"
                 href={links[network]}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -148,7 +148,7 @@ export function ShareDialog({ path, title, summary, t }: ShareProps) {
           ))}
           <li>
             <a
-              className="rd-sharedlg__option type-ui-sm text-ink"
+              className="rd-sharedlg__option font-ui text-xs font-medium text-ink"
               href={mailto(url, title, summary)}
             >
               <span className="rd-sharedlg__icon">
@@ -161,7 +161,7 @@ export function ShareDialog({ path, title, summary, t }: ShareProps) {
             <li>
               <button
                 type="button"
-                className="rd-sharedlg__option type-ui-sm text-ink"
+                className="rd-sharedlg__option font-ui text-xs font-medium text-ink"
                 onClick={() =>
                   navigator.share({ title, text: summary, url }).catch(() => {
                     // The reader closed the share sheet.
@@ -184,14 +184,14 @@ export function ShareDialog({ path, title, summary, t }: ShareProps) {
           <input
             ref={field}
             id="rd-share-url"
-            className="rd-sharedlg__field type-input text-ink"
+            className="rd-sharedlg__field font-ui text-sm font-normal text-ink"
             value={url}
             readOnly
             onFocus={(event) => event.currentTarget.select()}
           />
           <button
             type="button"
-            className="rd-sharedlg__copy bg-interactive type-button text-on-interactive hover:bg-interactive-hover"
+            className="rd-sharedlg__copy bg-interactive font-ui text-xs leading-tight font-semibold text-on-interactive hover:bg-interactive-hover"
             onClick={() => void copy()}
           >
             {copied ? (

@@ -19,7 +19,7 @@ type Props = {
 };
 
 /**
- * TopBar.language (C-17): a text link to the same page in the other language, type-ui-sm
+ * TopBar.language (C-17): a text link to the same page in the other language, text-xs
  * at weight 600, ink. As tall as the ghost icon buttons: 32px under 768, 36px from 768 (a
  * minimum, so 200% text grows it; LAY-17, DR-349). Bangla pages show "En" on phones (under
  * 768px) and "English" from 768px; English pages show "বাংলা" (T-27, DR-174). UI link: hover
@@ -42,7 +42,7 @@ export function LanguageSwitch({ lang, path = "/", fallback }: Props) {
       href={href}
       lang={target}
       hrefLang={target}
-      className="inline-flex min-h-(--icon-button-size-ghost) items-center px-1 pt-0.5 type-ui-sm font-semibold text-ink transition-colors hover:text-interactive-hover active:text-interactive-pressed md:px-2 md:pt-0"
+      className="inline-flex min-h-(--icon-button-size-ghost) items-center px-1 pt-0.5 font-ui text-xs font-semibold text-ink transition-colors hover:text-interactive-hover active:text-interactive-pressed md:px-2 md:pt-0"
     >
       <span className="md:hidden">{t.otherShort}</span>
       <span className="max-md:hidden">{t.other}</span>

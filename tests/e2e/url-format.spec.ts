@@ -164,16 +164,16 @@ for (const prefix of ["", "/en"]) {
     page,
   }) => {
     await page.goto(`${prefix}/?content=sparse`);
-    const leadEyebrow = page.locator("[data-lead] .type-eyebrow a");
+    const leadEyebrow = page.locator("[data-lead] .case-eyebrow a");
     await expect(leadEyebrow).toHaveAttribute("href", `${prefix}/analysis`);
     await expect(leadEyebrow).toHaveText(prefix ? /analysis/i : "বিশ্লেষণ");
     // The top story is news: its category.
     await expect(
-      page.locator("[data-top-stories] .type-eyebrow a").first(),
+      page.locator("[data-top-stories] .case-eyebrow a").first(),
     ).toHaveAttribute("href", new RegExp(`^${prefix}/category/`));
     // Analysis section cards: the category, never the format.
     const analysisEyebrows = page.locator(
-      "[data-section=analysis-opinion] .type-eyebrow a",
+      "[data-section=analysis-opinion] .case-eyebrow a",
     );
     await expect(analysisEyebrows.first()).toBeVisible();
     for (const href of await analysisEyebrows.evaluateAll((links) =>

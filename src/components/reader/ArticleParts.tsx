@@ -172,7 +172,7 @@ export function PreferredSourceAlert({ t }: { t: ReaderStrings }) {
       <AlertDescription>{t.googleCardText}</AlertDescription>
       <AlertAction>
         <a
-          className="rd-galert__btn type-button"
+          className="rd-galert__btn font-ui text-xs leading-tight font-semibold"
           href={preferredSourceHref}
           target="_blank"
           rel="noopener noreferrer"

@@ -5,12 +5,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 // Restyled after add (CPT-16): no radius (CPT-05), no shadow or ring (COL-13, COL-15), no
-// dark: classes or opacity modifiers (COL-03, COL-08). Type is type-eyebrow, the Badge
+// dark: classes or opacity modifiers (COL-03, COL-08). Type is text-xs (eyebrow), the Badge
 // role (typography §7.3), with normal-case: uppercase is for Eyebrow and Chip only
 // (DR-216). As a link (render={<a />}) the text changes color only on hover and press
 // (COL-06). Used by the wild card article page for its topic links (tajmin, 24 Oct 2026; DR-410).
 const badgeVariants = cva(
-  "inline-flex w-fit shrink-0 items-center gap-1 border px-3 py-1.5 type-eyebrow normal-case transition-colors duration-200",
+  "inline-flex w-fit shrink-0 items-center gap-1 border px-3 py-1.5 font-ui text-xs leading-tight font-eyebrow transition-colors duration-200",
   {
     variants: {
       variant: {

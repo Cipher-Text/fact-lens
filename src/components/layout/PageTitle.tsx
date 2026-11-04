@@ -17,9 +17,9 @@ type Props = {
 
 /**
  * PageTitle: the title of a page that is not the homepage or an article, as the page h1,
- * type-page-title, with Divider.section (C-22, the bar on the rule) above it and
+ * text-6xl, with Divider.section (C-22, the bar on the rule) above it and
  * space-section-rule-title between, as in SectionHeading. Sheet: C-43. The optional
- * description sits below the title: type-deck (EN 18 to 21px, BN 18 to 20px; tajmin, 3 Nov
+ * description sits below the title: text-lg (deck, 16 to 20px; DR-454; before: tajmin, 3 Nov
  * 2026), ink-secondary, 12px after the title as the article deck (tajmin, 2 Nov 2026). No
  * measure cap: it runs the width of the shell and wraps only when the shell is narrower
  * (tajmin, 3 Nov 2026: "dont wrap the text").
@@ -44,14 +44,14 @@ export function PageTitle({ title, id, note, description, className }: Props) {
         <Divider />
         <h1
           id={id}
-          className="mt-(--space-section-rule-title) type-page-title text-ink"
+          className="mt-(--space-section-rule-title) font-editorial text-6xl font-semibold text-balance text-ink"
         >
           {title}
         </h1>
         {description ? (
           <p
             data-page-title-description
-            className="mt-3 type-deck text-ink-secondary max-inline-none"
+            className="mt-3 font-editorial text-lg leading-relaxed font-normal text-ink-secondary"
           >
             {description}
           </p>

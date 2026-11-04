@@ -27,8 +27,8 @@ type StoryCardProps = {
   layout?: StoryCardLayout;
   ratio?: "3:2" | "16:9";
   /**
-   * lead: type-story-lead, as the category page feature story (the analysis hub hero).
-   * md: type-story-title. sm: type-story-title-sm.
+   * lead: text-4xl, as the category page feature story (the analysis hub hero).
+   * md: text-2xl. sm: text-lg.
    */
   size?: "lead" | "md" | "sm";
   /** Row only. third: text 2fr, image 1fr. feature: the clamped image column of P-2. */
@@ -55,9 +55,9 @@ type StoryCardProps = {
 const ratioClass = { "3:2": "aspect-3/2", "16:9": "aspect-video" } as const;
 
 const titleClass = {
-  lead: "type-story-lead",
-  md: "type-story-title",
-  sm: "type-story-title-sm",
+  lead: "font-editorial text-4xl text-balance font-semibold",
+  md: "font-editorial text-2xl font-semibold",
+  sm: "font-editorial text-lg font-semibold",
 } as const;
 
 // The grid areas media and body place the parts, no `order` (LAY-14). The media is first in
@@ -152,7 +152,7 @@ export function StoryCard({
             </Link>
           </Title>
           {showSummary ? (
-            <p className="mt-(--space-story-title-summary) type-summary text-ink-secondary">
+            <p className="mt-(--space-story-title-summary) max-w-(--measure-deck) font-editorial text-sm leading-relaxed font-medium text-ink-secondary">
               {story.summary}
             </p>
           ) : null}
