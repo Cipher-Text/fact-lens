@@ -53,9 +53,9 @@ export function AnalysisPageView({ page }: Props) {
         {/* The hero: the newest analysis story, across the shell, no rail. space-module
             before the rule, or before the ad band (LAY-12); as the last row it adds
             none: main ends with space-section. */}
-        {page.lead ? (
+        {page.cover ? (
           <AnalysisCoverSection
-            story={page.lead}
+            story={page.cover}
             t={t}
             className={cn(
               (page.top.length > 0 || more) && "pb-(--space-module)",
@@ -64,7 +64,7 @@ export function AnalysisPageView({ page }: Props) {
         ) : null}
         {/* Divider.rule (1px solid) between the hero and the mosaic, space-module on each
             side (tajmin, 4 Nov 2026). Before the ad band there is no rule. */}
-        {page.lead && page.top.length > 0 ? (
+        {page.cover && page.top.length > 0 ? (
           <Shell data-analysis-cover-rule>
             <Divider variant="rule" />
           </Shell>
@@ -77,7 +77,7 @@ export function AnalysisPageView({ page }: Props) {
             stories={page.top}
             t={t}
             className={cn(
-              page.lead && "pt-(--space-module)",
+              page.cover && "pt-(--space-module)",
               more && "pb-(--space-module)",
             )}
           />

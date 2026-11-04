@@ -75,10 +75,10 @@ export interface HeroContent {
 export type FeaturedSource =
   { kind: "category"; id: CategoryId } | { kind: "region"; id: RegionId };
 
-/** P-2: lead in the wrapper, one image story and two stories in the rail. */
+/** P-2: the feature story in the wrapper (StoryCard side), three text stories in the rail (DR-451). */
 export interface FeaturedSection {
   source: FeaturedSource;
-  lead: Story;
+  feature: Story;
   rail: Story[];
 }
 
@@ -159,12 +159,12 @@ export interface LatestPage {
 
 /**
  * The analysis hub in one language (layout 7C.2 Paths, Analysis hub row): analysis stories
- * only, newest first, no repeats. The lead is the newest, the top the next 4, more the rest.
- * Editor picks or the newest for the lead and the top: not decided (tajmin, 2 Nov 2026).
+ * only, newest first, no repeats. The cover is the newest, the top the next 4, more the rest.
+ * Editor picks or the newest for the cover and the top: not decided (tajmin, 2 Nov 2026).
  */
 export interface AnalysisPage {
   lang: Lang;
-  lead: Story | null;
+  cover: Story | null;
   top: Story[]; // up to 4
   more: Story[]; // 10 first, then 10 per load
 }

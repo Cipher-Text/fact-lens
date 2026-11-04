@@ -25,11 +25,10 @@
      (tajmin, 28 Oct 2026). Not the LAY-20 panel band values (40 / 48px), CPT-07. */
   --space-page-title-band: 1.5rem;
 
-  /* StoryCard side (C-24, DR-451, DR-453): text at the start, the image at the end. The image
-     column is 2 / 3 of the free width (text : image = 1 : 2), at least 420px, no cap
-     (tajmin, 3 Nov 2026: the analysis hub cover; P-2 featured category feature, DR-451).
-     Section 6 has no tokens for it (CPT-07). */
-  --story-side-media-min: 26.25rem;
+  /* StoryCard side (C-24, DR-451, DR-464): text at the start, the image at the end. The image
+     column is 2 / 3 of the whole card width, no minimum and no maximum; the text takes the
+     rest minus the column gap (tajmin, 4 Nov 2026, DR-464; the analysis hub cover and the
+     P-2 featured category feature). Section 6 has no tokens for it (CPT-07). */
   --story-side-media-share: calc(2 / 3);
   /* The analysis hub mosaic: the gap between the two card rows. The row gap, and 32px from
      1280 (tajmin, 4 Nov 2026; CPT-07). */
@@ -238,18 +237,13 @@
   }
 }
 
-/* side: the image takes 2 / 3 of the row (minus the gap), at least 420px, uncapped. The
-   title fills its lines up to the gap before the image: pretty in place of the text-4xl
-   balance (TYP-13), which left the lines short of the gap (tajmin, 4 Nov 2026). The section
+/* side: the image column is 2 / 3 of the whole card width, no minimum and no maximum; the
+   text takes the rest minus the gap (DR-464). The title fills its lines up to the gap before
+   the image: pretty, also with large, in place of balance (TYP-13, DR-468). The section
    stacks it below 768 with story-top (StoryCard). */
 @utility story-side {
   grid-template-areas: "body media";
-  grid-template-columns:
-    minmax(0, 1fr)
-    max(
-      var(--story-side-media-min),
-      calc((100% - var(--grid-column-gap)) * var(--story-side-media-share))
-    );
+  grid-template-columns: minmax(0, 1fr) calc(100% * var(--story-side-media-share));
   column-gap: var(--grid-column-gap);
   row-gap: 0;
   & :is(h2, h3, h4) {

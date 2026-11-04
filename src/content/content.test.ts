@@ -53,7 +53,7 @@ function allStories(home: Homepage): Story[] {
       ? [...home.analysisOpinion.analysis, ...home.analysisOpinion.opinion]
       : []),
     ...[home.featured.southAsia, home.featured.geopolitics].flatMap((s) =>
-      s ? [s.lead, ...s.rail] : [],
+      s ? [s.feature, ...s.rail] : [],
     ),
     ...(home.grouped?.categories.flatMap((c) => c.stories) ?? []),
     ...(home.mostRead ?? []),
@@ -247,12 +247,12 @@ describe("getHomepage full", () => {
         }
       });
 
-      it("has both featured sections with a lead, one image story and two stories", () => {
+      it("has both featured sections with a feature story and three rail stories", () => {
         for (const section of [
           home.featured.southAsia!,
           home.featured.geopolitics!,
         ]) {
-          expect(section.lead.image).toBeDefined();
+          expect(section.feature.image).toBeDefined();
           expect(section.rail).toHaveLength(3);
           expect(section.rail[0].image).toBeDefined();
         }
@@ -261,14 +261,14 @@ describe("getHomepage full", () => {
       it("features the region দক্ষিণ এশিয়া with its own stories (DR-412)", () => {
         const section = home.featured.southAsia!;
         expect(section.source).toEqual({ kind: "region", id: "south-asia" });
-        for (const s of [section.lead, ...section.rail])
+        for (const s of [section.feature, ...section.rail])
           expect(s.regions).toContain("south-asia");
       });
 
       it("features the category ভূরাজনীতি with its own stories", () => {
         const section = home.featured.geopolitics!;
         expect(section.source).toEqual({ kind: "category", id: "geopolitics" });
-        for (const s of [section.lead, ...section.rail])
+        for (const s of [section.feature, ...section.rail])
           expect(s.category).toBe("geopolitics");
       });
 
@@ -573,10 +573,10 @@ describe("analysis hub (layout 7C.2 Paths, Analysis hub row)", () => {
   const analysis = stories.filter((def) => def.format === "analysis");
 
   for (const lang of langs) {
-    it(`${lang}: every analysis story once, analysis only, newest first; lead, top 4, the rest`, () => {
+    it(`${lang}: every analysis story once, analysis only, newest first; cover, top 4, the rest`, () => {
       const page = getAnalysisPage(lang);
       expect(page.lang).toBe(lang);
-      const all = [page.lead!, ...page.top, ...page.more];
+      const all = [page.cover!, ...page.top, ...page.more];
       expect(all).toHaveLength(analysis.length);
       expect(new Set(all.map((s) => s.id)).size).toBe(analysis.length);
       for (const s of all) {
@@ -599,7 +599,7 @@ describe("analysis hub (layout 7C.2 Paths, Analysis hub row)", () => {
   it("lists the same stories in the same order in both languages", () => {
     const ids = (lang: "bn" | "en") => {
       const page = getAnalysisPage(lang);
-      return [page.lead!, ...page.top, ...page.more].map((s) => s.id);
+      return [page.cover!, ...page.top, ...page.more].map((s) => s.id);
     };
     expect(ids("en")).toEqual(ids("bn"));
   });

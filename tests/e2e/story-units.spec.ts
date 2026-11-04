@@ -136,8 +136,8 @@ for (const path of PAGES) {
         // --grid-column-gap: 16px, 24px from 768, 32px from 1280 (spacing-layout-system.md §3).
         const columnGap = width >= 1280 ? 32 : width >= 768 ? 24 : 16;
 
-        // side: stack under 768; from 768 the text, then the image at 2 / 3 of the free width,
-        // at least 420px, no cap (DR-451, DR-453).
+        // side: stack under 768; from 768 the text, then the image at 2 / 3 of the whole card
+        // width, no minimum and no maximum (DR-451, DR-464).
         const feature = page.locator('[data-case="feature"]');
         const fImg = await box(feature.locator("img"));
         const fText = await box(feature.locator("h3"));
@@ -146,10 +146,7 @@ for (const path of PAGES) {
           expect(Math.round(fImg.width)).toBe(Math.round(wrapperWidth));
         } else {
           expect(fImg.x).toBeGreaterThan(fText.x);
-          expect(fImg.width).toBeCloseTo(
-            Math.max(420, ((wrapperWidth - columnGap) * 2) / 3),
-            0,
-          );
+          expect(fImg.width).toBeCloseTo((wrapperWidth * 2) / 3, 0);
         }
 
         // thumbnail: text 2fr, image 1fr, --grid-column-gap between them (DR-300).

@@ -12,8 +12,8 @@ export interface HomepagePlan {
   analysisOpinion: { analysis: string[]; opinion: string[] } | null;
   featured: {
     /** P-2 South Asia: stories with the region south-asia (DR-412). */
-    southAsia: { lead: string; rail: string[] } | null;
-    geopolitics: { lead: string; rail: string[] } | null;
+    southAsia: { feature: string; rail: string[] } | null;
+    geopolitics: { feature: string; rail: string[] } | null;
   };
   grouped: { category: CategoryId; stories: string[] }[];
   mostRead: string[];
@@ -56,7 +56,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
     },
     featured: {
       southAsia: {
-        lead: "cross-border-water-project",
+        feature: "cross-border-water-project",
         // Three text stories in the rail (IMP-125, DR-451).
         rail: [
           "regional-maritime-patrol-accord",
@@ -65,7 +65,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
         ],
       },
       geopolitics: {
-        lead: "bay-trilateral-dialogue",
+        feature: "bay-trilateral-dialogue",
         rail: [
           "regional-power-grid",
           "peacekeeping-women-target",
@@ -132,7 +132,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
     },
     featured: {
       // No rail stories: the wrapper spans the shell.
-      southAsia: { lead: "cross-border-water-project", rail: [] },
+      southAsia: { feature: "cross-border-water-project", rail: [] },
       // No content: the section and its ad row do not show.
       geopolitics: null,
     },

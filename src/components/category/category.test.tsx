@@ -107,3 +107,17 @@ describe("CategoryPageView spacing (LAY-12)", () => {
     ).toContain("pt-(--space-module)");
   });
 });
+
+describe("CategoryCoverSection hidden name (DR-469)", () => {
+  it.each([
+    ["en", "Main story"],
+    ["bn", "প্রধান খবর"],
+  ] as const)("%s: the cover heading is %s", (lang, name) => {
+    const { container } = render(
+      <CategoryPageView page={getCategoryPage("economy", lang)} />,
+    );
+    expect(container.querySelector("#category-cover-title")).toHaveTextContent(
+      name,
+    );
+  });
+});

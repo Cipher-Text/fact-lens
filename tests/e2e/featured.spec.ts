@@ -124,8 +124,8 @@ for (const p of PAGES) {
 
           // Feature story: one column under 768, image first, 16px to the text (P-2).
           // From 768 the text is at the start and the image at the end, top aligned, with
-          // the image 2 / 3 of the free width, at least 420px, no cap (StoryCard side,
-          // DR-451, DR-453).
+          // the image 2 / 3 of the whole card width, no minimum and no maximum (StoryCard
+          // side, DR-451, DR-464). The text takes the rest minus the column gap.
           const i = await box(featureImage);
           const t = await box(featureText);
           expect(Math.round((i.width / i.height) * 100)).toBe(150); // 3:2
@@ -134,7 +134,7 @@ for (const p of PAGES) {
             expect(Math.round(t.y)).toBe(Math.round(i.y + i.height + 16));
             expect(Math.round(t.x)).toBe(Math.round(i.x));
           } else {
-            const expected = Math.max(420, ((w.width - columnGap) * 2) / 3);
+            const expected = (w.width * 2) / 3;
             expect(Math.abs(i.width - expected)).toBeLessThanOrEqual(1);
             expect(Math.round(t.y)).toBe(Math.round(i.y));
             expect(Math.round(i.x + i.width)).toBe(Math.round(w.x + w.width));
