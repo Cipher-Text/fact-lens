@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
 
+import { Divider } from "@/components/layout/Divider";
 import { cn } from "@/lib/utils";
 
 import { uiLink } from "./classes";
@@ -19,7 +20,7 @@ type Props = {
  * items that fit on one line and hides the rest. There is no "More" item: every item is in
  * the Drawer (DR-255). A hidden item leaves the tab order.
  *
- * NavBar.item: type-nav, 16px 600 on Bangla pages and 14px 600 on English pages; the role
+ * NavBar.item: text-nav, 16px 600 on Bangla pages and 14px 600 on English pages; the role
  * changes by :lang, with no language variant here (DR-346). The row is 44px
  * (`--nav-row-height`) and the 1px rule at its bottom makes 45px in total (DR-349).
  *
@@ -93,10 +94,11 @@ export function NavBar({ items, label }: Props) {
 
   return (
     // The band is full width in the page color, so the page does not show beside the shell
-    // while it scrolls under the pinned row. The shell holds the items and the rule (C-18,
-    // DR-357). The list is one row tall from the server HTML (max-height, overflow hidden):
-    // items that wrap are cut off whole until `fit` hides them, so the page does not move at
-    // hydration (LAY-17 exception, DR-359, IMP-90).
+    // while it scrolls under the pinned row. The shell holds the items (C-18, DR-357); the
+    // rule under them spans the band (tajmin, 6 Nov 2026). The list is one row tall from the
+    // server HTML (max-height, overflow hidden): items that wrap are cut off whole until
+    // `fit` hides them, so the page does not move at hydration (LAY-17 exception, DR-359,
+    // IMP-90).
     <nav
       ref={navRef}
       aria-label={label}
@@ -104,7 +106,7 @@ export function NavBar({ items, label }: Props) {
       className="nav-row-slide header-focus bg-background max-xl:hidden"
       data-nav-row
     >
-      <div className="shell border-b border-border" data-nav-shell>
+      <div className="shell" data-nav-shell>
         <ul
           ref={listRef}
           className="flex max-h-(--nav-row-height) min-h-(--nav-row-height) flex-wrap items-center justify-center gap-x-7 overflow-hidden"
@@ -115,7 +117,7 @@ export function NavBar({ items, label }: Props) {
                 href={item.href}
                 aria-current={item.current ? "page" : undefined}
                 className={cn(
-                  "inline-flex min-h-(--nav-row-height) items-center type-nav aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar)",
+                  "inline-flex min-h-(--nav-row-height) items-center font-ui text-nav font-semibold aria-[current=page]:border-b-3 aria-[current=page]:border-(--color-bar)",
                   uiLink,
                 )}
               >
@@ -125,6 +127,9 @@ export function NavBar({ items, label }: Props) {
           ))}
         </ul>
       </div>
+      {/* The 1px rule under the row: Divider.rule (C-22, DR-349; IMP-100), the full width of
+          the band, not the shell (tajmin, 6 Nov 2026: "make it full width of the viewport"). */}
+      <Divider variant="rule" />
     </nav>
   );
 }

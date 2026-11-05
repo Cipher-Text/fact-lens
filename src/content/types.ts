@@ -4,11 +4,12 @@ import type { Lang } from "@/i18n/config";
 
 export type { Lang };
 
-export type Format = "news" | "analysis" | "opinion" | "explainer";
+// The three formats (DR-414). The format is in the content model, not in the URL.
+export type Format = "news" | "analysis" | "opinion";
 
 // চীন is a region, not a category (DR-19). No fact-check category (DR-18).
+// Bangladesh is not a category: Fact Lens has no domestic news (DR-412).
 export const categoryIds = [
-  "bangladesh",
   "geopolitics",
   "security",
   "history",
@@ -18,14 +19,27 @@ export const categoryIds = [
 
 export type CategoryId = (typeof categoryIds)[number];
 
-export type RegionId =
-  | "china"
-  | "india"
-  | "myanmar"
-  | "middle-east"
-  | "southeast-asia"
-  | "europe"
-  | "africa";
+// The working region list, in order (layout 7C, DR-411). The backend owns the list
+// later; code reads it from here and works with any number of regions.
+export const regionIds = [
+  "americas",
+  "europe",
+  "russia",
+  "middle-east",
+  "south-asia",
+  "china",
+  "asia",
+  "oceania",
+] as const;
+
+export type RegionId = (typeof regionIds)[number];
+
+/** A topic in one language (DR-410). Its page is /topic/<slug>. */
+export interface Topic {
+  id: string;
+  slug: string;
+  label: string;
+}
 
 export interface ImageRef {
   src: string; // /mock/<name>.svg
@@ -40,7 +54,7 @@ export interface Story {
   slug: string;
   format: Format;
   category: CategoryId;
-  region?: RegionId;
+  regions: RegionId[]; // what the story is about, one or more (DR-411)
   title: string;
   summary?: string;
   author?: { name: string; slug: string };
@@ -57,10 +71,14 @@ export interface HeroContent {
   latest: Story[];
 }
 
-/** P-2: lead in the wrapper, one image story and two stories in the rail. */
+/** What a P-2 section features: a category or a region (DR-412). */
+export type FeaturedSource =
+  { kind: "category"; id: CategoryId } | { kind: "region"; id: RegionId };
+
+/** P-2: the feature story in the wrapper (StoryCard side), three text stories in the rail (DR-451). */
 export interface FeaturedSection {
-  category: CategoryId;
-  lead: Story;
+  source: FeaturedSource;
+  feature: Story;
   rail: Story[];
 }
 
@@ -104,7 +122,7 @@ export interface Homepage {
   hero: HeroContent | null;
   analysisOpinion: AnalysisOpinionSection | null;
   featured: {
-    bangladesh: FeaturedSection | null;
+    southAsia: FeaturedSection | null;
     geopolitics: FeaturedSection | null;
   };
   grouped: { categories: CategoryBlock[]; poll: Poll } | null;
@@ -121,11 +139,68 @@ export type HomepageVariant = "full" | "sparse";
 export interface CategoryPage {
   lang: Lang;
   category: CategoryId;
-  feature: Story | null; // the feature story: the newest story with an image
-  latest: Story[]; // the next 5 newest, for the rail
-  cards: Story[]; // 3 image stories, one per row
+  cover: Story | null; // the cover story: the newest news story with an image
+  latest: Story[]; // the next 5 newest news stories, for the rail
+  cards: Story[]; // 3 news stories with an image, one per row
+  analysis: Story[]; // up to 5, newest first, for the analysis block (DR-415)
+  opinion: Story[]; // up to 5, newest first, for the opinion block (DR-415)
   mostRead: Story[]; // ranked, rank set
-  more: Story[]; // the rest, newest first; the page shows 10 at a time
+  more: Story[]; // news and analysis not shown above, newest first; never opinion. 10 at a time
+}
+
+/**
+ * The Latest page in one language (layout 7C.2 Paths, News hub row; layout 7D): the news hub,
+ * every news story of every category, newest first. No analysis or opinion.
+ */
+export interface LatestPage {
+  lang: Lang;
+  stories: Story[]; // 10 first, then 10 per load
+}
+
+/**
+ * The analysis hub in one language (layout 7C.2 Paths, Analysis hub row): analysis stories
+ * only, newest first, no repeats. The cover is the newest, the top the next 4, more the rest.
+ * Editor picks or the newest for the cover and the top: not decided (tajmin, 2 Nov 2026).
+ */
+export interface AnalysisPage {
+  lang: Lang;
+  cover: Story | null;
+  top: Story[]; // up to 4
+  more: Story[]; // 10 first, then 10 per load
+}
+
+/**
+ * The region hub in one language (layout 7C.2 Paths, Region hub row; page/regions brief):
+ * the cover with a Latest rail, then one block per region with stories, in the region order.
+ * The cover and the blocks are editorial and backend decisions (tajmin, 4 Nov 2026); the
+ * mock takes the newest story with a region as the cover and repeats are allowed.
+ */
+export interface RegionsPage {
+  lang: Lang;
+  cover: Story | null;
+  latest: Story[]; // up to 5, the newest stories with any region
+  regions: RegionBlock[]; // regions with no stories are left out (layout 7.3)
+}
+
+/**
+ * A region page in one language (layout 7C.2 Paths, Region row; DR-411; page/region brief):
+ * the news and analysis stories of one region, newest first. No opinion. The page follows
+ * the topic page (7E; tajmin, 5 Nov 2026). The slug is the region id.
+ */
+export interface RegionPage {
+  lang: Lang;
+  region: RegionId;
+  stories: Story[]; // 10 first, then 10 per load
+}
+
+/**
+ * A topic page in one language (layout 7C.2 Paths, Topic row; DR-410): the news and analysis
+ * stories of one topic, newest first. No opinion (tajmin, 29 Oct 2026).
+ */
+export interface TopicPage {
+  lang: Lang;
+  topic: Topic;
+  stories: Story[]; // 10 first, then 10 per load
 }
 
 /** The four ad slots (spacing-layout-system.md 9). `ad-inline` is for article pages, later. */

@@ -9,11 +9,13 @@ function at(monthDayTime: string): string {
 }
 
 export const categoryStories: StoryDef[] = [
-  // Bangladesh (10 stories)
+  // Economy, South Asia (2 stories; were Bangladesh, DR-412)
   {
-    id: "textile-export-standards",
+    id: "imjuj6m",
+    slug: "textile-export-standards",
     format: "news",
-    category: "bangladesh",
+    category: "economy",
+    regions: ["south-asia", "europe"],
     publishedAt: at("10-04 10:15"),
     readingMinutes: 4,
     image: "photo",
@@ -33,61 +35,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "monsoon-early-warning",
+    id: "nwcar7q",
+    slug: "port-automation-plan",
     format: "news",
-    category: "bangladesh",
-    publishedAt: at("10-03 14:20"),
-    readingMinutes: 3,
-    bn: {
-      title:
-        "আগামী বর্ষায় বন্যা প্রতিরোধে আবহাওয়া কেন্দ্র আরও দুটি রাডার স্টেশন যুক্ত করছে",
-    },
-    en: {
-      title:
-        "Weather centre adds two radar stations to prevent flooding in next monsoon",
-    },
-  },
-  {
-    id: "dhaka-water-crisis-solutions",
-    format: "analysis",
-    category: "bangladesh",
-    publishedAt: at("09-30 09:00"),
-    readingMinutes: 6,
-    image: "classic",
-    author: "farhana-kabir",
-    bn: {
-      title: "ঢাকার পানি সংকট: ভূগর্ভস্থ জল আহরণ বনাম দেশব্যাপী পরিবহন",
-      summary:
-        "পানিবিশেষজ্ঞরা বলছেন, দীর্ঘমেয়াদী সমাধানে আন্তঃনদী সংযোগ অপরিহার্য।",
-      imageAlt: "শহরের ওপর দিয়ে যাওয়া পানি বিতরণ লাইন",
-    },
-    en: {
-      title:
-        "Dhaka's water crisis: groundwater extraction versus nationwide transfer",
-      summary:
-        "Water experts say inter-river linkages are essential for a long-term solution.",
-      imageAlt: "Water distribution lines overhead in the city",
-    },
-  },
-  {
-    id: "agricultural-cooperative-network",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-28 11:30"),
-    readingMinutes: 3,
-    bn: {
-      title:
-        "গ্রামীণ কৃষি সমবায়ে নতুন সদস্যপদ লক্ষ্য এক লাখ, মূল্য নির্ধারণ ক্ষমতা পাবেন চাষিরা",
-    },
-    en: {
-      title:
-        "Rural farming co-operatives target 100,000 new members to give farmers pricing power",
-    },
-  },
-  {
-    id: "port-automation-plan",
-    format: "news",
-    category: "bangladesh",
+    category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("09-26 13:45"),
     readingMinutes: 4,
     image: "wide",
@@ -106,92 +58,15 @@ export const categoryStories: StoryDef[] = [
       imageAlt: "A view of vehicle transportation systems at the port",
     },
   },
-  {
-    id: "urban-farming-initiative",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-24 08:00"),
-    readingMinutes: 3,
-    bn: {
-      title: "ঢাকার ছাদবাগানে সরকারি সহায়তা প্রকল্প, হাজার পরিবার উপকৃত হবে",
-    },
-    en: {
-      title:
-        "Government support for rooftop gardens in Dhaka to benefit thousands",
-    },
-  },
-  {
-    id: "renewable-energy-village",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-22 16:30"),
-    readingMinutes: 3,
-    image: "photo",
-    bn: {
-      title:
-        "সিলেট জেলায় প্রথম সম্পূর্ণ নবায়নযোগ্য শক্তি নির্ভর গ্রাম উদ্যোগ",
-      imageAlt: "একটি গ্রামের ছাদে স্থাপিত সৌরপ্যানেল",
-    },
-    en: {
-      title:
-        "First fully renewable-powered village project launched in Sylhet district",
-      imageAlt: "Solar panels installed on a village roof",
-    },
-  },
-  {
-    id: "disaster-management-training",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-20 10:45"),
-    readingMinutes: 4,
-    bn: {
-      title:
-        "প্রাকৃতিক দুর্যোগ মোকাবিলায় জাতীয় প্রশিক্ষণ একাডেমি স্থাপন, পাঁচশত পেশাদার নিয়োগ পাবেন",
-    },
-    en: {
-      title:
-        "National disaster management training academy established, 500 professionals to be recruited",
-    },
-  },
-  {
-    id: "heritage-site-restoration",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-23 14:20"),
-    readingMinutes: 3,
-    image: "classic",
-    bn: {
-      title:
-        "ঐতিহ্য ঐতিহ্যবাহী স্থাপনা সংরক্ষণে নতুন তহবিল, তিনটি প্রকল্প অগ্রাধিকার পাবে",
-      imageAlt: "পুরানো ঐতিহ্যবাহী ভবনের মুখোমুখি অংশ",
-    },
-    en: {
-      title:
-        "New fund for heritage site restoration, three projects to be prioritized",
-      imageAlt: "The facade of an old heritage building",
-    },
-  },
-  {
-    id: "digital-literacy-expansion",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("09-21 12:00"),
-    readingMinutes: 3,
-    bn: {
-      title:
-        "দূরবর্তী এলাকায় ডিজিটাল সাক্ষরতা কর্মসূচি সম্প্রসারণ, দেড় লক্ষ মানুষ প্রশিক্ষিত হবেন",
-    },
-    en: {
-      title:
-        "Digital literacy programme expanded to remote areas, 150,000 to be trained",
-    },
-  },
 
   // Geopolitics (8 stories)
   {
-    id: "regional-security-pact",
+    id: "w9tuoqn",
+    slug: "regional-security-pact",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-05 09:30"),
     readingMinutes: 5,
     image: "photo",
@@ -211,9 +86,12 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "south-asian-connectivity-corridor",
-    format: "explainer",
+    id: "ahwmixf",
+    slug: "south-asian-connectivity-corridor",
+    format: "analysis",
     category: "geopolitics",
+    regions: ["south-asia"],
+    topics: ["rivers", "regional-cooperation"],
     publishedAt: at("10-01 15:00"),
     readingMinutes: 7,
     author: "tanvir-ahmed",
@@ -227,9 +105,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "maritime-boundary-agreement",
+    id: "0mjcddr",
+    slug: "maritime-boundary-agreement",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-29 11:15"),
     readingMinutes: 4,
     bn: {
@@ -247,9 +127,12 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "transit-facility-expansion",
+    id: "lof16o4",
+    slug: "transit-facility-expansion",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("09-27 13:00"),
     readingMinutes: 3,
     image: "classic",
@@ -265,9 +148,12 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "cross-border-water-project",
+    id: "e8fkixb",
+    slug: "cross-border-water-project",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
+    topics: ["rivers", "flood-forecasting", "regional-cooperation"],
     publishedAt: at("09-25 10:30"),
     readingMinutes: 4,
     image: "wide",
@@ -287,9 +173,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "diplomatic-mission-opening",
+    id: "7brkzd2",
+    slug: "diplomatic-mission-opening",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-23 08:45"),
     readingMinutes: 2,
     bn: {
@@ -301,9 +189,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "multilateral-trade-framework",
+    id: "p9qsxko",
+    slug: "multilateral-trade-framework",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-21 14:00"),
     readingMinutes: 3,
     bn: {
@@ -316,9 +206,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "cultural-exchange-programme",
+    id: "tzsd3ir",
+    slug: "cultural-exchange-programme",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("09-19 12:15"),
     readingMinutes: 3,
     image: "photo",
@@ -336,9 +228,12 @@ export const categoryStories: StoryDef[] = [
 
   // History (11 stories)
   {
-    id: "ancient-port-cities",
+    id: "gxfhq1q",
+    slug: "ancient-port-cities",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
+    topics: ["rivers"],
     publishedAt: at("10-02 09:20"),
     readingMinutes: 5,
     image: "classic",
@@ -358,9 +253,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "medieval-manuscripts-found",
+    id: "kcdl3n7",
+    slug: "medieval-manuscripts-found",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-30 16:45"),
     readingMinutes: 4,
     bn: {
@@ -375,9 +272,12 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "colonial-era-records",
-    format: "explainer",
+    id: "d1ko077",
+    slug: "colonial-era-records",
+    format: "analysis",
     category: "history",
+    regions: ["south-asia"],
+    topics: ["archives"],
     publishedAt: at("09-28 14:30"),
     readingMinutes: 6,
     author: "rashed-hossain",
@@ -390,9 +290,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "independence-struggle-archive",
+    id: "1txb5km",
+    slug: "independence-struggle-archive",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-26 11:00"),
     readingMinutes: 4,
     image: "photo",
@@ -412,9 +314,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "folklore-preservation-project",
+    id: "2bwip09",
+    slug: "folklore-preservation-project",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-24 13:15"),
     readingMinutes: 3,
     bn: {
@@ -427,9 +331,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "historical-site-excavation",
+    id: "g7mr352",
+    slug: "historical-site-excavation",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-22 10:30"),
     readingMinutes: 4,
     image: "wide",
@@ -449,9 +355,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "biography-research-initiative",
+    id: "94su5kv",
+    slug: "biography-research-initiative",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-20 15:45"),
     readingMinutes: 3,
     image: "classic",
@@ -467,9 +375,12 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "ancient-civilization-study",
+    id: "dqdemdb",
+    slug: "ancient-civilization-study",
     format: "analysis",
     category: "history",
+    regions: ["south-asia"],
+    topics: ["rivers"],
     publishedAt: at("09-23 12:00"),
     readingMinutes: 5,
     author: "sumaiya-islam",
@@ -483,9 +394,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "war-memorials-restoration",
+    id: "c2gjeir",
+    slug: "war-memorials-restoration",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-21 09:30"),
     readingMinutes: 3,
     bn: {
@@ -498,9 +411,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "religious-heritage-documentation",
+    id: "7xinn8p",
+    slug: "religious-heritage-documentation",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-19 14:00"),
     readingMinutes: 4,
     image: "photo",
@@ -519,9 +434,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "royal-family-genealogy",
+    id: "x3fwkkv",
+    slug: "royal-family-genealogy",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("09-18 11:15"),
     readingMinutes: 3,
     bn: {
@@ -536,9 +453,11 @@ export const categoryStories: StoryDef[] = [
 
   // Security (8 stories)
   {
-    id: "maritime-piracy-operations",
+    id: "qi3s5k2",
+    slug: "maritime-piracy-operations",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-04 07:15"),
     readingMinutes: 4,
     image: "photo",
@@ -557,9 +476,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "border-fence-upgrade",
+    id: "68z8mjr",
+    slug: "border-fence-upgrade",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-02 13:00"),
     readingMinutes: 3,
     bn: {
@@ -572,9 +493,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "intelligence-agency-cooperation",
+    id: "ww9i2b9",
+    slug: "intelligence-agency-cooperation",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-29 09:45"),
     readingMinutes: 3,
     image: "classic",
@@ -591,9 +514,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "counterterrorism-training",
+    id: "sr40as2",
+    slug: "counterterrorism-training",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-27 10:20"),
     readingMinutes: 4,
     bn: {
@@ -606,9 +531,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "coastal-defense-system",
+    id: "c0p0uko",
+    slug: "coastal-defense-system",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-25 14:30"),
     readingMinutes: 4,
     image: "wide",
@@ -628,9 +555,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "organized-crime-investigation",
+    id: "4fqlqpl",
+    slug: "organized-crime-investigation",
     format: "analysis",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-23 16:00"),
     readingMinutes: 5,
     author: "arif-rahman",
@@ -644,9 +573,12 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "disaster-response-drills",
+    id: "vv25j6b",
+    slug: "disaster-response-drills",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
+    topics: ["rivers", "monsoon"],
     publishedAt: at("09-21 11:45"),
     readingMinutes: 3,
     bn: {
@@ -659,9 +591,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "transnational-security-protocol",
+    id: "xtix7hc",
+    slug: "transnational-security-protocol",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("09-19 13:30"),
     readingMinutes: 3,
     image: "photo",
@@ -679,9 +613,11 @@ export const categoryStories: StoryDef[] = [
 
   // Technology (10 stories)
   {
-    id: "5g-network-expansion",
+    id: "jluuawh",
+    slug: "5g-network-expansion",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("10-03 10:00"),
     readingMinutes: 4,
     image: "photo",
@@ -701,9 +637,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "data-center-project",
+    id: "32e9cr2",
+    slug: "data-center-project",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("10-01 12:30"),
     readingMinutes: 3,
     image: "classic",
@@ -718,9 +656,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "digital-infrastructure-upgrade",
+    id: "rot6jgm",
+    slug: "digital-infrastructure-upgrade",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-30 14:15"),
     readingMinutes: 4,
     bn: {
@@ -733,9 +673,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "software-export-initiative",
+    id: "ludi4mn",
+    slug: "software-export-initiative",
     format: "analysis",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-28 09:00"),
     readingMinutes: 6,
     author: "mehnaz-chowdhury",
@@ -749,9 +691,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "tech-startup-incubation",
+    id: "4dy90ks",
+    slug: "tech-startup-incubation",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-26 15:45"),
     readingMinutes: 3,
     image: "wide",
@@ -771,9 +715,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "renewable-energy-tech",
+    id: "dw9wtx0",
+    slug: "renewable-energy-tech",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-24 11:00"),
     readingMinutes: 3,
     bn: {
@@ -786,9 +732,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "smart-city-infrastructure",
+    id: "o5yqhj4",
+    slug: "smart-city-infrastructure",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-22 13:20"),
     readingMinutes: 4,
     image: "photo",
@@ -804,9 +752,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "cybersecurity-framework",
-    format: "explainer",
+    id: "cj9xllr",
+    slug: "cybersecurity-framework",
+    format: "analysis",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-20 10:15"),
     readingMinutes: 7,
     author: "tanvir-ahmed",
@@ -820,9 +770,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "broadband-expansion-rural",
+    id: "t01gyyl",
+    slug: "broadband-expansion-rural",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-19 16:00"),
     readingMinutes: 3,
     image: "classic",
@@ -838,9 +790,11 @@ export const categoryStories: StoryDef[] = [
     },
   },
   {
-    id: "fintech-regulation-update",
+    id: "mqaso5s",
+    slug: "fintech-regulation-update",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("09-18 12:45"),
     readingMinutes: 3,
     bn: {

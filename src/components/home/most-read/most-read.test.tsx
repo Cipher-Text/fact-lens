@@ -5,6 +5,7 @@ import { getHomepage } from "@/content";
 import { getDictionary } from "@/i18n";
 
 import { MostReadSection } from "./MostReadSection";
+import { RankedList } from "./RankedList";
 
 function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
   const stories = getHomepage(lang, { variant }).mostRead!;
@@ -14,13 +15,31 @@ function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
   return { ...view, stories };
 }
 
+describe("RankedList (C-07)", () => {
+  it("is an ordered list of title links, in rank order, one h3 per item", () => {
+    const stories = getHomepage("en").mostRead!;
+    const { container } = render(<RankedList lang="en" stories={stories} />);
+    const list = container.querySelector("ol")!;
+    expect(list).toHaveClass("rank-list");
+    expect(
+      [...list.children].map((li) => li.querySelector("h3")!.textContent),
+    ).toEqual(stories.map((story) => story.title));
+    expect(screen.getAllByRole("heading", { level: 3 })).toHaveLength(
+      stories.length,
+    );
+    for (const link of screen.getAllByRole("link")) {
+      expect(link.getAttribute("href")).toMatch(/^\/en\/story\//);
+    }
+  });
+});
+
 describe("MostReadSection (P-5)", () => {
-  it("is a section named by its heading, with the top 5 as an ordered list (DR-51)", () => {
+  it("is a section named by its heading, with the top 5 as an ordered list (DR-44)", () => {
     const { stories } = renderSection("bn");
     const section = screen.getByRole("region", { name: "সর্বাধিক পঠিত" });
     const list = within(section).getByRole("list");
     expect(list.tagName).toBe("OL");
-    expect(list.className).toContain("rank-list");
+    expect(list).toHaveClass("rank-list");
     const items = within(list).getAllByRole("listitem");
     expect(items).toHaveLength(5);
     // Source order is the rank order (LAY-14).
@@ -29,36 +48,51 @@ describe("MostReadSection (P-5)", () => {
     );
   });
 
-  it("uses 1, 2, 3 and 4 columns, and no other count (DR-51, DR-145, LAY-06)", () => {
+  it("puts the list in the middle and end of three columns from 1024, the start column empty (C-07)", () => {
     renderSection("en");
     const list = screen.getByRole("list");
-    expect(list.className).toMatch(/(^| )grid-cols-1( |$)/);
-    expect(list.className).toContain("sm:grid-cols-2");
-    expect(list.className).toContain("lg:grid-cols-3");
-    expect(list.className).toContain("xl:grid-cols-4");
-    expect(list.className).not.toMatch(/(md|2xl):grid-cols/);
+    expect(list).toHaveClass("lg:col-span-2", "lg:col-start-2");
+    expect(list.parentElement).toHaveClass(
+      "lg:grid",
+      "lg:grid-cols-3",
+      "lg:gap-x-(--grid-column-gap)",
+    );
+    // No other column count and no 2xl tier (LAY-06).
+    expect(list.className).not.toMatch(/grid-cols|2xl:/);
   });
 
-  it("uses the column gap token and a rule inside each column, no row gap (C-07, DR-299, DR-300)", () => {
+  it("uses two CSS columns from 600, items 1 to 3 then 4 and 5, the column tops level (C-07)", () => {
     renderSection("en");
     const list = screen.getByRole("list");
-    expect(list).toHaveClass("gap-x-(--grid-column-gap)", "gap-y-0");
-    for (const item of screen.getAllByRole("listitem"))
-      expect(item).toHaveClass("divider-item-grid");
+    expect(list).toHaveClass("sm:columns-2", "sm:gap-x-(--grid-column-gap)");
+    screen.getAllByRole("listitem").forEach((li, i) => {
+      expect(li).toHaveClass("sm:break-inside-avoid");
+      if (i === 3) expect(li).toHaveClass("sm:break-before-column", "sm:mt-0");
+      else expect(li).not.toHaveClass("sm:break-before-column");
+    });
   });
 
-  it("links each title to its story in the page language", () => {
+  it("has no rule between the items: they are --rank-list-gap apart (C-07, tajmin)", () => {
+    renderSection("bn");
+    screen.getAllByRole("listitem").forEach((li, i) => {
+      expect(li.className).not.toMatch(/divider-item/);
+      if (i > 0) expect(li).toHaveClass("mt-(--rank-list-gap)");
+      else expect(li).not.toHaveClass("mt-(--rank-list-gap)");
+    });
+  });
+
+  it("links each title to its story in the page language, /story/<slug>-<id> (DR-413)", () => {
     const { stories } = renderSection("en");
     const links = screen.getAllByRole("link");
     expect(links.map((a) => a.getAttribute("href"))).toEqual(
-      stories.map((s) => `/en/story/${s.slug}`),
+      stories.map((s) => `/en/story/${s.slug}-${s.id}`),
     );
     for (const heading of screen.getAllByRole("heading", { level: 3 })) {
-      expect(heading.className).toContain("type-story-title-sm");
+      expect(heading.className).toContain("text-lg");
     }
   });
 
-  it("writes the rank from the data in an aria-hidden span, digits in the page language (DR-290)", () => {
+  it("writes the rank from the data in an aria-hidden chip, digits in the page language (DR-290)", () => {
     for (const [lang, digits] of [
       ["bn", ["১", "২", "৩", "৪", "৫"]],
       ["en", ["1", "2", "3", "4", "5"]],
@@ -69,42 +103,15 @@ describe("MostReadSection (P-5)", () => {
           "SPAN",
           "H3",
         ]);
-        const numeral = li.firstElementChild!;
-        expect(numeral).toHaveAttribute("aria-hidden", "true");
-        expect(numeral.textContent).toBe(digits[i]);
+        const chip = li.firstElementChild!;
+        expect(chip).toHaveAttribute("aria-hidden", "true");
+        // One inner span, which the chip trims to the ink of the digits.
+        expect([...chip.children].map((el) => el.tagName)).toEqual(["SPAN"]);
+        expect(chip.textContent).toBe(digits[i]);
         expect(li.querySelector("h3")!.textContent).toBe(stories[i].title);
       });
       unmount();
     }
-  });
-
-  it("puts the rank in a chip, with no rule, in the columns layout only (category page, tajmin)", () => {
-    const stories = getHomepage("bn").mostRead!;
-    const { unmount } = render(
-      <MostReadSection lang="bn" stories={stories} t={getDictionary("bn")} />,
-    );
-    expect(screen.getByRole("list")).not.toHaveClass("rank-list-chip");
-    unmount();
-
-    render(
-      <MostReadSection
-        lang="bn"
-        stories={stories}
-        t={getDictionary("bn")}
-        layout="columns"
-      />,
-    );
-    expect(screen.getByRole("list")).toHaveClass("rank-list", "rank-list-chip");
-    screen.getAllByRole("listitem").forEach((li, i) => {
-      // No rule between the items (tajmin): they are --rank-list-gap apart.
-      expect(li.className).not.toMatch(/divider-item/);
-      if (i > 0) expect(li).toHaveClass("mt-(--rank-list-gap)");
-      const numeral = li.firstElementChild!;
-      expect(numeral).toHaveAttribute("aria-hidden", "true");
-      // One inner span, which the chip trims to the ink of the digits.
-      expect([...numeral.children].map((el) => el.tagName)).toEqual(["SPAN"]);
-      expect(numeral.textContent).toBe(["১", "২", "৩", "৪", "৫"][i]);
-    });
   });
 
   it("shows the items that exist when content is sparse (7.3)", () => {

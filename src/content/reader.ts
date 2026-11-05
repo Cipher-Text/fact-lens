@@ -1,9 +1,15 @@
 // Read access for the wild card reader page. Joins a story from stories.ts with its
 // full article text from reader-articles.ts.
 import { getStory } from "./index";
-import { articleDefs, readNextIds, type ArticleText } from "./reader-articles";
-import { authors } from "./stories";
-import type { ImageRef, Lang, Story } from "./types";
+import {
+  articleDefs,
+  readNextSlugs,
+  type ArticleText,
+} from "./reader-articles";
+import { authors, stories } from "./stories";
+import { topics } from "./topics";
+import { parseStoryRef, refForSlug, slugForId } from "./urls";
+import type { ImageRef, Lang, Story, Topic } from "./types";
 
 export type { ArticleContext, Block } from "./reader-articles";
 export { imageFiles } from "./stories";
@@ -26,15 +32,43 @@ export interface Article extends Omit<
   updatedAt?: string;
   author: ReaderAuthor;
   readingMinutes: number;
+  topics: Topic[];
 }
 
 export interface ReadNextItem {
   story: Story;
 }
 
-const byId = new Map(articleDefs.map((def) => [def.id, def]));
+const bySlug = new Map(articleDefs.map((def) => [def.slug, def]));
+// The topics belong to the story, so the article page and the topic page share them (DR-410).
+const topicsBySlug = new Map(stories.map((def) => [def.slug, def.topics]));
 
-export const articleSlugs = articleDefs.map((def) => def.id);
+/**
+ * The articles, each with its URL segment "<slug>-<id>" (layout 7C) and the languages it
+ * exists in (DR-401).
+ */
+export const articleRefs: { ref: string; langs: Lang[] }[] = articleDefs.map(
+  (def) => ({
+    ref: refForSlug(def.slug),
+    langs: (["bn", "en"] as const).filter((lang) => def[lang] !== undefined),
+  }),
+);
+
+/**
+ * The article for a URL segment "<slug>-<id>". The id finds the story; a slug that is not
+ * the current one gives null here, because the proxy has already sent a 301 for it.
+ */
+export function getArticleByRef(ref: string, lang: Lang): Article | null {
+  const parsed = parseStoryRef(ref);
+  if (!parsed || slugForId(parsed.id) !== parsed.slug) return null;
+  return getArticle(parsed.slug, lang);
+}
+
+/** The languages an article exists in (DR-401). */
+export function articleLangsOf(slug: string): Lang[] {
+  const def = bySlug.get(slug);
+  return def ? (["bn", "en"] as const).filter((lang) => def[lang]) : [];
+}
 
 /** Two letters for an English name; the first letter, with its vowel sign, for Bangla. */
 function initialsOf(name: string, lang: Lang): string {
@@ -57,24 +91,26 @@ function wordCount(text: ArticleText): number {
     .filter(Boolean).length;
 }
 
+/** The article in one language, or null when it does not exist in that language (DR-401). */
 export function getArticle(slug: string, lang: Lang): Article | null {
-  const def = byId.get(slug);
-  if (!def) return null;
+  const def = bySlug.get(slug);
+  const text = def?.[lang];
+  if (!def || !text) return null;
   const story = getStory(slug, lang);
   // Editors must add a lead image before an article can be published.
   const { image } = story;
   if (!image)
     throw new Error(`Article without a lead image: ${slug} (${lang})`);
-  const { summary, authorRole, authorBio, ...text } = def[lang];
+  const { summary, authorRole, authorBio, ...rest } = text;
   const name = authors[def.author][lang];
   // Bangla is read a little slower per word than English.
   const computed = Math.max(
     1,
-    Math.round(wordCount(def[lang]) / (lang === "bn" ? 170 : 230)),
+    Math.round(wordCount(text) / (lang === "bn" ? 170 : 230)),
   );
 
   return {
-    ...text,
+    ...rest,
     story: { ...story, image },
     summary: summary ?? story.summary ?? "",
     updatedAt: def.updatedAt,
@@ -85,6 +121,11 @@ export function getArticle(slug: string, lang: Lang): Article | null {
       initials: initialsOf(name, lang),
     },
     readingMinutes: story.readingMinutes ?? computed,
+    topics: (topicsBySlug.get(slug) ?? []).map((id) => ({
+      id,
+      slug: topics[id].slug,
+      label: topics[id][lang],
+    })),
   };
 }
 
@@ -93,5 +134,5 @@ export function getArticle(slug: string, lang: Lang): Article | null {
  * lead to a 404 page, like the homepage story links.
  */
 export function getReadNext(lang: Lang): ReadNextItem[] {
-  return readNextIds.map((id) => ({ story: getStory(id, lang) }));
+  return readNextSlugs.map((slug) => ({ story: getStory(slug, lang) }));
 }

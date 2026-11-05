@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import { tokenBackground } from "./rules";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
@@ -88,11 +89,14 @@ async function logoSize(logo: Locator) {
   });
 }
 
-/** The bottom rule of the top bar is drawn when its color is not transparent. */
+/**
+ * The bottom rule of the top bar (Divider.rule, tone soft; IMP-100) is drawn when its color
+ * is not transparent.
+ */
 async function barRuleShown(page: Page) {
   const color = await page
-    .locator("[data-top-bar]")
-    .evaluate((el) => getComputedStyle(el).borderBottomColor);
+    .locator('[data-top-bar] > [data-divider="rule"]')
+    .evaluate((el) => getComputedStyle(el).backgroundColor);
   return color !== "rgba(0, 0, 0, 0)";
 }
 
@@ -233,7 +237,7 @@ for (const p of PAGES) {
           expect(Math.round(navBox.width)).toBe(width);
           const shellBox = await box(navRow.locator("[data-nav-shell]"));
           expect(Math.round(shellBox.width)).toBe(Math.min(width - 48, 1280));
-          expect(Math.round(shellBox.height)).toBe(45);
+          expect(Math.round(shellBox.height)).toBe(44);
           expect(Math.round(navBox.y)).toBe(
             Math.round(barBox.y + barBox.height),
           );
@@ -241,9 +245,10 @@ for (const p of PAGES) {
           expect(Math.round(navBox.height)).toBe(45);
           const list = await box(navRow.locator("ul"));
           expect(Math.round(list.height)).toBe(44);
+          // The rule is Divider.rule under the list (C-22; IMP-100).
           const navRule = await navRow
-            .locator("[data-nav-shell]")
-            .evaluate((el) => getComputedStyle(el).borderBottomWidth);
+            .locator(':scope > [data-divider="rule"]')
+            .evaluate((el) => getComputedStyle(el).height);
           expect(navRule).toBe("1px");
         } else {
           await expect(navRow).toBeHidden();
@@ -251,7 +256,10 @@ for (const p of PAGES) {
         // No rule on the bar at the page top, at any width: the bar shows its rule only when
         // it is stuck (DR-173, DR-295). The border is transparent, so the bar does not move.
         expect(await barRuleShown(page)).toBe(false);
-        await expect(bar).toHaveCSS("border-bottom-width", "1px");
+        await expect(bar.locator(':scope > [data-divider="rule"]')).toHaveCSS(
+          "height",
+          "1px",
+        );
 
         // The logo is type-logo: 20px on phones, 28px at 768, 32px from 1024 (DR-306).
         await expect(logo).toHaveCSS(
@@ -319,7 +327,18 @@ for (const p of PAGES) {
           false,
         );
         expect(Math.round((await box(nav)).y)).toBe(64);
-        expect(await barRuleShown(page)).toBe(false);
+        // Not stuck: the rule is transparent in both themes (FC-08). If the class merge in
+        // TopBar kept bg-border-soft next to bg-transparent, the rule would show here.
+        for (const dark of [false, true]) {
+          await page.evaluate(
+            (on) => document.documentElement.classList.toggle("dark", on),
+            dark,
+          );
+          expect(await barRuleShown(page), dark ? "dark" : "light").toBe(false);
+        }
+        await page.evaluate(() =>
+          document.documentElement.classList.remove("dark"),
+        );
         await expect.poll(() => logoSize(logo)).toBe(32);
 
         // Past the row (45px): stuck. The row slides up under the bar, is hidden and inert,
@@ -338,6 +357,28 @@ for (const p of PAGES) {
           true,
         );
         await expect.poll(() => barRuleShown(page)).toBe(true);
+        // The stuck rule is the soft border color in both themes (FC-08): the class merge in
+        // TopBar (bg-transparent, then bar-stuck:bg-border-soft) must not leave another color.
+        for (const dark of [false, true]) {
+          await page.evaluate(
+            (on) => document.documentElement.classList.toggle("dark", on),
+            dark,
+          );
+          const [rule, soft] = await bar
+            .locator(':scope > [data-divider="rule"]')
+            .evaluate((el) => {
+              const probe = document.createElement("div");
+              probe.style.backgroundColor = "var(--color-border-soft)";
+              document.body.append(probe);
+              const value = getComputedStyle(probe).backgroundColor;
+              probe.remove();
+              return [getComputedStyle(el).backgroundColor, value];
+            });
+          expect(rule, dark ? "dark" : "light").toBe(soft);
+        }
+        await page.evaluate(() =>
+          document.documentElement.classList.remove("dark"),
+        );
         await expect.poll(() => logoSize(logo)).toBe(24);
         expect(Math.round((await box(bar)).height)).toBe(64);
         expect(Math.round((await box(bar)).y)).toBe(0);
@@ -446,7 +487,7 @@ for (const p of PAGES) {
       await expect(page.locator("main#main")).toHaveAttribute("tabindex", "-1");
     });
 
-    test("nav row items are type-nav: 16px 600 on Bangla pages, 14px 600 on English pages; every # link has a target (DR-346, DR-331)", async ({
+    test("nav row items are text-nav: 16px 600 on Bangla pages, 14px 600 on English pages; no # link is left (DR-346)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1280, height: 800 });
@@ -457,12 +498,9 @@ for (const p of PAGES) {
         "font-size",
         p.lang === "bn" ? "16px" : "14px",
       );
-      const hrefs = await page
-        .locator('[data-nav-row] a[href^="#"]:not([href^="#region-"])')
-        .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
-      expect(hrefs.length).toBeGreaterThan(0);
-      for (const href of hrefs)
-        await expect(page.locator(href), href).toHaveCount(1);
+      // Every item goes to a page: the Analysis item replaced the parent Analysis and
+      // Opinion # link (DR-331; tajmin, 4 Nov 2026).
+      await expect(page.locator('[data-nav-row] a[href^="#"]')).toHaveCount(0);
     });
 
     for (const width of [360, 1280]) {
@@ -508,30 +546,28 @@ for (const p of PAGES) {
         ).toBeLessThanOrEqual(0.5);
         expect(Math.abs(head.x - drawerBox.x - 20)).toBeLessThanOrEqual(0.5);
 
-        // The Regions item reads অঞ্চলসমূহ / Regions (DR-345).
+        // The Regions item reads অঞ্চলসমূহ / Regions (DR-345) and goes to /regions (DR-411).
         await expect(
-          drawer.locator('nav > ul > li a[href="#regions"]'),
+          drawer.locator(
+            `nav > ul > li a[href="${p.path === "/" ? "" : "/en"}/regions"]`,
+          ),
         ).toHaveText(p.regions);
 
-        // Every nav item is in the drawer: 9 rows, Regions with 7 regions (China among
-        // them, DR-19) and Analysis and Opinion with 2 sub-items, no Op-ed (DR-302). All
-        // accordions are closed (DR-181).
+        // Every nav item is in the drawer: 9 rows, Regions with 8 regions (China among
+        // them, DR-19, DR-411); Analysis has no sub-items and there is no Opinion item
+        // (tajmin, 4 Nov 2026), no Op-ed (DR-302, DR-414). The accordion is closed (DR-181).
         await expect(drawer.locator("nav > ul > li")).toHaveCount(9);
         const carets = drawer.locator("nav button[aria-expanded]");
-        await expect(carets).toHaveCount(2);
+        await expect(carets).toHaveCount(1);
         for (const caret of await carets.all())
           await expect(caret).toHaveAttribute("aria-expanded", "false");
         await expect(drawer.locator("nav ul ul")).toHaveCount(0);
         for (const caret of await carets.all()) await caret.click();
-        await expect(drawer.locator("nav ul ul a")).toHaveCount(9);
+        await expect(drawer.locator("nav ul ul a")).toHaveCount(8);
         await expect(drawer.locator('a[href*="op-ed"]')).toHaveCount(0);
-        // Every # link has a target on the page (DR-331). The region links wait for R3-06:
-        // the slider shows 4 of the 7 regions until it uses all of them.
-        const hrefs = await drawer
-          .locator('nav a[href^="#"]:not([href^="#region-"])')
-          .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
-        for (const href of hrefs)
-          await expect(page.locator(href), href).toHaveCount(1);
+        await expect(drawer.locator('a[href*="opinion"]')).toHaveCount(0);
+        // Every item goes to a page: no # link is left (tajmin, 4 Nov 2026).
+        await expect(drawer.locator('nav a[href^="#"]')).toHaveCount(0);
 
         // The social band is pinned at the bottom, with the 5 links of the footer.
         const social = drawer.locator("[data-social]");
@@ -587,11 +623,18 @@ for (const p of PAGES) {
         .first()
         .locator("a")
         .locator("..");
-      expect(Math.round((await box(row)).height)).toBe(53); // 52px + 1px rule
+      expect(Math.round((await box(row)).height)).toBe(52);
       expect(Math.round((await box(row)).x)).toBe(20);
       // 360 - 48 = 312 wide, less the 2 x 20 inset.
       expect(Math.round((await box(row)).width)).toBe(272);
-      await expect(row).toHaveCSS("border-bottom-width", "1px");
+      // The row line is Divider.rule in the soft border color, right under the row (C-19,
+      // C-22; IMP-100).
+      const rowRule = row.locator("xpath=following-sibling::*[1]");
+      await expect(rowRule).toHaveAttribute("data-divider", "rule");
+      await expect(rowRule).toHaveCSS("height", "1px");
+      expect(
+        await rowRule.evaluate((el) => getComputedStyle(el).backgroundColor),
+      ).toBe(await tokenBackground(page, "--color-border-soft"));
 
       const caret = drawer.locator("nav button[aria-expanded]").first();
       await expect(caret).toHaveAttribute("aria-expanded", "false");
@@ -677,7 +720,7 @@ for (const p of PAGES) {
       expect(await activeLabel(page)).toBe(p.menu);
     });
 
-    test("a drawer link closes the drawer and moves focus to its target", async ({
+    test("a drawer link closes the drawer and opens its page", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 360, height: 800 });
@@ -685,18 +728,11 @@ for (const p of PAGES) {
       const menu = page.getByRole("button", { name: p.menu, exact: true });
       const drawer = page.locator("[data-drawer]");
       await openWithKeyboard(menu, drawer);
-      // The target is the Analysis and Opinion heading: the category items go to the
-      // category pages now (spacing-layout-system.md 7B), so this is a link to a place on the page.
-      await drawer
-        .locator('nav a[href="#analysis-opinion-title"]')
-        .first()
-        .click();
+      // Every nav item goes to a page; no # link is left (tajmin, 4 Nov 2026).
+      const hub = p.path === "/" ? "/analysis" : "/en/analysis";
+      await drawer.locator(`nav a[href="${hub}"]`).click();
+      await expect(page).toHaveURL(hub);
       await expectClosed(drawer);
-      const target = page.locator("#analysis-opinion-title");
-      await expect(target).toBeFocused();
-      // The target keeps no tabindex once focus has left it (DR-330).
-      await page.keyboard.press("Tab");
-      await expect(target).not.toHaveAttribute("tabindex");
       // The scroll lock is gone with the drawer.
       await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
     });
@@ -707,8 +743,8 @@ for (const p of PAGES) {
       page,
     }) => {
       const prefix = p.path === "/" ? "" : "/en";
+      // Bangladesh is not a category (DR-412).
       const ids = [
-        "bangladesh",
         "geopolitics",
         "economy",
         "security",
@@ -1160,8 +1196,62 @@ for (const p of PAGES) {
       await page.setViewportSize({ width: 1280, height: 800 });
       await page.goto(p.path);
       await expect(
-        page.locator('[data-nav-row] a[href="#regions"]'),
+        page.locator(
+          `[data-nav-row] a[href="${p.path === "/" ? "" : "/en"}/regions"]`,
+        ),
       ).toHaveText(p.regions);
+    });
+
+    // South Asia takes the place of Bangladesh; Regions and its regions go to their own URLs
+    // (layout 7C, DR-411, DR-412); the region pages open (page/region, IMP-128). Analysis is one
+    // item to the analysis hub; Opinion is on hold, no item (tajmin, 4 Nov 2026).
+    test("nav targets: South Asia, regions and the analysis hub (DR-414)", async ({
+      page,
+    }) => {
+      const prefix = p.path === "/" ? "" : "/en";
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(p.path);
+      const drawer = page.locator("[data-drawer]");
+      await openWithKeyboard(
+        page.getByRole("button", { name: p.menu, exact: true }),
+        drawer,
+      );
+      // The second row, in the place of Bangladesh. The accordions are closed, so the
+      // South Asia entry under Regions is not in the DOM yet.
+      await expect(
+        drawer.locator(`nav a[href="${prefix}/regions/south-asia"]`),
+      ).toHaveCount(1);
+      await expect(
+        drawer
+          .locator("nav > ul > li")
+          .nth(1)
+          .locator(`a[href="${prefix}/regions/south-asia"]`),
+      ).toHaveCount(1);
+      for (const caret of await drawer
+        .locator("nav button[aria-expanded]")
+        .all())
+        await caret.click();
+      const sub = await drawer
+        .locator("nav ul ul a")
+        .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
+      expect(sub).toEqual([
+        ...[
+          "americas",
+          "europe",
+          "russia",
+          "middle-east",
+          "south-asia",
+          "china",
+          "asia",
+          "oceania",
+        ].map((id) => `${prefix}/regions/${id}`),
+      ]);
+      await expect(drawer.locator('a[href*="bangladesh"]')).toHaveCount(0);
+      await expect(
+        drawer.locator("nav > ul > li").last().locator("a"),
+      ).toHaveAttribute("href", `${prefix}/analysis`);
+      await expect(drawer.locator('a[href*="opinion"]')).toHaveCount(0);
+      await expect(drawer.locator('nav a[href^="#"]')).toHaveCount(0);
     });
 
     test("the header has interface text in the page language only (T-27)", async ({
@@ -1292,7 +1382,6 @@ for (const p of PAGES) {
         await waitForNavRow(page);
         const m = await page.evaluate((shellSelector) => {
           const nav = document.querySelector("[data-nav-row]")!;
-          const shell = nav.querySelector("[data-nav-shell]")!;
           const list = nav.querySelector("ul")!;
           const items = [...list.children].filter(
             (li) => !(li as HTMLElement).hidden,
@@ -1307,8 +1396,10 @@ for (const p of PAGES) {
             background: getComputedStyle(nav).backgroundColor,
             page: getComputedStyle(document.body).backgroundColor,
             rule: {
-              ...edges(shell),
-              width: getComputedStyle(shell).borderBottomWidth,
+              ...edges(nav.querySelector(':scope > [data-divider="rule"]')!),
+              width: getComputedStyle(
+                nav.querySelector(':scope > [data-divider="rule"]')!,
+              ).height,
             },
             list: edges(list),
             first: edges(items[0]),
@@ -1320,12 +1411,13 @@ for (const p of PAGES) {
         expect(Math.abs(m.band.left)).toBeLessThanOrEqual(0.5);
         expect(Math.abs(m.band.right - m.viewport)).toBeLessThanOrEqual(0.5);
         expect(m.background).toBe(m.page);
-        // The 1px rule and the item list sit on the shell edges.
+        // The 1px rule spans the band, the full viewport width (tajmin, 6 Nov 2026). The
+        // item list sits on the shell edges.
         expect(m.rule.width).toBe("1px");
-        for (const part of [m.rule, m.list]) {
-          expect(Math.abs(part.left - m.shell.left)).toBeLessThanOrEqual(0.5);
-          expect(Math.abs(part.right - m.shell.right)).toBeLessThanOrEqual(0.5);
-        }
+        expect(Math.abs(m.rule.left - m.band.left)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(m.rule.right - m.band.right)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(m.list.left - m.shell.left)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(m.list.right - m.shell.right)).toBeLessThanOrEqual(0.5);
         // The items are centered in the shell (DR-170), so they stay inside its edges.
         expect(m.first.left).toBeGreaterThanOrEqual(m.shell.left - 0.5);
         expect(m.last.right).toBeLessThanOrEqual(m.shell.right + 0.5);
@@ -1417,7 +1509,7 @@ for (const p of PAGES) {
     }
 
     for (const width of [360, 1280]) {
-      test(`stuck logo keeps its font size and scales by transform; language link is type-ui-sm 600 at ${width} (C-17, DR-355, DOC-44)`, async ({
+      test(`stuck logo keeps its font size and scales by transform; language link is text-xs 600 at ${width} (C-17, DR-355, DOC-44)`, async ({
         page,
       }) => {
         await page.setViewportSize({ width, height: 900 });
@@ -1438,7 +1530,7 @@ for (const p of PAGES) {
         const link = page.locator("[data-top-bar] a[hreflang]");
         const font = await link.evaluate((el) => {
           const probe = document.createElement("span");
-          probe.className = "type-ui-sm";
+          probe.className = "font-ui text-xs";
           probe.lang = el.getAttribute("lang")!;
           el.parentElement!.append(probe);
           const read = (node: Element) => {

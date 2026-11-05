@@ -7,7 +7,8 @@ import { setTheme } from "./theme";
 // the keyboard on the share dialog and the text size radio group, the band and inline
 // ads, and the header # links. The header, footer and top ad are the homepage parts.
 
-const SLUG = "river-data-framework";
+// The URL segment is <slug>-<id> (layout 7C, DR-413).
+const SLUG = "river-data-framework-t3txcff";
 const PAGES = [
   {
     lang: "bn",
@@ -164,6 +165,50 @@ for (const p of PAGES) {
       );
     });
 
+    test("the stored text size is not set on the homepage (TYP-15)", async ({
+      page,
+    }) => {
+      await page.addInitScript(() => {
+        window.localStorage.setItem("rd-text-size", "2");
+      });
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.home);
+      // From 600, the regions slider drops its tab roles once the client code runs: the
+      // page is hydrated, so a size set late would show here too.
+      await expect(
+        page.locator('[data-section="regions"] [role="tabpanel"]'),
+      ).toHaveCount(0);
+      await expect(page.locator("html")).not.toHaveAttribute(
+        "data-reader-size",
+        /.*/,
+      );
+    });
+
+    // tajmin's steps: the homepage, then a click on the lead story. React logs an error
+    // when the client creates a <script> (task reader-size-script).
+    test("a click on the lead story logs no script tag error", async ({
+      page,
+    }) => {
+      const errors: string[] = [];
+      page.on("console", (message) => {
+        if (message.type() === "error") errors.push(message.text());
+      });
+      await page.addInitScript(() => {
+        window.localStorage.setItem("rd-text-size", "2");
+      });
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(p.home);
+      await page.locator("[data-lead] h3 a").click();
+      await expect(page).toHaveURL(/\/story\//);
+      await expect(page.locator("[data-reader-title]")).toBeVisible();
+      // ReaderRoot sets the stored size after a client link.
+      await expect(page.locator("html")).toHaveAttribute(
+        "data-reader-size",
+        "xl",
+      );
+      expect(errors.filter((text) => text.includes("script tag"))).toEqual([]);
+    });
+
     test("a section heading is named by its text only", async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
@@ -287,24 +332,15 @@ for (const p of PAGES) {
       }
     }
 
-    test("header section links point to targets on the homepage (DR-331)", async ({
+    test("header links go to pages: no # link is left (DR-331)", async ({
       page,
     }) => {
+      // The Analysis item replaced the parent Analysis and Opinion # link to the homepage
+      // section (tajmin, 4 Nov 2026), so no nav link points to a place on the homepage.
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto(p.path);
-      const hrefs = await page
-        .locator('[data-nav-row] a[href*="#"]')
-        .evaluateAll((els) => els.map((el) => el.getAttribute("href")!));
-      expect(hrefs.length).toBeGreaterThan(0);
-      for (const href of hrefs)
-        expect(href.startsWith(`${p.home}#`), href).toBe(true);
-
-      await page.goto(p.home);
-      // The region links wait for R3-06, as on the homepage (header.spec.ts).
-      for (const href of hrefs.filter((h) => !h.includes("#region-"))) {
-        const hash = href.slice(href.indexOf("#"));
-        await expect(page.locator(hash), href).toHaveCount(1);
-      }
+      await expect(page.locator("[data-nav-row] a")).not.toHaveCount(0);
+      await expect(page.locator('[data-nav-row] a[href*="#"]')).toHaveCount(0);
     });
   });
 }

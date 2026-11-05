@@ -1,9 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { columnRule, tokenBackground } from "./rules";
+import { sideTitleFits } from "./side-title";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
-// R2-10: P-2 FeaturedCategorySection for বাংলাদেশ and ভূরাজনীতি (component-system.md P-2,
+// R2-10: P-2 FeaturedCategorySection for দক্ষিণ এশিয়া and ভূরাজনীতি (component-system.md P-2,
 // C-24, C-03; spacing-layout-system.md 7.1 to 7.3, 13; DR-118, DR-119, DR-121, DR-122,
 // DR-123, LAY-03, LAY-05, LAY-12, LAY-13).
 
@@ -11,21 +13,32 @@ const PAGES = [
   {
     path: "/",
     lang: "bn",
-    titles: { bangladesh: "বাংলাদেশ", geopolitics: "ভূরাজনীতি ও কূটনীতি" },
+    titles: {
+      "south-asia": "দক্ষিণ এশিয়া",
+      geopolitics: "ভূরাজনীতি ও কূটনীতি",
+    },
     more: (title: string) => `আরও দেখুন: ${title}`,
   },
   {
     path: "/en",
     lang: "en",
     titles: {
-      bangladesh: "Bangladesh",
+      "south-asia": "South Asia",
       geopolitics: "Geopolitics and Diplomacy",
     },
     more: (title: string) => `See more: ${title}`,
   },
 ] as const;
 
-const CATEGORIES = ["bangladesh", "geopolitics"] as const;
+// The region দক্ষিণ এশিয়া takes the place of বাংলাদেশ (DR-412), then the category ভূরাজনীতি.
+const CATEGORIES = ["south-asia", "geopolitics"] as const;
+
+// The section id, its anchor, and the আরও দেখুন target. The region section is not
+// region-south-asia: that is the RegionSlider panel id (tajmin, 28 Oct 2026).
+const SECTIONS = {
+  "south-asia": { id: "featured-south-asia", more: "/regions/south-asia" },
+  geopolitics: { id: "category-geopolitics", more: "/category/geopolitics" },
+} as const;
 
 const WIDTHS = [
   320, 360, 600, 767, 768, 834, 1023, 1024, 1180, 1279, 1280, 1366, 1440, 1920,
@@ -42,8 +55,8 @@ const WRAPPER: Record<number, number> = {
   1920: 944,
 };
 
-const section = (page: Page, category: string) =>
-  page.locator(`[data-section="featured"][data-category="${category}"]`);
+const section = (page: Page, category: keyof typeof SECTIONS) =>
+  page.locator(`[data-section="featured"]#${SECTIONS[category].id}`);
 
 async function box(locator: Locator) {
   const b = await locator.boundingBox();
@@ -100,34 +113,38 @@ for (const p of PAGES) {
           // Wrapper + 304px rail from 1024; rail under the wrapper below (LAY-05).
           const w = await box(wrapper);
           const r = await box(rail);
+          // Below 1024 a Divider.item rule draws above the rail, under the stacked card
+          // (divider-item-rail; tajmin, 5 Nov 2026). From 1024 there is none. The 16px to the
+          // ink on each side is measured in small-parts.spec.ts (C-22, DR-350).
+          const railRule = await rail.evaluate(
+            (el) => getComputedStyle(el, "::before").content,
+          );
           if (width >= 1024) {
             expect(Math.round(r.width)).toBe(304);
             expect(Math.round(w.width)).toBe(WRAPPER[width]);
             expect(Math.round(r.y)).toBe(Math.round(w.y));
             expect(r.x).toBeGreaterThan(w.x + w.width);
+            expect(railRule).toBe("none");
           } else {
             expect(Math.round(w.width)).toBe(shell);
             expect(Math.round(r.width)).toBe(shell);
             expect(r.y).toBeGreaterThan(w.y + w.height);
+            expect(railRule).toBe('""');
           }
 
-          // Feature story: one column under 768, image first, 16px to the text (P-2).
-          // From 768 the text is at the start and the image at the end, top aligned, with
-          // the image 50% (768 to 1023, DR-119) or 60% (from 1024, DR-118) of the free
-          // width, between 420 and 557px.
+          // Feature story: one column under 1024, image first, 16px to the text (P-2).
+          // From 1024 the text is at the start and the image at the end, top aligned, with
+          // the image 3 / 5 of the whole card width, no minimum and no maximum (StoryCard
+          // side, DR-451, DR-464 as amended). The text takes the rest minus the column gap.
           const i = await box(featureImage);
           const t = await box(featureText);
           expect(Math.round((i.width / i.height) * 100)).toBe(150); // 3:2
-          if (width < 768) {
+          if (width < 1024) {
             expect(Math.round(i.width)).toBe(Math.round(w.width));
             expect(Math.round(t.y)).toBe(Math.round(i.y + i.height + 16));
             expect(Math.round(t.x)).toBe(Math.round(i.x));
           } else {
-            const share = width >= 1024 ? 0.6 : 0.5;
-            const expected = Math.min(
-              557,
-              Math.max(420, (w.width - columnGap) * share),
-            );
+            const expected = (w.width * 3) / 5;
             expect(Math.abs(i.width - expected)).toBeLessThanOrEqual(1);
             expect(Math.round(t.y)).toBe(Math.round(i.y));
             expect(Math.round(i.x + i.width)).toBe(Math.round(w.x + w.width));
@@ -135,42 +152,35 @@ for (const p of PAGES) {
           }
 
           // The image link is as tall as its image, so the focus ring fits (COL-13).
-          for (const media of [
-            featureImage.locator("xpath=.."),
-            rail.locator("[data-story-media]"),
-          ]) {
+          for (const media of [featureImage.locator("xpath=..")]) {
             const link = await box(media);
             const img = await box(media.locator("img"));
             expect(Math.abs(link.height - img.height)).toBeLessThanOrEqual(1);
           }
 
-          // Rail: one image story, then two text rows with a rule between (C-24, C-03).
-          const card = rail.locator("[data-story-card]");
-          const cardImage = card.locator("[data-story-media] img");
-          const cardText = card.locator(".story-body");
+          // Rail: a text StoryList of 3 rows with a rule between, no image (C-03, IMP-125).
+          await expect(rail.locator("[data-story-card]")).toHaveCount(0);
           const rows = rail.locator("[data-story-list] > li");
-          await expect(rows).toHaveCount(2);
-          await expect(rows.locator("img")).toHaveCount(0);
-          const ci = await box(cardImage);
-          const ct = await box(cardText);
-          expect(Math.round((ci.width / ci.height) * 100)).toBe(178); // 16:9
-          if (width >= 1024) {
-            // In the 304px rail: image on top, 16px, text below.
-            expect(Math.round(ci.width)).toBe(304);
-            expect(Math.round(ct.y)).toBe(Math.round(ci.y + ci.height + 16));
-          } else {
-            // Row 2 : 1, --grid-column-gap between them (DR-300), text at the start, image at the end (DR-121).
-            const imageWidth = (r.width - columnGap) / 3;
-            expect(Math.abs(ci.width - imageWidth)).toBeLessThanOrEqual(1);
-            expect(Math.round(ct.y)).toBe(Math.round(ci.y));
-            expect(Math.round(ci.x + ci.width)).toBe(Math.round(r.x + r.width));
-            expect(Math.round(ci.x - (ct.x + ct.width))).toBe(columnGap);
+          await expect(rows).toHaveCount(3);
+          await expect(rows.locator("img, [data-story-media]")).toHaveCount(0);
+          for (let n = 1; n < 3; n++) {
+            const above = await box(rows.nth(n - 1));
+            const row = await box(rows.nth(n));
+            expect(row.y).toBeGreaterThan(above.y + above.height);
           }
-          const cardBox = await box(card);
-          const firstRow = await box(rows.nth(0));
-          const secondRow = await box(rows.nth(1));
-          expect(firstRow.y).toBeGreaterThan(cardBox.y + cardBox.height);
-          expect(secondRow.y).toBeGreaterThan(firstRow.y + firstRow.height);
+          // Divider.item (C-22): a rule drawn above rows 2 and 3, none above the first row.
+          const ruled = await rows.evaluateAll((items) =>
+            items.map((li) => {
+              const s = getComputedStyle(li, "::before");
+              return (
+                li.classList.contains("divider-item") &&
+                s.content !== "none" &&
+                s.display !== "none" &&
+                parseFloat(s.height) > 0
+              );
+            }),
+          );
+          expect(ruled).toEqual([false, true, true]);
 
           // One আরও দেখুন link below the wrapper and the rail, at the end edge (DR-123).
           const more = s.getByRole("link", {
@@ -179,7 +189,7 @@ for (const p of PAGES) {
           await expect(more).toHaveCount(1);
           await expect(more).toHaveAttribute(
             "href",
-            `${p.lang === "bn" ? "" : "/en"}/category/${category}`,
+            `${p.lang === "bn" ? "" : "/en"}${SECTIONS[category].more}`,
           );
           const m = await box(more);
           expect(m.y).toBeGreaterThan(
@@ -221,6 +231,23 @@ for (const p of PAGES) {
       });
     }
 
+    for (const width of [768, 1023, 1024, 1280]) {
+      test(`the feature story title fits its text column at ${width} (DR-464)`, async ({
+        page,
+      }) => {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(p.path);
+        await waitForNavRow(page);
+        for (const category of CATEGORIES) {
+          await sideTitleFits(
+            section(page, category).locator(
+              "[data-featured-wrapper] [data-story-card]",
+            ),
+          );
+        }
+      });
+    }
+
     for (const theme of ["light", "dark"] as const) {
       test(`axe in ${theme} theme`, async ({ page }) => {
         await setTheme(page, theme);
@@ -235,7 +262,7 @@ for (const p of PAGES) {
       }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(`${p.path}?content=sparse`);
-        const s = section(page, "bangladesh");
+        const s = section(page, "south-asia");
         await expect(s.locator("[data-featured-rail]")).toHaveCount(0);
         expect(
           Math.round((await box(s.locator("[data-featured-wrapper]"))).width),
@@ -252,24 +279,18 @@ for (const p of PAGES) {
       });
     }
 
-    for (const width of [360, 600, 768, 1024, 1280, 1440]) {
+    for (const width of [360, 600, 768, 1023, 1024, 1280, 1440]) {
       test(`image first in the markup, visual order kept at ${width} (C-24, DR-267, DR-348)`, async ({
         page,
       }) => {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(p.path);
         for (const category of CATEGORIES) {
-          const section = page.locator(`[data-category="${category}"]`);
+          const section = page.locator(`#${SECTIONS[category].id}`);
           const cards = [
             {
               card: section.locator("[data-featured-wrapper] article"),
-              row: width >= 768,
-            },
-            {
-              card: section.locator(
-                "[data-featured-rail] article[data-story-card]",
-              ),
-              row: width < 1024,
+              row: width >= 1024,
             },
           ];
           for (const { card, row } of cards) {
@@ -309,7 +330,7 @@ for (const p of PAGES) {
       await page.goto(p.path);
       for (const category of CATEGORIES) {
         const s = section(page, category);
-        await expect(s).toHaveAttribute("id", `category-${category}`);
+        await expect(s).toHaveAttribute("id", SECTIONS[category].id);
         await expect(
           s.getByRole("heading", { level: 2, name: p.titles[category] }),
         ).toBeVisible();
@@ -363,14 +384,62 @@ for (const p of PAGES) {
   });
 }
 
-test("page order: P-4, ad, বাংলাদেশ, ad, ভূরাজনীতি, ad (7.1)", async ({
+// From 1024 a dotted column-inset between the feature card and the rail: the Divider.item
+// dot, running down, 16px from the top and the bottom, centered in the gap. Below 1024 none:
+// the rail is under the card, after a Divider.item rule (tajmin, 5 and 6 Nov 2026; C-22).
+test.describe("column rule (C-22)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`/ ${theme}: dotted, inset, in the middle of the card and rail gap from 1024`, async ({
+      page,
+    }) => {
+      await setTheme(page, theme);
+      for (const width of [768, 1023, 1024, 1280, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto("/");
+        for (const category of CATEGORIES) {
+          const id = SECTIONS[category].id;
+          const rule = await columnRule(
+            page,
+            `#${id} .with-rail`,
+            `#${id} [data-featured-wrapper]`,
+            `#${id} [data-featured-rail]`,
+          );
+          if (width < 1024) {
+            expect(rule.shown, `${id} rule at ${width}`).toBe(false);
+            continue;
+          }
+          expect(rule.shown, `${id} rule at ${width}`).toBe(true);
+          expect(rule.width).toBe(1);
+          const border = await tokenBackground(page, "--color-border");
+          expect(rule.image).toBe(
+            `repeating-linear-gradient(${border} 0px, ${border} 2px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0) 6px)`,
+          );
+          expect(
+            Math.abs(rule.offCenter),
+            `center at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.top - 16),
+            `top at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.bottom - 16),
+            `bottom at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+        }
+      }
+    });
+  }
+});
+
+test("page order: P-4, ad, দক্ষিণ এশিয়া, ad, ভূরাজনীতি, ad (7.1)", async ({
   page,
 }) => {
   await page.goto("/");
   const main = page.locator("main > *");
   await expect(main.nth(3)).toHaveAttribute("data-section", "analysis-opinion");
   await expect(main.nth(4)).toHaveAttribute("data-ad-slot", "ad-band");
-  await expect(main.nth(5)).toHaveAttribute("data-category", "bangladesh");
+  await expect(main.nth(5)).toHaveAttribute("id", "featured-south-asia");
   await expect(main.nth(6)).toHaveAttribute("data-ad-slot", "ad-band");
   await expect(main.nth(7)).toHaveAttribute("data-category", "geopolitics");
   await expect(main.nth(8)).toHaveAttribute("data-ad-slot", "ad-band");

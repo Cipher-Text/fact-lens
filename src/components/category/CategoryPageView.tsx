@@ -4,12 +4,14 @@ import { SiteHeader } from "@/components/header/SiteHeader";
 import { SkipLink } from "@/components/header/SkipLink";
 import { MostReadSection } from "@/components/home/most-read/MostReadSection";
 import { PageTitle } from "@/components/layout/PageTitle";
+import { MoreStoriesSection } from "@/components/more-stories/MoreStoriesSection";
 import type { CategoryPage } from "@/content";
 import { getDictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-import { CategoryFeatureSection } from "./CategoryFeatureSection";
-import { CategoryMoreStoriesSection } from "./CategoryMoreStoriesSection";
+import { CategoryCoverSection } from "./CategoryCoverSection";
+import { CategoryFormatsSection } from "./CategoryFormatsSection";
+import { MissingTranslationNote } from "./MissingTranslationNote";
 
 type Props = {
   page: CategoryPage;
@@ -19,7 +21,10 @@ type Props = {
 export function CategoryPageView({ page }: Props) {
   const { lang, category } = page;
   const t = getDictionary(lang);
-  const afterAd = page.feature !== null || page.mostRead.length > 0;
+  const formats = page.analysis.length > 0 || page.opinion.length > 0;
+  // More stories follows an ad row only when Most read or the cover ad row is the row
+  // before it; after the formats row it follows a section (LAY-12).
+  const afterAd = page.mostRead.length > 0 || (page.cover !== null && !formats);
 
   return (
     <>
@@ -31,19 +36,26 @@ export function CategoryPageView({ page }: Props) {
       <main
         id="main"
         tabIndex={-1}
-        className="pt-(--space-page-start) pb-(--space-section) focus-visible:outline-none"
+        className="pb-(--space-section) focus-visible:outline-none"
       >
+        {/* The title band is the first row of main, under the ad-top row; it takes the
+            place of space-page-start (tajmin, 28 Oct 2026). The missing translation note
+            sits in the band, above the title (DR-401): it reads the URL in the browser; the
+            page stays static. */}
         <PageTitle
           title={t.categories[category]}
-          className="pb-(--space-section-title-after)"
+          note={
+            <MissingTranslationNote lang={lang} text={t.language.onlyInOther} />
+          }
+          className="mb-(--space-module)"
         />
-        {/* CategoryFeatureSection holds the feature story and the card rows, then its ad row. A section with
+        {/* CategoryCoverSection holds the cover story and the card rows, then its ad row. A section with
             no stories also hides its ad row (7.3, LAY-13). The space before the ad row
             belongs to the section (LAY-12). */}
-        {page.feature ? (
+        {page.cover ? (
           <>
-            <CategoryFeatureSection
-              feature={page.feature}
+            <CategoryCoverSection
+              cover={page.cover}
               latest={page.latest}
               cards={page.cards}
               t={t}
@@ -51,6 +63,20 @@ export function CategoryPageView({ page }: Props) {
             />
             <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
+        ) : null}
+        {/* Analysis and opinion, directly above Most read (DR-415). After an ad row:
+            space-module above (LAY-12); space-section to Most read. */}
+        {formats ? (
+          <CategoryFormatsSection
+            lang={lang}
+            analysis={page.analysis}
+            opinion={page.opinion}
+            t={t}
+            className={cn(
+              page.cover && "pt-(--space-module)",
+              "pb-(--space-section)",
+            )}
+          />
         ) : null}
         {/* Most read in this category: P-5 with RankedList columns (C-07: from 1024 the list
             in the end two thirds, 1 to 3 then 4 and 5, no rule between items), then its ad
@@ -61,9 +87,8 @@ export function CategoryPageView({ page }: Props) {
               lang={lang}
               stories={page.mostRead}
               t={t}
-              layout="columns"
               className={cn(
-                page.feature && "pt-(--space-module)",
+                page.cover && !formats && "pt-(--space-module)",
                 "pb-(--space-module)",
               )}
             />
@@ -73,7 +98,7 @@ export function CategoryPageView({ page }: Props) {
         {/* More stories: the older stories, 10 at a time. After an ad row: space-module
             above (LAY-12); main ends with space-section. */}
         {page.more.length > 0 ? (
-          <CategoryMoreStoriesSection
+          <MoreStoriesSection
             stories={page.more}
             t={t}
             className={cn(afterAd && "pt-(--space-module)")}

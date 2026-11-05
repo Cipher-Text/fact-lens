@@ -6,7 +6,7 @@ paths:
 
 # Components
 
-- Use token utilities, `type-*` role utilities and the Tailwind 4px scale classes only. No hex, no `text-[...]`, no arbitrary values, no Tailwind palette colors (`COL-01`, `COL-02`, `TYP-01`, `TYP-18`, `LAY-01`, `LAY-21`, `CPT-07`).
+- Use token utilities, the type scale classes (`text-xs` to `text-7xl`, `text-section`, `text-nav`; typography-system.md Section 3) and the Tailwind 4px scale classes only. No hex, no `text-[...]`, no arbitrary values, no Tailwind palette colors (`COL-01`, `COL-02`, `TYP-01`, `TYP-18`, `LAY-01`, `LAY-21`, `CPT-07`).
 - No `dark:` (`COL-03`). No `2xl:` (`LAY-06`). No CSS `order` (`LAY-14`). No `vw` (`LAY-02`).
 - Text color: `ink`, `ink-secondary`, `ink-muted` (`TYP-14`). Controls and links: `interactive` (`COL-05`). `brand` is for identity only (`COL-04`).
 - Do not check the language in a component to change a font or size. The tokens do it through `lang` (`TYP-04`).

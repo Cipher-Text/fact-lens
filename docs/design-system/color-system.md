@@ -1,6 +1,6 @@
 # Fact Lens Color System
 
-Version 2.16 · 24 October 2026 · Article page, checkpoint 1 (DR-389)
+Version 2.19 · 6 November 2026 · Featured card and rules (spec log featured-card-text-room FC-05, FC-06): 2.5 and Section 5 `border` light `#A9A39E`, dark `#686B70`; `border-soft` dark `#43464B`. Before: Version 2.18 · 30 October 2026 · XC fixes (spec log xc-fixes XF-01): 2.9 `--color-page-title-band`; 2.1 the PageTitle band names it, no exception note (DR-424, DR-425). Before: Version 2.17 · 28 October 2026 · Category formats (spec log `category-formats.md` CF-06): `surface` is also the PageTitle band (C-43). Before: Version 2.16 · 24 October 2026 · Article page, checkpoint 1 (DR-389)
 
 The values are not final. Some colors can change after a few prototype rounds. Run the contrast tests in Section 3 again after each change.
 
@@ -47,7 +47,7 @@ Components use utilities only.
 | Token | Utility | Light | Dark | Use |
 | --- | --- | --- | --- | --- |
 | `background` | `background` | `#FFF9ED` | `#18191E` | Page canvas |
-| `surface` | `surface`, `card` | `#FFFCF7` | `#202126` | Cards |
+| `surface` | `surface`, `card` | `#FFFCF7` | `#202126` | Cards, the PageTitle band through `--color-page-title-band` (C-43, Section 2.9) |
 | `surface-alt` | `surface-alt`, `muted`, `secondary` | `#F6EEDF` | `#27292F` | Sections, bands, the no-image placeholder in StoryImage (DR-338) |
 | `surface-elevated` | `surface-elevated`, `popover` | `#FFFFFF` | `#303239` | Menus, dialogs, popovers, the বিশ্লেষণ ও মতামত section |
 
@@ -74,15 +74,15 @@ Components use utilities only.
 
 | Token | Utility | Light | Dark | Use |
 | --- | --- | --- | --- | --- |
-| `accent-soft` | `accent-soft` | `#EDCEC4` | `#3A201A` | Tags, selected cards |
+| `accent-soft` | `accent-soft` | `#EDCEC4` | `#3A201A` | Topics, selected cards |
 | `accent-subtle` | `accent-subtle`, `accent` | `#F6E6E0` | `#281B18` | Callouts |
 
 ### 2.5 Borders
 
 | Token | Utility | Light | Dark | Use |
 | --- | --- | --- | --- | --- |
-| `border` | `border` | `#CEC7BD` | `#494D55` | Dividers, card edges |
-| `border-soft` | `border-soft` | `#EAE1D6` | `#2D3036` | Low-priority separators |
+| `border` | `border` | `#A9A39E` | `#686B70` | Dividers, card edges. About 2.4:1 on light `background`, 3.3:1 on dark `background` (spec log featured-card-text-room FC-05) |
+| `border-soft` | `border-soft` | `#EAE1D6` | `#43464B` | Low-priority separators: Divider.rule `tone="soft"` (C-22). Dark: 1.70:1 on `surface`, 1.85:1 on `background`, so the Drawer row lines show (FC-06) |
 | `border-interactive` | `border-interactive`, `input` | `#7D7369` | `#767E89` | Inputs, selects, checkboxes |
 
 ### 2.6 Status
@@ -124,7 +124,14 @@ The utility name is the same as the token name, for example `text-success` and `
 
 ### 2.9 Component colors
 
-Components use the tokens in Sections 2.1 to 2.8. One component color token is allowed; it only points at a token above (DR-294, DR-349): `--color-bar` (brand bar: `brand` in light, `interactive` in dark). It is in `component-system.md` Section 6. Add no other component color token without a decision.
+Components use the tokens in Sections 2.1 to 2.8. Two component color tokens are allowed; each only points at a token above (DR-294, DR-349, DR-425):
+
+| Token | Light | Dark | Use |
+| --- | --- | --- | --- |
+| `--color-bar` | `brand` | `interactive` | The brand bar and the accents that follow it |
+| `--color-page-title-band` | `surface` | `surface` | The PageTitle band (C-43), class `bg-(--color-page-title-band)` (DR-424, DR-425) |
+
+They are in `component-system.md` Section 6. Add no other component color token without a decision.
 
 NewsletterSignup (DR-229; paused for prototype run 2, built in a later phase, DR-239): panel `accent-soft`; heading `ink`; text line `ink-secondary`; arrow button and privacy link `interactive`, with the UI link and button states; email field `background` with `border-interactive`. The field text is `ink` and the placeholder is `ink-muted`.
 
@@ -293,7 +300,7 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --accent-soft: #edcec4;
   --accent-subtle: #f6e6e0;
   /* Borders */
-  --border: #cec7bd;
+  --border: #a9a39e;
   --border-soft: #eae1d6;
   --border-interactive: #7d7369;
   /* Status */
@@ -331,8 +338,8 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --on-interactive: #18191e;
   --accent-soft: #3a201a;
   --accent-subtle: #281b18;
-  --border: #494d55;
-  --border-soft: #2d3036;
+  --border: #686b70;
+  --border-soft: #43464b;
   --border-interactive: #767e89;
   --success: #60ae7c;
   --success-subtle: #192a26;
@@ -473,6 +480,9 @@ Examples:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.19 | 2026-11-06 | Featured card and rules (spec log featured-card-text-room FC-05, FC-06; tajmin, 6 Nov 2026): `border` light `#CEC7BD` to `#A9A39E`, dark `#494D55` to `#686B70` (amends DR-358); `border-soft` dark `#2D3036` to `#43464B`, light unchanged (Section 2.5, Section 5). `skeleton` dark stays `#2D3036`. |
+| 2.18 | 2026-10-30 | XC fixes (spec log xc-fixes XF-01, DR-424, DR-425): Section 2.9 adds `--color-page-title-band` (`surface` in light and dark) and lists the two component color tokens; Section 2.1 the `surface` row names the band token, the exception note is removed. |
+| 2.17 | 2026-10-28 | Category formats (DR-415, spec log `category-formats.md` CF-06): Section 2.1 `surface` is also the PageTitle band (C-43), by tajmin's choice; other bands stay `surface-alt`, the P-4 and Footer panel bands `surface-elevated`. |
 | 2.16 | 2026-10-24 | Article page, checkpoint 1 (DR-385, DR-389): Section 2.9 article page colors (`--color-bar` accents, no page aliases, no wash, base focus outline). COL-02: third-party marks take the text color, no hex. COL-04 and COL-05: the article category is a filled `--color-bar` button, a stated exception. `SectionAnchor` hover wash, a stated exception to the no-wash rule (DR-391). |
 | 2.15 | 2026-10-17 | `border` changed: light `#DDD2C4` to `#CEC7BD`, dark `#3A3D44` to `#494D55`, so divider rules show on every surface, `surface-elevated` in dark included (Section 2.5, Section 5, DR-358). |
 | 2.14 | 2026-10-16 | `--color-theme-control` and `--color-theme-icon` removed; `--color-bar` is the one component color token. Ghost icon buttons and the language link: ink, hover `interactive-hover`, no wash; `accent-subtle` has no hover use; `fill-neutral` for the poll only (Section 2.9, Section 4, DR-349). |

@@ -4,6 +4,8 @@
 // translation share one id. Components read stories through ./index.ts only.
 import { categoryStories } from "./category-stories";
 import { olderCategoryStories } from "./category-stories-older";
+import { regionStories } from "./region-stories";
+import type { TopicId } from "./topics";
 import type { CategoryId, Format, RegionId } from "./types";
 
 type ImageFile = keyof typeof imageFiles;
@@ -21,10 +23,17 @@ interface StoryText {
 }
 
 export interface StoryDef {
+  /** 6 to 8 base36 characters, fixed for the story's life, shared by both languages (layout 7C). */
   id: string;
+  /** Lowercase Latin and hyphens; the Bangla page uses the same slug. Plans name stories by slug. */
+  slug: string;
   format: Format;
   category: CategoryId;
-  region?: RegionId;
+  /** What the story is about, not the dateline. One or more (DR-411). */
+  regions: RegionId[];
+  /** Topic keys from topics.ts, shared by both languages (DR-410). Opinion keeps its topics
+   *  for the article page; the topic page lists news and analysis only. */
+  topics?: TopicId[];
   publishedAt: string;
   readingMinutes?: number;
   image?: ImageFile;
@@ -53,9 +62,12 @@ function at(monthDayTime: string): string {
 export const stories: StoryDef[] = [
   // Hero
   {
-    id: "river-data-framework",
+    id: "t3txcff",
+    slug: "river-data-framework",
     format: "news",
-    category: "bangladesh",
+    category: "geopolitics",
+    regions: ["south-asia"],
+    topics: ["rivers", "monsoon", "flood-forecasting", "regional-cooperation"],
     publishedAt: at("10-07 09:15"),
     readingMinutes: 6,
     image: "wide",
@@ -75,9 +87,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "deep-sea-port-trial-ship",
+    id: "clcwc47",
+    slug: "deep-sea-port-trial-ship",
     format: "news",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("10-07 08:40"),
     readingMinutes: 4,
     image: "photo",
@@ -98,9 +112,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "joint-border-patrol-rules",
-    format: "explainer",
+    id: "xd0ei1e",
+    slug: "joint-border-patrol-rules",
+    format: "analysis",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-07 07:55"),
     readingMinutes: 5,
     bn: {
@@ -117,9 +133,11 @@ export const stories: StoryDef[] = [
   },
 
   {
-    id: "border-crossing-digital-pass",
+    id: "8xykma7",
+    slug: "border-crossing-digital-pass",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-07 07:50"),
     readingMinutes: 4,
     image: "photo",
@@ -141,17 +159,23 @@ export const stories: StoryDef[] = [
 
   // Latest
   {
-    id: "exports-september",
+    id: "a5nt6lq",
+    slug: "exports-september",
     format: "news",
     category: "economy",
+    regions: ["south-asia", "americas", "europe"],
+    topics: ["foreign-reserves"],
     publishedAt: at("10-07 10:05"),
     bn: { title: "রপ্তানি আয়ে সেপ্টেম্বরে ৭ শতাংশ প্রবৃদ্ধি" },
     en: { title: "Export earnings grow 7 percent in September" },
   },
   {
-    id: "foreign-secretary-kathmandu",
+    id: "j5obt77",
+    slug: "foreign-secretary-kathmandu",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-07 09:50"),
     bn: {
       title: "আঞ্চলিক সংযোগ ফোরামে যোগ দিতে পররাষ্ট্রসচিব কাঠমান্ডু যাচ্ছেন",
@@ -162,9 +186,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "new-submarine-cable",
+    id: "yygi4w1",
+    slug: "new-submarine-cable",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("10-07 09:30"),
     bn: { title: "নতুন সাবমেরিন কেবলে পরীক্ষামূলক ইন্টারনেট সেবা শুরু" },
     en: {
@@ -172,23 +198,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "chattogram-rain-warning",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("10-07 09:10"),
-    readingMinutes: 2,
-    bn: {
-      title: "চট্টগ্রামে ভারী বৃষ্টির সতর্কতা, পাহাড়ধসের ঝুঁকিতে চার উপজেলা",
-    },
-    en: {
-      title:
-        "Heavy rain warning in Chattogram; four sub-districts at risk of landslides",
-    },
-  },
-  {
-    id: "coast-guard-patrol-boats",
+    id: "k0i52tn",
+    slug: "coast-guard-patrol-boats",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-07 08:20"),
     bn: { title: "উপকূলে জলদস্যুতা ঠেকাতে কোস্টগার্ডের নতুন টহল নৌযান" },
     en: {
@@ -196,9 +210,12 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "liberation-war-press-archive",
+    id: "p3410oy",
+    slug: "liberation-war-press-archive",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
+    topics: ["archives"],
     publishedAt: at("10-07 07:30"),
     bn: { title: "মুক্তিযুদ্ধ নিয়ে বিদেশি সংবাদপত্রের সংগ্রহ এখন অনলাইনে" },
     en: {
@@ -208,9 +225,11 @@ export const stories: StoryDef[] = [
 
   // Analysis
   {
-    id: "small-state-balancing",
+    id: "bebk8ok",
+    slug: "small-state-balancing",
     format: "analysis",
     category: "geopolitics",
+    regions: ["south-asia", "china"],
     publishedAt: at("10-07 06:00"),
     readingMinutes: 9,
     image: "photo",
@@ -231,9 +250,12 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "reserve-indicators",
+    id: "jgj1rp3",
+    slug: "reserve-indicators",
     format: "analysis",
     category: "economy",
+    regions: ["south-asia"],
+    topics: ["regional-cooperation", "foreign-reserves"],
     publishedAt: at("10-06 20:00"),
     readingMinutes: 7,
     image: "classic",
@@ -249,9 +271,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "chip-supply-map",
+    id: "a7ocrhl",
+    slug: "chip-supply-map",
     format: "analysis",
     category: "technology",
+    regions: ["south-asia", "asia", "americas"],
     publishedAt: at("10-06 17:30"),
     readingMinutes: 8,
     image: "photo",
@@ -266,9 +290,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "bay-security-calculation",
+    id: "ylstahb",
+    slug: "bay-security-calculation",
     format: "analysis",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-06 15:00"),
     readingMinutes: 10,
     author: "rashed-hossain",
@@ -283,9 +309,11 @@ export const stories: StoryDef[] = [
 
   // Opinion
   {
-    id: "opinion-connectivity-not-port",
+    id: "kpvyhmv",
+    slug: "opinion-connectivity-not-port",
     format: "opinion",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("10-07 07:00"),
     readingMinutes: 5,
     author: "mehnaz-chowdhury",
@@ -293,9 +321,11 @@ export const stories: StoryDef[] = [
     en: { title: "The real question is connectivity, not the port" },
   },
   {
-    id: "opinion-climate-finance",
+    id: "fjyk7lb",
+    slug: "opinion-climate-finance",
     format: "opinion",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("10-06 21:00"),
     readingMinutes: 6,
     author: "arif-rahman",
@@ -303,9 +333,11 @@ export const stories: StoryDef[] = [
     en: { title: "Climate finance pledges must not stay on paper" },
   },
   {
-    id: "opinion-digital-economy-youth",
+    id: "bi2bijt",
+    slug: "opinion-digital-economy-youth",
     format: "opinion",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("10-06 18:00"),
     readingMinutes: 5,
     author: "sumaiya-islam",
@@ -316,9 +348,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "opinion-regional-history",
+    id: "cxgptgb",
+    slug: "opinion-regional-history",
     format: "opinion",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("10-06 12:00"),
     readingMinutes: 4,
     author: "farhana-kabir",
@@ -326,9 +360,11 @@ export const stories: StoryDef[] = [
     en: { title: "History textbooks need a regional view" },
   },
   {
-    id: "opinion-energy-transition-labour",
+    id: "9ih0gnq",
+    slug: "opinion-energy-transition-labour",
     format: "opinion",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("10-06 09:00"),
     readingMinutes: 5,
     author: "tanvir-ahmed",
@@ -336,76 +372,14 @@ export const stories: StoryDef[] = [
     en: { title: "Where do workers stand in the energy transition?" },
   },
 
-  // Featured: বাংলাদেশ
-  {
-    id: "coastal-embankment-project",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("10-07 08:00"),
-    readingMinutes: 5,
-    image: "wide",
-    bn: {
-      title:
-        "উপকূলের ১৯ জেলায় নতুন বাঁধ প্রকল্প, প্রথম ধাপে বরাদ্দ ৪ হাজার কোটি টাকা",
-      summary:
-        "পানিসম্পদ মন্ত্রণালয় বলছে, ঘূর্ণিঝড় মৌসুমের আগে সবচেয়ে ঝুঁকিপূর্ণ ৭০ কিলোমিটার বাঁধের কাজ শেষ হবে।",
-      imageAlt: "উপকূলে মাটি ফেলে বাঁধ উঁচু করার কাজ",
-    },
-    en: {
-      title:
-        "New embankment project for 19 coastal districts, with Tk 4,000 crore in the first phase",
-      summary:
-        "The water resources ministry says work on the 70 most vulnerable kilometres will finish before the cyclone season.",
-      imageAlt: "Workers raising a coastal embankment with soil",
-    },
-  },
-  {
-    id: "dhaka-single-ticket",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("10-07 07:45"),
-    readingMinutes: 3,
-    image: "classic",
-    bn: {
-      title: "ঢাকার গণপরিবহনে একক টিকিট চালু হচ্ছে জানুয়ারিতে",
-      imageAlt: "মেট্রো স্টেশনের প্ল্যাটফর্মে যাত্রীরা",
-    },
-    en: {
-      title: "Single ticket for Dhaka public transport to start in January",
-      imageAlt: "Passengers on a metro station platform",
-    },
-  },
-  {
-    id: "primary-teacher-training",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("10-06 19:20"),
-    readingMinutes: 4,
-    bn: {
-      // Long Bangla headline with no image.
-      title:
-        "প্রাথমিক বিদ্যালয়ের শিক্ষকদের নতুন প্রশিক্ষণ কর্মসূচিতে ডিজিটাল পাঠদান, শিশুদের মানসিক স্বাস্থ্য এবং প্রতিবন্ধী শিক্ষার্থীদের অন্তর্ভুক্তির ওপর বিশেষ জোর দেওয়া হবে বলে জানিয়েছে শিক্ষা মন্ত্রণালয়",
-    },
-    en: {
-      title:
-        "Primary teacher training to focus on digital lessons, child mental health and inclusion",
-    },
-  },
-  {
-    id: "aman-harvest-north",
-    format: "news",
-    category: "bangladesh",
-    publishedAt: at("10-06 16:00"),
-    readingMinutes: 3,
-    bn: { title: "উত্তরাঞ্চলে আমন ধানের ভালো ফলনের আশা" },
-    en: { title: "Good aman rice harvest expected in the north" },
-  },
-
   // Featured: ভূরাজনীতি
   {
-    id: "bay-trilateral-dialogue",
+    id: "k8xj473",
+    slug: "bay-trilateral-dialogue",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia", "asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-07 06:45"),
     readingMinutes: 6,
     image: "wide",
@@ -424,9 +398,12 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "regional-power-grid",
+    id: "2km7hwc",
+    slug: "regional-power-grid",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-06 22:10"),
     readingMinutes: 4,
     image: "classic",
@@ -440,9 +417,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "peacekeeping-women-target",
+    id: "11xxrae",
+    slug: "peacekeeping-women-target",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
     publishedAt: at("10-06 18:40"),
     readingMinutes: 3,
     bn: { title: "শান্তিরক্ষা মিশনে নারী সদস্য বাড়াতে নতুন লক্ষ্য" },
@@ -451,9 +430,12 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "visa-joint-committee",
+    id: "mast2hx",
+    slug: "visa-joint-committee",
     format: "news",
     category: "geopolitics",
+    regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-06 14:30"),
     readingMinutes: 3,
     bn: { title: "ভিসা সহজ করতে দুই প্রতিবেশীর যৌথ কমিটি" },
@@ -462,9 +444,11 @@ export const stories: StoryDef[] = [
 
   // Grouped: নিরাপত্তা ও সংঘাত
   {
-    id: "cyber-response-centre",
+    id: "48wvj5k",
+    slug: "cyber-response-centre",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-07 05:30"),
     readingMinutes: 4,
     image: "photo",
@@ -482,18 +466,22 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "fishing-boat-trackers",
+    id: "argtgnf",
+    slug: "fishing-boat-trackers",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-06 13:00"),
     readingMinutes: 3,
     bn: { title: "সমুদ্রে মাছ ধরার নৌকায় স্যাটেলাইট ট্র্যাকার বাধ্যতামূলক" },
     en: { title: "Satellite trackers made compulsory on sea fishing boats" },
   },
   {
-    id: "hill-road-security-posts",
+    id: "g199u0n",
+    slug: "hill-road-security-posts",
     format: "news",
     category: "security",
+    regions: ["south-asia"],
     publishedAt: at("10-06 11:00"),
     readingMinutes: 5,
     bn: {
@@ -509,9 +497,12 @@ export const stories: StoryDef[] = [
 
   // Grouped: ইতিহাস ও প্রেক্ষাপট
   {
-    id: "old-dhaka-trade-ledgers",
+    id: "wa78nf3",
+    slug: "old-dhaka-trade-ledgers",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
+    topics: ["archives", "river-trade"],
     publishedAt: at("10-06 16:30"),
     readingMinutes: 5,
     image: "classic",
@@ -529,9 +520,12 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "southern-silk-route",
-    format: "explainer",
+    id: "e44z1wc",
+    slug: "southern-silk-route",
+    format: "analysis",
     category: "history",
+    regions: ["south-asia"],
+    topics: ["rivers", "river-trade"],
     publishedAt: at("10-06 10:00"),
     readingMinutes: 8,
     bn: {
@@ -542,9 +536,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "partition-oral-history",
+    id: "1q469br",
+    slug: "partition-oral-history",
     format: "news",
     category: "history",
+    regions: ["south-asia"],
     publishedAt: at("10-05 18:00"),
     readingMinutes: 4,
     bn: { title: "দেশভাগের স্মৃতি সংরক্ষণে মৌখিক ইতিহাস প্রকল্প" },
@@ -553,9 +549,11 @@ export const stories: StoryDef[] = [
 
   // Grouped: অর্থনীতি ও বাণিজ্য
   {
-    id: "garment-latin-america",
+    id: "8ty8nou",
+    slug: "garment-latin-america",
     format: "news",
     category: "economy",
+    regions: ["americas"],
     publishedAt: at("10-07 06:30"),
     readingMinutes: 4,
     image: "photo",
@@ -574,9 +572,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "inflation-third-month",
+    id: "r707srg",
+    slug: "inflation-third-month",
     format: "news",
     category: "economy",
+    regions: ["south-asia"],
     publishedAt: at("10-06 20:30"),
     readingMinutes: 3,
     bn: { title: "মূল্যস্ফীতি টানা তিন মাস কমেছে, খাদ্যপণ্যে চাপ রয়ে গেছে" },
@@ -585,9 +585,12 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "remittance-digital-channel",
+    id: "v3kwhfo",
+    slug: "remittance-digital-channel",
     format: "news",
     category: "economy",
+    regions: ["south-asia", "middle-east"],
+    topics: ["foreign-reserves"],
     publishedAt: at("10-06 12:40"),
     readingMinutes: 3,
     bn: { title: "প্রবাসী আয় পাঠাতে নতুন ডিজিটাল চ্যানেল, কমবে খরচ" },
@@ -596,9 +599,11 @@ export const stories: StoryDef[] = [
 
   // Grouped: প্রযুক্তি ও কৌশলগত শক্তি
   {
-    id: "farm-drone-tests",
+    id: "cy2g15h",
+    slug: "farm-drone-tests",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("10-06 15:40"),
     readingMinutes: 4,
     image: "classic",
@@ -616,30 +621,37 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "ai-policy-draft",
+    id: "7l94o8a",
+    slug: "ai-policy-draft",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
     publishedAt: at("10-06 11:30"),
     readingMinutes: 3,
     bn: { title: "কৃত্রিম বুদ্ধিমত্তা নীতিমালার খসড়ায় মতামত চাইল সরকার" },
     en: { title: "Government asks for comments on draft AI policy" },
   },
   {
-    id: "char-satellite-internet",
+    id: "ulu2arp",
+    slug: "char-satellite-internet",
     format: "news",
     category: "technology",
+    regions: ["south-asia"],
+    topics: ["rivers"],
     publishedAt: at("10-05 17:00"),
     readingMinutes: 4,
     bn: { title: "দুর্গম চরে স্যাটেলাইট ইন্টারনেটের পরীক্ষামূলক সংযোগ" },
     en: { title: "Satellite internet reaches remote river islands in a trial" },
   },
 
-  // Regions. চীন is a region, not a category (DR-19). Africa has no stories.
+  // Regions. চীন is a region, not a category (DR-19). Oceania has no
+  // stories, so it does not show.
   {
-    id: "china-renewables-understanding",
+    id: "dhe3tgp",
+    slug: "china-renewables-understanding",
     format: "news",
     category: "economy",
-    region: "china",
+    regions: ["china"],
     publishedAt: at("10-07 05:00"),
     readingMinutes: 4,
     image: "photo",
@@ -653,10 +665,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "china-scholarships",
+    id: "1c4s3ri",
+    slug: "china-scholarships",
     format: "news",
     category: "geopolitics",
-    region: "china",
+    regions: ["china"],
     publishedAt: at("10-06 14:00"),
     readingMinutes: 3,
     bn: { title: "চীনা বিশ্ববিদ্যালয়ে বাংলাদেশি শিক্ষার্থীদের বৃত্তি বাড়ছে" },
@@ -666,20 +679,23 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "kunming-trade-fair",
+    id: "83uodjb",
+    slug: "kunming-trade-fair",
     format: "news",
     category: "economy",
-    region: "china",
+    regions: ["china"],
     publishedAt: at("10-05 16:00"),
     readingMinutes: 3,
     bn: { title: "চীনের এক আঞ্চলিক বাণিজ্য মেলায় বাংলাদেশি প্যাভিলিয়ন" },
     en: { title: "A Bangladeshi pavilion at a regional trade fair in China" },
   },
   {
-    id: "india-land-port-clearance",
+    id: "2bmih79",
+    slug: "india-land-port-clearance",
     format: "news",
     category: "geopolitics",
-    region: "india",
+    regions: ["south-asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-07 04:30"),
     readingMinutes: 4,
     image: "classic",
@@ -693,40 +709,45 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "india-border-markets",
+    id: "g864wmg",
+    slug: "india-border-markets",
     format: "news",
     category: "economy",
-    region: "india",
+    regions: ["south-asia"],
     publishedAt: at("10-06 10:30"),
     readingMinutes: 3,
     bn: { title: "সীমান্ত হাটের সংখ্যা বাড়ানোর প্রস্তাব" },
     en: { title: "Proposal to open more border markets" },
   },
   {
-    id: "myanmar-river-trade",
+    id: "gj7aeft",
+    slug: "myanmar-river-trade",
     format: "news",
     category: "economy",
-    region: "myanmar",
+    regions: ["asia"],
+    topics: ["rivers", "river-trade"],
     publishedAt: at("10-06 19:00"),
     readingMinutes: 4,
     bn: { title: "মিয়ানমার সীমান্তে নৌপথে বাণিজ্য আবার শুরুর উদ্যোগ" },
     en: { title: "Move to restart river trade on the Myanmar border" },
   },
   {
-    id: "myanmar-refugee-research",
+    id: "6abw8vo",
+    slug: "myanmar-refugee-research",
     format: "analysis",
     category: "security",
-    region: "myanmar",
+    regions: ["asia", "south-asia"],
     publishedAt: at("10-05 12:00"),
     readingMinutes: 7,
     bn: { title: "আঞ্চলিক শরণার্থী পরিস্থিতি নিয়ে নতুন গবেষণা প্রতিবেদন" },
     en: { title: "New research report on the regional refugee situation" },
   },
   {
-    id: "gulf-skilled-workers",
+    id: "6vdnq0y",
+    slug: "gulf-skilled-workers",
     format: "news",
     category: "economy",
-    region: "middle-east",
+    regions: ["middle-east"],
     publishedAt: at("10-06 17:00"),
     readingMinutes: 4,
     image: "photo",
@@ -740,10 +761,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "middle-east-energy-prices",
+    id: "5s0uqeb",
+    slug: "middle-east-energy-prices",
     format: "news",
     category: "economy",
-    region: "middle-east",
+    regions: ["middle-east"],
     publishedAt: at("10-05 20:00"),
     readingMinutes: 3,
     bn: { title: "মধ্যপ্রাচ্যে জ্বালানির দামে ওঠানামা, সতর্ক আমদানিকারকেরা" },
@@ -753,10 +775,12 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "southeast-asia-trade-talks",
+    id: "g9l8itx",
+    slug: "southeast-asia-trade-talks",
     format: "news",
     category: "economy",
-    region: "southeast-asia",
+    regions: ["asia"],
+    topics: ["regional-cooperation"],
     publishedAt: at("10-06 09:00"),
     readingMinutes: 4,
     image: "classic",
@@ -771,20 +795,22 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "thailand-tourism-circuit",
+    id: "xg5340z",
+    slug: "thailand-tourism-circuit",
     format: "news",
     category: "economy",
-    region: "southeast-asia",
+    regions: ["asia"],
     publishedAt: at("10-05 11:00"),
     readingMinutes: 3,
     bn: { title: "থাইল্যান্ড হয়ে পর্যটন সার্কিট চালুর পরিকল্পনা" },
     en: { title: "Plan for a tourism circuit through Thailand" },
   },
   {
-    id: "europe-labour-law",
+    id: "wv5ufat",
+    slug: "europe-labour-law",
     format: "news",
     category: "economy",
-    region: "europe",
+    regions: ["europe"],
     publishedAt: at("10-06 08:00"),
     readingMinutes: 5,
     image: "photo",
@@ -799,10 +825,11 @@ export const stories: StoryDef[] = [
     },
   },
   {
-    id: "germany-nurses-pilot",
+    id: "mnsoqro",
+    slug: "germany-nurses-pilot",
     format: "news",
     category: "economy",
-    region: "europe",
+    regions: ["europe"],
     publishedAt: at("10-05 15:00"),
     readingMinutes: 3,
     bn: { title: "জার্মানিতে নার্স পাঠানোর পাইলট কর্মসূচি" },
@@ -811,4 +838,6 @@ export const stories: StoryDef[] = [
   // The category pages (spacing-layout-system.md 7B).
   ...categoryStories,
   ...olderCategoryStories,
+  // The region hub (page/regions).
+  ...regionStories,
 ];

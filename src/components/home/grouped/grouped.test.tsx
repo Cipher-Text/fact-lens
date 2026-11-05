@@ -84,14 +84,14 @@ describe("GroupedCategoriesSection (P-3)", () => {
     const feature = section.querySelector("[data-story-card]")!;
     expect(
       within(feature as HTMLElement).getByRole("heading", { level: 3 }),
-    ).toHaveClass("type-story-title");
+    ).toHaveClass("text-2xl");
     expect(feature.querySelector("img")).not.toBeNull();
     expect(feature.className).not.toMatch(/rounded|border/);
     const items = within(section).getAllByRole("listitem");
     expect(items).toHaveLength(2);
     for (const li of items) {
       expect(within(li).getByRole("heading", { level: 3 })).toHaveClass(
-        "type-story-title-sm",
+        "text-lg",
       );
     }
     // The block heading is plain text, not a link (DR-122).
@@ -106,10 +106,11 @@ describe("GroupedCategoriesSection (P-3)", () => {
     expect(
       [...rail.children].map((el) => el.getAttribute("data-ad-slot") ?? "poll"),
     ).toEqual(["poll", "ad-rail"]);
-    // The rail ad is in the HTML at every width and hidden under 1280 (9.1, DR-244).
+    // The rail ad is in the HTML at every width and hidden until the rail is a column,
+    // from 1024 (9.1, DR-244; tajmin, 4 Nov 2026).
     expect(rail.querySelector('[data-ad-slot="ad-rail"]')).toHaveClass(
       "hidden",
-      "xl:grid",
+      "lg:grid",
     );
     expect(rail.querySelector("[data-poll]")!.innerHTML).not.toMatch(
       /(^|[\s"])bg-surface-alt/,

@@ -84,12 +84,13 @@ describe("AdSlot", () => {
     }
   });
 
-  it("hides the rail under 1280 and shows its 300x600 creative from 1280 (DR-245)", () => {
+  it("hides the rail under 1024 and shows its 300x600 creative whenever the rail is a column, from 1024", () => {
     const { container } = render(
       <AdSlot variant="rail" lang="en" strings={en.ads} />,
     );
     const row = container.firstElementChild as HTMLElement;
-    expect(row).toHaveClass("hidden", "xl:grid");
+    expect(row).toHaveClass("hidden", "lg:grid");
+    expect(row).not.toHaveClass("xl:grid");
     expect(container.querySelector("img")).toHaveAttribute(
       "src",
       "/mock/ad-300x600.svg",

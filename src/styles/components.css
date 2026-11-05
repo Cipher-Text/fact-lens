@@ -3,28 +3,37 @@
   --bar-brand: 0.375rem;
   --bar-section-width: 2.5rem;
   --bar-section-height: 0.5rem;
-  --space-lead-inset-start: 0;
-  --space-lead-inset-end: 2rem;
-  --space-lead-panel: 1rem;
-  --space-lead-overlap: 2rem;
-  --space-lead-eyebrow-title: 0.5rem;
-  --space-lead-summary-meta: 1rem;
-  --space-card-overlap: clamp(2.5rem, 10cqi, 4rem);
+  --space-inset-large-start: 0;
+  --space-inset-large-end: 2rem;
+  --space-panel-large: 1rem;
+  --space-overlap-large: 2rem;
+  --space-story-eyebrow-title: 0.5rem;
+  --space-story-summary-meta: 1rem;
+  --space-overlap: clamp(2.5rem, 10cqi, 4rem);
   --space-card-notch: clamp(2.5rem, 10cqi, 4rem);
   --color-bar: var(--brand);
   --color-meta: var(--ink-muted);
+  /* PageTitle band (C-43): surface in light and dark (DR-424, DR-425). */
+  --color-page-title-band: var(--surface);
 
   /* LeadStory panel padding at the start side: 0 on narrow (text lines up with the image
      edge), the panel padding from 600px. C-01 gives the values; Section 6 has no token
      (CPT-07, DOC-30). */
-  --space-lead-panel-start: 0;
+  --space-panel-large-start: 0;
 
-  /* StoryCard split feature (C-24, P-2 featureStory): the image column is a share of the
-     free width, clamped. 50% from 768 to 1023, 60% from 1024 (DR-118, DR-119). Section 6 has
-     no tokens for it (DOC-30). */
-  --story-feature-media-min: 26.25rem;
-  --story-feature-media-max: 34.8125rem;
-  --story-feature-media-share: 0.5;
+  /* PageTitle band (C-43) block inset: 24px under 600px, 32px from 600px, 40px from 1024px
+     (tajmin, 28 Oct 2026). Not the LAY-20 panel band values (40 / 48px), CPT-07. */
+  --space-page-title-band: 1.5rem;
+
+  /* StoryCard side (C-24, DR-451, DR-464 as amended): from 1024 text at the start, the image
+     at the end. The image column is 3 / 5 of the whole card width, no minimum and no maximum;
+     the text takes the rest minus the column gap (tajmin, 5 Nov 2026: "lets go with 2/5:3/5
+     from 1024 till end. before 1024, make it stack."; the analysis hub cover and the
+     P-2 featured category feature). Section 6 has no tokens for it (CPT-07). */
+  --story-side-media-share: calc(3 / 5);
+  /* The analysis hub mosaic: the gap between the two card rows. The row gap, and 32px from
+     1280 (tajmin, 4 Nov 2026; CPT-07). */
+  --space-analysis-top-row-gap: var(--grid-row-gap);
 
   /* Buttons (Section 6 table, DR-208) */
   --button-height: 3rem;
@@ -40,14 +49,21 @@
 
 .dark {
   --color-bar: var(--interactive);
+  --color-page-title-band: var(--surface);
 }
 
-/* Divider (C-22, DR-351). --divider-rule is in Section 6: the rule weight of Divider.item,
-   Divider.rule and Divider.column. Section 6 has no tokens for the other values (CPT-07):
-   the column-inset distance from the top and the bottom, and the OpinionList quote mark
-   width (C-06: 28 / 36 / 44px), which also sets where the OpinionList item rule starts. */
+/* Divider (C-22, DR-351), component-system Section 6: --divider-rule, the rule weight of
+   Divider.item, Divider.rule and Divider.column; --divider-column-inset, the column-inset
+   distance from the top and the bottom; --quote-mark-width, the OpinionList quote mark width
+   (C-06: 28 / 36 / 44px), which also sets where the OpinionList item rule starts.
+   --divider-dots: the one dotted rule pattern (C-22, FC-04): 2px marks with a 4px gap in the
+   border color, the color stops of a repeating gradient. Every dotted rule draws
+   repeating-linear-gradient(<direction>, var(--divider-dots)): Divider.item, divider-item-rail,
+   divider-column-dotted and the article Key points. It resolves on :root, where the .dark
+   class is, so it follows the theme. */
 :root {
   --divider-rule: 1px;
+  --divider-dots: var(--color-border) 0 2px, transparent 2px 6px;
   --divider-column-inset: 1rem;
   --quote-mark-width: 1.75rem;
 }
@@ -56,6 +72,7 @@
   :root {
     --top-bar-inset: 1.125rem;
     --quote-mark-width: 2.25rem;
+    --space-page-title-band: 2rem;
   }
 }
 
@@ -69,6 +86,7 @@
 @media (min-width: 64rem) {
   :root {
     --quote-mark-width: 2.75rem;
+    --space-page-title-band: 2.5rem;
   }
 }
 
@@ -117,7 +135,8 @@
 /* TopBar.logo when stuck: 24px; phones keep 20px (C-17). Each ratio is 24px over the
    type-logo size of that tier (typography §3: 28px from 768, 32px from 1024). Change them
    with those sizes; header.spec.ts checks the drawn 24px. A length / length calc would tie
-   them, but Safari does not support it yet. */
+   them, but Safari does not support it yet. --logo-stuck-scale is a helper (DR-437): its
+   sources are --type-logo-size at each tier and the 24px stuck logo of C-17. */
 :root {
   --logo-stuck-scale: 1;
 }
@@ -158,45 +177,44 @@
 @media (min-width: 64rem) {
   :root {
     --bar-section-width: 3rem;
-    --story-feature-media-share: 0.6;
   }
 }
 
-/* LeadStory root: container-type: inline-size. .overlap-feature is the OverlapCard feature
-   body (CategoryFeatureSection): the card is its container, so --space-lead-panel steps with the card
+/* LeadStory root: container-type: inline-size. .overlap-large is the OverlapCard large
+   body (CategoryCoverSection): the card is its container, so --space-panel-large steps with the card
    width as in LeadStory (tajmin, category page). */
 @container (width >= 600px) {
   .lead-story,
-  .overlap-feature {
+  .overlap-large {
     --bar-brand: 0.5rem;
-    --space-lead-inset-start: clamp(2rem, 4.2cqi, 2.5rem);
-    --space-lead-inset-end: clamp(2rem, 4.2cqi, 2.5rem);
-    --space-lead-panel: 1.5rem;
-    --space-lead-overlap: clamp(4rem, 10cqi, 6rem);
+    --space-inset-large-start: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-inset-large-end: clamp(2rem, 4.2cqi, 2.5rem);
+    --space-panel-large: 1.5rem;
+    --space-overlap-large: clamp(4rem, 10cqi, 6rem);
   }
 }
 
 @container (width >= 880px) {
   .lead-story,
-  .overlap-feature {
+  .overlap-large {
     --bar-brand: 0.625rem;
-    --space-lead-panel: 2rem;
+    --space-panel-large: 2rem;
   }
 }
 
 @container (width >= 600px) {
   .lead-story {
-    --space-lead-panel-start: var(--space-lead-panel);
+    --space-panel-large-start: var(--space-panel-large);
   }
 }
 
-/* StoryCard layout (C-24). The card root is the container (CPT-04); the grid inside it has
-   a media area and a body area (DR-267: the media is first in the markup, no `order`).
-   story-stacked puts the media above the body. story-split-third and story-split-feature put
+/* StoryCard variants (C-24, DR-451, DR-453). The card root is the container (CPT-04); the
+   grid inside it has a media area and a body area (DR-267: the media is first in the markup,
+   no `order`). story-top puts the media above the body. story-thumbnail and story-side put
    the text at the start and the image at the end, with --grid-column-gap between them
    (DR-300). A row stacks when the container is narrower than 17.5rem, which is what happens
    at 200% text; the width is in rem so it grows with the text (DR-308, A11Y-18). Tracks use
-   minmax(0, ...) so a long word does not widen a column (P-2 checks). */
+   minmax(0, ...) so a long word does not widen a column. */
 @utility story-media {
   grid-area: media;
 }
@@ -205,14 +223,15 @@
   grid-area: body;
 }
 
-@utility story-stacked {
+@utility story-top {
   grid-template-areas: "media" "body";
   grid-template-columns: minmax(0, 1fr);
   column-gap: 0;
   row-gap: var(--space-story-media-text);
 }
 
-@utility story-split-third {
+/* thumbnail: text 2fr, image 1fr. */
+@utility story-thumbnail {
   grid-template-areas: "body media";
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   column-gap: var(--grid-column-gap);
@@ -225,17 +244,20 @@
   }
 }
 
-@utility story-split-feature {
+/* side: the image column is 3 / 5 of the whole card width, no minimum and no maximum; the
+   text takes the rest minus the gap (DR-464 as amended). The title fills its lines up to the
+   gap before the image: pretty, also with large, in place of balance (TYP-13, DR-468).
+   StoryCard stacks it below 1024 with story-top. */
+@utility story-side {
   grid-template-areas: "body media";
-  grid-template-columns:
-    minmax(0, 1fr)
-    clamp(
-      var(--story-feature-media-min),
-      calc((100% - var(--grid-column-gap)) * var(--story-feature-media-share)),
-      var(--story-feature-media-max)
+  grid-template-columns: minmax(0, 1fr) calc(
+      100% * var(--story-side-media-share)
     );
   column-gap: var(--grid-column-gap);
   row-gap: 0;
+  & :is(h2, h3, h4) {
+    text-wrap: pretty;
+  }
   @container (width < 17.5rem) {
     grid-template-areas: "media" "body";
     grid-template-columns: minmax(0, 1fr);
@@ -257,7 +279,7 @@
     margin-block-start: var(--space-story-media-text);
   }
   & > .story-date {
-    margin-block-start: var(--space-lead-summary-meta);
+    margin-block-start: var(--space-story-summary-meta);
   }
   @media (width >= 37.5rem) {
     grid-template-areas: "date body media";
@@ -278,7 +300,7 @@
         margin-block-start: var(--space-story-media-text);
       }
       & > .story-date {
-        margin-block-start: var(--space-lead-summary-meta);
+        margin-block-start: var(--space-story-summary-meta);
       }
     }
   }
@@ -363,6 +385,31 @@
   }
 }
 
+/* Load more (Latest and category More stories; "fade + image fade", tajmin 28 Oct 2026):
+   each row a press adds fades in, opacity only, as the phone region tab panels (DR-284);
+   nothing moves. The first rows do not animate. No fill mode: the end state is the row's own
+   look, so a finished row lets the animation go. Reduced motion: none (base rule). */
+@keyframes story-added {
+  from {
+    opacity: 0;
+  }
+}
+
+@utility story-added {
+  animation: story-added var(--duration-slide) var(--ease-slide);
+}
+
+/* The story image of an added row: transparent over the surface-alt slot until it has
+   loaded, then it fades in, so a lazy image does not snap in after the row (StoryImage
+   fadeIn). Lazy loading stays. Reduced motion: it shows at once (base rule). */
+@utility story-image-fade {
+  opacity: 0;
+  transition: opacity var(--duration-slide) var(--ease-slide);
+  &[data-loaded] {
+    opacity: 1;
+  }
+}
+
 /* One motion (DR-346, DR-349): every slide, fade and height change uses --duration-slide with ease-slide (DR-357).
    Button colors keep the 200ms theme default. The base rule in globals.css sets every
    duration to 0 with reduced motion, so the end state shows at once.
@@ -425,13 +472,15 @@
   }
 }
 
-/* Divider.item (C-22, DR-262, DR-350, DR-351): a 1px dotted rule, square 1 x 1px dots with a
-   2px gap, drawn with a repeating gradient because border-style dotted differs between
-   browsers. space-list-item is on each side of the rule, measured to the ink (DR-350): the
-   list sets --list-ink-start (blank space above the first ink of an item) with a list-ink-*
-   utility and the padding takes it off; the item above ends at its ink because its meta line
-   is trimmed in place (rule below). The padding holds the rule, so the space below the rule
-   is the full space-list-item too. --list-ink-end is for RankedList only.
+/* Divider.item (C-22, DR-262, DR-350, DR-351): a 1px dotted rule, 2px marks with a 4px gap
+   (tajmin, 6 Nov 2026: "var(--color-border) 0px 2px, transparent 1px 6px ... for both
+   vertical and horizontal"; was 1 x 1px dots with a 2px gap), drawn with a repeating
+   gradient of --divider-dots because border-style dotted differs between browsers.
+   space-list-item is on each side of the rule, measured to the ink (DR-350): the list sets
+   --list-ink-start (blank space above the first ink of an item) with a list-ink-* utility
+   and the padding takes it off; the item above ends at its ink because its meta line is
+   trimmed in place (rule below). The padding holds the rule, so the space below the rule
+   is the full space-list-item too.
    --divider-item-start moves the rule start (OpinionList: the text column only). The first
    item has no rule (no rule before the first row, none after the last). */
 @utility divider-item {
@@ -439,7 +488,7 @@
      collapse through it (WebKit carried it across the Latest column break). */
   display: flow-root;
   position: relative;
-  margin-block-start: calc(var(--space-list-item) - var(--list-ink-end, 0rem));
+  margin-block-start: var(--space-list-item);
   padding-block-start: calc(
     var(--space-list-item) + var(--divider-rule) - var(--list-ink-start, 0rem)
   );
@@ -449,11 +498,7 @@
     inset-inline: var(--divider-item-start, 0rem) 0;
     top: 0;
     height: var(--divider-rule);
-    background-image: repeating-linear-gradient(
-      to right,
-      var(--color-border) 0 1px,
-      transparent 1px 3px
-    );
+    background-image: repeating-linear-gradient(to right, var(--divider-dots));
   }
   &:first-child {
     margin-block-start: 0;
@@ -464,61 +509,38 @@
   }
 }
 
-/* Divider.item inside a multi-column grid list (RankedList): the rule runs within a column
-   only (DR-299, DR-300), so an item on the first grid row has no rule and the others have
-   one above them. Items per row: 1, 2 from 600, 3 from 1024, 4 from 1280 (DR-51, DR-145).
-   The list sets row-gap 0: the space above and below the rule is space-list-item, measured
-   to the ink as in divider-item. The rule is the ::after of the li, because the rank numeral
-   is its ::before. */
-@utility divider-item-grid {
-  position: relative;
-  margin-block-start: calc(var(--space-list-item) - var(--list-ink-end, 0rem));
-  padding-block-start: calc(
-    var(--space-list-item) + var(--divider-rule) - var(--list-ink-start, 0rem)
-  );
-  &::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: var(--divider-rule);
-    background-image: repeating-linear-gradient(
-      to right,
-      var(--color-border) 0 1px,
-      transparent 1px 3px
-    );
-  }
-  &:nth-child(-n + 1) {
-    margin-block-start: 0;
-    padding-block-start: 0;
-    &::after {
-      display: none;
+/* Divider.item between the wrapper and the rail below 1024, where the rail is under the
+   wrapper (P-2: under the stacked StoryCard side feature; tajmin, 5 Nov 2026: "use a dotted
+   rule below the card when it stacks below 1024."). Put it on the WithRail grid. The same
+   dotted rule and space-list-item on each side, measured to the ink (DR-350): the grid row
+   gap is 0, the wrapper ends at the ink of its meta line, and the rail sets --list-ink-start
+   (a list-ink-* utility on the Rail). From 1024 the rail is beside the wrapper: no rule. */
+@utility divider-item-rail {
+  @media (width < 64rem) {
+    /* Two classes, so it wins over the with-rail gap. */
+    &.with-rail {
+      row-gap: 0;
     }
-  }
-  @media (width >= 37.5rem) {
-    &:nth-child(-n + 2) {
-      margin-block-start: 0;
-      padding-block-start: 0;
-      &::after {
-        display: none;
-      }
+    & > :first-child [data-meta-line] {
+      margin-block-end: calc(-1 * var(--text-xs-ink-end));
     }
-  }
-  @media (width >= 64rem) {
-    &:nth-child(-n + 3) {
-      margin-block-start: 0;
-      padding-block-start: 0;
-      &::after {
-        display: none;
-      }
-    }
-  }
-  @media (width >= 80rem) {
-    &:nth-child(-n + 4) {
-      margin-block-start: 0;
-      padding-block-start: 0;
-      &::after {
-        display: none;
+    & > :nth-child(2) {
+      position: relative;
+      margin-block-start: var(--space-list-item);
+      padding-block-start: calc(
+        var(--space-list-item) + var(--divider-rule) -
+          var(--list-ink-start, 0rem)
+      );
+      &::before {
+        content: "";
+        position: absolute;
+        inset-inline: 0;
+        top: 0;
+        height: var(--divider-rule);
+        background-image: repeating-linear-gradient(
+          to right,
+          var(--divider-dots)
+        );
       }
     }
   }
@@ -530,14 +552,16 @@
    The last item of a list keeps its line box: space-more-link is not measured to the ink. */
 @layer components {
   :where(:has(+ .divider-item)) [data-meta-line] {
-    margin-block-end: calc(-1 * var(--type-metadata-ink-end));
+    margin-block-end: calc(-1 * var(--text-xs-ink-end));
   }
 }
 
 /* The ink at the top of the items of a list (DR-350). Set it on the list (and on a
-   StoryList that is itself a row after a card). Items that start with a title: */
+   StoryList that is itself a row after a card). --list-ink-start is a helper (DR-437): it
+   only takes a named token, --text-lg-ink-start or 0. Items that start with a
+   title: */
 @utility list-ink-title-meta {
-  --list-ink-start: var(--type-story-title-sm-ink-start);
+  --list-ink-start: var(--text-lg-ink-start);
 }
 
 /* Cards with an image at the top (the AnalysisSection rows): the image is the first ink. */
@@ -545,14 +569,7 @@
   --list-ink-start: 0rem;
 }
 
-/* RankedList: the title is the first and the last row. A row-first grid: the item below a
-   rule sits under the tallest item of the row above (C-07), so the list sets both edges. */
-@utility list-ink-title {
-  --list-ink-start: var(--type-story-title-sm-ink-start);
-  --list-ink-end: var(--type-story-title-sm-ink-end);
-}
-
-/* RankedList chip (category page, tajmin): the rank in a square chip, serif digits in both
+/* RankedList chip (C-07): the rank in a square chip, serif digits in both
    languages (Source Serif 4, Noto Serif Bengali), 1.5rem at weight 700 in a 2.25rem chip,
    2rem at 600 in 2.75rem from 1024. The ink insets are the blank space above and below the
    ink of the digits in their 1em line box, as a share of the digit size, measured from the
@@ -561,8 +578,7 @@
    (--rank-chip-ink-start, --rank-chip-ink-end) are in typography.css with the other ink
    insets (U-44). */
 
-/* --rank-list-gap: the space between the items of the RankedList columns layout, which have
-   no rule (tajmin):
+/* --rank-list-gap: the space between the RankedList items, which have no rule (tajmin):
    1.5rem on phones, 1.75rem from 600 (two columns), 2rem from 1280 (equal to
    --grid-column-gap). */
 :root {
@@ -589,41 +605,46 @@
 @media (min-width: 80rem) {
   :root {
     --rank-list-gap: 2rem;
+    --space-analysis-top-row-gap: 2rem;
   }
 }
 
-/* The chip is --color-bar with on-interactive digits, as the label Chip (C-11). The inner
-   span takes the ink insets off with negative margins, so the chip centers the ink of the
-   digits. 16px between the chip and the title (tajmin; rank-list has 12px). The chip and
-   the title center on each other (tajmin): on the title's line boxes,
-   whose center is within about half a pixel of the ink of a real headline. The selectors
-   repeat .rank-list to win over the type-rank rules of rank-list (family, weight and the
-   nudge margin). */
-@utility rank-list-chip {
-  &.rank-list > li {
+/* RankedList (C-07): the rank and the title in a two-column grid per item. The rank is the
+   number from the data in <span aria-hidden="true"> (DR-290), in a square chip in
+   --color-bar with on-interactive digits, as the label Chip (C-11). The inner span takes the
+   ink insets off with negative margins, so the chip centers the ink of the digits. 16px
+   between the chip and the title (tajmin). The chip and the title center on each other
+   (tajmin): on the title's line boxes, whose center is within about half a pixel of the ink
+   of a real headline. */
+@utility rank-list {
+  list-style: none;
+  & > li {
+    display: grid;
     grid-template-columns: var(--rank-chip-size) minmax(0, 1fr);
     column-gap: --spacing(4);
     align-items: center;
   }
-  &.rank-list > li > [aria-hidden="true"]:first-child {
+  & > li > [aria-hidden="true"]:first-child {
     display: grid;
     place-items: center;
     inline-size: var(--rank-chip-size);
     aspect-ratio: 1;
-    margin-block: 0;
     background-color: var(--color-bar);
     color: var(--on-interactive);
     font-family: var(--font-editorial-active);
     font-size: var(--rank-chip-digit-size);
     font-weight: var(--rank-chip-digit-weight);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
   }
-  &.rank-list > li > [aria-hidden="true"]:first-child > span {
+  & > li > [aria-hidden="true"]:first-child > span {
     margin-block: calc(-1 * var(--rank-chip-ink-start))
       calc(-1 * var(--rank-chip-ink-end));
   }
 }
 
-/* OpinionList: the item rule spans the text column only, not the quote mark (DR-351). */
+/* OpinionList: the item rule spans the text column only, not the quote mark (DR-351).
+   --divider-item-start is a helper (DR-437): --quote-mark-width plus --grid-column-gap. */
 @utility opinion-rule-start {
   --divider-item-start: calc(var(--quote-mark-width) + var(--grid-column-gap));
 }
@@ -662,19 +683,40 @@
   }
 }
 
+/* --divider-column-block is a helper: the rule distance from the top and the bottom, from
+   --divider-column-inset (column-inset), or 0 with divider-column-full (column-full). */
 @utility divider-column-rail {
   position: relative;
   @media (width >= 64rem) {
     &::after {
       content: "";
       position: absolute;
-      inset-block: var(--divider-column-inset);
+      inset-block: var(--divider-column-block, var(--divider-column-inset));
       inset-inline-end: calc(
         var(--measure-rail) + var(--grid-column-gap) / 2 - var(--divider-rule) /
           2
       );
       width: var(--divider-rule);
-      background-color: var(--color-border);
+      background: var(--divider-column-paint, var(--color-border));
     }
   }
+}
+
+/* divider-column-full: Divider.column-full (C-22: full height). Add it to divider-column-rail
+   to run the rule the full height of the grid: the analysis hub mosaic (tajmin, 4 Nov 2026). */
+@utility divider-column-full {
+  --divider-column-block: 0;
+}
+
+/* divider-column-dotted: the Divider.item dot on a vertical rule (2px marks, 4px
+   gap, the same repeating gradient, running down). Add it to divider-column-rail: P-2, the
+   feature card and the rail from 1024, two groups of the same type, inset as column-inset
+   (tajmin, 6 Nov 2026: "for now, just use the dot vertical rule in the featured category";
+   "apply inset for vertical dot rule"). --divider-column-paint is a helper: the rule paint, the
+   border color by default. */
+@utility divider-column-dotted {
+  --divider-column-paint: repeating-linear-gradient(
+    to bottom,
+    var(--divider-dots)
+  );
 }

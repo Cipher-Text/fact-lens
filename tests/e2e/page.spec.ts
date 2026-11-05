@@ -11,7 +11,7 @@ const WIDTHS = [320, 360, 600, 768, 834, 1024, 1180, 1280, 1366, 1440, 1920];
 function reserved(slot: string, width: number) {
   if (slot === "ad-top") return width < 768 ? 100 : width < 1024 ? 90 : 250;
   if (slot === "ad-band") return width < 768 ? 280 : width < 1024 ? 90 : 250; // DR-315
-  if (slot === "ad-rail") return 600; // from 1280 only
+  if (slot === "ad-rail") return 600; // from 1024, when the rail is a column
   return width < 1280 ? 250 : 90; // ad-inset
 }
 const AD_LABEL = 24;
@@ -36,8 +36,9 @@ for (const path of ["/", "/en"]) {
       for (let i = 0; i < count; i++) {
         const row = rows.nth(i);
         const slot = (await row.getAttribute("data-ad-slot"))!;
-        if (slot === "ad-rail" && width < 1280) {
-          // In the HTML at every width, hidden under 1280 (9.1, DR-244, DR-245).
+        if (slot === "ad-rail" && width < 1024) {
+          // In the HTML at every width, hidden until the rail is a column at 1024 (9.1,
+          // DR-244; tajmin, 4 Nov 2026).
           await expect(row).toBeHidden();
           continue;
         }
@@ -93,7 +94,7 @@ test("section headings have the divider above them: border rule, brand bar, 12px
   await setTheme(page, "light");
   await page.goto("/en");
   const heading = page.locator(
-    '[data-section="most-read"] .type-section-title',
+    '[data-section="most-read"] [data-section-title]',
   );
   const divider = page.locator('[data-section="most-read"] [data-divider]');
   const style = await divider.evaluate((el) => {
@@ -103,8 +104,8 @@ test("section headings have the divider above them: border rule, brand bar, 12px
     });
     return { rule, bar };
   });
-  expect(style.rule.height).toBe("2px"); // 2px solid rule (DR-262)
-  expect(style.rule.background).toBe("rgb(206, 199, 189)"); // border #CEC7BD, light theme (DR-358)
+  expect(style.rule.height).toBe("1px"); // 1px solid rule (DR-262; tajmin, 6 Nov 2026)
+  expect(style.rule.background).toBe("rgb(169, 163, 158)"); // border #A9A39E, light theme (DR-358; tajmin, 6 Nov 2026)
   expect(style.bar.background).toBe("rgb(153, 51, 20)"); // brand, light theme
   const gap =
     (await heading.boundingBox())!.y -
@@ -137,8 +138,10 @@ for (const path of ["/", "/en"]) {
 // R5-01: the border token shows divider rules on every surface (color-system §2.5, DR-358).
 for (const path of ["/", "/en"]) {
   for (const [theme, hex, rgb] of [
-    ["light", "#cec7bd", "rgb(206, 199, 189)"],
-    ["dark", "#494d55", "rgb(73, 77, 85)"],
+    // tajmin, 6 Nov 2026: "#a39c94 - new border color for light theme. dark theme - #686b70", then
+    // "change only the light border color: A9A39E".
+    ["light", "#a9a39e", "rgb(169, 163, 158)"],
+    ["dark", "#686b70", "rgb(104, 107, 112)"],
   ] as const) {
     test(`${path} ${theme}: --border is ${hex} (DR-358)`, async ({ page }) => {
       await setTheme(page, theme);

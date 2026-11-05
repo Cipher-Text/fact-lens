@@ -38,19 +38,19 @@ export interface ArticleText {
   keyPoints?: string[];
   body: Block[];
   context?: ArticleContext;
-  tags: string[];
   updates?: { at: string; text: string }[];
   authorRole: string;
   authorBio: string;
 }
 
 export interface ArticleDef {
-  id: string; // a story id in stories.ts
+  slug: string; // a story slug in stories.ts
   author:
     "farhana-kabir" | "tanvir-ahmed" | "rashed-hossain" | "mehnaz-chowdhury";
   updatedAt?: string;
-  bn: ArticleText;
-  en: ArticleText;
+  /** An article may exist in one language only (DR-401). */
+  bn?: ArticleText;
+  en?: ArticleText;
 }
 
 /** Time in Dhaka: at("10-07 08:30") is 7 October 2026, 08:30 +06:00. */
@@ -61,7 +61,7 @@ function at(monthDayTime: string): string {
 
 export const articleDefs: ArticleDef[] = [
   {
-    id: "river-data-framework",
+    slug: "river-data-framework",
     author: "rashed-hossain",
     updatedAt: at("10-07 13:40"),
     en: {
@@ -140,7 +140,6 @@ export const articleDefs: ArticleDef[] = [
         background:
           "The four countries share some data today, but late, in different formats and often once a day.",
       },
-      tags: ["Rivers", "Monsoon", "Flood forecasting", "Regional cooperation"],
       updates: [
         {
           at: at("10-07 13:40"),
@@ -227,7 +226,6 @@ export const articleDefs: ArticleDef[] = [
         background:
           "চার দেশ এখনো কিছু তথ্য বিনিময় করে, তবে দেরিতে, ভিন্ন ধাঁচে এবং প্রায়ই দিনে একবার।",
       },
-      tags: ["নদী", "বর্ষা", "বন্যার পূর্বাভাস", "আঞ্চলিক সহযোগিতা"],
       updates: [
         {
           at: at("10-07 13:40"),
@@ -239,10 +237,126 @@ export const articleDefs: ArticleDef[] = [
         "রাশেদ হোসেন ঢাকা থেকে নদী, জলবায়ু ও দুর্যোগ প্রস্তুতি নিয়ে লেখেন।",
     },
   },
+  {
+    // Bangla only: there is no English text, so the article has no English page and
+    // no hreflang to English (DR-401, tajmin 28 Oct 2026).
+    slug: "old-dhaka-trade-ledgers",
+    author: "farhana-kabir",
+    bn: {
+      dateline: "ঢাকা",
+      caption:
+        "খাতার পাতায় নদীপথে আসা পাট ও মসলার চালানের হিসাব, তারিখ আর দাম লেখা।",
+      credit: "ছবি: ফ্যাক্ট লেন্স",
+      body: [
+        {
+          type: "p",
+          text: "পুরান ঢাকার একটি পুরোনো বাড়ি সংস্কারের সময় একটি কাঠের সিন্দুকে প্রায় চল্লিশটি হাতে লেখা খাতা পাওয়া গেছে। গবেষকেরা বলছেন, খাতাগুলো উনিশ শতকের শেষ ভাগের এক বাণিজ্য প্রতিষ্ঠানের।",
+        },
+        {
+          type: "p",
+          text: "খাতায় নদীপথে আসা পাট, মসলা ও লবণের চালানের হিসাব আছে। কোন ঘাট থেকে নৌকা ছেড়েছে, কত দিনে পৌঁছেছে এবং কোন দামে মাল বিক্রি হয়েছে, তা-ও লেখা আছে।",
+        },
+        { type: "h2", id: "what-the-ledgers-show", text: "খাতায় কী আছে" },
+        {
+          type: "p",
+          text: "প্রাথমিক পাঠে দেখা গেছে, বর্ষায় চালান বেশি আসত এবং শুকনো মৌসুমে দাম বাড়ত। গবেষকদের মতে, এই তথ্য সে সময়ের নদীবন্দরগুলোর গুরুত্ব বুঝতে সাহায্য করবে।",
+        },
+        {
+          type: "p",
+          text: "খাতাগুলো এখন একটি গবেষণা প্রতিষ্ঠানের সংরক্ষণাগারে রাখা হয়েছে। পাতাগুলো পরিষ্কার করে ছবি তোলার পর আগামী বছর সেগুলো অনলাইনে দেওয়ার পরিকল্পনা রয়েছে।",
+        },
+      ],
+      authorRole: "ইতিহাস বিষয়ক প্রতিবেদক",
+      authorBio:
+        "ফারহানা কবির ঢাকা থেকে ইতিহাস, মহাফেজখানা ও ঐতিহ্য নিয়ে লেখেন।",
+    },
+  },
+  {
+    // An analysis article: its heading shows the two-part Eyebrow, format · category
+    // (C-08, DR-416). Fictional figures, no real people.
+    slug: "reserve-indicators",
+    author: "tanvir-ahmed",
+    bn: {
+      summary:
+        "আমদানি দায়, রপ্তানি আয় আর প্রবাসী আয়ের ধারা একসঙ্গে দেখলে চাপ কমার লক্ষণ আছে, তবে স্বস্তির সময় এখনো আসেনি।",
+      caption: "ব্যাংকের কাউন্টারে বৈদেশিক মুদ্রার নোট গোনা হচ্ছে।",
+      credit: "ছবি: ফ্যাক্ট লেন্স",
+      keyPoints: [
+        "টানা তিন মাস আমদানি দায় পরিশোধের চাপ কমেছে।",
+        "রপ্তানি আয় বেড়েছে, তবে কয়েকটি পণ্যেই তা সীমিত।",
+        "প্রবাসী আয় স্থিতিশীল, কিন্তু মৌসুমি ওঠানামা রয়ে গেছে।",
+      ],
+      body: [
+        {
+          type: "p",
+          text: "কয়েক মাস ধরে ডলারের দাম আর রিজার্ভ নিয়ে উদ্বেগ চলছে। তিনটি সূচক পাশাপাশি রাখলে ছবিটা কিছুটা পরিষ্কার হয়: আমদানি দায়, রপ্তানি আয় এবং প্রবাসী আয়।",
+        },
+        { type: "h2", id: "import-bills", text: "আমদানি দায় কমছে" },
+        {
+          type: "p",
+          text: "বাকিতে আনা পণ্যের দায় পরিশোধের চাপ টানা তিন মাস কমেছে। ব্যবসায়ীরা বলছেন, ঋণপত্র খোলায় কড়াকড়ির কারণে নতুন দায় কম তৈরি হচ্ছে।",
+        },
+        {
+          type: "h2",
+          id: "exports-and-remittances",
+          text: "রপ্তানি ও প্রবাসী আয়",
+        },
+        {
+          type: "p",
+          text: "রপ্তানি আয় বেড়েছে, তবে বৃদ্ধির বড় অংশ কয়েকটি পণ্যে সীমিত। প্রবাসী আয় স্থিতিশীল থাকলেও উৎসবের মাসগুলোর পর তা কিছুটা কমে আসে।",
+        },
+        {
+          type: "p",
+          text: "বিশ্লেষকদের মতে, চাপ কমার লক্ষণ বাস্তব, কিন্তু রিজার্ভ টেকসইভাবে বাড়াতে রপ্তানি পণ্যে বৈচিত্র্য আনাই মূল শর্ত।",
+        },
+      ],
+      authorRole: "অর্থনীতি বিষয়ক বিশ্লেষক",
+      authorBio:
+        "তানভীর আহমেদ ঢাকা থেকে অর্থনীতি, বাণিজ্য ও ব্যাংক খাত নিয়ে লেখেন।",
+    },
+    en: {
+      summary:
+        "Read together, import bills, export earnings and remittances show the pressure easing, but relief has not arrived yet.",
+      caption: "Foreign currency notes being counted at a bank counter.",
+      credit: "Photo: Fact Lens",
+      keyPoints: [
+        "Pressure from import bills has eased for three months in a row.",
+        "Export earnings are up, but the rise rests on a few products.",
+        "Remittances are steady, with seasonal swings.",
+      ],
+      body: [
+        {
+          type: "p",
+          text: "For several months the dollar rate and the reserves have been a worry. Three indicators side by side make the picture clearer: import bills, export earnings and remittances.",
+        },
+        { type: "h2", id: "import-bills", text: "Import bills are falling" },
+        {
+          type: "p",
+          text: "Payments due on goods bought on credit have fallen for three months in a row. Traders say tighter rules on letters of credit mean fewer new bills.",
+        },
+        {
+          type: "h2",
+          id: "exports-and-remittances",
+          text: "Exports and remittances",
+        },
+        {
+          type: "p",
+          text: "Export earnings are up, but most of the rise comes from a few products. Remittances hold steady, though they dip after the festival months.",
+        },
+        {
+          type: "p",
+          text: "Analysts say the easing is real, but more varied exports are the main condition for reserves to grow for good.",
+        },
+      ],
+      authorRole: "Economy analyst",
+      authorBio:
+        "Tanvir Ahmed writes on the economy, trade and banking from Dhaka.",
+    },
+  },
 ];
 
-/** Other stories for the Read next row. Only the article above has full text. */
-export const readNextIds: string[] = [
+/** Other stories for the Read next row, by slug. They have no full text. */
+export const readNextSlugs: string[] = [
   "deep-sea-port-trial-ship",
   "small-state-balancing",
   "opinion-connectivity-not-port",

@@ -7,6 +7,9 @@ import type { Page } from "@playwright/test";
 const INK_THRESHOLD = 24;
 // Rows scanned above and below the rule.
 const REACH = 48;
+// The elements that draw a Divider.item rule (::before): the list items, and the rail under
+// the wrapper below 1024 (divider-item-rail, P-2).
+const RULE_ITEMS = ".divider-item, .divider-item-rail > :nth-child(2)";
 
 export type RuleInk = {
   /** Where the rule is, for the failure message. */
@@ -33,33 +36,31 @@ export async function prepareInkScan(page: Page) {
 
 /**
  * Every Divider.item rule in view on the page (in `scope` when given): the items that draw
- * the rule (divider-item ::before, divider-item-grid ::after) and are visible, inside the
+ * the rule (divider-item ::before) and are visible, inside the
  * viewport width and not in a hidden or inert panel. Returns their index in document order.
  */
 async function visibleRules(page: Page, scope: string) {
-  return page.evaluate((scopeSelector) => {
-    const root = document.querySelector(scopeSelector);
-    if (!root) return [];
-    const items = [
-      ...root.querySelectorAll(".divider-item, .divider-item-grid"),
-    ];
-    return items.flatMap((el, index) => {
-      const pseudo = el.classList.contains("divider-item")
-        ? "::before"
-        : "::after";
-      const s = getComputedStyle(el, pseudo);
-      if (s.display === "none" || s.content === "none") return [];
-      const r = el.getBoundingClientRect();
-      if (r.width === 0 || r.height === 0) return [];
-      if (r.left < 0 || r.right > window.innerWidth + 0.5) return [];
-      if (el.closest("[hidden], [inert], [aria-hidden='true']")) return [];
-      const section =
-        el.closest("[data-section]")?.getAttribute("data-section") ??
-        el.closest("section")?.getAttribute("aria-labelledby") ??
-        "page";
-      return [{ index, label: `${section} item ${index}` }];
-    });
-  }, scope);
+  return page.evaluate(
+    ([scopeSelector, RULE_ITEMS]) => {
+      const root = document.querySelector(scopeSelector);
+      if (!root) return [];
+      const items = [...root.querySelectorAll(RULE_ITEMS)];
+      return items.flatMap((el, index) => {
+        const s = getComputedStyle(el, "::before");
+        if (s.display === "none" || s.content === "none") return [];
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) return [];
+        if (r.left < 0 || r.right > window.innerWidth + 0.5) return [];
+        if (el.closest("[hidden], [inert], [aria-hidden='true']")) return [];
+        const section =
+          el.closest("[data-section]")?.getAttribute("data-section") ??
+          el.closest("section")?.getAttribute("aria-labelledby") ??
+          "page";
+        return [{ index, label: `${section} item ${index}` }];
+      });
+    },
+    [scope, RULE_ITEMS] as const,
+  );
 }
 
 /** The rule above one item, measured on a screenshot. */
@@ -69,31 +70,21 @@ async function scanRule(
   index: number,
 ): Promise<{ above: number; below: number }> {
   const rect = await page.evaluate(
-    ([scopeSelector, i]) => {
+    ([scopeSelector, i, selector]) => {
       const el = document
-        .querySelector(scopeSelector)!
-        .querySelectorAll(".divider-item, .divider-item-grid")[i as number];
-      const pseudo = el.classList.contains("divider-item")
-        ? "::before"
-        : "::after";
+        .querySelector(scopeSelector as string)!
+        .querySelectorAll(selector)[i as number];
       const top = el.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: top - 300, behavior: "instant" });
       const r = el.getBoundingClientRect();
-      const s = getComputedStyle(el, pseudo);
-      const start = r.left + parseFloat(s.left);
-      // A row-first grid (RankedList, C-07): the item below a rule sits under the tallest
-      // item of the row above, so the ink above is read across the whole list width.
-      const list = el.parentElement!.getBoundingClientRect();
-      const grid = pseudo === "::after";
+      const s = getComputedStyle(el, "::before");
       return {
         top: r.top,
-        left: start,
+        left: r.left + parseFloat(s.left),
         width: parseFloat(s.width),
-        aboveLeft: grid ? list.left : start,
-        aboveWidth: grid ? list.width : parseFloat(s.width),
       };
     },
-    [scope, index] as const,
+    [scope, index, RULE_ITEMS] as const,
   );
   // Images in view are lazy: wait until they have loaded.
   await page.waitForFunction(() =>
@@ -105,21 +96,15 @@ async function scanRule(
         img.complete,
     ),
   );
-  const shot = async (left: number, w: number) => {
-    const x = Math.ceil(left);
-    const y = Math.floor(rect.top) - REACH;
-    const width = Math.floor(left + w) - x;
-    const buffer = await page.screenshot({
-      clip: { x, y, width, height: 2 * REACH + 2 },
-      scale: "css",
-      animations: "disabled",
-    });
-    return measure(page, buffer.toString("base64"), rect.top - y);
-  };
-  const own = await shot(rect.left, rect.width);
-  if (rect.aboveLeft === rect.left) return own;
-  const row = await shot(rect.aboveLeft, rect.aboveWidth);
-  return { above: row.above, below: own.below };
+  const x = Math.ceil(rect.left);
+  const y = Math.floor(rect.top) - REACH;
+  const width = Math.floor(rect.left + rect.width) - x;
+  const buffer = await page.screenshot({
+    clip: { x, y, width, height: 2 * REACH + 2 },
+    scale: "css",
+    animations: "disabled",
+  });
+  return measure(page, buffer.toString("base64"), rect.top - y);
 }
 
 /** Blank rows above and below the rule row in a screenshot strip. */
@@ -198,6 +183,8 @@ export type ColumnRule = {
   shown: boolean;
   width: number;
   color: string;
+  /** The background image: a repeating gradient when the rule is dotted. */
+  image: string;
   /** Rule center less the center of the gap between the two columns. */
   offCenter: number;
   /** Space from the grid top to the rule top, and from the rule bottom to the grid bottom. */
@@ -232,6 +219,7 @@ export async function columnRule(
         shown: s.content !== "none" && s.display !== "none",
         width,
         color: s.backgroundColor,
+        image: s.backgroundImage,
         offCenter: ruleLeft + width / 2 - (left.right + right.left) / 2,
         top: ruleTop - box.top,
         bottom: box.bottom - (ruleTop + height),

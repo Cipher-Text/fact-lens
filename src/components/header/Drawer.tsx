@@ -6,6 +6,7 @@ import { useCallback, useRef, useState } from "react";
 
 import { SocialIcon } from "@/components/footer/SocialIcon";
 import { socialLinks } from "@/components/footer/socialLinks";
+import { Divider } from "@/components/layout/Divider";
 import { IconButton } from "@/components/story/IconButton";
 import {
   Collapsible,
@@ -46,7 +47,8 @@ type Props = {
  *
  * Focus moves to the panel itself (tabindex -1), not to an item (DR-249). Escape, the close
  * button and a press on the backdrop close it, and focus returns to the menu button. A link
- * to a place on the page closes the Drawer and moves focus to that place.
+ * closes the Drawer; every nav item goes to a page (no # link, so no focus to a place on
+ * the page; tajmin, 4 Nov 2026).
  *
  * Base UI hides the page behind the open panel with aria-hidden and traps Tab inside it; it
  * does not set the `inert` attribute that the spec names (R3-02 DOC- item).
@@ -62,10 +64,6 @@ export function Drawer({
   homeHref,
 }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
-  // Set by a link: the element that gets the focus instead of the menu button.
-  const linkTarget = useRef<HTMLElement | null>(null);
-  // True when the Drawer gave the target its tabindex, so it takes it off again (DR-330).
-  const addedTabIndex = useRef(false);
   const [open, setOpen] = useState(false);
 
   // The ids of the open accordions. The current category is open when the Drawer opens.
@@ -79,44 +77,15 @@ export function Drawer({
   const [openIds, setOpenIds] = useState<string[]>(initialOpen);
 
   const onOpenChange = (next: boolean) => {
-    if (next) {
-      linkTarget.current = null;
-      setOpenIds(initialOpen());
-    }
+    if (next) setOpenIds(initialOpen());
     setOpen(next);
   };
 
-  const onNavigate = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    const hash = event.currentTarget.hash;
-    const target = hash ? document.getElementById(hash.slice(1)) : null;
-    addedTabIndex.current = !!target && !target.hasAttribute("tabindex");
-    if (target && addedTabIndex.current) target.setAttribute("tabindex", "-1");
-    linkTarget.current = target;
-    setOpen(false);
-  };
+  // A link closes the Drawer; the page it opens takes over.
+  const onNavigate = () => setOpen(false);
 
   return (
-    <Sheet
-      open={open}
-      onOpenChange={onOpenChange}
-      onOpenChangeComplete={(isOpen) => {
-        // A link to a place on the page: focus goes to that place, not to the menu button.
-        // Base UI returns focus only to a tabbable element, and the target is tabindex -1.
-        // The ref stays set until the next open, so finalFocus still says "do not return".
-        const target = linkTarget.current;
-        if (isOpen || !target) return;
-        target.focus({ preventScroll: true });
-        // The target is not a control: it keeps no tabindex once focus has left (DR-330).
-        if (addedTabIndex.current)
-          target.addEventListener(
-            "blur",
-            () => target.removeAttribute("tabindex"),
-            {
-              once: true,
-            },
-          );
-      }}
-    >
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger
         render={
           <IconButton
@@ -133,7 +102,6 @@ export function Drawer({
         ref={panelRef}
         aria-label={strings.menu}
         initialFocus={panelRef}
-        finalFocus={() => !linkTarget.current}
         data-drawer
         data-drawer-panel
         className="focus-visible:outline-none"
@@ -219,11 +187,11 @@ type ItemProps = {
   item: NavItem;
   expanded: boolean;
   onExpandedChange: (expanded: boolean) => void;
-  onNavigate: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+  onNavigate: () => void;
   strings: Dictionary["header"];
 };
 
-// Drawer.item: type-ui 600, rows min-h-13 (52px), a 1px rule under every category row,
+// Drawer.item: text-sm 600, rows min-h-13 (52px), a 1px rule under every category row,
 // inside the panel inset. Drawer.accordion: the label links to the category; a 44px caret
 // button (ghost, size default) at the end opens the child list below the row; the caret
 // points down and turns up when the group is open (accordion-caret). The child group sits on the page
@@ -240,14 +208,14 @@ function DrawerItem({
   return (
     <li>
       <Collapsible open={expanded} onOpenChange={onExpandedChange}>
-        <div className="flex items-center border-b border-border">
+        <div className="flex items-center">
           <Link
             href={item.href}
             onClick={onNavigate}
             aria-current={item.current ? "page" : undefined}
             data-drawer-item
             className={cn(
-              "flex min-h-13 flex-1 items-center type-ui font-semibold",
+              "flex min-h-13 flex-1 items-center font-ui text-sm font-semibold",
               uiLink,
             )}
           >
@@ -267,6 +235,8 @@ function DrawerItem({
             />
           ) : null}
         </div>
+        {/* The row line: Divider.rule in the soft border color (C-19, C-22; IMP-100). */}
+        <Divider variant="rule" tone="soft" />
         {hasChildren ? (
           <CollapsibleContent className="accordion-panel">
             <ul className="bg-background py-2">
@@ -275,7 +245,8 @@ function DrawerItem({
                   <Link
                     href={child.href}
                     onClick={onNavigate}
-                    className="flex min-h-11 items-center ps-4 type-ui-sm text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed"
+                    aria-current={child.current ? "page" : undefined}
+                    className="flex min-h-11 items-center ps-4 font-ui text-xs font-medium text-ink-secondary hover:text-interactive-hover active:text-interactive-pressed aria-[current=page]:text-interactive"
                   >
                     {child.label}
                   </Link>

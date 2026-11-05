@@ -5,28 +5,39 @@ import { categoryMostRead } from "./category-most-read";
 import { homepagePlans } from "./homepage";
 import { dailyPoll } from "./poll";
 import { authors, imageFiles, stories, type StoryDef } from "./stories";
+import { topics, type TopicId } from "./topics";
 import { trendingTerms } from "./trending";
 import type {
   Ad,
   AdSlotId,
+  AnalysisPage,
   CategoryId,
   CategoryPage,
   FeaturedSection,
+  FeaturedSource,
   Homepage,
   HomepageVariant,
   Lang,
+  LatestPage,
   Poll,
   RegionId,
+  RegionPage,
+  RegionsPage,
   Story,
+  TopicPage,
 } from "./types";
+import { regionIds } from "./types";
 
 export type * from "./types";
-export { categoryIds } from "./types";
+export { categoryIds, regionIds } from "./types";
+export { currentStoryRef, storyRef } from "./urls";
 
 // The article page (wild card reader): its content goes through this file too (DR-01).
 export {
-  articleSlugs,
+  articleLangsOf,
+  articleRefs,
   getArticle,
+  getArticleByRef,
   getReadNext,
   imageFiles,
   type Article,
@@ -36,20 +47,21 @@ export {
   type ReaderAuthor,
 } from "./reader";
 
-const byId = new Map(stories.map((def) => [def.id, def]));
+// The mock plans name stories by slug; the article URL finds a story by id (layout 7C).
+const bySlug = new Map(stories.map((def) => [def.slug, def]));
 
 function toStory(def: StoryDef, lang: Lang): Story {
   const text = def[lang];
   const story: Story = {
     id: def.id,
     lang,
-    slug: def.id,
+    slug: def.slug,
     format: def.format,
     category: def.category,
+    regions: def.regions,
     title: text.title,
     publishedAt: def.publishedAt,
   };
-  if (def.region) story.region = def.region;
   if (text.summary) story.summary = text.summary;
   if (def.readingMinutes) story.readingMinutes = def.readingMinutes;
   if (def.author)
@@ -60,15 +72,15 @@ function toStory(def: StoryDef, lang: Lang): Story {
   return story;
 }
 
-/** One story in one language. Throws for an unknown id, so a typo in the plan fails fast. */
-export function getStory(id: string, lang: Lang): Story {
-  const def = byId.get(id);
-  if (!def) throw new Error(`Unknown story id: ${id}`);
+/** One story in one language. Throws for an unknown slug, so a typo in the plan fails fast. */
+export function getStory(slug: string, lang: Lang): Story {
+  const def = bySlug.get(slug);
+  if (!def) throw new Error(`Unknown story slug: ${slug}`);
   return toStory(def, lang);
 }
 
-function getStories(ids: string[], lang: Lang): Story[] {
-  return ids.map((id) => getStory(id, lang));
+function getStories(slugs: string[], lang: Lang): Story[] {
+  return slugs.map((slug) => getStory(slug, lang));
 }
 
 /** Newest first. */
@@ -78,7 +90,7 @@ function newestFirst(a: Story, b: Story): number {
 
 function getRegionStories(region: RegionId, lang: Lang): Story[] {
   return stories
-    .filter((def) => def.region === region)
+    .filter((def) => def.regions.includes(region))
     .map((def) => toStory(def, lang))
     .sort(newestFirst);
 }
@@ -135,12 +147,12 @@ export function getHomepage(
   const plan = homepagePlans[variant];
 
   const featured = (
-    section: { lead: string; rail: string[] } | null,
-    category: FeaturedSection["category"],
+    section: { feature: string; rail: string[] } | null,
+    source: FeaturedSource,
   ): FeaturedSection | null =>
     section && {
-      category,
-      lead: getStory(section.lead, lang),
+      source,
+      feature: getStory(section.feature, lang),
       rail: getStories(section.rail, lang),
     };
 
@@ -173,8 +185,14 @@ export function getHomepage(
         ? analysisOpinion
         : null,
     featured: {
-      bangladesh: featured(plan.featured.bangladesh, "bangladesh"),
-      geopolitics: featured(plan.featured.geopolitics, "geopolitics"),
+      southAsia: featured(plan.featured.southAsia, {
+        kind: "region",
+        id: "south-asia",
+      }),
+      geopolitics: featured(plan.featured.geopolitics, {
+        kind: "category",
+        id: "geopolitics",
+      }),
     },
     grouped:
       groupedCategories.length > 0
@@ -192,13 +210,18 @@ export function getHomepage(
 
 const LATEST_COUNT = 5;
 const CARD_COUNT = 3;
+// At most 5 stories per block of the analysis and opinion row (tajmin, 28 Oct 2026).
+const FORMAT_BLOCK_COUNT = 5;
 // The top 5, as on the homepage (tajmin, checkpoint 4).
 const MOST_READ_COUNT = 5;
 
 /**
- * A category page in one language (spacing-layout-system.md 7B). Stories are newest first:
- * the feature story is the newest with an image, the rail takes the next 5, the card rows the
- * next 3 with an image, and More news the rest. Most read comes from the mock ranking.
+ * A category page in one language (spacing-layout-system.md 7B, DR-415). Stories are newest
+ * first. The main stream is news only: the cover story is the newest news story with an
+ * image, the rail takes the next 5, the card rows the next 3 with an image. The analysis and
+ * opinion row takes up to 5 of each. More stories is the news and analysis not shown above,
+ * never opinion. Opinion past the 5th is not on the category page: it belongs to the
+ * /opinion hub (DR-415). Most read comes from the mock ranking.
  */
 export function getCategoryPage(
   category: CategoryId,
@@ -208,27 +231,158 @@ export function getCategoryPage(
     .filter((def) => def.category === category)
     .map((def) => toStory(def, lang))
     .sort(newestFirst);
-  const feature = all.find((story) => story.image) ?? null;
-  const rest = all.filter((story) => story !== feature);
+  const news = all.filter((story) => story.format === "news");
+  const cover = news.find((story) => story.image) ?? null;
+  const rest = news.filter((story) => story !== cover);
   const latest = rest.slice(0, LATEST_COUNT);
   const cards = rest
     .slice(LATEST_COUNT)
     .filter((story) => story.image)
     .slice(0, CARD_COUNT);
-  const more = rest.filter(
-    (story) => !latest.includes(story) && !cards.includes(story),
+  const analysis = all
+    .filter((story) => story.format === "analysis")
+    .slice(0, FORMAT_BLOCK_COUNT);
+  const opinion = all
+    .filter((story) => story.format === "opinion")
+    .slice(0, FORMAT_BLOCK_COUNT);
+  const shown = new Set([cover, ...latest, ...cards, ...analysis]);
+  const more = all.filter(
+    (story) => story.format !== "opinion" && !shown.has(story),
   );
   return {
     lang,
     category,
-    feature,
+    cover,
     latest,
     cards,
+    analysis,
+    opinion,
     mostRead: getStories(
       categoryMostRead[category].slice(0, MOST_READ_COUNT),
       lang,
     ).map((story, index) => ({ ...story, rank: index + 1 })),
     more,
+  };
+}
+
+/**
+ * The Latest page in one language (layout 7C.2 Paths, News hub row: news only). Every news story of every
+ * category, newest first. Every story has a category, so no region-only news shows
+ * (tajmin, 28 Oct 2026).
+ */
+export function getLatestPage(lang: Lang): LatestPage {
+  return {
+    lang,
+    stories: stories
+      .filter((def) => def.format === "news")
+      .map((def) => toStory(def, lang))
+      .sort(newestFirst),
+  };
+}
+
+/**
+ * The analysis hub in one language (layout 7C.2 Paths, Analysis hub row). Every analysis
+ * story, newest first: the newest is the cover, the next 4 the top, the rest More stories.
+ * The newest stands in until the editor picks are decided (tajmin, 2 Nov 2026).
+ */
+export function getAnalysisPage(lang: Lang): AnalysisPage {
+  const all = stories
+    .filter((def) => def.format === "analysis")
+    .map((def) => toStory(def, lang))
+    .sort(newestFirst);
+  return {
+    lang,
+    cover: all[0] ?? null,
+    top: all.slice(1, 5),
+    more: all.slice(5),
+  };
+}
+
+// Stories per region block on the region hub: the feature story and a list of 3, as a
+// homepage CategoryBlock (C-23, DR-126).
+const REGION_BLOCK_STORIES = 4;
+
+/** The newest story with an image first (a block's feature story), then the rest in order. */
+function imageFirst(list: Story[]): Story[] {
+  const feature = list.find((story) => story.image);
+  return feature ? [feature, ...list.filter((s) => s !== feature)] : list;
+}
+
+/**
+ * The region hub in one language (layout 7C.2 Paths, Region hub row). The cover is the
+ * newest story with a region and an image (a cover has an image, as the hero, DR-91); the
+ * Latest rail the 5 newest of the others. With no story with an image there is no cover,
+ * and the page shows no cover section and so no Latest rail, as the category page
+ * (RG-02; tajmin, 5 Nov 2026: keep it and document it). Each region block takes the 4
+ * newest stories of its region, news and analysis, no opinion; its feature story is the
+ * newest of them with an image. Repeats across the page are
+ * an editorial and backend decision (tajmin, 4 Nov 2026), so the mock does not remove them.
+ */
+export function getRegionsPage(lang: Lang): RegionsPage {
+  const all = stories
+    .filter((def) => def.format !== "opinion" && def.regions.length > 0)
+    .map((def) => toStory(def, lang))
+    .sort(newestFirst);
+  const cover = all.find((story) => story.image) ?? null;
+  return {
+    lang,
+    cover,
+    latest: all.filter((story) => story !== cover).slice(0, 5),
+    regions: regionIds
+      .map((region) => ({
+        region,
+        stories: imageFirst(
+          getRegionStories(region, lang).filter(
+            (story) => story.format !== "opinion",
+          ),
+        ).slice(0, REGION_BLOCK_STORIES),
+      }))
+      .filter((block) => block.stories.length > 0),
+  };
+}
+
+/** Every region slug, for the static region pages (layout 7C.2 Paths, Region row). */
+export function getRegionSlugs(): string[] {
+  return [...regionIds];
+}
+
+function isRegionId(slug: string): slug is RegionId {
+  return (regionIds as readonly string[]).includes(slug);
+}
+
+/**
+ * The region page, or undefined for an unknown slug (a 404 page). The region's news and
+ * analysis, newest first, no opinion (page/region brief; tajmin, 5 Nov 2026). A region with
+ * no stories still has its page: the title band only (U-63).
+ */
+export function getRegionPage(lang: Lang, slug: string): RegionPage | undefined {
+  if (!isRegionId(slug)) return undefined;
+  return {
+    lang,
+    region: slug,
+    stories: getRegionStories(slug, lang).filter(
+      (story) => story.format !== "opinion",
+    ),
+  };
+}
+
+/** Every topic slug, for the static topic pages (layout 7C.2 Paths, Topic row). */
+export function getTopicSlugs(): string[] {
+  return Object.values(topics).map((topic) => topic.slug);
+}
+
+/** The topic page, or undefined for an unknown slug (a 404 page). */
+export function getTopicPage(lang: Lang, slug: string): TopicPage | undefined {
+  const entry = Object.entries(topics).find(([, topic]) => topic.slug === slug);
+  if (!entry) return undefined;
+  const id = entry[0] as TopicId;
+  return {
+    lang,
+    topic: { id, slug, label: entry[1][lang] },
+    stories: stories
+      .filter((def) => def.format !== "opinion" && def.topics?.includes(id))
+      .map((def) => toStory(def, lang))
+      .sort(newestFirst),
   };
 }
 

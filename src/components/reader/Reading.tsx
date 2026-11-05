@@ -2,6 +2,8 @@
 
 import { ArrowUp, Check, Hash } from "lucide-react";
 
+import { Divider } from "@/components/layout/Divider";
+
 import { SaveButton, TextSize, TextSizeOptions } from "./Controls";
 import { useReading } from "./reading-store";
 import { CopyLinkButton, ShareDialog, type ShareProps } from "./Share";
@@ -73,9 +75,15 @@ function MinutesLeft({ t, lang }: { t: ReaderStrings; lang: "bn" | "en" }) {
 export function ReadingTools({
   layout,
   lang,
-  slug,
+  storyId,
+  storySlug,
   ...share
-}: ShareProps & { layout: "rail" | "dock"; lang: "bn" | "en"; slug: string }) {
+}: ShareProps & {
+  layout: "rail" | "dock";
+  lang: "bn" | "en";
+  storyId: string;
+  storySlug: string;
+}) {
   const { t } = share;
   const percent = useReading((s) => s.percent);
   const started = useReading((s) => s.started);
@@ -83,6 +91,11 @@ export function ReadingTools({
   if (layout === "dock") {
     return (
       <div className="rd-dock" data-show={started || undefined}>
+        <Divider
+          variant="rule"
+          tone="soft"
+          className="absolute inset-x-0 top-0"
+        />
         <ProgressButton t={t} lang={lang} />
         <span className="rd-dock__meta" aria-hidden="true">
           <MinutesLeft t={t} lang={lang} />
@@ -90,7 +103,7 @@ export function ReadingTools({
         <span className="rd-dock__sep" aria-hidden="true" />
         <TextSize t={t} side="top" />
         <ShareDialog {...share} />
-        <SaveButton slug={slug} t={t} />
+        <SaveButton storyId={storyId} storySlug={storySlug} t={t} />
       </div>
     );
   }
@@ -122,7 +135,7 @@ export function ReadingTools({
         <div className="rd-tools__row">
           <ShareDialog {...share} />
           <CopyLinkButton path={share.path} t={t} />
-          <SaveButton slug={slug} t={t} />
+          <SaveButton storyId={storyId} storySlug={storySlug} t={t} />
         </div>
       </div>
     </div>
