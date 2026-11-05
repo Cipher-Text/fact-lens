@@ -1155,7 +1155,7 @@ for (const p of PAGES) {
     });
 
     // South Asia takes the place of Bangladesh; Regions and its regions go to their own URLs
-    // (layout 7C, DR-411, DR-412); those pages are not built yet (IMP-18). Analysis is one
+    // (layout 7C, DR-411, DR-412); the region pages open (page/region, IMP-128). Analysis is one
     // item to the analysis hub; Opinion is on hold, no item (tajmin, 4 Nov 2026).
     test("nav targets: South Asia, regions and the analysis hub (DR-414)", async ({
       page,

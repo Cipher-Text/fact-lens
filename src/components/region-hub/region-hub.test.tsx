@@ -211,5 +211,21 @@ describe("navigation: the Regions item (C-18, C-19)", () => {
         lang === "bn" ? "/regions" : "/en/regions",
       );
     });
+    it(`${lang}: the region sub-item and South Asia are current on their region page`, () => {
+      const t = getDictionary(lang);
+      const items = (path: string) => getNavItems(t, lang, path);
+      const child = (path: string, id: string) =>
+        items(path)
+          .find((item) => item.id === "regions")!
+          .children!.find((c) => c.id === id)!;
+      expect(child("/regions/china", "china").current).toBe(true);
+      expect(child("/regions/china", "europe").current).toBe(false);
+      expect(child("/regions", "china").current).toBe(false);
+      const southAsia = (path: string) =>
+        items(path).find((item) => item.id === "south-asia")!;
+      expect(southAsia("/regions/south-asia").current).toBe(true);
+      expect(child("/regions/south-asia", "south-asia").current).toBe(true);
+      expect(southAsia("/regions/china").current).toBe(false);
+    });
   }
 });

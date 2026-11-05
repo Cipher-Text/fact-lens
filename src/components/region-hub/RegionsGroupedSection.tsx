@@ -42,7 +42,7 @@ export function regionGroups<T>(regions: T[]): T[][] {
  * (LAY-07). An odd last block keeps its size and the other half stays empty (7.3). Each block:
  * the feature story (StoryCard `top`), a StoryList of 3, the `format` Eyebrow on every story
  * (news the category, analysis বিশ্লেষণ / Analysis; tajmin, 5 Nov 2026) and a MoreLink to
- * the region page, /regions/<slug> (404 until the region page, IMP-18, IMP-128). No
+ * the region page, /regions/<slug> (page/region, IMP-128). No
  * ad-inset: the ad-band between the groups replaces it.
  * Rail: the ad-rail slot from 1024, one per group, as AnalysisTopSection; no poll (tajmin,
  * 5 Nov 2026).
