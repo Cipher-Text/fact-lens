@@ -346,6 +346,28 @@ for (const p of PAGES) {
           true,
         );
         await expect.poll(() => barRuleShown(page)).toBe(true);
+        // The stuck rule is the soft border color in both themes (FC-08): the class merge in
+        // TopBar (bg-transparent, then bar-stuck:bg-border-soft) must not leave another color.
+        for (const dark of [false, true]) {
+          await page.evaluate(
+            (on) => document.documentElement.classList.toggle("dark", on),
+            dark,
+          );
+          const [rule, soft] = await bar
+            .locator(':scope > [data-divider="rule"]')
+            .evaluate((el) => {
+              const probe = document.createElement("div");
+              probe.style.backgroundColor = "var(--color-border-soft)";
+              document.body.append(probe);
+              const value = getComputedStyle(probe).backgroundColor;
+              probe.remove();
+              return [getComputedStyle(el).backgroundColor, value];
+            });
+          expect(rule, dark ? "dark" : "light").toBe(soft);
+        }
+        await page.evaluate(() =>
+          document.documentElement.classList.remove("dark"),
+        );
         await expect.poll(() => logoSize(logo)).toBe(24);
         expect(Math.round((await box(bar)).height)).toBe(64);
         expect(Math.round((await box(bar)).y)).toBe(0);
