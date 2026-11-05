@@ -183,6 +183,17 @@ export interface RegionsPage {
 }
 
 /**
+ * A region page in one language (layout 7C.2 Paths, Region row; DR-411; page/region brief):
+ * the news and analysis stories of one region, newest first. No opinion. The page follows
+ * the topic page (7E; tajmin, 5 Nov 2026). The slug is the region id.
+ */
+export interface RegionPage {
+  lang: Lang;
+  region: RegionId;
+  stories: Story[]; // 10 first, then 10 per load
+}
+
+/**
  * A topic page in one language (layout 7C.2 Paths, Topic row; DR-410): the news and analysis
  * stories of one topic, newest first. No opinion (tajmin, 29 Oct 2026).
  */

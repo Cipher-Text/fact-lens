@@ -17,6 +17,8 @@ import {
   getCategoryPage,
   getHomepage,
   getAnalysisPage,
+  getRegionPage,
+  getRegionSlugs,
   getRegionsPage,
   getLatestPage,
   getTopicPage,
@@ -669,6 +671,55 @@ describe("topic page (layout 7C.2 Paths, Topic row; DR-410)", () => {
   it("has no page for an unknown slug", () => {
     expect(getTopicPage("bn", "no-such-topic")).toBeUndefined();
     expect(getTopicPage("en", "Rivers")).toBeUndefined();
+  });
+});
+
+describe("region page (layout 7C.2 Paths, Region row; DR-411)", () => {
+  it("has a page for every region, in the region order", () => {
+    expect(getRegionSlugs()).toEqual([...regionIds]);
+  });
+
+  for (const lang of langs) {
+    it(`${lang}: the region's news and analysis only, newest first, no repeats`, () => {
+      for (const slug of getRegionSlugs()) {
+        const page = getRegionPage(lang, slug)!;
+        expect(page.lang).toBe(lang);
+        expect(page.region).toBe(slug);
+        expect(new Set(page.stories.map((s) => s.id)).size).toBe(
+          page.stories.length,
+        );
+        for (const s of page.stories) {
+          expect(s.format, s.slug).not.toBe("opinion");
+          expect(s.regions, s.slug).toContain(slug);
+          expect(s.lang).toBe(lang);
+        }
+        expect(page.stories).toEqual(
+          [...page.stories].sort(
+            (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+          ),
+        );
+      }
+    });
+  }
+
+  it("has the test cases: South Asia over 10 (load more), Oceania empty", () => {
+    const southAsia = getRegionPage("bn", "south-asia")!.stories;
+    expect(southAsia.length).toBeGreaterThan(10);
+    expect(southAsia.map((s) => s.format)).toContain("analysis");
+    expect(getRegionPage("bn", "oceania")!.stories).toEqual([]);
+  });
+
+  it("lists the same stories in the same order in both languages", () => {
+    for (const slug of getRegionSlugs()) {
+      expect(getRegionPage("en", slug)!.stories.map((s) => s.id)).toEqual(
+        getRegionPage("bn", slug)!.stories.map((s) => s.id),
+      );
+    }
+  });
+
+  it("has no page for an unknown slug", () => {
+    expect(getRegionPage("bn", "atlantis")).toBeUndefined();
+    expect(getRegionPage("en", "China")).toBeUndefined();
   });
 });
 

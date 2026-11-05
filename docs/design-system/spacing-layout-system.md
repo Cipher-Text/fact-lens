@@ -1,6 +1,6 @@
 # Fact Lens Spacing and Layout System
 
-Version 2.37 · 5 November 2026 · Region hub (spec log regions RG-01, RG-02, RG-04 to RG-06): Section 7G (new), the region hub page order, content, region groups and sparse cases; 7C.2 Region hub row names 7G; Section 9 one `ad-rail` per region group. Before: 2.36 · 5 November 2026 · IMP-125 follow-up (spec log imp-125-followup FU-01, FU-05; DR-464, DR-465): 7.2 P-2 the feature story image is 2 / 3 of the whole card width, no minimum and no maximum; 7F the cover the same; 7B.1 Formats names the cover story. Before: 2.35 · 5 November 2026 · Story roles and card variants (IMP-125 spec log IM-02, IM-09, IM-10; DR-450, DR-451, DR-453): 7.2 P-2 the `side` feature (2 / 3, no cap) and the text rail; 7B `CategoryCoverSection` with OverlapCard `large` and the `thumbnail` card rows; 7F `AnalysisCoverSection`, StoryCard `side` with `large`. Before: 2.34 · 4 November 2026 · Analysis hub sync review (DR-440, DR-447): Section 9 ad density, a hard 30% limit under 768 only, measured against the main content; 7F.3 an empty hub shows a no-content message (U-61). Before: 2.33 · 4 November 2026 · Analysis hub (spec log analysis AN-01, AN-02, AN-04, AN-08, AN-10): Section 7F (new), the analysis hub page order, content and sparse cases; 7C.2 Analysis hub row names 7F. Then, approved by tajmin (4 Nov 2026: "Add the spec changes"; after the third PR 23 review: "make this ad behavior available for any page at whatever breakpoint the rail is displayed from"): `ad-rail` shows whenever the rail is a column, from 1024, on every page, the homepage P-3 included (amends DR-245), with `--ad-rail-w` and `--ad-rail-h` in the 64rem block (Sections 7.2, 9, 12.2) (AN-11); 7F.1 the description (AN-12) and the Analysis nav item (AN-16). Before: 2.32 · 30 October 2026 · XC fixes (spec log xc-fixes XF-04 to XF-08): 7B.1 and 7B.3 fixed halves in `CategoryFormatsSection` (DR-436); 7B.2 `main` starts with the title band (as 7D.2); 7E.2 noindex, follow below 3 stories, no `?page` (DR-432); DR citations in 7.1, 7B.1, 7C, Section 10 (DR-420, DR-419, DR-418, DR-393). Before: 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
+Version 2.38 · 5 November 2026 · Region page (spec log region RE-01, RE-02): Section 7H (new), the region page `/regions/<slug>`: page order as the topic page, content and sparse cases; 7C.2 Region row and 7G name 7H. Before: 2.37 · 5 November 2026 · Region hub (spec log regions RG-01, RG-02, RG-04 to RG-06): Section 7G (new), the region hub page order, content, region groups and sparse cases; 7C.2 Region hub row names 7G; Section 9 one `ad-rail` per region group. Before: 2.36 · 5 November 2026 · IMP-125 follow-up (spec log imp-125-followup FU-01, FU-05; DR-464, DR-465): 7.2 P-2 the feature story image is 2 / 3 of the whole card width, no minimum and no maximum; 7F the cover the same; 7B.1 Formats names the cover story. Before: 2.35 · 5 November 2026 · Story roles and card variants (IMP-125 spec log IM-02, IM-09, IM-10; DR-450, DR-451, DR-453): 7.2 P-2 the `side` feature (2 / 3, no cap) and the text rail; 7B `CategoryCoverSection` with OverlapCard `large` and the `thumbnail` card rows; 7F `AnalysisCoverSection`, StoryCard `side` with `large`. Before: 2.34 · 4 November 2026 · Analysis hub sync review (DR-440, DR-447): Section 9 ad density, a hard 30% limit under 768 only, measured against the main content; 7F.3 an empty hub shows a no-content message (U-61). Before: 2.33 · 4 November 2026 · Analysis hub (spec log analysis AN-01, AN-02, AN-04, AN-08, AN-10): Section 7F (new), the analysis hub page order, content and sparse cases; 7C.2 Analysis hub row names 7F. Then, approved by tajmin (4 Nov 2026: "Add the spec changes"; after the third PR 23 review: "make this ad behavior available for any page at whatever breakpoint the rail is displayed from"): `ad-rail` shows whenever the rail is a column, from 1024, on every page, the homepage P-3 included (amends DR-245), with `--ad-rail-w` and `--ad-rail-h` in the 64rem block (Sections 7.2, 9, 12.2) (AN-11); 7F.1 the description (AN-12) and the Analysis nav item (AN-16). Before: 2.32 · 30 October 2026 · XC fixes (spec log xc-fixes XF-04 to XF-08): 7B.1 and 7B.3 fixed halves in `CategoryFormatsSection` (DR-436); 7B.2 `main` starts with the title band (as 7D.2); 7E.2 noindex, follow below 3 stories, no `?page` (DR-432); DR citations in 7.1, 7B.1, 7C, Section 10 (DR-420, DR-419, DR-418, DR-393). Before: 2.31 · 30 October 2026 · Topic page (IMP-18, Topic spec log TP-01 to TP-03): new Section 7E; the 7C.2 Topic row names it. Before: 2.30 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path (7A, 7B, 7D). No rule changes. Before: 2.29 · 28 October 2026 · Latest page (spec log `latest.md` LT-01 to LT-04): new Section 7D; 7B.1 and 7D name `MoreStoriesSection`; 7B.2 Load more adds the motion of the added rows and their story time. Before: 2.28 · 28 October 2026 · Category formats (DR-415, spec log `category-formats.md` CF-01, CF-02, CF-06, CF-07): 7B.1 the analysis and opinion row above Most read and the PageTitle band; 7B.2 Formats; 7B.3 sparse. Before: URL format (IMP-97): new Section 7C URLs; article URL `/story/<slug>-<id>`; South Asia replaces Bangladesh on the homepage (7.1). Before: Homepage most read (IMP-99): P-5 uses the RankedList layout of the category page (7.2, Sections 4 and 8). Before: Category review: LAY-07 and Section 7B, 1 card per row on the category page (amends DR-44); 7B rows name their parts; Section 14.2
 
 This document is the single source for Fact Lens page layout and spacing. It is for designers, developers and AI agents. Other documents link to the tables in this document. They do not copy values.
 
@@ -450,7 +450,7 @@ These rules apply to every page (DR-397, DR-399, DR-401, DR-410 to DR-414, DR-41
 | Article | `/story/<slug>-<id>` | Every format (news, analysis, opinion). `<id>`: 6 to 8 base36 characters, fixed, shared by both languages. The page finds the article by `<id>`. A wrong or old slug gets a 301 to the current URL. An unknown `<id>` gives a 404 |
 | Category | `/category/<slug>` | `geopolitics`, `security`, `history`, `economy`, `technology`. Sub-category: `/category/<parent>/<slug>`, two levels at most. Bangladesh is not a category (DR-412) |
 | Region hub | `/regions` | All regions. The page: Section 7G |
-| Region | `/regions/<slug>` | The backend owns the list and the order. Working list: `americas`, `europe`, `russia`, `middle-east`, `south-asia`, `china`, `asia`, `oceania`. Code works with any number of regions (DR-411) |
+| Region | `/regions/<slug>` | The backend owns the list and the order. Working list: `americas`, `europe`, `russia`, `middle-east`, `south-asia`, `china`, `asia`, `oceania`. Code works with any number of regions (DR-411). The page: Section 7H |
 | Topic | `/topic/<slug>` | Flat. One key, one Latin slug, a bn and an en label. Do not use the word "tag" (DR-410). The page: Section 7E |
 | News hub | `/latest` | News only |
 | Analysis hub | `/analysis` | বিশ্লেষণ / Analysis. Flat, no sub-hubs. Analysis only. The page: Section 7F |
@@ -552,7 +552,7 @@ The analysis hub (`/analysis`, `/en/analysis`, `AnalysisPageView`) is the Analys
 
 ## 7G. Region hub
 
-The region hub (`/regions`, `/en/regions`, `RegionsPageView`) is the Region hub row of Section 7C.2. Defined from the regions spec log RG-01, RG-02, RG-04 to RG-06 (tajmin, 4 and 5 Nov 2026). The page is built at build time for bn and en. Region pages (`/regions/<slug>`) are not built yet (IMP-18).
+The region hub (`/regions`, `/en/regions`, `RegionsPageView`) is the Region hub row of Section 7C.2. Defined from the regions spec log RG-01, RG-02, RG-04 to RG-06 (tajmin, 4 and 5 Nov 2026). The page is built at build time for bn and en. Each region has its page, `/regions/<slug>` (Section 7H).
 
 ### 7G.1 Page order
 
@@ -581,6 +581,36 @@ No More stories. `main` starts with the title band and ends with `space-section`
 - No cover: the first group follows the title band, with no `ad-band` before it (LAY-13).
 - No regions: the cover is the last row and adds no space.
 - No stories at all: the title band only; the empty-state message is open (U-63).
+
+## 7H. Region page
+
+The region page (`/regions/<slug>`, `/en/regions/<slug>`, `RegionPageView`) is the Region row of Section 7C.2. Defined from the region spec log RE-01, RE-02 (tajmin, 5 Nov 2026: "follow the tags/latest page design and layout."). The pages are built at build time for every region of the region list in bn and en; an unknown slug gives a 404 page (7C.1).
+
+### 7H.1 Page order
+
+As the topic page (7E.1), with these differences:
+
+| Row | Container | Content |
+| --- | --- | --- |
+| Site header | As on the homepage | `TopBar`, `NavBar` (C-17, C-18). The region's child link in the Drawer is the current item and its অঞ্চলসমূহ / Regions group opens (C-19); on `/regions/south-asia` the দক্ষিণ এশিয়া / South Asia item is current too. অঞ্চলসমূহ / Regions is not current. The language link keeps the region |
+| `ad-top` | Ad container | As on the homepage (Section 9). The page has no `ad-band` and no `ad-rail` |
+| Page title | `Shell` | `PageTitle` (C-43): the region name (the nav label), the page `h1`, in the `surface` band. No label, no description; `space-module` below |
+| `MoreStoriesSection` | `Shell`, `WithRail`: the wrapper column; the rail stays empty | As on the topic page: `MoreStoriesList` (StoryCard `dated`, C-24), named by the `h1`, `h2` titles, the C-08 Eyebrow in `format` mode on every row (news the category, analysis বিশ্লেষণ / Analysis; DR-417). DR-153 does not apply |
+| Footer | As on the homepage | `Footer` (C-21) |
+
+No link back to the region hub: the nav has it.
+
+### 7H.2 Content and load more
+
+- The news and analysis stories of the region, newest first, no repeats, no opinion. A story carries its regions (DR-411).
+- 10 stories first, then 10 per press, as 7B.2 Load more, with its motion and story time.
+- `main` starts with the title band and ends with `space-section`, as 7D.2.
+- A region page with fewer than 3 stories is `noindex, follow`; from 3 stories it sets no robots rule, as the topic page (DR-432).
+
+### 7H.3 Sparse content
+
+- No stories: the title band only; the list is not shown. The empty-state message is open (U-63). Every region of the list has its page, also with no stories.
+- 10 stories or fewer: no Button.
 
 ## 8. Peer rows
 
@@ -1083,9 +1113,13 @@ Test these content cases:
 
 ### 14.2 Article and other pages
 
-The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. The Latest page is in Section 7D and the topic page in Section 7E. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
+The article page is in Section 7A (DR-385 to DR-387). L-01, L-02, L-03, L-13 and L-15 to L-18 were about the archived article draft (version 1.1.1); Section 7A replaces that draft, so they are closed (DR-392). L-19 (page patterns) stays open for the other pages. The category page is in Section 7B: every item of its spec log is green or decided by tajmin. The Latest page is in Section 7D, the topic page in Section 7E, the analysis hub in 7F, the region hub in 7G and the region page in 7H. Other pages are not defined yet. They are defined per page in the browser: the page brief (`docs/briefs/<page>.md`) names the open items it covers, and the page spec log records the result (DR-370, DR-372, DR-379). After `/accept` the blueprint project writes the result into this document and closes the items.
 
 ## 15. Changelog
+
+**2.38 (5 November 2026)**
+
+- Region page (spec log region RE-01, RE-02; tajmin, 5 Nov 2026): new Section 7H, the region page `/regions/<slug>` in the order of the topic page (title only, no ad band), news and analysis newest first, noindex below 3 stories, sparse cases; the 7C.2 Region row and 7G name 7H; 14.2 lists the built pages.
 
 **2.37 (5 November 2026)**
 

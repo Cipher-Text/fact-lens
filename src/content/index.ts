@@ -21,6 +21,7 @@ import type {
   LatestPage,
   Poll,
   RegionId,
+  RegionPage,
   RegionsPage,
   Story,
   TopicPage,
@@ -337,6 +338,31 @@ export function getRegionsPage(lang: Lang): RegionsPage {
         ).slice(0, REGION_BLOCK_STORIES),
       }))
       .filter((block) => block.stories.length > 0),
+  };
+}
+
+/** Every region slug, for the static region pages (layout 7C.2 Paths, Region row). */
+export function getRegionSlugs(): string[] {
+  return [...regionIds];
+}
+
+function isRegionId(slug: string): slug is RegionId {
+  return (regionIds as readonly string[]).includes(slug);
+}
+
+/**
+ * The region page, or undefined for an unknown slug (a 404 page). The region's news and
+ * analysis, newest first, no opinion (page/region brief; tajmin, 5 Nov 2026). A region with
+ * no stories still has its page: the title band only (U-63).
+ */
+export function getRegionPage(lang: Lang, slug: string): RegionPage | undefined {
+  if (!isRegionId(slug)) return undefined;
+  return {
+    lang,
+    region: slug,
+    stories: getRegionStories(slug, lang).filter(
+      (story) => story.format !== "opinion",
+    ),
   };
 }
 

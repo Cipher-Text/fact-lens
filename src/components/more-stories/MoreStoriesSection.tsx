@@ -24,8 +24,8 @@ type Props = {
    * section shows no SectionHeading of its own, and data-section is `section`.
    */
   labelledBy?: string;
-  /** With `labelledBy`: the data-section name, "latest" (default) or "topic". */
-  section?: "latest" | "topic";
+  /** With `labelledBy`: the data-section name, "latest" (default), "topic" or "region". */
+  section?: "latest" | "topic" | "region";
   /** The category Eyebrow on every row (the Latest page). */
   eyebrow?: boolean;
   /** With `eyebrow` on: "format" shows the format on analysis rows (the topic page). */
