@@ -31,7 +31,8 @@ type CategoryBlockProps = {
 /**
  * C-23 CategoryBlock: one block in P-3 (component-system.md C-23). The heading is plain
  * text, not a link (DR-122). Then the feature story (a StoryCard: image 3:2 on top, title,
- * summary, meta, no eyebrow because the heading names the block) with a rule below it,
+ * summary, meta; no eyebrow because the heading names the block, unless the page sets
+ * `eyebrowMode`, as the region hub does, RG-07) with a rule below it,
  * then a StoryList of the other stories (3 per category on the homepage, DR-126). The
  * MoreLink is pinned to the block bottom, so both blocks in a row end on one line (DR-110,
  * DR-123). The page gives the heading, the name and the link: a category on the homepage,

@@ -15,7 +15,7 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: committed (93875b4) and pushed; PR 27 to `dev` open. PR 27 review fixes made, waiting for tajmin's commit yes
+- State: committed (93875b4, 3b555ed) and pushed; PR 27 to `dev` open. Second review fixes made, waiting for tajmin's commit yes
 - Next step: on tajmin's yes, commit the review fixes on `page/regions` and push; then tajmin's merge. RG-09 stays an open flag (DOC-61)
 - Open questions to tajmin: the page title is অঞ্চলসমূহ / Regions (the nav label, DR-345), not অঞ্চল as the brief says. DOC-61 is a flag for the spec log
 - Uncommitted: the PR 27 review fixes (see the last log entry)
@@ -145,3 +145,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - Tests: `region-hub.test.tsx` "no cover" also checks that no Latest rail shows.
 - Docs: spec log RG-02 names the no-cover case; the brief has a "Changed in the build" note.
 - Full e2e: the 1038-pass run came after the last `src/i18n/` change; the Eyebrow change after it touched only the region hub components and tests.
+
+### PR 27 second review (5 Nov 2026)
+
+- Review (claude bot): the 7 region MoreLinks go to `/regions/<slug>`, a 404 until the region page; a long comment line in `RegionsGroupedSection`; the `CategoryBlock` comment says the feature story has no eyebrow.
+- tajmin: "this will be fixed when region page is built. add an todo in the issues. and address the other comment".
+- Docs: ISSUES IMP-128 (to do with the region page: every region link opens its page, plus an e2e), ISSUES 1.14.
+- Code: `RegionsGroupedSection` comment re-wrapped and names IMP-128; `CategoryBlock` comment says no eyebrow unless the page sets `eyebrowMode` (RG-07). Comments only.

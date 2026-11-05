@@ -41,8 +41,9 @@ export function regionGroups<T>(regions: T[]): T[][] {
  * with stories, in the region order (layout 7C.2, DR-411); 1 per row on phones, 2 from 600
  * (LAY-07). An odd last block keeps its size and the other half stays empty (7.3). Each block:
  * the feature story (StoryCard `top`), a StoryList of 3, the `format` Eyebrow on every story
- * (news the category, analysis বিশ্লেষণ / Analysis; tajmin, 5 Nov 2026) and a MoreLink to the region page, /regions/<slug> (404 until IMP-18).
- * No ad-inset: the ad-band between the groups replaces it.
+ * (news the category, analysis বিশ্লেষণ / Analysis; tajmin, 5 Nov 2026) and a MoreLink to
+ * the region page, /regions/<slug> (404 until the region page, IMP-18, IMP-128). No
+ * ad-inset: the ad-band between the groups replaces it.
  * Rail: the ad-rail slot from 1024, one per group, as AnalysisTopSection; no poll (tajmin,
  * 5 Nov 2026).
  * Below 1024 the Rail is not drawn. From 1024 Divider.column-inset (16px from the top and the
