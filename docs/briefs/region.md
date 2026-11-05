@@ -43,5 +43,6 @@ Every link to `/regions/<slug>` opens its region page: the 7 MoreLinks of the re
 ## Test files
 
 - New: `tests/e2e/region.spec.ts` (page order, widths 360 / 600 / 768 / 1024 / 1280, bn and en, light and dark, keyboard, axe, load more, the empty region, an unknown slug 404, every IMP-128 link opens its page), `src/app/[lang]/regions/[slug]/metadata.test.ts`
-- Changed: `src/content/content.test.ts` (`getRegionPage`), `tests/e2e/header.spec.ts` (the current region items), `tests/e2e/regions-hub.spec.ts` and `tests/e2e/featured.spec.ts` (the region links open their pages), `src/components/region-hub/region-hub.test.tsx` if the current-item logic changes
+- Changed: `src/content/content.test.ts` (`getRegionPage`), `tests/e2e/header.spec.ts` (the current region items), `src/components/region-hub/region-hub.test.tsx` if the current-item logic changes
+- Change (5 Nov 2026, build): the IMP-128 link check (the region hub, homepage and Drawer links) lives in `region.spec.ts`, so `regions-hub.spec.ts` and `featured.spec.ts` do not change; both still run at the final checkpoint
 - The string tables may change, so the full `pnpm test:e2e:chromium` runs at the final checkpoint (AGENTS.md Section 11)

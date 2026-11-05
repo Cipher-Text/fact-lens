@@ -15,10 +15,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: Final checkpoint done; committed and pushed on tajmin's yes (5 Nov 2026)
-- Next step: the PR from `page/region` to `dev` when tajmin asks
+- State: PR 28 open; the review fixes are made, not committed (5 Nov 2026)
+- Next step: commit and push the PR 28 review fixes on tajmin's yes
 - Open questions to tajmin: none
-- Uncommitted: yes, the brief, this file, the STATUS "Now" branch bullet and the checkpoint 1 code
+- Uncommitted: yes, `tests/e2e/region.spec.ts`, the brief, the spec log and this file (PR 28 review fixes)
 
 ## Decisions
 
@@ -83,3 +83,13 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - design-reviewer: pass, no blockers; RE-01 to RE-05 green. Note: on `/regions/south-asia` two links are current (the South Asia item and its Regions child), written into C-19.
 - Spec log `docs/spec-log/region.md` RE-01 to RE-05; specs: layout 2.38 (7C.2, 7G, 7H new, 14.2, changelog), component-system 1.33 (Section 3, C-18, C-19, Section 8), agent-contract 2.29 (Sections 1, 3, 5).
 - `docs/ISSUES.md` 1.15: IMP-128 fixed (remove the row after the merge), IMP-14, IMP-18, U-63 (names the empty region page).
+
+### PR 28 review (5 Nov 2026)
+
+tajmin: "Yes, fix both".
+
+- `tests/e2e/region.spec.ts` IMP-128 test: the Drawer region links are now read from the open Drawer on `/regions/china` (the Regions group is open there), and must equal the 8 regions in the region order; before, the test added the list by hand.
+- Brief "Test files": `regions-hub.spec.ts` and `featured.spec.ts` are not changed (the IMP-128 check lives in `region.spec.ts`); the change is noted in the brief.
+- Spec log: RE-01 now names `page.tsx:13` (`generateStaticParams`) beside `:11`; RE-03 `MoreStoriesSection.tsx:27` (was `:28`). The other refs are correct.
+- Notes kept, no change: two `aria-current` links on `/regions/south-asia` (C-19), the empty Oceania page (U-63).
+- Runs: Chromium `region.spec.ts` 51 passed; lint and typecheck clean.

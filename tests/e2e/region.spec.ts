@@ -288,8 +288,25 @@ for (const p of PAGES) {
           .evaluateAll((els) => els.map((a) => a.getAttribute("href")!)))
           hrefs.add(href);
       }
-      // The Drawer sub-items: every region in the region order.
-      for (const id of REGIONS) hrefs.add(`${p.prefix}/regions/${id}`);
+      // The Drawer sub-items, read from the open Drawer: on a region page the Regions group
+      // is open, so every region link is in the page, in the region order.
+      await page.setViewportSize({ width: 360, height: 800 });
+      await page.goto(`${p.prefix}/regions/china`);
+      const drawer = page.locator("[data-drawer]");
+      await expect(async () => {
+        const menu = page.getByRole("button", { name: p.menu, exact: true });
+        await menu.focus();
+        await menu.press("Enter");
+        await expect(drawer).toBeVisible({ timeout: 500 });
+      }).toPass();
+      const drawerHrefs = await drawer
+        .locator(`a[href^="${p.prefix}/regions/"]`)
+        .evaluateAll((els) => els.map((a) => a.getAttribute("href")!));
+      // The South Asia top item comes first; the Regions group follows in the region order.
+      expect([...new Set(drawerHrefs.slice(-REGIONS.length))]).toEqual(
+        REGIONS.map((id) => `${p.prefix}/regions/${id}`),
+      );
+      for (const href of drawerHrefs) hrefs.add(href);
       expect(hrefs.size).toBe(REGIONS.length);
       for (const href of hrefs) {
         const response = await page.request.get(href);
