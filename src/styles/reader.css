@@ -1005,12 +1005,13 @@ html:has(
   }
 }
 /* Below 1280 the dock covers the bottom of the screen: its height is the button, the
-   padding, the top border and the safe area. A link that takes focus scrolls clear of
-   it, and the page ends above it. */
+   padding and the safe area. Its top line is an absolute Divider.rule inside that height,
+   so it adds nothing (FC-08). A link that takes focus scrolls clear of it, and the page
+   ends above it. */
 @media (width < 80rem) {
   html:has(.rd-dock) {
     --rd-dock-h: calc(
-      var(--icon-button-size) + calc(var(--spacing) * 4) + 1px +
+      var(--icon-button-size) + calc(var(--spacing) * 4) +
         env(safe-area-inset-bottom)
     );
     scroll-padding-bottom: var(--rd-dock-h);
