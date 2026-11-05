@@ -1,6 +1,6 @@
 # Fact Lens: Status
 
-Version 1.17 · 6 November 2026
+Version 1.18 · 6 November 2026
 
 The current state of the repository. It replaces `PROGRESS.md`, `HANDOVER.md`, `SPRINT.md`, the run logs and reports, and `prototype-findings.md` (removed 24 October 2026). Their open items are in `docs/ISSUES.md`. The session-start hook shows the "Now" section to Claude Code.
 
@@ -24,7 +24,7 @@ The current state of the repository. It replaces `PROGRESS.md`, `HANDOVER.md`, `
 - topic (page) merged (PR #20, 30 Oct 2026): the topic page `/topic/<slug>` and `/en/topic/<slug>` (layout 7E): news and analysis of a topic, newest first, no opinion; the C-08 `format` Eyebrow (category on news, Analysis on analysis); 10 then 10. The topics belong to the story (`StoryDef.topics`). Full Chromium e2e on `dev` (30 Oct 2026): 918 passed.
 - reader-size-script (task) merged (PR #21, 30 Oct 2026): no console error "Encountered a script tag while rendering React component" on a client link to an article. The reader size script runs once from the root layout `<head>`, on `/story/` and `/en/story/` only; after a client link `ReaderRoot` sets the size (TYP-15). Full Chromium e2e on `dev` (30 Oct 2026): 922 passed.
 - xc-fixes (task) merged (PR #22, 30 Oct 2026): the 30 Oct cross-check fixes (DR-424, DR-425, DR-432 to DR-437). The homepage lock is lifted (DR-434); `--color-page-title-band` for the PageTitle band; the `two-part` Eyebrow separator is the CPT-10 square, in the color of its line; the homepage region columns show the C-08 `format` Eyebrow on every story (DR-433 amended); `CategoryFormatsSection` keeps fixed halves (DR-436); topic pages below 3 stories are noindex, follow (DR-432); the article and category spec logs are full again. The amendments are recorded as DR-438 (homepage Eyebrow: hero and region columns, news the category, analysis the format; More stories news none; amends DR-433 and DR-417) and DR-439 (the `bg-(--color-page-title-band)` form, wording of DR-425). Full Chromium e2e on `dev` (30 Oct 2026): 928 passed.
-- Open items: `docs/ISSUES.md` (article page: IMP-101 to IMP-114, U-08; most read: U-47, IMP-115; url-format: U-48, IMP-119; xc-fixes: U-53, IMP-123; category-formats: IMP-120, IMP-121, DOC-58; latest: IMP-122, DOC-59; analysis: U-60; type-scale: IMP-126 ink insets, DOC-60 `type-*` names in `component-system.md`; imp-125: U-62 fixed by the follow-up; regions: U-63 empty-state message (also the empty region page), IMP-131 P-3b code comments; DOC-61 fixed in the specs, 6 Nov 2026). Open spec items are rows there too; the spec logs in `docs/spec-log/` are the record of what each page or task changed in the specs.
+- Open items: `docs/ISSUES.md` (article page: IMP-101 to IMP-114, U-08; most read: none; url-format: U-48, IMP-119; xc-fixes: U-53, IMP-123; category-formats: IMP-120, IMP-121, DOC-58; latest: IMP-122, DOC-59; analysis: U-60; type-scale: IMP-126 ink insets, DOC-60 `type-*` names in `component-system.md`; imp-125: U-62 fixed by the follow-up; regions: U-63 empty-state message (also the empty region page), IMP-131 P-3b code comments; DOC-61 fixed in the specs, 6 Nov 2026). Open spec items are rows there too; the spec logs in `docs/spec-log/` are the record of what each page or task changed in the specs.
 
 ## Issues
 
