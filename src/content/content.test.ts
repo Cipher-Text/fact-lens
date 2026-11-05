@@ -17,6 +17,7 @@ import {
   getCategoryPage,
   getHomepage,
   getAnalysisPage,
+  getRegionsPage,
   getLatestPage,
   getTopicPage,
   getTopicSlugs,
@@ -729,4 +730,41 @@ describe("article URLs (layout 7C, DR-413)", () => {
     expect(getArticleByRef(`wrong-${river.id}`, "bn")).toBeNull();
     expect(articleLangsOf("old-dhaka-trade-ledgers")).toEqual(["bn"]);
   });
+});
+
+describe("getRegionsPage (the region hub, page/regions brief)", () => {
+  it.each(["bn", "en"] as const)(
+    "%s: cover, Latest rail and one block per region with stories",
+    (lang) => {
+      const page = getRegionsPage(lang);
+      expect(page.lang).toBe(lang);
+      expect(page.cover).not.toBeNull();
+      expect(page.cover!.regions.length).toBeGreaterThan(0);
+      expect(page.cover!.image).toBeDefined();
+      expect(page.latest).not.toContain(page.cover);
+      expect(page.latest).toHaveLength(5);
+      for (const story of [page.cover!, ...page.latest]) {
+        expect(story.format).not.toBe("opinion");
+        expect(story.regions.length).toBeGreaterThan(0);
+      }
+      // The rail is newest first.
+      const times = page.latest.map((s) =>
+        Date.parse(s.publishedAt),
+      );
+      expect([...times].sort((a, b) => b - a)).toEqual(times);
+      // Every region but Oceania (no stories, layout 7.3) has a full block, in the 7C order.
+      expect(page.regions.map((block) => block.region)).toEqual(
+        regionIds.filter((id) => id !== "oceania"),
+      );
+      for (const block of page.regions) {
+        expect(block.stories).toHaveLength(4);
+        // The feature story has an image (every region has one).
+        expect(block.stories[0].image).toBeDefined();
+        for (const story of block.stories) {
+          expect(story.regions).toContain(block.region);
+          expect(story.format).not.toBe("opinion");
+        }
+      }
+    },
+  );
 });

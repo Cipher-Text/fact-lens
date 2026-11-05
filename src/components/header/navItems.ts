@@ -17,8 +17,9 @@ export type NavItem = {
  * Regions has sub-items, which only the Drawer shows (DR-255).
  * The category items go to the category pages, /category/<id> (/en/...), and the open
  * category is the current item (spacing-layout-system.md 7B, DR-181). South Asia goes to
- * /regions/south-asia, Regions to /regions and each region to /regions/<slug> (layout 7C,
- * DR-411); those pages are not built yet, so the links lead to a 404 page (IMP-18).
+ * /regions/south-asia, Regions to the region hub /regions, the current item there, and each region to
+ * /regions/<slug> (layout 7C, DR-411); the region pages are not built yet, so those links
+ * lead to a 404 page (IMP-18).
  * Analysis is one item with no sub-items: it goes to the analysis hub /analysis and is the
  * current item there. Opinion is on hold, so it has no item (tajmin, 4 Nov 2026; this
  * replaces the parent Analysis and Opinion with its # link, DR-331). There is no Op-ed item
@@ -56,6 +57,7 @@ export function getNavItems(
       id: "regions",
       label: t.header.navRegions,
       href: localizedPath(lang, "/regions"),
+      current: path === "/regions",
       children: regions,
     },
     category("geopolitics"),

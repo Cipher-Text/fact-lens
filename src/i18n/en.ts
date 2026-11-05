@@ -64,6 +64,14 @@ export const en: Dictionary = {
     analysis: "Analysis",
     opinion: "Opinion",
   },
+  // The region hub /regions (layout 7C.2, Region hub row). The title is regionsSection.title.
+  regionsPage: {
+    // Visually hidden name of the cover (RegionsCoverSection).
+    cover: "Main story",
+    latest: "Latest",
+    // The short line below the page title (page/regions brief, tajmin, 4 Nov 2026).
+    description: "News and analysis from every region of the world",
+  },
   // The analysis hub /analysis (layout 7C.2, Analysis hub row). The title is analysisOpinion.analysis.
   analysisPage: {
     // Visually hidden name of the mosaic.

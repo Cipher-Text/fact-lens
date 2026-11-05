@@ -21,8 +21,8 @@ export interface HomepagePlan {
   regions: RegionId[];
 }
 
-// চীন is a region, not a category (DR-19). Russia and Oceania have no stories, so they
-// do not show.
+// চীন is a region, not a category (DR-19). Oceania has no stories, so it does not
+// show (layout 7.3).
 const allRegions: RegionId[] = [...regionIds];
 
 export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
