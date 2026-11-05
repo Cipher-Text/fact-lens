@@ -19,8 +19,8 @@ type CategoryBlockProps = {
   t: Dictionary;
   /**
    * The C-08 Eyebrow on every story, in this mode; none when unset (the heading names the
-   * category, DR-114). The region hub blocks use `two-part`: the heading names the region,
-   * and the stories mix categories (tajmin, 5 Nov 2026).
+   * category, DR-114). The region hub blocks use `format`: the heading names the region,
+   * and the stories mix categories (RG-06; tajmin, 5 Nov 2026: "use only format").
    */
   eyebrowMode?: EyebrowMode;
   /** Replaces the feature story and the StoryList: the category page opinion block uses the

@@ -15,10 +15,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 
 ## Now
 
-- State: Final checkpoint done, waiting for tajmin's commit yes
-- Next step: on tajmin's yes, one commit on `page/regions`; then the PR to `dev`. RG-09 stays an open flag (DOC-61)
+- State: committed (93875b4) and pushed; PR 27 to `dev` open. PR 27 review fixes made, waiting for tajmin's commit yes
+- Next step: on tajmin's yes, commit the review fixes on `page/regions` and push; then tajmin's merge. RG-09 stays an open flag (DOC-61)
 - Open questions to tajmin: the page title is অঞ্চলসমূহ / Regions (the nav label, DR-345), not অঞ্চল as the brief says. DOC-61 is a flag for the spec log
-- Uncommitted: yes, everything on the branch (docs staged earlier, code and specs unstaged)
+- Uncommitted: the PR 27 review fixes (see the last log entry)
 
 ## Decisions
 
@@ -136,3 +136,12 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - Tests: `region-hub.test.tsx`: analysis rows link the Eyebrow to `/en/analysis` only, one link per Eyebrow, no separator. `regions-hub.spec.ts`: "the format Eyebrow: news the category, analysis only Analysis": one Eyebrow link per card, `/analysis` or a category, no separator.
 - Docs: spec log RG-06 is now a Reuse, green; RG-09 an open flag. Specs: layout 7G.1 and component-system (Section 3, C-23 region hub) name the `format` Eyebrow; agent-contract Section 3 row; STATUS; ISSUES DOC-61 quotes tajmin.
 - Checks (affected tests only, tajmin: "run only affected tests for this change"): region hub unit tests 12 passed; Chromium `regions-hub.spec.ts` 49 passed; lint and typecheck.
+
+### PR 27 review fixes (5 Nov 2026)
+
+- Review (claude bot): two stale `two-part` comments; the no-cover case drops the Latest rail; the brief is out of date; is the full e2e current.
+- tajmin: "A: keep, document" (no cover: no cover section and no Latest rail, as the category page).
+- Code: `CategoryBlock.tsx` and `StoryList.tsx` comments say `format` (RG-06); `getRegionsPage` comment documents the no-cover case.
+- Tests: `region-hub.test.tsx` "no cover" also checks that no Latest rail shows.
+- Docs: spec log RG-02 names the no-cover case; the brief has a "Changed in the build" note.
+- Full e2e: the 1038-pass run came after the last `src/i18n/` change; the Eyebrow change after it touched only the region hub components and tests.

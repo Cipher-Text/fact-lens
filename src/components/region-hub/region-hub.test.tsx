@@ -146,8 +146,11 @@ describe("RegionsPageView", () => {
     ).toBeNull();
   });
 
-  it("no cover: the first group follows the title band with no ad band", () => {
-    const { order, classes } = rows(view(false, 5, 7));
+  it("no cover: the first group follows the title band with no ad band, no Latest rail", () => {
+    const { main, order, classes } = rows(view(false, 5, 7));
+    // Intended (RG-02; tajmin, 5 Nov 2026): with no cover the Latest rail is not shown,
+    // even with Latest stories, as on the category page.
+    expect(main.querySelector("[data-latest]")).toBeNull();
     expect(order).toEqual([
       "header",
       "regions-grouped",

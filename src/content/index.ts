@@ -310,7 +310,9 @@ function imageFirst(list: Story[]): Story[] {
 /**
  * The region hub in one language (layout 7C.2 Paths, Region hub row). The cover is the
  * newest story with a region and an image (a cover has an image, as the hero, DR-91); the
- * Latest rail the 5 newest of the others. Each region block takes the 4
+ * Latest rail the 5 newest of the others. With no story with an image there is no cover,
+ * and the page shows no cover section and so no Latest rail, as the category page
+ * (RG-02; tajmin, 5 Nov 2026: keep it and document it). Each region block takes the 4
  * newest stories of its region, news and analysis, no opinion; its feature story is the
  * newest of them with an image. Repeats across the page are
  * an editorial and backend decision (tajmin, 4 Nov 2026), so the mock does not remove them.

@@ -23,7 +23,7 @@ type StoryListProps = {
   columns?: 1 | 2;
   meta?: "category-time" | "time-reading";
   /** The C-08 Eyebrow on every row, in this mode; none when unset (C-25). The region hub
-   * blocks use `two-part` (tajmin, 5 Nov 2026). */
+   * blocks use `format` (RG-06; tajmin, 5 Nov 2026). */
   eyebrowMode?: EyebrowMode;
   titleAs?: "h3" | "h4";
   className?: string;

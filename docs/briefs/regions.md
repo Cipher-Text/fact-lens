@@ -8,6 +8,16 @@ The region hub of layout 7C.2 (row Region hub, "All regions"): `/regions` and `/
 
 IMP-125 (story role names) is done on `dev` (PR #25, #26), so it is no longer part of this run. The page uses its names: N-06 (lead, cover, top stories, feature), OverlapCard `large`, StoryCard `variant`, and the type scale classes of type-scale (PR #24, TYP-01).
 
+## Changed in the build
+
+The table below is the plan of 4 Nov. The build differs; the spec log RG-01 to RG-09 is the record:
+
+- Title অঞ্চলসমূহ / Regions (the nav label, DR-345), not অঞ্চল.
+- The Eyebrow is `format` on every card (news the category, analysis only Analysis), not `two-part` (RG-06).
+- 7 regions with stories (Oceania has none), in groups of 4 with an `ad-band` before each group and one `ad-rail` per group; no `ad-inset` (RG-05).
+- The Divider between the wrapper and the rail is `column-inset`, not `column-full` (RG-05).
+- With no cover, the page shows no cover section and no Latest rail, as the category page (RG-02; PR 27 review).
+
 ## Sections, top to bottom
 
 | Row | Container | Component |
