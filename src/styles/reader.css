@@ -590,8 +590,10 @@
   /* The Divider.item dotted rule (--divider-dots, C-22), drawn at the bottom of the padding:
      8px above the rule, the rule, then the 8px item margin below it (IMP-129). */
   padding-bottom: calc(var(--spacing) * 2 + var(--divider-rule));
-  background: repeating-linear-gradient(to right, var(--divider-dots)) bottom /
-    100% var(--divider-rule) no-repeat;
+  background-image: repeating-linear-gradient(to right, var(--divider-dots));
+  background-position: bottom;
+  background-size: 100% var(--divider-rule);
+  background-repeat: no-repeat;
 }
 .rd-points__n {
   /* The item number is part of the list: text-base, so it sits on the line. */

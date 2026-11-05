@@ -6,6 +6,7 @@ import { useCallback, useRef, useState } from "react";
 
 import { SocialIcon } from "@/components/footer/SocialIcon";
 import { socialLinks } from "@/components/footer/socialLinks";
+import { Divider } from "@/components/layout/Divider";
 import { IconButton } from "@/components/story/IconButton";
 import {
   Collapsible,
@@ -19,7 +20,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import type { Dictionary } from "@/i18n";
-import { Divider } from "@/components/layout/Divider";
 import { cn } from "@/lib/utils";
 
 import { uiLink } from "./classes";
