@@ -1,7 +1,8 @@
 "use client";
 
-import { Divider } from "@/components/layout/Divider";
 import { ArrowUp, Check, Hash } from "lucide-react";
+
+import { Divider } from "@/components/layout/Divider";
 
 import { SaveButton, TextSize, TextSizeOptions } from "./Controls";
 import { useReading } from "./reading-store";

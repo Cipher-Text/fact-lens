@@ -1,5 +1,6 @@
-import { Divider } from "@/components/layout/Divider";
 import type { ReactNode } from "react";
+
+import { Divider } from "@/components/layout/Divider";
 
 import { ScrollOffset } from "./ScrollOffset";
 
@@ -38,6 +39,10 @@ export function TopBar({ start, logo, end }: Props) {
           {end}
         </div>
       </div>
+      {/* The stuck line (FC-08): the 1px rule is always there, so the bar does not move, but
+          transparent until the bar is stuck. This relies on cn (tailwind-merge): bg-transparent
+          replaces the bg-border-soft that tone="soft" sets, and bar-stuck:bg-border-soft adds
+          it back. Keep both classes if the Divider classes change. */}
       <Divider
         variant="rule"
         tone="soft"

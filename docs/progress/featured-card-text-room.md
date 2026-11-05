@@ -16,9 +16,9 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 ## Now
 
 - State: Final checkpoint done; FC-11 and FC-12 added after it (IMP-129, one dot token). pnpm check and the full Chromium e2e (1097) pass; waiting for tajmin's commit yes
-- Next step: on tajmin's yes, one commit on the branch, then a PR to `dev` (`AGENTS.md` Section 9 steps 4 and 5)
+- Next step: a PR to `dev` on tajmin's yes (`AGENTS.md` Section 9 steps 4 and 5)
 - Open questions to tajmin: none
-- Uncommitted: yes, all of the work, the spec log and the spec updates
+- Uncommitted: no, committed on the branch (6 Nov 2026)
 
 ## Decisions
 
@@ -101,3 +101,10 @@ This file is the memory of the work. tajmin clears the context often; a new sess
 - tajmin on the three copies of the dot gradient: "make only one token or component and reuse everywhere" → new token `--divider-dots` in `components.css` `:root` (the color stops); Divider.item, `divider-item-rail`, `divider-column-dotted` and Key points use it (FC-11). Checked in the browser: light `#a9a39e`, dark `#686b70` through the token. Spec component-system 1.34 (Section 6 row and CSS, C-22, KeyPoints) and the spec log FC-11, FC-12 updated. The e2e tests still compare against the written-out gradient, so they check the token value independently; not changed.
 - IMP-127 explained and its row updated: only 1024 to 1279 is left (title column 229px at 1024). Still open.
 - Checks: `pnpm check` passes (Vitest 393, build). Chromium e2e of small-parts, featured, grouped, story-units, article: 267 passed. Full `pnpm test:e2e:chromium` after FC-11 and FC-12: 1097 passed.
+
+### PR #29 review (6 Nov 2026)
+
+- claude[bot] review: no blockers. Fixed: the long comment lines this PR left (`NavBar.tsx` band comment, `components.css` Divider.item comment, `Divider.tsx` Divider.section JSDoc) re-wrapped to 100 columns; the `Divider` import moved into the repo import order in `TopBar.tsx`, `ReaderPage.tsx` and `Reading.tsx`; a comment on the TopBar stuck line says it relies on tailwind-merge (`bg-transparent` over the `tone="soft"` background, then `bar-stuck:bg-border-soft`). No behavior change.
+- Review notes kept as they are: `--divider-dots` follows the theme because `.dark` is on `<html>` (DR-281; the CSS comment says so); `--border` and `--border-soft` are tajmin's choices (FC-05, FC-06, contrast in the spec log).
+- Checks: lint, typecheck, Vitest 393, Chromium header, article and small-parts e2e 190 passed.
+- Not committed: waiting for tajmin's yes (AGENTS.md Section 9 step 5).

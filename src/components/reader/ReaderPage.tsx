@@ -1,10 +1,10 @@
-import { Divider } from "@/components/layout/Divider";
 import Image from "next/image";
 
 import { AdSlot } from "@/components/ads/AdSlot";
 import { Footer } from "@/components/footer/Footer";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { SkipLink } from "@/components/header/SkipLink";
+import { Divider } from "@/components/layout/Divider";
 import { Eyebrow } from "@/components/story/Eyebrow";
 import { storyPath } from "@/components/story/links";
 import { articleLangsOf } from "@/content";

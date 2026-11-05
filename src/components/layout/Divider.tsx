@@ -60,8 +60,9 @@ type DividerProps = {
 /**
  * Divider.section (C-22): a 1px solid border rule (--divider-rule) with the bar on it at the
  * start (tajmin, 6 Nov 2026: "the section heading and page heading is currently at 2px. change
- * it to 1px"; was 2px). The bar and the rule share the bottom edge. Bar size is --bar-section, color is --color-bar (brand in
- * light, interactive in dark). Decorative, so it is aria-hidden.
+ * it to 1px"; was 2px). The bar and the rule share the bottom edge. Bar size is
+ * --bar-section, color is --color-bar (brand in light, interactive in dark). Decorative, so
+ * it is aria-hidden.
  */
 export function Divider({
   variant = "section",

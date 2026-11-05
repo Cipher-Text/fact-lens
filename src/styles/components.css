@@ -475,10 +475,11 @@
 /* Divider.item (C-22, DR-262, DR-350, DR-351): a 1px dotted rule, 2px marks with a 4px gap
    (tajmin, 6 Nov 2026: "var(--color-border) 0px 2px, transparent 1px 6px ... for both
    vertical and horizontal"; was 1 x 1px dots with a 2px gap), drawn with a repeating
-   gradient because border-style dotted differs between browsers. space-list-item is on each side of the rule, measured to the ink (DR-350): the
-   list sets --list-ink-start (blank space above the first ink of an item) with a list-ink-*
-   utility and the padding takes it off; the item above ends at its ink because its meta line
-   is trimmed in place (rule below). The padding holds the rule, so the space below the rule
+   gradient of --divider-dots because border-style dotted differs between browsers.
+   space-list-item is on each side of the rule, measured to the ink (DR-350): the list sets
+   --list-ink-start (blank space above the first ink of an item) with a list-ink-* utility
+   and the padding takes it off; the item above ends at its ink because its meta line is
+   trimmed in place (rule below). The padding holds the rule, so the space below the rule
    is the full space-list-item too.
    --divider-item-start moves the rule start (OpinionList: the text column only). The first
    item has no rule (no rule before the first row, none after the last). */

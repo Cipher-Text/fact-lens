@@ -94,10 +94,11 @@ export function NavBar({ items, label }: Props) {
 
   return (
     // The band is full width in the page color, so the page does not show beside the shell
-    // while it scrolls under the pinned row. The shell holds the items (C-18, DR-357); the rule
-    // under them spans the band (tajmin, 6 Nov 2026). The list is one row tall from the server HTML (max-height, overflow hidden):
-    // items that wrap are cut off whole until `fit` hides them, so the page does not move at
-    // hydration (LAY-17 exception, DR-359, IMP-90).
+    // while it scrolls under the pinned row. The shell holds the items (C-18, DR-357); the
+    // rule under them spans the band (tajmin, 6 Nov 2026). The list is one row tall from the
+    // server HTML (max-height, overflow hidden): items that wrap are cut off whole until
+    // `fit` hides them, so the page does not move at hydration (LAY-17 exception, DR-359,
+    // IMP-90).
     <nav
       ref={navRef}
       aria-label={label}
