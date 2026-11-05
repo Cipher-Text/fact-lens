@@ -32,6 +32,6 @@ Not spec items (progress file only): the mock stories in `src/content/region-sto
 
 ## Flags
 
-- RG-09 (P-3b renamed P-6) is a Changed rule item, a red flag. tajmin, 5 Nov 2026: "RG-09 open flag. will fix later." It stays open as DOC-61 and is not written into the specs.
+- RG-09 (P-3b renamed P-6) was a Changed rule item, a red flag (DOC-61). tajmin, 6 Nov 2026: "im ok with that." Written into layout 2.40 and component-system 1.35 on dev; the code comments are IMP-131.
 - RG-06 was a Changed rule flag (the `two-part` Eyebrow on cards). tajmin dropped `two-part` at the final checkpoint (5 Nov 2026), so it is now a Reuse of the `format` mode and green; C-08 does not change.
 - Green items RG-01 to RG-08 are written into the specs on `page/regions`.
