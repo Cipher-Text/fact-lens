@@ -38,7 +38,8 @@ for (const { path, more } of PAGES) {
       ] as const) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(path);
-        const divider = page.locator("[data-divider]").first();
+        // The first section divider: the header has a Divider.rule before it (IMP-100).
+        const divider = page.locator('[data-divider="section"]').first();
         const bar = divider.locator("[data-divider-bar]");
         const barBox = (await bar.boundingBox())!;
         const dividerBox = (await divider.boundingBox())!;
@@ -51,14 +52,14 @@ for (const { path, more } of PAGES) {
         expect(
           await bar.evaluate((el) => getComputedStyle(el).borderRadius),
         ).toBe("0px");
-        // The rule is 2px solid in the border color (DR-262).
+        // The rule is 1px solid in the border color (DR-262; tajmin, 6 Nov 2026).
         const rule = (await divider.locator("span").first().boundingBox())!;
-        expect(Math.round(rule.height)).toBe(2);
+        expect(Math.round(rule.height)).toBe(1);
         expect(Math.round(rule.width)).toBe(Math.round(dividerBox.width));
       }
     });
 
-    test("Divider.item: 1px square dots with a 2px gap, both themes, none before the first row (C-22, DR-351)", async ({
+    test("Divider.item: 2px marks with a 4px gap, both themes, none before the first row (C-22, DR-351)", async ({
       page,
     }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
@@ -77,7 +78,7 @@ for (const { path, more } of PAGES) {
         page.evaluate(() => {
           const probe = document.createElement("div");
           probe.style.backgroundImage =
-            "repeating-linear-gradient(to right, var(--color-border) 0 1px, transparent 1px 3px)";
+            "repeating-linear-gradient(to right, var(--color-border) 0 2px, transparent 2px 6px)";
           document.body.append(probe);
           const value = getComputedStyle(probe).backgroundImage;
           probe.remove();
@@ -93,7 +94,7 @@ for (const { path, more } of PAGES) {
         expect(second.height, theme).toBe("1px");
         expect(second.image, theme).toBe(await expected());
         expect(second.image, theme).toMatch(
-          /1px, rgba\(0, 0, 0, 0\) 1px, rgba\(0, 0, 0, 0\) 3px\)$/,
+          /2px, rgba\(0, 0, 0, 0\) 2px, rgba\(0, 0, 0, 0\) 6px\)$/,
         );
       }
     });

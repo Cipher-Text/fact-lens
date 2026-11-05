@@ -1,6 +1,6 @@
 # Fact Lens Color System
 
-Version 2.18 · 30 October 2026 · XC fixes (spec log xc-fixes XF-01): 2.9 `--color-page-title-band`; 2.1 the PageTitle band names it, no exception note (DR-424, DR-425). Before: Version 2.17 · 28 October 2026 · Category formats (spec log `category-formats.md` CF-06): `surface` is also the PageTitle band (C-43). Before: Version 2.16 · 24 October 2026 · Article page, checkpoint 1 (DR-389)
+Version 2.19 · 6 November 2026 · Featured card and rules (spec log featured-card-text-room FC-05, FC-06): 2.5 and Section 5 `border` light `#A9A39E`, dark `#686B70`; `border-soft` dark `#43464B`. Before: Version 2.18 · 30 October 2026 · XC fixes (spec log xc-fixes XF-01): 2.9 `--color-page-title-band`; 2.1 the PageTitle band names it, no exception note (DR-424, DR-425). Before: Version 2.17 · 28 October 2026 · Category formats (spec log `category-formats.md` CF-06): `surface` is also the PageTitle band (C-43). Before: Version 2.16 · 24 October 2026 · Article page, checkpoint 1 (DR-389)
 
 The values are not final. Some colors can change after a few prototype rounds. Run the contrast tests in Section 3 again after each change.
 
@@ -81,8 +81,8 @@ Components use utilities only.
 
 | Token | Utility | Light | Dark | Use |
 | --- | --- | --- | --- | --- |
-| `border` | `border` | `#CEC7BD` | `#494D55` | Dividers, card edges |
-| `border-soft` | `border-soft` | `#EAE1D6` | `#2D3036` | Low-priority separators |
+| `border` | `border` | `#A9A39E` | `#686B70` | Dividers, card edges. About 2.4:1 on light `background`, 3.3:1 on dark `background` (spec log featured-card-text-room FC-05) |
+| `border-soft` | `border-soft` | `#EAE1D6` | `#43464B` | Low-priority separators: Divider.rule `tone="soft"` (C-22). Dark: 1.70:1 on `surface`, 1.85:1 on `background`, so the Drawer row lines show (FC-06) |
 | `border-interactive` | `border-interactive`, `input` | `#7D7369` | `#767E89` | Inputs, selects, checkboxes |
 
 ### 2.6 Status
@@ -300,7 +300,7 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --accent-soft: #edcec4;
   --accent-subtle: #f6e6e0;
   /* Borders */
-  --border: #cec7bd;
+  --border: #a9a39e;
   --border-soft: #eae1d6;
   --border-interactive: #7d7369;
   /* Status */
@@ -338,8 +338,8 @@ Put this CSS in `src/styles/colors.css`. It sets the tokens for both themes and 
   --on-interactive: #18191e;
   --accent-soft: #3a201a;
   --accent-subtle: #281b18;
-  --border: #494d55;
-  --border-soft: #2d3036;
+  --border: #686b70;
+  --border-soft: #43464b;
   --border-interactive: #767e89;
   --success: #60ae7c;
   --success-subtle: #192a26;
@@ -480,6 +480,7 @@ Examples:
 
 | Version | Date | Change |
 | --- | --- | --- |
+| 2.19 | 2026-11-06 | Featured card and rules (spec log featured-card-text-room FC-05, FC-06; tajmin, 6 Nov 2026): `border` light `#CEC7BD` to `#A9A39E`, dark `#494D55` to `#686B70` (amends DR-358); `border-soft` dark `#2D3036` to `#43464B`, light unchanged (Section 2.5, Section 5). `skeleton` dark stays `#2D3036`. |
 | 2.18 | 2026-10-30 | XC fixes (spec log xc-fixes XF-01, DR-424, DR-425): Section 2.9 adds `--color-page-title-band` (`surface` in light and dark) and lists the two component color tokens; Section 2.1 the `surface` row names the band token, the exception note is removed. |
 | 2.17 | 2026-10-28 | Category formats (DR-415, spec log `category-formats.md` CF-06): Section 2.1 `surface` is also the PageTitle band (C-43), by tajmin's choice; other bands stay `surface-alt`, the P-4 and Footer panel bands `surface-elevated`. |
 | 2.16 | 2026-10-24 | Article page, checkpoint 1 (DR-385, DR-389): Section 2.9 article page colors (`--color-bar` accents, no page aliases, no wash, base focus outline). COL-02: third-party marks take the text color, no hex. COL-04 and COL-05: the article category is a filled `--color-bar` button, a stated exception. `SectionAnchor` hover wash, a stated exception to the no-wash rule (DR-391). |

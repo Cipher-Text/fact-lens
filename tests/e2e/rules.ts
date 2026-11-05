@@ -7,6 +7,9 @@ import type { Page } from "@playwright/test";
 const INK_THRESHOLD = 24;
 // Rows scanned above and below the rule.
 const REACH = 48;
+// The elements that draw a Divider.item rule (::before): the list items, and the rail under
+// the wrapper below 1024 (divider-item-rail, P-2).
+const RULE_ITEMS = ".divider-item, .divider-item-rail > :nth-child(2)";
 
 export type RuleInk = {
   /** Where the rule is, for the failure message. */
@@ -37,24 +40,27 @@ export async function prepareInkScan(page: Page) {
  * viewport width and not in a hidden or inert panel. Returns their index in document order.
  */
 async function visibleRules(page: Page, scope: string) {
-  return page.evaluate((scopeSelector) => {
-    const root = document.querySelector(scopeSelector);
-    if (!root) return [];
-    const items = [...root.querySelectorAll(".divider-item")];
-    return items.flatMap((el, index) => {
-      const s = getComputedStyle(el, "::before");
-      if (s.display === "none" || s.content === "none") return [];
-      const r = el.getBoundingClientRect();
-      if (r.width === 0 || r.height === 0) return [];
-      if (r.left < 0 || r.right > window.innerWidth + 0.5) return [];
-      if (el.closest("[hidden], [inert], [aria-hidden='true']")) return [];
-      const section =
-        el.closest("[data-section]")?.getAttribute("data-section") ??
-        el.closest("section")?.getAttribute("aria-labelledby") ??
-        "page";
-      return [{ index, label: `${section} item ${index}` }];
-    });
-  }, scope);
+  return page.evaluate(
+    ([scopeSelector, RULE_ITEMS]) => {
+      const root = document.querySelector(scopeSelector);
+      if (!root) return [];
+      const items = [...root.querySelectorAll(RULE_ITEMS)];
+      return items.flatMap((el, index) => {
+        const s = getComputedStyle(el, "::before");
+        if (s.display === "none" || s.content === "none") return [];
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) return [];
+        if (r.left < 0 || r.right > window.innerWidth + 0.5) return [];
+        if (el.closest("[hidden], [inert], [aria-hidden='true']")) return [];
+        const section =
+          el.closest("[data-section]")?.getAttribute("data-section") ??
+          el.closest("section")?.getAttribute("aria-labelledby") ??
+          "page";
+        return [{ index, label: `${section} item ${index}` }];
+      });
+    },
+    [scope, RULE_ITEMS] as const,
+  );
 }
 
 /** The rule above one item, measured on a screenshot. */
@@ -64,10 +70,10 @@ async function scanRule(
   index: number,
 ): Promise<{ above: number; below: number }> {
   const rect = await page.evaluate(
-    ([scopeSelector, i]) => {
+    ([scopeSelector, i, selector]) => {
       const el = document
-        .querySelector(scopeSelector)!
-        .querySelectorAll(".divider-item")[i as number];
+        .querySelector(scopeSelector as string)!
+        .querySelectorAll(selector)[i as number];
       const top = el.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: top - 300, behavior: "instant" });
       const r = el.getBoundingClientRect();
@@ -78,7 +84,7 @@ async function scanRule(
         width: parseFloat(s.width),
       };
     },
-    [scope, index] as const,
+    [scope, index, RULE_ITEMS] as const,
   );
   // Images in view are lazy: wait until they have loaded.
   await page.waitForFunction(() =>
@@ -177,6 +183,8 @@ export type ColumnRule = {
   shown: boolean;
   width: number;
   color: string;
+  /** The background image: a repeating gradient when the rule is dotted. */
+  image: string;
   /** Rule center less the center of the gap between the two columns. */
   offCenter: number;
   /** Space from the grid top to the rule top, and from the rule bottom to the grid bottom. */
@@ -211,6 +219,7 @@ export async function columnRule(
         shown: s.content !== "none" && s.display !== "none",
         width,
         color: s.backgroundColor,
+        image: s.backgroundImage,
         offCenter: ruleLeft + width / 2 - (left.right + right.left) / 2,
         top: ruleTop - box.top,
         bottom: box.bottom - (ruleTop + height),

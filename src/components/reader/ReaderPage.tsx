@@ -4,6 +4,7 @@ import { AdSlot } from "@/components/ads/AdSlot";
 import { Footer } from "@/components/footer/Footer";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { SkipLink } from "@/components/header/SkipLink";
+import { Divider } from "@/components/layout/Divider";
 import { Eyebrow } from "@/components/story/Eyebrow";
 import { storyPath } from "@/components/story/links";
 import { articleLangsOf } from "@/content";
@@ -135,6 +136,11 @@ export function ReaderPage({ lang, article, readNext }: Props) {
           <div className="rd-byrow rd-wrap">
             <div className="rd-hero__text">
               <div className="rd-meta">
+                <Divider
+                  variant="rule"
+                  tone="soft"
+                  className="mb-(--space-list-item)"
+                />
                 <div className="rd-byline">
                   <span className="rd-avatar" aria-hidden="true">
                     {article.author.initials}
@@ -183,6 +189,7 @@ export function ReaderPage({ lang, article, readNext }: Props) {
               />
 
               <div className="rd-after">
+                <Divider variant="rule" tone="soft" />
                 <Topics topics={article.topics} t={t} lang={lang} />
               </div>
             </div>

@@ -7,7 +7,7 @@ import { setTheme } from "./theme";
 
 // The analysis hub, /[lang]/analysis (layout 7C.2 Paths, Analysis hub row): analysis only,
 // newest first. Page order: the PageTitle band with the description (C-43), the cover
-// (StoryCard `side` with `large`, C-24, the image 2 / 3 of the card width from 768,
+// (StoryCard `side` with `large`, C-24, the image 3 / 5 of the card width from 1024,
 // DR-464), the 2 x 2 OverlapCard mosaic (C-02) with the ad rail from 1024 (C-16), the ad
 // band, More stories (10 then 10,
 // C-12); the category Eyebrow everywhere (C-08, DR-417). Keyboard and axe, in Bangla and
@@ -182,17 +182,18 @@ for (const p of PAGES) {
         expect(description.max).toBe("none");
         expect(description.width).toBe(description.shell);
 
-        // Hero: image first under 768; from 768 text at the start, image at the end, the
-        // image about 2 / 3 of the row.
+        // Cover: image first under 1024; from 1024 text at the start, image at the end, the
+        // image 3 / 5 of the row (DR-464 as amended).
         const media = await box(hero(page).locator(".story-media"));
         const title = await box(hero(page).locator("h3"));
-        if (width < 768) {
+        if (width < 1024) {
           expect(title.y).toBeGreaterThan(media.y + media.height - 1);
         } else {
           expect(media.x).toBeGreaterThan(title.x + title.width - 1);
           const row = await box(hero(page).locator("[data-story-card]"));
-          expect(media.width / row.width).toBeGreaterThan(0.6);
-          expect(media.width / row.width).toBeLessThan(0.7);
+          expect(
+            Math.abs(media.width - (row.width * 3) / 5),
+          ).toBeLessThanOrEqual(1);
         }
         // 3:2 image.
         expect(media.width / media.height).toBeCloseTo(1.5, 1);
@@ -249,7 +250,7 @@ for (const p of PAGES) {
       });
     }
 
-    for (const width of [768, 1024, 1280]) {
+    for (const width of [768, 1023, 1024, 1280]) {
       test(`the cover title fits its text column at ${width} (DR-464)`, async ({
         page,
       }) => {

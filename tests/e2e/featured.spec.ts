@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { columnRule, tokenBackground } from "./rules";
 import { sideTitleFits } from "./side-title";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
@@ -112,30 +113,38 @@ for (const p of PAGES) {
           // Wrapper + 304px rail from 1024; rail under the wrapper below (LAY-05).
           const w = await box(wrapper);
           const r = await box(rail);
+          // Below 1024 a Divider.item rule draws above the rail, under the stacked card
+          // (divider-item-rail; tajmin, 5 Nov 2026). From 1024 there is none. The 16px to the
+          // ink on each side is measured in small-parts.spec.ts (C-22, DR-350).
+          const railRule = await rail.evaluate(
+            (el) => getComputedStyle(el, "::before").content,
+          );
           if (width >= 1024) {
             expect(Math.round(r.width)).toBe(304);
             expect(Math.round(w.width)).toBe(WRAPPER[width]);
             expect(Math.round(r.y)).toBe(Math.round(w.y));
             expect(r.x).toBeGreaterThan(w.x + w.width);
+            expect(railRule).toBe("none");
           } else {
             expect(Math.round(w.width)).toBe(shell);
             expect(Math.round(r.width)).toBe(shell);
             expect(r.y).toBeGreaterThan(w.y + w.height);
+            expect(railRule).toBe('""');
           }
 
-          // Feature story: one column under 768, image first, 16px to the text (P-2).
-          // From 768 the text is at the start and the image at the end, top aligned, with
-          // the image 2 / 3 of the whole card width, no minimum and no maximum (StoryCard
-          // side, DR-451, DR-464). The text takes the rest minus the column gap.
+          // Feature story: one column under 1024, image first, 16px to the text (P-2).
+          // From 1024 the text is at the start and the image at the end, top aligned, with
+          // the image 3 / 5 of the whole card width, no minimum and no maximum (StoryCard
+          // side, DR-451, DR-464 as amended). The text takes the rest minus the column gap.
           const i = await box(featureImage);
           const t = await box(featureText);
           expect(Math.round((i.width / i.height) * 100)).toBe(150); // 3:2
-          if (width < 768) {
+          if (width < 1024) {
             expect(Math.round(i.width)).toBe(Math.round(w.width));
             expect(Math.round(t.y)).toBe(Math.round(i.y + i.height + 16));
             expect(Math.round(t.x)).toBe(Math.round(i.x));
           } else {
-            const expected = (w.width * 2) / 3;
+            const expected = (w.width * 3) / 5;
             expect(Math.abs(i.width - expected)).toBeLessThanOrEqual(1);
             expect(Math.round(t.y)).toBe(Math.round(i.y));
             expect(Math.round(i.x + i.width)).toBe(Math.round(w.x + w.width));
@@ -222,7 +231,7 @@ for (const p of PAGES) {
       });
     }
 
-    for (const width of [768, 1024, 1280]) {
+    for (const width of [768, 1023, 1024, 1280]) {
       test(`the feature story title fits its text column at ${width} (DR-464)`, async ({
         page,
       }) => {
@@ -270,7 +279,7 @@ for (const p of PAGES) {
       });
     }
 
-    for (const width of [360, 600, 768, 1024, 1280, 1440]) {
+    for (const width of [360, 600, 768, 1023, 1024, 1280, 1440]) {
       test(`image first in the markup, visual order kept at ${width} (C-24, DR-267, DR-348)`, async ({
         page,
       }) => {
@@ -281,7 +290,7 @@ for (const p of PAGES) {
           const cards = [
             {
               card: section.locator("[data-featured-wrapper] article"),
-              row: width >= 768,
+              row: width >= 1024,
             },
           ];
           for (const { card, row } of cards) {
@@ -374,6 +383,54 @@ for (const p of PAGES) {
     });
   });
 }
+
+// From 1024 a dotted column-inset between the feature card and the rail: the Divider.item
+// dot, running down, 16px from the top and the bottom, centered in the gap. Below 1024 none:
+// the rail is under the card, after a Divider.item rule (tajmin, 5 and 6 Nov 2026; C-22).
+test.describe("column rule (C-22)", () => {
+  for (const theme of ["light", "dark"] as const) {
+    test(`/ ${theme}: dotted, inset, in the middle of the card and rail gap from 1024`, async ({
+      page,
+    }) => {
+      await setTheme(page, theme);
+      for (const width of [768, 1023, 1024, 1280, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto("/");
+        for (const category of CATEGORIES) {
+          const id = SECTIONS[category].id;
+          const rule = await columnRule(
+            page,
+            `#${id} .with-rail`,
+            `#${id} [data-featured-wrapper]`,
+            `#${id} [data-featured-rail]`,
+          );
+          if (width < 1024) {
+            expect(rule.shown, `${id} rule at ${width}`).toBe(false);
+            continue;
+          }
+          expect(rule.shown, `${id} rule at ${width}`).toBe(true);
+          expect(rule.width).toBe(1);
+          const border = await tokenBackground(page, "--color-border");
+          expect(rule.image).toBe(
+            `repeating-linear-gradient(${border} 0px, ${border} 2px, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, 0) 6px)`,
+          );
+          expect(
+            Math.abs(rule.offCenter),
+            `center at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.top - 16),
+            `top at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+          expect(
+            Math.abs(rule.bottom - 16),
+            `bottom at ${width}`,
+          ).toBeLessThanOrEqual(0.5);
+        }
+      }
+    });
+  }
+});
 
 test("page order: P-4, ad, দক্ষিণ এশিয়া, ad, ভূরাজনীতি, ad (7.1)", async ({
   page,

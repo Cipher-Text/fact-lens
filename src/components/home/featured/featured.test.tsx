@@ -55,9 +55,17 @@ describe("FeaturedCategorySection (P-2)", () => {
         el.hasAttribute("data-featured-wrapper") ? "wrapper" : "rail",
       ),
     ).toEqual(["wrapper", "rail"]);
+    // Below 1024 a Divider.item rule between the stacked card and the rail (C-22).
+    expect(grid).toHaveClass("divider-item-rail");
+    // From 1024 a dotted column-inset between the card and the rail (C-22).
+    expect(grid).toHaveClass("divider-column-rail", "divider-column-dotted");
+    expect(grid).not.toHaveClass("divider-column-full");
+    expect(container.querySelector("[data-featured-rail]")).toHaveClass(
+      "list-ink-title-meta",
+    );
   });
 
-  it("draws the feature story as the StoryCard side: stack under 768, side from 768, no eyebrow (C-24, P-2, DR-451)", () => {
+  it("draws the feature story as the StoryCard side: stack under 1024, side from 1024, no eyebrow (C-24, P-2, DR-451)", () => {
     const { container } = renderSection("bn", full.southAsia!);
     const card = container.querySelector(
       "[data-featured-wrapper] [data-story-card]",
@@ -65,7 +73,7 @@ describe("FeaturedCategorySection (P-2)", () => {
     expect(card).toHaveAttribute("data-variant", "side");
     const grid = card.firstElementChild as HTMLElement;
     expect(card).toHaveClass("@container");
-    expect(grid.className).toContain("md:story-side");
+    expect(grid.className).toContain("lg:story-side");
     expect(card.innerHTML).not.toMatch(/\border-/);
     // Image before the text in the markup; the grid puts the image at the end (LAY-14, DR-267).
     expect(grid.children[0]).toHaveAttribute("data-story-media");

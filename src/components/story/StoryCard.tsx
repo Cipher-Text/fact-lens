@@ -14,8 +14,9 @@ import { StoryImage } from "./StoryImage";
  * title size (tajmin, 5 Nov 2026: "map against variant"), not the card width:
  * top: the image above the text; card title.
  * thumbnail: text at the start, a small image at the end (text : image = 2 : 1); list title.
- * side: stacked as top under 768px; from 768px text at the start, the image at the end
- * (the image 2 / 3 of the card width, DR-464); card title, or the cover title with `large`.
+ * side: stacked as top under 1024px; from 1024px text at the start, the image at the end
+ * (text 2 / 5, the image 3 / 5 of the card width; amends DR-464); card title, or the cover
+ * title with `large`.
  * dated: the image, the text, then the date under 600px; from 600px three columns, the date,
  * the text, the image (More stories; tajmin, 27 Oct 2026). The date is the time only, no
  * reading time. Card title.
@@ -78,7 +79,7 @@ const coverTitle = "font-editorial text-4xl font-semibold";
 const gridClass: Record<StoryCardVariant, string> = {
   top: "story-top",
   thumbnail: "story-thumbnail",
-  side: "story-top md:story-side",
+  side: "story-top lg:story-side",
   dated: "story-dated",
 };
 

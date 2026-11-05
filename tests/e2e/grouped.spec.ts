@@ -685,6 +685,8 @@ test.describe("column rule (C-22, DR-351)", () => {
     }
   }
 
+  // P-2 has its own rule, the dotted column-inset (tajmin, 6 Nov 2026), checked in
+  // featured.spec.ts.
   test("no column rule in the other wrapper and rail sections (DR-351)", async ({
     page,
   }) => {
@@ -692,7 +694,11 @@ test.describe("column rule (C-22, DR-351)", () => {
     await page.goto("/");
     const others = await page.evaluate(() =>
       [...document.querySelectorAll(".with-rail")]
-        .filter((el) => !el.closest('[data-section="grouped"]'))
+        .filter(
+          (el) =>
+            !el.closest('[data-section="grouped"]') &&
+            !el.closest('[data-section="featured"]'),
+        )
         .map((el) => getComputedStyle(el, "::after").content),
     );
     expect(others.length).toBeGreaterThan(0);
