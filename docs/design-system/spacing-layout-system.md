@@ -544,7 +544,7 @@ The analysis hub (`/analysis`, `/en/analysis`, `AnalysisPageView`) is the Analys
 
 ### 7F.3 Sparse content
 
-- 0 stories: the title band, then a no-content message (DR-440). Its part and strings are not defined yet (U-61).
+- 0 stories: the title band, then a no-content message (DR-440). Its part and strings are not defined yet (U-63).
 - 1 story: the hero only; as the last row it adds no space.
 - 2 to 5 stories: the mosaic shows what there is (1 to 4 cards); no `ad-band`, no More stories (Section 7.3, LAY-13).
 - No mosaic stories but list stories: the `ad-band` follows the hero (`space-module` before it); no rule.
