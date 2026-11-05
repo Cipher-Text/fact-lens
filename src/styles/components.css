@@ -25,11 +25,12 @@
      (tajmin, 28 Oct 2026). Not the LAY-20 panel band values (40 / 48px), CPT-07. */
   --space-page-title-band: 1.5rem;
 
-  /* StoryCard side (C-24, DR-451, DR-464): text at the start, the image at the end. The image
-     column is 2 / 3 of the whole card width, no minimum and no maximum; the text takes the
-     rest minus the column gap (tajmin, 4 Nov 2026, DR-464; the analysis hub cover and the
+  /* StoryCard side (C-24, DR-451, DR-464 as amended): from 1024 text at the start, the image
+     at the end. The image column is 3 / 5 of the whole card width, no minimum and no maximum;
+     the text takes the rest minus the column gap (tajmin, 5 Nov 2026: "lets go with 2/5:3/5
+     from 1024 till end. before 1024, make it stack."; the analysis hub cover and the
      P-2 featured category feature). Section 6 has no tokens for it (CPT-07). */
-  --story-side-media-share: calc(2 / 3);
+  --story-side-media-share: calc(3 / 5);
   /* The analysis hub mosaic: the gap between the two card rows. The row gap, and 32px from
      1280 (tajmin, 4 Nov 2026; CPT-07). */
   --space-analysis-top-row-gap: var(--grid-row-gap);
@@ -54,9 +55,15 @@
 /* Divider (C-22, DR-351), component-system Section 6: --divider-rule, the rule weight of
    Divider.item, Divider.rule and Divider.column; --divider-column-inset, the column-inset
    distance from the top and the bottom; --quote-mark-width, the OpinionList quote mark width
-   (C-06: 28 / 36 / 44px), which also sets where the OpinionList item rule starts. */
+   (C-06: 28 / 36 / 44px), which also sets where the OpinionList item rule starts.
+   --divider-dots: the one dotted rule pattern (C-22, FC-04): 2px marks with a 4px gap in the
+   border color, the color stops of a repeating gradient. Every dotted rule draws
+   repeating-linear-gradient(<direction>, var(--divider-dots)): Divider.item, divider-item-rail,
+   divider-column-dotted and the article Key points. It resolves on :root, where the .dark
+   class is, so it follows the theme. */
 :root {
   --divider-rule: 1px;
+  --divider-dots: var(--color-border) 0 2px, transparent 2px 6px;
   --divider-column-inset: 1rem;
   --quote-mark-width: 1.75rem;
 }
@@ -237,13 +244,15 @@
   }
 }
 
-/* side: the image column is 2 / 3 of the whole card width, no minimum and no maximum; the
-   text takes the rest minus the gap (DR-464). The title fills its lines up to the gap before
-   the image: pretty, also with large, in place of balance (TYP-13, DR-468). The section
-   stacks it below 768 with story-top (StoryCard). */
+/* side: the image column is 3 / 5 of the whole card width, no minimum and no maximum; the
+   text takes the rest minus the gap (DR-464 as amended). The title fills its lines up to the
+   gap before the image: pretty, also with large, in place of balance (TYP-13, DR-468).
+   StoryCard stacks it below 1024 with story-top. */
 @utility story-side {
   grid-template-areas: "body media";
-  grid-template-columns: minmax(0, 1fr) calc(100% * var(--story-side-media-share));
+  grid-template-columns: minmax(0, 1fr) calc(
+      100% * var(--story-side-media-share)
+    );
   column-gap: var(--grid-column-gap);
   row-gap: 0;
   & :is(h2, h3, h4) {
@@ -463,9 +472,10 @@
   }
 }
 
-/* Divider.item (C-22, DR-262, DR-350, DR-351): a 1px dotted rule, square 1 x 1px dots with a
-   2px gap, drawn with a repeating gradient because border-style dotted differs between
-   browsers. space-list-item is on each side of the rule, measured to the ink (DR-350): the
+/* Divider.item (C-22, DR-262, DR-350, DR-351): a 1px dotted rule, 2px marks with a 4px gap
+   (tajmin, 6 Nov 2026: "var(--color-border) 0px 2px, transparent 1px 6px ... for both
+   vertical and horizontal"; was 1 x 1px dots with a 2px gap), drawn with a repeating
+   gradient because border-style dotted differs between browsers. space-list-item is on each side of the rule, measured to the ink (DR-350): the
    list sets --list-ink-start (blank space above the first ink of an item) with a list-ink-*
    utility and the padding takes it off; the item above ends at its ink because its meta line
    is trimmed in place (rule below). The padding holds the rule, so the space below the rule
@@ -487,17 +497,50 @@
     inset-inline: var(--divider-item-start, 0rem) 0;
     top: 0;
     height: var(--divider-rule);
-    background-image: repeating-linear-gradient(
-      to right,
-      var(--color-border) 0 1px,
-      transparent 1px 3px
-    );
+    background-image: repeating-linear-gradient(to right, var(--divider-dots));
   }
   &:first-child {
     margin-block-start: 0;
     padding-block-start: 0;
     &::before {
       display: none;
+    }
+  }
+}
+
+/* Divider.item between the wrapper and the rail below 1024, where the rail is under the
+   wrapper (P-2: under the stacked StoryCard side feature; tajmin, 5 Nov 2026: "use a dotted
+   rule below the card when it stacks below 1024."). Put it on the WithRail grid. The same
+   dotted rule and space-list-item on each side, measured to the ink (DR-350): the grid row
+   gap is 0, the wrapper ends at the ink of its meta line, and the rail sets --list-ink-start
+   (a list-ink-* utility on the Rail). From 1024 the rail is beside the wrapper: no rule. */
+@utility divider-item-rail {
+  @media (width < 64rem) {
+    /* Two classes, so it wins over the with-rail gap. */
+    &.with-rail {
+      row-gap: 0;
+    }
+    & > :first-child [data-meta-line] {
+      margin-block-end: calc(-1 * var(--text-xs-ink-end));
+    }
+    & > :nth-child(2) {
+      position: relative;
+      margin-block-start: var(--space-list-item);
+      padding-block-start: calc(
+        var(--space-list-item) + var(--divider-rule) -
+          var(--list-ink-start, 0rem)
+      );
+      &::before {
+        content: "";
+        position: absolute;
+        inset-inline: 0;
+        top: 0;
+        height: var(--divider-rule);
+        background-image: repeating-linear-gradient(
+          to right,
+          var(--divider-dots)
+        );
+      }
     }
   }
 }
@@ -653,7 +696,7 @@
           2
       );
       width: var(--divider-rule);
-      background-color: var(--color-border);
+      background: var(--divider-column-paint, var(--color-border));
     }
   }
 }
@@ -662,4 +705,17 @@
    to run the rule the full height of the grid: the analysis hub mosaic (tajmin, 4 Nov 2026). */
 @utility divider-column-full {
   --divider-column-block: 0;
+}
+
+/* divider-column-dotted: the Divider.item dot on a vertical rule (2px marks, 4px
+   gap, the same repeating gradient, running down). Add it to divider-column-rail: P-2, the
+   feature card and the rail from 1024, two groups of the same type, inset as column-inset
+   (tajmin, 6 Nov 2026: "for now, just use the dot vertical rule in the featured category";
+   "apply inset for vertical dot rule"). --divider-column-paint is a helper: the rule paint, the
+   border color by default. */
+@utility divider-column-dotted {
+  --divider-column-paint: repeating-linear-gradient(
+    to bottom,
+    var(--divider-dots)
+  );
 }

@@ -136,7 +136,7 @@ describe("StoryCard (C-24)", () => {
   it.each([
     ["top", "story-top"],
     ["thumbnail", "story-thumbnail"],
-    ["side", "md:story-side"],
+    ["side", "lg:story-side"],
     ["dated", "story-dated"],
   ] as const)(
     "sets variant %s on the grid inside the container",
@@ -153,13 +153,13 @@ describe("StoryCard (C-24)", () => {
     },
   );
 
-  it("side stacks under 768 and puts the image at the end from 768; every image is 3:2 (DR-453)", () => {
+  it("side stacks under 1024 and puts the image at the end from 1024; every image is 3:2 (DR-453)", () => {
     const { container } = render(
       <StoryCard story={withImage} strings={bn} variant="side" />,
     );
     const grid =
       container.querySelector("[data-story-card]")!.firstElementChild!;
-    expect(grid).toHaveClass("story-top", "md:story-side");
+    expect(grid).toHaveClass("story-top", "lg:story-side");
     expect(container.querySelector("img")).toHaveClass("aspect-3/2");
     expect(container.innerHTML).not.toContain("aspect-video");
   });

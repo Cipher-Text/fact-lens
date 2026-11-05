@@ -219,9 +219,9 @@
 }
 
 .rd-meta {
-  /* Rule to byline: space-list-item (16px). */
-  padding-top: var(--space-list-item);
-  border-top: 1px solid var(--border-soft);
+  /* The rule above the byline is Divider.rule (C-22), tone soft, with space-list-item
+     (16px) to the byline (IMP-100; tajmin, 6 Nov 2026: "Article, line above byline: use
+     divider.rule", then "change to border soft"; was a 1px border-soft border). */
   animation: rd-rise var(--duration-slide) var(--ease-slide) both;
 }
 .rd-byline {
@@ -582,13 +582,16 @@
   gap: calc(var(--spacing) * 3);
 }
 /* A dotted rule below the text only (not under the number), 8px on each side of the rule.
-   tajmin, 23 Oct 2026. */
+   tajmin, 23 Oct 2026. The rule is the Divider.item pattern (IMP-129). */
 .rd-points li + li {
   margin-top: calc(var(--spacing) * 2);
 }
 .rd-points li:not(:last-child) p {
-  padding-bottom: calc(var(--spacing) * 2);
-  border-bottom: 1px dotted var(--border);
+  /* The Divider.item dotted rule (--divider-dots, C-22), drawn at the bottom of the padding:
+     8px above the rule, the rule, then the 8px item margin below it (IMP-129). */
+  padding-bottom: calc(var(--spacing) * 2 + var(--divider-rule));
+  background: repeating-linear-gradient(to right, var(--divider-dots)) bottom /
+    100% var(--divider-rule) no-repeat;
 }
 .rd-points__n {
   /* The item number is part of the list: text-base, so it sits on the line. */
@@ -857,13 +860,13 @@
 
 /* The end of the article: a 1px rule, then the topics (tajmin, 24 Oct 2026). The same
    space on both sides of the rule, as Divider does (C-22): space-module (24 / 32 / 40),
-   because the rule separates two modules, the body and the topics. */
+   because the rule separates two modules, the body and the topics. The rule is Divider.rule,
+   tone soft, the first grid item; the grid gap is the space below it (IMP-100; tajmin,
+   6 Nov 2026). */
 .rd-after {
   display: grid;
   gap: var(--space-module);
   margin-top: var(--space-module);
-  padding-top: var(--space-module);
-  border-top: 1px solid var(--border);
 }
 
 .rd-topics ul {
@@ -963,7 +966,8 @@
   gap: calc(var(--spacing) * 1);
   padding: calc(var(--spacing) * 2) var(--rd-gutter)
     calc(calc(var(--spacing) * 2) + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border-soft);
+  /* The top line is Divider.rule, tone soft, at the top edge (IMP-100; tajmin, 6 Nov 2026:
+     "use the softer diver.rule above the reading dock as well"). */
   /* A raised surface: surface-elevated, opaque, no blur (COL-01, COL-15). tajmin,
      24 Oct 2026. */
   background: var(--surface-elevated);

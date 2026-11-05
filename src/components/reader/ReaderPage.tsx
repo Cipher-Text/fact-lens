@@ -1,3 +1,4 @@
+import { Divider } from "@/components/layout/Divider";
 import Image from "next/image";
 
 import { AdSlot } from "@/components/ads/AdSlot";
@@ -135,6 +136,11 @@ export function ReaderPage({ lang, article, readNext }: Props) {
           <div className="rd-byrow rd-wrap">
             <div className="rd-hero__text">
               <div className="rd-meta">
+                <Divider
+                  variant="rule"
+                  tone="soft"
+                  className="mb-(--space-list-item)"
+                />
                 <div className="rd-byline">
                   <span className="rd-avatar" aria-hidden="true">
                     {article.author.initials}
@@ -183,6 +189,7 @@ export function ReaderPage({ lang, article, readNext }: Props) {
               />
 
               <div className="rd-after">
+                <Divider variant="rule" tone="soft" />
                 <Topics topics={article.topics} t={t} lang={lang} />
               </div>
             </div>

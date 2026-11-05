@@ -27,7 +27,7 @@ describe("Divider (C-22)", () => {
     const divider = container.firstElementChild!;
     expect(divider).toHaveAttribute("aria-hidden", "true");
     expect(divider).toHaveClass("h-(--bar-section-height)");
-    expect(divider.querySelector("span")).toHaveClass("h-0.5", "bg-border"); // 2px rule
+    expect(divider.querySelector("span")).toHaveClass("h-(--divider-rule)", "bg-border"); // 1px rule
     expect(divider.querySelector("[data-divider-bar]")).toHaveClass(
       "bottom-0",
       "h-full",

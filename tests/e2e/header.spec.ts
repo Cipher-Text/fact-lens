@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
+import { tokenBackground } from "./rules";
 import { waitForNavRow } from "./settle";
 import { setTheme } from "./theme";
 
@@ -88,11 +89,14 @@ async function logoSize(logo: Locator) {
   });
 }
 
-/** The bottom rule of the top bar is drawn when its color is not transparent. */
+/**
+ * The bottom rule of the top bar (Divider.rule, tone soft; IMP-100) is drawn when its color
+ * is not transparent.
+ */
 async function barRuleShown(page: Page) {
   const color = await page
-    .locator("[data-top-bar]")
-    .evaluate((el) => getComputedStyle(el).borderBottomColor);
+    .locator('[data-top-bar] > [data-divider="rule"]')
+    .evaluate((el) => getComputedStyle(el).backgroundColor);
   return color !== "rgba(0, 0, 0, 0)";
 }
 
@@ -233,7 +237,7 @@ for (const p of PAGES) {
           expect(Math.round(navBox.width)).toBe(width);
           const shellBox = await box(navRow.locator("[data-nav-shell]"));
           expect(Math.round(shellBox.width)).toBe(Math.min(width - 48, 1280));
-          expect(Math.round(shellBox.height)).toBe(45);
+          expect(Math.round(shellBox.height)).toBe(44);
           expect(Math.round(navBox.y)).toBe(
             Math.round(barBox.y + barBox.height),
           );
@@ -241,9 +245,10 @@ for (const p of PAGES) {
           expect(Math.round(navBox.height)).toBe(45);
           const list = await box(navRow.locator("ul"));
           expect(Math.round(list.height)).toBe(44);
+          // The rule is Divider.rule under the list (C-22; IMP-100).
           const navRule = await navRow
-            .locator("[data-nav-shell]")
-            .evaluate((el) => getComputedStyle(el).borderBottomWidth);
+            .locator(':scope > [data-divider="rule"]')
+            .evaluate((el) => getComputedStyle(el).height);
           expect(navRule).toBe("1px");
         } else {
           await expect(navRow).toBeHidden();
@@ -251,7 +256,10 @@ for (const p of PAGES) {
         // No rule on the bar at the page top, at any width: the bar shows its rule only when
         // it is stuck (DR-173, DR-295). The border is transparent, so the bar does not move.
         expect(await barRuleShown(page)).toBe(false);
-        await expect(bar).toHaveCSS("border-bottom-width", "1px");
+        await expect(bar.locator(':scope > [data-divider="rule"]')).toHaveCSS(
+          "height",
+          "1px",
+        );
 
         // The logo is type-logo: 20px on phones, 28px at 768, 32px from 1024 (DR-306).
         await expect(logo).toHaveCSS(
@@ -582,11 +590,18 @@ for (const p of PAGES) {
         .first()
         .locator("a")
         .locator("..");
-      expect(Math.round((await box(row)).height)).toBe(53); // 52px + 1px rule
+      expect(Math.round((await box(row)).height)).toBe(52);
       expect(Math.round((await box(row)).x)).toBe(20);
       // 360 - 48 = 312 wide, less the 2 x 20 inset.
       expect(Math.round((await box(row)).width)).toBe(272);
-      await expect(row).toHaveCSS("border-bottom-width", "1px");
+      // The row line is Divider.rule in the soft border color, right under the row (C-19,
+      // C-22; IMP-100).
+      const rowRule = row.locator("xpath=following-sibling::*[1]");
+      await expect(rowRule).toHaveAttribute("data-divider", "rule");
+      await expect(rowRule).toHaveCSS("height", "1px");
+      expect(
+        await rowRule.evaluate((el) => getComputedStyle(el).backgroundColor),
+      ).toBe(await tokenBackground(page, "--color-border-soft"));
 
       const caret = drawer.locator("nav button[aria-expanded]").first();
       await expect(caret).toHaveAttribute("aria-expanded", "false");
@@ -1334,7 +1349,6 @@ for (const p of PAGES) {
         await waitForNavRow(page);
         const m = await page.evaluate((shellSelector) => {
           const nav = document.querySelector("[data-nav-row]")!;
-          const shell = nav.querySelector("[data-nav-shell]")!;
           const list = nav.querySelector("ul")!;
           const items = [...list.children].filter(
             (li) => !(li as HTMLElement).hidden,
@@ -1349,8 +1363,10 @@ for (const p of PAGES) {
             background: getComputedStyle(nav).backgroundColor,
             page: getComputedStyle(document.body).backgroundColor,
             rule: {
-              ...edges(shell),
-              width: getComputedStyle(shell).borderBottomWidth,
+              ...edges(nav.querySelector(':scope > [data-divider="rule"]')!),
+              width: getComputedStyle(
+                nav.querySelector(':scope > [data-divider="rule"]')!,
+              ).height,
             },
             list: edges(list),
             first: edges(items[0]),
@@ -1362,12 +1378,13 @@ for (const p of PAGES) {
         expect(Math.abs(m.band.left)).toBeLessThanOrEqual(0.5);
         expect(Math.abs(m.band.right - m.viewport)).toBeLessThanOrEqual(0.5);
         expect(m.background).toBe(m.page);
-        // The 1px rule and the item list sit on the shell edges.
+        // The 1px rule spans the band, the full viewport width (tajmin, 6 Nov 2026). The
+        // item list sits on the shell edges.
         expect(m.rule.width).toBe("1px");
-        for (const part of [m.rule, m.list]) {
-          expect(Math.abs(part.left - m.shell.left)).toBeLessThanOrEqual(0.5);
-          expect(Math.abs(part.right - m.shell.right)).toBeLessThanOrEqual(0.5);
-        }
+        expect(Math.abs(m.rule.left - m.band.left)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(m.rule.right - m.band.right)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(m.list.left - m.shell.left)).toBeLessThanOrEqual(0.5);
+        expect(Math.abs(m.list.right - m.shell.right)).toBeLessThanOrEqual(0.5);
         // The items are centered in the shell (DR-170), so they stay inside its edges.
         expect(m.first.left).toBeGreaterThanOrEqual(m.shell.left - 0.5);
         expect(m.last.right).toBeLessThanOrEqual(m.shell.right + 0.5);

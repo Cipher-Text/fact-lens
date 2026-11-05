@@ -1,5 +1,6 @@
 "use client";
 
+import { Divider } from "@/components/layout/Divider";
 import { ArrowUp, Check, Hash } from "lucide-react";
 
 import { SaveButton, TextSize, TextSizeOptions } from "./Controls";
@@ -89,6 +90,11 @@ export function ReadingTools({
   if (layout === "dock") {
     return (
       <div className="rd-dock" data-show={started || undefined}>
+        <Divider
+          variant="rule"
+          tone="soft"
+          className="absolute inset-x-0 top-0"
+        />
         <ProgressButton t={t} lang={lang} />
         <span className="rd-dock__meta" aria-hidden="true">
           <MinutesLeft t={t} lang={lang} />

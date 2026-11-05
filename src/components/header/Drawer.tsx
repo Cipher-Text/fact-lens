@@ -19,6 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import type { Dictionary } from "@/i18n";
+import { Divider } from "@/components/layout/Divider";
 import { cn } from "@/lib/utils";
 
 import { uiLink } from "./classes";
@@ -207,7 +208,7 @@ function DrawerItem({
   return (
     <li>
       <Collapsible open={expanded} onOpenChange={onExpandedChange}>
-        <div className="flex items-center border-b border-border">
+        <div className="flex items-center">
           <Link
             href={item.href}
             onClick={onNavigate}
@@ -234,6 +235,8 @@ function DrawerItem({
             />
           ) : null}
         </div>
+        {/* The row line: Divider.rule in the soft border color (C-19, C-22; IMP-100). */}
+        <Divider variant="rule" tone="soft" />
         {hasChildren ? (
           <CollapsibleContent className="accordion-panel">
             <ul className="bg-background py-2">

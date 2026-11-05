@@ -1,8 +1,8 @@
 import { expect, type Locator } from "@playwright/test";
 
 /**
- * The StoryCard side title fits its text column (DR-464: the image is 2 / 3 of the card,
- * no text minimum). The h3 does not scroll sideways and the body stays inside the card
+ * The StoryCard side title fits its text column (DR-464 as amended: stacked below 1024; from
+ * 1024 the image is 3 / 5 of the card, no text minimum). The h3 does not scroll sideways and the body stays inside the card
  * (TYP-08, TYP-09, LAY-02, LAY-17). 200% text is out of scope (tajmin, 4 Nov 2026). Used
  * by the analysis hub cover and the P-2 feature story tests.
  */

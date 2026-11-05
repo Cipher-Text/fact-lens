@@ -1,3 +1,4 @@
+import { Divider } from "@/components/layout/Divider";
 import type { ReactNode } from "react";
 
 import { ScrollOffset } from "./ScrollOffset";
@@ -20,13 +21,14 @@ type Props = {
  *
  * The 1px bottom rule shows only when the bar is stuck, at every width, in both themes. The
  * NavBar sets `data-bar-stuck` on <html>; the bar reads it through the `bar-stuck` variant
- * (DR-287, DR-295). The border is transparent until then, so the bar does not move.
+ * (DR-287, DR-295). The line is Divider.rule in the soft border color, transparent until
+ * then, so the bar does not move (IMP-100; tajmin, 6 Nov 2026).
  */
 export function TopBar({ start, logo, end }: Props) {
   return (
     <header
       data-top-bar
-      className="sticky top-0 z-(--z-bar) flex min-h-(--bar-height) header-focus flex-col border-b border-transparent bg-background bar-stuck:border-border"
+      className="sticky top-0 z-(--z-bar) flex min-h-(--bar-height) header-focus flex-col bg-background"
     >
       <ScrollOffset />
       <div className="flex flex-1 flex-wrap items-center px-(--top-bar-inset)">
@@ -36,6 +38,11 @@ export function TopBar({ start, logo, end }: Props) {
           {end}
         </div>
       </div>
+      <Divider
+        variant="rule"
+        tone="soft"
+        className="bg-transparent bar-stuck:bg-border-soft"
+      />
     </header>
   );
 }

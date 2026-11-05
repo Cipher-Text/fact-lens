@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.29 · 5 November 2026 · Region page: Sections 1 and 5 name layout 2.38 and component-system 1.33; Section 3 adds the region page layout row. Before: 2.28 · 5 November 2026 · Region hub: Sections 1 and 5 name layout 2.37 and component-system 1.32; Section 3 adds the region hub layout row. Before: 2.27 · 5 November 2026 · IMP-125 follow-up (DR-464 to DR-470): Section 1 and Section 5 name typography 2.25, layout 2.36 and component-system 1.31. Before: 2.26 · 5 November 2026 · Story roles and card variants (IMP-125, DR-450, DR-451, DR-453): new rule N-06 "Name a story by its role"; Section 1 names typography 2.24, layout 2.35 and component-system 1.30. Before: 2.25 · 4 November 2026 · Type scale (DR-454 to DR-456): TYP-01 is "Use only the scale classes"; Section 1 names typography 2.23 and the type scale. Before: 2.24 · 4 November 2026 · Analysis hub sync review: Sections 1 and 5 name layout 2.34. Before: 2.23 · 4 November 2026 · Analysis hub: Sections 1 and 5 name typography 2.22, layout 2.33 and component-system 1.29; Section 3 adds the analysis hub layout row. Before: 2.22 · 30 October 2026 · XC fixes (`task/xc-fixes`): Section 3 the homepage lock is lifted, the homepage changes like any page (DR-434); Sections 1 and 5 name the current spec versions: color 2.18, layout 2.32, component-system 1.28 (XC-07). Before: 2.21 · 30 October 2026 · Topic page: Section 1 names layout 2.31 and component-system 1.27; Section 3 adds the topic page layout row. Before: 2.20 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path; Section 3 rows link the specs, not the logs; Section 11 item 1 adds the spec-log template, and after the merge the brief and the progress file are deleted while the spec log stays. Before: 2.19 · 28 October 2026 · Latest page (spec log `latest.md`): Section 1 spec versions; Section 3 Latest page row. Before: 2.18 · 28 October 2026 · Dev process (`task/dev-process`): Section 3 other-page row and Section 11 items 1 to 3 name `page/` and `task/` branches and the progress file. Before: Category formats (DR-415): Section 1 spec versions; Section 3 category page row. Before: Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
+Version 2.30 · 6 November 2026 · Featured card and rules: Sections 1 and 5 name color 2.19, layout 2.39 and component-system 1.34. Before: 2.29 · 5 November 2026 · Region page: Sections 1 and 5 name layout 2.38 and component-system 1.33; Section 3 adds the region page layout row. Before: 2.28 · 5 November 2026 · Region hub: Sections 1 and 5 name layout 2.37 and component-system 1.32; Section 3 adds the region hub layout row. Before: 2.27 · 5 November 2026 · IMP-125 follow-up (DR-464 to DR-470): Section 1 and Section 5 name typography 2.25, layout 2.36 and component-system 1.31. Before: 2.26 · 5 November 2026 · Story roles and card variants (IMP-125, DR-450, DR-451, DR-453): new rule N-06 "Name a story by its role"; Section 1 names typography 2.24, layout 2.35 and component-system 1.30. Before: 2.25 · 4 November 2026 · Type scale (DR-454 to DR-456): TYP-01 is "Use only the scale classes"; Section 1 names typography 2.23 and the type scale. Before: 2.24 · 4 November 2026 · Analysis hub sync review: Sections 1 and 5 name layout 2.34. Before: 2.23 · 4 November 2026 · Analysis hub: Sections 1 and 5 name typography 2.22, layout 2.33 and component-system 1.29; Section 3 adds the analysis hub layout row. Before: 2.22 · 30 October 2026 · XC fixes (`task/xc-fixes`): Section 3 the homepage lock is lifted, the homepage changes like any page (DR-434); Sections 1 and 5 name the current spec versions: color 2.18, layout 2.32, component-system 1.28 (XC-07). Before: 2.21 · 30 October 2026 · Topic page: Section 1 names layout 2.31 and component-system 1.27; Section 3 adds the topic page layout row. Before: 2.20 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path; Section 3 rows link the specs, not the logs; Section 11 item 1 adds the spec-log template, and after the merge the brief and the progress file are deleted while the spec log stays. Before: 2.19 · 28 October 2026 · Latest page (spec log `latest.md`): Section 1 spec versions; Section 3 Latest page row. Before: 2.18 · 28 October 2026 · Dev process (`task/dev-process`): Section 3 other-page row and Section 11 items 1 to 3 name `page/` and `task/` branches and the progress file. Before: Category formats (DR-415): Section 1 spec versions; Section 3 category page row. Before: Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.18, `typography-system.md` v2.25, `spacing-layout-system.md` v2.38, `component-system.md` v1.33 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.19, `typography-system.md` v2.25, `spacing-layout-system.md` v2.39, `component-system.md` v1.34 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -92,7 +92,7 @@ The homepage changes like any page: on its own `page/` or `task/` branch, with c
 
 Each row links to the rule. The rule text is in the foundation document.
 
-### Color (`color-system.md` v2.18, 17 rules)
+### Color (`color-system.md` v2.19, 17 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -144,7 +144,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`TYP-24`](typography-system.md#typ-24-show-meaning-with-more-than-style) | Show meaning with more than style |
 | [`TYP-25`](typography-system.md#typ-25-break-a-word-only-when-it-does-not-fit) | Break a word only when it does not fit |
 
-### Spacing and layout (`spacing-layout-system.md` v2.38, 22 rules)
+### Spacing and layout (`spacing-layout-system.md` v2.39, 22 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -171,7 +171,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`LAY-21`](spacing-layout-system.md#lay-21-use-the-4px-scale-for-one-component-values) | Use the 4px scale for one-component values |
 | [`LAY-22`](spacing-layout-system.md#lay-22-put-an-inline-ad-between-two-paragraphs) | Put an inline ad between two paragraphs |
 
-### Components (`component-system.md` v1.33, 22 rules)
+### Components (`component-system.md` v1.34, 22 rules)
 
 | ID | Rule |
 | --- | --- |

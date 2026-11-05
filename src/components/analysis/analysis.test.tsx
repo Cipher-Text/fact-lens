@@ -124,7 +124,7 @@ describe("AnalysisPageView", () => {
     const card = hero.querySelector("[data-story-card]")!;
     expect(card).toHaveAttribute("data-variant", "side");
     expect(card).toHaveAttribute("data-large");
-    expect(card.firstElementChild!.className).toContain("md:story-side");
+    expect(card.firstElementChild!.className).toContain("lg:story-side");
     expect(
       hero.querySelector("[data-story-media] .aspect-3\\/2"),
     ).not.toBeNull();

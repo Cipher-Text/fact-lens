@@ -21,7 +21,7 @@
   --accent-soft: #edcec4;
   --accent-subtle: #f6e6e0;
   /* Borders */
-  --border: #cec7bd;
+  --border: #a9a39e;
   --border-soft: #eae1d6;
   --border-interactive: #7d7369;
   /* Status */
@@ -59,8 +59,8 @@
   --on-interactive: #18191e;
   --accent-soft: #3a201a;
   --accent-subtle: #281b18;
-  --border: #494d55;
-  --border-soft: #2d3036;
+  --border: #686b70;
+  --border-soft: #43464b;
   --border-interactive: #767e89;
   --success: #60ae7c;
   --success-subtle: #192a26;
