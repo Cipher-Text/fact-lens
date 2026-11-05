@@ -327,7 +327,18 @@ for (const p of PAGES) {
           false,
         );
         expect(Math.round((await box(nav)).y)).toBe(64);
-        expect(await barRuleShown(page)).toBe(false);
+        // Not stuck: the rule is transparent in both themes (FC-08). If the class merge in
+        // TopBar kept bg-border-soft next to bg-transparent, the rule would show here.
+        for (const dark of [false, true]) {
+          await page.evaluate(
+            (on) => document.documentElement.classList.toggle("dark", on),
+            dark,
+          );
+          expect(await barRuleShown(page), dark ? "dark" : "light").toBe(false);
+        }
+        await page.evaluate(() =>
+          document.documentElement.classList.remove("dark"),
+        );
         await expect.poll(() => logoSize(logo)).toBe(32);
 
         // Past the row (45px): stuck. The row slides up under the bar, is hidden and inert,
