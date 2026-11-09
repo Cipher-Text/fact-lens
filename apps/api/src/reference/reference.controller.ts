@@ -1,12 +1,10 @@
-import { Body, Controller, Get, HttpCode, Inject, Post, Query, Req } from '@nestjs/common';
+import { Controller, Get, Inject, Query } from '@nestjs/common';
 import {
-  contributorCreateSchema, editorialCapabilities, type Category, type Contributor, type Desk, type Locale, type Principal,
+  editorialCapabilities, type Category, type Contributor, type Desk, type Locale,
 } from '@fact-lens/contracts';
-import type { FastifyRequest } from 'fastify';
 import type { Pool } from 'pg';
 import { z } from 'zod';
-import { AuditService } from '../audit/audit.service';
-import { CurrentPrincipal, RequireAnyCapability, RequireCapability } from '../auth/decorators';
+import { RequireAnyCapability, RequireCapability } from '../auth/decorators';
 import { parse } from '../common/http';
 import { PG_POOL } from '../db/pool';
 
@@ -15,7 +13,6 @@ import { PG_POOL } from '../db/pool';
 export class ReferenceController {
   constructor(
     @Inject(PG_POOL) private readonly pool: Pool,
-    @Inject(AuditService) private readonly audit: AuditService,
   ) {}
 
   @Get('reference/desks')
@@ -56,22 +53,5 @@ export class ReferenceController {
       [q || null],
     );
     return rows.map((r) => ({ id: r.id, kind: r.kind, displayName: r.display_name, bio: r.bio }));
-  }
-
-  @Post('contributors')
-  @HttpCode(201)
-  @RequireCapability('news.edit')
-  async createContributor(@Body() body: unknown, @CurrentPrincipal() principal: Principal, @Req() req: FastifyRequest): Promise<Contributor> {
-    const input = parse(contributorCreateSchema, body);
-    const { rows } = await this.pool.query(
-      `INSERT INTO contributor (kind, display_name, bio) VALUES ($1, $2, $3) RETURNING id, kind, display_name, bio`,
-      [input.kind, input.displayName, input.bio ?? null],
-    );
-    const r = rows[0];
-    await this.audit.record({
-      actorType: 'human', actorId: principal.subject, action: 'contributor.create', objectType: 'contributor', objectId: r.id,
-      requestId: String(req.id),
-    });
-    return { id: r.id, kind: r.kind, displayName: r.display_name, bio: r.bio };
   }
 }

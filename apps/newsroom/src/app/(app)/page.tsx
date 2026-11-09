@@ -5,7 +5,7 @@ import {
 } from '@fact-lens/contracts';
 import { Empty, Panel, StatusBadge } from '@/components/ui';
 import { api, getPrincipal } from '@/lib/current';
-import { formatDateTime, pickTitle, relativeTime, statusLabel } from '@/lib/format';
+import { formatDateTime, formatLabel, pickTitle, relativeTime, statusLabel } from '@/lib/format';
 import { can } from '@/lib/nav';
 
 export const metadata = { title: 'Desk queue' };
@@ -94,7 +94,7 @@ export default async function DeskQueue({ searchParams }: { searchParams: Promis
                       <tr key={n.id} className="relative hover:bg-line/30">
                         <td className="px-4 py-3">
                           <Link href={`/news/${n.id}`} lang={title?.locale} className="font-semibold after:absolute after:inset-0 hover:underline focus-visible:outline-2">{title?.text ?? 'Untitled'}</Link>
-                          <div className="text-xs text-muted">{n.categoryIds.map((id) => section.get(id)).filter(Boolean).join(', ') || 'No section'} · {Object.keys(n.titles).sort().join(', ') || 'no text yet'}</div>
+                          <div className="text-xs text-muted">{n.format !== 'news' ? `${formatLabel(n.format)} · ` : ''}{n.categoryIds.map((id) => section.get(id)).filter(Boolean).join(', ') || 'No section'} · {Object.keys(n.titles).sort().join(', ') || 'no text yet'}</div>
                         </td>
                         <td className="px-4 py-3"><StatusBadge status={n.status} /></td>
                         <td className="whitespace-nowrap px-4 py-3 text-muted">{n.scheduledFor ? dueFormat.format(new Date(n.scheduledFor)) : '—'}</td>

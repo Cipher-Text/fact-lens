@@ -2,7 +2,7 @@ import {
   BadRequestException, ConflictException, Inject, Injectable, NotFoundException,
 } from '@nestjs/common';
 import type {
-  CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, PublicMedia, PublicNavItem, PublicNewsList, PublicTaxonomyRef, TagCreate, TagUpdate,
+  CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, NewsFormat, PublicMedia, PublicNavItem, PublicRegion, RegionCreate, RegionOrder, RegionUpdate, TaxonomyRegion, PublicNewsList, PublicTaxonomyRef, TagCreate, TagUpdate,
   TaxonomyCategory, TaxonomyTag, TaxonomyTagList,
 } from '@fact-lens/contracts';
 import { taxonomyTagQuerySchema } from '@fact-lens/contracts';
@@ -15,13 +15,14 @@ import { withTransaction } from '../db/transaction';
 import { slugify } from '../news/validation';
 import { LIVE_STATUSES } from '../news/workflow';
 
-type Kind = 'category' | 'tag';
+type Kind = 'category' | 'tag' | 'region';
 type Db = Pool | PoolClient;
 
 // Fixed names, never built from input: the SQL below interpolates only these.
 const KIND = {
   category: { table: 'category', labels: 'category_label', fk: 'category_id', hasDescription: true },
   tag: { table: 'tag', labels: 'tag_label', fk: 'tag_id', hasDescription: true },
+  region: { table: 'region', labels: 'region_label', fk: 'region_id', hasDescription: true },
 } as const;
 
 interface Row {
@@ -114,6 +115,107 @@ export class TaxonomyService {
 
   async deleteCategory(id: string, actor: Actor): Promise<void> {
     await this.remove('category', id, actor);
+  }
+
+  // --------------------------------------------------------------------- regions
+
+  async listRegions(db: Db = this.pool): Promise<TaxonomyRegion[]> {
+    const { rows } = await db.query<Row>(`${this.select('region')} ORDER BY c.position, c.key`);
+    return rows.map(toRegion);
+  }
+
+  async getRegion(id: string, db: Db = this.pool): Promise<TaxonomyRegion> {
+    const { rows } = await db.query<Row>(`${this.select('region')} WHERE c.id = $1`, [id]);
+    if (!rows[0]) throw new NotFoundException('Region not found');
+    return toRegion(rows[0]);
+  }
+
+  async createRegion(input: RegionCreate, actor: Actor): Promise<TaxonomyRegion> {
+    const id = await withTransaction(this.pool, async (db) => {
+      await this.requireLocales(db, Object.keys(input.labels));
+      const key = this.keyFor(input.key, input.labels);
+      const next = await db.query<{ n: number }>('SELECT COALESCE(max(position), 0) + 1 AS n FROM region');
+      const created = await this.guard(() => db.query<{ id: string }>('INSERT INTO region (key, position) VALUES ($1, $2) RETURNING id', [key, next.rows[0]!.n]));
+      const regionId = created.rows[0]!.id;
+      await this.writeLabels(db, 'region', regionId, key, input.labels);
+      await this.audit.record(
+        { actorType: 'human', actorId: actor.principal.subject, action: 'taxonomy.region_create', objectType: 'region', objectId: regionId,
+          requestId: actor.requestId, metadata: { key, locales: Object.keys(input.labels) } },
+        db,
+      );
+      return regionId;
+    });
+    return this.getRegion(id);
+  }
+
+  async updateRegion(id: string, input: RegionUpdate, actor: Actor): Promise<TaxonomyRegion> {
+    await withTransaction(this.pool, async (db) => {
+      const found = await db.query<{ key: string }>('SELECT key FROM region WHERE id = $1 FOR UPDATE', [id]);
+      if (!found.rows[0]) throw new NotFoundException('Region not found');
+      if (input.status !== undefined) await db.query('UPDATE region SET status = $2 WHERE id = $1', [id, input.status]);
+      if (input.labels) await this.applyLabels(db, 'region', id, found.rows[0].key, input.labels);
+      await this.audit.record(
+        { actorType: 'human', actorId: actor.principal.subject, action: 'taxonomy.region_update', objectType: 'region', objectId: id,
+          requestId: actor.requestId, metadata: { changed: Object.keys(input), locales: input.labels ? Object.keys(input.labels) : [] } },
+        db,
+      );
+    });
+    return this.getRegion(id);
+  }
+
+  /** The listed regions take the first places, in this order; the rest follow, in their old order. */
+  async reorderRegions(input: RegionOrder, actor: Actor): Promise<TaxonomyRegion[]> {
+    await withTransaction(this.pool, async (db) => {
+      const known = await db.query('SELECT 1 FROM region WHERE id = ANY ($1::uuid[])', [input.ids]);
+      if (known.rowCount !== input.ids.length) throw new BadRequestException('Some of those regions do not exist');
+      await db.query('UPDATE region SET position = position + $2 WHERE id <> ALL ($1::uuid[])', [input.ids, input.ids.length]);
+      await db.query('UPDATE region c SET position = o.n FROM unnest($1::uuid[]) WITH ORDINALITY AS o(id, n) WHERE c.id = o.id', [input.ids]);
+      await this.audit.record(
+        { actorType: 'human', actorId: actor.principal.subject, action: 'taxonomy.region_reorder', objectType: 'region', objectId: 'regions',
+          requestId: actor.requestId, metadata: { order: input.ids } },
+        db,
+      );
+    });
+    return this.listRegions();
+  }
+
+  async deleteRegion(id: string, actor: Actor): Promise<void> {
+    await this.remove('region', id, actor);
+  }
+
+  /** The regions of one news item, replaced as a whole. Regions belong to the news item, not to a revision. */
+  async setNewsRegions(newsId: string, regionIds: string[], actor: Actor): Promise<TaxonomyRegion[]> {
+    await withTransaction(this.pool, async (db) => {
+      const news = await db.query<{ status: string }>('SELECT status FROM news WHERE id = $1 FOR UPDATE', [newsId]);
+      if (!news.rows[0]) throw new NotFoundException('News not found');
+      if (news.rows[0].status === 'ARCHIVED') throw new ConflictException({ message: 'Archived news cannot be edited', reason: 'news_archived' });
+      if (regionIds.length > 0) {
+        const usable = await db.query(`SELECT 1 FROM region WHERE id = ANY ($1::uuid[]) AND status <> 'archived'`, [regionIds]);
+        if (usable.rowCount !== regionIds.length) throw new BadRequestException('Some of those regions do not exist or are archived');
+      }
+      const current = await db.query<{ region_id: string }>('SELECT region_id FROM news_region WHERE news_id = $1', [newsId]);
+      const had = new Set(current.rows.map((r) => r.region_id));
+      const want = new Set(regionIds);
+      const added = regionIds.filter((r) => !had.has(r));
+      const removed = [...had].filter((r) => !want.has(r));
+      if (removed.length > 0) await db.query('DELETE FROM news_region WHERE news_id = $1 AND region_id = ANY ($2::uuid[])', [newsId, removed]);
+      if (added.length > 0) await db.query('INSERT INTO news_region (news_id, region_id) SELECT $1, unnest($2::uuid[])', [newsId, added]);
+      if (added.length > 0 || removed.length > 0) {
+        await db.query('UPDATE news SET updated_at = now() WHERE id = $1', [newsId]);
+        await this.audit.record(
+          { actorType: 'human', actorId: actor.principal.subject, action: 'news.regions_update', objectType: 'news', objectId: newsId, newsId,
+            requestId: actor.requestId, metadata: { added, removed } },
+          db,
+        );
+      }
+    });
+    return this.regionsOfNews(newsId);
+  }
+
+  async regionsOfNews(newsId: string, db: Db = this.pool): Promise<TaxonomyRegion[]> {
+    const { rows } = await db.query<Row>(
+      `${this.select('region')} WHERE c.id IN (SELECT region_id FROM news_region WHERE news_id = $1) ORDER BY c.position, c.key`, [newsId]);
+    return rows.map(toRegion);
   }
 
   // ------------------------------------------------------------------------ tags
@@ -244,6 +346,38 @@ export class TaxonomyService {
     return tops.map((p) => ({ ...ref(p), children: rows.filter((r) => r.parent_id === p.id).map(ref) }));
   }
 
+  /** The regions in one language, in order. Only regions that are active and named in that language appear. */
+  async publicRegions(locale: string): Promise<PublicRegion[]> {
+    await this.requireActiveLocale(locale);
+    const { rows } = await this.pool.query<PublicRegion>(
+      `SELECT r.key, l.name, l.slug, l.description FROM region r JOIN region_label l ON l.region_id = r.id AND l.locale = $1
+        WHERE r.status = 'active' ORDER BY r.position, r.key`,
+      [locale],
+    );
+    return rows;
+  }
+
+  /**
+   * For a list address that no longer exists: the same list at its current address, when the section, region or
+   * tag was renamed. Null when the address was never used. Only asked after a 404, so the lookup costs nothing
+   * on the normal path.
+   */
+  async movedList(locale: string, q: { category?: string; tag?: string; region?: string }): Promise<{ param: 'category' | 'tag' | 'region'; slug: string } | null> {
+    const kinds = [
+      ['category', q.category, 'category_id', 'category_label'],
+      ['tag', q.tag, 'tag_id', 'tag_label'],
+      ['region', q.region, 'region_id', 'region_label'],
+    ] as const;
+    for (const [param, old, fk, labels] of kinds) {
+      if (!old) continue;
+      const { rows } = await this.pool.query<{ slug: string }>(
+        `SELECT l.slug FROM taxonomy_slug_history h JOIN ${labels} l ON l.${fk} = h.${fk} AND l.locale = h.locale
+          WHERE h.locale = $1 AND h.slug = $2`, [locale, old]);
+      if (rows[0]) return { param, slug: rows[0].slug };
+    }
+    return null;
+  }
+
   /** Active tags that have a name in this language, for choosing tags from a text. Capped, in key order. */
   async tagCandidates(locale: string, limit = 400): Promise<Array<{ id: string; key: string; name: string }>> {
     const { rows } = await this.pool.query<{ id: string; key: string; name: string }>(
@@ -253,12 +387,13 @@ export class TaxonomyService {
   }
 
   /** Published news in one language, newest first, optionally of one category or tag. */
-  async publicNews(locale: string, q: { category?: string; tag?: string; limit: number; cursor?: string }): Promise<PublicNewsList> {
+  async publicNews(locale: string, q: { category?: string; tag?: string; region?: string; format?: NewsFormat; excludeFormat?: NewsFormat; limit: number; cursor?: string }): Promise<PublicNewsList> {
     await this.requireActiveLocale(locale);
-    if (q.category && q.tag) throw new BadRequestException('Filter by a category or a tag, not both');
+    if ([q.category, q.tag, q.region].filter(Boolean).length > 1) throw new BadRequestException('Filter by a category, a tag or a region, not more than one');
     let filter: PublicNewsList['filter'] = null;
     let categoryId: string | null = null;
     let tagId: string | null = null;
+    let regionId: string | null = null;
     if (q.category) {
       const { rows } = await this.pool.query(
         `SELECT c.id, l.name, l.slug, l.description FROM category c JOIN category_label l ON l.category_id = c.id
@@ -266,6 +401,13 @@ export class TaxonomyService {
       if (!rows[0]) throw new NotFoundException('Not found');
       categoryId = rows[0].id;
       filter = { type: 'category', name: rows[0].name, slug: rows[0].slug, description: rows[0].description, image: null };
+    } else if (q.region) {
+      const { rows } = await this.pool.query(
+        `SELECT r.id, l.name, l.slug, l.description FROM region r JOIN region_label l ON l.region_id = r.id
+          WHERE l.locale = $1 AND l.slug = $2 AND r.status <> 'archived'`, [locale, q.region]);
+      if (!rows[0]) throw new NotFoundException('Not found');
+      regionId = rows[0].id;
+      filter = { type: 'region', name: rows[0].name, slug: rows[0].slug, description: rows[0].description, image: null };
     } else if (q.tag) {
       const { rows } = await this.pool.query(
         `SELECT t.id, t.image_id, l.name, l.slug, l.description FROM tag t JOIN tag_label l ON l.tag_id = t.id
@@ -285,24 +427,38 @@ export class TaxonomyService {
         throw new BadRequestException('Invalid cursor');
       }
     }
+    // Only the filters asked for are in the SQL. "$n IS NULL OR EXISTS (...)" hides the link table from the
+    // planner, which then walks the whole newest-first feed for a rare section, region or tag; as plain EXISTS
+    // it is a semi-join that can start from the link table's own index (category_id, news_id and the like).
+    const params: unknown[] = [locale, LIVE_STATUSES];
+    const bind = (value: unknown) => `$${params.push(value)}`;
+    const filters: string[] = [];
+    if (categoryId) {
+      const id = bind(categoryId);
+      filters.push(`EXISTS (SELECT 1 FROM news_category x JOIN category xc ON xc.id = x.category_id
+                             WHERE x.news_id = s.id AND (x.category_id = ${id} OR xc.parent_id = ${id}))`);
+    }
+    if (tagId) filters.push(`EXISTS (SELECT 1 FROM news_tag x WHERE x.news_id = s.id AND x.tag_id = ${bind(tagId)})`);
+    if (regionId) filters.push(`EXISTS (SELECT 1 FROM news_region nr WHERE nr.news_id = s.id AND nr.region_id = ${bind(regionId)})`);
+    if (cursorAt) filters.push(`(s.published_at, s.id) < (${bind(cursorAt)}::timestamptz, ${bind(cursorId)}::uuid)`);
+    if (q.format) filters.push(`s.format = ${bind(q.format)}`);
+    if (q.excludeFormat) filters.push(`s.format <> ${bind(q.excludeFormat)}`);
+    const limit = bind(q.limit + 1);
     const { rows } = await this.pool
       .query(
-        `SELECT s.id, ss.slug, st.title, st.dek, s.published_at,
+        `SELECT s.id, s.short_id, s.format, ss.slug, st.title, st.dek, s.published_at,
                 to_char(s.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at,
                 cl.name AS category_name, cl.slug AS category_slug, c.key AS category_key
            FROM news s
            JOIN news_translation st ON st.revision_id = s.published_revision_id AND st.locale = $1
            JOIN news_slug ss ON ss.news_id = s.id AND ss.locale = $1 AND ss.is_current
-           LEFT JOIN category c ON c.id = s.category_id AND c.status <> 'archived'
+           LEFT JOIN news_category pc ON pc.news_id = s.id AND pc.is_primary
+           LEFT JOIN category c ON c.id = pc.category_id AND c.status <> 'archived'
            LEFT JOIN category_label cl ON cl.category_id = c.id AND cl.locale = $1
           WHERE s.status = ANY ($2) AND s.published_revision_id IS NOT NULL
-            AND ($3::uuid IS NULL OR EXISTS (
-                  SELECT 1 FROM news_category x JOIN category xc ON xc.id = x.category_id
-                   WHERE x.news_id = s.id AND (x.category_id = $3 OR xc.parent_id = $3)))
-            AND ($4::uuid IS NULL OR EXISTS (SELECT 1 FROM news_tag x WHERE x.news_id = s.id AND x.tag_id = $4))
-            AND ($5::timestamptz IS NULL OR (s.published_at, s.id) < ($5::timestamptz, $6::uuid))
-          ORDER BY s.published_at DESC, s.id DESC LIMIT $7`,
-        [locale, LIVE_STATUSES, categoryId, tagId, cursorAt, cursorId, q.limit + 1],
+            ${filters.map((f) => `AND ${f}`).join('\n            ')}
+          ORDER BY s.published_at DESC, s.id DESC LIMIT ${limit}`,
+        params,
       )
       .catch((e) => {
         if (isPgError(e) && (e.code === '22007' || e.code === '22P02')) throw new BadRequestException('Invalid cursor');
@@ -312,7 +468,7 @@ export class TaxonomyService {
     return {
       filter,
       items: page.map((r) => ({
-        id: r.id, slug: r.slug, title: r.title, dek: r.dek, publishedAt: r.published_at.toISOString(),
+        id: r.id, shortId: r.short_id, format: r.format, slug: r.slug, title: r.title, dek: r.dek, publishedAt: r.published_at.toISOString(),
         category: r.category_name ? { key: r.category_key, name: r.category_name, slug: r.category_slug } : null,
       })),
       nextCursor: rows.length > q.limit ? Buffer.from(JSON.stringify([page[page.length - 1]!.cursor_at, page[page.length - 1]!.id])).toString('base64url') : null,
@@ -320,7 +476,7 @@ export class TaxonomyService {
   }
 
   /** A tag's picture as readers may see it: ready, allowed on the web, rights not expired, and credited or licensed. Otherwise none. */
-  private async publicImage(imageId: string | null): Promise<PublicMedia | null> {
+  async publicImage(imageId: string | null): Promise<PublicMedia | null> {
     if (!imageId) return null;
     const { rows } = await this.pool.query(
       `SELECT id, width, height, alt_text, attribution, license FROM media_asset
@@ -338,30 +494,34 @@ export class TaxonomyService {
    * The sections and tags of a news item as a reader of this language sees them: `category` is the primary
    * section, `categories` all of them with the primary first. One with no label here is left out.
    */
-  async publicRefs(newsId: string, locale: string): Promise<{ category: PublicTaxonomyRef | null; categories: PublicTaxonomyRef[]; tags: PublicTaxonomyRef[] }> {
-    const [categories, tags] = await Promise.all([
+  async publicRefs(newsId: string, locale: string): Promise<{ category: PublicTaxonomyRef | null; categories: PublicTaxonomyRef[]; regions: PublicTaxonomyRef[]; tags: PublicTaxonomyRef[] }> {
+    const [categories, tags, regions] = await Promise.all([
       this.pool.query<PublicTaxonomyRef & { is_primary: boolean }>(
-        `SELECT c.key, l.name, l.slug, (c.id = n.category_id) AS is_primary
-           FROM news_category nc JOIN news n ON n.id = nc.news_id
+        `SELECT c.key, l.name, l.slug, nc.is_primary
+           FROM news_category nc
            JOIN category c ON c.id = nc.category_id AND c.status <> 'archived'
            JOIN category_label l ON l.category_id = c.id AND l.locale = $2
-          WHERE nc.news_id = $1 ORDER BY (c.id = n.category_id) DESC, c.position, c.key`, [newsId, locale]),
+          WHERE nc.news_id = $1 ORDER BY nc.is_primary DESC, c.position, c.key`, [newsId, locale]),
       this.pool.query<PublicTaxonomyRef>(
         `SELECT t.key, l.name, l.slug FROM news_tag st JOIN tag t ON t.id = st.tag_id AND t.status <> 'archived'
            JOIN tag_label l ON l.tag_id = t.id AND l.locale = $2
           WHERE st.news_id = $1 ORDER BY l.name`, [newsId, locale]),
+      this.pool.query<PublicTaxonomyRef>(
+        `SELECT r.key, l.name, l.slug FROM news_region nr JOIN region r ON r.id = nr.region_id AND r.status <> 'archived'
+           JOIN region_label l ON l.region_id = r.id AND l.locale = $2
+          WHERE nr.news_id = $1 ORDER BY r.position, r.key`, [newsId, locale]),
     ]);
     const refs = categories.rows.map(({ key, name, slug }) => ({ key, name, slug }));
-    return { category: categories.rows[0]?.is_primary ? refs[0]! : null, categories: refs, tags: tags.rows };
+    return { category: categories.rows[0]?.is_primary ? refs[0]! : null, categories: refs, regions: regions.rows, tags: tags.rows };
   }
 
   // ------------------------------------------------------------------- internals
 
   private select(kind: Kind): string {
     const k = KIND[kind];
-    const usage = kind === 'category' ? 'SELECT count(*) FROM news_category x WHERE x.category_id = c.id' : 'SELECT count(*) FROM news_tag x WHERE x.tag_id = c.id';
+    const usage = { category: 'SELECT count(*) FROM news_category x WHERE x.category_id = c.id', tag: 'SELECT count(*) FROM news_tag x WHERE x.tag_id = c.id', region: 'SELECT count(*) FROM news_region x WHERE x.region_id = c.id' }[kind];
     const description = k.hasDescription ? 'l.description' : 'NULL::text';
-    return `SELECT c.id, c.key, ${kind === 'category' ? 'c.show_in_menu, c.parent_id, c.position,' : 'c.image_id,'} c.status,
+    return `SELECT c.id, c.key, ${{ category: 'c.show_in_menu, c.parent_id, c.position,', tag: 'c.image_id,', region: 'c.position,' }[kind]} c.status,
                    (${usage})::int AS usage_count,
                    COALESCE((SELECT jsonb_agg(jsonb_build_object('locale', l.locale, 'name', l.name, 'slug', l.slug, 'description', ${description}, 'aliases', l.aliases) ORDER BY l.locale)
                                FROM ${k.labels} l WHERE l.${k.fk} = c.id), '[]'::jsonb) AS labels
@@ -417,9 +577,16 @@ export class TaxonomyService {
 
   private async upsertLabel(db: Db, kind: Kind, id: string, key: string, locale: string, label: LabelInput, keepSlug: boolean): Promise<void> {
     const k = KIND[kind];
-    const existing = keepSlug ? await db.query<{ slug: string }>(`SELECT slug FROM ${k.labels} WHERE ${k.fk} = $1 AND locale = $2`, [id, locale]) : { rows: [] as Array<{ slug: string }> };
+    const existing = await db.query<{ slug: string }>(`SELECT slug FROM ${k.labels} WHERE ${k.fk} = $1 AND locale = $2`, [id, locale]);
+    const was = existing.rows[0]?.slug;
     // On an update the address is kept unless one is given: changing a name must not move a live page.
-    const slug = label.slug ?? existing.rows[0]?.slug ?? slugify(label.name, key);
+    const slug = label.slug ?? (keepSlug ? was : undefined) ?? slugify(label.name, key);
+    // A replaced address keeps working (a redirect); an address that is in use again no longer redirects.
+    await db.query(`DELETE FROM taxonomy_slug_history WHERE ${k.fk} IS NOT NULL AND locale = $1 AND slug = $2`, [locale, slug]);
+    if (was && was !== slug) {
+      await db.query(
+        `INSERT INTO taxonomy_slug_history (locale, slug, ${k.fk}) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING`, [locale, was, id]);
+    }
     await this.guard(() =>
       k.hasDescription
         ? db.query(
@@ -453,7 +620,7 @@ export class TaxonomyService {
       }
       try {
         const res = await db.query(`DELETE FROM ${k.table} WHERE id = $1`, [id]);
-        if (res.rowCount === 0) throw new NotFoundException(`${kind === 'tag' ? 'Tag' : 'Category'} not found`);
+        if (res.rowCount === 0) throw new NotFoundException(`${{ tag: 'Tag', category: 'Category', region: 'Region' }[kind]} not found`);
       } catch (err) {
         if (isPgError(err) && err.code === '23503') {
           throw new ConflictException({ message: `This ${kind} is used by news. Archive it instead.`, reason: 'in_use' });
@@ -486,4 +653,5 @@ export class TaxonomyService {
 const toCategory = (r: Row): TaxonomyCategory => ({
   id: r.id, key: r.key, showInMenu: r.show_in_menu ?? true, parentId: r.parent_id ?? null, position: r.position ?? 0, status: r.status, usageCount: r.usage_count, labels: r.labels,
 });
+const toRegion = (r: Row): TaxonomyRegion => ({ id: r.id, key: r.key, position: r.position ?? 0, status: r.status, usageCount: r.usage_count, labels: r.labels });
 const toTag = (r: Row): TaxonomyTag => ({ id: r.id, key: r.key, imageId: r.image_id ?? null, status: r.status, usageCount: r.usage_count, labels: r.labels });

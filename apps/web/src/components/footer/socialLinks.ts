@@ -5,7 +5,7 @@ import type { SocialNetwork } from "./SocialIcon";
 // goes to the network's front page (IMP-29).
 export type SocialLink = { network: SocialNetwork; href: string };
 
-/** The defaults. The newsroom can set the real accounts (lib/social-api.ts); a network without one keeps its link here. */
+/** The defaults. The real accounts come from the API's settings (lib/social-api.ts); a network without one keeps its link here. */
 export const socialLinks: SocialLink[] = [
   { network: "facebook", href: "https://www.facebook.com/" },
   { network: "youtube", href: "https://www.youtube.com/" },

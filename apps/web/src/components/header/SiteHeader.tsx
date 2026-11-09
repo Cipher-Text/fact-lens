@@ -19,7 +19,7 @@ type Props = {
   lang: Lang;
   /** The current page path without the language prefix, for the language switch. */
   path?: string;
-  /** The social links for the menu. The page passes the newsroom's addresses. */
+  /** The social links for the menu. The page passes the configured addresses. */
   social?: SocialLink[];
   /** Where the language switch goes when this page has no other-language version (DR-401). */
   switchFallback?: string;

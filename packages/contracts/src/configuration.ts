@@ -88,10 +88,17 @@ export const publicSocialLinksSchema = z.object({
 });
 export type PublicSocialLinks = z.infer<typeof publicSocialLinksSchema>;
 
+/** The site's contact details, from the deployment settings. A detail that is not set is null. */
+export const publicContactSchema = z.object({
+  email: z.string().nullable(),
+  phone: z.string().nullable(),
+  address: z.string().nullable(),
+});
+export type PublicContact = z.infer<typeof publicContactSchema>;
+
 /** Picks the value schema for a configuration key, or undefined for an unknown key. */
 export function configValueSchema(key: string): z.ZodType | undefined {
   if (key === 'workflow.transition_policy') return workflowPolicySchema;
-  if (key === 'site.social_links') return socialLinksSchema;
   if (key.startsWith('rate_limit.')) return rateLimitSchema;
   if (key.startsWith('ai.use_case.')) return aiUseCasePolicySchema;
   if (key.startsWith('retention.')) return retentionRuleSchema;

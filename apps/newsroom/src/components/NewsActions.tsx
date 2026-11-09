@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import type { AvailableTransition } from '@fact-lens/contracts';
-import { statusLabel } from '@/lib/format';
+import { newsFormats, type AvailableTransition, type NewsFormat } from '@fact-lens/contracts';
+import { formatLabel, statusLabel } from '@/lib/format';
 import { announce } from '@/lib/announce';
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
@@ -108,13 +108,14 @@ export function CorrectionForm({ newsId, locales }: { newsId: string; locales: s
   );
 }
 
-export function MetaForm({ newsId, desks, categories, deskId, categoryId, categoryIds, contributors, people }: {
+export function MetaForm({ newsId, desks, categories, deskId, categoryId, categoryIds, format, contributors, people }: {
   newsId: string;
   desks: Array<{ id: string; name: string }>;
   categories: SectionOption[];
   deskId: string | null;
   categoryId: string | null;
   categoryIds: string[];
+  format: NewsFormat;
   contributors: Array<{ id: string; name: string; role: string }>;
   people: Array<{ id: string; name: string }>;
 }) {
@@ -125,10 +126,11 @@ export function MetaForm({ newsId, desks, categories, deskId, categoryId, catego
   return (
     <form className="space-y-3"
       onSubmit={submitWith((form) => run('PUT', `news/${newsId}/meta`, {
-        deskId: (form.get('deskId') as string) || null, categoryId: sections.primary, categoryIds: sections.ids,
+        deskId: (form.get('deskId') as string) || null, categoryId: sections.primary, categoryIds: sections.ids, format: form.get('format'),
         contributors: added.map((c, i) => ({ contributorId: c.id, role: c.role, position: i })),
       }))}>
       <Field label="Desk"><select name="deskId" defaultValue={deskId ?? ''} className={inputClass}><option value="">None</option>{desks.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}</select></Field>
+      <Field label="Format" hint="The same address for all three. Opinion is kept out of the news lists."><select name="format" defaultValue={format} className={inputClass}>{newsFormats.map((f) => <option key={f} value={f}>{formatLabel(f)}</option>)}</select></Field>
       <SectionPicker options={categories} value={sections} onChange={setSections} />
       <fieldset>
         <legend className="mb-1 text-sm font-medium">Credits</legend>

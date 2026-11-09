@@ -4,6 +4,14 @@ import { z } from 'zod';
  * Typed deployment/environment config only. Editorial and runtime
  * configuration and feature flags are DB-backed (docs/21), not read here.
  */
+/** A text setting where an empty value means "not set". */
+const optionalText = (max: number) =>
+  z.string().optional().transform((v) => v?.trim() || undefined).pipe(z.string().max(max).optional());
+/** An https address where an empty value means "not set". The API also checks that it is on the network's own domain. */
+const optionalHttpsUrl = optionalText(300).pipe(
+  z.string().url().refine((v) => v.startsWith('https://'), 'must be an https address').optional(),
+);
+
 export const apiEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   API_HOST: z.string().default('0.0.0.0'),
@@ -38,6 +46,17 @@ export const apiEnvSchema = z.object({
   POLL_HASH_SECRET: z.string().min(32).optional(),
   /** How many votes one network address may cast on one poll in 24 hours. Above 1 so offices and mobile networks still work. */
   POLL_VOTES_PER_IP_PER_DAY: z.coerce.number().int().min(1).max(1000).default(5),
+  // The public site's identity: its social accounts and contact details. They are deployment settings, not
+  // editorial data, so they come from here and nowhere else. Empty means not set: the site keeps its default
+  // social links (each network's front page) and shows no contact detail.
+  SITE_SOCIAL_FACEBOOK_URL: optionalHttpsUrl,
+  SITE_SOCIAL_YOUTUBE_URL: optionalHttpsUrl,
+  SITE_SOCIAL_X_URL: optionalHttpsUrl,
+  SITE_SOCIAL_INSTAGRAM_URL: optionalHttpsUrl,
+  SITE_SOCIAL_LINKEDIN_URL: optionalHttpsUrl,
+  SITE_CONTACT_EMAIL: optionalText(320).pipe(z.string().email().optional()),
+  SITE_CONTACT_PHONE: optionalText(40),
+  SITE_CONTACT_ADDRESS: optionalText(300),
   /** Read the client address from X-Forwarded-For. Only behind a proxy you control: otherwise anyone can fake it. */
   TRUST_PROXY: z.stringbool().default(false),
 }).superRefine((env, ctx) => {

@@ -21,6 +21,7 @@ import { seedReferenceData } from './seed/seed';
 import { MediaController } from './media/media.controller';
 import { MEDIA_OPTIONS, MediaService } from './media/media.service';
 import { MemoryStorage, OBJECT_STORAGE, type ObjectStorage } from './media/storage';
+import { ContributorsController } from './contributors/contributors.controller';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { AssignmentsService } from './news/assignments.service';
@@ -31,7 +32,8 @@ import { SourcesService } from './news/sources.service';
 import { NewsController } from './news/news.controller';
 import { NewsService } from './news/news.service';
 import { LocalesController } from './config/locales.controller';
-import { PublicSiteController, SocialLinksController } from './config/social-links.controller';
+import { SITE_INFO } from './config/site';
+import { PublicSiteController } from './config/site.controller';
 import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller';
 import { TaxonomyController } from './taxonomy/taxonomy.controller';
 import { TaxonomyService } from './taxonomy/taxonomy.service';
@@ -70,10 +72,11 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [SocialLinksController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+    controllers: [PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: GEMINI_OPTIONS, useValue: opts.gemini ?? { apiKey: null, model: 'test-model' } }, GeminiService,
+      { provide: SITE_INFO, useValue: { social: { links: [{ network: 'x', url: 'https://x.com/factlens' }] }, contact: { email: 'desk@factlens.example', phone: null, address: null } } },
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
       NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, InboxService, PollsService, MediaService,
       { provide: POLL_OPTIONS, useValue: opts.polls ?? { secret: 'test-poll-secret-0123456789abcdef0123456789', perIpPerDay: 3 } },

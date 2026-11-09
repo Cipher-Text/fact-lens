@@ -5,9 +5,10 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import type { Editor } from '@tiptap/react';
 import {
-  tiptapBodySchema, toCanonicalBody, type AiSuggestion, type AiTranslation, type Category, type Desk, type InboxItem, type TaxonomyTag,
+  newsFormats, tiptapBodySchema, toCanonicalBody, type AiSuggestion, type AiTranslation, type Category, type Desk, type InboxItem, type NewsFormat, type TaxonomyRegion, type TaxonomyTag,
 } from '@fact-lens/contracts';
 import { bff } from '@/lib/client';
+import { formatLabel } from '@/lib/format';
 import { slugOf } from '@/lib/slug';
 import { collectTexts, replaceTexts } from '@/lib/translate-doc';
 import { MediaPicker } from './MediaParts';
@@ -22,6 +23,7 @@ type Note = { kind: 'error' | 'ok'; text: string } | null;
 
 const tagName = (t: TaxonomyTag) => t.labels.find((l) => l.locale === 'en')?.name ?? t.labels[0]?.name ?? t.key;
 const categoryName = (c: Category) => c.labels.find((l) => l.locale === 'en')?.name ?? c.labels[0]?.name ?? c.key;
+const regionNameOf = (r: TaxonomyRegion) => r.labels.find((l) => l.locale === 'en')?.name ?? r.labels[0]?.name ?? r.key;
 const emptyDoc = { type: 'doc', content: [] };
 
 /**
@@ -29,8 +31,8 @@ const emptyDoc = { type: 'doc', content: [] };
  * fold away), the desk, section and tags. One button creates it with everything and goes to the
  * desk queue, so there is no second form to fill in afterwards.
  */
-export function NewNewsForm({ locales, desks, categories, fromInbox = null }: {
-  locales: Array<{ code: string; displayName: string }>; desks: Desk[]; categories: Category[];
+export function NewNewsForm({ locales, desks, categories, regions, fromInbox = null }: {
+  locales: Array<{ code: string; displayName: string }>; desks: Desk[]; categories: Category[]; regions: TaxonomyRegion[];
   /** A source inbox item this news item is made from: it fills the headline and becomes the news item's source. */
   fromInbox?: InboxItem | null;
 }) {
@@ -44,7 +46,9 @@ export function NewNewsForm({ locales, desks, categories, fromInbox = null }: {
   });
   const editors = useRef<Record<string, Editor | null>>({});
   const [deskId, setDeskId] = useState('');
+  const [format, setFormat] = useState<NewsFormat>('news');
   const [sections, setSections] = useState<Sections>({ ids: [], primary: null });
+  const [regionIds, setRegionIds] = useState<string[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [picking, setPicking] = useState<string | null>(null);
   const [dirty, setDirty] = useState(false);
@@ -100,7 +104,7 @@ export function NewNewsForm({ locales, desks, categories, fromInbox = null }: {
       }));
       const made = await bff<{ news: { id: string } }>('POST', 'news', {
         locale: first.code, title: draftOf(first.code).title.trim(), slug: slugs[first.code],
-        ...(deskId ? { deskId } : {}), ...(sections.ids.length ? { categoryId: sections.primary, categoryIds: sections.ids } : {}),
+        ...(deskId ? { deskId } : {}), format, ...(sections.ids.length ? { categoryId: sections.primary, categoryIds: sections.ids } : {}),
       });
       if (!made.ok) return setError({ message: made.message, issues: made.issues });
       const id = made.data.news.id;
@@ -116,6 +120,10 @@ export function NewNewsForm({ locales, desks, categories, fromInbox = null }: {
           seoDescription: d.seoDescription.trim() || null, body: bodies[l.code], expectedVersion: l.code === first.code ? 1 : null,
         });
         if (!saved.ok) return stop(`the ${l.displayName} text`, saved);
+      }
+      if (regionIds.length > 0) {
+        const r = await bff('PUT', `news/${id}/regions`, { regionIds });
+        if (!r.ok) return stop('its regions', r);
       }
       if (tags.length > 0) {
         const t = await bff('PUT', `news/${id}/tags`, { tagIds: tags.map((x) => x.id) });
@@ -181,9 +189,29 @@ export function NewNewsForm({ locales, desks, categories, fromInbox = null }: {
                   {desks.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                 </select>
               </Field>
+              <Field label="Format">
+                <select value={format} onChange={(e) => { setFormat(e.target.value as NewsFormat); setDirty(true); }} className={inputClass}>
+                  {newsFormats.map((f) => <option key={f} value={f}>{formatLabel(f)}</option>)}
+                </select>
+              </Field>
               <SectionPicker
                 options={categories.map((c) => ({ id: c.id, name: categoryName(c), parentId: c.parentId }))}
                 value={sections} onChange={(next) => { setSections(next); setDirty(true); }} />
+              <fieldset>
+                <legend className="mb-1 text-sm font-medium">Regions</legend>
+                <ul className="grid gap-1 text-sm sm:grid-cols-2">
+                  {regions.filter((r) => r.status === 'active').map((r) => (
+                    <li key={r.id}>
+                      <label className="flex items-center gap-2">
+                        <input type="checkbox" checked={regionIds.includes(r.id)}
+                          onChange={() => { setRegionIds((cur) => (cur.includes(r.id) ? cur.filter((x) => x !== r.id) : [...cur, r.id])); setDirty(true); }} />
+                        {regionNameOf(r)}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-1 text-xs text-muted">The places the news is about. Not menu sections; it can be about several.</p>
+              </fieldset>
               <TagChooser tags={tags} onAdd={addTags} onRemove={(id) => setTags((cur) => cur.filter((t) => t.id !== id))} />
             </div>
           </Panel>

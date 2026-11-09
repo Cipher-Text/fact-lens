@@ -19,8 +19,8 @@ describe.skipIf(!adminUrl)('reference data (database)', () => {
     expect((await get('/reference/locales')).body.map((l: any) => l.code)).toEqual(['bn-BD', 'en']);
 
     const cats = await get('/reference/categories');
-    expect(cats.body).toHaveLength(9);
-    expect(cats.body[0]).toMatchObject({ key: 'local', labels: [{ locale: 'bn-BD', name: 'স্থানীয়' }, { locale: 'en', name: 'Local' }] });
+    expect(cats.body).toHaveLength(5);
+    expect(cats.body[0]).toMatchObject({ key: 'geopolitics', labels: [{ locale: 'bn-BD', name: 'ভূরাজনীতি ও কূটনীতি' }, { locale: 'en', name: 'Geopolitics and Diplomacy' }] });
 
     for (const url of ['/reference/desks', '/reference/locales', '/reference/categories', '/contributors']) {
       expect((await get(url, ['analyst'])).status).toBe(403);
@@ -36,14 +36,15 @@ describe.skipIf(!adminUrl)('reference data (database)', () => {
   it('creates and searches contributors without exposing contact details', async () => {
     const made = await t.call({ method: 'POST', url: '/contributors', roles: ['reporter'], body: { displayName: 'Rina Akter', bio: 'Politics reporter' } });
     expect(made.status).toBe(201);
-    expect(made.body).toEqual({ id: expect.any(String), kind: 'person', displayName: 'Rina Akter', bio: 'Politics reporter' });
+    // Creating returns the newsroom profile (news.edit only); the picker list below stays public-safe.
+    expect(made.body).toMatchObject({ id: expect.any(String), kind: 'person', displayName: 'Rina Akter', bio: 'Politics reporter', imageId: null, usageCount: 0 });
     await t.call({ method: 'POST', url: '/contributors', roles: ['reporter'], body: { displayName: '100% Real_Name', kind: 'organization' } });
 
     expect((await get('/contributors?query=rina')).body.map((c: any) => c.displayName)).toEqual(['Rina Akter']);
     expect((await get('/contributors?query=%25')).body.map((c: any) => c.displayName)).toEqual(['100% Real_Name']);
     expect((await get('/contributors?query=_')).body.map((c: any) => c.displayName)).toEqual(['100% Real_Name']);
     expect((await get('/contributors')).body.length).toBe(2);
-    expect(JSON.stringify(made.body)).not.toContain('contact');
+    expect(JSON.stringify((await get('/contributors')).body)).not.toContain('contact');
 
     expect((await t.call({ method: 'POST', url: '/contributors', roles: ['fact_checker'], body: { displayName: 'x' } })).status).toBe(403);
     expect((await t.call({ method: 'POST', url: '/contributors', roles: ['reporter'], body: { displayName: '  ' } })).status).toBe(400);

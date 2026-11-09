@@ -9,7 +9,7 @@ const now = '2026-10-21T10:00:00Z';
 
 describe('contracts', () => {
   it('accepts a news item and rejects an unknown status', () => {
-    const news = { id, canonicalKey: 'k', status: 'DRAFT', categoryId: null, categoryIds: [], deskId: null, publishedRevisionId: null, publishedAt: null, createdAt: now, updatedAt: now };
+    const news = { id, canonicalKey: 'k', shortId: 'g199u0n', format: 'news', status: 'DRAFT', categoryId: null, categoryIds: [], deskId: null, publishedRevisionId: null, publishedAt: null, createdAt: now, updatedAt: now };
     expect(newsSchema.safeParse(news).success).toBe(true);
     expect(newsSchema.safeParse({ ...news, status: 'NOPE' }).success).toBe(false);
     expect(newsStatuses).toContain('FACT_CHECK');

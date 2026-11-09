@@ -14,6 +14,21 @@ describe('loadApiEnv', () => {
     expect(loadApiEnv({ ...base, GEMINI_API_KEY: ' k ' }).GEMINI_API_KEY).toBe('k');
     expect(loadApiEnv(base).GEMINI_MODEL).toBe('gemini-2.5-flash');
   });
+  it('reads the site social links and contact details, and treats empty as not set', () => {
+    const none = loadApiEnv({ ...base, SITE_SOCIAL_X_URL: '', SITE_CONTACT_EMAIL: ' ', SITE_CONTACT_PHONE: '' });
+    expect(none.SITE_SOCIAL_X_URL).toBeUndefined();
+    expect(none.SITE_CONTACT_EMAIL).toBeUndefined();
+    const set = loadApiEnv({
+      ...base, SITE_SOCIAL_FACEBOOK_URL: ' https://www.facebook.com/factlens ', SITE_CONTACT_EMAIL: 'desk@factlens.example',
+      SITE_CONTACT_PHONE: '+880 2 5555 0100', SITE_CONTACT_ADDRESS: '12 Press Road, Dhaka',
+    });
+    expect(set.SITE_SOCIAL_FACEBOOK_URL).toBe('https://www.facebook.com/factlens');
+    expect(set.SITE_CONTACT_EMAIL).toBe('desk@factlens.example');
+    expect(set.SITE_CONTACT_ADDRESS).toBe('12 Press Road, Dhaka');
+    expect(() => loadApiEnv({ ...base, SITE_SOCIAL_X_URL: 'http://x.com/a' })).toThrow(/SITE_SOCIAL_X_URL/);
+    expect(() => loadApiEnv({ ...base, SITE_SOCIAL_X_URL: 'not a url' })).toThrow(/SITE_SOCIAL_X_URL/);
+    expect(() => loadApiEnv({ ...base, SITE_CONTACT_EMAIL: 'nope' })).toThrow(/SITE_CONTACT_EMAIL/);
+  });
   it('rejects a missing DATABASE_URL', () => {
     expect(() => loadApiEnv({ REDIS_URL: base.REDIS_URL })).toThrow(/DATABASE_URL/);
   });

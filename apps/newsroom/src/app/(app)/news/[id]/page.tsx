@@ -1,11 +1,11 @@
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import {
-  assignmentSchema, attachedSourceSchema, categorySchema, commentSchema, contributorSchema, deskSchema, localeSchema,
+  assignmentSchema, attachedSourceSchema, categorySchema, commentSchema, taxonomyRegionSchema, contributorSchema, deskSchema, localeSchema,
   newsDetailSchema, timelineEntrySchema,
 } from '@fact-lens/contracts';
 import { RichBody } from '@/components/RichBody';
-import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, NewsTagPicker, TransitionPanel, TranslationEditor } from '@/components';
+import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, NewsRegionPicker, NewsTagPicker, TransitionPanel, TranslationEditor } from '@/components';
 import { Badge, Empty, Panel, StatusBadge, WorkflowSteps } from '@/components/ui';
 import { ApiError, api, getPrincipal } from '@/lib/current';
 import { formatDateTime, pickTitle } from '@/lib/format';
@@ -32,7 +32,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const here = `/news/${id}`;
   const principal = await getPrincipal();
-  const [detail, comments, timeline, sources, assignments, desks, categories, locales, people] = await Promise.all([
+  const [detail, comments, timeline, sources, assignments, desks, categories, regions, locales, people] = await Promise.all([
     load(api(`/news/${id}`, newsDetailSchema, { returnTo: here })),
     api(`/news/${id}/comments`, z.array(commentSchema.extend({ resolvedBy: z.string().nullable().optional() })), { returnTo: here }),
     api(`/news/${id}/timeline`, z.array(timelineEntrySchema), { returnTo: here }),
@@ -40,6 +40,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
     api(`/news/${id}/assignments`, z.array(assignmentSchema), { returnTo: here }),
     api('/reference/desks', z.array(deskSchema), { returnTo: here }),
     api('/reference/categories', z.array(categorySchema), { returnTo: here }),
+    api('/reference/regions', z.array(taxonomyRegionSchema), { returnTo: here }),
     api('/reference/locales', z.array(localeSchema), { returnTo: here }),
     api('/contributors', z.array(contributorSchema), { returnTo: here }),
   ]);
@@ -55,6 +56,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
         seoTitle: first.seoTitle, seoDescription: first.seoDescription, body: first.body }
     : null;
   const missing = locales.filter((l) => !have.has(l.code));
+  const regionName = (r: (typeof regions)[number]) => r.labels.find((l) => l.locale === 'en')?.name ?? r.labels[0]?.name ?? r.key;
   const sectionName = (c: (typeof categories)[number]) => c.labels.find((l) => l.locale === 'en')?.name ?? c.key;
 
   return (
@@ -130,12 +132,16 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
           {news.status === 'PUBLISHED' && can(principal, 'news.correct') ? <Panel title="Record a correction" id="correct-h"><CorrectionForm newsId={id} locales={translations.map((t) => t.locale)} /></Panel> : null}
 
           <Panel title="Details" id="meta-h">
+            <p className="mb-3 text-sm text-muted">
+              Public address: <code>/story/&lt;slug&gt;-{news.shortId}</code>. The id stays the same in every language and when the slug changes.
+            </p>
             {can(principal, 'news.edit') && news.status !== 'ARCHIVED' ? (
               <div className="space-y-3">
-                <MetaForm newsId={id} deskId={news.deskId} categoryId={news.categoryId} categoryIds={news.categoryIds}
+                <MetaForm newsId={id} deskId={news.deskId} categoryId={news.categoryId} categoryIds={news.categoryIds} format={news.format}
                   desks={desks.map((d) => ({ id: d.id, name: d.name }))} categories={categories.map((c) => ({ id: c.id, name: sectionName(c), parentId: c.parentId }))}
                   contributors={detail.contributors.map((c) => ({ id: c.contributor.id, name: c.contributor.displayName, role: c.role }))}
                   people={people.map((p) => ({ id: p.id, name: p.displayName }))} />
+                <NewsRegionPicker newsId={id} regions={regions.map((r) => ({ id: r.id, name: regionName(r) }))} chosen={detail.regions.map((r) => r.id)} />
                 <NewsTagPicker newsId={id} tags={detail.tags} locales={locales} />
                 <NewPersonForm />
               </div>

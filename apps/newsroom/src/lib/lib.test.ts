@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { principalSchema } from '@fact-lens/contracts';
 import { isTrustedRequest } from './csrf';
 import { dateFromExpiry, expiryFromDate, formatBytes, mediaFileUrl, rightsStatus } from './media';
-import { formatDateTime, pickTitle, relativeTime, statusTone } from './format';
+import { formatDateTime, formatLabel, pickTitle, relativeTime, statusTone } from './format';
 import { visibleNav } from './nav';
 import { apiUrl, isAllowedApiRequest } from './proxy-allow';
 import { cookieNames, MAX_COOKIE_VALUE, openFlow, openSession, safeReturnTo, sealFlow, sealSession, type Session } from './session';
@@ -99,7 +99,7 @@ describe('capability-aware navigation', () => {
   const principal = (capabilities: string[]) => principalSchema.parse({ subject: 'u', roles: [], capabilities, mfa: true });
   const labels = (caps: string[]) => visibleNav(principal(caps)).map((n) => n.label);
   it('shows only what the person can use', () => {
-    expect(labels(['news.edit', 'news.submit'])).toEqual(['Desk queue', 'New news item', 'Source inbox', 'Polls', 'Media library']);
+    expect(labels(['news.edit', 'news.submit'])).toEqual(['Desk queue', 'New news item', 'Source inbox', 'Polls', 'Media library', 'People']);
     expect(labels(['media.manage'])).toEqual(['Media library']);
     expect(labels(['config.manage'])).toEqual(['Configuration']);
     expect(labels([])).toEqual([]);
@@ -116,6 +116,9 @@ describe('formatting', () => {
     expect(relativeTime('2026-10-21T11:30:00Z', now)).toBe('30 minutes ago');
     expect(relativeTime('2026-10-21T10:00:00Z', now)).toBe('2 hours ago');
     expect(relativeTime('2026-10-19T12:00:00Z', now)).toBe('2 days ago');
+  });
+  it('names the three formats', () => {
+    expect(['news', 'analysis', 'opinion'].map((f) => formatLabel(f as 'news'))).toEqual(['News', 'Analysis', 'Opinion']);
   });
   it('picks an English title first, then any locale', () => {
     expect(pickTitle({ 'bn-BD': 'ক', en: 'A' })).toEqual({ text: 'A', locale: 'en' });

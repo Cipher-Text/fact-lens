@@ -1,4 +1,4 @@
-import type { NewsStatus } from '@fact-lens/contracts';
+import type { NewsFormat, NewsStatus } from '@fact-lens/contracts';
 
 const dateTime = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Dhaka' });
 
@@ -24,6 +24,9 @@ export function pickTitle(titles: Record<string, string>): { text: string; local
   const locale = titles.en ? 'en' : Object.keys(titles).sort()[0];
   return locale ? { text: titles[locale]!, locale } : null;
 }
+
+/** News, analysis or opinion, as an editor reads it. */
+export const formatLabel = (f: NewsFormat) => ({ news: 'News', analysis: 'Analysis', opinion: 'Opinion' })[f];
 
 export const statusLabel = (s: NewsStatus) => s.replace(/_/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase());
 

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { categorySchema, deskSchema, inboxItemSchema, localeSchema } from '@fact-lens/contracts';
+import { categorySchema, deskSchema, inboxItemSchema, localeSchema, taxonomyRegionSchema } from '@fact-lens/contracts';
 import { NewNewsForm } from '@/components';
 import { api } from '@/lib/current';
 
@@ -11,10 +11,11 @@ export default async function NewNews({ searchParams }: { searchParams: Promise<
   const { fromInbox } = await searchParams;
   const here = '/news/new';
   const inboxId = uuid.safeParse(fromInbox);
-  const [locales, desks, categories, item] = await Promise.all([
+  const [locales, desks, categories, regions, item] = await Promise.all([
     api('/reference/locales', z.array(localeSchema), { returnTo: here }),
     api('/reference/desks', z.array(deskSchema), { returnTo: here }),
     api('/reference/categories', z.array(categorySchema), { returnTo: here }),
+    api('/reference/regions', z.array(taxonomyRegionSchema), { returnTo: here }),
     // An item that is gone, or already used, simply means a blank form.
     inboxId.success ? api(`/inbox/${inboxId.data}`, inboxItemSchema, { returnTo: here }).catch(() => null) : Promise.resolve(null),
   ]);
@@ -22,7 +23,7 @@ export default async function NewNews({ searchParams }: { searchParams: Promise<
   return (
     <div className="space-y-4">
       <h1 className="text-xl font-semibold">New news item</h1>
-      <NewNewsForm locales={locales.map((l) => ({ code: l.code, displayName: l.displayName }))} desks={desks} categories={categories} fromInbox={from} />
+      <NewNewsForm locales={locales.map((l) => ({ code: l.code, displayName: l.displayName }))} desks={desks} categories={categories} regions={regions} fromInbox={from} />
     </div>
   );
 }

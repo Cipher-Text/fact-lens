@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { httpUrlSchema, idSchema, localeCodeSchema, slugSchema, timestampSchema } from './common';
+import { httpUrlSchema, idSchema, localeCodeSchema, shortIdSchema, slugSchema, timestampSchema } from './common';
 import {
   assignmentRoles, assignmentStatuses, auditActorTypes, cardAspectRatios, cardTemplateStatuses,
-  commentStatuses, contributorKinds, contributorRoles, ingestChannels, mediaProcessingStates,
+  commentStatuses, contributorKinds, newsFormats, contributorRoles, ingestChannels, mediaProcessingStates,
   revisionMediaRoles, scheduleStatuses, sourceKinds, sourceRelations, sourceUseTypes,
   sourceValidationStatuses, newsStatuses, taxonomyStatuses, translationStatuses,
 } from './enums';
@@ -100,6 +100,9 @@ export type NewsRevision = z.infer<typeof newsRevisionSchema>;
 export const newsSchema = z.object({
   id: idSchema,
   canonicalKey: z.string(),
+  /** The id in the public address /story/<slug>-<id>. */
+  shortId: shortIdSchema,
+  format: z.enum(newsFormats),
   status: newsStatusSchema,
   /** The primary section. */
   categoryId: idSchema.nullable(),
@@ -236,9 +239,3 @@ export const auditEventSchema = z.object({
 });
 export type AuditEvent = z.infer<typeof auditEventSchema>;
 
-export const contributorCreateSchema = z.object({
-  kind: z.enum(contributorKinds).default('person'),
-  displayName: z.string().trim().min(1).max(200),
-  bio: z.string().trim().max(2000).nullish(),
-});
-export type ContributorCreate = z.infer<typeof contributorCreateSchema>;

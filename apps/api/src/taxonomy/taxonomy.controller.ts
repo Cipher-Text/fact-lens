@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
 import {
-  categoryCreateSchema, categoryOrderSchema, categoryUpdateSchema, editorialCapabilities, newsTagsSchema, tagCreateSchema,
+  categoryCreateSchema, categoryOrderSchema, categoryUpdateSchema, editorialCapabilities, newsRegionsSchema, newsTagsSchema, regionCreateSchema, regionOrderSchema, regionUpdateSchema, tagCreateSchema,
   tagUpdateSchema, taxonomyTagQuerySchema, type Principal,
 } from '@fact-lens/contracts';
 import type { FastifyRequest } from 'fastify';
@@ -46,6 +46,39 @@ export class TaxonomyController {
     await this.taxonomy.deleteCategory(id, actorOf(p, req));
   }
 
+  // ---- regions (places a news item is about; not menu sections)
+  @Get('taxonomy/regions')
+  @RequireAnyCapability('taxonomy.manage')
+  regions() {
+    return this.taxonomy.listRegions();
+  }
+
+  @Post('taxonomy/regions')
+  @RequireCapability('taxonomy.manage')
+  createRegion(@Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
+    return this.taxonomy.createRegion(parse(regionCreateSchema, body), actorOf(p, req));
+  }
+
+  // Declared before `:id` so "order" is never read as an id.
+  @Put('taxonomy/regions/order')
+  @RequireCapability('taxonomy.manage')
+  reorderRegions(@Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
+    return this.taxonomy.reorderRegions(parse(regionOrderSchema, body), actorOf(p, req));
+  }
+
+  @Put('taxonomy/regions/:id')
+  @RequireCapability('taxonomy.manage')
+  updateRegion(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
+    return this.taxonomy.updateRegion(id, parse(regionUpdateSchema, body), actorOf(p, req));
+  }
+
+  @Delete('taxonomy/regions/:id')
+  @HttpCode(204)
+  @RequireCapability('taxonomy.manage')
+  async deleteRegion(@Param('id', ParseUUIDPipe) id: string, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest): Promise<void> {
+    await this.taxonomy.deleteRegion(id, actorOf(p, req));
+  }
+
   // ---- tags
   @Get('taxonomy/tags')
   @RequireAnyCapability('taxonomy.manage')
@@ -79,6 +112,25 @@ export class TaxonomyController {
   referenceTags(@Query() query: unknown) {
     const q = parse(taxonomyTagQuerySchema, query);
     return this.taxonomy.listTags({ ...q, status: 'active' });
+  }
+
+  /** Active regions for the picker. Archived regions are not offered. */
+  @Get('reference/regions')
+  @RequireAnyCapability(...editorialCapabilities)
+  async referenceRegions() {
+    return (await this.taxonomy.listRegions()).filter((r) => r.status === 'active');
+  }
+
+  @Get('news/:id/regions')
+  @RequireAnyCapability(...editorialCapabilities)
+  newsRegions(@Param('id', ParseUUIDPipe) id: string) {
+    return this.taxonomy.regionsOfNews(id);
+  }
+
+  @Put('news/:id/regions')
+  @RequireCapability('news.edit')
+  setNewsRegions(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
+    return this.taxonomy.setNewsRegions(id, parse(newsRegionsSchema, body).regionIds, actorOf(p, req));
   }
 
   @Get('news/:id/tags')

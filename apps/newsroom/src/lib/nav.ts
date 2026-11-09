@@ -13,7 +13,8 @@ export const navItems: readonly NavItem[] = [
   { href: '/inbox', label: 'Source inbox', anyOf: ['news.edit', 'news.review'] },
   { href: '/polls', label: 'Polls', anyOf: ['news.edit', 'news.publish'] },
   { href: '/media', label: 'Media library', anyOf: ['media.manage', 'news.edit'] },
-  { href: '/taxonomy', label: 'Sections and tags', anyOf: ['taxonomy.manage'] },
+  { href: '/contributors', label: 'People', anyOf: ['news.edit'] },
+  { href: '/taxonomy', label: 'Sections, regions and tags', anyOf: ['taxonomy.manage'] },
   { href: '/calendar', label: 'Publishing calendar', anyOf: ['news.publish'] },
   { href: '/config', label: 'Configuration', anyOf: ['config.manage'] },
 ];

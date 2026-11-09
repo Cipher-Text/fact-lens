@@ -5,7 +5,7 @@ import { apiBase } from "./poll-api";
 type Saved = { network: string; url: string };
 
 /**
- * The site's social links with the addresses the newsroom saved: each network keeps its place, and a
+ * The site's social links with the addresses from the API's settings: each network keeps its place, and a
  * network with no saved address keeps its default link. Only an https address is taken from the API.
  */
 export function mergeSocialLinks(saved: unknown): SocialLink[] {
@@ -22,7 +22,7 @@ export function mergeSocialLinks(saved: unknown): SocialLink[] {
 }
 
 /**
- * The social links for the footer and the menu: the newsroom's addresses when `FACTLENS_API_URL` is
+ * The social links for the footer and the menu: the API's configured addresses when `FACTLENS_API_URL` is
  * set and answers, else the defaults. Never throws.
  */
 export async function fetchSocialLinks(fetchImpl: typeof fetch = fetch): Promise<SocialLink[]> {

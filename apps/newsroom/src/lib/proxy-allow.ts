@@ -11,7 +11,7 @@ export function isAllowedApiRequest(method: string, segments: string[]): boolean
   if (!METHODS.has(method.toUpperCase()) || segments.length === 0 || segments.length > 6) return false;
   if (!segments.every((s) => SEGMENT.test(s) && s !== '.' && s !== '..' && !s.includes('..'))) return false;
   const [root, second] = segments;
-  if (root === 'config') return (second === 'flags' || second === 'locales' || second === 'social-links') && segments.length <= 3;
+  if (root === 'config') return (second === 'flags' || second === 'locales') && segments.length <= 3;
   return ROOTS.has(root!);
 }
 

@@ -10,10 +10,12 @@ import { GEMINI_OPTIONS, GeminiService } from './ai/gemini.service';
 import { AuthModule } from './auth/auth.module';
 import { MeController } from './auth/me.controller';
 import { FeatureFlagsController } from './config/feature-flags.controller';
-import { PublicSiteController, SocialLinksController } from './config/social-links.controller';
+import { SITE_INFO, siteFromEnv } from './config/site';
+import { PublicSiteController } from './config/site.controller';
 import { MediaController } from './media/media.controller';
 import { MEDIA_OPTIONS, MediaService } from './media/media.service';
 import { createStorage, OBJECT_STORAGE } from './media/storage';
+import { ContributorsController } from './contributors/contributors.controller';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { AssignmentsService } from './news/assignments.service';
@@ -35,8 +37,9 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [SocialLinksController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+  controllers: [PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
   providers: [
+    { provide: SITE_INFO, useFactory: () => siteFromEnv(loadApiEnv()) },
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
     { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },
     { provide: MEDIA_OPTIONS, useFactory: () => ({ maxBytes: loadApiEnv().MAX_UPLOAD_MB * 1024 * 1024 }) },

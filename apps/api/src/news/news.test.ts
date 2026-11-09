@@ -296,6 +296,42 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     expect(old.headers.location).toBe('/public/news/en/update-me-new');
   });
 
+  it('addresses a news item as <slug>-<id>: the id finds it, a wrong or old slug redirects, a bare slug still works', async () => {
+    const id = await publishedNews('addressed');
+    const page = (await pub('en', 'addressed')).body;
+    // The id is the creation time in ms, in base 36: 8 characters, readable back.
+    expect(page.shortId).toMatch(/^[0-9a-z]{8}$/);
+    expect(Math.abs(Date.now() - parseInt(page.shortId, 36))).toBeLessThan(10 * 60_000);
+    const second = await publishedNews('addressed-later');
+    expect((await pub('en', 'addressed-later')).body.shortId > page.shortId).toBe(true);
+    expect(second).not.toBe(id);
+    const ref = `addressed-${page.shortId}`;
+    const byRef = await pub('en', ref);
+    expect(byRef.status).toBe(200);
+    expect(byRef.body.id).toBe(page.id);
+    expect(byRef.body.slug).toBe('addressed');
+    // The id is the same in every language and is on the news object the newsroom sees.
+    expect((await call({ method: 'GET', url: `/news/${id}`, roles: ['reporter'] })).body.news.shortId).toBe(page.shortId);
+
+    // A wrong slug with a known id goes to the current address; an unknown id is a 404.
+    const wrong = await pub('en', `some-old-words-${page.shortId}`);
+    expect(wrong.status).toBe(301);
+    expect(wrong.headers.location).toBe(`/public/news/en/${ref}`);
+    expect((await pub('en', 'addressed-zzzzzzz')).status).toBe(404);
+    expect((await pub('en', 'no-such-slug-here')).status).toBe(404);
+    // Not in that language yet: 404, not another language's page.
+    expect((await pub('bn-BD', ref)).status).toBe(404);
+
+    // When the slug changes the id stays, so the old address still lands on the item.
+    await call({ method: 'POST', url: `/news/${id}/revisions`, roles: ['reporter'], body: { reason: 'Rename the address' } });
+    await call({ method: 'PUT', url: `/news/${id}/translations/en`, roles: ['reporter'], body: { title: 'Renamed', body: doc('b'), slug: 'addressed-renamed', expectedVersion: 1 } });
+    expect((await move(id, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
+    const old = await pub('en', ref);
+    expect(old.status).toBe(301);
+    expect(old.headers.location).toBe(`/public/news/en/addressed-renamed-${page.shortId}`);
+    expect((await pub('en', `addressed-renamed-${page.shortId}`)).body.title).toBe('Renamed');
+  });
+
   it('records a correction and shows its notice once the corrected revision is published', async () => {
     const id = await publishedNews('fix-me');
     const denied = await call({ method: 'POST', url: `/news/${id}/corrections`, roles: ['reporter'], body: { reason: 'typo', notices: { en: 'Fixed.' } } });

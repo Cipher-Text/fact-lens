@@ -3,8 +3,8 @@ import {
   BadRequestException, ConflictException, HttpException, Inject, Injectable, NotFoundException, UnprocessableEntityException,
 } from '@nestjs/common';
 import {
-  bodyMediaAssetIds, defaultWorkflowPolicy, parseConfigValue,
-  type AvailableTransition, type CorrectionCreate, type Principal, type PublicNews, type RevisionCreate, type NewsCreate, type NewsDetail,
+  bodyMediaAssetIds, defaultWorkflowPolicy, parseConfigValue, socialNetworks,
+  type AvailableTransition, type NewsFormat, type CorrectionCreate, type Principal, type PublicNews, type RevisionCreate, type NewsCreate, type NewsDetail,
   type NewsCounts, type NewsList, type NewsListQuery, type NewsMeta, type NewsStatus, type TransitionRequest,
   type ScheduledPublishResult, type TimelineEntry, type TranslationSave, type WorkflowPolicy,
 } from '@fact-lens/contracts';
@@ -21,7 +21,7 @@ import { capabilityFor, findTransition, LIVE_STATUSES, movesFrom } from './workf
 type Db = Pool | PoolClient;
 
 interface NewsRow {
-  id: string; canonical_key: string; status: NewsStatus; category_id: string | null; category_ids?: string[]; desk_id: string | null;
+  id: string; canonical_key: string; short_id: string; format: NewsFormat; status: NewsStatus; category_id: string | null; category_ids: string[]; desk_id: string | null;
   published_revision_id: string | null; published_at: Date | null; created_at: Date; updated_at: Date;
 }
 interface RevisionRow {
@@ -32,8 +32,8 @@ interface RevisionRow {
 
 const iso = (d: Date | null) => (d ? d.toISOString() : null);
 const toNews = (r: NewsRow) => ({
-  id: r.id, canonicalKey: r.canonical_key, status: r.status, categoryId: r.category_id,
-  categoryIds: r.category_ids ?? (r.category_id ? [r.category_id] : []), deskId: r.desk_id,
+  id: r.id, canonicalKey: r.canonical_key, shortId: r.short_id, format: r.format, status: r.status, categoryId: r.category_id,
+  categoryIds: r.category_ids, deskId: r.desk_id,
   publishedRevisionId: r.published_revision_id, publishedAt: iso(r.published_at),
   createdAt: r.created_at.toISOString(), updatedAt: r.updated_at.toISOString(),
 });
@@ -57,13 +57,17 @@ export function resolveCategories(input: { categoryId?: string | null; categoryI
 
 /** Every section of a news item, the primary one first. */
 const categoryIdsOf = (alias: string) =>
-  `COALESCE((SELECT array_agg(nc.category_id ORDER BY (nc.category_id = ${alias}.category_id) DESC, nc.category_id)
+  `(SELECT nc.category_id FROM news_category nc WHERE nc.news_id = ${alias}.id AND nc.is_primary) AS category_id,
+   COALESCE((SELECT array_agg(nc.category_id ORDER BY nc.is_primary DESC, nc.category_id)
                FROM news_category nc WHERE nc.news_id = ${alias}.id), '{}') AS category_ids`;
+
+/** A public address segment: `<slug>-<id>`, the id being 6 to 8 characters of 0-9a-z after the last hyphen. */
+const SHORT_REF = /^(.+)-([0-9a-z]{6,8})$/;
 
 const conflict = (reason: string, message: string) => new ConflictException({ message, reason });
 const unprocessable = (message: string, issues: string[]) => new UnprocessableEntityException({ message, issues });
 const fkMessage: Record<string, string> = {
-  news_desk_id_fkey: 'Unknown desk', news_category_id_fkey: 'Unknown category',
+  news_desk_id_fkey: 'Unknown desk', news_category_category_id_fkey: 'Unknown category',
   news_translation_locale_fkey: 'Unknown locale', news_contributor_contributor_id_fkey: 'Unknown contributor',
   revision_media_media_asset_id_fkey: 'Body references an unknown media asset', correction_notice_locale_fkey: 'Unknown locale',
 };
@@ -151,7 +155,7 @@ export class NewsService {
   async detail(id: string, principal: Principal, db: Db = this.pool): Promise<NewsDetail> {
     const news = await this.loadNews(db, id);
     const revision = await this.latestRevision(db, id);
-    const [translations, contributors, media, count, openComments, tags] = await Promise.all([
+    const [translations, contributors, media, count, openComments, tags, regions] = await Promise.all([
       db.query(
         `SELECT * FROM news_translation WHERE revision_id = $1 ORDER BY locale`, [revision.id]),
       db.query(
@@ -166,6 +170,7 @@ export class NewsService {
       db.query<{ n: number }>('SELECT count(*)::int AS n FROM news_revision WHERE news_id = $1', [id]),
       db.query<{ n: number }>(`SELECT count(*)::int AS n FROM editorial_comment WHERE news_id = $1 AND status = 'open' AND parent_id IS NULL`, [id]),
       this.taxonomy.tagsOfNews(id, db),
+      this.taxonomy.regionsOfNews(id, db),
     ]);
     return {
       news: toNews(news),
@@ -184,6 +189,7 @@ export class NewsService {
         license: m.license, attribution: m.attribution, processingState: m.processing_state, role: m.role,
       })),
       tags,
+      regions,
       revisionCount: count.rows[0]!.n,
       openCommentCount: openComments.rows[0]!.n,
       transitions: await this.availableTransitions(db, news, principal),
@@ -234,16 +240,17 @@ export class NewsService {
   // --------------------------------------------------------------- commands
 
   async create(input: NewsCreate, actor: Actor): Promise<NewsDetail> {
-    const id = await withTransaction(this.pool, async (db) => {
+    // The short id is the creation time in ms; a race with another writer in the same ms hits the unique key, so try again.
+    const make = () => withTransaction(this.pool, async (db) => {
       const newsId = randomUUID();
       const slug = input.slug ?? slugify(input.title, `news-${newsId.slice(0, 8)}`);
       const { primary, ids } = resolveCategories(input);
       try {
         await db.query(
-          'INSERT INTO news (id, canonical_key, category_id, desk_id) VALUES ($1, $2, $3, $4)',
-          [newsId, `news-${newsId}`, primary, input.deskId ?? null],
+          'INSERT INTO news (id, canonical_key, desk_id, format) VALUES ($1, $2, $3, $4)',
+          [newsId, `news-${newsId}`, input.deskId ?? null, input.format ?? 'news'],
         );
-        await this.writeCategories(db, newsId, ids);
+        await this.writeCategories(db, newsId, ids, primary);
         const rev = await db.query<{ id: string }>(
           `INSERT INTO news_revision (news_id, revision_no, changed_by, change_reason) VALUES ($1, 1, $2, 'created') RETURNING id`,
           [newsId, actor.principal.subject],
@@ -262,6 +269,14 @@ export class NewsService {
       );
       return newsId;
     });
+    let id: string | undefined;
+    for (let attempt = 0; id === undefined; attempt++) {
+      try {
+        id = await make();
+      } catch (e) {
+        if (attempt >= 3 || !isPgError(e) || e.code !== '23505' || e.constraint !== 'news_short_id_key') throw e;
+      }
+    }
     return this.detail(id, actor.principal);
   }
 
@@ -311,15 +326,9 @@ export class NewsService {
       if (news.status === 'ARCHIVED') throw conflict('news_archived', 'Archived news cannot be edited');
       try {
         const sections = 'categoryId' in input || 'categoryIds' in input ? resolveCategories(input) : null;
-        if ('deskId' in input || sections) {
-          await db.query(
-            `UPDATE news SET desk_id = CASE WHEN $2::boolean THEN $3::uuid ELSE desk_id END,
-                              category_id = CASE WHEN $4::boolean THEN $5::uuid ELSE category_id END
-              WHERE id = $1`,
-            [id, 'deskId' in input, input.deskId ?? null, sections !== null, sections?.primary ?? null],
-          );
-        }
-        if (sections) await this.writeCategories(db, id, sections.ids);
+        if ('deskId' in input) await db.query('UPDATE news SET desk_id = $2 WHERE id = $1', [id, input.deskId ?? null]);
+        if (sections) await this.writeCategories(db, id, sections.ids, sections.primary);
+        if (input.format) await db.query('UPDATE news SET format = $2 WHERE id = $1', [id, input.format]);
         if (input.contributors) {
           await db.query('DELETE FROM news_contributor WHERE news_id = $1', [id]);
           for (const c of input.contributors) {
@@ -337,7 +346,7 @@ export class NewsService {
       await this.audit.record(
         { actorType: 'human', actorId: actor.principal.subject, action: 'news.meta_update', objectType: 'news', objectId: id,
           newsId: id, requestId: actor.requestId,
-          metadata: { changed: Object.keys(input), from: { deskId: news.desk_id, categoryId: news.category_id }, categoryIds: 'categoryIds' in input ? input.categoryIds : undefined } },
+          metadata: { changed: Object.keys(input), from: { deskId: news.desk_id, categoryId: news.category_id, format: news.format }, categoryIds: 'categoryIds' in input ? input.categoryIds : undefined } },
         db,
       );
     });
@@ -494,24 +503,46 @@ export class NewsService {
 
   // ------------------------------------------------------------ public read
 
-  /** Only a published translation is ever returned; a replaced slug redirects to the current one. */
-  async publicNews(locale: string, slug: string): Promise<{ news: PublicNews } | { redirectTo: string }> {
-    const hit = await this.pool.query<{ news_id: string; is_current: boolean }>(
-      `SELECT ss.news_id, ss.is_current FROM news_slug ss JOIN news s ON s.id = ss.news_id
-        WHERE ss.locale = $1 AND ss.slug = $2 AND s.published_revision_id IS NOT NULL AND s.status = ANY($3)`,
-      [locale, slug, LIVE_STATUSES],
+  /**
+   * Only a published translation is ever returned. `ref` is `<slug>-<id>` (the id is the item's short id and
+   * decides which item it is) or, for old links, a bare slug. A replaced slug, or a wrong slug with a known id,
+   * redirects to the current address. A whole slug is matched before an id: its last word can look like an id.
+   */
+  async publicNews(locale: string, ref: string): Promise<{ news: PublicNews } | { redirectTo: string }> {
+    const live = 'p.published_revision_id IS NOT NULL AND p.status = ANY($3)';
+    const bySlug = await this.pool.query<{ news_id: string; is_current: boolean }>(
+      `SELECT ss.news_id, ss.is_current FROM news_slug ss JOIN news p ON p.id = ss.news_id
+        WHERE ss.locale = $1 AND ss.slug = $2 AND ${live}`,
+      [locale, ref, LIVE_STATUSES],
     );
-    const row = hit.rows[0];
-    if (!row) throw new NotFoundException('Not found');
-    if (!row.is_current) {
-      const current = await this.pool.query<{ slug: string }>(
-        'SELECT slug FROM news_slug WHERE news_id = $1 AND locale = $2 AND is_current', [row.news_id, locale]);
-      if (!current.rows[0]) throw new NotFoundException('Not found');
-      return { redirectTo: current.rows[0].slug };
+    let newsId: string;
+    if (bySlug.rows[0]) {
+      const row = bySlug.rows[0];
+      if (!row.is_current) {
+        const current = await this.pool.query<{ slug: string }>(
+          'SELECT slug FROM news_slug WHERE news_id = $1 AND locale = $2 AND is_current', [row.news_id, locale]);
+        if (!current.rows[0]) throw new NotFoundException('Not found');
+        return { redirectTo: current.rows[0].slug };
+      }
+      newsId = row.news_id;
+    } else {
+      const parsed = SHORT_REF.exec(ref);
+      if (!parsed) throw new NotFoundException('Not found');
+      const byId = await this.pool.query<{ news_id: string; slug: string }>(
+        `SELECT p.id AS news_id, ss.slug FROM news p JOIN news_slug ss ON ss.news_id = p.id AND ss.locale = $1 AND ss.is_current
+          WHERE p.short_id = $2 AND ${live}`,
+        [locale, parsed[2], LIVE_STATUSES],
+      );
+      const row = byId.rows[0];
+      if (!row) throw new NotFoundException('Not found');
+      if (row.slug !== parsed[1]) return { redirectTo: `${row.slug}-${parsed[2]}` };
+      newsId = row.news_id;
     }
+    const row = { news_id: newsId };
 
     const main = await this.pool.query(
-      `SELECT s.id, s.published_at, st.title, st.dek, st.body, st.seo_title, st.seo_description, st.updated_at,
+      `SELECT s.id, s.short_id, s.format, s.published_at,
+              (SELECT slug FROM news_slug WHERE news_id = s.id AND locale = $2 AND is_current) AS slug, st.title, st.dek, st.body, st.seo_title, st.seo_description, st.updated_at,
               sr.revision_no, sr.changed_at, sr.id AS revision_id
          FROM news s
          JOIN news_revision sr ON sr.id = s.published_revision_id
@@ -523,7 +554,7 @@ export class NewsService {
     if (!m) throw new NotFoundException('Not found');
     const [contributors, alternates, corrections] = await Promise.all([
       this.pool.query(
-        `SELECT sc.role, c.id, c.kind, c.display_name, c.bio FROM news_contributor sc
+        `SELECT sc.role, c.id, c.kind, c.display_name, c.bio, c.image_id, c.social_links FROM news_contributor sc
            JOIN contributor c ON c.id = sc.contributor_id WHERE sc.news_id = $1 ORDER BY sc.position, c.display_name`, [row.news_id]),
       this.pool.query(
         `SELECT st.locale, ss.slug FROM news_translation st
@@ -536,19 +567,27 @@ export class NewsService {
           WHERE c.news_id = $1 AND r.revision_no <= $3 ORDER BY c.approved_at`, [row.news_id, locale, m.revision_no]),
     ]);
     const media = await this.publicMedia(bodyMediaAssetIds(m.body));
+    const portraits = new Map(await Promise.all(
+      [...new Set(contributors.rows.map((c) => c.image_id as string | null).filter((x): x is string => !!x))]
+        .map(async (imageId) => [imageId, await this.taxonomy.publicImage(imageId)] as const)));
     const refs = await this.taxonomy.publicRefs(row.news_id, locale);
     return {
       news: {
-        id: m.id, locale, slug, title: m.title, dek: m.dek, body: m.body, seoTitle: m.seo_title, seoDescription: m.seo_description,
+        id: m.id, shortId: m.short_id, format: m.format, locale, slug: m.slug, title: m.title, dek: m.dek, body: m.body, seoTitle: m.seo_title, seoDescription: m.seo_description,
         publishedAt: m.published_at.toISOString(), updatedAt: m.changed_at.toISOString(),
         contributors: contributors.rows.map((c) => ({
-          contributor: { id: c.id, kind: c.kind, displayName: c.display_name, bio: c.bio }, role: c.role,
+          contributor: {
+            id: c.id, kind: c.kind, displayName: c.display_name, bio: c.bio,
+            image: c.image_id ? (portraits.get(c.image_id) ?? null) : null,
+            socialLinks: socialNetworks.flatMap((n) => (c.social_links?.[n] ? [{ network: n, url: c.social_links[n] as string }] : [])),
+          }, role: c.role,
         })),
         alternates: alternates.rows.map((a) => ({ locale: a.locale, slug: a.slug })),
         corrections: corrections.rows.map((c) => ({ approvedAt: c.approved_at.toISOString(), notice: c.notice })),
         media,
         category: refs.category,
         categories: refs.categories,
+        regions: refs.regions,
         tags: refs.tags,
       },
     };
@@ -725,12 +764,15 @@ export class NewsService {
   }
 
   /** Replaces the sections of a news item. The primary section is always one of them. */
-  private async writeCategories(db: PoolClient, newsId: string, ids: string[]): Promise<void> {
+  private async writeCategories(db: PoolClient, newsId: string, ids: string[], primary: string | null): Promise<void> {
     await db.query('DELETE FROM news_category WHERE news_id = $1 AND NOT (category_id = ANY ($2::uuid[]))', [newsId, ids]);
     if (ids.length > 0) {
       await db.query(
         'INSERT INTO news_category (news_id, category_id) SELECT $1, unnest($2::uuid[]) ON CONFLICT DO NOTHING', [newsId, ids]);
     }
+    // Two statements: the unique index allows one primary, so the old one is cleared before the new one is set.
+    await db.query('UPDATE news_category SET is_primary = false WHERE news_id = $1 AND is_primary', [newsId]);
+    if (primary) await db.query('UPDATE news_category SET is_primary = true WHERE news_id = $1 AND category_id = $2', [newsId, primary]);
   }
 
   private async loadNews(db: Db, id: string): Promise<NewsRow> {
@@ -740,7 +782,7 @@ export class NewsService {
   }
 
   private async lockNews(db: PoolClient, id: string): Promise<NewsRow> {
-    const { rows } = await db.query<NewsRow>('SELECT * FROM news WHERE id = $1 FOR UPDATE', [id]);
+    const { rows } = await db.query<NewsRow>(`SELECT s.*, ${categoryIdsOf('s')} FROM news s WHERE s.id = $1 FOR UPDATE OF s`, [id]);
     if (!rows[0]) throw new NotFoundException('News not found');
     return rows[0];
   }

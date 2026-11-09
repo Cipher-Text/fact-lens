@@ -2,9 +2,10 @@ import { z } from 'zod';
 import { tiptapBodySchema } from './body';
 import { publicMediaSchema } from './media';
 import { contributorSchema, mediaAssetSchema, newsRevisionSchema, newsSchema, newsTranslationSchema } from './editorial';
-import { idSchema, localeCodeSchema, slugSchema, timestampSchema } from './common';
-import { contributorRoles, newsStatuses } from './enums';
-import { publicTaxonomyRefSchema, taxonomyTagSchema } from './taxonomy';
+import { idSchema, localeCodeSchema, shortIdSchema, slugSchema, timestampSchema } from './common';
+import { contributorRoles, newsFormats, newsStatuses } from './enums';
+import { publicContributorSchema } from './contributors';
+import { publicTaxonomyRefSchema, taxonomyRegionSchema, taxonomyTagSchema } from './taxonomy';
 
 export const categoryIdsSchema = z
   .array(idSchema)
@@ -21,6 +22,8 @@ export const newsCreateSchema = z.object({
   categoryId: idSchema.nullish(),
   /** Every section the news item appears in (the news menu). The first is the primary one unless `categoryId` says otherwise. */
   categoryIds: categoryIdsSchema.optional(),
+  /** News, analysis or opinion. News when left out. */
+  format: z.enum(newsFormats).optional(),
 });
 export type NewsCreate = z.infer<typeof newsCreateSchema>;
 
@@ -41,6 +44,7 @@ export const newsMetaSchema = z
     deskId: idSchema.nullable(),
     categoryId: idSchema.nullable(),
     categoryIds: categoryIdsSchema,
+    format: z.enum(newsFormats),
     contributors: z
       .array(z.object({ contributorId: idSchema, role: z.enum(contributorRoles), position: z.number().int().min(0).default(0) }))
       .max(50),
@@ -125,6 +129,8 @@ export const newsDetailSchema = z.object({
   media: z.array(mediaAssetSchema.extend({ role: z.string() })),
   /** Tags belong to the news item, in every language. A label per language, so the editor can show what is missing. */
   tags: z.array(taxonomyTagSchema),
+  /** The regions the news is about. */
+  regions: z.array(taxonomyRegionSchema),
   revisionCount: z.number().int().positive(),
   /** Open review comments. Visible at every hand-off so they are not missed (docs/06). */
   openCommentCount: z.number().int().nonnegative(),
@@ -135,6 +141,9 @@ export type NewsDetail = z.infer<typeof newsDetailSchema>;
 
 export const publicNewsSchema = z.object({
   id: idSchema,
+  /** With the slug it makes the address: /story/<slug>-<shortId>. */
+  shortId: shortIdSchema,
+  format: z.enum(newsFormats),
   locale: localeCodeSchema,
   slug: slugSchema,
   title: z.string(),
@@ -144,7 +153,7 @@ export const publicNewsSchema = z.object({
   seoDescription: z.string().nullable(),
   publishedAt: timestampSchema,
   updatedAt: timestampSchema,
-  contributors: z.array(z.object({ contributor: contributorSchema, role: z.enum(contributorRoles) })),
+  contributors: z.array(z.object({ contributor: publicContributorSchema, role: z.enum(contributorRoles) })),
   alternates: z.array(z.object({ locale: localeCodeSchema, slug: slugSchema })),
   corrections: z.array(z.object({ approvedAt: timestampSchema, notice: z.string() })),
   /** The images the body refers to, with what a reader's page needs to show them. */
@@ -153,6 +162,8 @@ export const publicNewsSchema = z.object({
   category: publicTaxonomyRefSchema.nullable(),
   /** Every section the item appears in, the primary one first. */
   categories: z.array(publicTaxonomyRefSchema),
+  /** The regions the item is about, in the page's language. */
+  regions: z.array(publicTaxonomyRefSchema),
   tags: z.array(publicTaxonomyRefSchema),
 });
 export type PublicNews = z.infer<typeof publicNewsSchema>;

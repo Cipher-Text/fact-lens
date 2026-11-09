@@ -420,17 +420,18 @@ describe.skipIf(!adminUrl)('database schema', () => {
 
   it('seeds reference data once and never overwrites later edits', async () => {
     const first = await seedReferenceData(pool);
-    expect(first.categories).toBe(9);
+    expect(first.categories).toBe(5);
     expect(first.tags).toBe(146);
+    expect(first.regions).toBe(8);
     expect(first.featureFlags).toBe(c.featureFlagKeys.length);
     expect(first.desks).toBeGreaterThan(0);
 
     await pool.query(`UPDATE feature_flag SET enabled = true WHERE key = 'ads.serving'`);
     await pool.query(`UPDATE configuration SET value = '{"limit":1,"windowSeconds":1}' WHERE key = 'rate_limit.search'`);
-    await pool.query(`UPDATE category_label SET name = 'Edited' WHERE slug = 'local' AND locale = 'en'`);
+    await pool.query(`UPDATE category_label SET name = 'Edited' WHERE slug = 'geopolitics' AND locale = 'en'`);
 
     const second = await seedReferenceData(pool);
-    expect(second).toEqual({ desks: 0, categories: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0, feeds: 0 });
+    expect(second).toEqual({ desks: 0, categories: 0, regions: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0, feeds: 0 });
     expect(first.roles).toBe(8);
     expect(first.feeds).toBe(9);
     expect((await pool.query(`SELECT count(*)::int AS n FROM feed WHERE active`)).rows[0].n).toBe(0);
@@ -439,10 +440,10 @@ describe.skipIf(!adminUrl)('database schema', () => {
     expect(flag.rows[0].enabled).toBe(true);
     const cfg = await pool.query(`SELECT value FROM configuration WHERE key = 'rate_limit.search'`);
     expect(cfg.rows[0].value).toEqual({ limit: 1, windowSeconds: 1 });
-    const label = await pool.query(`SELECT name FROM category_label WHERE slug = 'local' AND locale = 'en'`);
+    const label = await pool.query(`SELECT name FROM category_label WHERE slug = 'geopolitics' AND locale = 'en'`);
     expect(label.rows[0].name).toBe('Edited');
     const bn = await pool.query(`SELECT count(*)::int AS n FROM category_label WHERE locale = 'bn-BD'`);
-    expect(bn.rows[0].n).toBe(9);
+    expect(bn.rows[0].n).toBe(5);
     const tagNames = await pool.query(`SELECT count(*)::int AS n FROM tag_label`);
     expect(tagNames.rows[0].n).toBe(292);
   });

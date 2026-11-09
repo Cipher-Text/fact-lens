@@ -39,11 +39,13 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     return id;
   }
 
-  it('is seeded with the cipher-press menu and tags in English and Bangla', async () => {
+  it('is seeded with the site menu (and its labels in English and Bangla) and the tags', async () => {
     const list = await cats();
-    expect(list.map((c) => c.key).slice(0, 3)).toEqual(['local', 'national', 'politics']);
+    expect(list.map((c) => c.key).slice(0, 5)).toEqual(['geopolitics', 'economy', 'security', 'technology', 'history']);
     expect(list[0].labels.map((l: any) => l.locale)).toEqual(['bn-BD', 'en']);
-    expect(list[0].labels.find((l: any) => l.locale === 'en').description).toMatch(/Jessore/);
+    expect(list[0].labels.map((l: any) => l.name)).toEqual(['ভূরাজনীতি ও কূটনীতি', 'Geopolitics and Diplomacy']);
+    // The address is the key in both languages, and there is no description until editors write one.
+    expect(list[0].labels.map((l: any) => [l.slug, l.description])).toEqual([['geopolitics', null], ['geopolitics', null]]);
     const tags = (await t.call({ method: 'GET', url: '/taxonomy/tags?limit=500' })).body;
     expect(tags.items).toHaveLength(146);
     expect(tags.items.find((x: any) => x.key === 'india').labels.map((l: any) => l.name).sort()).toEqual(['India', 'ভারত']);
@@ -51,9 +53,10 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
 
   it('serves the menu per language, in order, and never mixes languages', async () => {
     expect((await nav('en')).slice(0, 2)).toEqual([
-      { key: 'local', name: 'Local', slug: 'local', children: [] }, { key: 'national', name: 'National', slug: 'national', children: [] },
+      { key: 'geopolitics', name: 'Geopolitics and Diplomacy', slug: 'geopolitics', children: [] },
+      { key: 'economy', name: 'Economy and Trade', slug: 'economy', children: [] },
     ]);
-    expect((await nav('bn-BD'))[0].name).toBe('স্থানীয়');
+    expect((await nav('bn-BD'))[0].name).toBe('ভূরাজনীতি ও কূটনীতি');
     expect((await t.anonymous('GET', '/public/navigation/xx')).statusCode).toBe(404);
   });
 
@@ -122,21 +125,21 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     const science = (await cats()).find((c) => c.key === 'science');
     const renamed = await t.call({ method: 'PUT', url: `/taxonomy/categories/${science.id}`, body: { labels: { en: { name: 'Science and Technology' } } } });
     expect(renamed.body.labels.find((l: any) => l.locale === 'en')).toMatchObject({ name: 'Science and Technology', slug: 'science' });
-    const clash = await t.call({ method: 'PUT', url: `/taxonomy/categories/${science.id}`, body: { labels: { en: { name: 'Local', slug: 'local' } } } });
+    const clash = await t.call({ method: 'PUT', url: `/taxonomy/categories/${science.id}`, body: { labels: { en: { name: 'Geopolitics', slug: 'geopolitics' } } } });
     expect(clash.status).toBe(409);
-    expect(clash.body.error.details).toMatchObject({ reason: 'slug_taken', locale: 'en', slug: 'local' });
+    expect(clash.body.error.details).toMatchObject({ reason: 'slug_taken', locale: 'en', slug: 'geopolitics' });
   });
 
   it('hides a category from the menu without deleting it, and reorders', async () => {
     const list = await cats();
-    const sports = list.find((c) => c.key === 'sports');
-    await t.call({ method: 'PUT', url: `/taxonomy/categories/${sports.id}`, body: { showInMenu: false } });
-    expect((await nav('en')).some((c) => c.key === 'sports')).toBe(false);
-    const last = list.find((c) => c.key === 'health');
+    const economy = list.find((c) => c.key === 'economy');
+    await t.call({ method: 'PUT', url: `/taxonomy/categories/${economy.id}`, body: { showInMenu: false } });
+    expect((await nav('en')).some((c) => c.key === 'economy')).toBe(false);
+    const last = list.find((c) => c.key === 'history');
     const reordered = await t.call({ method: 'PUT', url: '/taxonomy/categories/order', body: { ids: [last.id] } });
     expect(reordered.status).toBe(200);
-    expect((await nav('en'))[0].key).toBe('health');
-    expect((await nav('en'))[1].key).toBe('local');
+    expect((await nav('en'))[0].key).toBe('history');
+    expect((await nav('en'))[1].key).toBe('geopolitics');
   });
 
   it('only people with taxonomy.manage can change the menu', async () => {
@@ -148,30 +151,31 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
   it('serves tags, category and lists in the language of the page', async () => {
     const [india, usa] = ['india', 'usa'].map(async (k) => (await t.call({ method: 'GET', url: `/taxonomy/tags?query=${k}` })).body.items.find((x: any) => x.key === k));
     const tagIds = [(await india).id, (await usa).id];
-    const local = (await cats()).find((c) => c.key === 'local');
+    const local = (await cats()).find((c) => c.key === 'geopolitics');
     const id = await publish('flood-report', local.id, tagIds);
 
     const en = (await t.anonymous('GET', '/public/news/en/flood-report')).json() as any;
-    expect(en.category).toEqual({ key: 'local', name: 'Local', slug: 'local' });
+    expect(en.category).toEqual({ key: 'geopolitics', name: 'Geopolitics and Diplomacy', slug: 'geopolitics' });
     expect(en.tags.map((x: any) => x.name)).toEqual(['India', 'United States']);
     const bn = (await t.anonymous('GET', '/public/news/bn-BD/bn-flood-report')).json() as any;
-    expect(bn.category.name).toBe('স্থানীয়');
+    expect(bn.category.name).toBe('ভূরাজনীতি ও কূটনীতি');
     expect(bn.tags.map((x: any) => x.name).sort()).toEqual(['ভারত', 'যুক্তরাষ্ট্র'].sort());
 
-    const byCategory = (await t.anonymous('GET', '/public/news/en?category=local')).json() as any;
-    expect(byCategory.filter).toMatchObject({ type: 'category', name: 'Local' });
+    const byCategory = (await t.anonymous('GET', '/public/news/en?category=geopolitics')).json() as any;
+    expect(byCategory.filter).toMatchObject({ type: 'category', name: 'Geopolitics and Diplomacy' });
     expect(byCategory.items.map((i: any) => i.id)).toEqual([id]);
+    expect(byCategory.items[0].shortId).toBe(en.shortId);
     const byTagBn = (await t.anonymous('GET', '/public/news/bn-BD?tag=india')).json() as any;
     expect(byTagBn.items.map((i: any) => i.slug)).toEqual(['bn-flood-report']);
     expect((await t.anonymous('GET', '/public/news/en?category=no-such')).statusCode).toBe(404);
-    expect((await t.anonymous('GET', '/public/news/en?category=local&tag=india')).statusCode).toBe(400);
+    expect((await t.anonymous('GET', '/public/news/en?category=geopolitics&tag=india')).statusCode).toBe(400);
   });
 
   it('leaves a news item out of a language it was never translated into', async () => {
-    const national = (await cats()).find((c) => c.key === 'national');
+    const national = (await cats()).find((c) => c.key === 'economy');
     await publish('english-only', national.id, [], false);
-    expect(((await t.anonymous('GET', '/public/news/bn-BD?category=national')).json() as any).items).toEqual([]);
-    expect(((await t.anonymous('GET', '/public/news/en?category=national')).json() as any).items).toHaveLength(1);
+    expect(((await t.anonymous('GET', '/public/news/bn-BD?category=economy')).json() as any).items).toEqual([]);
+    expect(((await t.anonymous('GET', '/public/news/en?category=economy')).json() as any).items).toHaveLength(1);
   });
 
   it('does not list unpublished news, and pages with a cursor', async () => {
@@ -224,11 +228,11 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     expect((await t.call({ method: 'POST', url: '/config/locales', body: { code: 'Not Valid', displayName: 'x' } })).status).toBe(400);
 
     expect((await nav('hi'))).toEqual([]);
-    const local = (await cats()).find((c) => c.key === 'local');
+    const local = (await cats()).find((c) => c.key === 'geopolitics');
     const upd = await t.call({ method: 'PUT', url: `/taxonomy/categories/${local.id}`, body: { labels: { hi: { name: 'स्थानीय', slug: 'sthaniya' } } } });
     expect(upd.status, JSON.stringify(upd.body)).toBe(200);
-    expect(await nav('hi')).toEqual([{ key: 'local', name: 'स्थानीय', slug: 'sthaniya', children: [] }]);
-    expect((await nav('en'))[1]).toMatchObject({ key: 'local', name: 'Local' });
+    expect(await nav('hi')).toEqual([{ key: 'geopolitics', name: 'स्थानीय', slug: 'sthaniya', children: [] }]);
+    expect((await nav('en'))[1]).toMatchObject({ key: 'geopolitics', name: 'Geopolitics and Diplomacy' });
 
     const off = await t.call({ method: 'PUT', url: '/config/locales/hi', body: { active: false } });
     expect(off.body.active).toBe(false);
@@ -238,10 +242,10 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
   });
 
   it('never removes the last name of a category', async () => {
-    const business = (await cats()).find((c) => c.key === 'business');
+    const business = (await cats()).find((c) => c.key === 'technology');
     const res = await t.call({ method: 'PUT', url: `/taxonomy/categories/${business.id}`, body: { labels: { en: null, 'bn-BD': null } } });
     expect(res.status).toBe(400);
-    expect((await cats()).find((c) => c.key === 'business').labels).toHaveLength(2);
+    expect((await cats()).find((c) => c.key === 'technology').labels).toHaveLength(2);
   });
 
   it('gives a tag a description per language and one picture, shown publicly only while its rights allow the web', async () => {
@@ -283,7 +287,7 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
 
   it('keeps one news item in several menu sections, with one primary section', async () => {
     const list = await cats();
-    const [local, national, politics] = ['local', 'national', 'politics'].map((k) => list.find((c) => c.key === k));
+    const [local, national, politics] = ['geopolitics', 'economy', 'security'].map((k) => list.find((c) => c.key === k));
     const created = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Many', slug: 'many-sections', deskId, categoryIds: [national.id, politics.id] } });
     expect(created.status).toBe(201);
     const id = created.body.news.id as string;
@@ -315,16 +319,155 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
       expect((await t.call({ method: 'POST', url: `/news/${id}/transitions`, roles: [role], body: { to } })).status).toBe(201);
     }
     const page = (await t.anonymous('GET', `/public/news/en/${slug}`)).json() as any;
-    expect(page.category).toEqual({ key: 'politics', name: 'Politics', slug: 'politics' });
-    expect(page.categories.map((c: any) => c.key)).toEqual(['politics', 'local']);
-    for (const c of ['politics', 'local']) {
+    expect(page.category).toEqual({ key: 'security', name: 'Security and Conflict', slug: 'security' });
+    expect(page.categories.map((c: any) => c.key)).toEqual(['security', 'geopolitics']);
+    for (const c of ['security', 'geopolitics']) {
       expect(((await t.anonymous('GET', `/public/news/en?category=${c}`)).json() as any).items.map((i: any) => i.id)).toContain(id);
     }
-    expect(((await t.anonymous('GET', '/public/news/en?category=national')).json() as any).items.map((i: any) => i.id)).not.toContain(id);
+    expect(((await t.anonymous('GET', '/public/news/en?category=economy')).json() as any).items.map((i: any) => i.id)).not.toContain(id);
 
     // Each section counts the item once, and a section in use cannot be removed.
     const after = await cats();
-    expect(after.find((c) => c.key === 'politics').usageCount).toBeGreaterThanOrEqual(1);
+    expect(after.find((c) => c.key === 'security').usageCount).toBeGreaterThanOrEqual(1);
     expect((await t.call({ method: 'DELETE', url: `/taxonomy/categories/${local.id}` })).status).toBe(409);
+  });
+
+  it('has three formats (news, analysis, opinion) that readers can list apart', async () => {
+    const business = (await cats()).find((c) => c.key === 'technology');
+    const plain = await publish('fmt-news', business.id, []);
+    const deep = await publish('fmt-analysis', business.id, []);
+    const view = await publish('fmt-opinion', business.id, []);
+    const setFormat = (id: string, format: string) => t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { format } });
+
+    // News is the default, on the newsroom object and on the public page.
+    expect((await t.call({ method: 'GET', url: `/news/${plain}`, roles: ['reporter'] })).body.news.format).toBe('news');
+    expect((await setFormat(deep, 'analysis')).body.news.format).toBe('analysis');
+    expect((await setFormat(view, 'opinion')).body.news.format).toBe('opinion');
+    expect((await setFormat(view, 'explainer')).status).toBe(400);
+    expect(((await t.anonymous('GET', '/public/news/en/fmt-opinion')).json() as any).format).toBe('opinion');
+
+    const ids = async (query: string) => ((await t.anonymous('GET', `/public/news/en?category=technology${query}`)).json() as any).items.map((i: any) => [i.id, i.format]);
+    expect((await ids('')).map((x: any) => x[0]).sort()).toEqual([plain, deep, view].sort());
+    expect(await ids('&format=analysis')).toEqual([[deep, 'analysis']]);
+    expect(await ids('&format=opinion')).toEqual([[view, 'opinion']]);
+    expect((await ids('&excludeFormat=opinion')).map((x: any) => x[1]).sort()).toEqual(['analysis', 'news']);
+    expect((await t.anonymous('GET', '/public/news/en?format=op-ed')).statusCode).toBe(400);
+
+    // It can be chosen when the item is created.
+    const made = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'View', slug: 'fmt-created', deskId, format: 'opinion' } });
+    expect(made.body.news.format).toBe('opinion');
+    expect((await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Bad', slug: 'fmt-bad', deskId, format: 'blog' } })).status).toBe(400);
+  });
+
+  it('has regions as their own list, apart from the menu sections, and a news item can be about several', async () => {
+    const regs = async () => (await t.call({ method: 'GET', url: '/taxonomy/regions' })).body as any[];
+    const list = await regs();
+    expect(list.map((r) => r.key)).toEqual(['americas', 'europe', 'russia', 'middle-east', 'south-asia', 'china', 'asia', 'oceania']);
+    expect(list[4].labels.map((l: any) => l.name).sort()).toEqual(['South Asia', 'দক্ষিণ এশিয়া'].sort());
+    // Regions are not menu sections.
+    expect((await cats()).some((c) => c.key === 'south-asia')).toBe(false);
+    expect((await nav('en')).some((c) => c.key === 'south-asia')).toBe(false);
+    const publicList = (await t.anonymous('GET', '/public/regions/en')).json() as any[];
+    expect(publicList.slice(0, 2)).toEqual([{ key: 'americas', name: 'Americas', slug: 'americas', description: null }, { key: 'europe', name: 'Europe', slug: 'europe', description: null }]);
+    expect(((await t.anonymous('GET', '/public/regions/bn-BD')).json() as any[])[4].name).toBe('দক্ষিণ এশিয়া');
+    expect((await t.anonymous('GET', '/public/regions/xx')).statusCode).toBe(404);
+
+    const [southAsia, china, europe] = ['south-asia', 'china', 'europe'].map((k) => list.find((r) => r.key === k));
+    const business = (await cats()).find((c) => c.key === 'technology');
+    const id = await publish('regions-story', business.id, []);
+    const set = await t.call({ method: 'PUT', url: `/news/${id}/regions`, roles: ['reporter'], body: { regionIds: [southAsia.id, china.id] } });
+    expect(set.status, JSON.stringify(set.body)).toBe(200);
+    expect(set.body.map((r: any) => r.key)).toEqual(['south-asia', 'china']);
+    expect((await t.call({ method: 'GET', url: `/news/${id}`, roles: ['reporter'] })).body.regions.map((r: any) => r.key)).toEqual(['south-asia', 'china']);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/regions`, roles: ['reporter'], body: { regionIds: [china.id, china.id] } })).status).toBe(400);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/regions`, roles: ['reporter'], body: { regionIds: ['00000000-0000-4000-8000-000000000000'] } })).status).toBe(400);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/regions`, roles: ['fact_checker'], body: { regionIds: [] } })).status).toBe(403);
+
+    // Readers: the page names its regions, and each region lists the item (and an unrelated one does not).
+    const page = (await t.anonymous('GET', '/public/news/en/regions-story')).json() as any;
+    // In the order of the region list, not alphabetical.
+    expect(page.regions).toEqual([{ key: 'south-asia', name: 'South Asia', slug: 'south-asia' }, { key: 'china', name: 'China', slug: 'china' }]);
+    for (const r of ['china', 'south-asia']) {
+      const byRegion = (await t.anonymous('GET', `/public/news/en?region=${r}`)).json() as any;
+      expect(byRegion.filter).toMatchObject({ type: 'region', slug: r });
+      expect(byRegion.items.map((i: any) => i.id)).toEqual([id]);
+    }
+    expect(((await t.anonymous('GET', '/public/news/en?region=europe')).json() as any).items).toEqual([]);
+    expect((await t.anonymous('GET', '/public/news/en?region=nowhere')).statusCode).toBe(404);
+    expect((await t.anonymous('GET', '/public/news/en?region=china&category=technology')).statusCode).toBe(400);
+
+    // Managing the list: add, name in a language, order, archive; a region in use is archived, not deleted.
+    const made = await t.call({ method: 'POST', url: '/taxonomy/regions', body: { labels: { en: { name: 'Africa', description: 'The continent.' } } } });
+    expect(made.status, JSON.stringify(made.body)).toBe(201);
+    expect(made.body).toMatchObject({ key: 'africa', position: 9, usageCount: 0 });
+    expect((await t.call({ method: 'POST', url: '/taxonomy/regions', body: { key: 'africa', labels: { en: { name: 'Africa 2' } } } })).status).toBe(409);
+    expect((await t.call({ method: 'POST', url: '/taxonomy/regions', roles: ['reporter'], body: { labels: { en: { name: 'No' } } } })).status).toBe(403);
+    // Not named in Bangla yet: left out of the Bangla list.
+    expect(((await t.anonymous('GET', '/public/regions/bn-BD')).json() as any[]).some((r) => r.key === 'africa')).toBe(false);
+    expect(((await t.anonymous('GET', '/public/regions/en')).json() as any[]).some((r) => r.key === 'africa')).toBe(true);
+    const ordered = await t.call({ method: 'PUT', url: '/taxonomy/regions/order', body: { ids: [made.body.id] } });
+    expect(ordered.body[0].key).toBe('africa');
+    expect((await t.call({ method: 'DELETE', url: `/taxonomy/regions/${china.id}` })).status).toBe(409);
+    const archived = await t.call({ method: 'PUT', url: `/taxonomy/regions/${europe.id}`, body: { status: 'archived' } });
+    expect(archived.body.status).toBe('archived');
+    expect(((await t.anonymous('GET', '/public/regions/en')).json() as any[]).some((r) => r.key === 'europe')).toBe(false);
+    expect((await t.call({ method: 'GET', url: '/reference/regions', roles: ['reporter'] })).body.some((r: any) => r.key === 'europe')).toBe(false);
+    expect((await t.call({ method: 'DELETE', url: `/taxonomy/regions/${made.body.id}` })).status).toBe(204);
+    expect((await regs()).find((r) => r.key === 'china').usageCount).toBe(1);
+  });
+
+  it('keeps one primary section per news item in the database, not only in the code', async () => {
+    const [a, b] = (await cats()).slice(0, 2);
+    const made = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Primary', slug: 'primary-check', deskId, categoryIds: [a.id, b.id], categoryId: b.id } });
+    const id = made.body.news.id as string;
+    expect(made.body.news).toMatchObject({ categoryId: b.id });
+    expect(made.body.news.categoryIds).toEqual([b.id, a.id]);
+    // Two primaries for one item is refused by the unique index.
+    await expect(t.db.pool.query('UPDATE news_category SET is_primary = true WHERE news_id = $1', [id])).rejects.toMatchObject({ code: '23505' });
+    // Moving the primary leaves exactly one.
+    await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { categoryId: a.id, categoryIds: [a.id, b.id] } });
+    const rows = await t.db.pool.query('SELECT category_id FROM news_category WHERE news_id = $1 AND is_primary', [id]);
+    expect(rows.rows.map((r) => r.category_id)).toEqual([a.id]);
+    // The old column that repeated it is gone.
+    const col = await t.db.pool.query(`SELECT 1 FROM information_schema.columns WHERE table_name = 'news' AND column_name = 'category_id'`);
+    expect(col.rowCount).toBe(0);
+  });
+
+  it('redirects the old address of a renamed section, region or tag, and stops when it is used again', async () => {
+    const regs = (await t.call({ method: 'GET', url: '/taxonomy/regions' })).body as any[];
+    const oceania = regs.find((r) => r.key === 'oceania');
+    const asia = regs.find((r) => r.key === 'asia');
+    const local = (await cats()).find((c) => c.key === 'geopolitics');
+    const tag = (await t.call({ method: 'GET', url: '/taxonomy/tags?query=india' })).body.items.find((x: any) => x.key === 'india');
+    const rename = (kind: string, id: string, slug: string) =>
+      t.call({ method: 'PUT', url: `/taxonomy/${kind}/${id}`, body: { labels: { en: { name: 'Renamed', slug } } } });
+    const get = (url: string) => t.anonymous('GET', url);
+
+    for (const [kind, param, item, oldSlug, newSlug] of [
+      ['regions', 'region', oceania, 'oceania', 'pacific'], ['categories', 'category', local, 'geopolitics', 'local-news'], ['tags', 'tag', tag, 'india', 'india-news'],
+    ] as const) {
+      expect((await get(`/public/news/en?${param}=${newSlug}`)).statusCode).toBe(404);
+      expect((await rename(kind, item.id, newSlug)).status).toBe(200);
+      const moved = await get(`/public/news/en?${param}=${oldSlug}&limit=5`);
+      expect(moved.statusCode, `${param} ${oldSlug}`).toBe(301);
+      expect(moved.headers.location).toBe(`/public/news/en?limit=5&${param}=${newSlug}`);
+      expect((await get(`/public/news/en?${param}=${newSlug}`)).statusCode).toBe(200);
+      expect((await get(`/public/news/en?${param}=never-used-${param}`)).statusCode).toBe(404);
+    }
+
+    // Used again: the address serves the item itself, and the one it replaced now redirects.
+    expect((await rename('regions', oceania.id, 'oceania')).status).toBe(200);
+    expect((await get('/public/news/en?region=oceania')).statusCode).toBe(200);
+    expect((await get('/public/news/en?region=pacific')).statusCode).toBe(301);
+    // Taking another region's old address frees it, so it no longer points at the first.
+    expect((await rename('regions', asia.id, 'pacific')).status).toBe(200);
+    expect((await get('/public/news/en?region=pacific')).statusCode).toBe(200);
+
+    // A deleted region takes its history with it.
+    const gone = await t.call({ method: 'POST', url: '/taxonomy/regions', body: { key: 'antarctica', labels: { en: { name: 'Antarctica' } } } });
+    await rename('regions', gone.body.id, 'south-pole');
+    expect(await t.db.pool.query('SELECT 1 FROM taxonomy_slug_history WHERE region_id = $1', [gone.body.id])).toHaveProperty('rowCount', 1);
+    expect((await t.call({ method: 'DELETE', url: `/taxonomy/regions/${gone.body.id}` })).status).toBe(204);
+    expect(await t.db.pool.query('SELECT 1 FROM taxonomy_slug_history WHERE region_id = $1', [gone.body.id])).toHaveProperty('rowCount', 0);
   });
 });

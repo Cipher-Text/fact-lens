@@ -40,7 +40,7 @@ export default async function HomePage({
   const livePoll = home.grouped
     ? await fetchFeaturedPoll(lang, (await cookies()).get(VOTER_COOKIE)?.value)
     : null;
-  // The social accounts the newsroom set, else the default links.
+  // The social accounts in the API's settings, else the default links.
   const social = await fetchSocialLinks();
   const featured = [home.featured.southAsia, home.featured.geopolitics].filter(
     (section) => section !== null,

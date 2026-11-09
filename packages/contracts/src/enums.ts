@@ -9,6 +9,10 @@ export const newsStatuses = [
 ] as const;
 export const translationStatuses = ['original', 'machine_draft', 'human_reviewed', 'approved'] as const;
 export const taxonomyStatuses = ['active', 'hidden', 'archived'] as const;
+/** What kind of piece a news item is. The same address for all three; the site lists them apart. */
+export const newsFormats = ['news', 'analysis', 'opinion'] as const;
+export type NewsFormat = (typeof newsFormats)[number];
+
 export const contributorKinds = ['person', 'organization'] as const;
 export const contributorRoles = ['author', 'editor', 'photographer', 'translator'] as const;
 export const localeDirections = ['ltr', 'rtl'] as const;

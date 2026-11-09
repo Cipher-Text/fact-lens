@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { idSchema, localeCodeSchema, slugSchema, timestampSchema } from './common';
+import { idSchema, localeCodeSchema, shortIdSchema, slugSchema, timestampSchema } from './common';
 import { publicMediaSchema } from './media';
-import { localeDirections, taxonomyStatuses } from './enums';
+import { localeDirections, newsFormats, taxonomyStatuses } from './enums';
 
 /**
  * Categories (the news menu) and tags (many per news), in any number of languages. A category or
@@ -88,6 +88,47 @@ export const taxonomyCategorySchema = z.object({
 });
 export type TaxonomyCategory = z.infer<typeof taxonomyCategorySchema>;
 
+/** A region: a place a news item is about. Its own list, not a menu section. */
+export const taxonomyRegionSchema = z.object({
+  id: idSchema,
+  key: z.string(),
+  position: z.number().int(),
+  status: z.enum(taxonomyStatuses),
+  /** News about this region. A region in use cannot be deleted, only archived. */
+  usageCount: z.number().int().nonnegative(),
+  labels: z.array(taxonomyLabelSchema),
+});
+export type TaxonomyRegion = z.infer<typeof taxonomyRegionSchema>;
+
+export const regionCreateSchema = z.object({
+  /** Language-free identifier, for example `south-asia`. Made from the first label's slug when left out. */
+  key: taxonomyKeySchema.optional(),
+  labels: labelsByLocale.refine((l) => Object.keys(l).length > 0, 'give the name in at least one language'),
+});
+export type RegionCreate = z.infer<typeof regionCreateSchema>;
+
+/** Only what is sent changes. A language set to null loses its label. */
+export const regionUpdateSchema = z
+  .object({
+    status: z.enum(taxonomyStatuses),
+    labels: z.record(localeCodeSchema, labelInputSchema.nullable()),
+  })
+  .partial()
+  .strict()
+  .refine((u) => Object.keys(u).length > 0, 'nothing to change');
+export type RegionUpdate = z.infer<typeof regionUpdateSchema>;
+
+export const regionOrderSchema = z.object({
+  ids: z.array(idSchema).min(1).max(200).refine((ids) => new Set(ids).size === ids.length, 'each region once'),
+});
+export type RegionOrder = z.infer<typeof regionOrderSchema>;
+
+/** The regions of one news item. A news item's region set is replaced as a whole. */
+export const newsRegionsSchema = z.object({
+  regionIds: z.array(idSchema).max(20).refine((ids) => new Set(ids).size === ids.length, 'each region once'),
+});
+export type NewsRegions = z.infer<typeof newsRegionsSchema>;
+
 export const taxonomyTagSchema = z.object({
   id: idSchema,
   key: z.string(),
@@ -148,12 +189,21 @@ export const navigationSchema = z.array(publicNavItemSchema);
 export const publicNewsListQuerySchema = z.object({
   category: slugSchema.optional(),
   tag: slugSchema.optional(),
+  /** Only news about this region (its address in the page's language). */
+  region: slugSchema.optional(),
+  /** Only this format. */
+  format: z.enum(newsFormats).optional(),
+  /** Everything but this format (the news lists leave opinion out). */
+  excludeFormat: z.enum(newsFormats).optional(),
   limit: z.coerce.number().int().min(1).max(50).default(20),
   cursor: z.string().max(300).optional(),
 });
 
 export const publicNewsListItemSchema = z.object({
   id: idSchema,
+  /** The address of the item is /story/<slug>-<shortId>. */
+  shortId: shortIdSchema,
+  format: z.enum(newsFormats),
   slug: slugSchema,
   title: z.string(),
   dek: z.string().nullable(),
@@ -163,8 +213,13 @@ export const publicNewsListItemSchema = z.object({
 
 export const publicNewsListSchema = z.object({
   /** The category or tag the list was filtered by, with its heading and description in this language. */
-  filter: z.object({ type: z.enum(['category', 'tag']), name: z.string(), slug: slugSchema, description: z.string().nullable(), image: publicMediaSchema.nullable().default(null) }).nullable(),
+  filter: z.object({ type: z.enum(['category', 'tag', 'region']), name: z.string(), slug: slugSchema, description: z.string().nullable(), image: publicMediaSchema.nullable().default(null) }).nullable(),
   items: z.array(publicNewsListItemSchema),
   nextCursor: z.string().nullable(),
 });
 export type PublicNewsList = z.infer<typeof publicNewsListSchema>;
+
+/** The public region list in one language, in order: key, name, address and a short description. */
+export const publicRegionSchema = publicTaxonomyRefSchema.extend({ description: z.string().nullable() });
+export type PublicRegion = z.infer<typeof publicRegionSchema>;
+export const publicRegionListSchema = z.array(publicRegionSchema);

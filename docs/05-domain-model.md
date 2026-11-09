@@ -13,6 +13,7 @@ erDiagram
   STORY ||--o{ STORY_TAG : uses
   TAG ||--o{ STORY_TAG : labels
   STORY }o--o{ CATEGORY : belongs_to
+  STORY }o--o{ REGION : about
   STORY }o--o| DESK : assigned_to
   STORY }o--o{ ENTITY : mentions
   STORY_REVISION ||--o{ REVISION_MEDIA : uses
@@ -26,7 +27,7 @@ erDiagram
 - **News item:** stable public identity, lifecycle status, canonical key, current published revision pointer, slug history and timestamps.
 - **NewsRevision:** authoring snapshot, changedBy/changedAt, change reason, submitted/approved metadata, correction/AI flags, content hash.
 - **NewsTranslation:** locale, title, dek/excerpt, structured body, slug, SEO fields, translation status and source revision link.
-- **Contributor:** person/org credited for reporting/editing; imported Author maps here. Keep contact email private.
+- **Contributor:** person/org credited for reporting/editing; imported Author maps here. Keep contact email private. It has a public profile: a bio, one photo from the media library (shown only while the image is ready, allowed on the web, not expired and credited or licensed) and social links per network (the same networks and https-on-its-own-domain rule as the site's social links). The byline on a published news item carries the photo and links; the email never leaves the newsroom.
 - **Desk:** editorial ownership and assignment boundary; seed from product decisions, not inferred blindly from categories.
 - **Category, Topic, Tag:** controlled taxonomy with slugs, locale labels, aliases and status. Category is navigational; Topic/Tag are discovery labels.
   - **Multilingual by data.** A category or tag is one record with one label row per language (`category_label`, `tag_label`: name, address, aliases, and a description for categories). Which languages exist is the `locale` table, not code, so adding a language (for example `hi`) needs no release: it is added under Configuration, then categories and tags can be named in it and news items translated into it.
@@ -58,6 +59,9 @@ Entity types can include PERSON, ORGANIZATION, COMPANY, GOVERNMENT_AGENCY, POLIT
 - A revision is append-only to editors; corrections create a new revision and Correction record.
 - Locale codes are canonical (`en`, `bn-BD`) while UI aliases may be `bn`.
 - Slugs are unique within locale and publication surface; old slugs become redirect records.
+- **Region:** a place a news item is about (Americas, Middle East, South Asia, China ...). It is its own list (`region`, `region_label`), not a menu section: categories make up the news menu, regions do not appear in it. A news item can be about several regions (`news_region`, at most 20; like tags, they belong to the item, not to a revision). Like categories and tags, a region is one record with a name, an address and a description per language, an order (`position`) and a status (active, hidden, archived); a region with no name in a language is left out of that language. Editors manage the list with `taxonomy.manage` and set a news item's regions with `news.edit`. Readers get the list at `GET /public/regions/:locale`, the regions on each news page, and a list of the news about one region with `?region=<address>`. A region in use is archived, not deleted.
+- **Format:** every news item is one of `news`, `analysis` or `opinion` (`news.format`, default `news`; set when it is created or in its details). It is part of the content, not of the address and not a category. The public lists can filter on it (`?format=` and `?excludeFormat=`); the site keeps opinion out of its news lists and shows analysis on its own hub. There is no explainer or op-ed format.
+- **Public address:** `/story/<slug>-<id>` for every news item. `<id>` is the item's `short_id`: its creation time in milliseconds since 1970 in base 36 (8 characters of 0-9a-z until 2059, for example `mh3k9x2a`), made by the database, unique (a clash takes the next free millisecond, and the API retries a race), the same in every language, never changed. It sorts by creation time and `parseInt(id, 36)` gives the time back; it is not secret, so it reveals when an item was created. The site finds the item by the id; the slug is for people. A wrong or old slug with a known id redirects to the current address; a bare slug (an old link) still resolves. The id is 6 to 8 characters in the contract.
 - Every external source is untrusted input and has provenance, retrieval time and validation status.
 - Media object keys are not used as editorial truth; DB metadata controls rights and attachment.
 

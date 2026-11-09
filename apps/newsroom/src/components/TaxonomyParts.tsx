@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
-import type { Locale, TaxonomyCategory, TaxonomyTag } from '@fact-lens/contracts';
+import type { Locale, TaxonomyCategory, TaxonomyRegion, TaxonomyTag } from '@fact-lens/contracts';
 import { announce } from '@/lib/announce';
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
@@ -11,7 +11,7 @@ import { MediaPicker } from './MediaParts';
 import { Badge, buttonClass, Field, inputClass, Notice } from './ui';
 
 type Failure = { message: string; issues: string[] } | null;
-type Item = TaxonomyCategory | TaxonomyTag;
+type Item = TaxonomyCategory | TaxonomyRegion | TaxonomyTag;
 
 function useCommand() {
   const router = useRouter();
@@ -111,6 +111,87 @@ export function NewCategoryForm({ locales, parents }: { locales: Locale[]; paren
       </div>
       {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}
     </form>
+  );
+}
+
+export function NewRegionForm({ locales }: { locales: Locale[] }) {
+  const { error, pending, run } = useCommand();
+  return (
+    <form className="space-y-3" onSubmit={submitWith((form, el) => {
+      const key = String(form.get('key') ?? '').trim();
+      run('POST', 'taxonomy/regions', { ...(key ? { key } : {}), labels: readLabels(form, locales, undefined, true) }, () => el.reset());
+    })}>
+      <LabelFields locales={locales} withDescription />
+      <div className="flex flex-wrap items-end gap-3">
+        <Field label="Key" hint="Optional. Lowercase letters, digits and hyphens. Made from the English name when left empty."><input name="key" maxLength={60} className={inputClass} /></Field>
+        <button type="submit" disabled={pending} className={`${buttonClass('primary')} mb-5`}>Add region</button>
+      </div>
+      {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}
+    </form>
+  );
+}
+
+/** One region. `order` is every region in list order, so the arrows swap a region with its neighbour. */
+export function RegionRow({ region, order, locales }: { region: TaxonomyRegion; order: string[]; locales: Locale[] }) {
+  const { error, pending, run } = useCommand();
+  const [editing, setEditing] = useState(false);
+  const at = order.indexOf(region.id);
+  const move = (by: -1 | 1) => {
+    const next = [...order];
+    const b = at + by;
+    if (b < 0 || b >= next.length) return;
+    [next[at], next[b]] = [next[b]!, next[at]!];
+    run('PUT', 'taxonomy/regions/order', { ids: next });
+  };
+  const archived = region.status === 'archived';
+  return (
+    <li className="rounded-lg border border-line bg-panel p-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-xs tabular-nums text-muted">{at + 1}</span>
+        <strong>{displayName(region)}</strong>
+        {region.labels.filter((l) => l.locale !== 'en').map((l) => <span key={l.locale} lang={l.locale} className="text-sm text-muted">{l.name}</span>)}
+        <code className="text-xs text-muted">{region.key}</code>
+        {archived ? <Badge>Archived</Badge> : null}
+        <Badge tone="info">{`${region.usageCount} ${region.usageCount === 1 ? 'news item' : 'news items'}`}</Badge>
+        <Missing item={region} locales={locales} />
+        <span className="ml-auto flex flex-wrap gap-1">
+          <button type="button" aria-label={`Move ${displayName(region)} up`} disabled={pending || at <= 0} onClick={() => move(-1)} className={buttonClass()}>↑</button>
+          <button type="button" aria-label={`Move ${displayName(region)} down`} disabled={pending || at < 0 || at >= order.length - 1} onClick={() => move(1)} className={buttonClass()}>↓</button>
+          <button type="button" onClick={() => setEditing(!editing)} aria-expanded={editing} className={buttonClass()}>{editing ? 'Close' : 'Edit'}</button>
+        </span>
+      </div>
+      {editing ? (
+        <form className="mt-3 space-y-3" onSubmit={submitWith((form) => run('PUT', `taxonomy/regions/${region.id}`, { labels: readLabels(form, locales, region, true) }, () => setEditing(false)))}>
+          <LabelFields item={region} locales={locales} withDescription />
+          <p className="text-xs text-muted">Changing a name keeps its address, so links to the region keep working. Leave a name empty to remove that language.</p>
+          <div className="flex flex-wrap gap-2">
+            <button type="submit" disabled={pending} className={buttonClass('primary')}>Save</button>
+            <button type="button" disabled={pending} onClick={() => run('PUT', `taxonomy/regions/${region.id}`, { status: archived ? 'active' : 'archived' })} className={buttonClass()}>{archived ? 'Restore' : 'Archive'}</button>
+            <button type="button" disabled={pending || region.usageCount > 0} title={region.usageCount > 0 ? 'Used by news items: archive it instead' : undefined}
+              onClick={() => { if (window.confirm(`Delete ${displayName(region)}?`)) run('DELETE', `taxonomy/regions/${region.id}`); }} className={buttonClass('danger')}>Delete</button>
+          </div>
+        </form>
+      ) : null}
+      {error ? <div className="mt-2"><Notice kind="error" message={error.message} issues={error.issues} /></div> : null}
+    </li>
+  );
+}
+
+/** The regions of one news item: tick every place it is about. Saved as you tick. */
+export function NewsRegionPicker({ newsId, regions, chosen }: { newsId: string; regions: Array<{ id: string; name: string }>; chosen: string[] }) {
+  const { error, pending, run } = useCommand();
+  const set = (id: string) => run('PUT', `news/${newsId}/regions`, { regionIds: chosen.includes(id) ? chosen.filter((x) => x !== id) : [...chosen, id] });
+  return (
+    <fieldset disabled={pending}>
+      <legend className="mb-1 text-sm font-medium">Regions</legend>
+      <ul className="grid gap-1 text-sm sm:grid-cols-2">
+        {regions.map((r) => (
+          <li key={r.id}><label className="flex items-center gap-2"><input type="checkbox" checked={chosen.includes(r.id)} onChange={() => set(r.id)} />{r.name}</label></li>
+        ))}
+      </ul>
+      <p className="mt-1 text-xs text-muted">The places the news is about. It can be about several. Regions are not menu sections.</p>
+      {error ? <Notice kind="error" message={error.message} issues={error.issues} /> : null}
+    </fieldset>
   );
 }
 

@@ -1,12 +1,13 @@
 import { canonicalizeUrl, featureFlagKeys, parseConfigValue } from '@fact-lens/contracts';
 import type { Pool } from 'pg';
 import { tags } from './tags';
-import { categories, configuration, desks, featureFlags, feeds, roles } from './data';
+import { categories, configuration, desks, featureFlags, feeds, regions, roles } from './data';
 import { withTransaction } from '../db/transaction';
 
 export interface SeedResult {
   desks: number;
   categories: number;
+  regions: number;
   tags: number;
   configuration: number;
   featureFlags: number;
@@ -24,7 +25,7 @@ export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
 
   return withTransaction(pool, async (db) => {
     const count = async (sql: string, params: unknown[]) => (await db.query(sql, params)).rowCount ?? 0;
-    const result: SeedResult = { desks: 0, categories: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0, feeds: 0 };
+    const result: SeedResult = { desks: 0, categories: 0, regions: 0, tags: 0, configuration: 0, featureFlags: 0, roles: 0, feeds: 0 };
 
     for (const d of desks) {
       result.desks += await count('INSERT INTO desk (key, name) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING', [d.key, d.name]);
@@ -37,10 +38,22 @@ export async function seedReferenceData(pool: Pool): Promise<SeedResult> {
       );
       if (inserted.rowCount === 0) continue; // already seeded; keep any edited labels
       result.categories += 1;
-      for (const [locale, name, description] of [['en', c.en, c.enDescription], ['bn-BD', c.bn, c.bnDescription]] as const) {
-        await db.query('INSERT INTO category_label (category_id, locale, name, slug, description) VALUES ($1, $2, $3, $4, $5)', [
-          inserted.rows[0].id, locale, name, c.key, description,
+      for (const [locale, name] of [['en', c.en], ['bn-BD', c.bn]] as const) {
+        await db.query('INSERT INTO category_label (category_id, locale, name, slug) VALUES ($1, $2, $3, $4)', [
+          inserted.rows[0].id, locale, name, c.key,
         ]);
+      }
+    }
+
+    for (const [i, r] of regions.entries()) {
+      const inserted = await db.query(
+        'INSERT INTO region (key, position) VALUES ($1, $2) ON CONFLICT (key) DO NOTHING RETURNING id',
+        [r.key, i + 1],
+      );
+      if (inserted.rowCount === 0) continue; // already seeded; keep any edited labels
+      result.regions += 1;
+      for (const [locale, name] of [['en', r.en], ['bn-BD', r.bn]] as const) {
+        await db.query('INSERT INTO region_label (region_id, locale, name, slug) VALUES ($1, $2, $3, $4)', [inserted.rows[0].id, locale, name, r.key]);
       }
     }
 

@@ -1,17 +1,17 @@
 import Link from 'next/link';
 import { z } from 'zod';
-import { localeSchema, taxonomyCategorySchema, taxonomyTagListSchema } from '@fact-lens/contracts';
-import { CategoryRow, NewCategoryForm, NewTagForm, TagRow } from '@/components';
+import { localeSchema, taxonomyCategorySchema, taxonomyRegionSchema, taxonomyTagListSchema } from '@fact-lens/contracts';
+import { CategoryRow, NewCategoryForm, NewRegionForm, NewTagForm, RegionRow, TagRow } from '@/components';
 import { AccessProblem, Empty, Panel } from '@/components/ui';
 import { ApiError, api, getPrincipal, isMfaRequired } from '@/lib/current';
 import { can } from '@/lib/nav';
 
-export const metadata = { title: 'Sections and tags' };
+export const metadata = { title: 'Sections, regions and tags' };
 
 export default async function TaxonomyPage({ searchParams }: { searchParams: Promise<{ q?: string; archived?: string }> }) {
   const { q = '', archived } = await searchParams;
   const principal = await getPrincipal();
-  if (!can(principal, 'taxonomy.manage')) return <Empty>You do not have permission to manage sections and tags.</Empty>;
+  if (!can(principal, 'taxonomy.manage')) return <Empty>You do not have permission to manage sections, regions and tags.</Empty>;
   const query = new URLSearchParams({ limit: '100' });
   if (q.trim()) query.set('query', q.trim().slice(0, 100));
   if (archived === '1') query.set('status', 'archived');
@@ -20,13 +20,14 @@ export default async function TaxonomyPage({ searchParams }: { searchParams: Pro
     data = await Promise.all([
       api('/reference/locales', z.array(localeSchema), { returnTo: '/taxonomy' }),
       api('/taxonomy/categories', z.array(taxonomyCategorySchema), { returnTo: '/taxonomy' }),
+      api('/taxonomy/regions', z.array(taxonomyRegionSchema), { returnTo: '/taxonomy' }),
       api(`/taxonomy/tags?${query}`, taxonomyTagListSchema, { returnTo: '/taxonomy' }),
     ]);
   } catch (err) {
     if (err instanceof ApiError && err.status === 403) return <AccessProblem mfaRequired={isMfaRequired(err)} />;
     throw err;
   }
-  const [locales, categories, tags] = data;
+  const [locales, categories, regions, tags] = data;
   const order = categories.map((c) => c.id);
   // Menu order, with each parent's child menus directly under it. The menu has two levels.
   const tops = categories.filter((c) => c.parentId === null);
@@ -38,7 +39,7 @@ export default async function TaxonomyPage({ searchParams }: { searchParams: Pro
   return (
     <div className="max-w-4xl space-y-6">
       <header>
-        <h1 className="text-xl font-semibold">Sections and tags</h1>
+        <h1 className="text-xl font-semibold">Sections, regions and tags</h1>
         <p className="mt-1 text-sm text-muted">
           Sections make up the news menu; a news item has one. A section can sit under a parent menu as a child menu. Tags describe a news item; it can have many. Each is named once per language ({locales.map((l) => l.displayName).join(', ')}).
           Something with no name in a language is left out of that language&apos;s site. Add languages under <Link href="/config" className="underline">Configuration</Link>.
@@ -52,6 +53,19 @@ export default async function TaxonomyPage({ searchParams }: { searchParams: Pro
         <details>
           <summary className="cursor-pointer text-sm font-medium">Add a section</summary>
           <div className="mt-3"><NewCategoryForm locales={locales} parents={tops} /></div>
+        </details>
+      </Panel>
+
+      <Panel title="Regions" id="regions-h">
+        <p className="mb-3 text-sm text-muted">
+          The places a news item is about, such as South Asia or the Middle East. A region is not a menu section, and a news item can be about several regions.
+        </p>
+        <ol className="mb-4 space-y-2">
+          {regions.map((r) => <RegionRow key={r.id} region={r} order={regions.map((x) => x.id)} locales={locales} />)}
+        </ol>
+        <details>
+          <summary className="cursor-pointer text-sm font-medium">Add a region</summary>
+          <div className="mt-3"><NewRegionForm locales={locales} /></div>
         </details>
       </Panel>
 

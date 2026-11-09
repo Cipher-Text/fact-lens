@@ -206,7 +206,10 @@ export class MediaService {
           AND (m.rights_expires_at IS NULL OR m.rights_expires_at > now())
           AND (EXISTS (SELECT 1 FROM revision_media rm JOIN news s ON s.published_revision_id = rm.revision_id
                        WHERE rm.media_asset_id = m.id AND s.status = ANY ($2))
-             OR (EXISTS (SELECT 1 FROM tag t WHERE t.image_id = m.id AND t.status = 'active')
+             OR ((EXISTS (SELECT 1 FROM tag t WHERE t.image_id = m.id AND t.status = 'active')
+                  OR EXISTS (SELECT 1 FROM contributor c JOIN news_contributor nc ON nc.contributor_id = c.id
+                              JOIN news s ON s.id = nc.news_id AND s.status = ANY ($2) AND s.published_revision_id IS NOT NULL
+                             WHERE c.image_id = m.id))
                  AND (btrim(coalesce(m.license, '')) <> '' OR btrim(coalesce(m.attribution, '')) <> '')))`,
       [id, liveStatuses],
     );
