@@ -209,6 +209,8 @@ export const publicNewsListItemSchema = z.object({
   dek: z.string().nullable(),
   publishedAt: timestampSchema,
   category: publicTaxonomyRefSchema.nullable(),
+  /** The lead image, when it is ready, allowed on the web and cleared. Null otherwise. */
+  image: publicMediaSchema.nullable(),
 });
 
 export const publicNewsListSchema = z.object({

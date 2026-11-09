@@ -1,5 +1,5 @@
 import {
-  feedIngestResultSchema, INTERNAL_TOKEN_HEADER, scheduledPublishResultSchema, type FeedIngest, type FeedIngestResult, type ScheduledPublishResult,
+  analyticsRollupResultSchema, feedIngestResultSchema, INTERNAL_TOKEN_HEADER, scheduledPublishResultSchema, type AnalyticsRollupResult, type FeedIngest, type FeedIngestResult, type ScheduledPublishResult,
 } from '@fact-lens/contracts';
 import { PermanentJobError } from './errors';
 
@@ -7,6 +7,8 @@ export interface ApiClient {
   publishSchedule(scheduleId: string): Promise<ScheduledPublishResult>;
   /** Reports what one fetch of a feed found. The API stores the items and the feed's status. */
   ingestFeed(feedId: string, result: FeedIngest): Promise<FeedIngestResult>;
+  /** Asks the API to add the finished hours of the view counters to the durable table. Safe to repeat: an hour is added once. */
+  rollupViews(): Promise<AnalyticsRollupResult>;
 }
 
 /**
@@ -42,6 +44,18 @@ export function createApiClient(baseUrl: string, token: string, timeoutMs = 1500
       if (res.status === 400) throw new PermanentJobError('The API refused the feed result');
       if (!res.ok) throw new Error(`API answered ${res.status} for feed ${feedId}`);
       const parsed = feedIngestResultSchema.safeParse(await res.json());
+      if (!parsed.success) throw new PermanentJobError('The API sent an unexpected response');
+      return parsed.data;
+    },
+    async rollupViews() {
+      const res = await fetch(`${base}/internal/analytics/rollup`, {
+        method: 'POST',
+        headers: { [INTERNAL_TOKEN_HEADER]: token },
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (res.status === 401) throw new PermanentJobError('The API rejected the internal token');
+      if (!res.ok) throw new Error(`API answered ${res.status} for the view rollup`);
+      const parsed = analyticsRollupResultSchema.safeParse(await res.json());
       if (!parsed.success) throw new PermanentJobError('The API sent an unexpected response');
       return parsed.data;
     },

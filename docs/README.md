@@ -38,6 +38,10 @@ This set of documents plans a rebuild of FactLens as a digital newsroom platform
 20. [Phase 1 backlog](./20-phase-1-backlog.md)
 21. [Configuration and feature flags](./21-configuration-and-feature-flags.md)
 22. [Implementation status](./22-implementation-status.md)
+23. [Read next (related news under an article)](./23-read-next.md)
+24. [Reading time](./24-reading-time.md)
+25. [Most read and news performance](./25-most-read-and-performance.md)
+26. [Public search and trending search terms](./26-search-and-trending.md)
 
 ## Scope note
 

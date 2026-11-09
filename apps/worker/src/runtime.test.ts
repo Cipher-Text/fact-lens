@@ -46,6 +46,7 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
   const api: ApiClient = {
     publishSchedule: (scheduleId) => apiImpl.publishSchedule(scheduleId),
     ingestFeed: async () => ({ inserted: 0, duplicates: 0, skipped: 0 }),
+    rollupViews: async () => ({ buckets: 0, skipped: 0, rows: 0 }),
   };
 
   beforeAll(async () => {

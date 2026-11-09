@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
 import {
-  correctionCreateSchema, editorialCapabilities, localeCodeSchema, revisionCreateSchema, newsCreateSchema,
+  correctionCreateSchema, editorialCapabilities, leadImageSchema, localeCodeSchema, revisionCreateSchema, newsCreateSchema,
   newsListQuerySchema, newsMetaSchema, transitionRequestSchema, translationSaveSchema,
   type Principal, type NewsCounts, type NewsDetail, type NewsList,
 } from '@fact-lens/contracts';
@@ -48,6 +48,13 @@ export class NewsController {
   @RequireCapability('news.edit')
   create(@Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
     return this.news.create(parse(newsCreateSchema, body), actor(p, req));
+  }
+
+  /** Sets or removes the lead image of the open revision. The lists and Most read show it once it is cleared for the web. */
+  @Put(':id/lead-image')
+  @RequireCapability('news.edit')
+  leadImage(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
+    return this.news.setLeadImage(id, parse(leadImageSchema, body).mediaAssetId, actor(p, req));
   }
 
   @Put(':id/meta')

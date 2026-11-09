@@ -37,6 +37,21 @@ describe('api client', () => {
     }
   });
 
+  it('asks the API to roll up the view counters, with the token, and checks the answer', async () => {
+    reply = { status: 200, body: { buckets: 2, skipped: 1, rows: 5 } };
+    expect(await createApiClient(base, 'secret-token', 2000).rollupViews()).toEqual({ buckets: 2, skipped: 1, rows: 5 });
+    expect(seen).toEqual({ url: '/internal/analytics/rollup', token: 'secret-token' });
+    const client = createApiClient(base, 't', 2000);
+    for (const r of [{ status: 401, body: {} }, { status: 200, body: { buckets: 'many' } }]) {
+      reply = r;
+      await expect(client.rollupViews()).rejects.toBeInstanceOf(PermanentJobError);
+    }
+    reply = { status: 503, body: {} };
+    const err = await client.rollupViews().catch((e) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect(err).not.toBeInstanceOf(PermanentJobError);
+  });
+
   it('lets server errors and unreachable hosts retry', async () => {
     reply = { status: 503, body: {} };
     const err = await createApiClient(base, 't', 2000).publishSchedule(id).catch((e) => e);

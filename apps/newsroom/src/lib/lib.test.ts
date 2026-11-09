@@ -104,6 +104,7 @@ describe('capability-aware navigation', () => {
     expect(labels(['config.manage'])).toEqual(['Configuration']);
     expect(labels([])).toEqual([]);
     expect(labels(['news.publish'])).toEqual(['Desk queue', 'Polls', 'Publishing calendar']);
+    expect(labels(['analytics.read'])).toEqual(['Analytics']);
   });
 });
 

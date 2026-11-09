@@ -25,6 +25,7 @@ export * from './enums';
 export * from './common';
 export * from './editorial';
 export * from './contributors';
+export * from './analytics';
 export * from './ads';
 export * from './configuration';
 export * from './auth';

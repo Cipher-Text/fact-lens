@@ -57,6 +57,8 @@ export const apiEnvSchema = z.object({
   SITE_CONTACT_EMAIL: optionalText(320).pipe(z.string().email().optional()),
   SITE_CONTACT_PHONE: optionalText(40),
   SITE_CONTACT_ADDRESS: optionalText(300),
+  /** The public site's own host names, comma separated, so a visit from one of its pages to another counts as internal in the view statistics. */
+  PUBLIC_SITE_HOSTS: z.string().optional().transform((v) => (v ?? '').split(',').map((h) => h.trim().toLowerCase()).filter(Boolean)),
   /** Read the client address from X-Forwarded-For. Only behind a proxy you control: otherwise anyone can fake it. */
   TRUST_PROXY: z.stringbool().default(false),
 }).superRefine((env, ctx) => {
@@ -114,6 +116,8 @@ export const workerEnvSchema = z.object({
   JOB_CONCURRENCY: z.coerce.number().int().min(1).max(50).default(5),
   /** How often the worker looks for RSS feeds that are due. Each feed has its own interval. */
   FEED_SCAN_MS: z.coerce.number().int().min(10000).default(60000),
+  /** How often the worker adds the finished hours of the view counters to the durable table. */
+  ANALYTICS_ROLLUP_MS: z.coerce.number().int().min(10000).default(300000),
   /** Development only: allow a feed on this machine or network. Off, a feed on a private address is refused. */
   FEED_ALLOW_PRIVATE_HOSTS: z.stringbool().default(false),
 });

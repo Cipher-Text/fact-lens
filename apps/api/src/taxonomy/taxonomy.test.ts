@@ -470,4 +470,52 @@ describe.skipIf(!adminUrl)('multilingual categories and tags (database)', () => 
     expect((await t.call({ method: 'DELETE', url: `/taxonomy/regions/${gone.body.id}` })).status).toBe(204);
     expect(await t.db.pool.query('SELECT 1 FROM taxonomy_slug_history WHERE region_id = $1', [gone.body.id])).toHaveProperty('rowCount', 0);
   });
+
+  it('sets a lead image on the open revision, and shows it on the public lists while it is cleared for the web', async () => {
+    const economy = (await cats()).find((c) => c.key === 'economy');
+    const jpeg = await sharp({ create: { width: 800, height: 450, channels: 3, background: '#2255aa' } }).jpeg().toBuffer();
+    const up = await t.upload(jpeg, { roles: ['media_editor'] });
+    expect(up.status).toBe(201);
+    const imageId = up.body.id as string;
+
+    const created = await t.call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Lead', slug: 'lead-image', deskId, categoryIds: [economy.id] } });
+    const id = created.body.news.id as string;
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/translations/en`, roles: ['reporter'], body: { title: 'Lead', body: doc('x'), slug: 'lead-image', expectedVersion: 1 } })).status).toBe(200);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/meta`, roles: ['reporter'], body: { contributors: [{ contributorId: authorId, role: 'author' }] } })).status).toBe(200);
+
+    // Set, replace by nothing, set again; an unknown picture and a missing news item are refused.
+    const set = await t.call({ method: 'PUT', url: `/news/${id}/lead-image`, roles: ['reporter'], body: { mediaAssetId: imageId } });
+    expect(set.status, JSON.stringify(set.body)).toBe(200);
+    expect(set.body.media.filter((m: any) => m.role === 'lead').map((m: any) => m.id)).toEqual([imageId]);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/lead-image`, roles: ['reporter'], body: { mediaAssetId: null } })).body.media.filter((m: any) => m.role === 'lead')).toEqual([]);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/lead-image`, roles: ['reporter'], body: { mediaAssetId: imageId } })).status).toBe(200);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/lead-image`, roles: ['reporter'], body: { mediaAssetId: '00000000-0000-4000-8000-000000000000' } })).status).toBe(400);
+    expect((await t.call({ method: 'PUT', url: '/news/00000000-0000-4000-8000-000000000000/lead-image', roles: ['reporter'], body: { mediaAssetId: null } })).status).toBe(404);
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/lead-image`, roles: ['fact_checker'], body: { mediaAssetId: null } })).status).toBe(403);
+    // The picture is in use, so it cannot be deleted from the library.
+    expect((await t.call({ method: 'DELETE', url: `/media/${imageId}`, roles: ['media_editor'] })).status).toBe(409);
+
+    // Publishing needs a credit or licence on every picture of the revision, the lead image included.
+    for (const [to, role] of [['EDITOR_REVIEW', 'reporter'], ['READY', 'fact_checker']] as const) {
+      expect((await t.call({ method: 'POST', url: `/news/${id}/transitions`, roles: [role], body: { to } })).status).toBe(201);
+    }
+    expect((await t.call({ method: 'POST', url: `/news/${id}/transitions`, roles: ['managing_editor'], body: { to: 'PUBLISHED' } })).status).toBe(422);
+    const rights = (body: object) => t.call({ method: 'PUT', url: `/media/${imageId}/rights`, roles: ['media_editor'], body });
+    expect((await rights({ attribution: 'Photo: Studio', altText: 'A blue field', permittedChannels: ['web'] })).status).toBe(200);
+    expect((await t.call({ method: 'POST', url: `/news/${id}/transitions`, roles: ['managing_editor'], body: { to: 'PUBLISHED' } })).status).toBe(201);
+    // Submitted: locked until a new revision is opened.
+    expect((await t.call({ method: 'PUT', url: `/news/${id}/lead-image`, roles: ['reporter'], body: { mediaAssetId: null } })).status).toBe(409);
+
+    // Cleared for the web, it is on the lists with its derivatives; take the web channel away and it is not offered.
+    const imageOf = async () => ((await t.anonymous('GET', '/public/news/en?category=economy')).json() as any).items.find((i: any) => i.id === id).image;
+    expect(await imageOf()).toMatchObject({ id: imageId, alt: 'A blue field', attribution: 'Photo: Studio', urls: { card: `/public/media/${imageId}/card` } });
+    expect((await t.anonymous('GET', `/public/media/${imageId}/card`)).statusCode).toBe(200);
+    expect((await rights({ attribution: 'Photo: Studio', altText: 'A blue field', permittedChannels: ['print'] })).status).toBe(200);
+    expect(await imageOf()).toBeNull();
+    expect((await t.anonymous('GET', `/public/media/${imageId}/card`)).statusCode).toBe(404);
+    // A news item with no lead image has image: null on every list.
+    const plain = await publish('no-lead-image', economy.id, []);
+    const items = ((await t.anonymous('GET', '/public/news/en?category=economy')).json() as any).items;
+    expect(items.find((i: any) => i.id === plain).image).toBeNull();
+  });
 });

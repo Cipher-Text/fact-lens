@@ -26,7 +26,7 @@ erDiagram
 
 - **News item:** stable public identity, lifecycle status, canonical key, current published revision pointer, slug history and timestamps.
 - **NewsRevision:** authoring snapshot, changedBy/changedAt, change reason, submitted/approved metadata, correction/AI flags, content hash.
-- **NewsTranslation:** locale, title, dek/excerpt, structured body, slug, SEO fields, translation status and source revision link.
+- **NewsTranslation:** locale, title, dek/excerpt, structured body, slug, SEO fields, translation status and source revision link. Its reading time is calculated from the body per language, with an optional editor override on the translation (proposed, [24](./24-reading-time.md)).
 - **Contributor:** person/org credited for reporting/editing; imported Author maps here. Keep contact email private. It has a public profile: a bio, one photo from the media library (shown only while the image is ready, allowed on the web, not expired and credited or licensed) and social links per network (the same networks and https-on-its-own-domain rule as the site's social links). The byline on a published news item carries the photo and links; the email never leaves the newsroom.
 - **Desk:** editorial ownership and assignment boundary; seed from product decisions, not inferred blindly from categories.
 - **Category, Topic, Tag:** controlled taxonomy with slugs, locale labels, aliases and status. Category is navigational; Topic/Tag are discovery labels.

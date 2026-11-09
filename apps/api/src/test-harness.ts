@@ -32,6 +32,10 @@ import { SourcesService } from './news/sources.service';
 import { NewsController } from './news/news.controller';
 import { NewsService } from './news/news.service';
 import { LocalesController } from './config/locales.controller';
+import { AnalyticsController, PublicAnalyticsController } from './analytics/analytics.controller';
+import { AnalyticsService } from './analytics/analytics.service';
+import { REDIS_CLIENT, VIEWS_OPTIONS, ViewsService, type ViewsOptions } from './analytics/views.service';
+import { Redis } from 'ioredis';
 import { SITE_INFO } from './config/site';
 import { PublicSiteController } from './config/site.controller';
 import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller';
@@ -57,9 +61,18 @@ export const TEST_INTERNAL_TOKEN = 'test-internal-token-0123456789abcdef';
 
 /** Pass `storage` to run the app on another store; the default is an in-memory one that tests can inspect. */
 export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
-  adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number; storage?: S; gemini?: GeminiOptions; polls?: PollOptions; trustProxy?: boolean } = {},
+  adminUrl: string, opts: { internalToken?: string | null; maxUploadBytes?: number; storage?: S; gemini?: GeminiOptions; polls?: PollOptions; trustProxy?: boolean; redisUrl?: string | null; ownHosts?: string[] } = {},
 ) {
   const storage = (opts.storage ?? new MemoryStorage()) as S;
+  // The view counters use a Redis of their own prefix, so tests never meet one another's keys. Without
+  // TEST_REDIS_URL there is no Redis, and counting is off (the tests that need it skip themselves).
+  const redisUrl = opts.redisUrl === undefined ? process.env.TEST_REDIS_URL ?? null : opts.redisUrl;
+  const redis = redisUrl ? new Redis(redisUrl, { maxRetriesPerRequest: 2 }) : null;
+  const clock = { at: Date.now() };
+  const viewsOptions: ViewsOptions = {
+    prefix: `fltest-${Math.random().toString(36).slice(2, 10)}`, hashSecret: 'test-views-secret', ownHosts: opts.ownHosts ?? ['factlens.example'],
+    now: () => new Date(clock.at),
+  };
   const db = await createTestDatabase(adminUrl);
   await seedReferenceData(db.pool);
 
@@ -72,11 +85,12 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+    controllers: [PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: GEMINI_OPTIONS, useValue: opts.gemini ?? { apiKey: null, model: 'test-model' } }, GeminiService,
       { provide: SITE_INFO, useValue: { social: { links: [{ network: 'x', url: 'https://x.com/factlens' }] }, contact: { email: 'desk@factlens.example', phone: null, address: null } } },
+      { provide: REDIS_CLIENT, useValue: redis }, { provide: VIEWS_OPTIONS, useValue: viewsOptions }, ViewsService, AnalyticsService,
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
       NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, InboxService, PollsService, MediaService,
       { provide: POLL_OPTIONS, useValue: opts.polls ?? { secret: 'test-poll-secret-0123456789abcdef0123456789', perIpPerDay: 3 } },
@@ -118,10 +132,18 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
   const anonymous = (method: 'GET' | 'POST', url: string, body?: unknown) =>
     app.inject({ method, url, payload: body as object | undefined });
 
+  const views = app.get(ViewsService);
   return {
-    db, app, call, anonymous, upload, fetchFile, storage,
+    db, app, call, anonymous, upload, fetchFile, storage, views, redis, viewsOptions,
+    /** Moves the clock the view counters read. */
+    setClock: (at: Date) => { clock.at = at.getTime(); },
     token: (roles: string[], sub = 'user-1', mfa = true) => sign(roles, sub, mfa),
     async close() {
+      if (redis) {
+        const keys = await redis.keys(`${viewsOptions.prefix}:*`);
+        if (keys.length) await redis.del(...keys);
+        redis.disconnect();
+      }
       await app.close();
       await db.drop();
     },

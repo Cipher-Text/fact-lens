@@ -104,17 +104,17 @@ export const roles: ReadonlyArray<{ key: string; name: string; capabilities: rea
     name: 'Managing Editor',
     capabilities: [
       'news.edit', 'news.submit', 'news.review', 'news.fact_check', 'news.publish', 'news.correct',
-      'taxonomy.manage', 'audit.read',
+      'taxonomy.manage', 'audit.read', 'analytics.read',
     ],
   },
   { key: 'media_editor', name: 'Media Editor', capabilities: ['media.manage'] },
-  { key: 'analyst', name: 'Analyst', capabilities: [] },
+  { key: 'analyst', name: 'Analyst', capabilities: ['analytics.read'] },
   {
     key: 'admin',
     name: 'Admin',
     capabilities: [
       'news.edit', 'news.submit', 'news.review', 'news.fact_check', 'news.publish', 'news.correct',
-      'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage',
+      'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage', 'analytics.read',
     ],
   },
 ];

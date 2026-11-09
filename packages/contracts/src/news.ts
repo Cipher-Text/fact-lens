@@ -53,6 +53,10 @@ export const newsMetaSchema = z
   .refine((m) => Object.keys(m).length > 0, { message: 'nothing to change' });
 export type NewsMeta = z.infer<typeof newsMetaSchema>;
 
+/** The lead image of the news item's open revision: a picture from the media library, or null to remove it. */
+export const leadImageSchema = z.object({ mediaAssetId: idSchema.nullable() });
+export type LeadImage = z.infer<typeof leadImageSchema>;
+
 export const revisionCreateSchema = z.object({ reason: z.string().trim().min(3).max(500) });
 export type RevisionCreate = z.infer<typeof revisionCreateSchema>;
 

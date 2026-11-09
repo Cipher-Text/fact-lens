@@ -2,11 +2,12 @@ import {
   Body, CanActivate, Controller, ExecutionContext, HttpCode, Inject, Injectable, Param, ParseUUIDPipe, Post, Req,
   ServiceUnavailableException, UnauthorizedException, UseGuards,
 } from '@nestjs/common';
-import { feedIngestSchema, INTERNAL_TOKEN_HEADER, type FeedIngestResult, type ScheduledPublishResult } from '@fact-lens/contracts';
+import { feedIngestSchema, INTERNAL_TOKEN_HEADER, type AnalyticsRollupResult, type FeedIngestResult, type ScheduledPublishResult } from '@fact-lens/contracts';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import type { FastifyRequest } from 'fastify';
 import { Public } from '../auth/decorators';
 import { parse } from '../common/http';
+import { ViewsService } from '../analytics/views.service';
 import { InboxService } from '../inbox/inbox.service';
 import { NewsService } from '../news/news.service';
 
@@ -40,7 +41,15 @@ export class InternalController {
   constructor(
     @Inject(NewsService) private readonly news: NewsService,
     @Inject(InboxService) private readonly inbox: InboxService,
+    @Inject(ViewsService) private readonly views: ViewsService,
   ) {}
+
+  /** Adds the finished hours of the view counters to the durable table. Safe to call again: an hour is added once. */
+  @Post('analytics/rollup')
+  @HttpCode(200)
+  rollupViews(): Promise<AnalyticsRollupResult> {
+    return this.views.rollup();
+  }
 
   /** Publishes a due schedule. Safe to call again: the outcome of the first call is returned. */
   @Post('schedules/:id/publish')

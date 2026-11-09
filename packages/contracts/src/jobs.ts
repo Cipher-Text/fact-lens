@@ -40,6 +40,7 @@ export const jobPayloadSchemas = {
   'schedule.scan': z.object({}),
   'feed.scan': z.object({}),
   'feed.fetch': z.object({ feedId: idSchema }),
+  'analytics.rollup': z.object({}),
 } as const;
 
 export type JobType = keyof typeof jobPayloadSchemas;
@@ -60,6 +61,7 @@ export const jobQueue: Record<JobType, QueueName> = {
   'schedule.scan': 'maintenance',
   'feed.scan': 'maintenance',
   'feed.fetch': 'ingest',
+  'analytics.rollup': 'maintenance',
 };
 
 /**

@@ -35,6 +35,10 @@ async function main() {
     'feed-scan', { every: env.FEED_SCAN_MS },
     { name: 'feed.scan', data: { id: crypto.randomUUID(), type: 'feed.scan', version: 1, idempotencyKey: 'feed.scan', occurredAt: new Date().toISOString(), payload: {} } },
   );
+  await queues.queue('maintenance').upsertJobScheduler(
+    'analytics-rollup', { every: env.ANALYTICS_ROLLUP_MS },
+    { name: 'analytics.rollup', data: { id: crypto.randomUUID(), type: 'analytics.rollup', version: 1, idempotencyKey: 'analytics.rollup', occurredAt: new Date().toISOString(), payload: {} } },
+  );
   const health = startHealthServer(pool, queues, env.WORKER_HEALTH_PORT);
   log.info('worker.started', { queues: workers.map((w) => w.name), healthPort: env.WORKER_HEALTH_PORT });
 

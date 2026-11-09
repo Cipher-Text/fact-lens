@@ -387,7 +387,7 @@ export class TaxonomyService {
   }
 
   /** Published news in one language, newest first, optionally of one category or tag. */
-  async publicNews(locale: string, q: { category?: string; tag?: string; region?: string; format?: NewsFormat; excludeFormat?: NewsFormat; limit: number; cursor?: string }): Promise<PublicNewsList> {
+  async publicNews(locale: string, q: { category?: string; tag?: string; region?: string; format?: NewsFormat; excludeFormat?: NewsFormat; ids?: string[]; limit: number; cursor?: string }): Promise<PublicNewsList> {
     await this.requireActiveLocale(locale);
     if ([q.category, q.tag, q.region].filter(Boolean).length > 1) throw new BadRequestException('Filter by a category, a tag or a region, not more than one');
     let filter: PublicNewsList['filter'] = null;
@@ -443,10 +443,12 @@ export class TaxonomyService {
     if (cursorAt) filters.push(`(s.published_at, s.id) < (${bind(cursorAt)}::timestamptz, ${bind(cursorId)}::uuid)`);
     if (q.format) filters.push(`s.format = ${bind(q.format)}`);
     if (q.excludeFormat) filters.push(`s.format <> ${bind(q.excludeFormat)}`);
+    // Only these news items (the ranked ids of most read). The caller puts them in order.
+    if (q.ids) filters.push(`s.id = ANY (${bind(q.ids)}::uuid[])`);
     const limit = bind(q.limit + 1);
     const { rows } = await this.pool
       .query(
-        `SELECT s.id, s.short_id, s.format, ss.slug, st.title, st.dek, s.published_at,
+        `SELECT s.id, s.short_id, s.format, ss.slug, st.title, st.dek, s.published_at, s.published_revision_id,
                 to_char(s.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at,
                 cl.name AS category_name, cl.slug AS category_slug, c.key AS category_key
            FROM news s
@@ -465,14 +467,35 @@ export class TaxonomyService {
         throw e;
       });
     const page = rows.slice(0, q.limit);
+    const images = await this.leadImages(page.map((r) => r.published_revision_id as string));
     return {
       filter,
       items: page.map((r) => ({
         id: r.id, shortId: r.short_id, format: r.format, slug: r.slug, title: r.title, dek: r.dek, publishedAt: r.published_at.toISOString(),
         category: r.category_name ? { key: r.category_key, name: r.category_name, slug: r.category_slug } : null,
+        image: images.get(r.published_revision_id) ?? null,
       })),
       nextCursor: rows.length > q.limit ? Buffer.from(JSON.stringify([page[page.length - 1]!.cursor_at, page[page.length - 1]!.id])).toString('base64url') : null,
     };
+  }
+
+  /**
+   * The lead image of each published revision, as readers may see it (ready, allowed on the web, rights not expired,
+   * credited or licensed), or none. The same rule as a tag's picture.
+   */
+  private async leadImages(revisionIds: string[]): Promise<Map<string, PublicMedia>> {
+    const out = new Map<string, PublicMedia>();
+    if (revisionIds.length === 0) return out;
+    const { rows } = await this.pool.query<{ revision_id: string; media_asset_id: string }>(
+      `SELECT DISTINCT ON (revision_id) revision_id, media_asset_id FROM revision_media
+        WHERE revision_id = ANY ($1::uuid[]) AND role = 'lead' ORDER BY revision_id, position`, [revisionIds]);
+    const media = new Map<string, PublicMedia | null>();
+    await Promise.all([...new Set(rows.map((r) => r.media_asset_id))].map(async (id) => media.set(id, await this.publicImage(id))));
+    for (const r of rows) {
+      const image = media.get(r.media_asset_id);
+      if (image) out.set(r.revision_id, image);
+    }
+    return out;
   }
 
   /** A tag's picture as readers may see it: ready, allowed on the web, rights not expired, and credited or licensed. Otherwise none. */

@@ -106,6 +106,14 @@ export const handlers: Handlers = {
       }
     },
   },
+  'analytics.rollup': {
+    // Adding an hour twice is impossible in the API (it records each hour), so a repeat is harmless.
+    receipt: false,
+    async run(_payload, { api, log }) {
+      const result = await api.rollupViews();
+      if (result.buckets > 0) log.info('analytics.rollup', result);
+    },
+  },
   'schedule.scan': {
     receipt: false,
     async run(_payload, { pool, enqueue, log }) {

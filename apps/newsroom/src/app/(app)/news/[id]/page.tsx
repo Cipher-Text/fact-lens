@@ -2,11 +2,13 @@ import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import {
   assignmentSchema, attachedSourceSchema, categorySchema, commentSchema, taxonomyRegionSchema, contributorSchema, deskSchema, localeSchema,
-  newsDetailSchema, timelineEntrySchema,
+  newsDetailSchema, newsPerformanceDetailSchema, timelineEntrySchema,
 } from '@fact-lens/contracts';
 import { RichBody } from '@/components/RichBody';
 import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, NewsRegionPicker, NewsTagPicker, TransitionPanel, TranslationEditor } from '@/components';
+import { LeadImagePicker } from '@/components/LeadImagePicker';
 import { Badge, Empty, Panel, StatusBadge, WorkflowSteps } from '@/components/ui';
+import { SourceBars, ViewsChart } from '@/components/PerformanceParts';
 import { ApiError, api, getPrincipal } from '@/lib/current';
 import { formatDateTime, pickTitle } from '@/lib/format';
 import { can } from '@/lib/nav';
@@ -46,6 +48,10 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
   ]);
 
   const { news, revision, translations, editable } = detail;
+  // The performance of a news item that has been live. A failure here must not break the page.
+  const performance = can(principal, 'analytics.read') && news.publishedAt
+    ? await api(`/analytics/news/${id}`, newsPerformanceDetailSchema, { returnTo: here }).catch(() => null)
+    : null;
   const heading = pickTitle(Object.fromEntries(translations.map((t) => [t.locale, t.title])));
   const canEdit = can(principal, 'news.edit') && editable && news.status !== 'ARCHIVED';
   const have = new Set(translations.map((t) => t.locale));
@@ -131,12 +137,35 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
           {news.status === 'PUBLISHED' && can(principal, 'news.edit') ? <Panel title="Change a published news item" id="revise-h"><ReviseForm newsId={id} /></Panel> : null}
           {news.status === 'PUBLISHED' && can(principal, 'news.correct') ? <Panel title="Record a correction" id="correct-h"><CorrectionForm newsId={id} locales={translations.map((t) => t.locale)} /></Panel> : null}
 
+          {performance ? (
+            <Panel title="Performance" id="performance-h">
+              <p className="mb-3 text-xs text-muted">Views are first views by a session in 24 hours, for {performance.from} to {performance.to} (Dhaka days). Updated hourly.</p>
+              <div className="space-y-5">
+                {performance.locales.map((l) => (
+                  <section key={l.locale} aria-label={`Performance in ${l.locale}`}>
+                    <h3 className="mb-1 text-sm font-semibold" lang={l.locale}>{l.locale}</h3>
+                    <dl className="mb-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
+                      <div><dt className="text-xs text-muted">In period</dt><dd className="font-semibold tabular-nums">{l.total}</dd></div>
+                      <div><dt className="text-xs text-muted">Last 7 days</dt><dd className="tabular-nums">{l.last7}</dd></div>
+                      <div><dt className="text-xs text-muted">All time</dt><dd className="tabular-nums">{l.allTime}</dd></div>
+                      <div><dt className="text-xs text-muted">A day</dt><dd className="tabular-nums">{l.viewsPerDay}</dd></div>
+                    </dl>
+                    <ViewsChart series={l.perDay} label={`Views a day in ${l.locale}`} />
+                    <div className="mt-3"><SourceBars sources={l.sources} /></div>
+                    {l.rankInSection ? <p className="mt-2 text-xs text-muted">Place {l.rankInSection.rank} of {l.rankInSection.of} in {l.rankInSection.section} in this period.{l.peakDay ? ` Peak day ${l.peakDay}.` : ''}</p> : null}
+                  </section>
+                ))}
+              </div>
+            </Panel>
+          ) : null}
+
           <Panel title="Details" id="meta-h">
             <p className="mb-3 text-sm text-muted">
               Public address: <code>/story/&lt;slug&gt;-{news.shortId}</code>. The id stays the same in every language and when the slug changes.
             </p>
             {can(principal, 'news.edit') && news.status !== 'ARCHIVED' ? (
               <div className="space-y-3">
+                <LeadImagePicker newsId={id} imageId={detail.media.find((m) => m.role === 'lead')?.id ?? null} />
                 <MetaForm newsId={id} deskId={news.deskId} categoryId={news.categoryId} categoryIds={news.categoryIds} format={news.format}
                   desks={desks.map((d) => ({ id: d.id, name: d.name }))} categories={categories.map((c) => ({ id: c.id, name: sectionName(c), parentId: c.parentId }))}
                   contributors={detail.contributors.map((c) => ({ id: c.contributor.id, name: c.contributor.displayName, role: c.role }))}

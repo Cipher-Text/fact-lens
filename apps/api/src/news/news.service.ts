@@ -320,6 +320,39 @@ export class NewsService {
     return this.detail(id, actor.principal);
   }
 
+  /**
+   * Sets or removes the lead image of the open revision (role `lead`, one per revision). It travels with the
+   * revision, so a new revision starts with the old picture and can change it. A submitted revision is locked.
+   */
+  async setLeadImage(id: string, mediaAssetId: string | null, actor: Actor): Promise<NewsDetail> {
+    await withTransaction(this.pool, async (db) => {
+      const news = await this.lockNews(db, id);
+      if (news.status === 'ARCHIVED') throw conflict('news_archived', 'Archived news cannot be edited');
+      const revision = await this.latestRevision(db, id);
+      if (revision.submitted_at) {
+        throw conflict('revision_locked', 'This revision is locked. Create a new revision to change the picture of a published news item.');
+      }
+      if (mediaAssetId) {
+        const asset = await db.query<{ mime_type: string }>('SELECT mime_type FROM media_asset WHERE id = $1', [mediaAssetId]);
+        if (!asset.rows[0]) throw new BadRequestException('That image is not in the media library');
+        if (!asset.rows[0].mime_type.startsWith('image/')) throw new BadRequestException('The lead image must be an image');
+      }
+      await db.query(`DELETE FROM revision_media WHERE revision_id = $1 AND role = 'lead'`, [revision.id]);
+      if (mediaAssetId) {
+        // The same picture may also be in the body: the lead row is its own role, so both can exist.
+        await db.query(`INSERT INTO revision_media (revision_id, media_asset_id, role, position) VALUES ($1, $2, 'lead', 0)`, [revision.id, mediaAssetId]);
+      }
+      await db.query('UPDATE news_revision SET changed_by = $2, changed_at = now() WHERE id = $1', [revision.id, actor.principal.subject]);
+      await db.query('UPDATE news SET updated_at = now() WHERE id = $1', [id]);
+      await this.audit.record(
+        { actorType: 'human', actorId: actor.principal.subject, action: 'news.lead_image_update', objectType: 'news', objectId: id,
+          newsId: id, requestId: actor.requestId, metadata: { mediaAssetId } },
+        db,
+      );
+    });
+    return this.detail(id, actor.principal);
+  }
+
   async updateMeta(id: string, input: NewsMeta, actor: Actor): Promise<NewsDetail> {
     await withTransaction(this.pool, async (db) => {
       const news = await this.lockNews(db, id);

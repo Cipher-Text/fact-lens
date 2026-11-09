@@ -23,3 +23,5 @@ First-party news view counts (see [target architecture](./03-target-architecture
 ## Status
 
 Not built. The worker has a `search.index` job that logs and succeeds, and the outbox already sends it a publish or archive event for each news item, so the projection can be added without changing the API. The newsroom list can filter by status only; there is no text search over news items. Media library search is a simple case-insensitive match on file name, alt text, credit and rights owner. See [implementation status](./22-implementation-status.md).
+
+The public search endpoint, the indexing of the published text per language (including Bangla), and the trending search terms behind the site's search dialog are specified in [26](./26-search-and-trending.md) (not built).

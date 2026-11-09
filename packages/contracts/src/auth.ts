@@ -3,7 +3,7 @@ import { z } from 'zod';
 /** Capabilities gate actions; roles are only named sets of them (docs/06, docs/12). */
 export const capabilities = [
   'news.edit', 'news.submit', 'news.review', 'news.fact_check', 'news.publish',
-  'news.correct', 'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage',
+  'news.correct', 'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage', 'analytics.read',
 ] as const;
 export const capabilitySchema = z.enum(capabilities);
 export type Capability = z.infer<typeof capabilitySchema>;
