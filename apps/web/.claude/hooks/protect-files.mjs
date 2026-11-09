@@ -1,13 +1,26 @@
-// PreToolUse (Edit|Write|Bash): blocks edits to the specs, secrets and the lock file.
+// PreToolUse (Edit|Write|Bash): blocks edits to the specs (except on a page/ or task/ branch), secrets and the lock file.
 // For Bash it blocks a command that writes into a protected path:
 // a redirect, tee, sed -i, perl -pi, or cp / mv with a protected target.
 // Exit code 2 blocks the tool call and sends the message to Claude.
+import { execFileSync } from "node:child_process";
 import { readInput } from "./_input.mjs";
 
 const { rel, root, command } = readInput();
 
+// Specs change only on a page or task branch, in its pull request (AGENTS.md Section 9).
+// On dev, main and every other branch they stay locked, so they never change after a merge.
+// Ask git for the branch: in a worktree `.git` is a file, not a folder.
+// On a detached HEAD git prints "HEAD", so the specs stay locked.
+let branch = "";
+try {
+  branch = execFileSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
+} catch {
+  branch = "";
+}
+const onPageBranch = branch.startsWith("page/") || branch.startsWith("task/");
+
 const PROTECTED = [
-  { test: (p) => p.startsWith("docs/design-system/"), why: "the design-system specs come from the blueprint project" },
+  { test: (p) => !onPageBranch && p.startsWith("docs/design-system/"), why: "the specs change only on a page/ or task/ branch, at the final checkpoint" },
   { test: (p) => /(^|\/)\.env(\.|$)/.test(p), why: "env files can hold secrets" },
   { test: (p) => p === "pnpm-lock.yaml", why: "pnpm writes the lock file; use pnpm add or pnpm install" },
 ];
@@ -40,7 +53,7 @@ if (hit) {
   console.error(
     `Blocked: ${target} is protected because ${hit.why}. ` +
       `Do not edit it another way. If a spec is wrong or a value is missing, ` +
-      `stop and report it as a DOC- issue in your summary.`
+      `report it as a DOC- issue in docs/ISSUES.md.`
   );
   process.exit(2);
 }

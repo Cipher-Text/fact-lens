@@ -32,7 +32,7 @@ describe("HeroSection (P-1)", () => {
   });
 
   it("shows two top-story cards at most (DR-44)", () => {
-    const extra = getHomepage("bn").featured.bangladesh!.lead;
+    const extra = getHomepage("bn").featured.southAsia!.feature;
     const { container } = renderHero("bn", {
       ...full,
       top: [...full.top, extra],
@@ -44,11 +44,9 @@ describe("HeroSection (P-1)", () => {
 
   it("uses the role mapping of typography-system.md 7.1", () => {
     const { container } = renderHero("en", getHomepage("en").hero!);
-    expect(container.querySelector("[data-lead] h3")).toHaveClass(
-      "type-story-lead",
-    );
+    expect(container.querySelector("[data-lead] h3")).toHaveClass("text-4xl");
     for (const h of container.querySelectorAll("[data-top-stories] h3"))
-      expect(h).toHaveClass("type-story-title");
+      expect(h).toHaveClass("text-2xl");
   });
 
   it("lets one top story span the wrapper (7.3)", () => {
@@ -67,14 +65,14 @@ describe("HeroSection (P-1)", () => {
       container.querySelector("[data-lead] [data-placeholder]"),
     ).not.toBeNull();
     expect(container.querySelector("[data-lead-panel]")!.className).toContain(
-      "-mt-(--space-lead-overlap)",
+      "-mt-(--space-overlap-large)",
     );
   });
 
   it("overlaps the lead image by the C-01 tokens, on the page color, and grows down (LAY-17)", () => {
     const { container } = renderHero("bn", full);
     const panel = container.querySelector("[data-lead-panel]")!;
-    expect(panel.className).toContain("-mt-(--space-lead-overlap)");
+    expect(panel.className).toContain("-mt-(--space-overlap-large)");
     expect(panel.className).toContain("bg-background");
     expect(panel.className).not.toMatch(/\b(h|max-h)-/);
   });

@@ -1,16 +1,18 @@
 import Image from "next/image";
-import Link from "next/link";
 
 import { AdSlot } from "@/components/ads/AdSlot";
 import { Footer } from "@/components/footer/Footer";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { SkipLink } from "@/components/header/SkipLink";
-import { categoryHref } from "@/components/story/links";
+import { Divider } from "@/components/layout/Divider";
+import { Eyebrow } from "@/components/story/Eyebrow";
+import { storyPath } from "@/components/story/links";
+import { articleLangsOf } from "@/content";
+import { otherLang } from "@/i18n";
 import { StoryTime } from "@/components/story/StoryTime";
 
 import type { Article, ReadNextItem } from "@/content";
 import { formatNumber } from "@/lib/format";
-import { readerSizeScript } from "@/lib/reader-size";
 import { getDictionary, localizedPath, type Lang } from "@/i18n";
 
 import {
@@ -18,7 +20,7 @@ import {
   KeyPoints,
   PreferredSourceAlert,
   ReadNext,
-  Tags,
+  Topics,
 } from "./ArticleParts";
 import { ReadingTools, Toc } from "./Reading";
 import { ReaderRoot } from "./ReaderRoot";
@@ -39,8 +41,11 @@ export function ReaderPage({ lang, article, readNext }: Props) {
   const site = getDictionary(lang);
   const t = site.reader;
   const { story } = article;
-  const path = localizedPath(lang, `/story/${story.slug}`);
-  const category = site.categories[story.category];
+  const path = localizedPath(lang, storyPath(story));
+  // An article missing in the other language: the switch goes to its category page (DR-401).
+  const switchFallback = articleLangsOf(story.slug).includes(otherLang(lang))
+    ? undefined
+    : `/category/${story.category}`;
   const share = { path, title: story.title, summary: article.summary, t };
   const toc = article.body.flatMap((block) =>
     block.type === "h2" ? [{ id: block.id, text: block.text }] : [],
@@ -48,10 +53,12 @@ export function ReaderPage({ lang, article, readNext }: Props) {
 
   return (
     <ReaderRoot minutes={article.readingMinutes} category={story.category}>
-      {/* Sets the stored text size on <html> before the first paint. */}
-      <script dangerouslySetInnerHTML={{ __html: readerSizeScript }} />
       <SkipLink label={site.header.skipLink} />
-      <SiteHeader lang={lang} path={`/story/${story.slug}`} />
+      <SiteHeader
+        lang={lang}
+        path={storyPath(story)}
+        switchFallback={switchFallback}
+      />
       {/* The top ad row is below the header, full width (DR-295). */}
       <AdSlot variant="top" lang={lang} strings={site.ads} />
 
@@ -59,14 +66,12 @@ export function ReaderPage({ lang, article, readNext }: Props) {
         <article className="rd-article" data-format={story.format}>
           <header className="rd-hero rd-wrap">
             <div className="rd-hero__text">
-              <div className="rd-kicker">
-                <Link
-                  href={categoryHref(lang, story.category)}
-                  className="rd-cat"
-                >
-                  {category}
-                </Link>
-              </div>
+              <Eyebrow
+                story={story}
+                strings={site}
+                mode="two-part"
+                className="rd-category"
+              />
 
               <h1 className="rd-title" data-reader-title>
                 {story.title}
@@ -131,6 +136,11 @@ export function ReaderPage({ lang, article, readNext }: Props) {
           <div className="rd-byrow rd-wrap">
             <div className="rd-hero__text">
               <div className="rd-meta">
+                <Divider
+                  variant="rule"
+                  tone="soft"
+                  className="mb-(--space-list-item)"
+                />
                 <div className="rd-byline">
                   <span className="rd-avatar" aria-hidden="true">
                     {article.author.initials}
@@ -161,7 +171,8 @@ export function ReaderPage({ lang, article, readNext }: Props) {
                   {...share}
                   layout="rail"
                   lang={lang}
-                  slug={story.slug}
+                  storyId={story.id}
+                  storySlug={story.slug}
                 />
               </div>
             </aside>
@@ -178,7 +189,8 @@ export function ReaderPage({ lang, article, readNext }: Props) {
               />
 
               <div className="rd-after">
-                <Tags tags={article.tags} t={t} lang={lang} />
+                <Divider variant="rule" tone="soft" />
+                <Topics topics={article.topics} t={t} lang={lang} />
               </div>
             </div>
           </div>
@@ -191,7 +203,13 @@ export function ReaderPage({ lang, article, readNext }: Props) {
       </main>
 
       <Footer lang={lang} />
-      <ReadingTools {...share} layout="dock" lang={lang} slug={story.slug} />
+      <ReadingTools
+        {...share}
+        layout="dock"
+        lang={lang}
+        storyId={story.id}
+        storySlug={story.slug}
+      />
       <SelectionShare title={story.title} t={t} />
       <Toaster />
     </ReaderRoot>

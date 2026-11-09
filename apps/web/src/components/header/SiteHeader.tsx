@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { use } from "react";
 
 import type { SocialLink } from "@/components/footer/socialLinks";
 import { getTrendingTerms } from "@/content";
@@ -20,6 +21,8 @@ type Props = {
   path?: string;
   /** The social links for the menu. The page passes the newsroom's addresses. */
   social?: SocialLink[];
+  /** Where the language switch goes when this page has no other-language version (DR-401). */
+  switchFallback?: string;
 };
 
 /**
@@ -37,13 +40,19 @@ type Props = {
  * ThemeButton (one ThemeButton at every width, DR-349). No subscribe button (DR-188). The logo is a text stand-in in brand color until
  * the logo file exists (BRD-06, COL-04, U-08). The logo type is `type-logo` (DR-306).
  *
- * An async server component: it reads the menu from the API (`lib/navigation.ts`), with the
- * static menu as the fallback.
+ * It reads the menu from the API (`lib/navigation.ts`), with the static menu as the fallback.
  */
-export async function SiteHeader({ lang, path = "/", social }: Props) {
+export function SiteHeader({
+  lang,
+  path = "/",
+  social,
+  switchFallback,
+}: Props) {
   const t = getDictionary(lang);
   // The menu comes from the API when FACTLENS_API_URL is set and answers; otherwise the static one.
-  const menu = await fetchNavigation(lang);
+  // `use` instead of `await` keeps this component synchronous, so the page views that contain it
+  // still render in unit tests; with no API set there is no promise at all.
+  const menu = process.env.FACTLENS_API_URL ? use(fetchNavigation(lang)) : null;
   const items = menu
     ? getApiNavItems(menu, t, lang, path)
     : getNavItems(t, lang, path);
@@ -80,7 +89,7 @@ export async function SiteHeader({ lang, path = "/", social }: Props) {
         }
         end={
           <>
-            <LanguageSwitch lang={lang} path={path} />
+            <LanguageSwitch lang={lang} path={path} fallback={switchFallback} />
             <ThemeButton strings={t.theme} />
           </>
         }

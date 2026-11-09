@@ -42,7 +42,7 @@ export default async function HomePage({
     : null;
   // The social accounts the newsroom set, else the default links.
   const social = await fetchSocialLinks();
-  const featured = [home.featured.bangladesh, home.featured.geopolitics].filter(
+  const featured = [home.featured.southAsia, home.featured.geopolitics].filter(
     (section) => section !== null,
   );
   // P-3b follows an ad row when P-5, or a section with an ad row and no P-3 after it,
@@ -96,9 +96,9 @@ export default async function HomePage({
             <AdSlot variant="band" lang={lang} strings={t.ads} />
           </>
         ) : null}
-        {/* P-2 for বাংলাদেশ, then ভূরাজনীতি, each with its ad row (DR-68). */}
+        {/* P-2 for দক্ষিণ এশিয়া, then ভূরাজনীতি, each with its ad row (DR-68, DR-412). */}
         {featured.map((section, index) => (
-          <Fragment key={section.category}>
+          <Fragment key={`${section.source.kind}-${section.source.id}`}>
             <FeaturedCategorySection
               lang={lang}
               section={section}

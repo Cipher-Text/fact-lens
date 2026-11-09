@@ -7,7 +7,7 @@ import {
 } from "@testing-library/react";
 import { beforeAll, describe, expect, it } from "vitest";
 
-import { getHomepage } from "@/content";
+import { getHomepage, regionIds } from "@/content";
 import { getDictionary } from "@/i18n";
 
 import { RegionsSection } from "./RegionsSection";
@@ -37,6 +37,51 @@ function renderSection(lang: "bn" | "en", variant: "full" | "sparse" = "full") {
 }
 
 describe("RegionsSection (P-3b)", () => {
+  // The working list of 8 in its order (DR-411; labels approved by tajmin, 28 Oct 2026).
+  // A region with no stories is left out (7.3); the rest keep the list order.
+  it("shows the regions with stories in the list order, with the approved labels", () => {
+    expect(regionIds).toEqual([
+      "americas",
+      "europe",
+      "russia",
+      "middle-east",
+      "south-asia",
+      "china",
+      "asia",
+      "oceania",
+    ]);
+    const labels = {
+      bn: [
+        "আমেরিকা",
+        "ইউরোপ",
+        "রাশিয়া",
+        "মধ্যপ্রাচ্য",
+        "দক্ষিণ এশিয়া",
+        "চীন",
+        "এশিয়া",
+        "ওশেনিয়া",
+      ],
+      en: [
+        "Americas",
+        "Europe",
+        "Russia",
+        "Middle East",
+        "South Asia",
+        "China",
+        "Asia",
+        "Oceania",
+      ],
+    };
+    for (const lang of ["bn", "en"] as const) {
+      expect(regionIds.map((id) => getDictionary(lang).regions[id])).toEqual(
+        labels[lang],
+      );
+      const shown = getHomepage(lang).regions!.map((r) => r.region);
+      expect(shown).toEqual(regionIds.filter((id) => shown.includes(id)));
+      expect(shown).toContain("south-asia");
+    }
+  });
+
   it("is the #regions section named by its heading, with every region in the HTML", () => {
     const { container, regions } = renderSection("bn");
     const section = screen.getByRole("region", { name: "অঞ্চলসমূহ" });

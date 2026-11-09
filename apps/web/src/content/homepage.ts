@@ -1,13 +1,19 @@
 // Which stories go into which homepage section (spacing-layout-system.md 7.1).
 // "full" fills every section. "sparse" has one sparse case per pattern (7.3).
-import type { CategoryId, HomepageVariant, RegionId } from "./types";
+import {
+  regionIds,
+  type CategoryId,
+  type HomepageVariant,
+  type RegionId,
+} from "./types";
 
 export interface HomepagePlan {
   hero: { lead: string; top: string[]; latest: string[] } | null;
   analysisOpinion: { analysis: string[]; opinion: string[] } | null;
   featured: {
-    bangladesh: { lead: string; rail: string[] } | null;
-    geopolitics: { lead: string; rail: string[] } | null;
+    /** P-2 South Asia: stories with the region south-asia (DR-412). */
+    southAsia: { feature: string; rail: string[] } | null;
+    geopolitics: { feature: string; rail: string[] } | null;
   };
   grouped: { category: CategoryId; stories: string[] }[];
   mostRead: string[];
@@ -15,16 +21,9 @@ export interface HomepagePlan {
   regions: RegionId[];
 }
 
-// চীন is a region, not a category (DR-19). Africa has no stories, so it does not show.
-const allRegions: RegionId[] = [
-  "china",
-  "india",
-  "myanmar",
-  "middle-east",
-  "southeast-asia",
-  "europe",
-  "africa",
-];
+// চীন is a region, not a category (DR-19). Oceania has no stories, so it does not
+// show (layout 7.3).
+const allRegions: RegionId[] = [...regionIds];
 
 export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
   full: {
@@ -36,7 +35,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
         "exports-september",
         "foreign-secretary-kathmandu",
         "new-submarine-cable",
-        "chattogram-rain-warning",
+        "transit-facility-expansion",
         "coast-guard-patrol-boats",
         "liberation-war-press-archive",
       ],
@@ -56,17 +55,17 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
       ],
     },
     featured: {
-      bangladesh: {
-        lead: "coastal-embankment-project",
-        // One image story, then two stories.
+      southAsia: {
+        feature: "cross-border-water-project",
+        // Three text stories in the rail (IMP-125, DR-451).
         rail: [
-          "dhaka-single-ticket",
-          "primary-teacher-training",
-          "aman-harvest-north",
+          "regional-maritime-patrol-accord",
+          "regional-economic-integration-prospects",
+          "maritime-boundary-agreement",
         ],
       },
       geopolitics: {
-        lead: "bay-trilateral-dialogue",
+        feature: "bay-trilateral-dialogue",
         rail: [
           "regional-power-grid",
           "peacekeeping-women-target",
@@ -111,10 +110,10 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
     // Top 5 (DR-51).
     mostRead: [
       "deep-sea-port-trial-ship",
-      "coastal-embankment-project",
+      "cross-border-water-project",
       "reserve-indicators",
       "inflation-third-month",
-      "chattogram-rain-warning",
+      "regional-security-pact",
     ],
     regions: allRegions,
   },
@@ -133,7 +132,7 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
     },
     featured: {
       // No rail stories: the wrapper spans the shell.
-      bangladesh: { lead: "coastal-embankment-project", rail: [] },
+      southAsia: { feature: "cross-border-water-project", rail: [] },
       // No content: the section and its ad row do not show.
       geopolitics: null,
     },
@@ -162,10 +161,10 @@ export const homepagePlans: Record<HomepageVariant, HomepagePlan> = {
     ],
     mostRead: [
       "deep-sea-port-trial-ship",
-      "coastal-embankment-project",
+      "cross-border-water-project",
       "reserve-indicators",
     ],
     // 3 regions after the empty one is removed: all fit in view from 1024px, so no buttons there.
-    regions: ["china", "india", "middle-east", "africa"],
+    regions: ["middle-east", "china", "asia", "oceania"],
   },
 };

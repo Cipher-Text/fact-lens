@@ -7,11 +7,12 @@ import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
+import type { EyebrowMode } from "./Eyebrow";
 import { StoryListItem } from "./StoryListItem";
 
 type StoryListProps = {
   stories: Story[];
-  strings: Pick<Dictionary, "story" | "categories">;
+  strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
   /**
    * 1: one column. 2: two columns from 768 to 1023px, column-first, with a 24px gap and rules
    * inside a column only (DR-125); one column elsewhere. 2 is the Latest list under the hero.
@@ -21,6 +22,9 @@ type StoryListProps = {
    */
   columns?: 1 | 2;
   meta?: "category-time" | "time-reading";
+  /** The C-08 Eyebrow on every row, in this mode; none when unset (C-25). The region hub
+   * blocks use `format` (RG-06; tajmin, 5 Nov 2026). */
+  eyebrowMode?: EyebrowMode;
   titleAs?: "h3" | "h4";
   className?: string;
 };
@@ -40,6 +44,7 @@ export function StoryList({
   strings,
   columns = 1,
   meta,
+  eyebrowMode,
   titleAs,
   className,
 }: StoryListProps) {
@@ -71,6 +76,7 @@ export function StoryList({
             story={story}
             strings={strings}
             meta={meta}
+            eyebrowMode={eyebrowMode}
             titleAs={titleAs}
           />
         </li>

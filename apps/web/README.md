@@ -2,7 +2,7 @@
 
 The new website frontend for **Fact Lens**, a Bangladesh-first international news publisher. The site publishes in Bangla and English.
 
-> Status: production frontend, run 5 (M2 stage F0): a short fix run. It puts the run 4 review decisions (`DR-355` to `DR-359`) in the code. Run 4 merged on 17 October 2026 (PR #6, `7430d53`), run 3 on 16 October (PR #5), run 2 finished on 11 October and run 1 on 8 October 2026. Mock data only.
+> Status: production frontend (M2). The homepage and the article page are done; the article page merged into `dev` on 23 October 2026 (PR #8, hotfixes PR #9 and #10). Work goes on `dev`, one `page/<name>` branch per new page. Mock data only. Current state: [`docs/STATUS.md`](docs/STATUS.md).
 >
 > Live preview: [fact-lens-web-ashy.vercel.app](https://fact-lens-web-ashy.vercel.app/) (Vercel). Test and review only; not the final hosting.
 
@@ -30,8 +30,8 @@ The design system was written before the code, as a blueprint. Each rule has a s
 | --- | --- |
 | [Color](docs/design-system/color-system.md) | Light and dark tokens, contrast results, rules `COL-01` to `COL-17` |
 | [Typography](docs/design-system/typography-system.md) | Bangla and English roles, fonts, reader sizes, rules `TYP-01` to `TYP-25` |
-| [Spacing and layout](docs/design-system/spacing-layout-system.md) | Breakpoints, shell, rail, homepage patterns, ads, rules `LAY-01` to `LAY-21` |
-| [Components](docs/design-system/component-system.md) | Homepage component sheets, names, rules `CPT-01` to `CPT-16` and `N-01` to `N-05` |
+| [Spacing and layout](docs/design-system/spacing-layout-system.md) | Breakpoints, shell, rail, homepage patterns, ads, rules `LAY-01` to `LAY-22` |
+| [Components](docs/design-system/component-system.md) | Homepage and article page component sheets, names, rules `CPT-01` to `CPT-16` and `N-01` to `N-05` |
 | [Agent contract](docs/design-system/agent-contract.md) | Index of all rule IDs, the project decisions that a build needs, and the build order |
 
 The docs are written in ASD-STE100 Simplified Technical English, so that people and AI agents read them the same way.
@@ -42,7 +42,7 @@ This repository is built with Claude Code, under rules that humans and agents sh
 
 - [`AGENTS.md`](AGENTS.md): instructions for every coding agent and developer
 - [`CLAUDE.md`](CLAUDE.md): imports `AGENTS.md` and adds Claude Code details
-- [`.claude/`](.claude): permissions, hooks that block raw design values, skills (`/ticket`, `/accept`, `/verify`, `/check-rules`) and review subagents
-- [`docs/SPRINT.md`](docs/SPRINT.md): the tickets, each with a goal, acceptance criteria and the original prompt
-- [`docs/PROGRESS.md`](docs/PROGRESS.md): the build log
-- [`docs/prototype-findings.md`](docs/prototype-findings.md): findings and gaps from runs 1 to 4, with the decided fix for each
+- [`.claude/`](.claude): permissions, hooks that block raw design values, skills (`/page`, `/checkpoint`, `/verify`, `/check-rules`) and review subagents
+- [`docs/STATUS.md`](docs/STATUS.md): the current state
+- [`docs/ISSUES.md`](docs/ISSUES.md): every open item, flag and decided issue
+- `docs/briefs/`, `docs/progress/` and [`docs/spec-log/`](docs/spec-log): the brief and progress file of the page or task in progress (deleted after the merge), and the spec log of each page or task (kept) (`AGENTS.md` Section 9)

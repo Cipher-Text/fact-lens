@@ -64,7 +64,7 @@ export function Footer({ lang, social = socialLinks }: Props) {
             ))}
           </ul>
           <nav aria-label={strings.siteNav}>
-            <ul className="flex flex-wrap justify-center gap-x-6 type-ui-sm font-semibold">
+            <ul className="flex flex-wrap justify-center gap-x-6 font-ui text-xs font-semibold">
               {sitePages.map((page) => (
                 <li key={page}>
                   <Link
@@ -77,7 +77,10 @@ export function Footer({ lang, social = socialLinks }: Props) {
               ))}
             </ul>
           </nav>
-          <p className="type-metadata text-ink-muted">
+          <p
+            data-copyright
+            className="font-ui text-xs font-normal text-ink-muted"
+          >
             {fill(strings.copyright, {
               year: formatYear(dhakaYear(), lang),
               name: t.site.name,

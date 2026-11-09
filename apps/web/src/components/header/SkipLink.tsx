@@ -11,7 +11,7 @@ export function SkipLink({ label }: Props) {
     <a
       href="#main"
       data-skip-link
-      className="sr-only focus:not-sr-only focus:fixed focus:start-(--gutter-page) focus:top-2 focus:z-(--z-overlay) focus:bg-background focus:px-4 focus:py-3 focus:type-ui focus:font-semibold focus:text-ink"
+      className="sr-only focus:not-sr-only focus:fixed focus:start-(--gutter-page) focus:top-2 focus:z-(--z-overlay) focus:bg-background focus:px-4 focus:py-3 focus:font-ui focus:text-sm focus:font-semibold focus:text-ink"
     >
       {label}
     </a>

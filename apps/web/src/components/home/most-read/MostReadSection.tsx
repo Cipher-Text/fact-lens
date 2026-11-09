@@ -14,8 +14,10 @@ type MostReadSectionProps = {
 
 /**
  * P-5 MostReadSection (spacing-layout-system.md 7.2): the top 5 as a RankedList (C-07) in
- * the full shell, not a card row. 3 and 4 columns are allowed because it is a numbered
- * list (DR-44, DR-51, DR-145). Sparse (7.3): the items that exist.
+ * the full shell, on the homepage and the category page. The SectionHeading across the
+ * shell as in every section, then from 1024 a grid of three equal columns with the list in
+ * the middle and end columns (1 to 3, then 4 and 5); the start column stays empty. Below
+ * 1024 the list spans the shell. Sparse (7.3): the items that exist.
  */
 export function MostReadSection({
   lang,
@@ -31,7 +33,13 @@ export function MostReadSection({
       className={className}
     >
       <SectionHeading id="most-read-title">{t.mostRead.title}</SectionHeading>
-      <RankedList lang={lang} stories={stories} />
+      <div className="lg:grid lg:grid-cols-3 lg:gap-x-(--grid-column-gap)">
+        <RankedList
+          lang={lang}
+          stories={stories}
+          className="lg:col-span-2 lg:col-start-2"
+        />
+      </div>
     </Shell>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { getDictionary, isLang, langs, localizedPath } from "@/i18n";
+import { readerSizeScript } from "@/lib/reader-size";
 import { storyTimeScript } from "@/lib/story-time";
 import { themeScript } from "@/lib/theme";
 
@@ -53,10 +54,12 @@ export default async function RootLayout({
   const { justNow, hourAgo, hoursAgo } = getDictionary(lang).story;
 
   return (
-    // The theme script sets the .dark class before hydration (DR-281).
+    // The theme script sets the .dark class before hydration (DR-281). The reader size
+    // script sets the stored text size on an article before the first paint (TYP-15).
     <html lang={lang} className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: readerSizeScript }} />
       </head>
       <body className="bg-background text-ink">
         {children}

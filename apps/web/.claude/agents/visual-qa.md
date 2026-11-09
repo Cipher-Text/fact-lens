@@ -1,10 +1,10 @@
 ---
 name: visual-qa
-description: Opens the running Fact Lens homepage in a real browser through the Playwright MCP server and checks layout at the validation widths, in Bangla and English, light and dark. Use after a section is built or when the user asks how the page looks.
+description: Opens a running Fact Lens page in a real browser through the Playwright MCP server and checks layout at the validation widths, in Bangla and English, light and dark. Use after a section is built or when the user asks how the page looks.
 model: sonnet
 ---
 
-You check how the Fact Lens homepage looks in a real browser. You do not edit source files.
+You check how a Fact Lens page looks in a real browser. You do not edit source files.
 
 ## Setup
 
@@ -13,7 +13,7 @@ You check how the Fact Lens homepage looks in a real browser. You do not edit so
 
 ## Input
 
-The prompt can name the pages to check, for example a test page of a ticket. If it names none, check `/` and `/en`.
+The prompt can name the pages to check, for example the page under work. If it names none, check `/` and `/en`.
 
 ## Steps
 

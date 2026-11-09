@@ -177,12 +177,12 @@ for (const p of PAGES) {
           `${space}px`,
         );
 
-        // Rail: the poll, then from 1280 the rail ad space-module below it, never ad
-        // colors in the poll (7.4, DR-239, DR-242).
+        // Rail: the poll, then from 1024 (the rail is a column) the rail ad space-module
+        // below it, never ad colors in the poll (7.4, DR-239, DR-242; tajmin, 4 Nov 2026).
         const poll = await box(rail.locator("[data-poll]"));
         expect(Math.round(poll.y)).toBe(Math.round(r.y));
         const railAd = rail.locator('[data-ad-slot="ad-rail"]');
-        if (width >= 1280) {
+        if (width >= 1024) {
           const ad = await box(railAd);
           expect(Math.round(ad.height)).toBe(624); // 600 + 24px label line
           expect(Math.round(ad.width)).toBe(304);
@@ -606,11 +606,16 @@ test("page order: ভূরাজনীতি, ad, P-3 (7.1)", async ({ page }) 
 });
 
 // The header has no Subscribe link any more (DR-188), so only the category link is left.
-test("a category nav link reaches P-3 (IMP-14)", async ({ page }) => {
+// The nav link goes to the category page now (spacing-layout-system.md 7B); the P-3 anchor stays.
+test("a category nav link opens its page; the P-3 anchor still works (IMP-14)", async ({
+  page,
+}) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  await page.locator('nav a[href="#category-economy"]:visible').first().click();
-  await expect(page).toHaveURL(/#category-economy$/);
+  await page.locator('nav a[href="/category/economy"]:visible').first().click();
+  await expect(page).toHaveURL(/\/category\/economy$/);
+
+  await page.goto("/#category-economy");
   await expect(
     page.locator("#category-economy").getByRole("heading", { level: 2 }),
   ).toBeInViewport();
@@ -680,6 +685,8 @@ test.describe("column rule (C-22, DR-351)", () => {
     }
   }
 
+  // P-2 has its own rule, the dotted column-inset (tajmin, 6 Nov 2026), checked in
+  // featured.spec.ts.
   test("no column rule in the other wrapper and rail sections (DR-351)", async ({
     page,
   }) => {
@@ -687,7 +694,11 @@ test.describe("column rule (C-22, DR-351)", () => {
     await page.goto("/");
     const others = await page.evaluate(() =>
       [...document.querySelectorAll(".with-rail")]
-        .filter((el) => !el.closest('[data-section="grouped"]'))
+        .filter(
+          (el) =>
+            !el.closest('[data-section="grouped"]') &&
+            !el.closest('[data-section="featured"]'),
+        )
         .map((el) => getComputedStyle(el, "::after").content),
     );
     expect(others.length).toBeGreaterThan(0);

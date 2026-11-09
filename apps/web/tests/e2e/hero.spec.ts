@@ -274,7 +274,7 @@ for (const p of PAGES) {
         for (let i = 0; i < 2; i++) {
           const card = cards.nth(i);
           const title = card.getByRole("heading", { level: 3 });
-          await expect(title).toHaveClass(/type-story-title/);
+          await expect(title).toHaveClass(/text-2xl/);
           await expect(card.locator("img")).toHaveCount(1);
           const cardImage = await box(card.locator("img"));
           const body = await box(card.locator("[data-overlap-body]"));
@@ -286,7 +286,7 @@ for (const p of PAGES) {
           expect(Math.round(body.x)).toBe(Math.round(cardImage.x));
         }
         await expect(lead.getByRole("heading", { level: 3 })).toHaveClass(
-          /type-story-lead/,
+          /text-4xl/,
         );
         // One tab stop for the story and one for the eyebrow (C-01).
         await expect(lead.locator("a:not([tabindex='-1'])")).toHaveCount(2);

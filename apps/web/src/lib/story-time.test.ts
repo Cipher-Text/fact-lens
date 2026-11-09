@@ -67,6 +67,8 @@ describe("story time (TYP-17, DR-274)", () => {
       );
       expect(new TextEncoder().encode(script).length).toBeLessThanOrEqual(1536);
       expect(script).toContain("time[data-story-time]");
+      // Load more calls it at once through refreshStoryTimes.
+      expect(script).toContain("window.flStoryTime = run;");
     }
   });
 });

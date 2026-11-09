@@ -8,22 +8,37 @@ import { en } from "@/i18n/en";
 
 import { homepagePlans } from "./homepage";
 import { ads } from "./ads";
+import { categoryMostRead } from "./category-most-read";
 import {
+  articleLangsOf,
+  currentStoryRef,
   getAd,
+  getArticleByRef,
+  getCategoryPage,
   getHomepage,
+  getAnalysisPage,
+  getRegionPage,
+  getRegionSlugs,
+  getRegionsPage,
+  getLatestPage,
+  getTopicPage,
+  getTopicSlugs,
   getPoll,
   getStory,
   type Homepage,
   type Story,
 } from "./index";
+import { articleDefs } from "./reader-articles";
 import { stories } from "./stories";
-import type { CategoryId, RegionId } from "./types";
+import { topics } from "./topics";
+import { parseStoryRef, storyRef } from "./urls";
+import { regionIds, type CategoryId, type RegionId } from "./types";
 
 const BENGALI = /[ঀ-৿]/;
 const langs = ["bn", "en"] as const;
 
+// Bangladesh is not a category (DR-412).
 const categoryIds: CategoryId[] = [
-  "bangladesh",
   "geopolitics",
   "security",
   "history",
@@ -40,8 +55,8 @@ function allStories(home: Homepage): Story[] {
     ...(home.analysisOpinion
       ? [...home.analysisOpinion.analysis, ...home.analysisOpinion.opinion]
       : []),
-    ...[home.featured.bangladesh, home.featured.geopolitics].flatMap((s) =>
-      s ? [s.lead, ...s.rail] : [],
+    ...[home.featured.southAsia, home.featured.geopolitics].flatMap((s) =>
+      s ? [s.feature, ...s.rail] : [],
     ),
     ...(home.grouped?.categories.flatMap((c) => c.stories) ?? []),
     ...(home.mostRead ?? []),
@@ -55,9 +70,39 @@ describe("story data", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it("gives each story an id of 6 to 8 base36 characters (layout 7C, DR-413)", () => {
+    for (const def of stories)
+      expect(def.id, def.slug).toMatch(/^[0-9a-z]{6,8}$/);
+  });
+
+  it("gives each story a unique Latin slug (layout 7C.1)", () => {
+    const slugs = stories.map((s) => s.slug);
+    expect(new Set(slugs).size).toBe(slugs.length);
+    for (const slug of slugs) expect(slug).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+  });
+
+  it("uses the three formats only: no explainer, no op-ed (DR-414)", () => {
+    for (const def of stories) {
+      expect(["news", "analysis", "opinion"], def.slug).toContain(def.format);
+    }
+  });
+
+  it("gives each story one or more regions from the region list (DR-411)", () => {
+    for (const def of stories) {
+      expect(def.regions.length, def.slug).toBeGreaterThan(0);
+      for (const region of def.regions)
+        expect(regionIds, def.slug).toContain(region);
+    }
+  });
+
+  it("has no Bangladesh category and no domestic story (DR-412)", () => {
+    for (const def of stories) expect(def.category).not.toBe("bangladesh");
+    expect(stories.map((s) => s.slug)).not.toContain("chattogram-rain-warning");
+  });
+
   it("gives each story the same id in Bangla and English", () => {
     for (const def of stories) {
-      expect(getStory(def.id, "bn").id).toBe(getStory(def.id, "en").id);
+      expect(getStory(def.slug, "bn").id).toBe(getStory(def.slug, "en").id);
     }
   });
 
@@ -65,32 +110,35 @@ describe("story data", () => {
     for (const def of stories) {
       for (const text of [def.bn.title, def.bn.summary, def.bn.imageAlt]) {
         if (!text) continue;
-        expect(text, def.id).toMatch(BENGALI);
-        expect(text, def.id).not.toMatch(/[A-Za-z]/);
+        expect(text, def.slug).toMatch(BENGALI);
+        expect(text, def.slug).not.toMatch(/[A-Za-z]/);
       }
       for (const text of [def.en.title, def.en.summary, def.en.imageAlt]) {
-        if (text) expect(text, def.id).not.toMatch(BENGALI);
+        if (text) expect(text, def.slug).not.toMatch(BENGALI);
       }
     }
   });
 
   it("has a summary in both languages or in neither", () => {
     for (const def of stories) {
-      expect(Boolean(def.bn.summary), def.id).toBe(Boolean(def.en.summary));
+      expect(Boolean(def.bn.summary), def.slug).toBe(Boolean(def.en.summary));
     }
   });
 
   it("gives every image alt text in both languages", () => {
     for (const lang of langs) {
       for (const def of stories.filter((s) => s.image)) {
-        expect(getStory(def.id, lang).image?.alt.trim(), def.id).toBeTruthy();
+        expect(
+          getStory(def.slug, lang).image?.alt.trim(),
+          def.slug,
+        ).toBeTruthy();
       }
     }
   });
 
   it("uses local SVG placeholder images that exist in public/mock (rule 6)", () => {
     for (const def of stories.filter((s) => s.image)) {
-      const { image } = getStory(def.id, "bn");
+      const { image } = getStory(def.slug, "bn");
       expect(image?.src).toMatch(/^\/mock\/[a-z0-9-]+\.svg$/);
       const file = join(process.cwd(), "public", image!.src);
       expect(existsSync(file), image!.src).toBe(true);
@@ -114,7 +162,7 @@ describe("story data", () => {
 
   it("gives every opinion piece an author", () => {
     for (const def of stories.filter((s) => s.format === "opinion")) {
-      expect(def.author, def.id).toBeDefined();
+      expect(def.author, def.slug).toBeDefined();
     }
   });
 
@@ -145,14 +193,30 @@ describe("story data", () => {
   });
 
   it("has a label for every category and region in both string tables", () => {
-    const regionIds = homepagePlans.full.regions;
     for (const table of [bn, en]) {
       expect(Object.keys(table.categories).sort()).toEqual(
         [...categoryIds].sort(),
       );
-      for (const region of regionIds) {
+      expect(Object.keys(table.regions)).toEqual([...regionIds]);
+      for (const region of homepagePlans.full.regions) {
         expect(table.regions[region as RegionId]).toBeTruthy();
       }
+    }
+  });
+
+  it("has a Latin slug and a label in both languages for every topic (DR-410)", () => {
+    for (const [id, topic] of Object.entries(topics)) {
+      expect(topic.slug, id).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/);
+      expect(topic.bn, id).toMatch(BENGALI);
+      expect(topic.en, id).not.toMatch(BENGALI);
+    }
+    for (const def of articleDefs) {
+      const story = stories.find((s) => s.slug === def.slug)!;
+      expect(story.topics?.length, def.slug).toBeGreaterThan(0);
+    }
+    for (const def of stories) {
+      for (const id of def.topics ?? [])
+        expect(topics[id], def.slug).toBeDefined();
     }
   });
 });
@@ -186,16 +250,29 @@ describe("getHomepage full", () => {
         }
       });
 
-      it("has both featured categories with a lead, one image story and two stories", () => {
-        for (const key of ["bangladesh", "geopolitics"] as const) {
-          const section = home.featured[key]!;
-          expect(section.category).toBe(key);
-          expect(section.lead.category).toBe(key);
-          expect(section.lead.image).toBeDefined();
+      it("has both featured sections with a feature story and three rail stories", () => {
+        for (const section of [
+          home.featured.southAsia!,
+          home.featured.geopolitics!,
+        ]) {
+          expect(section.feature.image).toBeDefined();
           expect(section.rail).toHaveLength(3);
           expect(section.rail[0].image).toBeDefined();
-          for (const s of section.rail) expect(s.category).toBe(key);
         }
+      });
+
+      it("features the region দক্ষিণ এশিয়া with its own stories (DR-412)", () => {
+        const section = home.featured.southAsia!;
+        expect(section.source).toEqual({ kind: "region", id: "south-asia" });
+        for (const s of [section.feature, ...section.rail])
+          expect(s.regions).toContain("south-asia");
+      });
+
+      it("features the category ভূরাজনীতি with its own stories", () => {
+        const section = home.featured.geopolitics!;
+        expect(section.source).toEqual({ kind: "category", id: "geopolitics" });
+        for (const s of [section.feature, ...section.rail])
+          expect(s.category).toBe("geopolitics");
       });
 
       it("has the remaining categories in the grouped section, with the poll", () => {
@@ -228,11 +305,12 @@ describe("getHomepage full", () => {
         const ids = home.regions!.map((r) => r.region);
         expect(ids.length).toBeGreaterThanOrEqual(6);
         expect(ids).toContain("china");
-        expect(homepagePlans.full.regions).toContain("africa");
-        expect(ids).not.toContain("africa");
+        expect(homepagePlans.full.regions).toContain("oceania");
+        expect(ids).not.toContain("oceania");
         for (const block of home.regions!) {
           expect(block.stories.length).toBeGreaterThan(0);
-          for (const s of block.stories) expect(s.region).toBe(block.region);
+          for (const s of block.stories)
+            expect(s.regions).toContain(block.region);
         }
       });
     });
@@ -259,7 +337,7 @@ describe("getHomepage sparse (spacing-layout-system.md 7.3)", () => {
   });
 
   it("P-2: no rail stories, and one featured section with no content", () => {
-    expect(home.featured.bangladesh!.rail).toHaveLength(0);
+    expect(home.featured.southAsia!.rail).toHaveLength(0);
     expect(home.featured.geopolitics).toBeNull();
   });
 
@@ -272,9 +350,9 @@ describe("getHomepage sparse (spacing-layout-system.md 7.3)", () => {
   });
 
   it("P-3b: 4 regions or fewer, and the empty one is dropped", () => {
-    expect(homepagePlans.sparse.regions).toContain("africa");
+    expect(homepagePlans.sparse.regions).toContain("oceania");
     expect(home.regions!.length).toBeLessThanOrEqual(4);
-    expect(home.regions!.map((r) => r.region)).not.toContain("africa");
+    expect(home.regions!.map((r) => r.region)).not.toContain("oceania");
   });
 });
 
@@ -289,15 +367,15 @@ describe("same story ids in both languages (R2-03)", () => {
 
   it("has a title in both languages for every story", () => {
     for (const def of stories) {
-      expect(def.bn.title.trim(), def.id).toBeTruthy();
-      expect(def.en.title.trim(), def.id).toBeTruthy();
+      expect(def.bn.title.trim(), def.slug).toBeTruthy();
+      expect(def.en.title.trim(), def.slug).toBeTruthy();
     }
   });
 
   it("keeps the same image and slug in both languages", () => {
     for (const def of stories) {
-      const bnStory = getStory(def.id, "bn");
-      const enStory = getStory(def.id, "en");
+      const bnStory = getStory(def.slug, "bn");
+      const enStory = getStory(def.slug, "en");
       expect(bnStory.slug).toBe(enStory.slug);
       expect(bnStory.image?.src).toBe(enStory.image?.src);
     }
@@ -386,7 +464,358 @@ describe("no newsletter content (DR-239)", () => {
 });
 
 describe("getStory", () => {
-  it("throws for an unknown id", () => {
-    expect(() => getStory("no-such-story", "bn")).toThrow(/Unknown story id/);
+  it("throws for an unknown slug", () => {
+    expect(() => getStory("no-such-story", "bn")).toThrow(/Unknown story slug/);
   });
+});
+
+// The category page (spacing-layout-system.md 7B).
+describe("category pages", () => {
+  for (const category of categoryIds) {
+    it(`${category}: 16 stories or more, every section full, formats split (DR-415)`, () => {
+      const defs = stories.filter((def) => def.category === category);
+      expect(defs.length).toBeGreaterThanOrEqual(16);
+      const count = (format: string) =>
+        defs.filter((def) => def.format === format).length;
+      for (const lang of langs) {
+        const page = getCategoryPage(category, lang);
+        expect(page.cover?.image).toBeTruthy();
+        expect(page.latest).toHaveLength(5);
+        expect(page.cards).toHaveLength(3);
+        for (const s of page.cards) expect(s.image).toBeTruthy();
+        expect(page.mostRead.map((s) => s.rank)).toEqual([1, 2, 3, 4, 5]);
+        // The main stream is news only.
+        for (const s of [page.cover!, ...page.latest, ...page.cards])
+          expect(s.format).toBe("news");
+        // Up to 5 per block, all the category has (no mock fill-in).
+        expect(page.analysis).toHaveLength(Math.min(count("analysis"), 5));
+        expect(page.opinion).toHaveLength(Math.min(count("opinion"), 5));
+        for (const s of page.analysis) expect(s.format).toBe("analysis");
+        for (const s of page.opinion) expect(s.format).toBe("opinion");
+        for (const list of [page.analysis, page.opinion, page.more])
+          expect(list).toEqual(
+            [...list].sort(
+              (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+            ),
+          );
+        // More stories: news and analysis, never opinion.
+        for (const s of page.more) expect(s.format).not.toBe("opinion");
+        // 10 at a time. With news and analysis only (DR-415), geopolitics and economy keep
+        // a second load; economy is the page of the load more e2e test. The others fit in
+        // one load with today's mock data.
+        if (category === "economy" || category === "geopolitics")
+          expect(page.more.length).toBeGreaterThan(10);
+        else expect(page.more.length).toBeLessThanOrEqual(10);
+        const shown = [
+          page.cover!,
+          ...page.latest,
+          ...page.cards,
+          ...page.analysis,
+          ...page.opinion,
+          ...page.more,
+        ];
+        // Every news and analysis story of the category once, and the 5 newest opinion
+        // stories: no repeats, none left out. Opinion past the 5th goes to the /opinion
+        // hub, not More stories (DR-415).
+        const expected = defs.length - count("opinion") + page.opinion.length;
+        expect(shown).toHaveLength(expected);
+        expect(new Set(shown.map((s) => s.id)).size).toBe(expected);
+        for (const s of [...shown, ...page.mostRead])
+          expect(s.category).toBe(category);
+      }
+    });
+
+    it(`${category}: the most read ranking has 8 ids that exist in the category`, () => {
+      const ids = categoryMostRead[category];
+      expect(ids).toHaveLength(8);
+      expect(new Set(ids).size).toBe(8);
+      for (const id of ids) expect(getStory(id, "bn").category).toBe(category);
+    });
+  }
+});
+
+describe("latest page (layout 7C.2 Paths, News hub row; layout 7D)", () => {
+  const news = stories.filter((def) => def.format === "news");
+
+  for (const lang of langs) {
+    it(`${lang}: every news story once, news only, newest first`, () => {
+      const page = getLatestPage(lang);
+      expect(page.lang).toBe(lang);
+      expect(page.stories).toHaveLength(news.length);
+      expect(new Set(page.stories.map((s) => s.id)).size).toBe(news.length);
+      for (const s of page.stories) {
+        expect(s.format).toBe("news");
+        expect(s.lang).toBe(lang);
+        // All categories; no region-only news (tajmin, 28 Oct 2026).
+        expect(categoryIds).toContain(s.category);
+      }
+      expect(page.stories).toEqual(
+        [...page.stories].sort(
+          (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+        ),
+      );
+    });
+  }
+
+  it("has news from every category and enough for 10 first and more than two loads of 10", () => {
+    const page = getLatestPage("bn");
+    expect(page.stories.length).toBeGreaterThan(40);
+    expect(new Set(page.stories.map((s) => s.category))).toEqual(
+      new Set(categoryIds),
+    );
+  });
+
+  it("lists the same stories in the same order in both languages", () => {
+    expect(getLatestPage("en").stories.map((s) => s.id)).toEqual(
+      getLatestPage("bn").stories.map((s) => s.id),
+    );
+  });
+});
+
+describe("analysis hub (layout 7C.2 Paths, Analysis hub row)", () => {
+  const analysis = stories.filter((def) => def.format === "analysis");
+
+  for (const lang of langs) {
+    it(`${lang}: every analysis story once, analysis only, newest first; cover, top 4, the rest`, () => {
+      const page = getAnalysisPage(lang);
+      expect(page.lang).toBe(lang);
+      const all = [page.cover!, ...page.top, ...page.more];
+      expect(all).toHaveLength(analysis.length);
+      expect(new Set(all.map((s) => s.id)).size).toBe(analysis.length);
+      for (const s of all) {
+        expect(s.format).toBe("analysis");
+        expect(s.lang).toBe(lang);
+      }
+      expect(all).toEqual(
+        [...all].sort(
+          (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+        ),
+      );
+      expect(page.top).toHaveLength(4);
+    });
+  }
+
+  it("has more than 10 list stories, so load more shows", () => {
+    expect(getAnalysisPage("bn").more.length).toBeGreaterThan(10);
+  });
+
+  it("lists the same stories in the same order in both languages", () => {
+    const ids = (lang: "bn" | "en") => {
+      const page = getAnalysisPage(lang);
+      return [page.cover!, ...page.top, ...page.more].map((s) => s.id);
+    };
+    expect(ids("en")).toEqual(ids("bn"));
+  });
+});
+
+describe("topic page (layout 7C.2 Paths, Topic row; DR-410)", () => {
+  // The test cases on purpose (tajmin, 30 Oct 2026): load more, exactly 10, sparse.
+  const counts: Record<string, number> = {
+    "regional-cooperation": 14,
+    rivers: 10,
+    archives: 3,
+    "river-trade": 3,
+    "foreign-reserves": 3,
+    monsoon: 3,
+    "flood-forecasting": 3,
+  };
+
+  it("has a page for every topic, with the test counts of news and analysis", () => {
+    expect(getTopicSlugs().sort()).toEqual(Object.keys(counts).sort());
+    for (const [slug, count] of Object.entries(counts)) {
+      expect(getTopicPage("bn", slug)?.stories, slug).toHaveLength(count);
+    }
+  });
+
+  for (const lang of langs) {
+    it(`${lang}: the topic label, news and analysis only, newest first, no repeats`, () => {
+      for (const slug of getTopicSlugs()) {
+        const page = getTopicPage(lang, slug)!;
+        expect(page.lang).toBe(lang);
+        expect(page.topic.slug).toBe(slug);
+        expect(page.topic.label).toBe(
+          Object.values(topics).find((t) => t.slug === slug)![lang],
+        );
+        expect(new Set(page.stories.map((s) => s.id)).size).toBe(
+          page.stories.length,
+        );
+        for (const s of page.stories) {
+          expect(s.format, s.slug).not.toBe("opinion");
+          expect(s.lang).toBe(lang);
+        }
+        expect(page.stories).toEqual(
+          [...page.stories].sort(
+            (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+          ),
+        );
+      }
+    });
+  }
+
+  it("mixes news and analysis on the load more topic", () => {
+    const formats = getTopicPage("bn", "regional-cooperation")!.stories.map(
+      (s) => s.format,
+    );
+    expect(formats).toContain("news");
+    expect(formats).toContain("analysis");
+  });
+
+  it("lists the same stories in the same order in both languages", () => {
+    for (const slug of getTopicSlugs()) {
+      expect(getTopicPage("en", slug)!.stories.map((s) => s.id)).toEqual(
+        getTopicPage("bn", slug)!.stories.map((s) => s.id),
+      );
+    }
+  });
+
+  it("has no page for an unknown slug", () => {
+    expect(getTopicPage("bn", "no-such-topic")).toBeUndefined();
+    expect(getTopicPage("en", "Rivers")).toBeUndefined();
+  });
+});
+
+describe("region page (layout 7C.2 Paths, Region row; DR-411)", () => {
+  it("has a page for every region, in the region order", () => {
+    expect(getRegionSlugs()).toEqual([...regionIds]);
+  });
+
+  for (const lang of langs) {
+    it(`${lang}: the region's news and analysis only, newest first, no repeats`, () => {
+      for (const slug of getRegionSlugs()) {
+        const page = getRegionPage(lang, slug)!;
+        expect(page.lang).toBe(lang);
+        expect(page.region).toBe(slug);
+        expect(new Set(page.stories.map((s) => s.id)).size).toBe(
+          page.stories.length,
+        );
+        for (const s of page.stories) {
+          expect(s.format, s.slug).not.toBe("opinion");
+          expect(s.regions, s.slug).toContain(slug);
+          expect(s.lang).toBe(lang);
+        }
+        expect(page.stories).toEqual(
+          [...page.stories].sort(
+            (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
+          ),
+        );
+      }
+    });
+  }
+
+  it("has the test cases: South Asia over 10 (load more), Oceania empty", () => {
+    const southAsia = getRegionPage("bn", "south-asia")!.stories;
+    expect(southAsia.length).toBeGreaterThan(10);
+    expect(southAsia.map((s) => s.format)).toContain("analysis");
+    expect(getRegionPage("bn", "oceania")!.stories).toEqual([]);
+  });
+
+  it("lists the same stories in the same order in both languages", () => {
+    for (const slug of getRegionSlugs()) {
+      expect(getRegionPage("en", slug)!.stories.map((s) => s.id)).toEqual(
+        getRegionPage("bn", slug)!.stories.map((s) => s.id),
+      );
+    }
+  });
+
+  it("has no page for an unknown slug", () => {
+    expect(getRegionPage("bn", "atlantis")).toBeUndefined();
+    expect(getRegionPage("en", "China")).toBeUndefined();
+  });
+});
+
+describe("article URLs (layout 7C, DR-413)", () => {
+  const river = stories.find((s) => s.slug === "river-data-framework")!;
+  const ledgers = stories.find((s) => s.slug === "old-dhaka-trade-ledgers")!;
+
+  it("builds and splits the segment <slug>-<id>", () => {
+    expect(storyRef(river)).toBe(`river-data-framework-${river.id}`);
+    expect(parseStoryRef(storyRef(river))).toEqual({
+      slug: "river-data-framework",
+      id: river.id,
+    });
+    // "framework" has 9 characters, so it is not an id.
+    expect(parseStoryRef("river-data-framework")).toBeNull();
+  });
+
+  it("sends an old root whose last word looks like an id to the current segment", () => {
+    // "centre" has the shape of an id but is not one.
+    const centre = stories.find((s) => s.slug === "cyber-response-centre")!;
+    expect(parseStoryRef("cyber-response-centre")?.id).toBe("centre");
+    // No full text, so no page: nothing to send the reader to.
+    expect(currentStoryRef("cyber-response-centre", "bn")).toBeNull();
+    expect(centre).toBeDefined();
+  });
+
+  // currentStoryRef matches a whole old slug before its id-shaped last word; this keeps
+  // the data from relying on it (PR #15 review).
+  it("has no slug whose last word is a story id", () => {
+    const ids = new Set(stories.map((s) => s.id));
+    for (const { slug } of stories) {
+      expect(ids.has(slug.split("-").at(-1)!), slug).toBe(false);
+    }
+  });
+
+  it("finds the current segment for a wrong slug or the old root", () => {
+    expect(currentStoryRef(`wrong-slug-${river.id}`, "bn")).toBe(
+      storyRef(river),
+    );
+    expect(currentStoryRef("river-data-framework", "en")).toBe(storyRef(river));
+  });
+
+  it("leaves a current segment, an unknown id and a missing language alone", () => {
+    expect(currentStoryRef(storyRef(river), "bn")).toBeNull();
+    expect(currentStoryRef("no-such-story-zzzzzzz", "bn")).toBeNull();
+    // Bangla only (DR-401): no English page to send the reader to.
+    expect(currentStoryRef(`old-slug-${ledgers.id}`, "en")).toBeNull();
+    expect(currentStoryRef(`old-slug-${ledgers.id}`, "bn")).toBe(
+      storyRef(ledgers),
+    );
+  });
+
+  it("finds an article by its segment in the languages it exists in (DR-401)", () => {
+    expect(getArticleByRef(storyRef(river), "en")?.story.slug).toBe(
+      "river-data-framework",
+    );
+    expect(getArticleByRef(storyRef(ledgers), "bn")).not.toBeNull();
+    expect(getArticleByRef(storyRef(ledgers), "en")).toBeNull();
+    expect(getArticleByRef(`wrong-${river.id}`, "bn")).toBeNull();
+    expect(articleLangsOf("old-dhaka-trade-ledgers")).toEqual(["bn"]);
+  });
+});
+
+describe("getRegionsPage (the region hub, page/regions brief)", () => {
+  it.each(["bn", "en"] as const)(
+    "%s: cover, Latest rail and one block per region with stories",
+    (lang) => {
+      const page = getRegionsPage(lang);
+      expect(page.lang).toBe(lang);
+      expect(page.cover).not.toBeNull();
+      expect(page.cover!.regions.length).toBeGreaterThan(0);
+      expect(page.cover!.image).toBeDefined();
+      expect(page.latest).not.toContain(page.cover);
+      expect(page.latest).toHaveLength(5);
+      for (const story of [page.cover!, ...page.latest]) {
+        expect(story.format).not.toBe("opinion");
+        expect(story.regions.length).toBeGreaterThan(0);
+      }
+      // The rail is newest first.
+      const times = page.latest.map((s) =>
+        Date.parse(s.publishedAt),
+      );
+      expect([...times].sort((a, b) => b - a)).toEqual(times);
+      // Every region but Oceania (no stories, layout 7.3) has a full block, in the 7C order.
+      expect(page.regions.map((block) => block.region)).toEqual(
+        regionIds.filter((id) => id !== "oceania"),
+      );
+      for (const block of page.regions) {
+        expect(block.stories).toHaveLength(4);
+        // The feature story has an image (every region has one).
+        expect(block.stories[0].image).toBeDefined();
+        for (const story of block.stories) {
+          expect(story.regions).toContain(block.region);
+          expect(story.format).not.toBe("opinion");
+        }
+      }
+    },
+  );
 });

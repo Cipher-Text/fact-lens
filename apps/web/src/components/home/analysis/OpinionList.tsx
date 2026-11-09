@@ -31,42 +31,52 @@ export function OpinionList({ lang, stories, strings }: OpinionListProps) {
       <p className="mb-(--space-section-title-after)">
         <Chip variant="label">{strings.analysisOpinion.opinion}</Chip>
       </p>
-      <ul className={cn(listInk.titleMeta, "opinion-rule-start")}>
-        {stories.map((story) => (
-          <li key={story.id} className={dividerItem}>
-            <article className="flex items-start gap-x-(--grid-column-gap)">
-              <QuoteMark />
-              <div className="min-w-0 flex-1">
-                <h3 className="type-story-title-sm">
-                  <Link href={storyHref(story)} className={headlineLink}>
-                    {story.title}
-                  </Link>
-                </h3>
-                {story.author ? (
-                  <p
-                    data-author
-                    className="mt-(--space-story-title-meta) type-metadata font-semibold text-ink-secondary"
-                  >
-                    {story.author.name}
-                  </p>
-                ) : null}
-                <p
-                  data-time
-                  data-meta-line
-                  className="type-metadata text-ink-muted"
-                >
-                  <StoryTime story={story} />
-                </p>
-              </div>
-            </article>
-          </li>
-        ))}
-      </ul>
+      <OpinionRows stories={stories} />
       <MoreLink
         href={localizedPath(lang, "/opinion")}
         section={strings.analysisOpinion.opinion}
         strings={strings.common}
       />
     </div>
+  );
+}
+
+/**
+ * The quote rows of OpinionList, on their own so the category page opinion block (C-23,
+ * DR-415) uses the same rows under its own heading.
+ */
+export function OpinionRows({ stories }: { stories: Story[] }) {
+  return (
+    <ul className={cn(listInk.titleMeta, "opinion-rule-start")}>
+      {stories.map((story) => (
+        <li key={story.id} className={dividerItem}>
+          <article className="flex items-start gap-x-(--grid-column-gap)">
+            <QuoteMark />
+            <div className="min-w-0 flex-1">
+              <h3 className="font-editorial text-lg font-semibold">
+                <Link href={storyHref(story)} className={headlineLink}>
+                  {story.title}
+                </Link>
+              </h3>
+              {story.author ? (
+                <p
+                  data-author
+                  className="mt-(--space-story-title-meta) font-ui text-xs font-semibold text-ink-secondary"
+                >
+                  {story.author.name}
+                </p>
+              ) : null}
+              <p
+                data-time
+                data-meta-line
+                className="font-ui text-xs font-normal text-ink-muted"
+              >
+                <StoryTime story={story} />
+              </p>
+            </div>
+          </article>
+        </li>
+      ))}
+    </ul>
   );
 }

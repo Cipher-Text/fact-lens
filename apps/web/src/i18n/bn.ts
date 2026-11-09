@@ -9,6 +9,8 @@ export const bn = {
     other: "English",
     // The phone top bar has less room (spacing-layout-system.md Section 6).
     otherShort: "En",
+    // On the category page, after the switch from an article that has no Bangla text (DR-401).
+    onlyInOther: "এই খবরটি শুধু ইংরেজিতে আছে।",
   },
   theme: {
     // The name of the switch; it is on when the theme is dark (DR-167).
@@ -46,11 +48,38 @@ export const bn = {
     title: "শীর্ষ খবর",
     latest: "সর্বশেষ",
   },
+  // The category page (spacing-layout-system.md 7B).
+  categoryPage: {
+    // Visually hidden name of CategoryCoverSection.
+    cover: "প্রধান খবর",
+    latest: "সর্বশেষ",
+    // Older stories under the most read section, 10 at a time.
+    moreStories: "আরও পড়ুন",
+    loadMore: "আরও লোড করুন",
+  },
   analysisOpinion: {
     // The section name follows the column order: analysis, then opinion (7.4).
     title: "বিশ্লেষণ ও মতামত",
     analysis: "বিশ্লেষণ",
     opinion: "মতামত",
+  },
+  // The region hub /regions (layout 7C.2, Region hub row). The title is regionsSection.title.
+  regionsPage: {
+    // Visually hidden name of the cover (RegionsCoverSection).
+    cover: "প্রধান খবর",
+    latest: "সর্বশেষ",
+    // The short line below the page title (page/regions brief, tajmin, 4 Nov 2026).
+    description: "বিশ্বের প্রতিটি অঞ্চলের খবর ও বিশ্লেষণ",
+  },
+  // The analysis hub /analysis (layout 7C.2, Analysis hub row). The title is analysisOpinion.analysis.
+  analysisPage: {
+    // Visually hidden name of the mosaic.
+    top: "শীর্ষ বিশ্লেষণ",
+    // Visually hidden name of the cover (AnalysisCoverSection).
+    cover: "প্রধান বিশ্লেষণ",
+    // The short line below the page title (tajmin, 3 Nov 2026).
+    description:
+      "ফ্যাক্ট লেন্স টিমের বিশ্লেষণ, ব্যাখ্যামূলক প্রতিবেদন ও বিস্তারিত ফিচার",
   },
   // P-5.
   mostRead: {
@@ -107,8 +136,8 @@ export const bn = {
     linkedin: "লিংকডইন",
   },
   // Category labels (mock-content skill). চীন is a region, not a category (DR-19).
+  // Bangladesh is not a category (DR-412).
   categories: {
-    bangladesh: "বাংলাদেশ",
     geopolitics: "ভূরাজনীতি ও কূটনীতি",
     security: "নিরাপত্তা ও সংঘাত",
     history: "ইতিহাস ও প্রেক্ষাপট",
@@ -120,15 +149,17 @@ export const bn = {
   regionsSection: {
     title: "অঞ্চলসমূহ",
   },
-  // Entries under অঞ্চলসমূহ. Working labels until the IA table exists (U-01).
+  // Entries under অঞ্চলসমূহ, in the order of the working list (layout 7C, DR-411).
+  // Labels approved by tajmin, 28 Oct 2026. Working English labels until IA-06 (U-01).
   regions: {
-    china: "চীন",
-    india: "ভারত",
-    myanmar: "মিয়ানমার",
-    "middle-east": "মধ্যপ্রাচ্য",
-    "southeast-asia": "দক্ষিণ-পূর্ব এশিয়া",
+    americas: "আমেরিকা",
     europe: "ইউরোপ",
-    africa: "আফ্রিকা",
+    russia: "রাশিয়া",
+    "middle-east": "মধ্যপ্রাচ্য",
+    "south-asia": "দক্ষিণ এশিয়া",
+    china: "চীন",
+    asia: "এশিয়া",
+    oceania: "ওশেনিয়া",
   },
   // The article page (wild card reader).
   reader: {
@@ -175,7 +206,7 @@ export const bn = {
     googleCardTitle: "গুগলে ফ্যাক্ট লেন্সকে আপনার পছন্দের উৎস করুন",
     googleCardText:
       "সার্চের শীর্ষ খবরে আমাদের প্রতিবেদন আরও বেশি দেখবেন। এক ক্লিকে যোগ করা যায়, যেকোনো সময় সরানো যায়।",
-    tags: "বিষয়",
+    topics: "বিষয়",
     readNext: "আরও পড়ুন",
     networks: {
       whatsapp: "হোয়াটসঅ্যাপ",

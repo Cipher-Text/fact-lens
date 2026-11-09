@@ -1,0 +1,56 @@
+// Mock most read ranking per category page (spacing-layout-system.md 7B), 8 story ids,
+// rank 1 first. A backend replaces it with the most-read query (DR-290).
+import type { CategoryId } from "./types";
+
+export const categoryMostRead: Record<CategoryId, string[]> = {
+  geopolitics: [
+    "small-state-balancing",
+    "regional-security-pact",
+    "foreign-secretary-kathmandu",
+    "maritime-boundary-agreement",
+    "bay-trilateral-dialogue",
+    "visa-joint-committee",
+    "transit-facility-expansion",
+    "regional-power-grid",
+  ],
+  security: [
+    "border-crossing-digital-pass",
+    "bay-security-calculation",
+    "maritime-piracy-operations",
+    "joint-border-patrol-rules",
+    "cyber-response-centre",
+    "coastal-defense-system",
+    "myanmar-refugee-research",
+    "counterterrorism-training",
+  ],
+  history: [
+    "liberation-war-press-archive",
+    "old-dhaka-trade-ledgers",
+    "partition-oral-history",
+    "ancient-port-cities",
+    "southern-silk-route",
+    "independence-struggle-archive",
+    "medieval-manuscripts-found",
+    "royal-family-genealogy",
+  ],
+  economy: [
+    "reserve-indicators",
+    "deep-sea-port-trial-ship",
+    "inflation-third-month",
+    "exports-september",
+    "remittance-digital-channel",
+    "gulf-skilled-workers",
+    "garment-latin-america",
+    "europe-labour-law",
+  ],
+  technology: [
+    "new-submarine-cable",
+    "ai-policy-draft",
+    "chip-supply-map",
+    "5g-network-expansion",
+    "char-satellite-internet",
+    "data-center-project",
+    "cybersecurity-framework",
+    "farm-drone-tests",
+  ],
+};

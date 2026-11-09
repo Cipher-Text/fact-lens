@@ -4,24 +4,33 @@ import type { Story } from "@/content";
 import type { Dictionary } from "@/i18n";
 import { cn } from "@/lib/utils";
 
-import { Eyebrow } from "./Eyebrow";
+import { Eyebrow, type EyebrowMode } from "./Eyebrow";
 import { headlineLink, storyHref } from "./links";
 import { MetaLine, storyMetaItems } from "./MetaLine";
 import { StoryImage } from "./StoryImage";
 
 type OverlapCardProps = {
   story: Story;
-  strings: Pick<Dictionary, "story" | "categories">;
+  strings: Pick<Dictionary, "story" | "categories" | "analysisOpinion">;
   /** The color of the section under the card: the text block repeats it (C-02). Page color in the hero, surface-elevated in P-4. */
   surface?: "background" | "elevated";
   /** Load the image without lazy loading: cards near the top of the page (hero). */
   eager?: boolean;
+  /** The page drops the eyebrow when its title names the category (DR-114, DR-153). */
+  eyebrow?: boolean;
+  /** The Eyebrow mode (C-08): format in mixed lists (DR-417). */
+  eyebrowMode?: EyebrowMode;
+  /**
+   * The cover story of its section (CategoryCoverSection; option large, DR-451, DR-453): the title takes text-4xl and the text block
+   * ends with --space-panel-large, as the C-01 panel does.
+   */
+  large?: boolean;
   className?: string;
 };
 
 /**
  * C-02 OverlapCard: the image-led story card. The text block covers the image bottom by
- * --space-card-overlap (10% of the card width, 40 to 64px) from the start edge and stops
+ * --space-overlap (10% of the card width, 40 to 64px) from the start edge and stops
  * --space-card-notch short of the end edge, so the corner of the image shows. The card is
  * the container, so cqi means the card width (CPT-04, CPT-09). Each card flows on its own, with
  * no shared rows (DR-99). The body grows down (LAY-17); the title is never cut (CPT-08). A story with
@@ -32,6 +41,9 @@ export function OverlapCard({
   strings,
   surface = "background",
   eager = false,
+  eyebrow = true,
+  eyebrowMode,
+  large = false,
   className,
 }: OverlapCardProps) {
   return (
@@ -42,21 +54,34 @@ export function OverlapCard({
         className={cn(
           "relative ps-0 pe-4",
           surface === "elevated" ? "bg-surface-elevated" : "bg-background",
-          "me-(--space-card-notch) -mt-(--space-card-overlap) pt-4",
+          "me-(--space-card-notch) -mt-(--space-overlap) pt-4",
+          large && "overlap-large pb-(--space-panel-large)",
         )}
       >
-        <Eyebrow
-          story={story}
-          strings={strings}
-          className="mb-(--space-lead-eyebrow-title)"
-        />
-        <h3 className="type-story-title">
+        {eyebrow ? (
+          <Eyebrow
+            story={story}
+            strings={strings}
+            mode={eyebrowMode}
+            className="mb-(--space-story-eyebrow-title)"
+          />
+        ) : null}
+        <h3
+          className={
+            large
+              ? "font-editorial text-4xl font-semibold text-balance"
+              : "font-editorial text-2xl font-semibold"
+          }
+        >
           <Link href={storyHref(story)} className={headlineLink}>
             {story.title}
           </Link>
         </h3>
         {story.summary ? (
-          <p className="mt-(--space-story-title-summary) type-summary text-ink-secondary">
+          <p
+            data-summary
+            className="mt-(--space-story-title-summary) max-w-(--measure-deck) font-editorial text-sm leading-relaxed font-medium text-ink-secondary"
+          >
             {story.summary}
           </p>
         ) : null}
@@ -64,7 +89,7 @@ export function OverlapCard({
           items={storyMetaItems(story, strings.story)}
           className={
             story.summary
-              ? "mt-(--space-lead-summary-meta)"
+              ? "mt-(--space-story-summary-meta)"
               : "mt-(--space-story-title-meta)"
           }
         />

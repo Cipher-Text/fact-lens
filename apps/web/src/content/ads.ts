@@ -43,12 +43,7 @@ export const ads: AdDef[] = [
     advertiser,
     link,
     ...dates,
-    creatives: [
-      size(336, 280),
-      size(300, 250),
-      size(728, 90),
-      size(970, 250),
-    ],
+    creatives: [size(336, 280), size(300, 250), size(728, 90), size(970, 250)],
   },
   {
     slot: "ad-inset",

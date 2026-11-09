@@ -32,7 +32,7 @@ function TabsTab({ className, ...props }: TabsPrimitive.Tab.Props) {
       data-slot="tabs-tab"
       data-chip="filter"
       className={cn(
-        "inline-flex min-h-11 shrink-0 items-center border border-border-interactive px-4 type-ui-sm whitespace-nowrap text-ink aria-selected:border-interactive aria-selected:bg-interactive aria-selected:text-on-interactive",
+        "inline-flex min-h-11 shrink-0 items-center border border-border-interactive px-4 font-ui text-xs font-medium whitespace-nowrap text-ink aria-selected:border-interactive aria-selected:bg-interactive aria-selected:text-on-interactive",
         className,
       )}
       {...props}

@@ -1,5 +1,6 @@
 import {
   LANG_QUERY,
+  ONLY_IN_QUERY,
   getDictionary,
   localizedPath,
   otherLang,
@@ -10,10 +11,15 @@ type Props = {
   lang: Lang;
   /** The current page path without the language prefix, for example "/latest". */
   path?: string;
+  /**
+   * The page to go to when this page does not exist in the other language: an article in
+   * one language goes to its category page, which shows a note (DR-401).
+   */
+  fallback?: string;
 };
 
 /**
- * TopBar.language (C-17): a text link to the same page in the other language, type-ui-sm
+ * TopBar.language (C-17): a text link to the same page in the other language, text-xs
  * at weight 600, ink. As tall as the ghost icon buttons: 32px under 768, 36px from 768 (a
  * minimum, so 200% text grows it; LAY-17, DR-349). Bangla pages show "En" on phones (under
  * 768px) and "English" from 768px; English pages show "বাংলা" (T-27, DR-174). UI link: hover
@@ -24,9 +30,11 @@ type Props = {
  * The proxy keeps the choice in a cookie (DR-17). A plain <a>, so it works without
  * JavaScript and the link is never prefetched (a prefetch would set the cookie).
  */
-export function LanguageSwitch({ lang, path = "/" }: Props) {
+export function LanguageSwitch({ lang, path = "/", fallback }: Props) {
   const target = otherLang(lang);
-  const href = `${localizedPath(target, path)}?${LANG_QUERY}=${target}`;
+  const href = fallback
+    ? `${localizedPath(target, fallback)}?${LANG_QUERY}=${target}&${ONLY_IN_QUERY}=${lang}`
+    : `${localizedPath(target, path)}?${LANG_QUERY}=${target}`;
   const t = getDictionary(lang).language;
 
   return (
@@ -34,7 +42,7 @@ export function LanguageSwitch({ lang, path = "/" }: Props) {
       href={href}
       lang={target}
       hrefLang={target}
-      className="inline-flex min-h-(--icon-button-size-ghost) items-center px-1 pt-0.5 type-ui-sm font-semibold text-ink transition-colors hover:text-interactive-hover active:text-interactive-pressed md:px-2 md:pt-0"
+      className="inline-flex min-h-(--icon-button-size-ghost) items-center px-1 pt-0.5 font-ui text-xs font-semibold text-ink transition-colors hover:text-interactive-hover active:text-interactive-pressed md:px-2 md:pt-0"
     >
       <span className="md:hidden">{t.otherShort}</span>
       <span className="max-md:hidden">{t.other}</span>

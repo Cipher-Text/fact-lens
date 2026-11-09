@@ -6,7 +6,7 @@ import { useSyncExternalStore, type KeyboardEvent } from "react";
 import { Popover } from "./Popover";
 import { setTextSize, useReading } from "./reading-store";
 import type { ReaderStrings } from "@/i18n";
-import { parseSaved } from "@/lib/saved";
+import { migrateSaved, parseSaved } from "@/lib/saved";
 import { toast } from "./Toaster";
 
 /**
@@ -99,7 +99,8 @@ export function TextSize({
   );
 }
 
-// Saved stories: a list of slugs in local storage (src/lib/saved.ts).
+// Saved stories: a list of story ids in local storage (src/lib/saved.ts). The id, not
+// the slug, because only the id is fixed for the story's life (layout 7C).
 const SAVED_KEY = "rd-saved";
 const SAVED_EVENT = "rd-saved-change";
 
@@ -120,13 +121,25 @@ function subscribeSaved(onChange: () => void) {
   };
 }
 
-export function SaveButton({ slug, t }: { slug: string; t: ReaderStrings }) {
+export function SaveButton({
+  storyId,
+  storySlug,
+  t,
+}: {
+  storyId: string;
+  /** The slug, to read a save made before the list held ids. */
+  storySlug: string;
+  t: ReaderStrings;
+}) {
+  const story = { id: storyId, slug: storySlug };
   const raw = useSyncExternalStore(subscribeSaved, readSaved, () => "[]");
-  const saved = parseSaved(raw).includes(slug);
+  const saved = migrateSaved(parseSaved(raw), story).includes(storyId);
 
   const toggle = () => {
-    const list = parseSaved(readSaved());
-    const next = saved ? list.filter((item) => item !== slug) : [...list, slug];
+    const list = migrateSaved(parseSaved(readSaved()), story);
+    const next = saved
+      ? list.filter((item) => item !== storyId)
+      : [...list, storyId];
     try {
       window.localStorage.setItem(SAVED_KEY, JSON.stringify(next));
     } catch {

@@ -51,7 +51,7 @@ Read content through functions in `src/content/index.ts`, for example `getHomepa
 | `economy` | অর্থনীতি ও বাণিজ্য | Economy and Trade |
 | `technology` | প্রযুক্তি ও কৌশলগত শক্তি | Technology and Strategic Power |
 
-The English labels are working labels until the IA label table exists (`IA-06`). Mark them as `UNRESOLVED_DESIGN_SYSTEM` in `docs/PROGRESS.md`.
+The English labels are working labels until the IA label table exists (`IA-06`). Mark them as `UNRESOLVED_DESIGN_SYSTEM` in `docs/ISSUES.md` (U-01, IMP-41).
 
 Regions are under অঞ্চলসমূহ (Regions). চীন (China) is a region, not a category (`DR-19`). Use 6 or more regions, so that the slider has buttons. Include one region with no stories, which must not show.
 
@@ -64,5 +64,5 @@ Regions are under অঞ্চলসমূহ (Regions). চীন (China) is a 
 5. Give each section the item counts of its sheet in `component-system.md` Section 7, for every section in `spacing-layout-system.md` Section 7.1. The poll has 2 to 4 options.
 6. Placeholder images are local SVG files in `public/mock/`. Use a neutral fill and the image ratio only. No stock photos and no remote images.
 7. Dates are recent and in ISO format. Format them in the component with `Intl` and the page language.
-8. No newsletter content in run 5 (`DR-239`).
+8. No newsletter content (`DR-239`, paused).
 9. Mock ads: one neutral placeholder creative per `AdSlot` variant (`top`, `band`, `inset`, `rail`), at the sizes in `component-system.md` C-16. The `rail` creative is 300×600 or 300×250 (`DR-241`). No ad network and no remote images.

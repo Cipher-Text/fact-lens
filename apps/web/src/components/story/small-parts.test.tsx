@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { Divider, dividerItem } from "@/components/layout/Divider";
 import { SectionHeading } from "@/components/layout/SectionHeading";
-import { getHomepage } from "@/content";
+import { getHomepage, getStory } from "@/content";
 import { bn } from "@/i18n/bn";
 import { en } from "@/i18n/en";
 
@@ -27,7 +27,7 @@ describe("Divider (C-22)", () => {
     const divider = container.firstElementChild!;
     expect(divider).toHaveAttribute("aria-hidden", "true");
     expect(divider).toHaveClass("h-(--bar-section-height)");
-    expect(divider.querySelector("span")).toHaveClass("h-0.5", "bg-border"); // 2px rule
+    expect(divider.querySelector("span")).toHaveClass("h-(--divider-rule)", "bg-border"); // 1px rule
     expect(divider.querySelector("[data-divider-bar]")).toHaveClass(
       "bottom-0",
       "h-full",
@@ -50,7 +50,7 @@ describe("SectionHeading (C-13)", () => {
       <SectionHeading id="x">Latest</SectionHeading>,
     );
     const heading = screen.getByRole("heading", { level: 2, name: "Latest" });
-    expect(heading).toHaveClass("type-section-title");
+    expect(heading).toHaveClass("text-section");
     expect(heading.querySelector("a")).toBeNull();
     expect(container.querySelector("[data-divider]")).not.toBeNull();
   });
@@ -73,7 +73,7 @@ describe("MoreLink (C-10)", () => {
     expect(link.parentElement).toHaveClass("text-end");
     expect(link).toHaveClass(
       "min-h-11",
-      "type-ui-sm",
+      "text-xs",
       "font-semibold",
       "text-interactive",
       "hover:text-interactive-hover",
@@ -102,7 +102,90 @@ describe("Eyebrow (C-08)", () => {
       "active:text-interactive-pressed",
     );
     expect(link.className).not.toMatch(NO_ROUNDING);
-    expect(link.parentElement).toHaveClass("type-eyebrow");
+    expect(link.parentElement).toHaveClass(
+      "font-ui",
+      "text-xs",
+      "leading-tight",
+      "font-eyebrow",
+      "tracking-eyebrow",
+      "case-eyebrow",
+    );
+  });
+
+  // DR-417: format mode in mixed lists. Analysis cards link the format hub; news cards keep
+  // the category.
+  for (const [lang, t] of [
+    ["bn", bn],
+    ["en", en],
+  ] as const) {
+    const prefix = lang === "en" ? "/en" : "";
+    it(`format mode links an analysis story to ${prefix}/analysis (${lang})`, () => {
+      const story = getStory("joint-border-patrol-rules", lang);
+      expect(story.format).toBe("analysis");
+      render(<Eyebrow story={story} strings={t} mode="format" />);
+      const links = screen.getAllByRole("link");
+      expect(links).toHaveLength(1);
+      expect(links[0]).toHaveAccessibleName(t.analysisOpinion.analysis);
+      expect(links[0]).toHaveAttribute("href", `${prefix}/analysis`);
+      expect(links[0]).toHaveClass("text-interactive");
+    });
+
+    it(`format mode keeps the category on a news story (${lang})`, () => {
+      const story = getStory("river-data-framework", lang);
+      expect(story.format).toBe("news");
+      render(<Eyebrow story={story} strings={t} mode="format" />);
+      expect(screen.getByRole("link")).toHaveAttribute(
+        "href",
+        `${prefix}/category/${story.category}`,
+      );
+    });
+  }
+
+  // DR-416: two-part on article pages. Analysis and opinion: format, separator, category.
+  for (const [slug, format] of [
+    ["reserve-indicators", "analysis"],
+    ["opinion-climate-finance", "opinion"],
+  ] as const) {
+    it(`two-part mode links the ${format} hub, then the category`, () => {
+      const story = getStory(slug, "bn");
+      expect(story.format).toBe(format);
+      const { container } = render(
+        <Eyebrow story={story} strings={bn} mode="two-part" />,
+      );
+      const links = screen.getAllByRole("link");
+      expect(links.map((a) => a.getAttribute("href"))).toEqual([
+        `/${format}`,
+        `/category/${story.category}`,
+      ]);
+      expect(links[0]).toHaveAccessibleName(bn.analysisOpinion[format]);
+      expect(links[1]).toHaveAccessibleName(bn.categories[story.category]);
+      const separator = container.querySelector("[data-eyebrow-separator]")!;
+      // CPT-10 drawn square in the Eyebrow color (DR-435), not a glyph.
+      expect(separator).toBeEmptyDOMElement();
+      expect(separator).toHaveAttribute("aria-hidden", "true");
+      expect(separator).toHaveClass("mx-2.5", "size-1", "bg-interactive");
+      expect(separator.closest("a")).toBeNull();
+      // The separator stays with the first part when the row wraps.
+      expect(separator.parentElement).toContainElement(links[0]);
+      for (const link of links) expect(link.className).not.toMatch(NO_ROUNDING);
+    });
+  }
+
+  it("two-part mode shows the category only on a news story", () => {
+    const story = getStory("river-data-framework", "en");
+    const { container } = render(
+      <Eyebrow story={story} strings={en} mode="two-part" />,
+    );
+    expect(screen.getAllByRole("link")).toHaveLength(1);
+    expect(container.querySelector("[data-eyebrow-separator]")).toBeNull();
+  });
+
+  it("category mode keeps the category on an analysis story (analysis sections)", () => {
+    const story = getStory("joint-border-patrol-rules", "en");
+    render(<Eyebrow story={story} strings={en} />);
+    expect(screen.getByRole("link")).toHaveAccessibleName(
+      en.categories[story.category],
+    );
   });
 });
 
@@ -127,10 +210,14 @@ describe("MetaLine (C-09)", () => {
     const { container } = render(<MetaLine items={["A"]} />);
     expect(container.querySelector("[data-meta-separator]")).toBeNull();
     expect(container.firstElementChild).toHaveClass(
-      "type-metadata",
+      "font-ui",
+      "text-xs",
+      "font-normal",
       "text-(--color-meta)",
     );
-    expect(container.firstElementChild!.className).not.toMatch(/font-/);
+    expect(container.firstElementChild!.className).not.toMatch(
+      /\bfont-(?!ui\b|normal\b)/,
+    );
   });
 
   it("shows the time only, with no separator, when the story has no reading time (DR-272)", () => {
@@ -178,7 +265,10 @@ describe("Button (C-12)", () => {
       "px-(--button-padding)",
       "bg-interactive",
       "text-on-interactive",
-      "type-button",
+      "font-ui",
+      "text-xs",
+      "leading-tight",
+      "font-semibold",
       "whitespace-nowrap",
       "not-aria-disabled:hover:bg-interactive-hover",
       "not-aria-disabled:active:bg-interactive-pressed",

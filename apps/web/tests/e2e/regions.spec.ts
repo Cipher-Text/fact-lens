@@ -28,8 +28,9 @@ const WIDTHS = [
   320, 360, 599, 600, 767, 768, 834, 1023, 1024, 1180, 1280, 1366, 1440, 1920,
 ];
 
-// Full content: 6 regions with stories (আফ্রিকা has none and is not shown).
-const REGION_COUNT = 6;
+// Full content: 7 regions with stories; Oceania has none and is not shown (7.3). Russia
+// has stories since the region hub mock (page/regions, 5 Nov 2026).
+const REGION_COUNT = 7;
 
 // Regions in view (C-15, DR-140, DR-141).
 const inViewAt = (width: number) => (width >= 1280 ? 4 : width >= 1024 ? 3 : 2);
@@ -630,7 +631,15 @@ for (const p of PAGES) {
           const r = el.getBoundingClientRect();
           const rowBox = el.closest(sel)!.getBoundingClientRect();
           return {
-            name: el.getAttribute("href") ?? el.tagName,
+            // A story can be in more than one region (DR-411), and two Eyebrows in one
+            // region can link to the same category: key by panel, link index and href.
+            name: (() => {
+              const panel = el.closest("[data-region]");
+              const links = panel
+                ? [...panel.querySelectorAll('a:not([tabindex="-1"])')]
+                : [];
+              return `${panel?.id ?? ""} ${links.indexOf(el)} ${el.getAttribute("href") ?? el.tagName}`;
+            })(),
             // The base outline (COL-13).
             ring: (() => {
               const s = getComputedStyle(el);
@@ -661,3 +670,55 @@ test("page order: P-5, ad, P-3b (7.1)", async ({ page }) => {
   await expect(main.nth(12)).toHaveAttribute("data-section", "regions");
   await expect(main).toHaveCount(13);
 });
+
+// DR-433 as amended by tajmin (30 Oct 2026): every story in a region column shows the C-08
+// `format` Eyebrow above its title, as the hero (DR-417): the category on news (a link to the
+// category page), বিশ্লেষণ / Analysis on analysis (a link to the analysis hub). Mock data:
+// চীন leads with an analysis story (the image card); আমেরিকা and এশিয়া end with one (a
+// text row); ইউরোপ has news only.
+for (const [prefix, label] of [
+  ["", "বিশ্লেষণ"],
+  ["/en", "Analysis"],
+] as const) {
+  test(`region columns: category on news, format on analysis ${prefix || "/"}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(prefix || "/");
+    const eyebrows = (region: string) =>
+      page.locator(`[data-region="${region}"] p[data-eyebrow] a`);
+    const analysisHref = `${prefix}/analysis`;
+    const categoryHref = new RegExp(`^${prefix}/category/`);
+    for (const [region, analysisAt] of [
+      ["china", 0],
+      ["americas", 2],
+      ["asia", 2],
+      ["europe", -1],
+    ] as const) {
+      // One Eyebrow per story: the image card and two text rows.
+      await expect(eyebrows(region), region).toHaveCount(3);
+      for (let i = 0; i < 3; i++) {
+        const eyebrow = eyebrows(region).nth(i);
+        if (i === analysisAt) {
+          await expect(eyebrow).toHaveText(label);
+          await expect(eyebrow).toHaveAttribute("href", analysisHref);
+        } else {
+          await expect(eyebrow).toHaveAttribute("href", categoryHref);
+        }
+      }
+    }
+    // The Eyebrow comes before the title (C-08): the image card and the text row.
+    for (const item of ["[data-story-card]", "[data-story-list-item]"]) {
+      const story = page.locator(`[data-region="americas"] ${item}`).first();
+      const before = await story.evaluate((el) => {
+        const eyebrow = el.querySelector("p[data-eyebrow]")!;
+        const title = el.querySelector("h4")!;
+        return Boolean(
+          eyebrow.compareDocumentPosition(title) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+        );
+      });
+      expect(before).toBe(true);
+    }
+  });
+}

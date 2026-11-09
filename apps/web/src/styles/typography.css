@@ -1,8 +1,10 @@
-/* Remove the Tailwind default font families, text sizes and weights (TYP-01, TYP-06, DR-235).
-   Only the Fact Lens roles and the weights 400 to 700 exist. */
+/* Remove the Tailwind default font families, text sizes, line heights and weights
+   (TYP-01, TYP-06, DR-235). Only the Fact Lens scale and the weights 400 to 700 exist. */
 @theme {
   --font-*: initial;
   --text-*: initial;
+  --leading-*: initial;
+  --tracking-*: initial;
   --font-weight-*: initial;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
@@ -11,9 +13,58 @@
   --default-font-family: var(--font-ui-active);
 }
 
+/* The type scale (Section 3, DR-454 to DR-456). Inline, so each class reads the
+   language token of its own element (TYP-04): text-xs on an English block in a Bangla
+   page takes the English value. */
 @theme inline {
   --font-editorial: var(--font-editorial-active);
   --font-ui: var(--font-ui-active);
+  --font-weight-eyebrow: var(--eyebrow-weight);
+
+  --text-xs: var(--text-xs-size);
+  --text-xs--line-height: var(--text-xs-line);
+  --text-xs--letter-spacing: var(--text-xs-tracking);
+  --text-sm: var(--text-sm-size);
+  --text-sm--line-height: var(--text-sm-line);
+  --text-sm--letter-spacing: var(--text-sm-tracking);
+  --text-base: var(--text-base-size);
+  --text-base--line-height: var(--text-base-line);
+  --text-base--letter-spacing: var(--text-base-tracking);
+  --text-lg: var(--text-lg-size);
+  --text-lg--line-height: var(--text-lg-line);
+  --text-lg--letter-spacing: var(--text-lg-tracking);
+  --text-xl: var(--text-xl-size);
+  --text-xl--line-height: var(--text-xl-line);
+  --text-xl--letter-spacing: var(--text-xl-tracking);
+  --text-2xl: var(--text-2xl-size);
+  --text-2xl--line-height: var(--text-2xl-line);
+  --text-2xl--letter-spacing: var(--text-2xl-tracking);
+  --text-3xl: var(--text-3xl-size);
+  --text-3xl--line-height: var(--text-3xl-line);
+  --text-3xl--letter-spacing: var(--text-3xl-tracking);
+  --text-4xl: var(--text-4xl-size);
+  --text-4xl--line-height: var(--text-4xl-line);
+  --text-4xl--letter-spacing: var(--text-4xl-tracking);
+  --text-5xl: var(--text-5xl-size);
+  --text-5xl--line-height: var(--text-5xl-line);
+  --text-5xl--letter-spacing: var(--text-5xl-tracking);
+  --text-6xl: var(--text-6xl-size);
+  --text-6xl--line-height: var(--text-6xl-line);
+  --text-6xl--letter-spacing: var(--text-6xl-tracking);
+  --text-7xl: var(--text-7xl-size);
+  --text-7xl--line-height: var(--text-7xl-line);
+  --text-7xl--letter-spacing: var(--text-7xl-tracking);
+  --text-section: var(--text-section-size);
+  --text-section--line-height: var(--text-section-line);
+  --text-section--letter-spacing: var(--text-section-tracking);
+  /* Nav: text-xs in English, text-sm in Bangla. The language choice is in the token, not
+     in the NavBar (TYP-04, DR-346). */
+  --text-nav: var(--nav-size);
+  --text-nav--line-height: var(--nav-line);
+
+  --leading-tight: var(--leading-tight-value);
+  --leading-relaxed: var(--leading-relaxed-value);
+  --tracking-eyebrow: var(--eyebrow-tracking);
 }
 
 :root {
@@ -22,6 +73,21 @@
   /* Line length caps (Section 5.1). Typography owns these tokens. */
   --measure-article-title: 56rem;
   --measure-deck: 36rem;
+
+  /* Article body floor, both languages (TYP-11, DR-455) */
+  --type-body-min: 1.0625rem;
+
+  /* Sizes that are the same in both languages. Fluid from 360 to 1280px. */
+  --text-sm-size: 1rem;
+  --text-base-size: clamp(1.062rem, 1.038rem + 0.1087vw, 1.125rem);
+  --text-lg-size: clamp(1rem, 0.9022rem + 0.4348vw, 1.25rem);
+  --text-xl-size: clamp(1.125rem, 1.027rem + 0.4348vw, 1.375rem);
+  --text-2xl-size: clamp(1.25rem, 1.152rem + 0.4348vw, 1.5rem);
+  --text-3xl-size: clamp(1.375rem, 1.179rem + 0.8696vw, 1.875rem);
+  --text-4xl-size: clamp(1.5rem, 1.207rem + 1.304vw, 2.25rem);
+  --text-5xl-size: clamp(1.625rem, 1.332rem + 1.304vw, 2.375rem);
+  --text-6xl-size: clamp(1.75rem, 1.457rem + 1.304vw, 2.5rem);
+  --text-section-size: 1.375rem;
 }
 
 /* English values. :lang(en) gives an English block on a Bangla page English type (TYP-03, DR-203).
@@ -34,113 +100,56 @@
     var(--font-plus-jakarta), system-ui, -apple-system, "Segoe UI", Arial,
     sans-serif;
 
-  --type-body-min: 1.0625rem;
-  --type-eyebrow-case: uppercase;
-  --type-blockquote-style: italic;
+  --text-xs-size: 0.875rem;
+  --text-7xl-size: clamp(2.75rem, 2.261rem + 2.174vw, 4rem);
 
-  --type-display-size: clamp(2.75rem, 2.261rem + 2.174vw, 4rem);
-  --type-display-weight: 600;
-  --type-display-line: 1.02;
-  --type-display-tracking: -0.03em;
-  --type-page-title-size: clamp(2.125rem, 1.783rem + 1.522vw, 3rem);
-  --type-page-title-weight: 600;
-  --type-page-title-line: 1.06;
-  --type-page-title-tracking: -0.025em;
-  --type-article-title-size: clamp(2.25rem, 1.957rem + 1.304vw, 3rem);
-  --type-article-title-weight: 600;
-  --type-article-title-line: 1.06;
-  --type-article-title-tracking: -0.025em;
-  --type-story-lead-size: clamp(1.875rem, 1.582rem + 1.304vw, 2.625rem);
-  --type-story-lead-weight: 600;
-  --type-story-lead-line: 1.08;
-  --type-story-lead-tracking: -0.02em;
-  --type-story-title-lg-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
-  --type-story-title-lg-weight: 600;
-  --type-story-title-lg-line: 1.12;
-  --type-story-title-lg-tracking: -0.015em;
-  --type-story-title-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
-  --type-story-title-weight: 600;
-  --type-story-title-line: 1.16;
-  --type-story-title-tracking: -0.01em;
-  --type-story-title-sm-size: clamp(1.125rem, 1.076rem + 0.217vw, 1.25rem);
-  --type-story-title-sm-weight: 600;
-  --type-story-title-sm-line: 1.2;
-  --type-story-title-sm-tracking: -0.005em;
-  --type-deck-size: clamp(1.125rem, 1.027rem + 0.435vw, 1.375rem);
-  --type-deck-weight: 400;
-  --type-deck-line: 1.45;
-  --type-deck-tracking: 0;
-  --type-summary-size: 1rem;
-  --type-summary-weight: 500;
-  --type-summary-line: 1.5;
-  --type-summary-tracking: 0;
-  --type-article-body-size: clamp(1.062rem, 1.038rem + 0.109vw, 1.125rem);
-  --type-article-body-weight: 400;
-  --type-article-body-line: 1.68;
-  --type-article-body-tracking: 0;
-  --type-article-h2-size: clamp(1.75rem, 1.554rem + 0.87vw, 2.25rem);
-  --type-article-h2-weight: 600;
-  --type-article-h2-line: 1.15;
-  --type-article-h2-tracking: -0.015em;
-  --type-article-h3-size: clamp(1.375rem, 1.228rem + 0.652vw, 1.75rem);
-  --type-article-h3-weight: 600;
-  --type-article-h3-line: 1.22;
-  --type-article-h3-tracking: -0.01em;
-  --type-blockquote-size: clamp(1.125rem, 1.027rem + 0.435vw, 1.375rem);
-  --type-blockquote-weight: 400;
-  --type-blockquote-line: 1.6;
-  --type-blockquote-tracking: 0;
-  --type-pullquote-size: clamp(1.75rem, 1.554rem + 0.87vw, 2.25rem);
-  --type-pullquote-weight: 500;
-  --type-pullquote-line: 1.2;
-  --type-pullquote-tracking: -0.015em;
-  --type-section-title-size: 1.375rem;
-  --type-section-title-weight: 600;
-  --type-section-title-line: 1.25;
-  --type-section-title-tracking: -0.01em;
-  --type-eyebrow-size: 0.875rem;
-  --type-eyebrow-weight: 700;
-  --type-eyebrow-line: 1.2;
-  --type-eyebrow-tracking: 0.06em;
-  --type-metadata-size: 0.875rem;
-  --type-metadata-weight: 400;
-  --type-metadata-line: 1.4;
-  --type-metadata-tracking: 0.01em;
-  /* Ink inset (Section 3.1, DR-355) */
-  --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.2);
-  --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.12);
-  --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.18);
-  --type-caption-size: 0.875rem;
-  --type-caption-weight: 400;
-  --type-caption-line: 1.5;
-  --type-caption-tracking: 0;
-  --type-ui-size: 1rem;
-  --type-ui-weight: 500;
-  --type-ui-line: 1.4;
-  --type-ui-tracking: 0;
-  --type-ui-sm-size: 0.875rem;
-  --type-ui-sm-weight: 500;
-  --type-ui-sm-line: 1.4;
-  --type-ui-sm-tracking: 0;
-  --type-nav-size: 0.875rem;
-  --type-nav-weight: 600;
-  --type-nav-line: 1.4;
-  --type-button-size: 0.875rem;
-  --type-button-weight: 600;
-  --type-button-line: 1.2;
-  --type-button-tracking: 0;
-  --type-rank-family: var(--font-editorial-active);
-  --type-rank-size: 2.75rem;
-  --type-rank-weight: 700;
-  --type-rank-line: 1;
-  --type-rank-nudge: -0.1em;
+  --text-xs-line: 1.4;
+  --text-sm-line: 1.4;
+  --text-base-line: 1.68;
+  --text-lg-line: 1.2;
+  --text-xl-line: 1.22;
+  --text-2xl-line: 1.16;
+  --text-3xl-line: 1.15;
+  --text-4xl-line: 1.08;
+  --text-5xl-line: 1.06;
+  --text-6xl-line: 1.06;
+  --text-7xl-line: 1.02;
+  --text-section-line: 1.25;
+  --leading-tight-value: 1.2;
+  --leading-relaxed-value: 1.5;
+
+  --text-xs-tracking: 0;
+  --text-sm-tracking: 0;
+  --text-base-tracking: 0;
+  --text-lg-tracking: -0.005em;
+  --text-xl-tracking: -0.01em;
+  --text-2xl-tracking: -0.01em;
+  --text-3xl-tracking: -0.015em;
+  --text-4xl-tracking: -0.02em;
+  --text-5xl-tracking: -0.025em;
+  --text-6xl-tracking: -0.025em;
+  --text-7xl-tracking: -0.03em;
+  --text-section-tracking: -0.01em;
+
+  --nav-size: var(--text-xs-size);
+  --nav-line: var(--text-xs-line);
+  --eyebrow-weight: 700;
+  --eyebrow-tracking: 0.06em;
+  --eyebrow-case: uppercase;
+  --blockquote-weight: 400;
+  --blockquote-style: italic;
+
+  /* Ink inset (Section 3.4, DR-355): the list title (text-lg) and metadata (text-xs) */
+  --text-lg-ink-start: calc(var(--text-lg-size) * 0.2);
+  --text-lg-ink-end: calc(var(--text-lg-size) * 0.12);
+  --text-xs-ink-end: calc(var(--text-xs-size) * 0.18);
+  /* RankedList chip digits, a share of the digit size (components.css) */
+  --rank-chip-ink-start: 0.205em;
+  --rank-chip-ink-end: 0.143em;
+
   --type-logo-size: 1.25rem;
   --type-logo-weight: 700;
   --type-logo-line: 1;
-  --type-input-size: 1rem;
-  --type-input-weight: 400;
-  --type-input-line: 1.4;
-  --type-input-tracking: 0;
 }
 
 :lang(bn) {
@@ -151,108 +160,68 @@
     var(--font-noto-sans-bengali), var(--font-plus-jakarta), "Nirmala UI",
     sans-serif;
 
-  --type-body-min: 1.125rem;
-  --type-eyebrow-case: none;
-  --type-blockquote-style: normal;
+  --text-xs-size: 0.9375rem;
+  --text-7xl-size: clamp(2.5rem, 2.109rem + 1.739vw, 3.5rem);
 
-  --type-display-size: clamp(2.5rem, 2.109rem + 1.739vw, 3.5rem);
-  --type-display-weight: 600;
-  --type-display-line: 1.16;
-  --type-display-tracking: 0;
-  --type-page-title-size: clamp(2rem, 1.707rem + 1.304vw, 2.75rem);
-  --type-page-title-weight: 600;
-  --type-page-title-line: 1.18;
-  --type-page-title-tracking: 0;
-  --type-article-title-size: clamp(2.125rem, 1.88rem + 1.087vw, 2.75rem);
-  --type-article-title-weight: 600;
-  --type-article-title-line: 1.18;
-  --type-article-title-tracking: 0;
-  --type-story-lead-size: clamp(1.75rem, 1.457rem + 1.304vw, 2.5rem);
-  --type-story-lead-weight: 600;
-  --type-story-lead-line: 1.2;
-  --type-story-lead-tracking: 0;
-  --type-story-title-lg-size: clamp(1.625rem, 1.478rem + 0.652vw, 2rem);
-  --type-story-title-lg-weight: 600;
-  --type-story-title-lg-line: 1.22;
-  --type-story-title-lg-tracking: 0;
-  --type-story-title-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
-  --type-story-title-weight: 600;
-  --type-story-title-line: 1.26;
-  --type-story-title-tracking: 0;
-  --type-story-title-sm-size: clamp(1.125rem, 1.076rem + 0.217vw, 1.25rem);
-  --type-story-title-sm-weight: 600;
-  --type-story-title-sm-line: 1.3;
-  --type-story-title-sm-tracking: 0;
-  --type-deck-size: clamp(1.125rem, 1.052rem + 0.326vw, 1.312rem);
-  --type-deck-weight: 400;
-  --type-deck-line: 1.55;
-  --type-deck-tracking: 0;
-  --type-summary-size: 1.0625rem;
-  --type-summary-weight: 500;
-  --type-summary-line: 1.6;
-  --type-summary-tracking: 0;
-  --type-article-body-size: clamp(1.125rem, 1.101rem + 0.109vw, 1.188rem);
-  --type-article-body-weight: 400;
-  --type-article-body-line: 1.76;
-  --type-article-body-tracking: 0;
-  --type-article-h2-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
-  --type-article-h2-weight: 600;
-  --type-article-h2-line: 1.28;
-  --type-article-h2-tracking: 0;
-  --type-article-h3-size: clamp(1.375rem, 1.277rem + 0.435vw, 1.625rem);
-  --type-article-h3-weight: 600;
-  --type-article-h3-line: 1.34;
-  --type-article-h3-tracking: 0;
-  --type-blockquote-size: clamp(1.188rem, 1.114rem + 0.326vw, 1.375rem);
-  --type-blockquote-weight: 500;
-  --type-blockquote-line: 1.68;
-  --type-blockquote-tracking: 0;
-  --type-pullquote-size: clamp(1.625rem, 1.429rem + 0.87vw, 2.125rem);
-  --type-pullquote-weight: 500;
-  --type-pullquote-line: 1.32;
-  --type-pullquote-tracking: 0;
-  --type-section-title-size: 1.375rem;
-  --type-section-title-weight: 600;
-  --type-section-title-line: 1.3;
-  --type-section-title-tracking: 0;
-  --type-eyebrow-size: 0.9375rem;
-  --type-eyebrow-weight: 600;
-  --type-eyebrow-line: 1.35;
-  --type-eyebrow-tracking: 0;
-  --type-metadata-size: 0.9375rem;
-  --type-metadata-weight: 400;
-  --type-metadata-line: 1.5;
-  --type-metadata-tracking: 0;
-  /* Ink inset (Section 3.1, DR-355) */
-  --type-story-title-sm-ink-start: calc(var(--type-story-title-sm-size) * 0.03);
-  --type-story-title-sm-ink-end: calc(var(--type-story-title-sm-size) * 0.25);
-  --type-metadata-ink-end: calc(var(--type-metadata-size) * 0.33);
-  --type-caption-size: 0.9375rem;
-  --type-caption-weight: 400;
-  --type-caption-line: 1.6;
-  --type-caption-tracking: 0;
-  --type-ui-size: 1rem;
-  --type-ui-weight: 500;
-  --type-ui-line: 1.5;
-  --type-ui-tracking: 0;
-  --type-ui-sm-size: 0.9375rem;
-  --type-ui-sm-weight: 500;
-  --type-ui-sm-line: 1.5;
-  --type-ui-sm-tracking: 0;
-  --type-nav-size: 1rem;
-  --type-nav-weight: 600;
-  --type-nav-line: 1.5;
-  --type-button-size: 0.9375rem;
-  --type-button-weight: 600;
-  --type-button-line: 1.35;
-  --type-button-tracking: 0;
-  --type-rank-family: var(--font-ui-active);
-  --type-rank-nudge: -0.125em;
+  --text-xs-line: 1.5;
+  --text-sm-line: 1.5;
+  --text-base-line: 1.76;
+  --text-lg-line: 1.3;
+  --text-xl-line: 1.34;
+  --text-2xl-line: 1.26;
+  --text-3xl-line: 1.28;
+  --text-4xl-line: 1.2;
+  --text-5xl-line: 1.18;
+  --text-6xl-line: 1.18;
+  --text-7xl-line: 1.16;
+  --text-section-line: 1.3;
+  --leading-tight-value: 1.35;
+  --leading-relaxed-value: 1.6;
+
+  /* Bangla tracking is 0 at every step (TYP-05) */
+  --text-xs-tracking: 0;
+  --text-sm-tracking: 0;
+  --text-base-tracking: 0;
+  --text-lg-tracking: 0;
+  --text-xl-tracking: 0;
+  --text-2xl-tracking: 0;
+  --text-3xl-tracking: 0;
+  --text-4xl-tracking: 0;
+  --text-5xl-tracking: 0;
+  --text-6xl-tracking: 0;
+  --text-7xl-tracking: 0;
+  --text-section-tracking: 0;
+
+  --nav-size: var(--text-sm-size);
+  --nav-line: var(--text-sm-line);
+  --eyebrow-weight: 600;
+  --eyebrow-tracking: 0;
+  --eyebrow-case: none;
+  --blockquote-weight: 500;
+  --blockquote-style: normal;
+
+  /* Ink inset (Section 3.4, DR-355) */
+  --text-lg-ink-start: calc(var(--text-lg-size) * 0.03);
+  --text-lg-ink-end: calc(var(--text-lg-size) * 0.25);
+  --text-xs-ink-end: calc(var(--text-xs-size) * 0.33);
+  /* RankedList chip digits, a share of the digit size (components.css) */
+  --rank-chip-ink-start: 0.17em;
+  --rank-chip-ink-end: 0.19em;
+
   --type-logo-line: 1.1;
-  --type-input-size: 1rem;
-  --type-input-weight: 400;
-  --type-input-line: 1.5;
-  --type-input-tracking: 0;
+}
+
+/* Below 600 the lead and cover step (text-4xl) takes the card title step (text-2xl), so
+   the lead and the cards read alike on phones (tajmin, 4 Nov 2026). From 600 text-4xl
+   keeps its own curve. */
+@media (width < 37.5rem) {
+  :root,
+  :lang(en),
+  :lang(bn) {
+    --text-4xl-size: var(--text-2xl-size);
+    --text-4xl-line: var(--text-2xl-line);
+    --text-4xl-tracking: var(--text-2xl-tracking);
+  }
 }
 
 [data-reader-size="lg"] {
@@ -279,7 +248,6 @@ body {
 @media (min-width: 64rem) {
   :root,
   :lang(en) {
-    --type-rank-size: 3.5rem;
     --type-logo-size: 2rem;
   }
 }
@@ -290,139 +258,6 @@ body {
 }
 :lang(bn) strong {
   font-weight: 700;
-}
-
-@utility type-display {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-display-size);
-  font-weight: var(--type-display-weight);
-  line-height: var(--type-display-line);
-  letter-spacing: var(--type-display-tracking);
-  text-wrap: balance;
-}
-
-@utility type-page-title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-page-title-size);
-  font-weight: var(--type-page-title-weight);
-  line-height: var(--type-page-title-line);
-  letter-spacing: var(--type-page-title-tracking);
-  text-wrap: balance;
-}
-
-@utility type-article-title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-article-title-size);
-  font-weight: var(--type-article-title-weight);
-  line-height: var(--type-article-title-line);
-  letter-spacing: var(--type-article-title-tracking);
-  text-wrap: balance;
-  max-inline-size: var(--measure-article-title);
-}
-
-@utility type-story-lead {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-lead-size);
-  font-weight: var(--type-story-lead-weight);
-  line-height: var(--type-story-lead-line);
-  letter-spacing: var(--type-story-lead-tracking);
-  text-wrap: balance;
-}
-
-@utility type-story-title-lg {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-title-lg-size);
-  font-weight: var(--type-story-title-lg-weight);
-  line-height: var(--type-story-title-lg-line);
-  letter-spacing: var(--type-story-title-lg-tracking);
-  text-wrap: balance;
-}
-
-@utility type-story-title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-title-size);
-  font-weight: var(--type-story-title-weight);
-  line-height: var(--type-story-title-line);
-  letter-spacing: var(--type-story-title-tracking);
-}
-
-@utility type-story-title-sm {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-story-title-sm-size);
-  font-weight: var(--type-story-title-sm-weight);
-  line-height: var(--type-story-title-sm-line);
-  letter-spacing: var(--type-story-title-sm-tracking);
-}
-
-@utility type-deck {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-deck-size);
-  font-weight: var(--type-deck-weight);
-  line-height: var(--type-deck-line);
-  letter-spacing: var(--type-deck-tracking);
-  max-inline-size: var(--measure-deck);
-}
-
-@utility type-summary {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-summary-size);
-  font-weight: var(--type-summary-weight);
-  line-height: var(--type-summary-line);
-  letter-spacing: var(--type-summary-tracking);
-  max-inline-size: var(--measure-deck);
-}
-
-@utility type-article-body {
-  font-family: var(--font-editorial-active);
-  font-size: max(
-    var(--type-body-min),
-    calc(var(--type-article-body-size) * var(--reader-scale))
-  );
-  font-weight: var(--type-article-body-weight);
-  line-height: var(--type-article-body-line);
-  letter-spacing: var(--type-article-body-tracking);
-}
-
-@utility type-article-h2 {
-  font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-article-h2-size) * var(--reader-scale));
-  font-weight: var(--type-article-h2-weight);
-  line-height: var(--type-article-h2-line);
-  letter-spacing: var(--type-article-h2-tracking);
-}
-
-@utility type-article-h3 {
-  font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-article-h3-size) * var(--reader-scale));
-  font-weight: var(--type-article-h3-weight);
-  line-height: var(--type-article-h3-line);
-  letter-spacing: var(--type-article-h3-tracking);
-}
-
-@utility type-blockquote {
-  font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-blockquote-size) * var(--reader-scale));
-  font-weight: var(--type-blockquote-weight);
-  line-height: var(--type-blockquote-line);
-  letter-spacing: var(--type-blockquote-tracking);
-  font-style: var(--type-blockquote-style);
-}
-
-@utility type-pullquote {
-  font-family: var(--font-editorial-active);
-  font-size: calc(var(--type-pullquote-size) * var(--reader-scale));
-  font-weight: var(--type-pullquote-weight);
-  line-height: var(--type-pullquote-line);
-  letter-spacing: var(--type-pullquote-tracking);
-  text-wrap: balance;
-}
-
-@utility type-section-title {
-  font-family: var(--font-editorial-active);
-  font-size: var(--type-section-title-size);
-  font-weight: var(--type-section-title-weight);
-  line-height: var(--type-section-title-line);
-  letter-spacing: var(--type-section-title-tracking);
 }
 
 @utility type-logo {
@@ -440,86 +275,7 @@ body {
   line-height: var(--type-logo-line);
 }
 
-@utility type-eyebrow {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-eyebrow-size);
-  font-weight: var(--type-eyebrow-weight);
-  line-height: var(--type-eyebrow-line);
-  letter-spacing: var(--type-eyebrow-tracking);
-  text-transform: var(--type-eyebrow-case);
-}
-
-@utility type-metadata {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-metadata-size);
-  font-weight: var(--type-metadata-weight);
-  line-height: var(--type-metadata-line);
-  letter-spacing: var(--type-metadata-tracking);
-}
-
-@utility type-caption {
-  font-family: var(--font-ui-active);
-  font-size: calc(var(--type-caption-size) * var(--reader-scale));
-  font-weight: var(--type-caption-weight);
-  line-height: var(--type-caption-line);
-  letter-spacing: var(--type-caption-tracking);
-}
-
-@utility type-ui {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-ui-size);
-  font-weight: var(--type-ui-weight);
-  line-height: var(--type-ui-line);
-  letter-spacing: var(--type-ui-tracking);
-}
-
-@utility type-ui-sm {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-ui-sm-size);
-  font-weight: var(--type-ui-sm-weight);
-  line-height: var(--type-ui-sm-line);
-  letter-spacing: var(--type-ui-sm-tracking);
-}
-
-@utility type-nav {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-nav-size);
-  font-weight: var(--type-nav-weight);
-  line-height: var(--type-nav-line);
-}
-
-@utility type-button {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-button-size);
-  font-weight: var(--type-button-weight);
-  line-height: var(--type-button-line);
-  letter-spacing: var(--type-button-tracking);
-}
-
-@utility type-input {
-  font-family: var(--font-ui-active);
-  font-size: var(--type-input-size);
-  font-weight: var(--type-input-weight);
-  line-height: var(--type-input-line);
-  letter-spacing: var(--type-input-tracking);
-}
-
-@utility rank-list {
-  list-style: none;
-  & > li {
-    display: grid;
-    grid-template-columns: calc(var(--type-rank-size) * 0.75) minmax(0, 1fr);
-    column-gap: 0.75rem;
-    align-items: start;
-  }
-  /* The rank number from the data, in <span aria-hidden="true"> (DR-290) */
-  & > li > [aria-hidden="true"]:first-child {
-    font-family: var(--type-rank-family);
-    font-size: var(--type-rank-size);
-    font-weight: var(--type-rank-weight);
-    line-height: var(--type-rank-line);
-    margin-block-start: var(--type-rank-nudge);
-    color: var(--interactive);
-    font-variant-numeric: tabular-nums;
-  }
+/* Eyebrow and Chip only: uppercase in English, no case in Bangla (DR-216). */
+@utility case-eyebrow {
+  text-transform: var(--eyebrow-case);
 }

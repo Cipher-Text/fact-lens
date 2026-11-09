@@ -25,7 +25,7 @@ export default async function StoryUnitsPage({
 
   const full = getStory("river-data-framework", lang);
   const longWithImage = getStory("deep-sea-port-trial-ship", lang);
-  const longNoImage = getStory("primary-teacher-training", lang);
+  const longNoImage = getStory("royal-family-genealogy", lang);
   const noImage = getStory("joint-border-patrol-rules", lang);
   const latest = getHomepage(lang).hero!.latest.slice(0, 5);
 
@@ -69,23 +69,20 @@ export default async function StoryUnitsPage({
               <StoryCard
                 story={longWithImage}
                 strings={t}
-                ratio="3:2"
                 eyebrow={false}
-                layout="row-from-md"
-                split="feature"
+                variant="side"
               />
             </div>
             <div data-case="row">
               <StoryCard
                 story={longWithImage}
                 strings={t}
-                size="sm"
                 summary={false}
-                layout="row"
+                variant="thumbnail"
               />
             </div>
             <div data-case="no-image">
-              <StoryCard story={longNoImage} strings={t} layout="row" />
+              <StoryCard story={longNoImage} strings={t} variant="thumbnail" />
             </div>
           </Wrapper>
           <Rail>
@@ -93,9 +90,8 @@ export default async function StoryUnitsPage({
               <StoryCard
                 story={longWithImage}
                 strings={t}
-                size="sm"
                 summary={false}
-                layout="row-until-lg"
+                variant="top"
               />
             </div>
           </Rail>

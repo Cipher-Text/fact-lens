@@ -20,18 +20,31 @@ const full = getHomepage("bn").featured;
 const sparse = getHomepage("bn", { variant: "sparse" }).featured;
 
 describe("FeaturedCategorySection (P-2)", () => {
-  it("is a shell section named by its category, with the nav anchor id (IMP-14)", () => {
-    const { container } = renderSection("bn", full.bangladesh!);
+  it("is a shell section named by its region, দক্ষিণ এশিয়া (DR-412)", () => {
+    const { container } = renderSection("bn", full.southAsia!);
     const section = container.firstElementChild as HTMLElement;
     expect(section.tagName).toBe("SECTION");
     expect(section).toHaveClass("shell");
-    expect(section).toHaveAttribute("id", "category-bangladesh");
+    // Not region-south-asia: that is the RegionSlider panel id on the same page.
+    expect(section).toHaveAttribute("id", "featured-south-asia");
     expect(
-      screen.getByRole("region", { name: "বাংলাদেশ" }),
+      screen.getByRole("region", { name: "দক্ষিণ এশিয়া" }),
     ).toBeInTheDocument();
     // The heading is plain text, not a link (DR-122, CPT-13).
-    const heading = screen.getByRole("heading", { level: 2, name: "বাংলাদেশ" });
+    const heading = screen.getByRole("heading", {
+      level: 2,
+      name: "দক্ষিণ এশিয়া",
+    });
     expect(heading.querySelector("a")).toBeNull();
+  });
+
+  it("is a shell section named by its category, with the nav anchor id (IMP-14)", () => {
+    const { container } = renderSection("bn", full.geopolitics!);
+    const section = container.firstElementChild as HTMLElement;
+    expect(section).toHaveAttribute("id", "category-geopolitics");
+    expect(
+      screen.getByRole("region", { name: "ভূরাজনীতি ও কূটনীতি" }),
+    ).toBeInTheDocument();
   });
 
   it("puts the feature story in the wrapper and the rail after it (LAY-05, LAY-14)", () => {
@@ -42,17 +55,25 @@ describe("FeaturedCategorySection (P-2)", () => {
         el.hasAttribute("data-featured-wrapper") ? "wrapper" : "rail",
       ),
     ).toEqual(["wrapper", "rail"]);
+    // Below 1024 a Divider.item rule between the stacked card and the rail (C-22).
+    expect(grid).toHaveClass("divider-item-rail");
+    // From 1024 a dotted column-inset between the card and the rail (C-22).
+    expect(grid).toHaveClass("divider-column-rail", "divider-column-dotted");
+    expect(grid).not.toHaveClass("divider-column-full");
+    expect(container.querySelector("[data-featured-rail]")).toHaveClass(
+      "list-ink-title-meta",
+    );
   });
 
-  it("draws the feature story as a StoryCard: stack under 768, row from 768, no eyebrow (C-24, P-2)", () => {
-    const { container } = renderSection("bn", full.bangladesh!);
+  it("draws the feature story as the StoryCard side: stack under 1024, side from 1024, no eyebrow (C-24, P-2, DR-451)", () => {
+    const { container } = renderSection("bn", full.southAsia!);
     const card = container.querySelector(
       "[data-featured-wrapper] [data-story-card]",
     ) as HTMLElement;
-    expect(card).toHaveAttribute("data-layout", "row-from-md");
+    expect(card).toHaveAttribute("data-variant", "side");
     const grid = card.firstElementChild as HTMLElement;
     expect(card).toHaveClass("@container");
-    expect(grid.className).toContain("md:story-split-feature");
+    expect(grid.className).toContain("lg:story-side");
     expect(card.innerHTML).not.toMatch(/\border-/);
     // Image before the text in the markup; the grid puts the image at the end (LAY-14, DR-267).
     expect(grid.children[0]).toHaveAttribute("data-story-media");
@@ -61,49 +82,50 @@ describe("FeaturedCategorySection (P-2)", () => {
       "aspect-3/2",
     );
     expect(within(card).getByRole("heading", { level: 3 })).toHaveClass(
-      "type-story-title",
+      "text-2xl",
     );
-    expect(card.querySelector(".type-eyebrow")).toBeNull();
+    expect(card.querySelector("[data-eyebrow]")).toBeNull();
   });
 
-  it("has one image story and two text rows in the rail (C-24, C-03)", () => {
-    const { container } = renderSection("bn", full.bangladesh!);
+  it("has a text StoryList of 3 rows in the rail, no image story (C-03, IMP-125)", () => {
+    const { container } = renderSection("bn", full.southAsia!);
     const rail = container.querySelector("[data-featured-rail]") as HTMLElement;
-    const card = rail.querySelector("[data-story-card]") as HTMLElement;
-    expect(card).toHaveAttribute("data-layout", "row-until-lg");
-    expect(card.querySelector("[data-story-media] img")).toHaveClass(
-      "aspect-video",
-    );
-    expect(within(card).getByRole("heading", { level: 3 })).toHaveClass(
-      "type-story-title-sm",
-    );
+    expect(rail.querySelector("[data-story-card]")).toBeNull();
+    expect(rail.querySelector("[data-story-media]")).toBeNull();
     const items = within(rail).getAllByRole("listitem");
-    expect(items).toHaveLength(2);
+    expect(items).toHaveLength(3);
     for (const li of items) {
       expect(li.querySelector("img")).toBeNull();
       expect(within(li).getByRole("heading", { level: 3 })).toHaveClass(
-        "type-story-title-sm",
+        "text-lg",
       );
     }
   });
 
-  it("has one আরও দেখুন link at the section end, to the category page (DR-110, DR-123)", () => {
-    const { container } = renderSection("bn", full.bangladesh!);
+  it("has one আরও দেখুন link at the section end, to the region page (DR-110, DR-123, DR-412)", () => {
+    const { container } = renderSection("bn", full.southAsia!);
     const links = screen.getAllByRole("link", { name: /আরও দেখুন/ });
     expect(links).toHaveLength(1);
-    expect(links[0]).toHaveAccessibleName("আরও দেখুন: বাংলাদেশ");
-    expect(links[0]).toHaveAttribute("href", "/category/bangladesh");
+    expect(links[0]).toHaveAccessibleName("আরও দেখুন: দক্ষিণ এশিয়া");
+    expect(links[0]).toHaveAttribute("href", "/regions/south-asia");
     const section = container.firstElementChild!;
     expect(section.lastElementChild).toContainElement(links[0]);
     // English pages link inside /en.
-    const en = renderSection("en", getHomepage("en").featured.bangladesh!);
+    const en = renderSection("en", getHomepage("en").featured.southAsia!);
     expect(
       within(en.container).getByRole("link", { name: /See more/ }),
-    ).toHaveAttribute("href", "/en/category/bangladesh");
+    ).toHaveAttribute("href", "/en/regions/south-asia");
+  });
+
+  it("links a category section to its category page", () => {
+    const { container } = renderSection("bn", full.geopolitics!);
+    expect(
+      within(container).getByRole("link", { name: /আরও দেখুন/ }),
+    ).toHaveAttribute("href", "/category/geopolitics");
   });
 
   it("spans the shell when there are no rail stories (7.3)", () => {
-    const { container } = renderSection("bn", sparse.bangladesh!);
+    const { container } = renderSection("bn", sparse.southAsia!);
     expect(container.querySelector(".with-rail")).toBeNull();
     expect(container.querySelector("[data-featured-rail]")).toBeNull();
     expect(container.querySelector("[data-featured-wrapper]")).not.toBeNull();

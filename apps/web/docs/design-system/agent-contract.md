@@ -1,6 +1,6 @@
 # Fact Lens Agent Contract
 
-Version 2.13 · 24 October 2026 · Section 3: article page approved, checkpoint 1 (DR-385 to DR-390); new rule LAY-22
+Version 2.32 · 6 November 2026 · Sections 1 and 5 name layout 2.41. Before: 2.31 · 6 November 2026 · DOC-61: Sections 1 and 5 name layout 2.40 and component-system 1.35; the Region hub row names RG-09 as done. Before: 2.30 · 6 November 2026 · Featured card and rules: Sections 1 and 5 name color 2.19, layout 2.39 and component-system 1.34. Before: 2.29 · 5 November 2026 · Region page: Sections 1 and 5 name layout 2.38 and component-system 1.33; Section 3 adds the region page layout row. Before: 2.28 · 5 November 2026 · Region hub: Sections 1 and 5 name layout 2.37 and component-system 1.32; Section 3 adds the region hub layout row. Before: 2.27 · 5 November 2026 · IMP-125 follow-up (DR-464 to DR-470): Section 1 and Section 5 name typography 2.25, layout 2.36 and component-system 1.31. Before: 2.26 · 5 November 2026 · Story roles and card variants (IMP-125, DR-450, DR-451, DR-453): new rule N-06 "Name a story by its role"; Section 1 names typography 2.24, layout 2.35 and component-system 1.30. Before: 2.25 · 4 November 2026 · Type scale (DR-454 to DR-456): TYP-01 is "Use only the scale classes"; Section 1 names typography 2.23 and the type scale. Before: 2.24 · 4 November 2026 · Analysis hub sync review: Sections 1 and 5 name layout 2.34. Before: 2.23 · 4 November 2026 · Analysis hub: Sections 1 and 5 name typography 2.22, layout 2.33 and component-system 1.29; Section 3 adds the analysis hub layout row. Before: 2.22 · 30 October 2026 · XC fixes (`task/xc-fixes`): Section 3 the homepage lock is lifted, the homepage changes like any page (DR-434); Sections 1 and 5 name the current spec versions: color 2.18, layout 2.32, component-system 1.28 (XC-07). Before: 2.21 · 30 October 2026 · Topic page: Section 1 names layout 2.31 and component-system 1.27; Section 3 adds the topic page layout row. Before: 2.20 · 29 October 2026 · Docs cleanup (`task/docs-cleanup`): the spec text names a spec log by its page and item IDs, not by its file path; Section 3 rows link the specs, not the logs; Section 11 item 1 adds the spec-log template, and after the merge the brief and the progress file are deleted while the spec log stays. Before: 2.19 · 28 October 2026 · Latest page (spec log `latest.md`): Section 1 spec versions; Section 3 Latest page row. Before: 2.18 · 28 October 2026 · Dev process (`task/dev-process`): Section 3 other-page row and Section 11 items 1 to 3 name `page/` and `task/` branches and the progress file. Before: Category formats (DR-415): Section 1 spec versions; Section 3 category page row. Before: Homepage most read (IMP-99): Section 3 homepage lock with the P-5 exception; DR-51, DR-145 in Section 7; spec versions in Section 5
 
 This contract tells an AI agent (or a developer) how to build Fact Lens screens from the design system. It is an index. It gives rule IDs and links. It does not give values. All values are in the four foundation documents: color, typography, spacing and layout, and components.
 
@@ -24,7 +24,7 @@ Generated from `tools/agent-contract/agent-contract.tpl.md` by `gen_contract.py`
 
 | Order | Source | Holds |
 | --- | --- | --- |
-| 1 | `color-system.md` v2.16, `typography-system.md` v2.17, `spacing-layout-system.md` v2.23, `component-system.md` v1.18 | Values, rules, component sheets and copy-ready CSS |
+| 1 | `color-system.md` v2.19, `typography-system.md` v2.25, `spacing-layout-system.md` v2.41, `component-system.md` v1.35 | Values, rules, component sheets and copy-ready CSS |
 | 2 | This contract | Rule IDs, project decisions (Section 7), links and the build order |
 | 3 | Existing code | Only where items 1 and 2 have no decision |
 
@@ -43,13 +43,19 @@ If this contract and a foundation document do not agree, follow the foundation d
 | --- | --- | --- |
 | Color | Approved for prototype run 4 | `color-system.md` |
 | Typography | Approved for prototype run 4 | `typography-system.md` |
-| Homepage layout and spacing | Approved for prototype run 4 | `spacing-layout-system.md` |
+| Homepage layout and spacing | Approved for prototype run 4. P-5 most read uses the RankedList layout of the category page (IMP-99, most read spec log HM-01 to HM-03) | `spacing-layout-system.md` |
 | Homepage components, radius, icons, motion | Approved for prototype run 4. The footer is provisional | `component-system.md` |
 | Article page layout and spacing | Approved, checkpoint 1 (DR-385, DR-386, DR-387) | `spacing-layout-system.md` Section 7A |
 | Article page components | Approved, checkpoint 1 (DR-390): C-27 to C-42 | `component-system.md` Section 7, Article page |
-| Other page layout and components | Defined per page in the browser (DR-370) | Build from the page brief `docs/briefs/<page>.md`; write changes in the page spec log. `spacing-layout-system.md` Section 14.2 lists the open items |
+| Category page layout | Green spec-log items (CL-01 to CL-08, CL-19, CL-20) and the RankedList `columns` variant (C-07, tajmin 27 Oct 2026); every red item is decided: DR-402 to DR-409 (amend DR-44, DR-51, DR-144 to DR-147, DR-153, DR-299, DR-300, DR-398 for this page). Formats: DR-415 (category formats spec log CF-01 to CF-08; CF-06 PageTitle band, U-50 approved) | `spacing-layout-system.md` Section 7B |
+| Latest page layout | Green spec-log items LT-01, LT-03 to LT-05 (tajmin, 28 Oct 2026); LT-02 decided: the reused parts are `MoreStoriesSection`, `MoreStoriesList` (tajmin, 28 Oct 2026) | `spacing-layout-system.md` Section 7D |
+| Topic page layout | Green spec-log items TP-01 to TP-05 (tajmin, 29 and 30 Oct 2026) | `spacing-layout-system.md` Section 7E |
+| Analysis hub layout | Spec-log items AN-01 to AN-16: green items AN-01 to AN-06, AN-08 to AN-10, AN-15; the changed rules AN-07, AN-11 to AN-14 and AN-16 approved by tajmin (4 Nov 2026: "Add the spec changes") | `spacing-layout-system.md` Section 7F |
+| Region hub layout | Spec-log items RG-01 to RG-09: green items RG-01 to RG-08 (design-reviewer, 5 Nov 2026; RG-06 the `format` Eyebrow after tajmin dropped `two-part`); the changed rule RG-09 (the regions slider named P-6) is written into layout 2.40 and component-system 1.35 (DOC-61, tajmin, 6 Nov 2026) | `spacing-layout-system.md` Section 7G |
+| Region page layout | Green spec-log items RE-01 to RE-05 (design-reviewer, 5 Nov 2026) | `spacing-layout-system.md` Section 7H |
+| Other page layout and components | Defined per page in the browser (DR-370) | Build from the brief `docs/briefs/<name>.md`; log each change in the progress file `docs/progress/<name>.md`; the spec log is made from it at the final checkpoint. `spacing-layout-system.md` Section 14.2 lists the open items |
 
-The homepage is locked (DR-370). Start a new page only with its ticket and brief (`AGENTS.md` Section 9).
+The homepage changes like any page: on its own `page/` or `task/` branch, with checkpoints and a spec log (DR-434). Start a new page only with its brief (`AGENTS.md` Section 9).
 
 ## 4. Where the values are
 
@@ -61,7 +67,7 @@ The homepage is locked (DR-370). Start a new page only with its ticket and brief
 | Tailwind 4 and shadcn/ui color names | `color-system.md` Section 5 |
 | Theme resets, container sizes, motion, base rules | `spacing-layout-system.md` Sections 12.1 and 12.4 |
 | Font families and stacks | `typography-system.md` Section 2 |
-| Type roles (size, weight, line height, tracking) | `typography-system.md` Section 3 |
+| Type scale and roles (size, line height, tracking; the classes of each role) | `typography-system.md` Section 3 |
 | Reader sizes A, A+, A++ | `typography-system.md` Section 4 |
 | Line length caps | `typography-system.md` Section 5 |
 | Which role for which element | `typography-system.md` Section 7 |
@@ -86,7 +92,7 @@ The homepage is locked (DR-370). Start a new page only with its ticket and brief
 
 Each row links to the rule. The rule text is in the foundation document.
 
-### Color (`color-system.md` v2.16, 17 rules)
+### Color (`color-system.md` v2.19, 17 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -108,11 +114,11 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`COL-16`](color-system.md#col-16-set-the-page-colors-on-body) | Set the page colors on body |
 | [`COL-17`](color-system.md#col-17-show-a-selected-item-with-interactive-and-a-word) | Show a selected item with `interactive` and a word |
 
-### Typography (`typography-system.md` v2.17, 25 rules)
+### Typography (`typography-system.md` v2.25, 25 rules)
 
 | ID | Rule |
 | --- | --- |
-| [`TYP-01`](typography-system.md#typ-01-use-only-the-roles-in-section-3) | Use only the roles in Section 3 |
+| [`TYP-01`](typography-system.md#typ-01-use-only-the-scale-classes) | Use only the scale classes |
 | [`TYP-02`](typography-system.md#typ-02-use-the-role-to-select-serif-or-sans) | Use the role to select serif or sans |
 | [`TYP-03`](typography-system.md#typ-03-set-lang-on-every-page-and-every-other-language-block) | Set `lang` on every page and every other-language block |
 | [`TYP-04`](typography-system.md#typ-04-keep-language-differences-in-the-tokens) | Keep language differences in the tokens |
@@ -138,7 +144,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`TYP-24`](typography-system.md#typ-24-show-meaning-with-more-than-style) | Show meaning with more than style |
 | [`TYP-25`](typography-system.md#typ-25-break-a-word-only-when-it-does-not-fit) | Break a word only when it does not fit |
 
-### Spacing and layout (`spacing-layout-system.md` v2.23, 22 rules)
+### Spacing and layout (`spacing-layout-system.md` v2.41, 22 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -165,7 +171,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`LAY-21`](spacing-layout-system.md#lay-21-use-the-4px-scale-for-one-component-values) | Use the 4px scale for one-component values |
 | [`LAY-22`](spacing-layout-system.md#lay-22-put-an-inline-ad-between-two-paragraphs) | Put an inline ad between two paragraphs |
 
-### Components (`component-system.md` v1.18, 21 rules)
+### Components (`component-system.md` v1.35, 22 rules)
 
 | ID | Rule |
 | --- | --- |
@@ -190,6 +196,7 @@ Each row links to the rule. The rule text is in the foundation document.
 | [`N-03`](component-system.md#n-03-name-a-one-component-part-parentpart) | Name a one-component part Parent.part |
 | [`N-04`](component-system.md#n-04-make-a-shared-part-its-own-component) | Make a shared part its own component |
 | [`N-05`](component-system.md#n-05-use-the-approved-names-and-words) | Use the approved names and words |
+| [`N-06`](component-system.md#n-06-name-a-story-by-its-role) | Name a story by its role |
 
 ## 6. Shared rules
 
@@ -230,11 +237,11 @@ These decisions are not in the foundation documents, but every build must obey t
 | `DR-19` | চীন is not in the navigation. It is an entry under অঞ্চলসমূহ (DR-345) |
 | `DR-35` | The first prototype uses the fixed rail only. Do not build the 8+4 hero |
 | `DR-44` | No 4-up card rows anywhere. The hero has two top-story cards |
-| `DR-51`, `DR-145` | Most read is a numbered list, not a card row: 4 per row from 1280px, 3 at 1024–1279px |
+| `DR-51`, `DR-145` | Most read is a numbered list, not a card row: RankedList (C-07) on the homepage and the category page. Two list columns from 600px; from 1024px the middle and end of three columns, the start column empty. No rule between items; the rank is the chip, not `type-rank` (IMP-99; amends DR-51, DR-145, DR-299, DR-144, DR-146, DR-147) |
 | `DR-87` | No rounded corners and no card borders, no exception (`CPT-05`, DR-349) |
 | `DR-162` | Use the approved component and section names (`component-system.md` Section 3) |
 | `DR-188` | No subscribe button in the header or the drawer |
-| `DR-239` | Do not build `NewsletterSignup` in prototype run 4. The P-3 rail holds the `DailyPoll`, and from 1280px the `ad-rail` slot below it (DR-240, DR-245). Run 4 has no sign-up point |
+| `DR-239` | Do not build `NewsletterSignup` in prototype run 4. The P-3 rail holds the `DailyPoll`, and from 1024px, when the rail is a column, the `ad-rail` slot below it (DR-240; amends DR-245, Analysis spec log AN-11). Run 4 has no sign-up point |
 | `DR-193` | The footer is provisional. Build the drawn look |
 | `DR-356` | The gap between analysis and opinion (P-4) is `--space-analysis-gap` (32 / 48 / 64px), not `--grid-column-gap`. It is the one stated exception to the column gap |
 
@@ -303,7 +310,7 @@ Before you finish a task:
 
 ## 11. How to change this contract
 
-1. Do not edit the files in `docs/design-system/` in a code branch. On a page branch, write each spec change in the page spec log `docs/spec-log/<page>.md` (`AGENTS.md` Section 9.2, DR-372).
-2. The `design-reviewer` agent checks the spec log against the diff at `/accept`. tajmin's `/accept` approves the green items. Red items go to tajmin as flags.
-3. After `/accept`, a blueprint project thread writes the approved items into the foundation documents in this folder, rebuilds this contract (`gen_contract.py` rebuilds the rule index and stops if a rule ID in this contract does not exist) and records the decisions in the project decision register, which is not in this repo (DR-251).
+1. Edit the files in `docs/design-system/` only on a `page/` or `task/` branch. Log each new token, gap or extension in the progress file `docs/progress/<name>.md` while you build; at the final checkpoint `/checkpoint` makes the spec log `docs/spec-log/<name>.md` from it, in the format of `docs/spec-log/TEMPLATE.md` (`AGENTS.md` Section 9, DR-372). After the merge, the brief and the progress file of the work are deleted on `dev`, once each open item is a row in `docs/ISSUES.md` or in the spec log; the spec log stays as the record of what the work changed in the specs (`AGENTS.md` Section 9, step 6). The specs name a spec log by its page and item IDs, not by its file path: the "Latest spec log" is `docs/spec-log/latest.md`, and every log is in `docs/spec-log/`.
+2. The `design-reviewer` agent checks the spec log against the diff at the final checkpoint (`/checkpoint`). tajmin's merge of the pull request approves the green items. Red items go to tajmin as flags.
+3. At the final checkpoint, the coding agent writes the green items into the foundation documents in this folder on the branch, so they go in the same pull request. A hook allows spec edits only on a `page/` or `task/` branch, so nothing changes after the merge. Before the merge, a project thread rebuilds this contract (`gen_contract.py` rebuilds the rule index and stops if a rule ID in this contract does not exist) and records the decisions in the project decision register, which is not in this repo (DR-251).
 4. The blueprint thread changes the contract template only for Sections 1 to 4 and 6 to 11.
