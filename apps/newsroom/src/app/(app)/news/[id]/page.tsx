@@ -7,6 +7,7 @@ import {
 import { RichBody } from '@/components/RichBody';
 import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, NewsRegionPicker, NewsTagPicker, TransitionPanel, TranslationEditor } from '@/components';
 import { LeadImagePicker } from '@/components/LeadImagePicker';
+import { AssignmentParts } from '@/components/AssignmentParts';
 import { Badge, Empty, Panel, StatusBadge, WorkflowSteps } from '@/components/ui';
 import { SourceBars, ViewsChart } from '@/components/PerformanceParts';
 import { ApiError, api, getPrincipal } from '@/lib/current';
@@ -214,11 +215,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
           </Panel>
 
           <Panel title="Assignments" id="assign-h">
-            {assignments.length === 0 ? <Empty>Nobody is assigned.</Empty> : (
-              <ul className="space-y-1 text-sm">
-                {assignments.map((a) => <li key={a.id}>{a.assignee} · {a.role.replace('_', ' ')} · <span className="text-muted">{a.status}{a.dueAt ? ` · due ${formatDateTime(a.dueAt)}` : ''}</span></li>)}
-              </ul>
-            )}
+            <AssignmentParts newsId={id} assignments={assignments} canCreate={can(principal, 'news.edit')} />
           </Panel>
         </div>
       </div>
