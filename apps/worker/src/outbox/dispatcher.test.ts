@@ -17,6 +17,7 @@ describe('event routes', () => {
       'news.archived': { newsId: id },
       'news.schedule_failed': { newsId: id, scheduleId: id, reason: 'x' },
       'config.flag_changed': { key: 'ads.serving', enabled: true },
+      'card.requested': { generatedCardId: id },
     };
     expect(Object.keys(samples).sort()).toEqual([...outboxEventTypes].sort());
     for (const type of outboxEventTypes) {

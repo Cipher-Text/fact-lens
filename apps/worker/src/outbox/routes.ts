@@ -27,6 +27,7 @@ const routes: { [K in OutboxEventType]: (p: import('@fact-lens/contracts').Outbo
     job('notification.send', { kind: 'schedule_failed', newsId: p.newsId, scheduleId: p.scheduleId, reason: p.reason }),
   ],
   'config.flag_changed': () => [job('cache.invalidate', { tags: ['config'] })],
+  'card.requested': (p) => [job('media.card_generate', { generatedCardId: p.generatedCardId })],
 };
 
 export function planJobs(eventType: string, payload: unknown): PlannedJob[] {

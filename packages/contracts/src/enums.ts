@@ -32,6 +32,7 @@ export const commentStatuses = ['open', 'resolved'] as const;
 export const scheduleStatuses = ['pending', 'published', 'cancelled', 'failed'] as const;
 export const cardAspectRatios = ['square', 'vertical', 'landscape'] as const;
 export const cardTemplateStatuses = ['draft', 'active', 'retired'] as const;
+export const generatedCardRenderStatuses = ['pending', 'processing', 'ready', 'failed'] as const;
 export const advertiserStatuses = ['active', 'archived'] as const;
 export const campaignStatuses = ['draft', 'active', 'paused', 'ended'] as const;
 export const adFormats = ['image', 'html'] as const;
