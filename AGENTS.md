@@ -14,14 +14,14 @@ Fact Lens is a Bangla and English news platform. This repository is the main pro
 | `packages/config` | Typed environment validation for the API, worker and newsroom. All three read the single root `.env`. |
 | `packages/contracts` | Zod schemas and enums shared across apps, including the news item body contract and job and event contracts. |
 | `infrastructure/` | Local PostgreSQL, Redis and MinIO (docker compose). |
-| `docs/` | The plan (docs 01 to 21) and `22-implementation-status.md`, which says what is built. `docs/15-repository-structure.md` has the layout and ownership rules. |
+| `docs/` | The plan (docs 01 to 26) and `22-implementation-status.md`, which says what is built. `docs/15-repository-structure.md` has the layout and ownership rules. |
 
 `packages/{ui,domain,shared}` are planned and not created.
 
 ## Rules
 
 - `apps/web` has its own `AGENTS.md`, `CLAUDE.md` and `.claude/`. Work inside `apps/web` follows those rules (one ticket at a time, design-system rule IDs, no backend yet). Do not edit `apps/web/docs/design-system/`.
-- The design source is still `fact-lens-web`. Until it is archived, sync design changes into `apps/web` by `git subtree pull --prefix=apps/web <fact-lens-web> main`.
+- `fact-lens-web` holds the UI documentation and is not changed from this repo. `apps/web` is maintained here, including its API wiring. Do not run `git subtree pull` from `fact-lens-web`: it would overwrite that wiring.
 - Schema changes are new SQL migrations in `apps/api/migrations` with both Up and Down sections. Never edit a migration that is on `main`. Database tests need `TEST_DATABASE_URL`.
 - Every API route requires authentication unless marked `@Public()`. Gate actions with `@RequireCapability(...)`, never with role names. Privileged changes write an `audit_event` (and any outbox row) in the same transaction.
 - The worker must not bypass domain rules: anything that changes news item, revision or schedule state goes through an API endpoint. New outbox event types need a schema in `packages/contracts/src/jobs.ts` and a route in `apps/worker/src/outbox/routes.ts`, or the dispatcher parks them. Jobs must be safe to run twice.
