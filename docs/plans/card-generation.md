@@ -47,7 +47,7 @@ Critical (Claude): contracts, the internal endpoints, the API endpoints and temp
 
 | ID | Task | Owner | Status |
 | --- | --- | --- | --- |
-| T0 | Contracts: `card.requested` event schema, card API types | Claude | pending |
+| T0 | Contracts: `card.requested` event schema, card API types | Claude | merged |
 | T1 | Internal endpoints: card inputs and render, with storage | Claude | pending |
 | T2 | `composeCard` compositor in the worker, with tests | Codex | pending |
 | T3 | Worker `media.card_generate` job and outbox route | Codex | pending |
