@@ -1,6 +1,6 @@
 # 22 — Implementation status
 
-What exists in this repository today, how much of it has been checked, and what is not built. The other documents describe the plan; this one describes reality. Last reviewed 22 October 2026.
+What exists in this repository today, how much of it has been checked, and what is not built. The other documents describe the plan; this one describes reality. Last reviewed 13 November 2026.
 
 ## How to read this
 
@@ -17,7 +17,7 @@ What exists in this repository today, how much of it has been checked, and what 
 | 1. Foundation and newsroom shell | Mostly done | Monorepo, API, migrations, OIDC bearer auth, capability checks, audit and outbox, worker, contracts, newsroom shell. Missing: OpenAPI generation, Docker images, deployment skeleton, tracing and metrics. See [20](./20-phase-1-backlog.md). |
 | 2. Editorial core | Largely done | News item, revision and translation commands, workflow, Tiptap editor, sources, comments, assignments, corrections, timeline, scheduling and scheduled publishing, media library. Missing: branded card generation, taxonomy merge and impact preview, the advertising screens. |
 | 3. Migration tooling and rehearsal | Not started | |
-| 4. Public web and cutover | Early | `apps/web` is the new design on mock data. The API has a published-news read model with slug redirects and public media, plus public per-language navigation and category and tag lists. `apps/web` calls none of it. There is no search route, sitemap, legacy redirects, newsletter or ad serving. The view beacon, the Most read list and the newsroom's performance reports are built ([25](./25-most-read-and-performance.md)), but `apps/web` neither sends views nor reads them. |
+| 4. Public web and cutover | Early | `apps/web` is the new design on mock data. The API has a published-news read model with slug redirects and public media, plus public per-language navigation and category and tag lists. `apps/web` calls only the navigation, social-link and poll endpoints, and only when `FACTLENS_API_URL` is set. There is no search route, sitemap, legacy redirects, newsletter or ad serving. The view beacon, the Most read list and the newsroom's performance reports are built ([25](./25-most-read-and-performance.md)), but `apps/web` neither sends views nor reads them. |
 | 5. Ingestion and AI assistance | Not started | Feature flags and AI configuration rows exist and do nothing. The cache, search and notification jobs only log. |
 | 6. Distribution and analytics | Not started | |
 | 7. Advanced discovery | Not started | |
@@ -68,12 +68,12 @@ What exists in this repository today, how much of it has been checked, and what 
 | Outbox dispatcher, jobs, idempotency, scheduled publish | Tested against real PostgreSQL and Redis; a real API and worker run was also hand-checked |
 | Media upload, sanitizing, variants, rights, public serving | Tested. Storage tests run against a stand-in S3 server; the real MinIO run is added to CI and **has not yet been seen to pass** |
 | Newsroom screens and the editor | Libraries, renderer and proxy rules tested; the screens themselves are **hand-checked only**, there are no browser tests. The tag picture chooser has not been hand-checked |
-| Public web | 251 tests in `apps/web`; it does not use the API |
+| Public web | 418 tests in `apps/web`; it calls the API only for the header menu, social links and daily poll, and only when `FACTLENS_API_URL` is set |
 
 ## Not built, in one place
 
 - **Delivery:** Docker images, deployment, secret scanning, dependency scanning, OpenAPI generation.
-- **Operations:** tracing, metrics, Sentry, dashboards, backups, rate limits (the numbers are seeded, nothing enforces them).
+- **Operations:** tracing, metrics, Sentry, dashboards, backups, rate limits (the seeded numbers are read only by the view beacon, `rate_limit.news_view_beacon`; the poll vote limit is enforced in code, not from these numbers, and the other seeded limits are not read by anything yet).
 - **Auth:** token refresh, desk-scoped roles, a real identity provider (only the fake one has been used).
 - **Media:** variant generation in the worker, malware scanning, crop and focal point, social cards, orphan sweep, cipher-press upload migration, CDN.
 - **Editorial:** HTML import fixture, autosave, side-by-side locales, comment replies in the UI, audit search, taxonomy merge.
