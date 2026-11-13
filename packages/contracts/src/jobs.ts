@@ -17,6 +17,7 @@ export const outboxEventSchemas = {
   'news.archived': z.object({ newsId: idSchema }),
   'news.schedule_failed': z.object({ newsId: idSchema, scheduleId: idSchema, reason: z.string() }),
   'config.flag_changed': z.object({ key: z.string(), enabled: z.boolean() }),
+  'card.requested': z.object({ generatedCardId: idSchema }),
 } as const;
 
 export type OutboxEventType = keyof typeof outboxEventSchemas;
