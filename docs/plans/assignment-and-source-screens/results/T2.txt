@@ -1,0 +1,7 @@
+Implemented the Sources panel controls in [SourceParts.tsx](/Users/imran/Documents/Repo/Cipher-Text/factlens/fact-lens-source-panel/apps/newsroom/src/components/SourceParts.tsx), with pure helpers and tests in [sources.ts](/Users/imran/Documents/Repo/Cipher-Text/factlens/fact-lens-source-panel/apps/newsroom/src/lib/sources.ts) and [sources.test.ts](/Users/imran/Documents/Repo/Cipher-Text/factlens/fact-lens-source-panel/apps/newsroom/src/lib/sources.test.ts). The news item page now uses the component in its Sources panel.
+
+Verification output:
+
+- `pnpm --filter @fact-lens/newsroom typecheck` — route types generated successfully; no TypeScript diagnostics.
+- `pnpm --filter @fact-lens/newsroom lint` — passed; no output.
+- `pnpm --filter @fact-lens/newsroom test` — 10 test files passed, 73 tests passed.

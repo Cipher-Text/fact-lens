@@ -1,0 +1,9 @@
+Implemented the assignment panel in [AssignmentParts.tsx](/Users/imran/Documents/Repo/Cipher-Text/factlens/fact-lens-assignment-panel/apps/newsroom/src/components/AssignmentParts.tsx) and replaced only the Assignments panel in the news item page.
+
+The create form is shown to people with `news.edit`. Open assignments have Complete and Cancel actions. Failed requests show the API message and issues; the form values remain in place.
+
+**Verification output**
+
+- `pnpm --filter @fact-lens/newsroom typecheck` — failed because `@fact-lens/contracts` (and `@fact-lens/config`) could not be resolved, causing cascading type errors.
+- `pnpm --filter @fact-lens/newsroom lint` — passed with no output.
+- `pnpm --filter @fact-lens/newsroom test` — 28 tests passed; 3 suites failed because Vitest could not resolve `@fact-lens/contracts`.
