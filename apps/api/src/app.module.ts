@@ -21,6 +21,7 @@ import { createStorage, OBJECT_STORAGE } from './media/storage';
 import { ContributorsController } from './contributors/contributors.controller';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
+import { CardsService } from './cards/cards.service';
 import { AssignmentsService } from './news/assignments.service';
 import { CollabController } from './news/collab.controller';
 import { CommentsService } from './news/comments.service';
@@ -63,6 +64,7 @@ import type { Pool } from 'pg';
     ViewsService,
     AnalyticsService,
     MediaService,
+    CardsService,
     NewsService,
     TaxonomyService,
     CommentsService,

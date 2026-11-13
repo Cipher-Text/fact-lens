@@ -1,5 +1,5 @@
 import {
-  Body, CanActivate, Controller, ExecutionContext, HttpCode, Inject, Injectable, Param, ParseUUIDPipe, Post, Req,
+  BadRequestException, Body, CanActivate, Controller, ExecutionContext, Get, HttpCode, Inject, Injectable, Param, ParseUUIDPipe, Post, Req,
   ServiceUnavailableException, UnauthorizedException, UseGuards,
 } from '@nestjs/common';
 import { feedIngestSchema, INTERNAL_TOKEN_HEADER, type AnalyticsRollupResult, type FeedIngestResult, type ScheduledPublishResult } from '@fact-lens/contracts';
@@ -10,6 +10,7 @@ import { parse } from '../common/http';
 import { ViewsService } from '../analytics/views.service';
 import { InboxService } from '../inbox/inbox.service';
 import { NewsService } from '../news/news.service';
+import { CardsService } from '../cards/cards.service';
 
 export const INTERNAL_TOKEN = Symbol('INTERNAL_TOKEN');
 
@@ -42,6 +43,7 @@ export class InternalController {
     @Inject(NewsService) private readonly news: NewsService,
     @Inject(InboxService) private readonly inbox: InboxService,
     @Inject(ViewsService) private readonly views: ViewsService,
+    @Inject(CardsService) private readonly cards: CardsService,
   ) {}
 
   /** Adds the finished hours of the view counters to the durable table. Safe to call again: an hour is added once. */
@@ -63,5 +65,19 @@ export class InternalController {
   @HttpCode(200)
   ingestFeed(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @Req() req: FastifyRequest): Promise<FeedIngestResult> {
     return this.inbox.ingest(id, parse(feedIngestSchema, body), String(req.id));
+  }
+
+  /** Everything the worker needs to composite one card. Refuses, and marks the card failed, when its source cannot be used. */
+  @Get('cards/:id/inputs')
+  cardInputs(@Param('id', ParseUUIDPipe) id: string, @Req() req: FastifyRequest) {
+    return this.cards.inputsFor(id, String(req.id));
+  }
+
+  /** Stores a rendered card (WebP). Safe to call again: a ready card is left as it is. */
+  @Post('cards/:id/render')
+  @HttpCode(200)
+  storeCardRender(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @Req() req: FastifyRequest) {
+    if (!Buffer.isBuffer(body)) throw new BadRequestException('Send the rendered card as the request body');
+    return this.cards.storeRender(id, body, String(req.id));
   }
 }
