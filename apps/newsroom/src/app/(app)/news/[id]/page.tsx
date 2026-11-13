@@ -6,6 +6,7 @@ import {
 } from '@fact-lens/contracts';
 import { RichBody } from '@/components/RichBody';
 import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, NewsRegionPicker, NewsTagPicker, TransitionPanel, TranslationEditor } from '@/components';
+import { SourceParts } from '@/components/SourceParts';
 import { LeadImagePicker } from '@/components/LeadImagePicker';
 import { AssignmentParts } from '@/components/AssignmentParts';
 import { Badge, Empty, Panel, StatusBadge, WorkflowSteps } from '@/components/ui';
@@ -202,16 +203,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
           </Panel>
 
           <Panel title="Sources" id="sources-h">
-            {sources.length === 0 ? <Empty>No sources attached.</Empty> : (
-              <ul className="space-y-2 text-sm">
-                {sources.map((s) => (
-                  <li key={s.id}>
-                    <span className="font-medium">{s.title}</span> <Badge tone={s.validationStatus === 'valid' ? 'good' : s.validationStatus === 'rejected' ? 'bad' : 'neutral'}>{s.validationStatus}</Badge>
-                    <div className="text-muted">{s.relation} · {s.useType}{s.publisher ? ` · ${s.publisher}` : ''}</div>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <SourceParts newsId={id} sources={sources} canEdit={can(principal, 'news.edit')} canReview={can(principal, 'news.review')} />
           </Panel>
 
           <Panel title="Assignments" id="assign-h">
