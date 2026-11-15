@@ -22,6 +22,8 @@ import { ContributorsController } from './contributors/contributors.controller';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
 import { CardsService } from './cards/cards.service';
+import { CardsController } from './cards/cards.controller';
+import { CardRequestsService } from './cards/card-requests.service';
 import { AssignmentsService } from './news/assignments.service';
 import { CollabController } from './news/collab.controller';
 import { CommentsService } from './news/comments.service';
@@ -42,7 +44,7 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+  controllers: [CardsController, PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
   providers: [
     { provide: SITE_INFO, useFactory: () => siteFromEnv(loadApiEnv()) },
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
@@ -65,6 +67,7 @@ import type { Pool } from 'pg';
     AnalyticsService,
     MediaService,
     CardsService,
+    CardRequestsService,
     NewsService,
     TaxonomyService,
     CommentsService,
