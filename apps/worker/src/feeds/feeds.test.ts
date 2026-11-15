@@ -171,6 +171,8 @@ describe.skipIf(!adminUrl)('feed jobs (database)', () => {
       publishSchedule: async () => ({ result: 'published', newsId: null }),
       ingestFeed: async (_id, r) => { reports.push(r); return { inserted: r.items.length, duplicates: 0, skipped: 0 }; },
       rollupViews: async () => ({ buckets: 0, skipped: 0, rows: 0 }),
+      cardInputs: async () => null,
+      renderCard: async () => true,
     },
   });
 
