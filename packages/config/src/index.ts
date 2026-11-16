@@ -44,8 +44,6 @@ export const apiEnvSchema = z.object({
   GEMINI_MODEL: z.string().min(1).default('gemini-2.5-flash'),
   /** Keys the hashes behind poll votes. Unset, it is derived from INTERNAL_API_TOKEN; with neither, voting is off. */
   POLL_HASH_SECRET: z.string().min(32).optional(),
-  /** How many votes one network address may cast on one poll in 24 hours. Above 1 so offices and mobile networks still work. */
-  POLL_VOTES_PER_IP_PER_DAY: z.coerce.number().int().min(1).max(1000).default(5),
   // The public site's identity: its social accounts and contact details. They are deployment settings, not
   // editorial data, so they come from here and nowhere else. Empty means not set: the site keeps its default
   // social links (each network's front page) and shows no contact detail.

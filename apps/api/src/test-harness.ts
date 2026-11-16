@@ -96,7 +96,7 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       { provide: REDIS_CLIENT, useValue: redis }, { provide: VIEWS_OPTIONS, useValue: viewsOptions }, ViewsService, AnalyticsService,
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
       NewsService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, InboxService, PollsService, MediaService, CardsService, CardRequestsService,
-      { provide: POLL_OPTIONS, useValue: opts.polls ?? { secret: 'test-poll-secret-0123456789abcdef0123456789', perIpPerDay: 3 } },
+      { provide: POLL_OPTIONS, useValue: opts.polls ?? { secret: 'test-poll-secret-0123456789abcdef0123456789' } },
       { provide: OBJECT_STORAGE, useValue: storage },
       { provide: MEDIA_OPTIONS, useValue: { maxBytes: opts.maxUploadBytes ?? 10 * 1024 * 1024 } },
       { provide: TOKEN_VERIFIER, useValue: verifier },

@@ -14,8 +14,6 @@ export const POLL_OPTIONS = Symbol('POLL_OPTIONS');
 export interface PollOptions {
   /** Keys the vote hashes. Null turns voting off: without it a vote could not be kept private. */
   secret: string | null;
-  /** Votes one address may cast on one poll in 24 hours. */
-  perIpPerDay: number;
 }
 
 type Db = Pool | PoolClient;
@@ -204,10 +202,10 @@ export class PollsService {
       const earlier = await db.query('SELECT 1 FROM poll_vote WHERE poll_id = $1 AND token_hash = $2', [id, tokenHash]);
       if (earlier.rowCount === 0) {
         if (ipHash) {
-          const n = await db.query<{ n: number }>(
-            `SELECT count(*)::int AS n FROM poll_vote WHERE poll_id = $1 AND ip_hash = $2 AND created_at > now() - interval '24 hours'`, [id, ipHash]);
-          if (n.rows[0]!.n >= this.opts.perIpPerDay) {
-            throw new HttpException({ message: 'Too many votes from this network today. Try again tomorrow.', reason: 'poll_ip_limit' }, HttpStatus.TOO_MANY_REQUESTS);
+          // One vote per network address per poll. A new browser from an address that already voted is refused.
+          const seen = await db.query('SELECT 1 FROM poll_vote WHERE poll_id = $1 AND ip_hash = $2 LIMIT 1', [id, ipHash]);
+          if (seen.rowCount) {
+            throw new HttpException({ message: 'This network has already voted in this poll.', reason: 'poll_ip_limit' }, HttpStatus.TOO_MANY_REQUESTS);
           }
         }
         await db.query('INSERT INTO poll_vote (poll_id, option_id, token_hash, ip_hash) VALUES ($1, $2, $3, $4)', [id, optionId, tokenHash, ipHash]);

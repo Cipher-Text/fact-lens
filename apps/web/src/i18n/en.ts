@@ -112,7 +112,7 @@ export const en: Dictionary = {
     totalOne: "{count} vote",
     closed: "Voting has closed",
     error: "Your vote could not be counted. Try again.",
-    limit: "Too many votes from this network today. Try again tomorrow.",
+    limit: "This network has already voted in this poll.",
   },
   ads: {
     label: "Advertisement",
