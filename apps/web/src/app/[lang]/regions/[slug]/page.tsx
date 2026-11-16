@@ -5,6 +5,8 @@ import { RegionPageView } from "@/components/region/RegionPageView";
 import { getRegionPage, getRegionSlugs } from "@/content";
 import { getDictionary, isLang, langs, localizedPath } from "@/i18n";
 import { topicRobots } from "@/lib/seo";
+import { apiBase } from "@/lib/api/client";
+import { regionPageFromApi } from "@/lib/api/home";
 
 // One template for every region (spacing-layout-system.md 7C.2 Paths, Region row; DR-411).
 // Built at build time for bn and en. An unknown slug is a 404.
@@ -21,7 +23,7 @@ export async function generateMetadata({
 }: PageProps<"/[lang]/regions/[slug]">): Promise<Metadata> {
   const { lang, slug } = await params;
   if (!isLang(lang)) return {};
-  const page = getRegionPage(lang, slug);
+  const page = apiBase() ? await regionPageFromApi(lang, slug) : getRegionPage(lang, slug);
   if (!page) return {};
   return {
     title: getDictionary(lang).regions[page.region],

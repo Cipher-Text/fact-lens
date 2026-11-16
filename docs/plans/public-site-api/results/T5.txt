@@ -1,0 +1,10 @@
+Implemented API-backed homepage, regions hub, and region pages. Mock mode remains unchanged; API errors propagate, empty sections stay empty, and unsupported region slugs return `undefined` and lead to `notFound()`. Added adapter tests. No components or mock content were changed.
+
+**Verification**
+
+- `pnpm --filter fact-lens-web typecheck` — passed.
+- `pnpm --filter fact-lens-web lint` — passed with no warnings.
+- `pnpm --filter fact-lens-web test` — passed: 41 files, 440 tests.
+- `pnpm --filter fact-lens-web build` — passed.
+
+`git diff --check` also passed. No dev server was started, and no commit was made.

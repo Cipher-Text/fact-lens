@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { RegionsPageView } from "@/components/region-hub/RegionsPageView";
 import { getRegionsPage } from "@/content";
 import { getDictionary, isLang, localizedPath } from "@/i18n";
+import { apiBase } from "@/lib/api/client";
+import { regionsPageFromApi } from "@/lib/api/home";
 
 // The region hub (spacing-layout-system.md 7C.2 Paths, Region hub row). Built at build
 // time for bn and en: the [lang] layout gives the params.
@@ -31,5 +33,6 @@ export default async function RegionsRoute({
 }: PageProps<"/[lang]/regions">) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
-  return <RegionsPageView page={getRegionsPage(lang)} />;
+  const page = apiBase() ? await regionsPageFromApi(lang) : getRegionsPage(lang);
+  return <RegionsPageView page={page} />;
 }

@@ -16,6 +16,8 @@ import { getHomepage } from "@/content";
 import { getDictionary, isLang } from "@/i18n";
 import { fetchFeaturedPoll, VOTER_COOKIE } from "@/lib/poll-api";
 import { fetchSocialLinks } from "@/lib/social-api";
+import { apiBase } from "@/lib/api/client";
+import { homepageFromApi } from "@/lib/api/home";
 import { cn } from "@/lib/utils";
 
 // The page reads searchParams, so it renders on each request: the footer year is the
@@ -30,12 +32,14 @@ export default async function HomePage({
   if (!isLang(lang)) notFound();
   const { content } = await searchParams;
   const t = getDictionary(lang);
-  const home = getHomepage(lang, {
-    variant:
-      process.env.NODE_ENV !== "production" && content === "sparse"
-        ? "sparse"
-        : "full",
-  });
+  const home = apiBase()
+    ? await homepageFromApi(lang)
+    : getHomepage(lang, {
+        variant:
+          process.env.NODE_ENV !== "production" && content === "sparse"
+            ? "sparse"
+            : "full",
+      });
   // The poll the newsroom put on the homepage, when the API is set up; else the mock poll (DR-01).
   const livePoll = home.grouped
     ? await fetchFeaturedPoll(lang, (await cookies()).get(VOTER_COOKIE)?.value)
