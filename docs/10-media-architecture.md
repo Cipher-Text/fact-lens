@@ -22,6 +22,8 @@ This keeps card generation fast, free of per-call AI cost, and visually consiste
 
 Validate template assets (SVG/font files) the same way as any upload — no active content, size/dimension caps, isolated rendering.
 
+**Built:** card requests, templates and rendering, with no uploaded template assets. The only fonts are the two bundled with the worker, Noto Sans and Noto Sans Bengali, under the SIL Open Font License (`apps/worker/assets/fonts`). The worker composites and sends the result to the API, which checks its type and size and stores it. Decisions: [ADR-035](./17-architecture-decisions.md). Open: two cards that render to identical bytes collide on the unique checksum ([open question 29](./19-open-questions.md)).
+
 ## Rights and attribution
 
 Capture owner, license/rights status, credit line, embargo/expiry, source attribution and permitted channels. A media asset can be attached to multiple revisions only when rights permit. Prevent publication when required rights fields are incomplete.

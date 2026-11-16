@@ -1,6 +1,6 @@
 # 20 — Phase 1 backlog
 
-This is a capability backlog, not an estimate. Each item is tagged with where it stands as of 21 October 2026; [implementation status](./22-implementation-status.md) has the summary.
+This is a capability backlog, not an estimate. Each item is tagged with where it stands as of 16 November 2026; [implementation status](./22-implementation-status.md) has the summary.
 
 ## Epic A — Repository and delivery foundation
 
@@ -15,7 +15,7 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 - Add PostgreSQL migrations, connection pooling and transaction helpers. *Done.*
 - Implement News item, NewsRevision, NewsTranslation, Contributor, Category, Tag, Desk and MediaAsset tables. *Done.*
 - Implement Source/NewsSource, Assignment, Comment, Correction, AuditEvent and Outbox tables. *Done.*
-- Implement CardTemplate and GeneratedCard tables. *Tables done; no endpoints or generation job.*
+- Implement CardTemplate and GeneratedCard tables. *Done: tables, endpoints and the render job; templates take no uploaded assets yet.*
 - Implement Configuration and FeatureFlag tables (workflow-transition policy, AI provider/model/budget, rate limits, retention rules, supported locales; see [configuration and feature flags](./21-configuration-and-feature-flags.md)).
 - Add slug/canonical/redirect registry and publication read models. *Partial: the slug registry, redirects between a news item's own slugs and the published news item read model are done; a registry of legacy URLs is not.*
 
@@ -31,20 +31,20 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 - Tiptap document schema, sanitization and HTML import compatibility fixture. *Partial: schema, validation and the editor are done; the HTML import fixture is not.*
 - Workflow transition policy and publish/schedule validation. *Done.*
 - Categories and tags in every supported language (menu order, descriptions, tag pictures), language administration, and per-language public navigation and lists. *Done in the API and the newsroom; `apps/web` does not use them yet.*
-- Source attachment, comments, assignments, correction record and revision timeline. *Done in the API; the newsroom lacks screens to create assignments and sources.*
+- Source attachment, comments, assignments, correction record and revision timeline. *Done in the API and the newsroom (assignment and source panels).*
 
 ## Epic E — Async and operations
 
 - Add Redis/BullMQ worker scaffold and idempotent job envelope. *Done.*
 - Add transactional outbox dispatcher with retries/dead-letter visibility. *Done; dead letters show as counts on the worker health endpoint, no dashboard.*
-- Add cache invalidation, search projection, media-variant and branded photocard/poster generation (`media.card_generate`) job stubs. *Done as stubs: cache and search log and succeed; media jobs fail as "not implemented".*
+- Add cache invalidation, search projection, media-variant and branded photocard/poster generation (`media.card_generate`) job stubs. *Cache and search log and succeed; media-variant fails as "not implemented"; card generation is built.*
 - Add structured logs, traces/metrics baseline, Sentry integration and queue/database dashboards. *Partial: JSON logs and health endpoints; no traces, metrics, Sentry or dashboards.*
 
 ## Epic F — Newsroom shell
 
 - Desk queue (numbers, stage tabs, table) and news item workspace in the Admin UI design ([docs/design](./design/newsroom-admin-ui.html)). *Done; the design's fact-check panel is not built (open question 15).*
 - Revision/history and comments panels. *Partial: timeline and comments done; no revision list or comparison screen.*
-- Source inbox placeholder and media library, including branded photocard/poster generation from a photo using FactLens templates. *Partial: placeholder and media library done; card generation not.*
+- Source inbox placeholder and media library, including branded photocard/poster generation from a photo using FactLens templates. *Done: the source inbox, the media library and the card panel. Template management is API-only.*
 - Publish/schedule review screen with capability-aware controls. *Partial: next steps (including scheduling) are on the news item page; no separate review screen or calendar.*
 - Configuration screen (workflow policy, AI budgets, rate limits, retention rules, feature flags), gated by `config.manage`. *Partial: feature flags and supported languages only.*
 
