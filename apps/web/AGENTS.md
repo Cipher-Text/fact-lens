@@ -12,7 +12,7 @@ Fact Lens is a Bangladesh-first international news publisher. It publishes in Ba
 | --- | --- |
 | Current work | M2 production build, one page or task at a time (Section 9). State: `docs/STATUS.md`. Open items and flags: `docs/ISSUES.md` |
 | Live preview | https://fact-lens-web-ashy.vercel.app/ (Vercel). Do not deploy unless tajmin asks |
-| Data | Mock data only. Do not connect a backend (`DR-01`) |
+| Data | Read from the API (`FACTLENS_API_URL`) for the menu, social links and poll; other content is still mock data until wired. The API decides what readers see. |
 | Pages | Homepage, article page and category page are done. The homepage changes like any page: a branch, checkpoints and a spec log (`DR-434`). Start a new page only with its brief (Section 9) |
 | Product | Fact Lens has no fact-checking product (`DR-18`) |
 

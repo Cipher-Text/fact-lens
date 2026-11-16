@@ -2,7 +2,7 @@
 
 ## Claude Code
 
-The text above comes from `AGENTS.md`. It is the source for every agent. This part is for Claude Code only.
+The text above comes from `AGENTS.md`. The site is API-backed (see `AGENTS.md`); the root `CLAUDE.md` roles apply to its work: normal tasks go to Codex, and Claude plans and reviews. It is the source for every agent. This part is for Claude Code only.
 
 ### Start of each session
 

@@ -6,7 +6,7 @@ Fact Lens is a Bangla and English news platform. This repository is the main pro
 
 | Path | What it is |
 | --- | --- |
-| `apps/web` | The public site, imported from `fact-lens-web` with its history (git subtree). Mock data only; its header menu, social links and daily poll are the optional calls to the API (`FACTLENS_API_URL`). |
+| `apps/web` | The public site. Its content is read from the API (`FACTLENS_API_URL`): the header menu, social links, the featured daily poll (votes go through its own route, `/api/poll`), and news once wired. Its design source is `fact-lens-web`, which holds UI documentation only. |
 | `apps/api` | NestJS on Fastify. Default-deny authentication with capability checks, the editorial workflow (`/news`), comments, assignments, sources, the media library (`/media`), reference data, feature flags, a public read model (`/public`), and an internal endpoint for the worker. Owns the SQL migrations (node-pg-migrate) and the seed. |
 | `apps/worker` | BullMQ worker: outbox dispatcher (leases, retries, dead letters), idempotent job runtime, scheduled-publish scanner, RSS feed fetching (guarded against private addresses), health endpoint. Reads PostgreSQL for the outbox and schedules but changes news item state only through the API's `/internal` endpoints. |
 | `apps/newsroom` | Editorial workspace (Next.js 16, Tailwind 4). Server-side OIDC code flow with PKCE; the access token lives in an encrypted HttpOnly cookie and the browser reaches the API only through `/api/*`, a proxy that checks the origin and an allowlist. Desk queue, news item workspace (Tiptap editor limited to the body contract, with a media picker), media library, configuration. The source inbox (RSS feeds, triage, make a news item from an item) is built; the calendar is a placeholder. |
@@ -20,7 +20,7 @@ Fact Lens is a Bangla and English news platform. This repository is the main pro
 
 ## Rules
 
-- `apps/web` has its own `AGENTS.md`, `CLAUDE.md` and `.claude/`. Work inside `apps/web` follows those rules (one ticket at a time, design-system rule IDs, no backend yet). Do not edit `apps/web/docs/design-system/`.
+- `apps/web` has its own `AGENTS.md`, `CLAUDE.md` and `.claude/`. Work inside `apps/web` follows those rules (one ticket at a time, design-system rule IDs). It is API-backed: read from the API, and the API decides what readers see. Do not edit `apps/web/docs/design-system/`.
 - `fact-lens-web` holds the UI documentation and is not changed from this repo. `apps/web` is maintained here, including its API wiring. Do not run `git subtree pull` from `fact-lens-web`: it would overwrite that wiring.
 - Schema changes are new SQL migrations in `apps/api/migrations` with both Up and Down sections. Never edit a migration that is on `main`. Database tests need `TEST_DATABASE_URL`.
 - Every API route requires authentication unless marked `@Public()`. Gate actions with `@RequireCapability(...)`, never with role names. Privileged changes write an `audit_event` (and any outbox row) in the same transaction.
