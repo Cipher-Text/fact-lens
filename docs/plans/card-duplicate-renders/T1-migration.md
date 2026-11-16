@@ -50,10 +50,15 @@ Any other migration, application code (T2), docs (T3), any `.env` file.
 
 ## Verification
 
+Use a scratch database, never the test database. Apply the Up section, check, then the Down section, with `psql` and `ON_ERROR_STOP`:
+
 ```bash
-# on a scratch database (not the test database)
-createdb fl_mig_scratch  # via the factlens role
-DATABASE_URL=postgres://factlens:factlens@localhost:5432/fl_mig_scratch pnpm --filter @fact-lens/api migrate up
-DATABASE_URL=postgres://factlens:factlens@localhost:5432/fl_mig_scratch pnpm --filter @fact-lens/api migrate down
+psql "postgres://factlens:factlens@localhost:5432/postgres" -c "CREATE DATABASE fl_mig_scratch"
+# apply all migrations 1 to 27 first, then the new file's Up section
+psql "postgres://factlens:factlens@localhost:5432/fl_mig_scratch" -v ON_ERROR_STOP=1 -f <Up section extracted from the new file>
+psql "postgres://factlens:factlens@localhost:5432/fl_mig_scratch" -c "\\di media_asset_sha256*"
+# insert the rows for acceptance 2 and 4, then run the Down section
+psql "postgres://factlens:factlens@localhost:5432/postgres" -c "DROP DATABASE fl_mig_scratch WITH (FORCE)"
 ```
-Then insert the rows described in acceptance 2 and 4 with `psql` and report the results. Drop the scratch database when done.
+
+Report the index definitions and the results of each insert. Acceptance 3 (the Down section on clean data) is checked by the same run.
