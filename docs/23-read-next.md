@@ -1,6 +1,6 @@
 # 23 — Read next (the related news under an article)
 
-**Status: PROPOSED. Not approved, not built.** This document records the concept and the decision to write it down before building it ([ADR-030](./17-architecture-decisions.md)). Nothing here is in the API, the newsroom or the contracts yet. The rules in section 3 are proposals that need approval (section 8).
+**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Not built.** This document records the concept and the decision to write it down before building it ([ADR-030](./17-architecture-decisions.md)). Nothing here is in the API, the newsroom or the contracts yet. The rules in section 3 are proposals that need approval (section 8).
 
 ## 1. What it is
 

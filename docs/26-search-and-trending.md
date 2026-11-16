@@ -1,6 +1,6 @@
 # 26 — Public search and trending search terms
 
-**Status: PROPOSED. Not approved, not built.** This records the concept for the public site's search and its "Trending" row, and the decision to write it down first ([ADR-034](./17-architecture-decisions.md)). It builds on the plan in [09](./09-search-and-discovery.md) (PostgreSQL first, OpenSearch later). Nothing here is in the database, the API, the worker or the newsroom yet.
+**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Not built.** This records the concept for the public site's search and its "Trending" row, and the decision to write it down first ([ADR-034](./17-architecture-decisions.md)). It builds on the plan in [09](./09-search-and-discovery.md) (PostgreSQL first, OpenSearch later). Nothing here is in the database, the API, the worker or the newsroom yet.
 
 ## 1. What the public site has
 

@@ -50,6 +50,8 @@ These were not in the original plan. Each is built and tested; revisit one if it
 
 38. **ADR-038: The full check runs packages and database test files one at a time.** The root `test` script runs packages in sequence, and the API and worker run their database files one at a time. Parallel runs made two packages share the vitest cache and made database suites contend for one PostgreSQL, which caused random failures. The cost is a slower check (about a minute on a developer machine). Tests are not skipped or changed to pass. Revisit if the check becomes too slow, for example with a shared pre-migrated template database.
 
+39. **ADR-039: The public-site defaults for Read next, reading time and search are approved.** The rules and weights of Read next (doc 23) are the first version. Topics are the existing tags until a topic table is approved. Opinion may appear in Read next at most once, and only when it shares a topic. Reading time ships with the editor override (doc 24). Trending starts from the editorial list, with computed terms later. Search uses `simple` with trigram matching on titles, without a Bangla dictionary, to be revisited on measured quality (doc 26). Search queries are not kept until a privacy review. Recorded here because the defaults for topics and query retention were chosen by the lead, not stated by the specs.
+
 ## Deferred with revisit triggers
 
 - **OpenSearch:** advanced faceting/autocomplete/semantic or measured scale/latency.
