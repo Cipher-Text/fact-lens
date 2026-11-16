@@ -600,6 +600,9 @@ export class NewsService {
           WHERE c.news_id = $1 AND r.revision_no <= $3 ORDER BY c.approved_at`, [row.news_id, locale, m.revision_no]),
     ]);
     const media = await this.publicMedia(bodyMediaAssetIds(m.body));
+    const lead = await this.pool.query<{ media_asset_id: string }>(
+      `SELECT media_asset_id FROM revision_media WHERE revision_id = $1 AND role = 'lead' ORDER BY position LIMIT 1`, [m.revision_id]);
+    const leadImage = await this.taxonomy.publicImage(lead.rows[0]?.media_asset_id ?? null);
     const portraits = new Map(await Promise.all(
       [...new Set(contributors.rows.map((c) => c.image_id as string | null).filter((x): x is string => !!x))]
         .map(async (imageId) => [imageId, await this.taxonomy.publicImage(imageId)] as const)));
@@ -618,6 +621,7 @@ export class NewsService {
         alternates: alternates.rows.map((a) => ({ locale: a.locale, slug: a.slug })),
         corrections: corrections.rows.map((c) => ({ approvedAt: c.approved_at.toISOString(), notice: c.notice })),
         media,
+        leadImage,
         category: refs.category,
         categories: refs.categories,
         regions: refs.regions,

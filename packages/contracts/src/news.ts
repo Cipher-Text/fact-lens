@@ -162,6 +162,8 @@ export const publicNewsSchema = z.object({
   corrections: z.array(z.object({ approvedAt: timestampSchema, notice: z.string() })),
   /** The images the body refers to, with what a reader's page needs to show them. */
   media: z.array(publicMediaSchema),
+  /** The lead image of the published revision, as readers may see it (ready, allowed on the web, rights not expired). Null otherwise. */
+  leadImage: publicMediaSchema.nullable(),
   /** In this news item's language only; null / left out when it has no name in that language. */
   category: publicTaxonomyRefSchema.nullable(),
   /** Every section the item appears in, the primary one first. */

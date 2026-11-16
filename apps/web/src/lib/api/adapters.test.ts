@@ -18,7 +18,7 @@ const news = publicNewsSchema.parse({
   updatedAt: "2026-01-02T03:04:05Z", contributors: [
     { contributor: { id: "33333333-3333-4333-8333-333333333333", kind: "person", displayName: "Writer One", bio: null, image: null, socialLinks: [] }, role: "editor" },
     { contributor: { id: "44444444-4444-4444-8444-444444444444", kind: "person", displayName: "Writer Two", bio: null, image: null, socialLinks: [] }, role: "author" },
-  ], alternates: [], corrections: [], media: [], categories: [listItem.category], regions: [
+  ], alternates: [], corrections: [], media: [], leadImage: null, categories: [listItem.category], regions: [
     { key: "europe", name: "Europe", slug: "europe" }, { key: "unknown", name: "Unknown", slug: "unknown" },
     { key: "china", name: "China", slug: "china" },
   ], tags: [],

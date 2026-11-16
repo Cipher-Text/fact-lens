@@ -105,6 +105,25 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     return id;
   }
 
+  it('shows the lead image to readers, and drops it once its rights lapse', async () => {
+    const id = await draftNews('lead-photo');
+    const asset = await db.pool.query(
+      `INSERT INTO media_asset (object_key, mime_type, byte_size, sha256, width, height, processing_state, permitted_channels, attribution, alt_text)
+       VALUES ('derivatives/lead-photo/card.webp', 'image/webp', 1, 'lead-sha-1', 800, 600, 'ready', '{web}', 'Photo: Test', 'A test photo') RETURNING id`);
+    const assetId = asset.rows[0].id as string;
+    const set = await call({ method: 'PUT', url: `/news/${id}/lead-image`, roles: ['reporter'], body: { mediaAssetId: assetId } });
+    expect(set.status).toBe(200);
+    expect((await move(id, 'EDITOR_REVIEW', ['reporter'])).status).toBe(201);
+    expect((await move(id, 'READY', ['fact_checker'])).status).toBe(201);
+    expect((await move(id, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
+    const shown = await app.inject({ method: 'GET', url: '/public/news/en/lead-photo' });
+    expect(shown.statusCode).toBe(200);
+    expect(shown.json().leadImage).toMatchObject({ id: assetId, alt: 'A test photo', attribution: 'Photo: Test' });
+    await db.pool.query(`UPDATE media_asset SET rights_expires_at = now() - interval '1 day' WHERE id = $1`, [assetId]);
+    const lapsed = await app.inject({ method: 'GET', url: '/public/news/en/lead-photo' });
+    expect(lapsed.json().leadImage).toBeNull();
+  });
+
   it('creates a draft with a derived slug and requires sign-in and capability', async () => {
     const res = await call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Hello, World!' } });
     expect(res.status).toBe(201);
