@@ -1,6 +1,6 @@
 # Plan: wire the public site to the API (Phase 4, step 2)
 
-Status: **awaiting approval** (plan only; no code written).
+Status: **in progress**. T1 to T4 are merged; the lead image change came in with T4 (`9aa7ae1`). T5 waits for three decisions (hero, featured sections, section rules).
 
 ## Goal
 
@@ -30,10 +30,10 @@ Out of scope for this plan (later steps): reading time, Read next, search, the v
 
 | ID | Task | Owner | Status |
 | --- | --- | --- | --- |
-| T1 | Add `@fact-lens/contracts` to `apps/web`; one API client with a timeout and schema parsing; error type for "API unavailable" | Codex | pending |
-| T2 | Adapters: API list and item to the site's `Story`, with mapping tests (contract fixtures) | Codex | pending |
-| T3 | Category, tag and analysis pages from the list endpoint with filters | Codex | pending |
-| T4 | Article page from `GET /public/news/:locale/:ref`: body mapping, contributors, corrections, alternates, 404 for unknown items | Codex | pending |
+| T1 | Add `@fact-lens/contracts` to `apps/web`; one API client with a timeout and schema parsing; error type for "API unavailable" | Codex | done (9ef0e8d) |
+| T2 | Adapters: API list and item to the site's `Story`, with mapping tests (contract fixtures) | Codex | done (b80da5b) |
+| T3 | Category, tag and analysis pages from the list endpoint with filters | Codex | done (7ae6c43) |
+| T4 | Article page from `GET /public/news/:locale/:ref`: body mapping, contributors, corrections, alternates, 404 for unknown items | Codex | done (65e0c89) |
 | T5 | Homepage and region pages derived from lists (decision 2) | Codex | pending |
 | T6 | Same-origin media rewrite and image mapping (decision 4) | Codex | pending |
 | T7 | Unavailable-API behaviour (decision 3); mock-mode e2e stays green; API-mode smoke test | Codex, then Claude reviews | pending |

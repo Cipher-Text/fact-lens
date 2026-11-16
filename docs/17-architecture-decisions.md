@@ -52,6 +52,8 @@ These were not in the original plan. Each is built and tested; revisit one if it
 
 39. **ADR-039: The public-site defaults for Read next, reading time and search are approved.** The rules and weights of Read next (doc 23) are the first version. Topics are the existing tags until a topic table is approved. Opinion may appear in Read next at most once, and only when it shares a topic. Reading time ships with the editor override (doc 24). Trending starts from the editorial list, with computed terms later. Search uses `simple` with trigram matching on titles, without a Bangla dictionary, to be revisited on measured quality (doc 26). Search queries are not kept until a privacy review. Recorded here because the defaults for topics and query retention were chosen by the lead, not stated by the specs.
 
+40. **ADR-040: The public site reads published news from the API, with these fixed choices.** The article, category, analysis and topic pages are built from the API when `FACTLENS_API_URL` is set, and from the mock content when it is not. The public news detail carries its lead image, with the same rule as the lists. The article body maps to the site's blocks: marks are dropped, and unknown nodes are logged rather than dropped silently. Reading time follows doc 24, with the default rates in the code until the runtime configuration is read. Read next is hidden in API mode until it has an API. Article addresses are generated on request in both modes. The reader figure takes a resolved image, so body pictures from the API display. Recorded because each of these is a choice the plan did not make.
+
 ## Deferred with revisit triggers
 
 - **OpenSearch:** advanced faceting/autocomplete/semantic or measured scale/latency.
