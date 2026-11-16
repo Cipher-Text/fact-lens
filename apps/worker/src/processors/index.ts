@@ -9,6 +9,7 @@ import { scanDueSchedules } from '../scan';
 import { parseFeed } from '../feeds/parse';
 import { scanDueFeeds } from '../feeds/scan';
 import type { FeedFetcher } from '../feeds/safe-fetch';
+import { composeCard, type ComposeSpec } from '../cards/compose';
 
 export interface Services {
   pool: Pool;
@@ -75,7 +76,28 @@ export const handlers: Handlers = {
     },
   },
   'media.variant': notBuilt('media.variant'),
-  'media.card_generate': notBuilt('media.card_generate'),
+  'media.card_generate': {
+    receipt: false,
+    async run({ generatedCardId }, { api, log }) {
+      const inputs = await api.cardInputs(generatedCardId);
+      if (!inputs) {
+        log.info('media.card_generate_already_ready', { generatedCardId });
+        return;
+      }
+      const bytes = await composeCard({
+        width: inputs.template.width,
+        height: inputs.template.height,
+        spec: inputs.template.spec as unknown as ComposeSpec,
+        photo: Buffer.from(inputs.source.base64, 'base64'),
+        crop: inputs.crop,
+        headline: inputs.headline,
+        byline: inputs.byline ?? undefined,
+      });
+      const rendered = await api.renderCard(generatedCardId, bytes);
+      if (!rendered) log.info('media.card_generate_already_ready', { generatedCardId });
+      else log.info('media.card_generate', { generatedCardId });
+    },
+  },
   'feed.scan': {
     receipt: false,
     async run(_payload, { pool, enqueue, log }) {
