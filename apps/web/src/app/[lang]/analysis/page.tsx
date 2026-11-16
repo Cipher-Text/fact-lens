@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { AnalysisPageView } from "@/components/analysis/AnalysisPageView";
 import { getAnalysisPage } from "@/content";
 import { getDictionary, isLang, localizedPath } from "@/i18n";
+import { apiBase } from "@/lib/api/client";
+import { analysisPageFromApi } from "@/lib/api/pages";
 
 // The analysis hub (spacing-layout-system.md 7C.2 Paths, Analysis hub row). Built at build
 // time for bn and en: the [lang] layout gives the params.
@@ -31,5 +33,6 @@ export default async function AnalysisRoute({
 }: PageProps<"/[lang]/analysis">) {
   const { lang } = await params;
   if (!isLang(lang)) notFound();
-  return <AnalysisPageView page={getAnalysisPage(lang)} />;
+  const page = apiBase() ? await analysisPageFromApi(lang) : getAnalysisPage(lang);
+  return <AnalysisPageView page={page} />;
 }

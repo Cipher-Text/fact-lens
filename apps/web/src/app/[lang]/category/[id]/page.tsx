@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { CategoryPageView } from "@/components/category/CategoryPageView";
 import { categoryIds, getCategoryPage, type CategoryId } from "@/content";
 import { getDictionary, isLang, langs, localizedPath } from "@/i18n";
+import { apiBase } from "@/lib/api/client";
+import { categoryPageFromApi } from "@/lib/api/pages";
 
 // One template for every category (spacing-layout-system.md 7B). An unknown id is a 404.
 export const dynamicParams = false;
@@ -37,5 +39,8 @@ export default async function CategoryRoute({
 }: PageProps<"/[lang]/category/[id]">) {
   const { lang, id } = await params;
   if (!isLang(lang) || !isCategory(id)) notFound();
-  return <CategoryPageView page={getCategoryPage(id, lang)} />;
+  const page = apiBase()
+    ? await categoryPageFromApi(id, lang)
+    : getCategoryPage(id, lang);
+  return <CategoryPageView page={page} />;
 }

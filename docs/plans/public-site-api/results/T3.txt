@@ -1,0 +1,15 @@
+Implemented the category, analysis, and topic API adapters and wired the pages to use them when `FACTLENS_API_URL` is set. Without it, the pages keep using mock content. Topic routes can now resolve API tags outside the mock list, and unknown localized tags call `notFound()`.
+
+**Files changed**
+
+- Added [pages.ts](/Users/imran/Documents/Repo/Cipher-Text/factlens/fact-lens/apps/web/src/lib/api/pages.ts) and [pages.test.ts](/Users/imran/Documents/Repo/Cipher-Text/factlens/fact-lens/apps/web/src/lib/api/pages.test.ts)
+- Updated the category, analysis, and topic page files under `apps/web/src/app/[lang]/`
+
+**Verification**
+
+- `pnpm --filter fact-lens-web typecheck` — passed.
+- `pnpm --filter fact-lens-web lint` — passed.
+- `pnpm --filter fact-lens-web test` — passed; 39 files, 431 tests.
+- `pnpm --filter fact-lens-web build` — passed.
+
+No dev server was started, and no commit was made. No failures remain. `UNRESOLVED_DESIGN_SYSTEM`, `DOC-` issues, and approval flags: none.

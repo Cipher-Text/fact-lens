@@ -5,10 +5,13 @@ import { TopicPageView } from "@/components/topic/TopicPageView";
 import { getTopicPage, getTopicSlugs } from "@/content";
 import { isLang, langs, localizedPath } from "@/i18n";
 import { topicRobots } from "@/lib/seo";
+import { apiBase } from "@/lib/api/client";
+import { topicPageFromApi } from "@/lib/api/pages";
 
 // One template for every topic (spacing-layout-system.md 7C.2 Paths, Topic row; DR-410).
 // Built at build time for bn and en. An unknown slug is a 404.
-export const dynamicParams = false;
+// New API tags may not be present in the mock topic list.
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return langs.flatMap((lang) =>
@@ -21,7 +24,9 @@ export async function generateMetadata({
 }: PageProps<"/[lang]/topic/[slug]">): Promise<Metadata> {
   const { lang, slug } = await params;
   if (!isLang(lang)) return {};
-  const page = getTopicPage(lang, slug);
+  const page = apiBase()
+    ? await topicPageFromApi(slug, lang)
+    : getTopicPage(lang, slug) ?? null;
   if (!page) return {};
   return {
     title: page.topic.label,
@@ -41,7 +46,9 @@ export default async function TopicRoute({
 }: PageProps<"/[lang]/topic/[slug]">) {
   const { lang, slug } = await params;
   if (!isLang(lang)) notFound();
-  const page = getTopicPage(lang, slug);
+  const page = apiBase()
+    ? await topicPageFromApi(slug, lang)
+    : getTopicPage(lang, slug) ?? null;
   if (!page) notFound();
   return <TopicPageView page={page} />;
 }
