@@ -12,7 +12,7 @@
     "build": "pnpm -r build",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
-    "test": "pnpm -r test",
+    "test": "pnpm -r --workspace-concurrency=1 test",
     "check": "pnpm test:scripts && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "dev:api": "pnpm --filter @fact-lens/api dev",
     "infra:up": "docker compose -f infrastructure/docker-compose.yml up -d",
