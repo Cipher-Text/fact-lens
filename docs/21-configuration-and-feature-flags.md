@@ -41,9 +41,9 @@ Built:
 
 - **Tables and validation:** `configuration` (one value per key and scope) and `feature_flag`; each configuration key has a value schema in `packages/contracts`, and the seed validates before it inserts.
 - **Seeded and used:** `workflow.transition_policy` (global, with a per-desk override that the workflow reads on every move).
-- **Seeded, not yet used:** nine `rate_limit.*` rows, six `ai.use_case.*` rows (budget zero). Nothing enforces or reads them yet. No `retention.*` rows exist because the policies are open ([19](./19-open-questions.md), 16).
+- **Seeded, not yet used:** nine `rate_limit.*` rows, six `ai.use_case.*` rows (budget zero). Only `rate_limit.news_view_beacon` is read (by the view beacon); the others are not read yet, and the poll vote limit is a code setting. No `retention.*` rows exist because the policies are open ([19](./19-open-questions.md), 16).
 - **Locales** are rows in `locale`, as the plan asks. An admin adds one or switches one off on the Configuration screen (`/config/locales`, `config.manage`, audited); categories and tags can then be named in it and news translated into it.
-- **Feature flags:** 11, all off, with a screen to turn them on or off. Nothing reads a flag yet except that screen.
+- **Feature flags:** 11, all off, with a screen to turn them on or off. Flags are read where they gate something: `analytics.news_views` (the view beacon) and `cards.generation` (card requests). The rest are not read yet.
 - **Admin screen:** feature flags and languages only, gated by `config.manage`, MFA-protected, with a required reason, an audit row and an outbox event on every change. Editing configuration values has no screen or endpoint.
 
 See [implementation status](./22-implementation-status.md).

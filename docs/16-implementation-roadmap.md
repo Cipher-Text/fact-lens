@@ -18,7 +18,7 @@ Exit: authenticated users can create a draft news item/revision/translation thro
 
 ## Phase 2 — Editorial core
 
-**Status:** largely done: taxonomy tables and contributors, source records, the Tiptap editor, timeline, comments, assignments, workflow, corrections, scheduling with a publishing worker, and the media library. Missing: branded card generation, taxonomy and assignment screens, and the advertising module beyond its tables.
+**Status:** largely done: taxonomy tables and contributors, source records, the Tiptap editor, timeline, comments, assignments, workflow, corrections, scheduling with a publishing worker, and the media library. Branded cards and the assignment and source screens are built. Missing: the advertising module beyond its tables (screens, serving and redirects).
 
 Deliverables: taxonomy/contributors, source records, Tiptap editor, revision timeline, comments/assignments, workflow transitions, corrections, media library, scheduling primitives, and branded photocard/poster generation (CardTemplate/GeneratedCard, deterministic template compositing). In parallel, build the advertising module (Advertiser/Campaign/Placement/Ad/AdEvent tables, targeting rules, admin screens) as a separate commercial domain module — it does not block or extend the editorial workflow.
 

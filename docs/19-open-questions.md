@@ -34,3 +34,5 @@ These require product, editorial or business input; they are not unresolved mere
 Resolved: advertising is confirmed part of the Phase 1 launch scope, carrying forward CipherPress's current Advertiser/Campaign/Placement/Ad/Event design as-is (see [product and platform scope](./02-product-and-platform-scope.md) and [domain model](./05-domain-model.md)).
 
 Resolved: Telegram channels are a named ingestion source type, using the Bot API (see [ingestion and automation](./08-ingestion-and-automation.md)); which specific channels remains covered by open question 4.
+
+29. Card renders with identical bytes. Each card output is a media asset whose checksum is unique in the database, so two cards that render to the same bytes (for example the same photo, template and text requested twice) would collide and the second render would fail. Options: keep the checksum unique and make the second request reuse the first output, or drop uniqueness for card outputs by migration. Decide before cards are used at volume.
