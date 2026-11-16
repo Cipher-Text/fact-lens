@@ -44,6 +44,8 @@ These were not in the original plan. Each is built and tested; revisit one if it
 
 35. **ADR-035: Branded cards render in the worker and are stored through the API.** The worker composites a card with sharp and the bundled Noto fonts, and reads and writes only through `/internal`; it never holds storage credentials or touches the card tables. The API checks the source rights on every render, requires WebP at the template size, and sets the output asset to ready once. Templates take no uploaded assets in v1, so no font or SVG upload path exists for them. Revisit when templates need their own assets or a second renderer.
 
+36. **ADR-036: Card outputs are exempt from the unique checksum; uploads never match them.** A branded card is derived, one per request, and identified by its card, so two cards that render to the same bytes must both succeed. The checksum index is therefore a plain lookup index plus a unique index that excludes card outputs (object keys under `derivatives/cards/`). Every other asset stays unique by checksum, which the upload race handling relies on. Upload lookups exclude card outputs, so an upload never returns one. The migration down step refuses, rather than deletes, while two assets share a checksum. The partial index depends on that key prefix, so card output keys must keep it.
+
 ## Deferred with revisit triggers
 
 - **OpenSearch:** advanced faceting/autocomplete/semantic or measured scale/latency.

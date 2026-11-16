@@ -1,6 +1,6 @@
 # Plan: card renders with identical bytes
 
-Status: **awaiting approval** (plan only; no code written). Resolves open question 29 in [docs/19](../19-open-questions.md) once approved.
+Status: **done**. Resolves open question 29 in [docs/19](../19-open-questions.md); the decision is [ADR-036](../17-architecture-decisions.md).
 
 ## Goal
 
@@ -31,9 +31,9 @@ Both are critical (migration and the upload path), so Claude implements them. Th
 
 | ID | Task | Owner | Status |
 | --- | --- | --- | --- |
-| T1 | Migration `1761000000028_card-output-checksum.sql`: partial unique index, plain lookup index, down step with a guard | Claude | pending |
-| T2 | Upload lookups exclude card outputs; tests for the race and for card/upload collisions | Claude | pending |
-| T3 | Record ADR-036, resolve open question 29, update `docs/10` and `docs/22` | Claude | pending |
+| T1 | Migration `1761000000028_card-output-checksum.sql`: partial unique index, plain lookup index, down step with a guard | Claude | merged (4b00872) |
+| T2 | Upload lookups exclude card outputs; tests for the race and for card/upload collisions | Claude | merged (9ba6b07) |
+| T3 | Record ADR-036, resolve open question 29, update `docs/10` and `docs/22` | Claude | done |
 
 Specs: [`card-duplicate-renders/`](./card-duplicate-renders/).
 
