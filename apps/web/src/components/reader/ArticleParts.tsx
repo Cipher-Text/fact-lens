@@ -87,7 +87,7 @@ function BodyBlock({ block, t }: { block: Block; t: ReaderStrings }) {
       return (
         <figure className="rd-figure">
           <Image
-            {...imageFiles[block.image]}
+            {...(typeof block.image === "string" ? imageFiles[block.image] : block.image)}
             // The caption below says what the image shows; a copy in alt would be read
             // twice. Real alt text wins when a block has it.
             alt={block.alt ?? ""}

@@ -9,12 +9,19 @@ import type { imageFiles } from "./stories";
 /** A placeholder image file from stories.ts (16:9, 3:2 or 4:3). */
 export type ImageFile = keyof typeof imageFiles;
 
+/** An image resolved to its own address (a body picture from the API). */
+export interface ResolvedImage {
+  src: string;
+  width: number;
+  height: number;
+}
+
 export type Block =
   | { type: "p"; text: string }
   | { type: "h2"; id: string; text: string }
   | {
       type: "figure";
-      image: ImageFile;
+      image: ImageFile | ResolvedImage;
       caption: string;
       credit: string;
       /** Alt text, when the image needs more than its caption says. */

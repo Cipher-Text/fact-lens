@@ -59,7 +59,7 @@ export function proxy(request: NextRequest) {
   // Next.js permanentRedirect(), so it is done here and not in the page.
   const lang = isLang(first) ? first : defaultLang;
   const story = STORY_PATH.exec(stripLang(pathname));
-  const current = story && currentStoryRef(story[1], lang);
+  const current = process.env.FACTLENS_API_URL?.trim() ? null : story && currentStoryRef(story[1], lang);
   if (current) {
     const url = request.nextUrl.clone();
     url.pathname = localizedPath(lang, `/story/${current}`);

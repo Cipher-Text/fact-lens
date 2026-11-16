@@ -1,0 +1,10 @@
+Implemented the article API adapter, body and reading-time mapping, API-mode page behavior, and proxy redirect handling. Added tests covering the mappings and redirect response.
+
+**Verification output**
+
+- `pnpm --filter fact-lens-web typecheck` — passed.
+- `pnpm --filter fact-lens-web lint` — passed.
+- `pnpm --filter fact-lens-web test` — passed: 40 files, 436 tests.
+- `pnpm --filter fact-lens-web build` — passed.
+
+Two constraints surfaced: Next requires `dynamicParams` to be a static literal, so it is `true` in both modes; mock unknown refs still return 404. Also, the existing reader figure renderer only accepts mock image keys, while this task requires API URL objects and forbids component edits. API body figures are mapped to the required URL object, but the existing renderer may not display them correctly. No dev server or `./run.sh` was started, and nothing was committed.

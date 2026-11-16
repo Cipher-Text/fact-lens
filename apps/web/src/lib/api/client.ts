@@ -24,6 +24,13 @@ export class ApiBadResponse extends Error {
   }
 }
 
+export class ApiRedirect extends Error {
+  constructor(readonly location: string) {
+    super("API redirected the request");
+    this.name = "ApiRedirect";
+  }
+}
+
 /** Fetch and validate a public API response. The optional arguments preserve request-level
  * caching/headers and fetch injection for the site's existing adapters and tests. */
 export async function apiGet<T>(
@@ -48,6 +55,12 @@ export async function apiGet<T>(
     });
   } catch (error) {
     throw new ApiUnavailable(error instanceof Error ? error.message : undefined);
+  }
+
+  if ((response.status === 301 || response.status === 308) && init.redirect === "manual") {
+    const location = response.headers.get("location");
+    if (location) throw new ApiRedirect(location);
+    throw new ApiBadResponse("API redirect had no Location header");
   }
 
   if (response.status === 404) throw new ApiNotFound();
