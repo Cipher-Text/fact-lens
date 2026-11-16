@@ -17,7 +17,7 @@ Each task in a plan is one of: `pending`, `in progress`, `in review`, `merged`, 
 | Plan | Status |
 | --- | --- |
 | [assignment-and-source-screens](./assignment-and-source-screens.md) | Done: T1 to T3 merged |
-| [card-generation](./card-generation.md) | Approved; Wave 0 in progress |
+| [card-generation](./card-generation.md) | Done: T0 to T5 merged |
 
 Add a row when a plan is written. Update its status after each merge, and update `docs/22-implementation-status.md` when what is built changes.
 

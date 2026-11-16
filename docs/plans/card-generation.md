@@ -1,6 +1,6 @@
 # Plan: branded photocard and poster generation
 
-Status: **approved** (decisions below accepted as recommended on 14 November 2026). Work in progress: Wave 0.
+Status: **done**. Decisions were accepted as recommended on 14 November 2026; all six tasks are merged into `main`.
 
 ## Goal
 
@@ -47,12 +47,12 @@ Critical (Claude): contracts, the internal endpoints, the API endpoints and temp
 
 | ID | Task | Owner | Status |
 | --- | --- | --- | --- |
-| T0 | Contracts: `card.requested` event schema, card API types | Claude | merged |
-| T1 | Internal endpoints: card inputs and render, with storage | Claude | pending |
-| T2 | `composeCard` compositor in the worker, with tests | Codex | pending |
-| T3 | Worker `media.card_generate` job and outbox route | Codex | pending |
-| T4 | Public API: request a card, list cards, template rules | Claude | pending |
-| T5 | Newsroom card panel: pick photo, template, crop, text | Codex | pending |
+| T0 | Contracts: `card.requested` event schema, card API types | Claude | merged (7ead8ad) |
+| T1 | Internal endpoints: card inputs and render, with storage | Claude | merged (c3868da) |
+| T2 | `composeCard` compositor in the worker, with tests | Codex | merged (b51aebd) |
+| T3 | Worker `media.card_generate` job and outbox route | Codex | merged (421529e) |
+| T4 | Public API: request a card, list cards, template rules | Claude | merged (421529e) |
+| T5 | Newsroom card panel: pick photo, template, crop, text | Codex | merged (aaaa47a) |
 
 Specs are in [`card-generation/`](./card-generation/).
 
