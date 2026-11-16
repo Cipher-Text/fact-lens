@@ -1,4 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createHash, randomUUID } from 'node:crypto';
 import sharp from 'sharp';
 import { startTestApp } from '../test-harness';
 import type { MemoryStorage } from './storage';
@@ -61,6 +62,17 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
       expect((await t.upload(bytes, { roles: ['fact_checker'] })).status).toBe(403);
       expect((await t.anonymous('POST', '/media')).statusCode).toBe(401);
       expect((await t.upload(bytes, { roles: ['media_editor'] })).status).toBe(201);
+    });
+
+    it('never returns a card output as the existing asset: the same bytes make a new original', async () => {
+      const bytes = await fresh();
+      const sha256 = createHash('sha256').update(bytes).digest('hex');
+      await t.db.pool.query(
+        `INSERT INTO media_asset (object_key, mime_type, byte_size, sha256, processing_state) VALUES ($1, 'image/webp', 1, $2, 'ready')`,
+        [`derivatives/cards/${randomUUID()}.webp`, sha256],
+      );
+      const res = await t.upload(bytes, { filename: 'same.jpg' });
+      expect(res.status).toBe(201);
     });
 
     it('returns the existing asset for the same bytes and stores nothing twice', async () => {
