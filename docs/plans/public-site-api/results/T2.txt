@@ -1,0 +1,7 @@
+Implemented the API-to-`Story` adapters and schema-validated tests in [adapters.ts](/Users/imran/Documents/Repo/Cipher-Text/factlens/fact-lens/apps/web/src/lib/api/adapters.ts) and [adapters.test.ts](/Users/imran/Documents/Repo/Cipher-Text/factlens/fact-lens/apps/web/src/lib/api/adapters.test.ts).
+
+All three requested checks passed:
+
+- `pnpm --filter fact-lens-web typecheck` — passed.
+- `pnpm --filter fact-lens-web lint` — passed with no warnings.
+- `pnpm --filter fact-lens-web test` — passed: 38 test files, 428 tests.
