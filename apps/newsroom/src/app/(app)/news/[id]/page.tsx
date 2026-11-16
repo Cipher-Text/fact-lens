@@ -2,13 +2,14 @@ import { notFound } from 'next/navigation';
 import { z } from 'zod';
 import {
   assignmentSchema, attachedSourceSchema, categorySchema, commentSchema, taxonomyRegionSchema, contributorSchema, deskSchema, localeSchema,
-  newsDetailSchema, newsPerformanceDetailSchema, timelineEntrySchema,
+  newsDetailSchema, newsPerformanceDetailSchema, timelineEntrySchema, generatedCardListItemSchema, cardTemplateSchema,
 } from '@fact-lens/contracts';
 import { RichBody } from '@/components/RichBody';
 import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, ResolveButton, NewsRegionPicker, NewsTagPicker, TransitionPanel, TranslationEditor } from '@/components';
 import { SourceParts } from '@/components/SourceParts';
 import { LeadImagePicker } from '@/components/LeadImagePicker';
 import { AssignmentParts } from '@/components/AssignmentParts';
+import { CardParts } from '@/components/CardParts';
 import { Badge, Empty, Panel, StatusBadge, WorkflowSteps } from '@/components/ui';
 import { SourceBars, ViewsChart } from '@/components/PerformanceParts';
 import { ApiError, api, getPrincipal } from '@/lib/current';
@@ -36,7 +37,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const here = `/news/${id}`;
   const principal = await getPrincipal();
-  const [detail, comments, timeline, sources, assignments, desks, categories, regions, locales, people] = await Promise.all([
+  const [detail, comments, timeline, sources, assignments, desks, categories, regions, locales, people, cards, templates] = await Promise.all([
     load(api(`/news/${id}`, newsDetailSchema, { returnTo: here })),
     api(`/news/${id}/comments`, z.array(commentSchema.extend({ resolvedBy: z.string().nullable().optional() })), { returnTo: here }),
     api(`/news/${id}/timeline`, z.array(timelineEntrySchema), { returnTo: here }),
@@ -47,6 +48,8 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
     api('/reference/regions', z.array(taxonomyRegionSchema), { returnTo: here }),
     api('/reference/locales', z.array(localeSchema), { returnTo: here }),
     api('/contributors', z.array(contributorSchema), { returnTo: here }),
+    api(`/news/${id}/cards`, z.array(generatedCardListItemSchema), { returnTo: here }),
+    api('/card-templates', z.array(cardTemplateSchema), { returnTo: here }),
   ]);
 
   const { news, revision, translations, editable } = detail;
@@ -208,6 +211,10 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
 
           <Panel title="Assignments" id="assign-h">
             <AssignmentParts newsId={id} assignments={assignments} canCreate={can(principal, 'news.edit')} />
+          </Panel>
+
+          <Panel title="Cards" id="cards-h">
+            <CardParts newsId={id} cards={cards} templates={templates} translations={translations.map((t) => ({ locale: t.locale, title: t.title }))} canCreate={can(principal, 'news.edit')} />
           </Panel>
         </div>
       </div>
