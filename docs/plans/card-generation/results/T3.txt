@@ -1,0 +1,8 @@
+Implemented card generation through the worker API client and `composeCard`. The existing `card.requested` route was already correct and remains unchanged. Added processor tests using the real photo fixture, including repeat delivery, ready-card conflicts, and render failures. No commit was made.
+
+Verification:
+
+- `pnpm --filter @fact-lens/worker typecheck` — passed.
+- `pnpm --filter @fact-lens/worker lint` — passed.
+- `TEST_REDIS_URL=redis://localhost:6379 pnpm --filter @fact-lens/worker test` — produced no output and remained running for over a minute, so I interrupted it (exit 130).
+- Focused card generation and compose tests — passed: 2 files, 8 tests.

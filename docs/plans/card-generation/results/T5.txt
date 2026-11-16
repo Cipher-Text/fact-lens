@@ -1,0 +1,8 @@
+Implemented the newsroom Cards panel, request form, media library selection, status list, and pure crop/headline helpers with tests.
+
+Verification:
+
+- `pnpm --filter @fact-lens/newsroom typecheck` — passed.
+- `pnpm --filter @fact-lens/newsroom lint` — passed.
+- `pnpm --filter @fact-lens/newsroom test` — passed: 11 files, 75 tests.
+- `pnpm --filter @fact-lens/newsroom build` — passed; production build completed.
