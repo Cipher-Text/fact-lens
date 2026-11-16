@@ -1,0 +1,10 @@
+Implemented T6. The API media URL rewrite runs in `beforeFiles` when `FACTLENS_API_URL` is set; the proxy matcher now skips `/public/media/`. Updated the existing proxy matcher assertion to match the new behavior, and added focused rewrite and matcher tests. No other files changed.
+
+Verification:
+
+- `pnpm --filter fact-lens-web typecheck` — passed (`next typegen` and `tsc --noEmit`).
+- `pnpm --filter fact-lens-web lint` — passed.
+- `pnpm --filter fact-lens-web test` — passed: 42 files, 443 tests.
+- `pnpm --filter fact-lens-web build` — passed: optimized production build completed.
+
+No server started; no commit made.

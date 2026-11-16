@@ -85,6 +85,6 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Every path except api/ and _next/ (DR-328). Files from public/ pass through in the proxy.
-  matcher: ["/((?!api/|_next/).*)"],
+  // Every path except api/, _next/ and public media. Files from public/ pass through in the proxy.
+  matcher: ["/((?!api/|_next/|public/media/).*)"],
 };
