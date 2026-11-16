@@ -22,18 +22,18 @@ This file only holds the orchestration rules. Coding conventions, layout and rul
   - upload handling and media rights (`apps/api/src/news/validation.ts`, `apps/newsroom/src/lib/media.ts`)
   - anything the user marks as critical
 - Claude may also make fixes under about 10 lines, or do any change the user asks for directly.
-- Claude implements a critical task in its own worktree on `task/<task-slug>`, following the same spec and verification steps. Codex review is not required for it, but Claude still runs the verification commands before merge.
+- Claude implements a critical task directly on `main`, following the same spec and verification steps. Codex review is not required for it, but Claude still runs the verification commands before committing.
 - `apps/web/CLAUDE.md` describes a flow where Claude writes the code. That flow is superseded here: for `apps/web`, normal tasks go to Codex, and Claude plans and reviews. Its design-system and `AGENTS.md` rules still apply to all `apps/web` work.
 
 ### Codex invocation (flags checked against `codex exec --help`, codex-cli 0.167.1)
 
 ```bash
-codex exec -C <worktree-dir> --approve-for-me -o <result-file> - < docs/plans/<slug>/<task-file>.md
+codex exec -C <repo-dir> --approve-for-me -o <result-file> - < docs/plans/<slug>/<task-file>.md
 ```
 
 - `-` reads the task spec from stdin. `-C` sets the working root. `--approve-for-me` routes approvals through automatic review inside the workspace-write sandbox, so runs are not interactive. Do not add `-s`: `codex exec` rejects `--sandbox` together with `--approve-for-me`.
 - `-o` writes Codex's final message to a file, which Claude reads during review.
-- Do not use `--dangerously-bypass-approvals-and-sandbox`. Do not use `codex exec --worktree`: worktrees are managed by this workflow, not by Codex.
+- Do not use `--dangerously-bypass-approvals-and-sandbox`. Do not use `codex exec --worktree`: no separate working trees are created.
 - Use `--json` only when a run needs its event stream for debugging.
 
 ## Planning
@@ -56,12 +56,12 @@ codex exec -C <worktree-dir> --approve-for-me -o <result-file> - < docs/plans/<s
 - `apps/web` is still on mock data. Do not wire it to the API unless the plan says so explicitly.
 - The worker changes news item state only through the API. Reject any diff that breaks this.
 
-## Parallel work with git worktrees
+## Working on main
 
-- Independent tasks run in separate worktrees at `../fact-lens-<task-slug>` (relative to the repo root), on branch `task/<task-slug>`.
-- Create with `git worktree add ../fact-lens-<task-slug> -b task/<task-slug>`. Then copy the root `.env` into the worktree and run `pnpm install --config.strict-dep-builds=false` there. Plain `pnpm install` fails in a new worktree with `ERR_PNPM_IGNORED_BUILDS` (`msgpackr-extract` is not in `allowBuilds`). The flag only relaxes that check for this install; it does not change the repo config. Then build the shared packages, because workspace packages resolve to their `dist/` (gitignored, so a new worktree has none): `pnpm --filter @fact-lens/config build` and `pnpm --filter @fact-lens/contracts build`. Without this, typecheck and test fail with unresolved `@fact-lens/contracts` imports.
-- Codex must NOT run `./run.sh` or start dev servers in a worktree, because the ports clash. Verification is by tests and checks only.
-- Shared local infra (PostgreSQL, Redis, MinIO from `pnpm infra:up`) can be used from any worktree.
+- All work is done directly on `main`. Do not create task branches or worktrees. Tasks run one after another in the main checkout.
+- Keep the main checkout installed with `pnpm install --config.strict-dep-builds=false`, because plain `pnpm install` can fail with `ERR_PNPM_IGNORED_BUILDS` (`msgpackr-extract` is not in `allowBuilds`). Build the shared packages after their sources change (`pnpm --filter @fact-lens/config build` and `pnpm --filter @fact-lens/contracts build`), since workspace packages resolve to their `dist/`.
+- Codex must NOT run `./run.sh` or start dev servers while another run is using them, because the ports clash. Verification is by tests and checks only.
+- Shared local infra (PostgreSQL, Redis, MinIO from `pnpm infra:up`) can be used from the main checkout.
 - `../fact-lens-web` is a separate repository (the design source for `apps/web`). It is NOT a worktree. Never remove it, never run `git worktree remove` on it, and never copy into it. Only remove paths that `git worktree list` shows for this repo.
 
 ## Verification
@@ -84,10 +84,9 @@ codex exec -C <worktree-dir> --approve-for-me -o <result-file> - < docs/plans/<s
 ## Review loop
 
 - After Codex finishes, Claude reviews the diff against the task spec and `AGENTS.md`, runs the task's verification command, and checks the ordering and worker rules above.
-- If something is wrong, send a specific fix prompt back to Codex (a new `codex exec` run in the same worktree). Maximum 2 retries. After that, stop and ask the user.
-- Never merge into `main` without showing the user a summary and getting their OK.
+- If something is wrong, send a specific fix prompt back to Codex (a new `codex exec` run in the same checkout). Maximum 2 retries. After that, stop and ask the user.
+- Show the user a summary and get their OK before committing a change to `main`.
 - After merging, update the plan file's task status, and `docs/22-implementation-status.md` if what is built has changed. A choice the plan did not make is recorded as an ADR in `docs/17-architecture-decisions.md`, as `AGENTS.md` requires.
-- Remove a finished worktree with `git worktree remove ../fact-lens-<task-slug>`, then delete its branch with `git branch -d task/<task-slug>` once merged.
 
 ## Hygiene
 
