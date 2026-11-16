@@ -85,7 +85,7 @@ export class MediaService {
     if (!kind) throw new UnsupportedMediaTypeException('Only JPEG, PNG and WebP images can be uploaded');
 
     const sha256 = createHash('sha256').update(input).digest('hex');
-    const existing = await this.pool.query<Row>(`${SELECT} WHERE m.sha256 = $1 ORDER BY m.created_at LIMIT 1`, [sha256]);
+    const existing = await this.pool.query<Row>(`${SELECT} WHERE m.sha256 = $1 AND m.object_key NOT LIKE 'derivatives/cards/%' ORDER BY m.created_at LIMIT 1`, [sha256]);
     if (existing.rows[0]) return { asset: toDetail(existing.rows[0]), created: false };
 
     let processed;
@@ -125,7 +125,7 @@ export class MediaService {
       // Two uploads of the same file at once: the loser's row is refused, so remove its stored copies and return the winner.
       await Promise.allSettled(files.map((f) => this.storage.delete(f.key)));
       if (isPgError(err) && err.code === '23505') {
-        const winner = await this.pool.query<Row>(`${SELECT} WHERE m.sha256 = $1 ORDER BY m.created_at LIMIT 1`, [sha256]);
+        const winner = await this.pool.query<Row>(`${SELECT} WHERE m.sha256 = $1 AND m.object_key NOT LIKE 'derivatives/cards/%' ORDER BY m.created_at LIMIT 1`, [sha256]);
         if (winner.rows[0]) return { asset: toDetail(winner.rows[0]), created: false };
       }
       throw err;

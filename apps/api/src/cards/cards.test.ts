@@ -41,7 +41,7 @@ describe.skipIf(!adminUrl)('card rendering (database)', () => {
     const output = (await t.db.pool.query(
       `INSERT INTO media_asset (object_key, mime_type, byte_size, sha256, processing_state)
        VALUES ($1, 'image/webp', 0, $2, 'pending') RETURNING id, object_key`,
-      [`derivatives/card-${n}/card.webp`, `pending-${n}`],
+      [`derivatives/cards/card-${n}.webp`, `pending-${n}`],
     )).rows[0];
 
     const card = (await t.db.pool.query(
@@ -127,6 +127,16 @@ describe.skipIf(!adminUrl)('card rendering (database)', () => {
       const png = await sharp({ create: { width: 400, height: 400, channels: 3, background: '#000' } }).png().toBuffer();
       await expect(cards.storeRender(cardId, png, 'req-png')).rejects.toMatchObject({ status: 415 });
     });
+  });
+
+  it('lets two cards render to identical bytes, since card outputs are not unique by checksum', async () => {
+    const a = await pendingCard();
+    const b = await pendingCard();
+    const bytes = await webp(400, 400);
+    expect(await cards.storeRender(a.cardId, bytes, 'req-a')).toEqual({ created: true });
+    expect(await cards.storeRender(b.cardId, bytes, 'req-b')).toEqual({ created: true });
+    const states = await t.db.pool.query(`SELECT processing_state FROM media_asset WHERE id = ANY($1)`, [[a.outputId, b.outputId]]);
+    expect(states.rows.map((r: { processing_state: string }) => r.processing_state)).toEqual(['ready', 'ready']);
   });
 
   it('answers 404 for an unknown card', async () => {
