@@ -94,28 +94,37 @@ describe.skipIf(!adminUrl)('polls (database)', () => {
     expect((await t.db.pool.query('SELECT 1 FROM poll_vote WHERE poll_id = $1', [p.id])).rowCount).toBe(1);
   });
 
-  it('refuses an option from another poll, a malformed cookie, and counts votes from different browsers', async () => {
+  it('refuses an option from another poll, a malformed cookie, and a second browser from the same address', async () => {
     const p = await open();
     const other = await open();
     expect((await vote(p.id, other.options[0].id)).statusCode).toBe(400);
     expect((await vote(p.id, p.options[0].id, { cookie: 'fl_voter=short' })).statusCode).toBe(200); // not ours: a new token is issued
-    expect((await vote(p.id, p.options[1].id)).json().totalVotes).toBe(2);
+    // The address has voted on this poll, so another browser from it is refused.
+    expect((await vote(p.id, p.options[1].id)).statusCode).toBe(429);
+    expect((await publicGet(`/public/polls/${p.id}/en`)).json().totalVotes).toBe(1);
     expect((await t.app.inject({ method: 'POST', url: `/public/polls/${p.id}/vote`, payload: { optionId: 'nope' } })).statusCode).toBe(400);
   });
 
-  it('limits votes per address per day, and an address behind a proxy counts separately only when proxies are trusted', async () => {
+  it('lets one network address vote once per poll, and an address behind a proxy counts separately only when proxies are trusted', async () => {
     const p = await open();
     const o = p.options[0].id as string;
-    // perIpPerDay is 3 in the test app: four different browsers from one address.
-    for (let i = 0; i < 3; i++) expect((await vote(p.id, o)).statusCode).toBe(200);
+    // The first vote from an address counts. A new browser from the same address is refused for this poll.
+    const first = await vote(p.id, o);
+    expect(first.statusCode).toBe(200);
     const blocked = await vote(p.id, o);
     expect(blocked.statusCode).toBe(429);
     expect(blocked.json().error.details?.reason ?? blocked.json().error.message).toBeTruthy();
-    expect((await publicGet(`/public/polls/${p.id}/en`)).json().totalVotes).toBe(3);
+    expect((await publicGet(`/public/polls/${p.id}/en`)).json().totalVotes).toBe(1);
+    // The same browser voting again is recognised, not counted again.
+    const cookie = String(first.headers['set-cookie']).split(';')[0];
+    expect((await vote(p.id, o, { cookie })).statusCode).toBe(200);
+    // A second poll is a separate question, so the same address may vote there.
+    const q = await open();
+    expect((await vote(q.id, q.options[0].id)).statusCode).toBe(200);
     // X-Forwarded-For is ignored here (no trusted proxy), so a spoofed address does not help.
     expect((await vote(p.id, o, { ip: '203.0.113.9' })).statusCode).toBe(429);
 
-    const behind = await startTestApp(adminUrl!, { trustProxy: true, polls: { secret: 'test-poll-secret-0123456789abcdef0123456789', perIpPerDay: 1 } });
+    const behind = await startTestApp(adminUrl!, { trustProxy: true, polls: { secret: 'test-poll-secret-0123456789abcdef0123456789' } });
     try {
       const made = (await behind.call({ method: 'POST', url: '/polls', roles: ['reporter'], body: wording() })).body;
       await behind.call({ method: 'POST', url: `/polls/${made.id}/open`, roles: ['managing_editor'] });
@@ -173,7 +182,7 @@ describe.skipIf(!adminUrl)('polls (database)', () => {
   });
 
   it('says so when voting is not set up, and still lets readers see polls', async () => {
-    const off = await startTestApp(adminUrl!, { polls: { secret: null, perIpPerDay: 5 } });
+    const off = await startTestApp(adminUrl!, { polls: { secret: null } });
     try {
       const made = (await off.call({ method: 'POST', url: '/polls', roles: ['reporter'], body: wording() })).body;
       await off.call({ method: 'POST', url: `/polls/${made.id}/open`, roles: ['managing_editor'] });

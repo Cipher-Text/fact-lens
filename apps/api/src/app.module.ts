@@ -81,7 +81,7 @@ import type { Pool } from 'pg';
         const env = loadApiEnv();
         // Without its own secret, one is derived from the internal token: a different key for a different purpose.
         const secret = env.POLL_HASH_SECRET ?? (env.INTERNAL_API_TOKEN ? createHmac('sha256', env.INTERNAL_API_TOKEN).update('poll-vote-v1').digest('base64url') : null);
-        return { secret, perIpPerDay: env.POLL_VOTES_PER_IP_PER_DAY };
+        return { secret };
       },
     },
     {
