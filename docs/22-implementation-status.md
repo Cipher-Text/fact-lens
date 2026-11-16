@@ -70,6 +70,7 @@ What exists in this repository today, how much of it has been checked, and what 
 | Media upload, sanitizing, variants, rights, public serving | Tested. Storage tests run against a stand-in S3 server; the real MinIO run is added to CI and **has not yet been seen to pass** |
 | Newsroom screens and the editor | Libraries, renderer and proxy rules tested; the screens themselves are **hand-checked only**, there are no browser tests. The tag picture chooser has not been hand-checked |
 | Branded cards: requests, templates, render, compositor | Tested: database tests for requests, templates and rendering, and compositor tests on fixtures. The newsroom card panel is hand-checked only, with no browser test. |
+| Full check (`pnpm check`) | Passes three runs in a row (exit 0, about a minute each) since packages and database files were made to run one at a time (ADR-038). |
 | Public web | 418 tests in `apps/web`; it calls the API only for the header menu, social links and daily poll, and only when `FACTLENS_API_URL` is set |
 
 ## Not built, in one place

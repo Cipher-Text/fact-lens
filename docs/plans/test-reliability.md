@@ -1,6 +1,6 @@
 # Plan: test reliability
 
-Status: **awaiting approval** (plan only; no code written).
+Status: **done**. Packages and database files run one at a time (ADR-038); three runs in a row passed.
 
 ## Goal
 
@@ -25,9 +25,9 @@ Rejected for now: a shared pre-migrated template database. It would make the sui
 
 | ID | Task | Owner | Status |
 | --- | --- | --- | --- |
-| T1 | Root `test` runs packages one at a time; API and worker database files run one at a time; API `testTimeout` 20000 | Claude | pending |
-| T2 | Stress check: run `pnpm check` three times in a row and record each result | Claude | pending |
-| T3 | Record the decision as ADR-038 and update `docs/22` (what the check does now) | Claude | pending |
+| T1 | Root `test` runs packages one at a time; API and worker database files run one at a time; API `testTimeout` 20000 | Claude | done |
+| T2 | Stress check: run `pnpm check` three times in a row and record each result | Claude | done (three runs, exit 0, about a minute each) |
+| T3 | Record the decision as ADR-038 and update `docs/22` (what the check does now) | Claude | done |
 
 T1 is a few lines in the root `package.json` and two vitest configs, so Claude makes it directly. Nothing here changes application behaviour.
 

@@ -48,6 +48,8 @@ These were not in the original plan. Each is built and tested; revisit one if it
 
 37. **ADR-037: Each network address votes once per poll.** The per-address daily limit of ADR-024 is replaced: the address hash may cast one vote on a poll, so a second browser from the same address is refused for that poll. The 24-hour count and `POLL_VOTES_PER_IP_PER_DAY` are removed. A browser that has voted is still recognised by its cookie. The product owner chose this rule. The trade-off: a shared network (an office, a university or a mobile carrier) gets one vote per poll in total. Revisit if readers on shared networks are refused in volume.
 
+38. **ADR-038: The full check runs packages and database test files one at a time.** The root `test` script runs packages in sequence, and the API and worker run their database files one at a time. Parallel runs made two packages share the vitest cache and made database suites contend for one PostgreSQL, which caused random failures. The cost is a slower check (about a minute on a developer machine). Tests are not skipped or changed to pass. Revisit if the check becomes too slow, for example with a shared pre-migrated template database.
+
 ## Deferred with revisit triggers
 
 - **OpenSearch:** advanced faceting/autocomplete/semantic or measured scale/latency.
