@@ -1,0 +1,12 @@
+Implemented the shared API client, contract validation for navigation and polls, and routed social links through the same client so it is the only API fetch path in `apps/web/src/lib`.
+
+**Files changed:** `apps/web/package.json`, `pnpm-lock.yaml`, `src/lib/api/client.ts`, `src/lib/api/client.test.ts`, `src/lib/navigation.ts`, `src/lib/poll-api.ts`, and `src/lib/social-api.ts`.
+
+**Verification output:**
+
+- `pnpm --filter fact-lens-web typecheck` — passed
+- `pnpm --filter fact-lens-web lint` — passed
+- `pnpm --filter fact-lens-web test` — passed; 37 files, 424 tests
+- `pnpm --filter fact-lens-web build` — passed
+
+No failures remain. No servers were started and no commit was made.
