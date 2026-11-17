@@ -1,6 +1,6 @@
 # 23 — Read next (the related news under an article)
 
-**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Not built.** This document records the concept and the decision to write it down before building it ([ADR-030](./17-architecture-decisions.md)). Nothing here is in the API, the newsroom or the contracts yet. The rules in section 3 are proposals that need approval (section 8).
+**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Built (RN1 to RN5; [ADR-043](./17-architecture-decisions.md)). A manual check against a running API is open.** This document records the concept and the decision to write it down before building it ([ADR-030](./17-architecture-decisions.md)). Nothing here is in the API, the newsroom or the contracts yet. The rules in section 3 are proposals that need approval (section 8).
 
 ## 1. What it is
 
@@ -13,7 +13,7 @@ After an article, the public site shows a row called **Read next**: other news a
 
 ## 2. What the backend has today
 
-Nothing. There is no related-news endpoint. The public list (`GET /public/news/:locale`) can filter by section, region, tag and format. Its items now carry the lead image ([25](./25-most-read-and-performance.md)), which the cards need. Topics (the site's managed "what or who" list) are not built; tags (146, from cipher-press) are the nearest thing ([gap list](./22-implementation-status.md)).
+The picks table, the picks endpoints and the public related-news endpoint now exist (RN1 to RN3), and the newsroom panel and the site section use them (RN4, RN5). This section describes the state before those steps. The public list (`GET /public/news/:locale`) can filter by section, region, tag and format. Its items now carry the lead image ([25](./25-most-read-and-performance.md)), which the cards need. Topics (the site's managed "what or who" list) are not built; tags (146, from cipher-press) are the nearest thing ([gap list](./22-implementation-status.md)).
 
 ## 3. Proposed selection rules
 

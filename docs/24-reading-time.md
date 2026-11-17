@@ -1,6 +1,6 @@
 # 24 — Reading time
 
-**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Not built.** This records how the reading time of a news item is worked out and the decision behind it ([ADR-031](./17-architecture-decisions.md)). Nothing here is in the database, the API, the contracts or the newsroom yet.
+**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Built in steps 1 to 5 ([ADR-031](./17-architecture-decisions.md)).** This records how the reading time of a news item is worked out and the decision behind it ([ADR-031](./17-architecture-decisions.md)). It is in the database, the API, the contracts, the site and the newsroom now.
 
 ## 1. What it is
 
