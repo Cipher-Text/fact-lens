@@ -7,6 +7,7 @@ import { tiptapBodySchema, toCanonicalBody, type AiSuggestion, type AiTranslatio
 import { bff } from '@/lib/client';
 import { submitWith } from '@/lib/form';
 import { collectTexts, replaceTexts } from '@/lib/translate-doc';
+import { autoHint, overrideWarning, parseOverride } from '@/lib/reading-time';
 import { MediaPicker } from './MediaParts';
 import { RichTextEditor } from './RichTextEditor';
 import { buttonClass, Field, inputClass, Notice } from './ui';
@@ -21,6 +22,8 @@ export interface EditableTranslation {
   seoDescription: string | null;
   body: unknown;
   version: number | null;
+  readingMinutesOverride?: number | null;
+  readingMinutesAuto?: number | null;
 }
 
 /** The language a new language is translated from: the first text of the news item. */
@@ -65,6 +68,7 @@ export function TranslationEditor({ newsId, translation, siblingSlug, tagIds = [
   const [picking, setPicking] = useState(false);
   const [message, setMessage] = useState<{ kind: 'error' | 'ok'; text: string; issues: string[] } | null>(null);
   const [pending, start] = useTransition();
+  const [readingOverrideRaw, setReadingOverrideRaw] = useState(translation.readingMinutesOverride?.toString() ?? '');
   const onEditor = useCallback((e: Editor | null) => setEditor(e), []);
   const markDirty = useCallback(() => setDirty(true), []);
 
@@ -144,6 +148,10 @@ export function TranslationEditor({ newsId, translation, siblingSlug, tagIds = [
     setMessage(null);
     setSuggestFailed(false);
     if (!editor) return setMessage({ kind: 'error', text: 'The editor is still loading.', issues: [] });
+    const readingMinutesOverride = parseOverride((form.get('readingMinutesOverride') as string) ?? '');
+    if (Number.isNaN(readingMinutesOverride) || (readingMinutesOverride !== null && (readingMinutesOverride < 1 || readingMinutesOverride > 120))) {
+      return setMessage({ kind: 'error', text: 'Reading time must be a whole number from 1 to 120 minutes.', issues: [] });
+    }
     // The editor adds bookkeeping (link targets, empty values); strip it, then check the strict contract.
     const body = toCanonicalBody(editor.getJSON());
     const checked = tiptapBodySchema.safeParse(body);
@@ -154,7 +162,7 @@ export function TranslationEditor({ newsId, translation, siblingSlug, tagIds = [
       const res = await bff('PUT', `news/${newsId}/translations/${translation.locale}`, {
         title: form.get('title'), dek: (form.get('dek') as string) || null, slug: form.get('slug'),
         seoTitle: (form.get('seoTitle') as string) || null, seoDescription: (form.get('seoDescription') as string) || null,
-        body: checked.data, expectedVersion: translation.version,
+        body: checked.data, expectedVersion: translation.version, readingMinutesOverride,
       });
       if (!res.ok) {
         const conflict = res.reason === 'version_conflict';
@@ -200,6 +208,11 @@ export function TranslationEditor({ newsId, translation, siblingSlug, tagIds = [
           <Field label="SEO description"><textarea name="seoDescription" defaultValue={translation.seoDescription ?? ''} maxLength={320} rows={2} className={inputClass} /></Field>
         </div>
       </details>
+      <Field label="Reading time (minutes)" hint={autoHint(translation.readingMinutesAuto) ?? undefined}>
+        <input name="readingMinutesOverride" type="number" min={1} max={120} step={1} value={readingOverrideRaw}
+          onChange={(event) => setReadingOverrideRaw(event.currentTarget.value)} className={inputClass} />
+      </Field>
+      {overrideWarning(parseOverride(readingOverrideRaw), translation.readingMinutesAuto) ? <Notice kind="error" message="This reading time differs greatly from the calculated time." issues={[]} /> : null}
       {message && !(message.kind === 'error' && suggestFailed) ? <Notice kind={message.kind} message={message.text} issues={message.issues} /> : null}
       <div className="flex items-center gap-3">
         <button type="submit" disabled={pending || !editor} className={buttonClass('primary')}>

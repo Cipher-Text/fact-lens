@@ -1,0 +1,8 @@
+Implemented the newsroom reading time override, auto hint, difference warning, and helper tests.
+
+All four requested verification commands passed:
+
+- `pnpm --filter @fact-lens/newsroom typecheck` — exit 0
+- `pnpm --filter @fact-lens/newsroom lint` — exit 0
+- `pnpm --filter @fact-lens/newsroom test` — exit 0; 12 files and 79 tests passed
+- `pnpm --filter @fact-lens/newsroom build` — exit 0

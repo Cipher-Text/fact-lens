@@ -92,6 +92,7 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
                 <TranslationEditor newsId={id} tagIds={detail.tags.map((x) => x.id)} siblingSlug={latinSlugOf(translations, t.locale)} translation={{
                   locale: t.locale, localeName: locales.find((l) => l.code === t.locale)?.displayName ?? t.locale, title: t.title, dek: t.dek, slug: t.slug,
                   seoTitle: t.seoTitle, seoDescription: t.seoDescription, body: t.body, version: t.version,
+                  readingMinutesOverride: t.readingMinutesOverride, readingMinutesAuto: t.readingMinutesAuto,
                 }} />
               ) : (
                 <article lang={t.locale} className="space-y-2">
