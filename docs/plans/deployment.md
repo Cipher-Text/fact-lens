@@ -1,6 +1,6 @@
 # Plan: deployment path (P0, item 3)
 
-Status: **awaiting decisions** (plan only; no code written).
+Status: **platform decided** (see decision 1). Domains and migrations are still open.
 
 ## Goal
 
@@ -17,7 +17,7 @@ The API, worker and public site run in a real environment, built from images in 
 
 ## Decisions needed from you
 
-1. **Platform.** Which managed container runtime and which managed PostgreSQL, Redis and object storage? Recommendation: whichever you already have an account with, as long as it runs OCI images and offers managed PostgreSQL with backups. The plan is written so that switching platform only changes the deployment definition.
+1. **Platform (decided).** Vercel for the public site (already in use). Cloudflare R2 for media, through its S3 API. Render for the API, the worker and the newsroom, with Render-managed PostgreSQL and a Redis-compatible store. Provider limits and prices must be checked before accounts are opened.
 2. **Domains.** Which hostnames for the site, the newsroom and the API? The site and the API must be on the same site for the media rewrite to avoid a second origin for images.
 3. **Migrations.** Run them as a release step before the new API starts (recommended), not on app start.
 
