@@ -36,3 +36,5 @@ Resolved: advertising is confirmed part of the Phase 1 launch scope, carrying fo
 Resolved: Telegram channels are a named ingestion source type, using the Bot API (see [ingestion and automation](./08-ingestion-and-automation.md)); which specific channels remains covered by open question 4.
 
 29. Card renders with identical bytes. Each card output is a media asset whose checksum is unique in the database, so two cards that render to the same bytes (for example the same photo, template and text requested twice) would collide and the second render would fail. Resolved: card outputs are exempt from the unique checksum index, so identical renders are allowed; uploads still deduplicate by checksum and never match a card output ([ADR-036](./17-architecture-decisions.md)).
+
+30. HTTP status of the unavailable page. Decision 3 of the public site plan asked for a 503 when the API is down. App Router answers a thrown error with 500, so the page shows the unavailable message with status 500. A true 503 needs a per-request health check in the middleware, which adds a call to every page. Accept 500, or add the health check?

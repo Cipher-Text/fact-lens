@@ -54,6 +54,8 @@ These were not in the original plan. Each is built and tested; revisit one if it
 
 40. **ADR-040: The public site reads published news from the API, with these fixed choices.** The article, category, analysis and topic pages are built from the API when `FACTLENS_API_URL` is set, and from the mock content when it is not. The public news detail carries its lead image, with the same rule as the lists. The article body maps to the site's blocks: marks are dropped, and unknown nodes are logged rather than dropped silently. Reading time follows doc 24, with the default rates in the code until the runtime configuration is read. Read next is hidden in API mode until it has an API. Article addresses are generated on request in both modes. The reader figure takes a resolved image, so body pictures from the API display. Recorded because each of these is a choice the plan did not make.
 
+41. **ADR-041: The public homepage and regions are built from the news lists, and media is served from the site's own origin.** The homepage hero, analysis and opinion, the featured Asia region and Geopolitics category, the five categories (three items each), most read and the regions with news come from the list endpoints. A section with no items is left out. The variant that the mock uses is not used in API mode. Media URLs stay relative; a Next `beforeFiles` rewrite sends `/public/media/...` to the API, and the middleware skips those paths, so they are not redirected to a language prefix. Recorded because the approved defaults and the rewrite are choices the plan did not make.
+
 ## Deferred with revisit triggers
 
 - **OpenSearch:** advanced faceting/autocomplete/semantic or measured scale/latency.

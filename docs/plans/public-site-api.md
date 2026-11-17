@@ -1,6 +1,6 @@
 # Plan: wire the public site to the API (Phase 4, step 2)
 
-Status: **in progress**. T1 to T4 are merged; the lead image change came in with T4 (`9aa7ae1`). T5 waits for three decisions (hero, featured sections, section rules).
+Status: **done**, except the HTTP status of the unavailable page (open question 30) and the ads, which stay mock content. T1 to T7 are merged; the lead image change came in with T4 (`9aa7ae1`).
 
 ## Goal
 
@@ -34,9 +34,9 @@ Out of scope for this plan (later steps): reading time, Read next, search, the v
 | T2 | Adapters: API list and item to the site's `Story`, with mapping tests (contract fixtures) | Codex | done (b80da5b) |
 | T3 | Category, tag and analysis pages from the list endpoint with filters | Codex | done (7ae6c43) |
 | T4 | Article page from `GET /public/news/:locale/:ref`: body mapping, contributors, corrections, alternates, 404 for unknown items | Codex | done (65e0c89) |
-| T5 | Homepage and region pages derived from lists (decision 2) | Codex | pending |
-| T6 | Same-origin media rewrite and image mapping (decision 4) | Codex | pending |
-| T7 | Unavailable-API behaviour (decision 3); mock-mode e2e stays green; API-mode smoke test | Codex, then Claude reviews | pending |
+| T5 | Homepage and region pages derived from lists (decision 2) | Codex | done (ec4b94c) |
+| T6 | Same-origin media rewrite and image mapping (decision 4) | Codex | done (0c69bfe) |
+| T7 | Unavailable-API behaviour (decision 3); mock-mode e2e stays green; API-mode smoke test | Codex, then Claude reviews | done (e2e34ee); the 503 status is open |
 
 Each task is small and ships on its own. T2 comes first, because T3 to T5 depend on it. T6 can run alongside T3 to T5.
 
