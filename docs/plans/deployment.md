@@ -1,6 +1,6 @@
 # Plan: deployment path (P0, item 3)
 
-Status: **platform decided** (see decision 1). Domains and migrations are still open.
+Status: **platform decided: one VPS and Cloudflare R2** (see decision 1). Domains and migrations are still open.
 
 ## Goal
 
@@ -17,7 +17,7 @@ The API, worker and public site run in a real environment, built from images in 
 
 ## Decisions needed from you
 
-1. **Platform (decided).** Vercel for the public site (already in use). Cloudflare R2 for media, through its S3 API. Render for the API, the worker and the newsroom, with Render-managed PostgreSQL and a Redis-compatible store. Provider limits and prices must be checked before accounts are opened.
+1. **Platform (decided).** One VPS runs every service in Docker Compose behind Caddy (TLS and routing): the public site, the API, the worker, the newsroom, PostgreSQL and Redis. Cloudflare R2 stores media through its S3 API. Only ports 80 and 443 are open; PostgreSQL and Redis are reachable only inside the compose network. Trade-off: we run the database ourselves, so nightly encrypted backups to R2 and a restore drill are our job (D7).
 2. **Domains.** Which hostnames for the site, the newsroom and the API? The site and the API must be on the same site for the media rewrite to avoid a second origin for images.
 3. **Migrations.** Run them as a release step before the new API starts (recommended), not on app start.
 
@@ -30,8 +30,8 @@ The API, worker and public site run in a real environment, built from images in 
 | D3 | Per-service environment matrix: the variables each service receives in production, and a check that a service refuses to start with another service's secrets | Claude (config is critical) |
 | D4 | Health for the platform: the site gets a `/health` route; the worker and API probes are wired to the platform | Codex (site route), Claude (probe wiring) |
 | D5 | Migration release step: `migrate up` runs once per release before the API starts; a failed migration stops the release | Claude (migrations are critical) |
-| D6 | Staging environment on the managed services, and a smoke-test runbook (sign-in, a published item, a card render, a poll vote, the 503 page with the API stopped) | Claude |
-| D7 | Backups and one restore drill: managed PostgreSQL backups on, a restore into a scratch database, and the result recorded | Claude |
+| D6 | Staging environment (a second VPS, or a second compose project on the same host if budget requires), and a smoke-test runbook (sign-in, a published item, a card render, a poll vote, the 503 page with the API stopped) | Claude |
+| D7 | Backups and one restore drill: nightly `pg_dump` encrypted and copied to an R2 bucket with a retention rule, a restore into a scratch database, and the result recorded | Claude |
 
 ## Order
 
@@ -45,5 +45,6 @@ D1 and the decisions run first. D2 needs D1. D3 and D5 can run in parallel with 
 
 ## Risks
 
-- A platform choice made late means rework in D1 and D6. Make decision 1 first.
+- One VPS is a single point of failure. Acceptable at launch scale; the restore drill (D7) and a documented rebuild steps are what make it recoverable.
+- Self-run PostgreSQL: a missing backup is a permanent loss. D7 must pass before any real content is loaded.
 - Images that contain secrets are a leak. D1 must check that no `.env` file reaches an image.
