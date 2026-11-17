@@ -163,6 +163,29 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     expect(calc.json().readingMinutes).toBe(1);
   });
 
+  it('sets, reads and clears the Read next picks; refuses drafts, the item itself and a repeated position', async () => {
+    const host = await publishedNews('rel-host');
+    const a = await publishedNews('rel-a');
+    const b = await publishedNews('rel-b');
+    const draft = await draftNews('rel-draft');
+
+    const put = await call({ method: 'PUT', url: `/news/${host}/related`, roles: ['reporter'], body: { related: [{ newsId: a, position: 2 }, { newsId: b, position: 1 }] } });
+    expect(put.status).toBe(200);
+    expect(put.body.map((r: { newsId: string }) => r.newsId)).toEqual([b, a]);
+    const read = await call({ method: 'GET', url: `/news/${host}/related`, roles: ['reporter'] });
+    expect(read.body.map((r: { position: number }) => r.position)).toEqual([1, 2]);
+
+    expect((await call({ method: 'PUT', url: `/news/${host}/related`, roles: ['reporter'], body: { related: [{ newsId: host, position: 1 }] } })).status).toBe(400);
+    expect((await call({ method: 'PUT', url: `/news/${host}/related`, roles: ['reporter'], body: { related: [{ newsId: draft, position: 1 }] } })).status).toBe(400);
+    expect((await call({ method: 'PUT', url: `/news/${host}/related`, roles: ['reporter'], body: { related: [{ newsId: a, position: 1 }, { newsId: b, position: 1 }] } })).status).toBe(400);
+
+    const cleared = await call({ method: 'PUT', url: `/news/${host}/related`, roles: ['reporter'], body: { related: [] } });
+    expect(cleared.status).toBe(200);
+    expect(cleared.body).toEqual([]);
+    const audit = await db.pool.query(`SELECT metadata FROM audit_event WHERE action = 'news.related_update' AND object_id = $1 ORDER BY occurred_at`, [host]);
+    expect(audit.rows.length).toBe(2);
+  });
+
   it('creates a draft with a derived slug and requires sign-in and capability', async () => {
     const res = await call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Hello, World!' } });
     expect(res.status).toBe(201);

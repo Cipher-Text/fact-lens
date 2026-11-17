@@ -177,3 +177,19 @@ export const publicNewsSchema = z.object({
   tags: z.array(publicTaxonomyRefSchema),
 });
 export type PublicNews = z.infer<typeof publicNewsSchema>;
+
+/** The Read next picks an editor sets on a news item (docs/23 section 5): up to three, each in a position 1 to 3. */
+export const newsRelatedSchema = z
+  .object({
+    related: z
+      .array(z.object({ newsId: idSchema, position: z.number().int().min(1).max(3) }).strict())
+      .max(3),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    const ids = value.related.map((r) => r.newsId);
+    const positions = value.related.map((r) => r.position);
+    if (new Set(ids).size !== ids.length) ctx.addIssue({ code: 'custom', path: ['related'], message: 'A news item can be picked only once' });
+    if (new Set(positions).size !== positions.length) ctx.addIssue({ code: 'custom', path: ['related'], message: 'Each position can be used once' });
+  });
+export type NewsRelated = z.infer<typeof newsRelatedSchema>;

@@ -153,6 +153,52 @@ export class NewsService {
     };
   }
 
+  /** The Read next picks of a news item, in the editor's order, with the title of each pick. */
+  async relatedOf(newsId: string, db: Db = this.pool): Promise<Array<{ newsId: string; position: number; title: string | null }>> {
+    const { rows } = await db.query<{ related_news_id: string; position: number; title: string | null }>(
+      `SELECT rel.related_news_id, rel.position,
+              (SELECT st.title FROM news_translation st JOIN news_revision r ON r.id = st.revision_id
+                WHERE r.news_id = rel.related_news_id ORDER BY r.revision_no DESC, st.locale LIMIT 1) AS title
+         FROM news_related rel WHERE rel.news_id = $1 ORDER BY rel.position`,
+      [newsId],
+    );
+    return rows.map((r) => ({ newsId: r.related_news_id, position: r.position, title: r.title }));
+  }
+
+  /** Replaces the picks in one transaction. Every pick must be live; the change is audited with what was added and removed. */
+  async setRelated(newsId: string, related: Array<{ newsId: string; position: number }>, actor: Actor) {
+    await withTransaction(this.pool, async (db) => {
+      const news = await db.query<{ status: string }>('SELECT status FROM news WHERE id = $1 FOR UPDATE', [newsId]);
+      if (!news.rows[0]) throw new NotFoundException('News not found');
+      if (news.rows[0].status === 'ARCHIVED') throw conflict('news_archived', 'Archived news cannot be edited');
+      if (related.some((r) => r.newsId === newsId)) throw new BadRequestException('A news item cannot be related to itself');
+      if (related.length > 0) {
+        const ids = related.map((r) => r.newsId);
+        const live = await db.query(
+          `SELECT id FROM news WHERE id = ANY ($1::uuid[]) AND status = ANY ($2) AND published_revision_id IS NOT NULL`, [ids, LIVE_STATUSES]);
+        if (live.rowCount !== ids.length) throw new BadRequestException('Some of those news items are not live');
+      }
+      const before = await db.query<{ related_news_id: string; position: number }>(
+        'SELECT related_news_id, position FROM news_related WHERE news_id = $1 ORDER BY position', [newsId]);
+      const beforeKey = before.rows.map((r) => `${r.position}:${r.related_news_id}`).join(',');
+      const afterKey = [...related].sort((a, b) => a.position - b.position).map((r) => `${r.position}:${r.newsId}`).join(',');
+      if (beforeKey === afterKey) return;
+      await db.query('DELETE FROM news_related WHERE news_id = $1', [newsId]);
+      for (const r of related) {
+        await db.query('INSERT INTO news_related (news_id, related_news_id, position) VALUES ($1, $2, $3)', [newsId, r.newsId, r.position]);
+      }
+      const had = new Set(before.rows.map((r) => r.related_news_id));
+      const want = new Set(related.map((r) => r.newsId));
+      await this.audit.record(
+        { actorType: 'human', actorId: actor.principal.subject, action: 'news.related_update', objectType: 'news', objectId: newsId, newsId,
+          requestId: actor.requestId,
+          metadata: { added: [...want].filter((i) => !had.has(i)), removed: [...had].filter((i) => !want.has(i)) } },
+        db,
+      );
+    });
+    return this.relatedOf(newsId);
+  }
+
   async detail(id: string, principal: Principal, db: Db = this.pool): Promise<NewsDetail> {
     const news = await this.loadNews(db, id);
     const revision = await this.latestRevision(db, id);

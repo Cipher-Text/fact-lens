@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req } from '@nestjs/common';
 import {
-  correctionCreateSchema, editorialCapabilities, leadImageSchema, localeCodeSchema, revisionCreateSchema, newsCreateSchema,
+  correctionCreateSchema, editorialCapabilities, leadImageSchema, newsRelatedSchema, localeCodeSchema, revisionCreateSchema, newsCreateSchema,
   newsListQuerySchema, newsMetaSchema, transitionRequestSchema, translationSaveSchema,
   type Principal, type NewsCounts, type NewsDetail, type NewsList,
 } from '@fact-lens/contracts';
@@ -51,6 +51,20 @@ export class NewsController {
   }
 
   /** Sets or removes the lead image of the open revision. The lists and Most read show it once it is cleared for the web. */
+  /** The Read next picks of a news item (docs/23 section 5). Anyone editorial may read them. */
+  @Get(':id/related')
+  @RequireAnyCapability(...editorialCapabilities)
+  related(@Param('id', ParseUUIDPipe) id: string) {
+    return this.news.relatedOf(id);
+  }
+
+  /** Replaces the Read next picks: up to three live news items, in order. Audited. */
+  @Put(':id/related')
+  @RequireCapability('news.edit')
+  setRelated(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
+    return this.news.setRelated(id, parse(newsRelatedSchema, body).related, actor(p, req));
+  }
+
   @Put(':id/lead-image')
   @RequireCapability('news.edit')
   leadImage(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown, @CurrentPrincipal() p: Principal, @Req() req: FastifyRequest) {
