@@ -124,6 +124,25 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     expect(lapsed.json().leadImage).toBeNull();
   });
 
+  it('a copied revision keeps the reading time override of the revision it copies', async () => {
+    const id = await draftNews('reading-override');
+    expect((await move(id, 'EDITOR_REVIEW', ['reporter'])).status).toBe(201);
+    await db.pool.query(
+      `UPDATE news_translation SET reading_minutes_override = 7
+          WHERE locale = 'en' AND revision_id = (SELECT id FROM news_revision WHERE news_id = $1 ORDER BY revision_no DESC LIMIT 1)`,
+      [id],
+    );
+    const back = await move(id, 'DRAFT', ['desk_editor'], { reason: 'Needs a second source' });
+    expect(back.status).toBe(201);
+    const kept = await db.pool.query(
+      `SELECT t.reading_minutes_override FROM news_translation t
+          JOIN news_revision r ON r.id = t.revision_id
+         WHERE r.news_id = $1 AND t.locale = 'en' ORDER BY r.revision_no DESC LIMIT 1`,
+      [id],
+    );
+    expect(kept.rows[0].reading_minutes_override).toBe(7);
+  });
+
   it('creates a draft with a derived slug and requires sign-in and capability', async () => {
     const res = await call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Hello, World!' } });
     expect(res.status).toBe(201);

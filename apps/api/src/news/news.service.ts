@@ -769,8 +769,8 @@ export class NewsService {
     );
     const id = next.rows[0]!.id;
     await db.query(
-      `INSERT INTO news_translation (revision_id, locale, title, dek, body, slug, seo_title, seo_description, translation_status)
-       SELECT $2, locale, title, dek, body, slug, seo_title, seo_description, translation_status FROM news_translation WHERE revision_id = $1`,
+      `INSERT INTO news_translation (revision_id, locale, title, dek, body, slug, seo_title, seo_description, translation_status, reading_minutes_override)
+       SELECT $2, locale, title, dek, body, slug, seo_title, seo_description, translation_status, reading_minutes_override FROM news_translation WHERE revision_id = $1`,
       [from.id, id],
     );
     await db.query(
