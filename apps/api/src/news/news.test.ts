@@ -16,6 +16,7 @@ import { seedReferenceData } from '../seed/seed';
 import { PublicNewsController } from './public.controller';
 import { NewsController } from './news.controller';
 import { NewsService } from './news.service';
+import { ReadNextService } from './read-next.service';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 
 const adminUrl = process.env.TEST_DATABASE_URL;
@@ -47,7 +48,7 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     @Module({
       controllers: [NewsController, PublicNewsController],
       providers: [
-        { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService, NewsService, TaxonomyService,
+        { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService, NewsService, ReadNextService, TaxonomyService,
         { provide: TOKEN_VERIFIER, useValue: verifier },
         { provide: CAPABILITY_STORE, useValue: new PgCapabilityStore(db.pool) },
         { provide: AUTH_OPTIONS, useValue: { rolesClaim: 'roles', requireMfa: true } },

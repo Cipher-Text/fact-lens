@@ -223,6 +223,11 @@ export const publicNewsListSchema = z.object({
 });
 export type PublicNewsList = z.infer<typeof publicNewsListSchema>;
 
+/** The Read next items under an article: up to three, in order, in the page's language (docs/23 section 1). */
+export const publicRelatedQuerySchema = z.object({ limit: z.coerce.number().int().min(1).max(3).default(3) });
+export const publicRelatedListSchema = z.object({ items: z.array(publicNewsListItemSchema).max(3) });
+export type PublicRelatedList = z.infer<typeof publicRelatedListSchema>;
+
 /** The public region list in one language, in order: key, name, address and a short description. */
 export const publicRegionSchema = publicTaxonomyRefSchema.extend({ description: z.string().nullable() });
 export type PublicRegion = z.infer<typeof publicRegionSchema>;

@@ -1,6 +1,6 @@
 # Read next (product backlog item 3)
 
-Status: spec, approved rules (ADR-039; doc 23). Reads: `docs/23-read-next.md` (sections 3 to 5), `docs/24-reading-time.md` (the reading time it shows), `docs/25-most-read-and-performance.md` (the public read cache), `apps/web/src/content/reader.ts` (`ReadNextItem`, `getReadNext`).
+Status: RN1 and RN2 committed, RN3 built (public endpoint, ADR-043); RN4 and RN5 pending. Approved rules: ADR-039; doc 23. Reads: `docs/23-read-next.md` (sections 3 to 5), `docs/24-reading-time.md` (the reading time it shows), `docs/25-most-read-and-performance.md` (the public read cache), `apps/web/src/content/reader.ts` (`ReadNextItem`, `getReadNext`).
 
 ## Goal
 

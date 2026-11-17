@@ -63,7 +63,7 @@ const categoryIdsOf = (alias: string) =>
                FROM news_category nc WHERE nc.news_id = ${alias}.id), '{}') AS category_ids`;
 
 /** A public address segment: `<slug>-<id>`, the id being 6 to 8 characters of 0-9a-z after the last hyphen. */
-const SHORT_REF = /^(.+)-([0-9a-z]{6,8})$/;
+export const SHORT_REF = /^(.+)-([0-9a-z]{6,8})$/;
 
 const conflict = (reason: string, message: string) => new ConflictException({ message, reason });
 const unprocessable = (message: string, issues: string[]) => new UnprocessableEntityException({ message, issues });

@@ -35,6 +35,7 @@ import { LocalesController } from './config/locales.controller';
 import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller';
 import { TaxonomyController } from './taxonomy/taxonomy.controller';
 import { TaxonomyService } from './taxonomy/taxonomy.service';
+import { ReadNextService } from './news/read-next.service';
 import { HealthController } from './health.controller';
 import { PG_POOL } from './db/pool';
 import { DatabaseModule } from './db/database.module';
@@ -69,6 +70,7 @@ import type { Pool } from 'pg';
     CardsService,
     CardRequestsService,
     NewsService,
+    ReadNextService,
     TaxonomyService,
     CommentsService,
     AssignmentsService,
