@@ -165,7 +165,7 @@ export const publicNewsSchema = z.object({
   /** The images the body refers to, with what a reader's page needs to show them. */
   media: z.array(publicMediaSchema),
   /** Reading time of this language version: the editor's override, or the calculation (doc 24). */
-  readingMinutes: z.number().int().min(1).optional(),
+  readingMinutes: z.number().int().min(1),
   /** The lead image of the published revision, as readers may see it (ready, allowed on the web, rights not expired). Null otherwise. */
   leadImage: publicMediaSchema.nullable(),
   /** In this news item's language only; null / left out when it has no name in that language. */
