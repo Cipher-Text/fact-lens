@@ -36,7 +36,8 @@ Out of scope for this plan (later steps): reading time, Read next, search, the v
 | T4 | Article page from `GET /public/news/:locale/:ref`: body mapping, contributors, corrections, alternates, 404 for unknown items | Codex | done (65e0c89) |
 | T5 | Homepage and region pages derived from lists (decision 2) | Codex | done (ec4b94c) |
 | T6 | Same-origin media rewrite and image mapping (decision 4) | Codex | done (0c69bfe) |
-| T7 | Unavailable-API behaviour (decision 3); mock-mode e2e stays green; API-mode smoke test | Codex, then Claude reviews | done (e2e34ee); the 503 status is open |
+| T7 | Unavailable-API behaviour (decision 3); mock-mode e2e stays green; API-mode smoke test | Codex, then Claude reviews | done (e2e34ee) |
+| T8 | 503 when the API is down: cached readiness check in the middleware (decision 3, open question 30) | Codex | done (7bbe77e); checked by hand |
 
 Each task is small and ships on its own. T2 comes first, because T3 to T5 depend on it. T6 can run alongside T3 to T5.
 

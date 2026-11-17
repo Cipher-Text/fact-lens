@@ -29,7 +29,7 @@ What exists in this repository today, how much of it has been checked, and what 
 - `apps/api`: NestJS on Fastify. Default-deny authentication, capability checks, audit, 27 SQL migrations.
 - `apps/worker`: BullMQ worker with an outbox dispatcher, a job runtime, a due-schedule scanner and a health endpoint.
 - `apps/newsroom`: Next.js editorial workspace with server-side OIDC sign-in.
-- `apps/web`: the public site. With `FACTLENS_API_URL` set, its article, category, analysis and topic pages read published news from the API (the article page maps the body to its blocks and reads the lead image), the homepage and regions pages are built from the news lists, media is served from the site's own origin, and an unavailable API shows a localized unavailable page (it answers 503 with a cached readiness check; see open question 30), and its header menu reads `GET /public/navigation/:locale`, its footer and menu social links are the ones in the API's settings (a network with none keeps its default link), and its daily poll is the one the newsroom featured, voted through the site's own `/api/poll/:id/vote`; without it, or if the API is down, it keeps the static menu and the mock poll.
+- `apps/web`: the public site. With `FACTLENS_API_URL` set, its article, category, analysis and topic pages read published news from the API (the article page maps the body to its blocks and reads the lead image), the homepage and regions pages are built from the news lists, media is served from the site's own origin, and an unavailable API shows a localized unavailable page (it answers 503 with a cached readiness check, at most once every 10 seconds; see open question 30), and its header menu reads `GET /public/navigation/:locale`, its footer and menu social links are the ones in the API's settings (a network with none keeps its default link), and its daily poll is the one the newsroom featured, voted through the site's own `/api/poll/:id/vote`; without it, or if the API is down, it keeps the static menu and the mock poll.
 - `tools/dev-idp`: a fake sign-in provider for local use. It refuses to run in production.
 - `packages/config` (environment validation) and `packages/contracts` (shared schemas and enums).
 
@@ -71,7 +71,7 @@ What exists in this repository today, how much of it has been checked, and what 
 | Newsroom screens and the editor | Libraries, renderer and proxy rules tested; the screens themselves are **hand-checked only**, there are no browser tests. The tag picture chooser has not been hand-checked |
 | Branded cards: requests, templates, render, compositor | Tested: database tests for requests, templates and rendering, and compositor tests on fixtures. The newsroom card panel is hand-checked only, with no browser test. |
 | Full check (`pnpm check`) | Passes three runs in a row (exit 0, about a minute each) since packages and database files were made to run one at a time (ADR-038). |
-| Public web | 445 unit tests and 1,097 browser tests in `apps/web` (mock mode). With `FACTLENS_API_URL` set, the menu, social links, poll, homepage, article, category, analysis, topic and region pages come from the API; ads are still mock content |
+| Public web | 452 unit tests and 1,097 browser tests in `apps/web` (mock mode). With `FACTLENS_API_URL` set, the menu, social links, poll, homepage, article, category, analysis, topic and region pages come from the API; ads are still mock content |
 
 ## Not built, in one place
 

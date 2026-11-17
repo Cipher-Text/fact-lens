@@ -56,6 +56,8 @@ These were not in the original plan. Each is built and tested; revisit one if it
 
 41. **ADR-041: The public homepage and regions are built from the news lists, and media is served from the site's own origin.** The homepage hero, analysis and opinion, the featured Asia region and Geopolitics category, the five categories (three items each), most read and the regions with news come from the list endpoints. A section with no items is left out. The variant that the mock uses is not used in API mode. Media URLs stay relative; a Next `beforeFiles` rewrite sends `/public/media/...` to the API, and the middleware skips those paths, so they are not redirected to a language prefix. Recorded because the approved defaults and the rewrite are choices the plan did not make.
 
+42. **ADR-042: The unavailable page answers 503, from a cached readiness check in the middleware.** With the API configured, a document request is answered with HTTP 503, retry-after 30 and the localized page while the API readiness endpoint is down. The check runs at most once every 10 seconds per process, with a 1 second timeout, and concurrent requests share it. Mock mode makes no check. A 500 would be dropped from search results, and a 503 tells crawlers to retry later. The cost is one small request every 10 seconds per process, not one per page. Checked by hand with the API unreachable (503) and in mock mode (200). Recorded because the check and its cache are choices the plan did not make.
+
 ## Deferred with revisit triggers
 
 - **OpenSearch:** advanced faceting/autocomplete/semantic or measured scale/latency.
