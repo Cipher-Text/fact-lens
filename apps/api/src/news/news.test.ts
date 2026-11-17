@@ -143,6 +143,26 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     expect(kept.rows[0].reading_minutes_override).toBe(7);
   });
 
+  it('a reading time override is saved, reaches readers and the newsroom; otherwise the calculation is shown', async () => {
+    const id = await draftNews('reading-save');
+    const saved = await call({
+      method: 'PUT', url: `/news/${id}/translations/en`, roles: ['reporter'],
+      body: { title: 'Title reading-save', body: doc('Body text'), slug: 'reading-save', expectedVersion: 2, readingMinutesOverride: 9 },
+    });
+    expect(saved.status).toBe(200);
+    expect((await move(id, 'EDITOR_REVIEW', ['reporter'])).status).toBe(201);
+    expect((await move(id, 'READY', ['fact_checker'])).status).toBe(201);
+    expect((await move(id, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
+    const shown = await app.inject({ method: 'GET', url: '/public/news/en/reading-save' });
+    expect(shown.json().readingMinutes).toBe(9);
+    const detail = await call({ method: 'GET', url: `/news/${id}`, roles: ['reporter'] });
+    expect(detail.body.translations[0]).toMatchObject({ readingMinutesOverride: 9, readingMinutesAuto: 1, readingMinutes: 9 });
+
+    await publishedNews('reading-calc');
+    const calc = await app.inject({ method: 'GET', url: '/public/news/en/reading-calc' });
+    expect(calc.json().readingMinutes).toBe(1);
+  });
+
   it('creates a draft with a derived slug and requires sign-in and capability', async () => {
     const res = await call({ method: 'POST', url: '/news', roles: ['reporter'], body: { locale: 'en', title: 'Hello, World!' } });
     expect(res.status).toBe(201);

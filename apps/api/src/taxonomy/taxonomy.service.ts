@@ -5,6 +5,7 @@ import type {
   CategoryCreate, CategoryOrder, CategoryUpdate, LabelInput, NewsFormat, PublicMedia, PublicNavItem, PublicRegion, RegionCreate, RegionOrder, RegionUpdate, TaxonomyRegion, PublicNewsList, PublicTaxonomyRef, TagCreate, TagUpdate,
   TaxonomyCategory, TaxonomyTag, TaxonomyTagList,
 } from '@fact-lens/contracts';
+import { BodyNode, effectiveReadingMinutes, loadReadingRates, readingMinutesFor } from '../news/reading-time';
 import { taxonomyTagQuerySchema } from '@fact-lens/contracts';
 import type { Pool, PoolClient } from 'pg';
 import type { z } from 'zod';
@@ -448,7 +449,7 @@ export class TaxonomyService {
     const limit = bind(q.limit + 1);
     const { rows } = await this.pool
       .query(
-        `SELECT s.id, s.short_id, s.format, ss.slug, st.title, st.dek, s.published_at, s.published_revision_id,
+        `SELECT s.id, s.short_id, s.format, ss.slug, st.title, st.dek, st.body, st.reading_minutes_override, s.published_at, s.published_revision_id,
                 to_char(s.published_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at,
                 cl.name AS category_name, cl.slug AS category_slug, c.key AS category_key
            FROM news s
@@ -468,12 +469,14 @@ export class TaxonomyService {
       });
     const page = rows.slice(0, q.limit);
     const images = await this.leadImages(page.map((r) => r.published_revision_id as string));
+    const rates = await loadReadingRates(this.pool);
     return {
       filter,
       items: page.map((r) => ({
         id: r.id, shortId: r.short_id, format: r.format, slug: r.slug, title: r.title, dek: r.dek, publishedAt: r.published_at.toISOString(),
         category: r.category_name ? { key: r.category_key, name: r.category_name, slug: r.category_slug } : null,
         image: images.get(r.published_revision_id) ?? null,
+        readingMinutes: effectiveReadingMinutes(readingMinutesFor(r.body as BodyNode, locale, rates), r.reading_minutes_override as number | null),
       })),
       nextCursor: rows.length > q.limit ? Buffer.from(JSON.stringify([page[page.length - 1]!.cursor_at, page[page.length - 1]!.id])).toString('base64url') : null,
     };

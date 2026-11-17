@@ -79,6 +79,10 @@ export const newsTranslationSchema = z.object({
   seoTitle: z.string().nullable(),
   seoDescription: z.string().nullable(),
   translationStatus: z.enum(translationStatuses),
+  /** Reading time (doc 24): the editor's override, the calculation, and the effective value. */
+  readingMinutesOverride: z.number().int().min(1).max(120).nullable().optional(),
+  readingMinutesAuto: z.number().int().min(1).optional(),
+  readingMinutes: z.number().int().min(1).optional(),
 });
 export type NewsTranslation = z.infer<typeof newsTranslationSchema>;
 

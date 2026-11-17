@@ -15,6 +15,7 @@ import { isPgError, type Actor } from '../common/http';
 import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
+import { effectiveReadingMinutes, loadReadingRates, readingMinutesFor } from './reading-time';
 import { publishIssues, reviewIssues, slugify, type RevisionSnapshot } from './validation';
 import { capabilityFor, findTransition, LIVE_STATUSES, movesFrom } from './workflow';
 
@@ -155,6 +156,7 @@ export class NewsService {
   async detail(id: string, principal: Principal, db: Db = this.pool): Promise<NewsDetail> {
     const news = await this.loadNews(db, id);
     const revision = await this.latestRevision(db, id);
+    const rates = await loadReadingRates(db);
     const [translations, contributors, media, count, openComments, tags, regions] = await Promise.all([
       db.query(
         `SELECT * FROM news_translation WHERE revision_id = $1 ORDER BY locale`, [revision.id]),
@@ -180,6 +182,9 @@ export class NewsService {
         id: t.id, revisionId: t.revision_id, locale: t.locale, title: t.title, dek: t.dek, body: t.body, slug: t.slug,
         seoTitle: t.seo_title, seoDescription: t.seo_description, translationStatus: t.translation_status,
         version: t.version, updatedAt: t.updated_at.toISOString(),
+        readingMinutesOverride: t.reading_minutes_override ?? null,
+        readingMinutesAuto: readingMinutesFor(t.body, t.locale, rates),
+        readingMinutes: effectiveReadingMinutes(readingMinutesFor(t.body, t.locale, rates), t.reading_minutes_override),
       })),
       contributors: contributors.rows.map((c) => ({
         contributor: { id: c.id, kind: c.kind, displayName: c.display_name, bio: c.bio }, role: c.role, position: c.position,
@@ -295,19 +300,22 @@ export class NewsService {
         throw conflict('version_conflict', `Someone else changed this translation (current version ${current ?? 'none'})`);
       }
       const values = [input.title, input.dek ?? null, JSON.stringify(input.body), input.slug, input.seoTitle ?? null, input.seoDescription ?? null];
+      // Absent: keep the stored override. Present (a number, or null to clear): write it (doc 24 section 4).
+      const setOverride = input.readingMinutesOverride !== undefined;
+      const overrideParams = setOverride ? [input.readingMinutesOverride ?? null] : [];
       try {
         if (current === null) {
           await db.query(
-            `INSERT INTO news_translation (revision_id, locale, title, dek, body, slug, seo_title, seo_description)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-            [revision.id, locale, ...values],
+            `INSERT INTO news_translation (revision_id, locale, title, dek, body, slug, seo_title, seo_description, reading_minutes_override)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+            [revision.id, locale, ...values, input.readingMinutesOverride ?? null],
           );
         } else {
           await db.query(
             `UPDATE news_translation SET title = $3, dek = $4, body = $5, slug = $6, seo_title = $7, seo_description = $8,
-                    version = version + 1, updated_at = now()
+                    version = version + 1, updated_at = now()${setOverride ? ', reading_minutes_override = $9' : ''}
               WHERE revision_id = $1 AND locale = $2`,
-            [revision.id, locale, ...values],
+            [revision.id, locale, ...values, ...overrideParams],
           );
         }
         await this.syncInlineMedia(db, revision.id);
@@ -575,7 +583,7 @@ export class NewsService {
 
     const main = await this.pool.query(
       `SELECT s.id, s.short_id, s.format, s.published_at,
-              (SELECT slug FROM news_slug WHERE news_id = s.id AND locale = $2 AND is_current) AS slug, st.title, st.dek, st.body, st.seo_title, st.seo_description, st.updated_at,
+              (SELECT slug FROM news_slug WHERE news_id = s.id AND locale = $2 AND is_current) AS slug, st.title, st.dek, st.body, st.seo_title, st.seo_description, st.updated_at, st.reading_minutes_override,
               sr.revision_no, sr.changed_at, sr.id AS revision_id
          FROM news s
          JOIN news_revision sr ON sr.id = s.published_revision_id
@@ -607,6 +615,7 @@ export class NewsService {
       [...new Set(contributors.rows.map((c) => c.image_id as string | null).filter((x): x is string => !!x))]
         .map(async (imageId) => [imageId, await this.taxonomy.publicImage(imageId)] as const)));
     const refs = await this.taxonomy.publicRefs(row.news_id, locale);
+    const rates = await loadReadingRates(this.pool);
     return {
       news: {
         id: m.id, shortId: m.short_id, format: m.format, locale, slug: m.slug, title: m.title, dek: m.dek, body: m.body, seoTitle: m.seo_title, seoDescription: m.seo_description,
@@ -622,6 +631,7 @@ export class NewsService {
         corrections: corrections.rows.map((c) => ({ approvedAt: c.approved_at.toISOString(), notice: c.notice })),
         media,
         leadImage,
+        readingMinutes: effectiveReadingMinutes(readingMinutesFor(m.body, locale, rates), m.reading_minutes_override),
         category: refs.category,
         categories: refs.categories,
         regions: refs.regions,

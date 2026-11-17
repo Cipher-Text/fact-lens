@@ -1,4 +1,4 @@
-import { DEFAULT_READING_RATES, type ReadingRates } from '@fact-lens/contracts';
+import { DEFAULT_READING_RATES, readingRatesSchema, type ReadingRates } from '@fact-lens/contracts';
 
 /** A node of a Tiptap document (only the parts this module reads). */
 export interface BodyNode {
@@ -52,4 +52,16 @@ export function readingMinutesFor(body: BodyNode, lang: string, rates: ReadingRa
 /** The editor's override when there is one, otherwise the calculation. */
 export function effectiveReadingMinutes(calculated: number, override: number | null | undefined): number {
   return override ?? calculated;
+}
+
+/** Anything that can run a query: the pool or a transaction client. */
+export interface Queryable {
+  query(sql: string, params?: unknown[]): Promise<{ rows: Array<Record<string, unknown>> }>;
+}
+
+/** The configured rates. A missing or invalid row gives the defaults, so a reading time is always available. */
+export async function loadReadingRates(db: Queryable): Promise<ReadingRates> {
+  const { rows } = await db.query(`SELECT value FROM configuration WHERE key = 'reading.words_per_minute' AND scope = 'global'`);
+  const parsed = readingRatesSchema.safeParse(rows[0]?.value);
+  return parsed.success ? parsed.data : DEFAULT_READING_RATES;
 }
