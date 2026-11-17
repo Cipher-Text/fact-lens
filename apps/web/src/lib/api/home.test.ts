@@ -7,7 +7,7 @@ function item(n: number, options: { format?: "news" | "analysis" | "opinion"; ca
   return {
     id: `22222222-2222-4222-8222-${String(n).padStart(12, "0")}`,
     shortId: `story${n}`, format: options.format ?? "news", slug: `story-${n}`, title: `Story ${n}`, dek: null,
-    publishedAt: new Date(Date.UTC(2026, 0, 1, 0, 0, 60 - n)).toISOString(),
+    publishedAt: new Date(Date.UTC(2026, 0, 1, 0, 0, 60 - n)).toISOString(), readingMinutes: 2,
     category: { key: options.category ?? "geopolitics", name: "Geopolitics", slug: options.category ?? "geopolitics" }, image: options.image ? media : null,
   };
 }

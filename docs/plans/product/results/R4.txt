@@ -1,0 +1,10 @@
+Implemented the API reading-time wiring in `apps/web`. API-backed articles and story cards now use `readingMinutes` from the API. Removed the site-side calculation, updated contract fixtures, and added tests for article values (including `1`) and story-card mapping. Mock content and mock mode were left unchanged.
+
+All four requested checks passed:
+
+- `pnpm --filter fact-lens-web typecheck` — passed
+- `pnpm --filter fact-lens-web lint` — passed
+- `pnpm --filter fact-lens-web test` — passed, 47 files and 460 tests
+- `pnpm --filter fact-lens-web build` — passed
+
+The search for `Segmenter`, `readingMinutesFrom`, and the rate constants in `apps/web/src/lib/api/` returned no matches. No server was started and no commit was made.

@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { publicNewsSchema } from "@fact-lens/contracts";
-import { articleFromApi, articleFromNews, blocksFromBody, readingMinutesFrom } from "./article";
+import { articleFromApi, articleFromNews, blocksFromBody } from "./article";
 
 const mediaId = "11111111-1111-4111-8111-111111111111";
 const authorId = "22222222-2222-4222-8222-222222222222";
 const fixture = publicNewsSchema.parse({
   id: "33333333-3333-4333-8333-333333333333", shortId: "abc123", format: "news", locale: "en", slug: "sample-story",
-  title: "Sample story", dek: "A short summary", body: { type: "doc", content: [] }, seoTitle: null, seoDescription: null,
+  title: "Sample story", dek: "A short summary", body: { type: "doc", content: [] }, seoTitle: null, seoDescription: null, readingMinutes: 2,
   publishedAt: "2026-01-02T03:04:05Z", updatedAt: "2026-01-03T03:04:05Z",
   contributors: [{ contributor: { id: authorId, kind: "person", displayName: "Ada Lovelace", bio: "Writer", image: null, socialLinks: [] }, role: "author" }],
   alternates: [], corrections: [{ approvedAt: "2026-01-03T03:04:05Z", notice: "A correction." }],
@@ -49,24 +49,21 @@ describe("article API adapter", () => {
     expect(result.dropped).toEqual([]);
   });
 
-  it("counts English and Bangla words, with a one minute minimum and no image captions", () => {
-    const english = publicNewsSchema.shape.body.parse({ type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: Array(460).fill("word").join(" ") }] }] });
-    const bangla = publicNewsSchema.shape.body.parse({ type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: Array(340).fill("শব্দ").join(" ") }] }] });
-    expect(readingMinutesFrom(english, "en")).toBe(2);
-    expect(readingMinutesFrom(bangla, "bn")).toBe(2);
-    expect(readingMinutesFrom({ type: "doc", content: [] }, "en")).toBe(1);
-    expect(readingMinutesFrom({ type: "doc", content: [{ type: "image", attrs: { mediaAssetId: mediaId, alt: "A very long caption" } }] } as never, "en")).toBe(1);
-  });
-
   it("maps the published article and falls back to a body image as lead", () => {
     expect(articleFromNews(fixture, "en")).toMatchObject({
       summary: "A short summary", author: { name: "Ada Lovelace", role: "author", bio: "Writer", initials: "AL" },
       topics: [{ id: "climate", slug: "climate", label: "Climate" }], updates: [{ text: "A correction." }],
-      caption: "River", credit: "Photo desk", readingMinutes: 1,
+      caption: "River", credit: "Photo desk", readingMinutes: 2,
     });
     const noLead = publicNewsSchema.parse({ ...fixture, leadImage: null, body: { type: "doc", content: [{ type: "image", attrs: { mediaAssetId: mediaId, alt: "Inline" } }] } });
     expect(articleFromNews(noLead, "en")?.story.image.src).toBe("/card");
     expect(articleFromNews(publicNewsSchema.parse({ ...fixture, leadImage: null, media: [] }), "en")).toBeNull();
+  });
+
+  it("uses the API reading time, including a one minute value", () => {
+    expect(articleFromNews(fixture, "en")?.readingMinutes).toBe(2);
+    const oneMinute = publicNewsSchema.parse({ ...fixture, readingMinutes: 1 });
+    expect(articleFromNews(oneMinute, "en")?.readingMinutes).toBe(1);
   });
 
   it("requests details without following 301 or 308 redirects", async () => {

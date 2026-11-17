@@ -9,7 +9,7 @@ const media = publicMediaSchema.parse({
 
 const listItem = publicNewsListItemSchema.parse({
   id: "22222222-2222-4222-8222-222222222222", shortId: "abc123", format: "news", slug: "sample-story",
-  title: "Sample story", dek: "A summary", publishedAt: "2026-01-02T03:04:05Z",
+  title: "Sample story", dek: "A summary", publishedAt: "2026-01-02T03:04:05Z", readingMinutes: 2,
   category: { key: "economy", name: "Economy", slug: "economy" }, image: media,
 });
 
@@ -40,6 +40,10 @@ describe("API story adapters", () => {
     expect(storyFromNews(news, "en")?.id).toBe(storyFromListItem(listItem, "en")?.id);
     expect(storyFromNews(news, "en")?.author).toEqual({ name: "Writer Two", slug: "44444444-4444-4444-8444-444444444444" });
     expect(storyFromListItem(listItem, "en")?.author).toBeUndefined();
+  });
+
+  it("uses the API reading time for story cards", () => {
+    expect(storyFromListItem(listItem, "en")?.readingMinutes).toBe(2);
   });
 
   it("maps media and uses fallback dimensions", () => {

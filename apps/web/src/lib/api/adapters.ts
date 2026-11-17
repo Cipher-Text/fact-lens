@@ -37,6 +37,7 @@ export function storyFromListItem(item: PublicNewsListItem, lang: Lang): Story |
     title: item.title,
     ...(item.dek === null ? {} : { summary: item.dek }),
     publishedAt: item.publishedAt,
+    readingMinutes: item.readingMinutes,
     ...(item.image === null ? {} : { image: imageFromMedia(item.image, lang) }),
   };
 }
@@ -56,5 +57,6 @@ export function storyFromNews(item: PublicNews, lang: Lang): Story | null {
     ...(item.dek === null ? {} : { summary: item.dek }),
     ...(author === undefined ? {} : { author: { name: author.displayName, slug: author.id } }),
     publishedAt: item.publishedAt,
+    readingMinutes: item.readingMinutes,
   };
 }

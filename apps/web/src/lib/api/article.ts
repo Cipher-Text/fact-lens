@@ -58,19 +58,6 @@ export function blocksFromBody(body: PublicNews["body"], media: PublicNews["medi
   return { blocks, dropped };
 }
 
-function countWords(text: string, lang: Lang): number {
-  const locale = lang === "bn" ? "bn-BD" : "en";
-  const segments = new Intl.Segmenter(locale, { granularity: "word" }).segment(text);
-  let count = 0;
-  for (const part of segments) if (part.isWordLike) count++;
-  return count;
-}
-
-export function readingMinutesFrom(body: PublicNews["body"], lang: Lang): number {
-  const text = (body.content as unknown as unknown[]).map(plainText).join(" ");
-  return Math.max(1, Math.round(countWords(text, lang) / (lang === "bn" ? 170 : 230)));
-}
-
 function initials(name: string): string {
   return name.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part) => Array.from(part)[0]?.toLocaleUpperCase() ?? "").join("");
 }
@@ -99,7 +86,7 @@ export function articleFromNews(item: PublicNews, lang: Lang): Article | null {
     credit: item.leadImage?.attribution ?? item.leadImage?.license ?? "",
     body: blocks,
     updates: item.corrections.map(({ approvedAt, notice }) => ({ at: approvedAt, text: notice })),
-    readingMinutes: readingMinutesFrom(item.body, lang),
+    readingMinutes: item.readingMinutes,
     topics,
   } as Article;
 }
