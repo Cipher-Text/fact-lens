@@ -82,10 +82,10 @@ describe("API homepage and region adapters", () => {
 
   it("uses only valid nonempty regions and builds their covers from newest imaged stories", async () => {
     installFetch((key) => {
-      if (key === "/public/news/bn?excludeFormat=opinion&limit=50") return list([item(1), item(2, { image: true }), item(3)]);
-      if (key === "/public/regions/bn") return publicRegionListSchema.parse([region("asia"), region("no-such-region"), region("europe")]);
-      if (key === "/public/news/bn?region=asia&excludeFormat=opinion&limit=3") return list([item(4)]);
-      if (key === "/public/news/bn?region=europe&excludeFormat=opinion&limit=3") return list([]);
+      if (key === "/public/news/bn-BD?excludeFormat=opinion&limit=50") return list([item(1), item(2, { image: true }), item(3)]);
+      if (key === "/public/regions/bn-BD") return publicRegionListSchema.parse([region("asia"), region("no-such-region"), region("europe")]);
+      if (key === "/public/news/bn-BD?region=asia&excludeFormat=opinion&limit=3") return list([item(4)]);
+      if (key === "/public/news/bn-BD?region=europe&excludeFormat=opinion&limit=3") return list([]);
       return undefined;
     });
     const page = await regionsPageFromApi("bn");

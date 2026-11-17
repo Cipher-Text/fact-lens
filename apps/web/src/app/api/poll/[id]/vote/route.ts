@@ -43,7 +43,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
         ...(token ? { cookie: `${VOTER_COOKIE}=${token}` } : {}),
         ...(ip ? { "x-forwarded-for": ip } : {}),
       },
-      body: JSON.stringify({ optionId: body.optionId, locale: apiLocale[body.lang] }),
+      body: JSON.stringify({ optionId: body.optionId, locale: apiLocale(body.lang) }),
       cache: "no-store",
       signal: AbortSignal.timeout(5000),
     });

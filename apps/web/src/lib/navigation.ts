@@ -1,12 +1,9 @@
 import { navigationSchema, publicTaxonomyRefSchema, type PublicNavItem } from "@fact-lens/contracts";
 import type { Lang } from "@/i18n";
-import { apiGet } from "./api/client";
+import { apiGet, apiLocale } from "./api/client";
 
 /** A menu from the Fact Lens API: a parent with its child menus (GET /public/navigation/{locale}). */
 export type ApiNavItem = PublicNavItem;
-
-/** The API's language codes for the site's two languages. */
-const apiLocale: Record<Lang, string> = { bn: "bn-BD", en: "en" };
 
 /** Keeps only well-formed menus; anything else from the network is dropped, not trusted. */
 export function parseNavigation(data: unknown): ApiNavItem[] {
@@ -36,7 +33,7 @@ export async function fetchNavigation(
   if (!process.env.FACTLENS_API_URL?.trim()) return null;
   try {
     const items = await apiGet(
-      `/public/navigation/${encodeURIComponent(apiLocale[lang])}`,
+      `/public/navigation/${encodeURIComponent(apiLocale(lang))}`,
       navigationSchema,
       { next: { revalidate: 60 } },
       fetchImpl,

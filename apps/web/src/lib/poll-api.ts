@@ -1,11 +1,10 @@
 import type { Lang, Poll } from "@/content";
 import { publicPollSchema } from "@fact-lens/contracts";
-import { apiBase, apiGet } from "./api/client";
+import { apiBase, apiGet, apiLocale } from "./api/client";
 
 export { apiBase } from "./api/client";
 
-/** The API's language codes for the site's two languages. */
-export const apiLocale: Record<Lang, string> = { bn: "bn-BD", en: "en" };
+export { apiLocale } from "./api/client";
 
 /** The cookie the API gives a browser that voted. It is the API's, relayed on this site's own domain. */
 export const VOTER_COOKIE = "fl_voter";
@@ -80,7 +79,7 @@ export async function fetchFeaturedPoll(
     // totalVotes was added after the site's original adapter; the shared contract remains the
     // source of truth while this default keeps older API fixtures compatible.
     const data = await apiGet(
-      `/public/polls/featured/${encodeURIComponent(apiLocale[lang])}`,
+      `/public/polls/featured/${encodeURIComponent(apiLocale(lang))}`,
       apiPollSchema,
       { cache: "no-store", headers: token ? { cookie: `${VOTER_COOKIE}=${token}` } : undefined },
       fetchImpl,

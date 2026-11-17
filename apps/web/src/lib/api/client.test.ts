@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { navigationSchema } from "@fact-lens/contracts";
 
-import { apiBase, apiGet, ApiBadResponse, ApiNotFound, ApiUnavailable } from "./client";
+import { apiBase, apiGet, apiLocale, ApiBadResponse, ApiNotFound, ApiUnavailable } from "./client";
 
 const schema = navigationSchema;
 const response = (body: unknown, status = 200) =>
@@ -58,5 +58,12 @@ describe("public API client", () => {
   it("returns null when the base is unset", () => {
     vi.stubEnv("FACTLENS_API_URL", "   ");
     expect(apiBase()).toBeNull();
+  });
+});
+
+describe("apiLocale", () => {
+  it("maps site languages to API locales", () => {
+    expect(apiLocale("bn")).toBe("bn-BD");
+    expect(apiLocale("en")).toBe("en");
   });
 });

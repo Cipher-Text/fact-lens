@@ -1,3 +1,9 @@
+import type { Lang } from "@/content/types";
+
+export function apiLocale(lang: Lang): string {
+  return lang === "bn" ? "bn-BD" : lang;
+}
+
 export function apiBase(): string | null {
   const base = process.env.FACTLENS_API_URL?.trim().replace(/\/+$/, "");
   return base || null;

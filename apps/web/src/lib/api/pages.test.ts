@@ -59,8 +59,8 @@ describe("API page adapters", () => {
     const analysis = Array.from({ length: 20 }, (_, i) => item(i + 1, "analysis"));
     const tagFilter = { type: "tag" as const, name: "বিশ্ব রাজনীতি", slug: "world-politics" };
     installFetch({
-      "/public/news/bn?format=analysis&limit=50": list(analysis),
-      "/public/news/bn?tag=world-politics&limit=50": list([item(1), item(2, "analysis"), item(3, "opinion")], tagFilter),
+      "/public/news/bn-BD?format=analysis&limit=50": list(analysis),
+      "/public/news/bn-BD?tag=world-politics&limit=50": list([item(1), item(2, "analysis"), item(3, "opinion")], tagFilter),
     });
     const page = await analysisPageFromApi("bn");
     expect(page.cover?.id).toBe("story1");

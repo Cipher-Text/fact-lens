@@ -2,7 +2,7 @@ import { publicNewsSchema, type PublicNews, type PublicMedia } from "@fact-lens/
 import type { Article, Block } from "@/content";
 import type { Lang, Topic } from "@/content/types";
 import { storyFromNews } from "./adapters";
-import { apiGet, ApiRedirect } from "./client";
+import { apiGet, apiLocale, ApiRedirect } from "./client";
 
 function plainText(node: unknown): string {
   if (!node || typeof node !== "object") return "";
@@ -93,15 +93,15 @@ export function articleFromNews(item: PublicNews, lang: Lang): Article | null {
 
 export async function articleFromApi(ref: string, lang: Lang): Promise<{ article: Article } | { redirectTo: string }> {
   try {
-    const item = await apiGet(`/public/news/${lang}/${encodeURIComponent(ref)}`, publicNewsSchema, { redirect: "manual" });
+    const item = await apiGet(`/public/news/${apiLocale(lang)}/${encodeURIComponent(ref)}`, publicNewsSchema, { redirect: "manual" });
     if (process.env.NODE_ENV === "development") {
       const { dropped } = blocksFromBody(item.body, item.media, lang);
       if (dropped.length) console.warn("Dropped unsupported public article body nodes", { ref, lang, dropped });
     }
     const article = articleFromNews(item, lang);
     if (!article) {
-      console.error(`Public article has no lead or body image: ${ref} (${lang})`);
-      throw new Error(`Public article has no usable image: ${ref} (${lang})`);
+      console.error(`Public article has no lead or body image: ${ref} (${apiLocale(lang)})`);
+      throw new Error(`Public article has no usable image: ${ref} (${apiLocale(lang)})`);
     }
     return { article };
   } catch (error) {

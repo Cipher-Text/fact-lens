@@ -60,6 +60,6 @@ describe("readNextFromApi", () => {
     const fetchMock = vi.fn().mockResolvedValue(response({ items: [] }));
     vi.stubGlobal("fetch", fetchMock);
     await readNextFromApi("story name/বাংলা", "bn");
-    expect(fetchMock.mock.calls[0]![0]).toBe("http://api.test/public/news/bn/story%20name%2F%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE/related?limit=3");
+    expect(fetchMock.mock.calls[0]![0]).toBe("http://api.test/public/news/bn-BD/story%20name%2F%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE/related?limit=3");
   });
 });

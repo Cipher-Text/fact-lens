@@ -2,12 +2,12 @@ import { publicRelatedListSchema } from "@fact-lens/contracts";
 import type { ReadNextItem } from "@/content";
 import type { Lang } from "@/content/types";
 import { storyFromListItem } from "./adapters";
-import { apiGet, ApiNotFound } from "./client";
+import { apiGet, apiLocale, ApiNotFound } from "./client";
 
 export async function readNextFromApi(ref: string, lang: Lang): Promise<ReadNextItem[]> {
   try {
     const result = await apiGet(
-      `/public/news/${lang}/${encodeURIComponent(ref)}/related?limit=3`,
+      `/public/news/${apiLocale(lang)}/${encodeURIComponent(ref)}/related?limit=3`,
       publicRelatedListSchema,
     );
     return result.items.flatMap((item) => {
