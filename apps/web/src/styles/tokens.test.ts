@@ -53,7 +53,7 @@ describe("no rounded corners (CPT-05)", () => {
   });
 
   it("no border-radius other than 0", () => {
-    expect(matches(/border-radius\s*:\s*(?!0(px|rem)?\s*[;}!])/)).toEqual([]);
+    expect(matches(/border-radius\s*:(?!\s*0(px|rem)?\s*[;}!])/)).toEqual([]);
   });
 
   it("no radius token in use", () => {
