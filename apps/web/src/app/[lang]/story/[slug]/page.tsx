@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
 import { ReaderPage } from "@/components/reader/ReaderPage";
+import { ViewBeacon } from "@/components/reader/ViewBeacon";
 import {
   articleLangsOf,
   articleRefs,
@@ -94,7 +95,7 @@ export default async function StoryPage({
       datePublished: article.story.publishedAt, dateModified: article.updatedAt ?? article.story.publishedAt,
       author: [{ "@type": "Person", name: article.author.name }], keywords: article.topics.map((topic) => topic.label).join(", "),
     };
-    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} /><ReaderPage lang={lang} article={article} readNext={[]} /></>;
+    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} /><ViewBeacon shortId={article.story.id} locale={lang} /><ReaderPage lang={lang} article={article} readNext={[]} /></>;
   }
   const article = getArticleByRef(slug, lang);
   if (!article) notFound();

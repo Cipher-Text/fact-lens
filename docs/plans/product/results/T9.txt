@@ -1,0 +1,10 @@
+Implemented the view beacon in the API-backed article path and added the forwarding route and tests. Mock article pages do not render the beacon.
+
+All four verification commands passed:
+
+- `pnpm --filter fact-lens-web typecheck` — exit 0
+- `pnpm --filter fact-lens-web lint` — exit 0
+- `pnpm --filter fact-lens-web test` — 47 files passed; 459 tests passed
+- `pnpm --filter fact-lens-web build` — exit 0; `/api/views` appears as a dynamic route
+
+No dev server was started, and I did not commit.
