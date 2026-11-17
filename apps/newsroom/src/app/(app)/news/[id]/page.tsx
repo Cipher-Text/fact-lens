@@ -9,12 +9,14 @@ import { CommentBox, CorrectionForm, MetaForm, NewPersonForm, ReviseForm, Resolv
 import { SourceParts } from '@/components/SourceParts';
 import { LeadImagePicker } from '@/components/LeadImagePicker';
 import { AssignmentParts } from '@/components/AssignmentParts';
+import { RelatedPicker } from '@/components/RelatedParts';
 import { CardParts } from '@/components/CardParts';
 import { Badge, Empty, Panel, StatusBadge, WorkflowSteps } from '@/components/ui';
 import { SourceBars, ViewsChart } from '@/components/PerformanceParts';
 import { ApiError, api, getPrincipal } from '@/lib/current';
 import { formatDateTime, pickTitle } from '@/lib/format';
 import { can } from '@/lib/nav';
+import type { RelatedPick } from '@/lib/related';
 
 /** A Latin-letter slug already used by another language of this news, so a new one can match it. */
 const latinSlugOf = (translations: Array<{ locale: string; slug: string }>, locale: string) =>
@@ -51,6 +53,18 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
     api(`/news/${id}/cards`, z.array(generatedCardListItemSchema), { returnTo: here }),
     api('/card-templates', z.array(cardTemplateSchema), { returnTo: here }),
   ]);
+
+  const listSchema = z.object({ items: z.array(z.object({ id: z.string(), titles: z.record(z.string(), z.string()).default({}) })) });
+  const [related, published, updated, corrected] = await Promise.all([
+    api(`/news/${id}/related`, z.array(z.object({ newsId: z.string(), position: z.number(), title: z.string().nullable() })), { returnTo: here }),
+    api('/news?status=PUBLISHED&limit=100', listSchema, { returnTo: here }),
+    api('/news?status=UPDATED&limit=100', listSchema, { returnTo: here }),
+    api('/news?status=CORRECTED&limit=100', listSchema, { returnTo: here }),
+  ]);
+  const candidateLists = [published, updated, corrected];
+  const candidateMap = new Map(candidateLists.flatMap((list) => list.items.map((item) => [item.id, { id: item.id, title: item.titles.en ?? Object.values(item.titles)[0] ?? 'Untitled news item' }] as const)));
+  const candidates = [...candidateMap.values()];
+  const relatedPicks = related as RelatedPick[];
 
   const { news, revision, translations, editable } = detail;
   // The performance of a news item that has been live. A failure here must not break the page.
@@ -178,6 +192,8 @@ export default async function NewsPage({ params }: { params: Promise<{ id: strin
                   people={people.map((p) => ({ id: p.id, name: p.displayName }))} />
                 <NewsRegionPicker newsId={id} regions={regions.map((r) => ({ id: r.id, name: regionName(r) }))} chosen={detail.regions.map((r) => r.id)} />
                 <NewsTagPicker newsId={id} tags={detail.tags} locales={locales} />
+                <RelatedPicker newsId={id} picks={relatedPicks} candidates={candidates} />
+                {candidateLists.some((list) => list.items.length >= 100) ? <p className="text-xs text-muted">Search covers only the newest items in each status.</p> : null}
                 <NewPersonForm />
               </div>
             ) : (

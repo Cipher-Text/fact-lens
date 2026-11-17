@@ -239,7 +239,7 @@ export function ReadNext({
       data-read-next
     >
       <SectionHeading id="rd-next-title">{t.readNext}</SectionHeading>
-      <ul className="grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-(--grid-row-gap) sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid grid-cols-1 gap-x-(--grid-column-gap) gap-y-(--grid-row-gap) min-[600px]:grid-cols-2 min-[1024px]:grid-cols-3">
         {items.map(({ story }) => (
           <li key={story.id}>
             <StoryCard story={story} strings={strings} />

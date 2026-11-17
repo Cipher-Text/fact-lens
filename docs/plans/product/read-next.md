@@ -1,6 +1,6 @@
 # Read next (product backlog item 3)
 
-Status: RN1 and RN2 committed, RN3 built (public endpoint, ADR-043); RN4 and RN5 pending. Approved rules: ADR-039; doc 23. Reads: `docs/23-read-next.md` (sections 3 to 5), `docs/24-reading-time.md` (the reading time it shows), `docs/25-most-read-and-performance.md` (the public read cache), `apps/web/src/content/reader.ts` (`ReadNextItem`, `getReadNext`).
+Status: RN1 to RN3 committed; RN4 (newsroom panel) and RN5 (site section) built, not yet committed; manual check against a running API open. Approved rules: ADR-039; doc 23. Reads: `docs/23-read-next.md` (sections 3 to 5), `docs/24-reading-time.md` (the reading time it shows), `docs/25-most-read-and-performance.md` (the public read cache), `apps/web/src/content/reader.ts` (`ReadNextItem`, `getReadNext`).
 
 ## Goal
 
@@ -42,6 +42,11 @@ Every article shows three related news items at its foot, chosen by editors firs
 - The article page shows the section under the tags and the ad band, as doc 23 section 1 describes: three cards in a row from 1024 px, two from 600 px, one below. Hidden when there are no items.
 - In API mode the page fetches the related items from RN3. The mock `getReadNext` is not used in API mode, so no mock article is ever shown.
 - Tests: the section appears with items, is hidden without them, and the cards show the image, title, category and reading time from the API.
+
+## Task specs
+
+- [RN4: newsroom panel](./read-next/RN4-newsroom-panel.md) (Codex)
+- [RN5: site section](./read-next/RN5-site-section.md) (Codex)
 
 ## Order
 

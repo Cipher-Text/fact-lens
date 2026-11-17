@@ -12,6 +12,7 @@ import {
 import { isLang, localizedPath } from "@/i18n";
 import { apiBase, ApiNotFound } from "@/lib/api/client";
 import { articleFromApi } from "@/lib/api/article";
+import { readNextFromApi } from "@/lib/api/related";
 
 import "@/styles/reader.css";
 
@@ -80,13 +81,13 @@ export default async function StoryPage({
   const { lang, slug } = await params;
   if (!isLang(lang)) notFound();
   if (apiBase()) {
-    let result;
-    try {
-      result = await articleFromApi(slug, lang);
-    } catch (error) {
-      if (error instanceof ApiNotFound) notFound();
-      throw error;
-    }
+    const [result, readNext] = await Promise.all([
+      articleFromApi(slug, lang).catch((error) => {
+        if (error instanceof ApiNotFound) notFound();
+        throw error;
+      }),
+      readNextFromApi(slug, lang),
+    ]);
     if ("redirectTo" in result) redirect(localizedPath(lang, `/story/${result.redirectTo}`));
     const { article } = result;
     const jsonLd = {
@@ -95,7 +96,7 @@ export default async function StoryPage({
       datePublished: article.story.publishedAt, dateModified: article.updatedAt ?? article.story.publishedAt,
       author: [{ "@type": "Person", name: article.author.name }], keywords: article.topics.map((topic) => topic.label).join(", "),
     };
-    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} /><ViewBeacon shortId={article.story.id} locale={lang} /><ReaderPage lang={lang} article={article} readNext={[]} /></>;
+    return <><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} /><ViewBeacon shortId={article.story.id} locale={lang} /><ReaderPage lang={lang} article={article} readNext={readNext} /></>;
   }
   const article = getArticleByRef(slug, lang);
   if (!article) notFound();
