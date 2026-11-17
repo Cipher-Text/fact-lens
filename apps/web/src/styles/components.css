@@ -720,3 +720,10 @@
     var(--divider-dots)
   );
 }
+
+/* The radio inputs under the poll are visually hidden, but the browser rounds them by default.
+   CPT-05 has no exception, so they get no radius. */
+input[type="radio"] {
+  appearance: none;
+  border-radius: 0;
+}
