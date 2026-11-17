@@ -1,6 +1,6 @@
 # Plan: wire the public site to the API (Phase 4, step 2)
 
-Status: **done**, except the HTTP status of the unavailable page (open question 30) and the ads, which stay mock content. T1 to T7 are merged; the lead image change came in with T4 (`9aa7ae1`).
+Status: **done**. The unavailable page answers 503 (open question 30, resolved). The ads stay mock content. T1 to T7 are merged; the lead image change came in with T4 (`9aa7ae1`).
 
 ## Goal
 
