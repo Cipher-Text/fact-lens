@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { currentStoryRef } from "@/content";
+import { createApiHealth } from "@/lib/api/health";
+import { unavailableHtml } from "@/lib/api/unavailable-page";
 
 import {
   LANG_COOKIE,
@@ -19,12 +21,33 @@ const FILE_PATH = /\.[^/]+$/;
 // An article path, /story/<slug>-<id>, after the language prefix (layout 7C).
 const STORY_PATH = /^\/story\/([^/]+)$/;
 
+const apiBase = process.env.FACTLENS_API_URL?.trim();
+const apiHealth = apiBase ? createApiHealth({ base: apiBase }) : undefined;
+
 // Bangla at the root URL, English under /en (DR-17).
 // The language comes from the URL and the reader's own choice only.
 // This proxy never reads Accept-Language.
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl;
   const first = pathname.split("/")[1] ?? "";
+
+  if (
+    apiHealth &&
+    request.method === "GET" &&
+    request.headers.get("accept")?.includes("text/html")
+  ) {
+    const lang = isLang(first) ? first : defaultLang;
+    if (!(await apiHealth.isUp())) {
+      return new Response(unavailableHtml(lang), {
+        status: 503,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "retry-after": "30",
+          "cache-control": "no-store",
+        },
+      });
+    }
+  }
 
   if (FILE_PATH.test(pathname)) return NextResponse.next();
 

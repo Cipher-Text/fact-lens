@@ -1,0 +1,10 @@
+Implemented T8: the proxy returns a localized 503 for HTML document requests when the configured API is down. Health checks are shared while in flight and cached for 10 seconds; mock mode skips them. Added health, unavailable page, and proxy tests.
+
+Verification:
+
+- `pnpm --filter fact-lens-web typecheck` — passed.
+- `pnpm --filter fact-lens-web lint` — passed.
+- `pnpm --filter fact-lens-web test` — passed: 45 files, 452 tests.
+- `pnpm --filter fact-lens-web build` — passed.
+
+The first test run found an incorrect test expectation for the English home link; I corrected it and reran the suite successfully. No dev server or `./run.sh` was started.
