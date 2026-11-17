@@ -211,6 +211,8 @@ export const publicNewsListItemSchema = z.object({
   category: publicTaxonomyRefSchema.nullable(),
   /** The lead image, when it is ready, allowed on the web and cleared. Null otherwise. */
   image: publicMediaSchema.nullable(),
+  /** Reading time of this language version (doc 24). Optional until the API fills it. */
+  readingMinutes: z.number().int().min(1).optional(),
 });
 
 export const publicNewsListSchema = z.object({

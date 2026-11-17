@@ -96,12 +96,19 @@ export const publicContactSchema = z.object({
 });
 export type PublicContact = z.infer<typeof publicContactSchema>;
 
+/** Words a minute for each language (doc 24). A language with no rate uses the English one. */
+export const readingRateSchema = z.number().int().min(50).max(600);
+export const readingRatesSchema = z.object({ en: readingRateSchema, 'bn-BD': readingRateSchema }).catchall(readingRateSchema);
+export type ReadingRates = z.infer<typeof readingRatesSchema>;
+export const DEFAULT_READING_RATES: ReadingRates = { en: 230, 'bn-BD': 170 };
+
 /** Picks the value schema for a configuration key, or undefined for an unknown key. */
 export function configValueSchema(key: string): z.ZodType | undefined {
   if (key === 'workflow.transition_policy') return workflowPolicySchema;
   if (key.startsWith('rate_limit.')) return rateLimitSchema;
   if (key.startsWith('ai.use_case.')) return aiUseCasePolicySchema;
   if (key.startsWith('retention.')) return retentionRuleSchema;
+  if (key === 'reading.words_per_minute') return readingRatesSchema;
   return undefined;
 }
 

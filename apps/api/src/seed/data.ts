@@ -56,6 +56,7 @@ export const categories = [
  */
 export const configuration: ReadonlyArray<{ key: string; scope: string; value: unknown }> = [
   { key: 'workflow.transition_policy', scope: 'global', value: defaultWorkflowPolicy },
+  { key: 'reading.words_per_minute', scope: 'global', value: { en: 230, 'bn-BD': 170 } },
   { key: 'rate_limit.login', scope: 'global', value: { limit: 10, windowSeconds: 300 } },
   { key: 'rate_limit.search', scope: 'global', value: { limit: 60, windowSeconds: 60 } },
   { key: 'rate_limit.ingestion', scope: 'global', value: { limit: 120, windowSeconds: 60 } },
