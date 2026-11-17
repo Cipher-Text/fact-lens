@@ -20,6 +20,7 @@ Each task in a plan is one of: `pending`, `in progress`, `in review`, `merged`, 
 | [card-generation](./card-generation.md) | Done: T0 to T5 merged |
 | [test-reliability](./test-reliability.md) | Done: runs are serial (ADR-038) |
 | [public-site-api](./public-site-api.md) | Done (the unavailable page answers 503; open question 30 resolved) |
+| [deployment](./deployment.md) | Awaiting decisions (platform, domains, migrations) |
 | [card-duplicate-renders](./card-duplicate-renders.md) | Done: migration and upload change merged (ADR-036) |
 
 Add a row when a plan is written. Update its status after each merge, and update `docs/22-implementation-status.md` when what is built changes.

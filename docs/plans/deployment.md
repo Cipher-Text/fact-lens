@@ -1,0 +1,49 @@
+# Plan: deployment path (P0, item 3)
+
+Status: **awaiting decisions** (plan only; no code written).
+
+## Goal
+
+The API, worker and public site run in a real environment, built from images in CI, configured only by their own variables, with health checks the platform can use, and with the database migrated as a separate release step. Everything after this (abuse controls, error tracking, SEO, consent) is tested against that environment.
+
+## Current state (checked in the code)
+
+- Each app has a production start command: API `node dist/main.js`, worker `node dist/main.js`, newsroom `next start --port 3100`, site `next start`.
+- `packages/config` already refuses production without S3 storage, OIDC settings and `INTERNAL_API_TOKEN`.
+- The API listens on `API_PORT`/`API_HOST`. The worker has a health server on `WORKER_HEALTH_PORT`. The API has `/health/live` and `/health/ready`. The site has no health route.
+- `infrastructure/docker-compose.yml` runs local PostgreSQL, Redis and MinIO only. There are no Dockerfiles.
+- CI (`.github/workflows/ci.yml`) runs `pnpm check`. It builds no images.
+- `docs/13-observability-and-operations.md` says: images built by GitHub Actions with pinned Node and pnpm, dependency scans, managed services first, and each service deployed independently.
+
+## Decisions needed from you
+
+1. **Platform.** Which managed container runtime and which managed PostgreSQL, Redis and object storage? Recommendation: whichever you already have an account with, as long as it runs OCI images and offers managed PostgreSQL with backups. The plan is written so that switching platform only changes the deployment definition.
+2. **Domains.** Which hostnames for the site, the newsroom and the API? The site and the API must be on the same site for the media rewrite to avoid a second origin for images.
+3. **Migrations.** Run them as a release step before the new API starts (recommended), not on app start.
+
+## Tasks (proposed)
+
+| ID | Task | Owner |
+| --- | --- | --- |
+| D1 | Dockerfiles for the API, the worker and the site: multi-stage, pinned Node 22 and pnpm 12.9.1, non-root user, only production dependencies in the final image, no `.env` copied in | Codex |
+| D2 | CI: build the three images on `main` and check they start (not run), with a dependency scan step | Codex, Claude reviews |
+| D3 | Per-service environment matrix: the variables each service receives in production, and a check that a service refuses to start with another service's secrets | Claude (config is critical) |
+| D4 | Health for the platform: the site gets a `/health` route; the worker and API probes are wired to the platform | Codex (site route), Claude (probe wiring) |
+| D5 | Migration release step: `migrate up` runs once per release before the API starts; a failed migration stops the release | Claude (migrations are critical) |
+| D6 | Staging environment on the managed services, and a smoke-test runbook (sign-in, a published item, a card render, a poll vote, the 503 page with the API stopped) | Claude |
+| D7 | Backups and one restore drill: managed PostgreSQL backups on, a restore into a scratch database, and the result recorded | Claude |
+
+## Order
+
+D1 and the decisions run first. D2 needs D1. D3 and D5 can run in parallel with D2. D4 needs D1. D6 needs D1 to D5. D7 can run any time after the database exists.
+
+## Verification
+
+- D1 and D2: the images build in CI and the three containers start with a valid environment and exit with a clear error without one.
+- D6: the smoke-test runbook is run end to end once, and each step is recorded.
+- D7: the restore is checked against row counts from before the backup.
+
+## Risks
+
+- A platform choice made late means rework in D1 and D6. Make decision 1 first.
+- Images that contain secrets are a leak. D1 must check that no `.env` file reaches an image.
