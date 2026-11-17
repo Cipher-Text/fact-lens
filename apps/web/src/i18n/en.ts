@@ -2,6 +2,11 @@ import type { Dictionary } from "./types";
 
 // English interface strings. bn.ts has the same keys (T-27).
 export const en: Dictionary = {
+  unavailable: {
+    title: "News is not available right now",
+    body: "Please try again in a few minutes.",
+    retry: "Try again",
+  },
   site: {
     name: "Fact Lens",
     description: "News, analysis and opinion from Bangladesh and the world",

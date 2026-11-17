@@ -1,5 +1,11 @@
 // Bangla interface strings. en.ts has the same keys (T-27).
 export const bn = {
+  unavailable: {
+    // TODO-REVIEW: Native speaker should review this translation before merge.
+    title: "এই মুহূর্তে খবর পাওয়া যাচ্ছে না",
+    body: "কয়েক মিনিট পর আবার চেষ্টা করুন।",
+    retry: "আবার চেষ্টা করুন",
+  },
   site: {
     name: "ফ্যাক্ট লেন্স",
     description: "বাংলাদেশ ও বিশ্বের খবর, বিশ্লেষণ ও মতামত",

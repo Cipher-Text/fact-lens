@@ -1,0 +1,11 @@
+Implemented the localized unavailable page and English/Bangla rendering tests. The Bangla copy is marked `TODO-REVIEW`. No page or API files were changed.
+
+Verification results:
+
+- `pnpm --filter fact-lens-web typecheck` — passed
+- `pnpm --filter fact-lens-web lint` — passed
+- `pnpm --filter fact-lens-web test` — passed; 43 files and 445 tests
+- `pnpm --filter fact-lens-web build` — passed
+- `pnpm --filter fact-lens-web test:e2e:chromium` — started, but the run was interrupted after hundreds of tests failed immediately (around 1–6 ms each). It did not produce a final summary, so the suite result is incomplete.
+
+The HTTP status code remains an open decision as specified in the task. No commit was made.
