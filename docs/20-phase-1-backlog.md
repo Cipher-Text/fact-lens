@@ -37,7 +37,7 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 
 - Add Redis/BullMQ worker scaffold and idempotent job envelope. *Done.*
 - Add transactional outbox dispatcher with retries/dead-letter visibility. *Done; dead letters show as counts on the worker health endpoint, no dashboard.*
-- Add cache invalidation, search projection, media-variant and branded photocard/poster generation (`media.card_generate`) job stubs. *Cache and search log and succeed; media-variant fails as "not implemented"; card generation is built.*
+- Add cache invalidation, search projection, media-variant and branded photocard/poster generation (`media.card_generate`) job stubs. *Cache logs and succeeds; search is built (ADR-044); media-variant fails as "not implemented"; card generation is built.*
 - Add structured logs, traces/metrics baseline, Sentry integration and queue/database dashboards. *Partial: JSON logs and health endpoints; no traces, metrics, Sentry or dashboards.*
 
 ## Epic F — Newsroom shell

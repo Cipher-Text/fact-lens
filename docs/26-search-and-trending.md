@@ -12,7 +12,7 @@ From the site's own design (`apps/web`, `component-system.md` C-19 and C-20):
 
 ## 2. What the backend has today
 
-Nothing for the public site. The worker's `search.index` job logs and succeeds, and the outbox already sends it an event for each published or archived news item, so a projection can be added without changing the API ([09](./09-search-and-discovery.md)). The newsroom cannot search news text either. The rate-limit setting `rate_limit.search` exists in the configuration and is not used.
+Before step 1 there was nothing for the public site. Step 1 is now built (ADR-044): the worker's `search.index` job and the outbox events drive the index ([09](./09-search-and-discovery.md)). The newsroom cannot search news text either. The rate-limit setting `rate_limit.search` exists in the configuration and is not used.
 
 ## 3. Search (proposed)
 
