@@ -45,6 +45,8 @@ import { PublicTaxonomyController } from './taxonomy/public-taxonomy.controller'
 import { TaxonomyController } from './taxonomy/taxonomy.controller';
 import { TaxonomyService } from './taxonomy/taxonomy.service';
 import { ReadNextService } from './news/read-next.service';
+import { SearchService } from './search/search.service';
+import { PublicSearchController } from './search/public-search.controller';
 
 const ISSUER = 'https://idp.test/';
 const AUDIENCE = 'fact-lens-api';
@@ -89,14 +91,14 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);
 
   @Module({
-    controllers: [CardsController, PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController],
+    controllers: [CardsController, PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController, PublicSearchController],
     providers: [
       { provide: INTERNAL_TOKEN, useValue: opts.internalToken === undefined ? TEST_INTERNAL_TOKEN : opts.internalToken },
       { provide: GEMINI_OPTIONS, useValue: opts.gemini ?? { apiKey: null, model: 'test-model' } }, GeminiService,
       { provide: SITE_INFO, useValue: { social: { links: [{ network: 'x', url: 'https://x.com/factlens' }] }, contact: { email: 'desk@factlens.example', phone: null, address: null } } },
       { provide: REDIS_CLIENT, useValue: redis }, { provide: VIEWS_OPTIONS, useValue: viewsOptions }, ViewsService, AnalyticsService,
       { provide: PG_POOL, useValue: db.pool }, AuditService, AuthService, AuthorizationService,
-      NewsService, ReadNextService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, InboxService, PollsService, MediaService, CardsService, CardRequestsService,
+      NewsService, ReadNextService, SearchService, TaxonomyService, CommentsService, AssignmentsService, SourcesService, InboxService, PollsService, MediaService, CardsService, CardRequestsService,
       { provide: POLL_OPTIONS, useValue: opts.polls ?? { secret: 'test-poll-secret-0123456789abcdef0123456789' } },
       { provide: OBJECT_STORAGE, useValue: storage },
       { provide: MEDIA_OPTIONS, useValue: { maxBytes: opts.maxUploadBytes ?? 10 * 1024 * 1024 } },

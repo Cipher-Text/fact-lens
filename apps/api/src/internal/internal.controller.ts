@@ -2,7 +2,7 @@ import {
   BadRequestException, Body, CanActivate, Controller, ExecutionContext, Get, HttpCode, Inject, Injectable, Param, ParseUUIDPipe, Post, Req,
   ServiceUnavailableException, UnauthorizedException, UseGuards,
 } from '@nestjs/common';
-import { feedIngestSchema, INTERNAL_TOKEN_HEADER, type AnalyticsRollupResult, type FeedIngestResult, type ScheduledPublishResult } from '@fact-lens/contracts';
+import { feedIngestSchema, INTERNAL_TOKEN_HEADER, searchIndexRequestSchema, type AnalyticsRollupResult, type FeedIngestResult, type ScheduledPublishResult, type SearchIndexResult } from '@fact-lens/contracts';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import type { FastifyRequest } from 'fastify';
 import { Public } from '../auth/decorators';
@@ -11,6 +11,7 @@ import { ViewsService } from '../analytics/views.service';
 import { InboxService } from '../inbox/inbox.service';
 import { NewsService } from '../news/news.service';
 import { CardsService } from '../cards/cards.service';
+import { SearchService } from '../search/search.service';
 
 export const INTERNAL_TOKEN = Symbol('INTERNAL_TOKEN');
 
@@ -44,7 +45,15 @@ export class InternalController {
     @Inject(InboxService) private readonly inbox: InboxService,
     @Inject(ViewsService) private readonly views: ViewsService,
     @Inject(CardsService) private readonly cards: CardsService,
+    @Inject(SearchService) private readonly search: SearchService,
   ) {}
+
+  /** Makes the public search document of one news item match its published version, or removes it. Safe to call again. */
+  @Post('search/:id')
+  @HttpCode(200)
+  indexSearch(@Param('id', ParseUUIDPipe) id: string, @Body() body: unknown): Promise<SearchIndexResult> {
+    return this.search.project(id, parse(searchIndexRequestSchema, body).operation);
+  }
 
   /** Adds the finished hours of the view counters to the durable table. Safe to call again: an hour is added once. */
   @Post('analytics/rollup')

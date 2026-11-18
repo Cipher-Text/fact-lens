@@ -64,9 +64,10 @@ export const handlers: Handlers = {
   },
   'search.index': {
     receipt: true,
-    async run(payload, { log }) {
-      // The search projection is not built yet; keep the queue flowing and say so.
-      log.info('search.index', { ...payload, stub: true });
+    async run({ newsId, operation }, { api, log }) {
+      // The API owns the search document; the job only asks for it. Safe to run twice.
+      const result = await api.indexSearch(newsId, operation);
+      log.info('search.index', { newsId, operation, indexed: result.indexed });
     },
   },
   'notification.send': {

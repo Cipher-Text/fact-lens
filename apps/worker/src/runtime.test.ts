@@ -45,6 +45,7 @@ describe.skipIf(!adminUrl || !redisUrl)('workers with Redis and PostgreSQL', () 
   let apiImpl: PublishApi = defaultApi;
   const api: ApiClient = {
     publishSchedule: (scheduleId) => apiImpl.publishSchedule(scheduleId),
+    indexSearch: async () => ({ indexed: false }),
     ingestFeed: async () => ({ inserted: 0, duplicates: 0, skipped: 0 }),
     rollupViews: async () => ({ buckets: 0, skipped: 0, rows: 0 }),
     cardInputs: async () => null,

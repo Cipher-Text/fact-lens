@@ -169,6 +169,7 @@ describe.skipIf(!adminUrl)('feed jobs (database)', () => {
     pool: db.pool, log: silentLogger, enqueue: async () => {}, cache: { invalidate: async () => {} }, feeds: fetchFeed,
     api: {
       publishSchedule: async () => ({ result: 'published', newsId: null }),
+      indexSearch: async () => ({ indexed: false }),
       ingestFeed: async (_id, r) => { reports.push(r); return { inserted: r.items.length, duplicates: 0, skipped: 0 }; },
       rollupViews: async () => ({ buckets: 0, skipped: 0, rows: 0 }),
       cardInputs: async () => null,

@@ -39,3 +39,4 @@ export * from './ai';
 export * from './inbox';
 export * from './polls';
 export * from './cards';
+export * from './search';

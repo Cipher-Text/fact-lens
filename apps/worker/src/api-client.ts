@@ -1,5 +1,5 @@
 import {
-  analyticsRollupResultSchema, cardRenderInputsSchema, feedIngestResultSchema, INTERNAL_TOKEN_HEADER, scheduledPublishResultSchema, type AnalyticsRollupResult, type CardRenderInputs, type FeedIngest, type FeedIngestResult, type ScheduledPublishResult,
+  analyticsRollupResultSchema, cardRenderInputsSchema, searchIndexResultSchema, type SearchIndexResult, feedIngestResultSchema, INTERNAL_TOKEN_HEADER, scheduledPublishResultSchema, type AnalyticsRollupResult, type CardRenderInputs, type FeedIngest, type FeedIngestResult, type ScheduledPublishResult,
 } from '@fact-lens/contracts';
 import { PermanentJobError } from './errors';
 
@@ -9,6 +9,8 @@ export interface ApiClient {
   ingestFeed(feedId: string, result: FeedIngest): Promise<FeedIngestResult>;
   /** Asks the API to add the finished hours of the view counters to the durable table. Safe to repeat: an hour is added once. */
   rollupViews(): Promise<AnalyticsRollupResult>;
+  /** Asks the API to make the public search document of one news item match its published version, or remove it. Safe to repeat. */
+  indexSearch(newsId: string, operation: 'upsert' | 'delete'): Promise<SearchIndexResult>;
   /** Returns null when the card is already ready. */
   cardInputs(generatedCardId: string): Promise<CardRenderInputs | null>;
   /** Returns false when the card is already ready. */
@@ -48,6 +50,20 @@ export function createApiClient(baseUrl: string, token: string, timeoutMs = 1500
       if (res.status === 400) throw new PermanentJobError('The API refused the feed result');
       if (!res.ok) throw new Error(`API answered ${res.status} for feed ${feedId}`);
       const parsed = feedIngestResultSchema.safeParse(await res.json());
+      if (!parsed.success) throw new PermanentJobError('The API sent an unexpected response');
+      return parsed.data;
+    },
+    async indexSearch(newsId, operation) {
+      const res = await fetch(`${base}/internal/search/${encodeURIComponent(newsId)}`, {
+        method: 'POST',
+        headers: { [INTERNAL_TOKEN_HEADER]: token, 'content-type': 'application/json' },
+        body: JSON.stringify({ operation }),
+        signal: AbortSignal.timeout(timeoutMs),
+      });
+      if (res.status === 404) throw new PermanentJobError(`News item ${newsId} does not exist`);
+      if (res.status === 401) throw new PermanentJobError('The API rejected the internal token');
+      if (!res.ok) throw new Error(`API answered ${res.status} for search of ${newsId}`);
+      const parsed = searchIndexResultSchema.safeParse(await res.json());
       if (!parsed.success) throw new PermanentJobError('The API sent an unexpected response');
       return parsed.data;
     },
