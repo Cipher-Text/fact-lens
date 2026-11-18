@@ -1,6 +1,6 @@
 # 23 — Read next (the related news under an article)
 
-**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Built (RN1 to RN5; [ADR-043](./17-architecture-decisions.md)). A manual check against a running API is open.** This document records the concept and the decision to write it down before building it ([ADR-030](./17-architecture-decisions.md)). Nothing here is in the API, the newsroom or the contracts yet. The rules in section 3 are proposals that need approval (section 8).
+**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Built (RN1 to RN5; [ADR-043](./17-architecture-decisions.md)). A manual check in English passed on 18 November 2026; the Bangla article check passed on 18 November 2026 (the article renders in Bangla, and the section is hidden when no other Bangla item exists).** This document records the concept and the decision to write it down before building it ([ADR-030](./17-architecture-decisions.md)). Nothing here is in the API, the newsroom or the contracts yet. The rules in section 3 are proposals that need approval (section 8).
 
 ## 1. What it is
 

@@ -1,6 +1,6 @@
 # Read next (product backlog item 3)
 
-Status: RN1 to RN3 committed; RN4 (newsroom panel) and RN5 (site section) built, not yet committed; manual check against a running API open. Approved rules: ADR-039; doc 23. Reads: `docs/23-read-next.md` (sections 3 to 5), `docs/24-reading-time.md` (the reading time it shows), `docs/25-most-read-and-performance.md` (the public read cache), `apps/web/src/content/reader.ts` (`ReadNextItem`, `getReadNext`).
+Status: built and committed (RN1 to RN5, pushed). The English manual check passed on 18 November 2026; the Bangla article check passed on 18 November 2026. Approved rules: ADR-039; doc 23. Reads: `docs/23-read-next.md` (sections 3 to 5), `docs/24-reading-time.md` (the reading time it shows), `docs/25-most-read-and-performance.md` (the public read cache), `apps/web/src/content/reader.ts` (`ReadNextItem`, `getReadNext`).
 
 ## Goal
 
