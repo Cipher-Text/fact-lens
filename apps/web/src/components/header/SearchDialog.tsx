@@ -11,11 +11,13 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import type { Dictionary } from "@/i18n";
+import type { Lang } from "@/i18n";
 
 import { SearchForm } from "./SearchForm";
 
 type Props = {
   strings: Dictionary["header"];
+  lang: Lang;
   trendingTerms: string[];
 };
 
@@ -31,7 +33,7 @@ type Props = {
  * reaches the field (DR-249). Escape, the close button and a press on the backdrop close
  * it, and focus returns to the search button. The page behind it is inert.
  */
-export function SearchDialog({ strings, trendingTerms }: Props) {
+export function SearchDialog({ strings, lang, trendingTerms }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -60,6 +62,7 @@ export function SearchDialog({ strings, trendingTerms }: Props) {
           <div className="shell pt-24 pb-14">
             <SearchForm
               strings={strings}
+              lang={lang}
               size="dialog"
               fieldProps={{ "data-search-field": "" }}
               trendingTerms={trendingTerms}

@@ -6,10 +6,12 @@ import { useId, useRef, useState } from "react";
 import { Button } from "@/components/story/Button";
 import { IconButton } from "@/components/story/IconButton";
 import type { Dictionary } from "@/i18n";
+import { localizedPath, type Lang } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 type Props = {
   strings: Dictionary["header"];
+  lang: Lang;
   /**
    * "drawer": 44px field with the search icon inside at the end, no attached button
    * (Drawer.search, DR-349). "dialog": 56px field with the attached submit button
@@ -31,6 +33,7 @@ type Props = {
  */
 export function SearchForm({
   strings,
+  lang,
   size,
   fieldProps,
   trendingTerms,
@@ -38,14 +41,15 @@ export function SearchForm({
   const fieldId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const searchHref = (term: string) => `${localizedPath(lang, "/search")}?q=${encodeURIComponent(term.trim())}`;
 
   return (
     <form
       role="search"
       onSubmit={(event) => {
         event.preventDefault();
-        setSubmitted(true);
+        const query = value.trim();
+        if (query) window.location.assign(searchHref(query));
       }}
     >
       <label htmlFor={fieldId} className="sr-only">
@@ -70,7 +74,6 @@ export function SearchForm({
           autoComplete="off"
           onChange={(event) => {
             setValue(event.target.value);
-            setSubmitted(false);
           }}
           className={cn(
             "h-full min-w-0 flex-1 bg-transparent font-ui text-sm font-normal text-ink placeholder:text-ink-muted",
@@ -90,7 +93,6 @@ export function SearchForm({
             className="h-full"
             onClick={() => {
               setValue("");
-              setSubmitted(false);
               inputRef.current?.focus();
             }}
           >
@@ -107,12 +109,6 @@ export function SearchForm({
           />
         ) : null}
       </div>
-      <p
-        role="status"
-        className="font-ui text-xs font-medium text-ink-secondary not-empty:mt-3"
-      >
-        {submitted ? strings.searchUnavailable : null}
-      </p>
       {trendingTerms?.length ? (
         <div className="mt-6 flex flex-wrap items-center">
           <h2 className="me-6 font-ui text-xs font-semibold text-ink-muted">
@@ -129,10 +125,7 @@ export function SearchForm({
                 ) : null}
                 <button
                   type="button"
-                  onClick={() => {
-                    setValue(term);
-                    setSubmitted(true);
-                  }}
+                  onClick={() => window.location.assign(searchHref(term))}
                   className="inline-flex min-h-11 items-center font-ui text-xs font-semibold text-interactive hover:text-interactive-hover active:text-interactive-pressed"
                 >
                   {term}

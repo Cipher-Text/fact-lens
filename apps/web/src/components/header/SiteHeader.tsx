@@ -8,6 +8,7 @@ import { getDictionary, localizedPath, type Lang } from "@/i18n";
 import { Drawer } from "./Drawer";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { fetchNavigation } from "@/lib/navigation";
+import { trendingFromApi } from "@/lib/api/search";
 
 import { getApiNavItems, getNavItems } from "./navItems";
 import { NavBar } from "./NavBar";
@@ -53,6 +54,9 @@ export function SiteHeader({
   // `use` instead of `await` keeps this component synchronous, so the page views that contain it
   // still render in unit tests; with no API set there is no promise at all.
   const menu = process.env.FACTLENS_API_URL ? use(fetchNavigation(lang)) : null;
+  const trendingTerms = process.env.FACTLENS_API_URL
+    ? use(trendingFromApi(lang))
+    : getTrendingTerms(lang);
   const items = menu
     ? getApiNavItems(menu, t, lang, path)
     : getNavItems(t, lang, path);
@@ -65,6 +69,7 @@ export function SiteHeader({
           <>
             <Drawer
               items={items}
+              lang={lang}
               strings={t.header}
               footerStrings={t.footer}
               siteName={t.site.name}
@@ -73,7 +78,8 @@ export function SiteHeader({
             />
             <SearchDialog
               strings={t.header}
-              trendingTerms={getTrendingTerms(lang)}
+              lang={lang}
+              trendingTerms={trendingTerms}
             />
           </>
         }

@@ -45,6 +45,18 @@ export const bn = {
     // The name of the caret button that opens the sub-items of a drawer row.
     expand: "উপবিভাগ",
   },
+  searchPage: {
+    // TODO-REVIEW: Native speaker should review these search page strings before merge.
+    title: "অনুসন্ধান",
+    resultsFor: "এর ফলাফল",
+    resultCount: "এই পাতায় ফলাফল",
+    empty: "কোনো ফল পাওয়া যায়নি।",
+    prompt: "অনুসন্ধান করতে অন্তত দুটি অক্ষর লিখুন।",
+    tooLong: "অনুসন্ধানের শব্দ ২০০ অক্ষরের মধ্যে রাখুন।",
+    loadMore: "আরও ফল দেখুন",
+    preview: "এই প্রিভিউতে অনুসন্ধান পাওয়া যাচ্ছে না।",
+    unavailable: "এই মুহূর্তে অনুসন্ধান করা যাচ্ছে না।",
+  },
   home: {
     // Visually hidden: the page heading for screen readers.
     title: "ফ্যাক্ট লেন্স: প্রথম পাতা",

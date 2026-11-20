@@ -45,6 +45,17 @@ export const en: Dictionary = {
     // The name of the caret button that opens the sub-items of a drawer row.
     expand: "sub-sections",
   },
+  searchPage: {
+    title: "Search",
+    resultsFor: "Results for",
+    resultCount: "results on this page",
+    empty: "No results matched your search.",
+    prompt: "Enter at least two characters to search.",
+    tooLong: "Keep your search under 200 characters.",
+    loadMore: "Load more",
+    preview: "Search is not available in this preview.",
+    unavailable: "Search is temporarily unavailable.",
+  },
   home: {
     // Visually hidden: the page heading for screen readers.
     title: "Fact Lens: front page",

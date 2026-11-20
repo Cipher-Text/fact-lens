@@ -19,7 +19,7 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import type { Dictionary } from "@/i18n";
+import type { Dictionary, Lang } from "@/i18n";
 import { cn } from "@/lib/utils";
 
 import { uiLink } from "./classes";
@@ -28,6 +28,7 @@ import { SearchForm } from "./SearchForm";
 
 type Props = {
   items: NavItem[];
+  lang: Lang;
   strings: Dictionary["header"];
   footerStrings: Dictionary["footer"];
   siteName: string;
@@ -60,6 +61,7 @@ type Props = {
  */
 export function Drawer({
   items,
+  lang,
   strings,
   footerStrings,
   siteName,
@@ -135,6 +137,7 @@ export function Drawer({
         <div className="shrink-0 px-5 pb-4 md:hidden">
           <SearchForm
             strings={strings}
+            lang={lang}
             size="drawer"
             fieldProps={{ "data-drawer-search": "" }}
           />
