@@ -42,3 +42,26 @@ export const publicSearchSchema = z.object({
   nextCursor: z.string().nullable(),
 });
 export type PublicSearch = z.infer<typeof publicSearchSchema>;
+
+/** The editorial trending list (docs/26, section 5): up to six terms in one language, in order, each at most 60 characters. */
+export const TRENDING_MAX_TERMS = 6;
+export const TRENDING_MAX_TERM = 60;
+
+export const trendingTermsSchema = z
+  .object({
+    terms: z.array(z.string().trim().min(1).max(TRENDING_MAX_TERM)).max(TRENDING_MAX_TERMS),
+  })
+  .strict()
+  .superRefine((value, ctx) => {
+    const seen = new Set<string>();
+    for (const term of value.terms) {
+      const key = term.toLocaleLowerCase();
+      if (seen.has(key)) ctx.addIssue({ code: 'custom', message: `"${term}" is listed twice`, path: ['terms'] });
+      seen.add(key);
+    }
+  });
+export type TrendingTerms = z.infer<typeof trendingTermsSchema>;
+
+/** What readers get: the terms in order. An empty list hides the row. */
+export const publicTrendingSchema = z.object({ terms: z.array(z.string()).max(TRENDING_MAX_TERMS) });
+export type PublicTrending = z.infer<typeof publicTrendingSchema>;

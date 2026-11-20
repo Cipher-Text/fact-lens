@@ -1,7 +1,8 @@
 import { z } from 'zod';
-import { featureFlagSchema, localeSchema } from '@fact-lens/contracts';
+import { featureFlagSchema, localeSchema, trendingTermsSchema } from '@fact-lens/contracts';
 import { FlagToggle } from '@/components/NewsActions';
 import { LanguageManager } from '@/components/TaxonomyParts';
+import { TrendingTermsEditor } from '@/components/TrendingParts';
 import { AccessProblem, Badge, Empty, Panel } from '@/components/ui';
 import { ApiError, api, getPrincipal, isMfaRequired } from '@/lib/current';
 import { formatDateTime } from '@/lib/format';
@@ -14,12 +15,17 @@ export default async function ConfigPage() {
   if (!can(principal, 'config.manage')) {
     return <Empty>You do not have permission to change configuration.</Empty>;
   }
-  let flags, locales;
+  let flags, locales, trending;
   try {
     [flags, locales] = await Promise.all([
       api('/config/flags', z.array(featureFlagSchema), { returnTo: '/config' }),
       api('/config/locales', z.array(localeSchema), { returnTo: '/config' }),
     ]);
+    const activeLocales = locales.filter((locale) => locale.active);
+    trending = await Promise.all(activeLocales.map(async (locale) => ({
+      locale,
+      data: await api(`/trending-searches/${locale.code}`, trendingTermsSchema, { returnTo: '/config' }),
+    })));
   } catch (err) {
     if (err instanceof ApiError && err.status === 403) return <AccessProblem mfaRequired={isMfaRequired(err)} />;
     throw err;
@@ -30,6 +36,11 @@ export default async function ConfigPage() {
       <Panel title="Languages" id="languages-h">
         <p className="mb-3 text-sm text-muted">The languages the site can be published in. A new language can be used straight away for names of sections and tags and for news translations; the public site needs its own interface text added separately.</p>
         <LanguageManager locales={locales} />
+      </Panel>
+      <Panel title="Trending searches" id="trending-h">
+        <div className="space-y-5">
+          {trending.map(({ locale, data }) => <TrendingTermsEditor key={locale.code} locale={locale.code} label={locale.displayName} initialTerms={data.terms} />)}
+        </div>
       </Panel>
       <Panel title="Site social links and contact" id="site-h">
         <p className="text-sm text-muted">

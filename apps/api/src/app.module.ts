@@ -38,6 +38,8 @@ import { TaxonomyService } from './taxonomy/taxonomy.service';
 import { ReadNextService } from './news/read-next.service';
 import { SearchService } from './search/search.service';
 import { PublicSearchController } from './search/public-search.controller';
+import { TrendingService } from './search/trending.service';
+import { PublicTrendingController, TrendingController } from './search/trending.controller';
 import { HealthController } from './health.controller';
 import { PG_POOL } from './db/pool';
 import { DatabaseModule } from './db/database.module';
@@ -47,7 +49,7 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [CardsController, PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController, PublicSearchController],
+  controllers: [CardsController, PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController, PublicSearchController, TrendingController, PublicTrendingController],
   providers: [
     { provide: SITE_INFO, useFactory: () => siteFromEnv(loadApiEnv()) },
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
@@ -74,6 +76,7 @@ import type { Pool } from 'pg';
     NewsService,
     ReadNextService,
     SearchService,
+    TrendingService,
     TaxonomyService,
     CommentsService,
     AssignmentsService,
