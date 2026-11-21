@@ -12,6 +12,8 @@
     "migrate": "node-pg-migrate --migrations-dir migrations --envPath ../../.env",
     "seed": "tsx --env-file-if-exists=../../.env src/seed/run.ts",
     "search:reindex": "tsx --env-file-if-exists=../../.env src/search/reindex.ts",
+    "auth:keygen": "tsx src/auth/keygen.ts",
+    "auth:bootstrap": "tsx --env-file-if-exists=../../.env src/auth/bootstrap.ts",
     "migrate:create": "node-pg-migrate --migrations-dir migrations --migration-file-language sql create"
   },
   "devDependencies": {

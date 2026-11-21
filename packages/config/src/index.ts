@@ -26,6 +26,16 @@ export const apiEnvSchema = z.object({
   /** Claim holding role keys; a dotted path such as `realm_access.roles` is allowed. */
   OIDC_ROLES_CLAIM: z.string().min(1).default('roles'),
   OIDC_REQUIRE_MFA: z.stringbool().default(true),
+  // Sign-in inside the backend (ADR-046, docs/plans/auth-in-app.md). Generate both with
+  // `pnpm --filter @fact-lens/api auth:keygen`. The signing key is a base64 PKCS#8 PEM of an ES256 private key;
+  // the encryption key is base64 of 32 random bytes. Production needs all four settings below.
+  AUTH_SIGNING_KEY: z.string().min(1).optional(),
+  AUTH_ENCRYPTION_KEY: z.string().min(1).optional(),
+  /** The issuer written into the backend's tokens, for example https://api.example.org. */
+  AUTH_ISSUER: z.string().url().optional(),
+  AUTH_AUDIENCE: z.string().min(1).default('fact-lens-api'),
+  /** The newsroom's public address, where invitation links point. Shared with the newsroom's own setting. */
+  NEWSROOM_BASE_URL: z.string().url().optional(),
   /** Shared secret for the worker's calls to /internal. Unset disables those endpoints. */
   INTERNAL_API_TOKEN: z.string().min(32).optional(),
   // Object storage for media. `fs` writes to a local folder (development); `s3` is any S3-compatible
@@ -68,10 +78,17 @@ export const apiEnvSchema = z.object({
   if (env.NODE_ENV === 'production' && env.STORAGE_DRIVER !== 's3') {
     ctx.addIssue({ code: 'custom', path: ['STORAGE_DRIVER'], message: 'must be s3 in production' });
   }
-  if (env.NODE_ENV === 'production') {
-    for (const key of ['OIDC_ISSUER', 'OIDC_AUDIENCE', 'INTERNAL_API_TOKEN'] as const) {
-      if (!env[key]) ctx.addIssue({ code: 'custom', path: [key], message: 'required in production' });
+  const signInConfigured = Boolean(env.AUTH_SIGNING_KEY || env.AUTH_ENCRYPTION_KEY);
+  if (signInConfigured || env.NODE_ENV === 'production') {
+    for (const key of ['AUTH_SIGNING_KEY', 'AUTH_ENCRYPTION_KEY', 'AUTH_ISSUER', 'NEWSROOM_BASE_URL'] as const) {
+      if (!env[key]) ctx.addIssue({ code: 'custom', path: [key], message: 'required for sign-in inside the backend' });
     }
+    if (env.AUTH_ENCRYPTION_KEY && Buffer.from(env.AUTH_ENCRYPTION_KEY, 'base64').length !== 32) {
+      ctx.addIssue({ code: 'custom', path: ['AUTH_ENCRYPTION_KEY'], message: 'must be base64 of exactly 32 bytes' });
+    }
+  }
+  if (env.NODE_ENV === 'production') {
+    if (!env.INTERNAL_API_TOKEN) ctx.addIssue({ code: 'custom', path: ['INTERNAL_API_TOKEN'], message: 'required in production' });
   }
 });
 

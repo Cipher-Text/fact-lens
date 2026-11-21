@@ -80,7 +80,7 @@ What exists in this repository today, how much of it has been checked, and what 
 
 - **Delivery:** Docker images, deployment, secret scanning, dependency scanning, OpenAPI generation.
 - **Operations:** tracing, metrics, Sentry, dashboards, backups, rate limits (the seeded numbers are read only by the view beacon, `rate_limit.news_view_beacon`; the poll vote rule (one vote per network address per poll) is enforced in code, not from these numbers, and the other seeded limits are not read by anything yet).
-- **Auth:** sign-in inside the backend is planned (ADR-046, docs/plans/auth-in-app.md) and not built yet; desk-scoped roles. Until it is built, sign-in uses the fake identity provider only.
+- **Auth:** the API signs in and checks its own tokens (ADR-046, ADR-047; plan in docs/plans/auth-in-app.md): accounts, passwords, authenticator-app codes with recovery codes, 8-hour sign-ins with rotating refresh tokens, lockout, invitations, roles and status. Not built yet: the newsroom's own sign-in page (step A7), the email provider, token-based desk-scoped roles. Until A7, the newsroom still signs in with the fake identity provider.
 - **Media:** variant generation in the worker, malware scanning, crop and focal point, social cards, orphan sweep, cipher-press upload migration, CDN.
 - **Editorial:** HTML import fixture, autosave, side-by-side locales, comment replies in the UI, audit search, taxonomy merge.
 - **Commercial:** ad serving, signed redirects, targeting logic, ad-event capture, advertising screens.

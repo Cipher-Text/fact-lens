@@ -9,7 +9,8 @@ import { AUTH_OPTIONS, AuthService, CAPABILITY_STORE } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { AuthorizationService } from './authorization.service';
 import { PgCapabilityStore } from './pg-capability-store';
-import { createTokenVerifier, TOKEN_VERIFIER } from './token-verifier';
+import { combineVerifiers, createTokenVerifier, TOKEN_VERIFIER, type TokenVerifier } from './token-verifier';
+import { signInOptionsFromEnv } from './auth-keys';
 
 @Global()
 @Module({
@@ -30,16 +31,20 @@ import { createTokenVerifier, TOKEN_VERIFIER } from './token-verifier';
       provide: TOKEN_VERIFIER,
       useFactory: () => {
         const env = loadApiEnv();
-        if (!env.OIDC_ISSUER || !env.OIDC_AUDIENCE) {
-          new Logger('Auth').warn('OIDC_ISSUER/OIDC_AUDIENCE not set: every protected route returns 401');
+        const verifiers: TokenVerifier[] = [];
+        // The backend's own tokens (ADR-046), checked with its public key.
+        const own = signInOptionsFromEnv(env);
+        if (own) verifiers.push(createTokenVerifier({ issuer: own.issuer, audience: own.audience, keys: own.publicKey }));
+        // An external provider, while one is still configured.
+        if (env.OIDC_ISSUER && env.OIDC_AUDIENCE) {
+          const jwks = env.OIDC_JWKS_URI ?? `${env.OIDC_ISSUER.replace(/\/$/, '')}/.well-known/jwks.json`;
+          verifiers.push(createTokenVerifier({ issuer: env.OIDC_ISSUER, audience: env.OIDC_AUDIENCE, keys: createRemoteJWKSet(new URL(jwks)) }));
+        }
+        if (verifiers.length === 0) {
+          new Logger('Auth').warn('No sign-in configured (AUTH_* or OIDC_*): every protected route returns 401');
           return null;
         }
-        const jwks = env.OIDC_JWKS_URI ?? `${env.OIDC_ISSUER.replace(/\/$/, '')}/.well-known/jwks.json`;
-        return createTokenVerifier({
-          issuer: env.OIDC_ISSUER,
-          audience: env.OIDC_AUDIENCE,
-          keys: createRemoteJWKSet(new URL(jwks)),
-        });
+        return combineVerifiers(verifiers);
       },
     },
   ],

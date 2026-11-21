@@ -41,10 +41,12 @@ describe('loadApiEnv', () => {
     expect(() => loadDatabaseEnv({})).toThrow(/DATABASE_URL/);
   });
 
-  it('requires OIDC settings in production only', () => {
-    expect(() => loadApiEnv({ ...base, NODE_ENV: 'production' })).toThrow(/OIDC_ISSUER/);
-    const ok = loadApiEnv({ ...base, NODE_ENV: 'production', OIDC_ISSUER: 'https://idp.example.com', OIDC_AUDIENCE: 'fact-lens-api', INTERNAL_API_TOKEN: 'x'.repeat(32), STORAGE_DRIVER: 's3', S3_BUCKET: 'media', S3_ACCESS_KEY_ID: 'k', S3_SECRET_ACCESS_KEY: 's' });
+  it('requires the backend sign-in keys in production, not an external provider', () => {
+    expect(() => loadApiEnv({ ...base, NODE_ENV: 'production' })).toThrow(/AUTH_SIGNING_KEY/);
+    expect(() => loadApiEnv({ ...base, AUTH_SIGNING_KEY: 'k', AUTH_ENCRYPTION_KEY: Buffer.alloc(16).toString('base64'), AUTH_ISSUER: 'https://api.example.org', NEWSROOM_BASE_URL: 'https://newsroom.example.org' })).toThrow(/32 bytes/);
+    const ok = loadApiEnv({ ...base, NODE_ENV: 'production', AUTH_SIGNING_KEY: 'k', AUTH_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString('base64'), AUTH_ISSUER: 'https://api.example.org', NEWSROOM_BASE_URL: 'https://newsroom.example.org', INTERNAL_API_TOKEN: 'x'.repeat(32), STORAGE_DRIVER: 's3', S3_BUCKET: 'media', S3_ACCESS_KEY_ID: 'k', S3_SECRET_ACCESS_KEY: 's' });
     expect(ok.OIDC_REQUIRE_MFA).toBe(true);
+    expect(ok.AUTH_AUDIENCE).toBe('fact-lens-api');
     expect(loadApiEnv({ ...base, OIDC_REQUIRE_MFA: 'false' }).OIDC_REQUIRE_MFA).toBe(false);
   });
 
@@ -70,7 +72,7 @@ describe('loadApiEnv', () => {
     expect(dev.MAX_UPLOAD_MB).toBe(10);
     expect(() => loadApiEnv({ ...base, STORAGE_DRIVER: 's3' })).toThrow(/S3_BUCKET/);
     expect(() => loadApiEnv({ ...base, MAX_UPLOAD_MB: '99' })).toThrow(/MAX_UPLOAD_MB/);
-    const prodBase = { ...base, NODE_ENV: 'production', OIDC_ISSUER: 'https://idp.example.com', OIDC_AUDIENCE: 'api', INTERNAL_API_TOKEN: 'x'.repeat(32) };
+    const prodBase = { ...base, NODE_ENV: 'production', AUTH_SIGNING_KEY: 'k', AUTH_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString('base64'), AUTH_ISSUER: 'https://api.example.org', NEWSROOM_BASE_URL: 'https://newsroom.example.org', INTERNAL_API_TOKEN: 'x'.repeat(32) };
     expect(() => loadApiEnv(prodBase)).toThrow(/STORAGE_DRIVER/);
     expect(loadApiEnv({ ...prodBase, STORAGE_DRIVER: 's3', S3_BUCKET: 'm', S3_ACCESS_KEY_ID: 'k', S3_SECRET_ACCESS_KEY: 's', S3_FORCE_PATH_STYLE: 'true' }).S3_FORCE_PATH_STYLE).toBe(true);
   });

@@ -44,6 +44,7 @@ import { SignInService } from './auth/sign-in.service';
 import { AccountsService } from './auth/accounts.service';
 import { AccountsController, InvitationsController } from './auth/accounts.controller';
 import { SIGNIN_OPTIONS } from './auth/sign-in.options';
+import { signInOptionsFromEnv } from './auth/auth-keys';
 import { PublicTrendingController, TrendingController } from './search/trending.controller';
 import { HealthController } from './health.controller';
 import { PG_POOL } from './db/pool';
@@ -84,8 +85,8 @@ import type { Pool } from 'pg';
     TrendingService,
     SignInService,
     AccountsService,
-    // Filled from the environment in step A6; until then sign-in answers 503.
-    { provide: SIGNIN_OPTIONS, useValue: null },
+    // Read from the environment; with no AUTH_* settings sign-in answers 503.
+    { provide: SIGNIN_OPTIONS, useFactory: () => signInOptionsFromEnv(loadApiEnv()) },
     TaxonomyService,
     CommentsService,
     AssignmentsService,
