@@ -2,7 +2,7 @@
 
 ## Authentication and authorization
 
-Use OIDC with short-lived access/session tokens, secure HTTP-only cookies for browser sessions, PKCE where applicable, issuer/audience validation, logout/revocation policy and MFA support for privileged users. Evaluate managed versus self-hosted OIDC based on residency, uptime, admin lifecycle, SCIM/ directory needs and cost.
+Sign-in is managed by the backend (ADR-046, plan in docs/plans/auth-in-app.md): accounts are created by admin invitation; passwords are hashed with Argon2id; MFA is authenticator-app codes (TOTP) with recovery codes, required for privileged capabilities; an editor's sign-in lasts 8 hours, with 15-minute access tokens and single-use, rotating refresh tokens (reuse ends the sign-in and is audited); five failed sign-ins in 15 minutes lock the account for 15 minutes; sign-in attempts are rate limited per address. Browser sessions use secure HTTP-only cookies. The API verifies its own signed tokens with the same checks as before (issuer, audience, expiry). Until the email provider is chosen, invitations and reset links are passed on by an admin.
 
 Map identity claims to capabilities, desk membership and scoped resources. Keep role definitions configurable; authorization checks must be enforced in API services, not only hidden in UI.
 

@@ -20,6 +20,7 @@ Each task in a plan is one of: `pending`, `in progress`, `in review`, `merged`, 
 | [card-generation](./card-generation.md) | Done: T0 to T5 merged |
 | [test-reliability](./test-reliability.md) | Done: runs are serial (ADR-038) |
 | [public-site-api](./public-site-api.md) | Done (the unavailable page answers 503; open question 30 resolved) |
+| [auth-in-app](./auth-in-app.md) | Approved defaults, not started: accounts, passwords, MFA and sessions inside the backend |
 | [deployment](./deployment.md) | Awaiting decisions (platform, domains, migrations) |
 | [product/read-next](./product/read-next.md) | Built: RN1 to RN5 committed; manual check against a running API open |
 | [product/T10-reading-time](./product/T10-reading-time.md) | Built: steps 1 to 5 committed |
