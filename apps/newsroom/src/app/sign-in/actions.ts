@@ -3,13 +3,14 @@
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { acceptInvitation, BackendError, codeStep, confirmSetup, passwordStep, recoveryStep } from '@/lib/backend';
+import { clientAddress } from '@/lib/client-address';
 import { getEnv, isSecure } from '@/lib/env';
 import { cookieNames, openSignInFlow, safeReturnTo, sealSession, sealSignInFlow, type SignInFlow } from '@/lib/session';
 
 /** The editor's address, forwarded to the API so its limits count per editor and not per newsroom. */
-async function clientAddress(): Promise<string | null> {
+async function editorAddress(): Promise<string | null> {
   const h = await headers();
-  return h.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+  return clientAddress(h.get('x-forwarded-for'));
 }
 
 export interface FormState {
@@ -61,7 +62,7 @@ export async function signIn(_previous: FormState, formData: FormData): Promise<
   const returnTo = safeReturnTo(String(formData.get('returnTo') ?? '/'));
   let challengeToken: string;
   try {
-    ({ challengeToken } = await passwordStep(email, password, await clientAddress()));
+    ({ challengeToken } = await passwordStep(email, password, await editorAddress()));
   } catch (err) {
     return { error: messageOf(err) };
   }
@@ -78,8 +79,8 @@ export async function verifyCode(_previous: FormState, formData: FormData): Prom
   let session;
   try {
     session = useRecovery
-      ? await recoveryStep(flow.challengeToken, value, await clientAddress())
-      : await codeStep(flow.challengeToken, value, await clientAddress());
+      ? await recoveryStep(flow.challengeToken, value, await editorAddress())
+      : await codeStep(flow.challengeToken, value, await editorAddress());
   } catch (err) {
     return { error: messageOf(err) };
   }
@@ -95,7 +96,7 @@ export async function acceptSetup(_previous: FormState, formData: FormData): Pro
   if (password !== confirmation) return { error: 'The two passwords do not match.' };
   let setup;
   try {
-    setup = await acceptInvitation(token, password, await clientAddress());
+    setup = await acceptInvitation(token, password, await editorAddress());
   } catch (err) {
     return { error: messageOf(err) };
   }
@@ -109,7 +110,7 @@ export async function confirmSetupCode(_previous: FormState, formData: FormData)
   if (!flow?.enrolmentToken) redirect('/sign-in');
   let codes;
   try {
-    codes = await confirmSetup(flow.enrolmentToken, String(formData.get('code') ?? '').trim(), await clientAddress());
+    codes = await confirmSetup(flow.enrolmentToken, String(formData.get('code') ?? '').trim(), await editorAddress());
   } catch (err) {
     return { error: messageOf(err) };
   }

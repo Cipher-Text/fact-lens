@@ -128,6 +128,18 @@ describe.skipIf(!adminUrl)('account administration (database)', () => {
     expect((await signIn('onoff@example.org')).statusCode).toBe(200);
   });
 
+  it('refuses an access token that was issued before the account was turned off', async () => {
+    const acc = await onboarded('live-off@example.org');
+    const challenge = json(await t.anonymous('POST', '/auth/sign-in', { email: 'live-off@example.org', password: PASSWORD }) as any);
+    const signedIn = await t.anonymous('POST', '/auth/mfa', { challengeToken: challenge.challengeToken, code: codeAt(acc.secret, stepAt(Math.floor(Date.now() / 1000)) + 1) });
+    const token = json(signedIn).accessToken as string;
+    const before = await t.app.inject({ method: 'GET', url: '/news', headers: { authorization: 'Bearer ' + token } });
+    expect(before.statusCode).toBe(200);
+    await t.call({ method: 'PUT', url: `/accounts/${acc.id}/status`, roles: ['admin'], body: { status: 'disabled' } });
+    const after = await t.app.inject({ method: 'GET', url: '/news', headers: { authorization: 'Bearer ' + token } });
+    expect(after.statusCode).toBe(401);
+  });
+
   it('refuses to turn on an account that has not finished setting up', async () => {
     const made = await invite('unfinished@example.org');
     const res = await t.call({ method: 'PUT', url: `/accounts/${made.body.userId}/status`, roles: ['admin'], body: { status: 'active' } });

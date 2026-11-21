@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { loadNewsroomEnv, type NewsroomEnv } from '@fact-lens/config';
 import { refreshShared } from '@/lib/backend';
+import { clientAddress } from '@/lib/client-address';
 import { cookieNames, readSession, sealSession } from '@/lib/session';
 
 /**
@@ -13,7 +14,7 @@ import { cookieNames, readSession, sealSession } from '@/lib/session';
 
 const REFRESH_BEFORE_SECONDS = 120;
 
-const clientAddress = (request: NextRequest): string | null => request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+
 
 function signInRedirect(request: NextRequest, env: NewsroomEnv): NextResponse {
   const target = new URL('/sign-in', env.NEWSROOM_BASE_URL);
@@ -48,7 +49,7 @@ export async function proxy(request: NextRequest) {
   if (session.expiresAt - now > REFRESH_BEFORE_SECONDS) return NextResponse.next();
 
   try {
-    const fresh = await refreshShared(session.refreshToken, clientAddress(request));
+    const fresh = await refreshShared(session.refreshToken, clientAddress(request.headers.get('x-forwarded-for')));
     const value = await sealSession(fresh, env.SESSION_SECRET);
     return continueWith(request, names.session, value, secure, Math.max(1, fresh.sessionExpiresAt - now));
   } catch {

@@ -7,6 +7,7 @@ import type { Capability } from '@fact-lens/contracts';
 import { createApp } from '../app';
 import { AuditService } from '../audit/audit.service';
 import { AuthGuard } from './auth.guard';
+import { PG_POOL } from '../db/pool';
 import { AuthorizationService } from './authorization.service';
 import { AUTH_OPTIONS, AuthService, CAPABILITY_STORE, readClaim, rolesFromClaim } from './auth.service';
 import { CurrentPrincipal, Public, RequireCapability } from './decorators';
@@ -66,6 +67,7 @@ describe('auth', () => {
           { provide: TOKEN_VERIFIER, useValue: verifierImpl },
           { provide: CAPABILITY_STORE, useValue: store },
           { provide: AUTH_OPTIONS, useValue: { rolesClaim: 'roles', requireMfa } },
+          { provide: PG_POOL, useValue: { query: async () => ({ rows: [] }) } },
           { provide: APP_GUARD, useClass: AuthGuard },
         ],
       })
@@ -150,7 +152,8 @@ describe('auth', () => {
         { provide: TOKEN_VERIFIER, useValue: verifier },
         { provide: CAPABILITY_STORE, useValue: { capabilitiesFor: async () => ['config.manage', 'news.edit'] } },
         { provide: AUTH_OPTIONS, useValue: { rolesClaim: 'roles', requireMfa: true } },
-        { provide: APP_GUARD, useClass: AuthGuard },
+        { provide: PG_POOL, useValue: { query: async () => ({ rows: [] }) } },
+          { provide: APP_GUARD, useClass: AuthGuard },
       ],
     })
     class M {}

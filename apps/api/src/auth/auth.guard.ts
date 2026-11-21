@@ -1,4 +1,6 @@
 import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import type { Pool } from 'pg';
+import { PG_POOL } from '../db/pool';
 import { Reflector } from '@nestjs/core';
 import type { Capability } from '@fact-lens/contracts';
 import { AuthorizationService } from './authorization.service';
@@ -15,6 +17,7 @@ export class AuthGuard implements CanActivate {
     @Inject(Reflector) private readonly reflector: Reflector,
     @Inject(AuthService) private readonly auth: AuthService,
     @Inject(AuthorizationService) private readonly authz: AuthorizationService,
+    @Inject(PG_POOL) private readonly pool: Pool,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -28,6 +31,9 @@ export class AuthGuard implements CanActivate {
 
     const principal = await this.auth.authenticate(match[1]!);
     if (!principal) throw new UnauthorizedException('Authentication required');
+    // An account of the backend's own that has been turned off loses access at once, not when its token runs out.
+    const account = await this.pool.query<{ status: string }>('SELECT status FROM app_user WHERE id::text = $1', [principal.subject]);
+    if (account.rows[0] && account.rows[0].status !== 'active') throw new UnauthorizedException('Authentication required');
     request.principal = principal;
 
     const ctx = {

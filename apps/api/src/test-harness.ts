@@ -14,7 +14,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { AUTH_OPTIONS, AuthService, CAPABILITY_STORE } from './auth/auth.service';
 import { AuthorizationService } from './auth/authorization.service';
 import { PgCapabilityStore } from './auth/pg-capability-store';
-import { createTokenVerifier, TOKEN_VERIFIER } from './auth/token-verifier';
+import { combineVerifiers, createTokenVerifier, TOKEN_VERIFIER } from './auth/token-verifier';
 import { PG_POOL } from './db/pool';
 import { createTestDatabase } from './db/test-db';
 import { seedReferenceData } from './seed/seed';
@@ -90,9 +90,13 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
   await seedReferenceData(db.pool);
 
   const { publicKey, privateKey } = await generateKeyPair('ES256');
-  const verifier = createTokenVerifier({
-    issuer: ISSUER, audience: AUDIENCE, keys: createLocalJWKSet({ keys: [{ ...(await exportJWK(publicKey)), alg: 'ES256' }] }),
-  });
+  // The test tokens, and the backend's own tokens when the test app has sign-in configured.
+  const verifier = combineVerifiers([
+    createTokenVerifier({
+      issuer: ISSUER, audience: AUDIENCE, keys: createLocalJWKSet({ keys: [{ ...(await exportJWK(publicKey)), alg: 'ES256' }] }),
+    }),
+    ...(opts.signIn ? [createTokenVerifier({ issuer: opts.signIn.issuer, audience: opts.signIn.audience, keys: opts.signIn.publicKey })] : []),
+  ])!;
   const sign = (roles: string[], sub: string, mfa: boolean) =>
     new SignJWT({ roles, ...(mfa ? { amr: ['pwd', 'mfa'] } : {}) }).setProtectedHeader({ alg: 'ES256' }).setSubject(sub)
       .setIssuer(ISSUER).setAudience(AUDIENCE).setExpirationTime('5m').sign(privateKey);

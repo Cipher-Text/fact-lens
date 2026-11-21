@@ -1,6 +1,6 @@
 # Plan: authentication inside the backend
 
-Status: **approved defaults; A0 done (ADR-046); A1 done (migration 1761000000033, tables only, verified up and down); A2 done (packages/contracts/src/account.ts, 40 contract tests); A3 done (apps/api/src/auth/credentials.ts, totp.ts, tokens.ts, 14 tests; Argon2id is Node's built-in, which needs Node 24.7 or later, and this machine runs Node 25); A4 done (16 tests); A5 done (migration 1761000000034; 10 tests); A6 done (ADR-047: keys and settings in packages/config, auth:keygen, auth:bootstrap, production requires the backend keys, the verifier trusts both the backend and any OIDC provider); A7 done (the newsroom's sign-in page, invitation setup, recovery codes, silent refresh in proxy.ts, sign-out; checked by hand on the local stack; the refresh token stays in the newsroom's encrypted session cookie); A8 next**. Written 21 November 2026. Replaces the plan to use an external identity provider for production sign-in. The existing authorization (roles to capabilities, MFA checks, audit) stays as it is.
+Status: **approved defaults; A0 done (ADR-046); A1 done (migration 1761000000033, tables only, verified up and down); A2 done (packages/contracts/src/account.ts, 40 contract tests); A3 done (apps/api/src/auth/credentials.ts, totp.ts, tokens.ts, 14 tests; Argon2id is Node's built-in, which needs Node 24.7 or later, and this machine runs Node 25); A4 done (16 tests); A5 done (migration 1761000000034; 10 tests); A6 done (ADR-047: keys and settings in packages/config, auth:keygen, auth:bootstrap, production requires the backend keys, the verifier trusts both the backend and any OIDC provider); A7 done (the newsroom's sign-in page, invitation setup, recovery codes, silent refresh in proxy.ts, sign-out; checked by hand on the local stack; the refresh token stays in the newsroom's encrypted session cookie); A8 done (review and fixes; see the A8 section below; the external review is the open step)**. Written 21 November 2026. Replaces the plan to use an external identity provider for production sign-in. The existing authorization (roles to capabilities, MFA checks, audit) stays as it is.
 
 ## Goal
 
@@ -74,3 +74,21 @@ Each task lists its owner. Critical tasks are Claude's. Normal tasks may go to C
 - Contracts: typecheck and lint.
 - Newsroom: typecheck, lint, test and build.
 - Before launch: `pnpm check` at the root, and the external security review.
+
+## A8: review result (21 November 2026)
+
+Checked against docs/12 and the sign-in code. Fixed in this step:
+
+- **Sign-out was a GET link a site could trigger.** It is now a POST from the app's own form, so another site cannot sign an editor out. (A GET to the route is refused with 405.)
+- **The address used for limits could be spoofed.** The newsroom now reads the last `X-Forwarded-For` entry, the one the reverse proxy appends, not the first.
+- **A disabled account kept its access token for up to 15 minutes.** The API's guard now checks the account's status on every request for the backend's own accounts. A test covers it.
+
+Already in place and checked: cookies are HTTP-only with SameSite set (Strict for the sign-in step cookie, Lax for the session), and Secure over HTTPS. Invitation tokens are in the link's fragment, so they never reach a server log. Sign-in gives one neutral message for a wrong password, an unknown address, a locked, inactive or unconfirmed account. Codes and passwords are compared in constant time, and the passwords and recovery codes are hashed with Argon2id. The TOTP secret is encrypted at rest. Refresh tokens are single use, and reuse ends the sign-in and is audited. Every sign-in step is audited, with the address hashed. Auth responses are not cacheable.
+
+Known limits, to decide or fix before launch:
+
+- **The common-password list is short.** It needs the full list.
+- **Refresh sharing is per process.** Several newsroom instances need a shared store (ADR-047).
+- **A lock can be triggered from outside.** Five wrong passwords lock an account for 15 minutes. That is accepted, and it is logged.
+- **Headers are not reviewed.** A Content-Security-Policy and the other security headers for the newsroom and the public site have not been checked in this step.
+- **External security review.** This needs a reviewer chosen by you (a user action).
