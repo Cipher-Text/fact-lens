@@ -54,7 +54,7 @@ Two sources, in this order of priority:
 
 1. The search column, the worker projection and the reindex command, then `GET /public/search/:locale`, tested with fixtures in English and Bangla (word matching, typos, language isolation, only live news, filters, cursor, rate limit, empty and over-long queries).
 2. The editorial trending list: table, newsroom screen, `GET /public/trending-searches/:locale`.
-3. The site: a search results page (its own design), the dialog calling both endpoints.
+3. The site: a search results page (its own design), the dialog calling both endpoints. Built: the page follows the proposal in docs/design/search-results.md (the layout is approved by the design owner later); the dialog calls the search and trending endpoints.
 4. Later: computed trending terms, and search statistics for administrators (queries with no results, top queries) once question 28 is answered.
 
 ## 8. Open questions

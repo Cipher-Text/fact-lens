@@ -1,6 +1,6 @@
 # Search results page: layout (Codex)
 
-Status: pending. Design: [docs/design/search-results.md](../../../design/search-results.md) (decisions settled as recommended; the design owner still approves the layout later). The API is built: `GET /public/search/:locale?q=&limit=&cursor=` returns `{ query, items, nextCursor }`; there is no total count.
+Status: built and committed (158b0aa). Checked in the browser: title, prefilled search row, count, cards, ad band, no-results; "More results" not yet seen (the dev data has fewer than ten matches). Design: [docs/design/search-results.md](../../../design/search-results.md) (decisions settled as recommended; the design owner still approves the layout later). The API is built: `GET /public/search/:locale?q=&limit=&cursor=` returns `{ query, items, nextCursor }`; there is no total count.
 
 ## Goal
 
