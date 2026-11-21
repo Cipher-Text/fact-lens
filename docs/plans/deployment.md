@@ -1,6 +1,6 @@
 # Plan: deployment path (P0, item 3)
 
-Status: **platform decided: one VPS and Cloudflare R2** (see decision 1). Domains and migrations are still open.
+Status: **platform decided: one Hetzner VM and Cloudflare R2** (see decision 1). Domains and migrations are still open.
 
 ## Goal
 
@@ -48,3 +48,12 @@ D1 and the decisions run first. D2 needs D1. D3 and D5 can run in parallel with 
 - One VPS is a single point of failure. Acceptable at launch scale; the restore drill (D7) and a documented rebuild steps are what make it recoverable.
 - Self-run PostgreSQL: a missing backup is a permanent loss. D7 must pass before any real content is loaded.
 - Images that contain secrets are a leak. D1 must check that no `.env` file reaches an image.
+
+## Sign-in keys and the first administrator (added with auth plan A9)
+
+- Node 24.7 or later runs the API, because password hashing uses Node's built-in Argon2id.
+- Once per environment: `pnpm --filter @fact-lens/api auth:keygen` prints `AUTH_SIGNING_KEY` and `AUTH_ENCRYPTION_KEY`. Keep them in the VM's environment file, never in git. A new signing key signs out everyone.
+- Set `AUTH_ISSUER` (the API's public address) and `NEWSROOM_BASE_URL` (the newsroom's public address). Production refuses to start without the four `AUTH_*` and `NEWSROOM_BASE_URL` settings.
+- Create the first administrator with `pnpm --filter @fact-lens/api auth:bootstrap -- --email <address> --name "<name>"`. It prints a one-time link (valid 72 hours) to set a password and an authenticator app. It refuses once an administrator exists.
+- The API should not be reachable from the internet except through the reverse proxy, since it trusts the forwarded client address for its limits (`TRUST_PROXY`).
+- Before launch: the external security review, and the full common-password list (docs/plans/auth-in-app.md, A8).

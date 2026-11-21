@@ -1,6 +1,6 @@
 # 22 — Implementation status
 
-What exists in this repository today, how much of it has been checked, and what is not built. The other documents describe the plan; this one describes reality. Last reviewed 18 November 2026.
+What exists in this repository today, how much of it has been checked, and what is not built. The other documents describe the plan; this one describes reality. Last reviewed 21 November 2026.
 
 ## How to read this
 
@@ -80,7 +80,7 @@ What exists in this repository today, how much of it has been checked, and what 
 
 - **Delivery:** Docker images, deployment, secret scanning, dependency scanning, OpenAPI generation.
 - **Operations:** tracing, metrics, Sentry, dashboards, backups, rate limits (the seeded numbers are read only by the view beacon, `rate_limit.news_view_beacon`; the poll vote rule (one vote per network address per poll) is enforced in code, not from these numbers, and the other seeded limits are not read by anything yet).
-- **Auth:** the API signs in and checks its own tokens (ADR-046, ADR-047; plan in docs/plans/auth-in-app.md): accounts, passwords, authenticator-app codes with recovery codes, 8-hour sign-ins with rotating refresh tokens, lockout, invitations, roles and status. The newsroom has its own sign-in page, invitation setup with authenticator app and recovery codes, and silent session refresh (step A7); checked by hand on the local stack. Not built yet: the email provider, hardening and external review (step A8), token-based desk-scoped roles.
+- **Auth:** the API signs in and checks its own tokens (ADR-046, ADR-047; plan in docs/plans/auth-in-app.md): accounts, passwords, authenticator-app codes with recovery codes, 8-hour sign-ins with rotating refresh tokens, lockout, invitations, roles and status. The newsroom has its own sign-in page, invitation setup with authenticator app and recovery codes, and silent session refresh (step A7); checked by hand on the local stack. Not built yet: the email provider, the external security review, the full common-password list, security headers, token-based desk-scoped roles.
 - **Media:** variant generation in the worker, malware scanning, crop and focal point, social cards, orphan sweep, cipher-press upload migration, CDN.
 - **Editorial:** HTML import fixture, autosave, side-by-side locales, comment replies in the UI, audit search, taxonomy merge.
 - **Commercial:** ad serving, signed redirects, targeting logic, ad-event capture, advertising screens.

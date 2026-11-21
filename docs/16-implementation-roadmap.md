@@ -10,7 +10,7 @@ Exit: representative bilingual news items round-trip, every current route class 
 
 ## Phase 1 — Foundation and newsroom shell
 
-**Status:** mostly done. Missing: OpenAPI generation, Docker images and a deployment skeleton, tracing, metrics and Sentry, and a real identity provider (only the fake one has been used).
+**Status:** mostly done. Missing: OpenAPI generation, Docker images and a deployment skeleton, tracing, metrics and Sentry, and an external security review of sign-in (sign-in itself is built inside the backend, ADR-046).
 
 Deliverables: monorepo/tooling, NestJS/Fastify API, PostgreSQL migrations, OIDC, capability checks, audit/outbox, Redis/BullMQ skeleton, media abstraction, contracts package, newsroom shell and health/observability baseline.
 

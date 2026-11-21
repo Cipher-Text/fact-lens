@@ -38,4 +38,4 @@ Built and tested:
 
 Secrets locally live in one root `.env`, which git ignores and `pnpm env:init` creates with `0600` permissions and random values for the session and internal secrets. That file is for development; a deployment must give each service only its own variables, so the newsroom never holds the database password.
 
-Not built: token refresh, rate limiting (limits are seeded, nothing enforces them), CSP for the public site, secret scanning, dependency and container scanning, malware scanning of uploads, a real identity provider, and CSRF protection beyond the origin check and SameSite. See [implementation status](./22-implementation-status.md).
+Built: sign-in inside the backend with refresh, MFA and lockout (ADR-046, ADR-047). Not built: rate limits beyond sign-in and public search (the other seeded limits are not enforced), CSP for the public site, secret scanning, dependency and container scanning, malware scanning of uploads, the external security review, and CSRF protection beyond the origin check and SameSite. See [implementation status](./22-implementation-status.md).
