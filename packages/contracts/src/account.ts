@@ -104,3 +104,15 @@ export type Account = z.infer<typeof accountSchema>;
 
 export const accountRolesSchema = z.object({ roleKeys: z.array(roleKeySchema).max(20).refine((k) => new Set(k).size === k.length, 'each role once') }).strict();
 export type AccountRoles = z.infer<typeof accountRolesSchema>;
+
+/** Turning an account on or off. Only an account that has finished setting up can be turned on. */
+export const accountStatusChangeSchema = z.object({ status: z.enum(['active', 'disabled']) }).strict();
+export type AccountStatusChange = z.infer<typeof accountStatusChangeSchema>;
+
+/** Accepting an invitation returns the authenticator setup and a short-lived token for confirming it. */
+export const invitationAcceptedSchema = mfaEnrolmentSchema.extend({ enrolmentToken: z.string().min(1) });
+export type InvitationAccepted = z.infer<typeof invitationAcceptedSchema>;
+
+/** Confirming the authenticator app: the enrolment token from the step before, and the first code from the app. */
+export const enrolmentConfirmSchema = z.object({ enrolmentToken: z.string().min(1).max(1024), code: mfaCodeSchema }).strict();
+export type EnrolmentConfirm = z.infer<typeof enrolmentConfirmSchema>;

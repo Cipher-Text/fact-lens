@@ -24,7 +24,7 @@ describe.skipIf(!adminUrl)('sign-in inside the backend (database)', () => {
     encryptionKey = randomBytes(32);
     options = {
       privateKey: keys.privateKey, publicKey: keys.publicKey, issuer: ISSUER, audience: AUDIENCE, encryptionKey, secureCookies: false,
-      attemptsPerMinute: 100000,
+      attemptsPerMinute: 100000, newsroomUrl: 'https://newsroom.test',
     };
     verifier = createTokenVerifier({
       issuer: ISSUER, audience: AUDIENCE, keys: createLocalJWKSet({ keys: [{ ...(await exportJWK(keys.publicKey)), alg: 'ES256' }] }),
@@ -206,7 +206,7 @@ describe.skipIf(!adminUrl)('sign-in inside the backend (database)', () => {
 describe.skipIf(!adminUrl || !process.env.TEST_REDIS_URL)('sign-in attempts per address', () => {
   it('answers 429 once an address has used up its attempts for the minute', async () => {
     const keys = await generateKeyPair('ES256');
-    const t = await startTestApp(adminUrl!, { signIn: { privateKey: keys.privateKey, publicKey: keys.publicKey, issuer: ISSUER, audience: AUDIENCE, encryptionKey: randomBytes(32), secureCookies: false, attemptsPerMinute: 3 } });
+    const t = await startTestApp(adminUrl!, { signIn: { privateKey: keys.privateKey, publicKey: keys.publicKey, issuer: ISSUER, audience: AUDIENCE, encryptionKey: randomBytes(32), secureCookies: false, attemptsPerMinute: 3, newsroomUrl: 'https://newsroom.test' } });
     try {
       const statuses: number[] = [];
       for (let i = 0; i < 4; i += 1) {

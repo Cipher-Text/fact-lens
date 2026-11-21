@@ -19,6 +19,8 @@ export interface SignInOptions {
   encryptionKey: Buffer;
   /** Marks the refresh cookie Secure. On in production, where the site runs over HTTPS. */
   secureCookies: boolean;
+  /** The newsroom address invitation links point to, for example https://newsroom.example.org (no trailing slash). */
+  newsroomUrl: string;
   /** Sign-in attempts from one address per minute. Defaults to ATTEMPTS_PER_MINUTE. */
   attemptsPerMinute?: number;
 }

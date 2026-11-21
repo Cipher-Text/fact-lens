@@ -54,3 +54,18 @@ export function verifyAgainstDummy(password: string): Promise<boolean> {
   dummy ??= hashPassword(randomBytes(24).toString('base64'));
   return dummy.then((stored) => verifyPassword(password, stored)).then(() => false);
 }
+
+/**
+ * Passwords so common that a stolen list would open them first. A starting list; the full check is widened later
+ * (docs/plans/auth-in-app.md, password rules). Compared without regard to case.
+ */
+const COMMON = new Set([
+  'password', 'password1', 'password123', 'passw0rd', 'qwerty', 'qwerty123', 'letmein', 'welcome', 'welcome1', 'admin',
+  'admin123', 'iloveyou', '123456', '12345678', '123456789', '1234567890', 'abc123', 'monkey', 'dragon', 'football',
+  'baseball', 'changeme', 'secret', 'trustno1', 'sunshine', 'master', 'login', 'princess', 'starwars', 'whatever',
+  'freedom', 'hello123', 'bangladesh', 'factlens', 'newsroom', 'editor123', 'password12', 'qwertyuiop', 'zaq12wsx',
+]);
+
+export function isCommonPassword(password: string): boolean {
+  return COMMON.has(password.toLowerCase());
+}

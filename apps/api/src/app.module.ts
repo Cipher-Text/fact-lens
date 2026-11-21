@@ -41,6 +41,8 @@ import { PublicSearchController } from './search/public-search.controller';
 import { TrendingService } from './search/trending.service';
 import { SignInController } from './auth/sign-in.controller';
 import { SignInService } from './auth/sign-in.service';
+import { AccountsService } from './auth/accounts.service';
+import { AccountsController, InvitationsController } from './auth/accounts.controller';
 import { SIGNIN_OPTIONS } from './auth/sign-in.options';
 import { PublicTrendingController, TrendingController } from './search/trending.controller';
 import { HealthController } from './health.controller';
@@ -52,7 +54,7 @@ import type { Pool } from 'pg';
 
 @Module({
   imports: [DatabaseModule, AuthModule],
-  controllers: [CardsController, PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController, PublicSearchController, TrendingController, PublicTrendingController, SignInController],
+  controllers: [CardsController, PublicAnalyticsController, AnalyticsController, PublicSiteController, PollsController, PublicPollsController, InboxController, AiController, HealthController, MeController, FeatureFlagsController, NewsController, PublicNewsController, CollabController, InternalController, ReferenceController, ContributorsController, MediaController, TaxonomyController, PublicTaxonomyController, LocalesController, PublicSearchController, TrendingController, PublicTrendingController, SignInController, AccountsController, InvitationsController],
   providers: [
     { provide: SITE_INFO, useFactory: () => siteFromEnv(loadApiEnv()) },
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
@@ -81,6 +83,7 @@ import type { Pool } from 'pg';
     SearchService,
     TrendingService,
     SignInService,
+    AccountsService,
     // Filled from the environment in step A6; until then sign-in answers 503.
     { provide: SIGNIN_OPTIONS, useValue: null },
     TaxonomyService,

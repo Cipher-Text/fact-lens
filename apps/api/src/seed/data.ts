@@ -115,7 +115,7 @@ export const roles: ReadonlyArray<{ key: string; name: string; capabilities: rea
     name: 'Admin',
     capabilities: [
       'news.edit', 'news.submit', 'news.review', 'news.fact_check', 'news.publish', 'news.correct',
-      'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage', 'analytics.read',
+      'media.manage', 'taxonomy.manage', 'audit.read', 'ads.manage', 'config.manage', 'analytics.read', 'user.manage',
     ],
   },
 ];

@@ -228,6 +228,11 @@ export class SignInService {
     }
   }
 
+  /** Counts one attempt from an address; throws 429 past the limit. Also used by the enrolment step. */
+  async throttle(ip: string | null): Promise<void> {
+    await this.limit(ip);
+  }
+
   /** One failed step counts towards the lockout. Five in a row lock the account for 15 minutes. */
   private async failed(userId: string, reason: 'password' | 'code' | 'recovery_code'): Promise<void> {
     await withTransaction(this.pool, async (db) => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
-  accountRolesSchema, emailSchema, invitationAcceptSchema, invitationCreateSchema, mfaCodeSchema, passwordChangeSchema, passwordSchema,
+  accountRolesSchema, accountStatusChangeSchema, enrolmentConfirmSchema, emailSchema, invitationAcceptSchema, invitationCreateSchema, mfaCodeSchema, passwordChangeSchema, passwordSchema,
   recoveryCodeSchema, signInResultSchema, signInSchema,
 } from './account';
 
@@ -55,5 +55,12 @@ describe('account contracts', () => {
   it('checks the invitation token length and the new password', () => {
     expect(invitationAcceptSchema.safeParse({ token: 'short', password: 'correct horse battery' }).success).toBe(false);
     expect(invitationAcceptSchema.safeParse({ token: 'x'.repeat(40), password: 'correct horse battery' }).success).toBe(true);
+  });
+
+  it('only turns an account on or off, and confirms enrolment with a six-digit code', () => {
+    expect(accountStatusChangeSchema.safeParse({ status: 'invited' }).success).toBe(false);
+    expect(accountStatusChangeSchema.safeParse({ status: 'disabled' }).success).toBe(true);
+    expect(enrolmentConfirmSchema.safeParse({ enrolmentToken: 'x.y.z', code: '12345' }).success).toBe(false);
+    expect(enrolmentConfirmSchema.safeParse({ enrolmentToken: 'x.y.z', code: '123456' }).success).toBe(true);
   });
 });
