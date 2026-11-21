@@ -1,6 +1,6 @@
 # Plan: authentication inside the backend
 
-Status: **approved defaults; A0 done (ADR-046); A1 done (migration 1761000000033, tables only, verified up and down); A2 next**. Written 21 November 2026. Replaces the plan to use an external identity provider for production sign-in. The existing authorization (roles to capabilities, MFA checks, audit) stays as it is.
+Status: **approved defaults; A0 done (ADR-046); A1 done (migration 1761000000033, tables only, verified up and down); A2 done (packages/contracts/src/account.ts, 40 contract tests); A3 next**. Written 21 November 2026. Replaces the plan to use an external identity provider for production sign-in. The existing authorization (roles to capabilities, MFA checks, audit) stays as it is.
 
 ## Goal
 
