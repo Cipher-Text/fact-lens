@@ -49,11 +49,13 @@ export const bn = {
     // TODO-REVIEW: Native speaker should review these search page strings before merge.
     title: "অনুসন্ধান",
     resultsFor: "এর ফলাফল",
-    resultCount: "এই পাতায় ফলাফল",
+    // TODO-REVIEW: Native speaker should review these search page strings before merge.
+    searchRowLabel: "আবার অনুসন্ধান করুন",
+    showingResults: "{count} টি ফলাফল দেখানো হচ্ছে",
     empty: "কোনো ফল পাওয়া যায়নি।",
     prompt: "অনুসন্ধান করতে অন্তত দুটি অক্ষর লিখুন।",
     tooLong: "অনুসন্ধানের শব্দ ২০০ অক্ষরের মধ্যে রাখুন।",
-    loadMore: "আরও ফল দেখুন",
+    moreResults: "আরও ফলাফল",
     preview: "এই প্রিভিউতে অনুসন্ধান পাওয়া যাচ্ছে না।",
     unavailable: "এই মুহূর্তে অনুসন্ধান করা যাচ্ছে না।",
   },

@@ -3,9 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Footer } from "@/components/footer/Footer";
+import { AdSlot } from "@/components/ads/AdSlot";
+import { SearchForm } from "@/components/header/SearchForm";
 import { SiteHeader } from "@/components/header/SiteHeader";
 import { SkipLink } from "@/components/header/SkipLink";
-import { Divider } from "@/components/layout/Divider";
 import { PageTitle } from "@/components/layout/PageTitle";
 import { Shell } from "@/components/layout/Shell";
 import { WithRail } from "@/components/layout/WithRail";
@@ -57,19 +58,25 @@ export default async function SearchRoute({
     <>
       <SkipLink label={t.header.skipLink} />
       <SiteHeader lang={lang} path="/search" />
+      <AdSlot variant="top" lang={lang} strings={t.ads} />
       <main id="main" tabIndex={-1} className="pb-(--space-section) focus-visible:outline-none">
-        <PageTitle title={heading} />
-        <Shell className="pt-(--space-module)">
+        <PageTitle title={heading} className="mb-(--space-module)" />
+        <Shell>
           <WithRail>
             <Wrapper>
-              {!apiMode ? <p className="font-ui text-sm text-ink-secondary">{t.searchPage.preview}</p> : null}
-              {prompt ? <p className="font-ui text-sm text-ink-secondary">{prompt}</p> : null}
-              {error ? <p className="font-ui text-sm text-ink-secondary">{t.searchPage.unavailable}</p> : null}
+              <section aria-label={t.searchPage.searchRowLabel}>
+                <SearchForm strings={t.header} lang={lang} size="dialog" initialValue={query} />
+              </section>
+              {!apiMode ? <p className="mt-(--space-module) font-ui text-sm text-ink-secondary">{t.searchPage.preview}</p> : null}
+              {prompt ? <p className="mt-(--space-module) font-ui text-sm text-ink-secondary">{prompt}</p> : null}
+              {error ? <p className="mt-(--space-module) font-ui text-sm text-ink-secondary">{t.searchPage.unavailable}</p> : null}
               {results ? (
                 <>
-                  <p className="mb-(--space-module) font-ui text-sm text-ink-secondary">
-                    {new Intl.NumberFormat(lang === "bn" ? "bn-BD" : "en").format(results.stories.length)} {t.searchPage.resultCount}
-                  </p>
+                  {results.stories.length ? (
+                    <p className="mt-(--space-module) mb-(--space-module) font-ui text-sm text-ink-secondary">
+                      {t.searchPage.showingResults.replace("{count}", new Intl.NumberFormat(lang === "bn" ? "bn-BD" : "en").format(results.stories.length))}
+                    </p>
+                  ) : null}
                   {results.stories.length ? (
                     <MoreStoriesList stories={results.stories} t={t} titleAs="h2" />
                   ) : (
@@ -88,18 +95,16 @@ export default async function SearchRoute({
                     </>
                   )}
                   {results.nextCursor ? (
-                    <>
-                      <Divider variant="rule" className="mt-(--space-module)" />
-                      <div className="mt-(--space-module) flex justify-center">
-                        <Link className="inline-flex min-h-11 items-center text-interactive hover:text-interactive-hover" href={`${searchUrl}?q=${encodeURIComponent(query)}&cursor=${encodeURIComponent(results.nextCursor)}`}>{t.searchPage.loadMore}</Link>
-                      </div>
-                    </>
+                    <div className="mt-(--space-module) flex justify-center">
+                      <Link className="inline-flex min-h-11 items-center text-interactive hover:text-interactive-hover" href={`${searchUrl}?q=${encodeURIComponent(query)}&cursor=${encodeURIComponent(results.nextCursor)}`}>{t.searchPage.moreResults}</Link>
+                    </div>
                   ) : null}
                 </>
               ) : null}
             </Wrapper>
           </WithRail>
         </Shell>
+        {results ? <AdSlot variant="band" lang={lang} strings={t.ads} /> : null}
       </main>
       <Footer lang={lang} />
     </>

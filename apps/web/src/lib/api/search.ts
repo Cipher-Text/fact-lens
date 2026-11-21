@@ -8,7 +8,7 @@ export async function searchFromApi(
   lang: Lang,
   cursor?: string,
 ): Promise<{ query: string; stories: Story[]; nextCursor: string | null }> {
-  const params = new URLSearchParams({ q: query, limit: "20" });
+  const params = new URLSearchParams({ q: query, limit: "10" });
   if (cursor) params.set("cursor", cursor);
   const result = await apiGet(
     `/public/search/${apiLocale(lang)}?${params.toString()}`,

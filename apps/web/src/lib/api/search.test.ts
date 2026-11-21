@@ -33,7 +33,7 @@ describe("public search adapters", () => {
     const url = new URL(fetch.mock.calls[0][0] as string);
     expect(url.pathname).toBe("/public/search/bn-BD");
     expect(url.searchParams.get("q")).toBe("ঢাকা খবর");
-    expect(url.searchParams.get("limit")).toBe("20");
+    expect(url.searchParams.get("limit")).toBe("10");
     expect(url.searchParams.get("cursor")).toBe("next + token");
     expect(result.stories.map(({ id, title }) => ({ id, title }))).toEqual([{ id: "story1", title: "Search result" }]);
     expect(result.nextCursor).toBe("next + token");

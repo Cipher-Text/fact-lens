@@ -18,6 +18,8 @@ type Props = {
    * (SearchDialog.field).
    */
   size: "drawer" | "dialog";
+  /** Prefills a standalone search row without changing the dialog's controlled input. */
+  initialValue?: string;
   /** Marks the field for the dialog that opens the form, so it can take the focus. */
   fieldProps?: Record<`data-${string}`, string>;
   /** The trending terms under the field (SearchDialog.trending). Omit in the Drawer. */
@@ -35,12 +37,13 @@ export function SearchForm({
   strings,
   lang,
   size,
+  initialValue = "",
   fieldProps,
   trendingTerms,
 }: Props) {
   const fieldId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialValue);
   const searchHref = (term: string) => `${localizedPath(lang, "/search")}?q=${encodeURIComponent(term.trim())}`;
 
   return (
@@ -48,7 +51,7 @@ export function SearchForm({
       role="search"
       onSubmit={(event) => {
         event.preventDefault();
-        const query = value.trim();
+        const query = (inputRef.current?.value ?? "").trim();
         if (query) window.location.assign(searchHref(query));
       }}
     >
@@ -68,7 +71,7 @@ export function SearchForm({
           id={fieldId}
           type="text"
           name="q"
-          value={value}
+          defaultValue={initialValue}
           placeholder={strings.searchPlaceholder}
           enterKeyHint="search"
           autoComplete="off"
@@ -93,7 +96,10 @@ export function SearchForm({
             className="h-full"
             onClick={() => {
               setValue("");
-              inputRef.current?.focus();
+              if (inputRef.current) {
+                inputRef.current.value = "";
+                inputRef.current.focus();
+              }
             }}
           >
             {strings.clear}
