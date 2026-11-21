@@ -107,6 +107,13 @@ describe.skipIf(!adminUrl)('public search (database)', () => {
     expect(ids((await search('glacier')).body)).not.toContain(id);
   });
 
+  it('leaves opinion pieces out unless the format is asked for', async () => {
+    const op = await published('sr-op-piece', { title: 'Opinion on marigold fields', body: 'A column about marigold.' });
+    await t.db.pool.query("UPDATE news SET format = 'opinion' WHERE id = $1", [op]);
+    expect(ids((await search('marigold')).body)).not.toContain(op);
+    expect(ids((await search('marigold', '&format=opinion')).body)).toContain(op);
+  });
+
   it('filters by section', async () => {
     const econ = await published('sr-econ-item', { title: 'Tariff talks widen', body: 'Trade ministers met.', cat: catEcon });
     const env = await published('sr-env-item', { title: 'Tariff on river water', body: 'Environment desk report.', cat: catEnv });

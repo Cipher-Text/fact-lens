@@ -111,7 +111,9 @@ export class SearchService {
       filters.push(`AND EXISTS (SELECT 1 FROM news_region nr JOIN region_label rl ON rl.region_id = nr.region_id AND rl.locale = $4
                                  WHERE nr.news_id = ns.news_id AND rl.slug = ${bind(q.region)})`);
     }
+    // Opinion pieces stay out of results unless a reader asks for that format, as the public news lists do.
     if (q.format) filters.push(`AND s.format = ${bind(q.format)}`);
+    else filters.push("AND s.format <> 'opinion'");
     const limit = bind(q.limit + 1);
     const start = bind(offset);
 
