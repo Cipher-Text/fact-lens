@@ -66,5 +66,5 @@ How the first implementation reads this document. Change these deliberately; eac
 - **Timeline** (`/news/:id/timeline`) lists audit events and revision openings, newest first, without request ids or metadata.
 - **Scheduled publishing:** Ready to Scheduled records a `publishing_schedule` row (the time is stored with its time zone, in the future, one key per schedule). The worker finds due rows and calls the API, which publishes as `system:scheduler` after re-checking every readiness rule. If publishing is no longer possible (for example the slug was taken meanwhile), the news item goes back to Ready, the schedule is marked failed and a `news.schedule_failed` event is queued. Moving a scheduled news item back to Ready, or archiving it, cancels the schedule. See [08](./08-ingestion-and-automation.md).
 - **Images:** every image in a body needs alt text before review; publishing needs rights that are current and cover the web ([10](./10-media-architecture.md)).
-- **Not built yet:** HTML import fixture, search projection, comment mentions and notifications, a calendar of schedules.
+- **Not built yet:** HTML import fixture, comment mentions and notifications, a calendar of schedules. The public search projection is built (ADR-044).
 

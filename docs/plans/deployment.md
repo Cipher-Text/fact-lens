@@ -9,7 +9,7 @@ The API, worker and public site run in a real environment, built from images in 
 ## Current state (checked in the code)
 
 - Each app has a production start command: API `node dist/main.js`, worker `node dist/main.js`, newsroom `next start --port 3100`, site `next start`.
-- `packages/config` already refuses production without S3 storage, OIDC settings and `INTERNAL_API_TOKEN`.
+- `packages/config` already refuses production without S3 storage, backend sign-in settings and `INTERNAL_API_TOKEN`.
 - The API listens on `API_PORT`/`API_HOST`. The worker has a health server on `WORKER_HEALTH_PORT`. The API has `/health/live` and `/health/ready`. The site has no health route.
 - `infrastructure/docker-compose.yml` runs local PostgreSQL, Redis and MinIO only. There are no Dockerfiles.
 - CI (`.github/workflows/ci.yml`) runs `pnpm check`. It builds no images.

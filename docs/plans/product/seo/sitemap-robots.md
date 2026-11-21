@@ -1,6 +1,6 @@
 # Sitemap and robots.txt for the public site (Codex)
 
-Status: pending. Backlog item: sitemap and robots (docs/22, "Not built"). The public site's address is a new setting, `PUBLIC_SITE_URL`, decided with the lead: read from the environment like `FACTLENS_API_URL` (it is documented in `.env.example` and the README, not in `packages/config`, because `apps/web` reads its settings directly). It is blank by default. In development, when it is blank, use `http://localhost:3000`. In production, when it is blank, the sitemap lists no news (only the static pages), and robots.txt has no Sitemap line.
+Status: built and merged (commit 7369747). The public site exposes `/sitemap.xml` and `/robots.txt` using `PUBLIC_SITE_URL`. The public site's address is a new setting, `PUBLIC_SITE_URL`, decided with the lead: read from the environment like `FACTLENS_API_URL` (it is documented in `.env.example` and the README, not in `packages/config`, because `apps/web` reads its settings directly). It is blank by default. In development, when it is blank, use `http://localhost:3000`. In production, when it is blank, the sitemap lists no news (only the static pages), and robots.txt has no Sitemap line.
 
 ## Goal
 

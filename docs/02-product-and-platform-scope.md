@@ -22,7 +22,7 @@ The public site is a consumer of approved publication state. It must not become 
 - Media assets, variants, rights/attribution metadata.
 - Scheduled publishing and public delivery.
 - PostgreSQL search and basic newsroom filters.
-- OIDC login and capability-based permissions.
+- Backend-managed staff sign-in and capability-based permissions (ADR-046).
 - Advertising: Advertiser, Campaign, Placement, Ad and AdEvent records with signed ad-redirect delivery, carried forward from CipherPress's current design. Modeled as a commercial/distribution capability, separate from the editorial News item graph (see [domain model](./05-domain-model.md)).
 - Branded photocard/poster generation from a raw photo, using deterministic FactLens template compositing — not generative AI (see [media architecture](./10-media-architecture.md)).
 - per-item performance tracking (first-party view counts, not GA4-derived) powering "most read"/"trending" rankings — ships with Phase 4 public web launch, since it requires the public site to exist (see [target architecture](./03-target-architecture.md)).
@@ -53,4 +53,4 @@ The public site is a consumer of approved publication state. It must not become 
 
 ## Status
 
-The newsroom application and the editorial half of the automation platform (workflow, scheduling, media) are built to the extent described in [implementation status](./22-implementation-status.md). The public website exists as a design on mock data. Ingestion, AI, distribution, search and the advertising screens are not built. Open scope questions are in [open questions](./19-open-questions.md): fact-checking (15), public comments (12) and paid subscriptions (13).
+The newsroom application and editorial workflow, scheduling and media are built to the extent described in [implementation status](./22-implementation-status.md). The public site is API-backed in part: search, reading time, Read next, editorial trending terms, sitemap and robots are built; public cutover remains in progress. RSS ingestion and the source inbox are built; other ingestion, the AI Gateway, distribution and advertising screens are not. Fact-checking remains open (15); public comments (12) and paid subscriptions (13) are future plans, not in the current scope.

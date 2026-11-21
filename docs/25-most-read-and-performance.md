@@ -1,6 +1,6 @@
 # 25 — Most read and news performance
 
-**Status: BUILT in the API, the worker and the newsroom; NOT connected to the public site.** The public site (`apps/web`) still shows mock data and neither sends views nor reads this list. The counting is **off** until the feature flag `analytics.news_views` is turned on. See [ADR-032](./17-architecture-decisions.md). The design follows [03](./03-target-architecture.md) (first-party view counting) and [12](./12-auth-security-and-audit.md) (abuse resistance).
+**Status: BUILT in the API, the worker, newsroom and public site's view beacon; the public site does not yet use the Most read list.** The article page sends views through its own `/api/views` route. The counting is **off** until the feature flag `analytics.news_views` is turned on. See [ADR-032](./17-architecture-decisions.md). The design follows [03](./03-target-architecture.md) (first-party view counting) and [12](./12-auth-security-and-audit.md) (abuse resistance).
 
 ## 1. What it does
 
@@ -53,7 +53,7 @@ Cards need a picture, and nothing could set one. `PUT /news/:id/lead-image` (`ne
 
 ## 8. Not built
 
-- **The public site does not send views and does not read this list.** It needs a small client piece that posts the beacon once per article page after it is shown (through its own route, like the poll vote, so the client address reaches the API), and the homepage and category pages calling `GET /public/most-read/:locale`. That is `apps/web` work, to be done under its own rules.
+- **The public site does not yet read the Most read list.** `apps/web` sends the view beacon through its own `/api/views` route. The homepage and category pages still need to call `GET /public/most-read/:locale`.
 - Reading time on the cards ([24](./24-reading-time.md)), "trending" (time-decayed), engaged time or scroll depth, snapshotting a news item's section at the time of the view, a history import from GA4, partitioning, and a consent step.
 - The lead image is not **required** to publish (the site's article page requires one); that rule is open.
 

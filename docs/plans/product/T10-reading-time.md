@@ -1,6 +1,6 @@
 # Reading time (product backlog item 2)
 
-Status: spec, approved rule. Reads: `docs/24-reading-time.md` (all sections, the rule is approved in ADR-039 and open question 25), `docs/17-architecture-decisions.md` ADR-014 (submitted revisions are locked), `apps/api/src/news/news.service.ts` (translation save at about line 301; new revision copy at about line 772, which lists the translation columns explicitly), `packages/contracts/src/news.ts` (`translationSaveSchema`, `publicNewsSchema`), `packages/contracts/src/configuration.ts` (configuration key schemas).
+Status: built (steps 1 to 5; ADR-031). Reads: `docs/24-reading-time.md` (all sections, the rule is approved in ADR-039 and open question 25), `docs/17-architecture-decisions.md` ADR-014 (submitted revisions are locked), `apps/api/src/news/news.service.ts` (translation save at about line 301; new revision copy at about line 772, which lists the translation columns explicitly), `packages/contracts/src/news.ts` (`translationSaveSchema`, `publicNewsSchema`), `packages/contracts/src/configuration.ts` (configuration key schemas).
 
 ## Goal
 

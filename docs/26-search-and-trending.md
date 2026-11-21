@@ -1,6 +1,6 @@
 # 26 — Public search and trending search terms
 
-**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Step 1 is built (the index, the worker job, the reindex command and `GET /public/search/:locale`, ADR-044). Step 2 is built: the editorial list in the API, `GET /public/trending-searches/:locale`, and the newsroom configuration page (ADR-045). Step 3 is built: the results page at `/search?q=` in the category card layout, and the dialog opens it (no design yet for the page, so it reuses the category layout). The trending list and the site's results page are not built.** This records the concept for the public site's search and its "Trending" row, and the decision to write it down first ([ADR-034](./17-architecture-decisions.md)). It builds on the plan in [09](./09-search-and-discovery.md) (PostgreSQL first, OpenSearch later). Nothing here is in the database, the API, the worker or the newsroom yet.
+**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Step 1 is built: the index, worker job, reindex command and `GET /public/search/:locale` (ADR-044). Step 2 is built: editorial trending terms in the API and newsroom configuration screen (ADR-045). Step 3 is built: the results page at `/search` and the dialog link to it. The layout follows [design/search-results.md](./design/search-results.md); design approval remains open.** ADR-034 specified this work; ADR-044 amends its search-index ownership and matching details. See [09](./09-search-and-discovery.md) for the PostgreSQL-first plan.
 
 ## 1. What the public site has
 
@@ -8,32 +8,31 @@ From the site's own design (`apps/web`, `component-system.md` C-19 and C-20):
 
 - **The search dialog.** A search button in the top bar from 768 px opens a panel from the top; below 768 px the same field is in the menu drawer. It has a field with a submit button and a clear button, and in the dialog (not the drawer) a **Trending** row.
 - **Trending terms.** Up to 6 terms in one wrapping row; each is a link that **runs a search** for that term. The source is not decided in the spec: "editorial or analytics, later" (DR-190 to DR-192). The mockup uses a fixed list per language.
-- **Search itself is a mock.** Submitting shows a note instead of results. There is **no search results page**, no `/search` path in the URL spec and no search result card. Those need their own design and are not part of this document's build.
+- The search dialog opens the built `/search` results page. The design system has not yet approved the page layout; implementation follows [design/search-results.md](./design/search-results.md).
 
 ## 2. What the backend has today
 
-Before step 1 there was nothing for the public site. Step 1 is now built (ADR-044): the worker's `search.index` job and the outbox events drive the index ([09](./09-search-and-discovery.md)). The newsroom cannot search news text either. The rate-limit setting `rate_limit.search` exists in the configuration and is not used.
+The public search index and API endpoint are built (ADR-044): the worker's `search.index` job and outbox events drive the index ([09](./09-search-and-discovery.md)). The newsroom cannot search news text; it can manage editorial trending terms (ADR-045). Public search enforces the `rate_limit.search` setting.
 
-## 3. Search (proposed)
+## 3. Search (built)
 
 `GET /public/search/:locale?q=&category=&region=&format=&limit=&cursor=`
 
-- **Scope.** Published news only, in the page's language only (languages are never mixed, [ADR-020](./17-architecture-decisions.md)), the same filters as the other public lists.
+- **Scope.** Published news only, in the page's language only (languages are never mixed, [ADR-020](./17-architecture-decisions.md)), the same filters as the other public lists. Opinion pieces are excluded unless the `format` filter explicitly asks for opinion ([ADR-044](./17-architecture-decisions.md)).
 - **Result.** The same list items as the public lists (id, short id, slug, title, standfirst, format, date, section, lead image), so the site's cards work unchanged, in a stable order with a cursor.
-- **Ranking.** Text relevance first, with a recency boost so a new article beats an equal old one; a title match counts more than a body match. Ties go to the newest.
-- **Query handling.** The text is trimmed and limited in length (for example 200 characters); an empty or one-character query returns no results (`200` with an empty list, not an error); the query is never used as SQL or as a tsquery operator, only as plain words.
-- **Limits.** Public, read only, rate limited by `rate_limit.search` per client address (hashed, as the poll and the view beacon do), cached briefly per query. A malformed request is `400`.
+- **Ranking.** The API scores text rank, adds half the title similarity and a recency boost of up to 0.2 that halves every 30 days. The title is weighted above the body. See ADR-044.
+- **Query handling.** The text is trimmed and limited to 200 characters. A query under two characters returns no items; one over 200 characters is refused with `400`. The query is handled as plain text, not SQL or a tsquery operator.
+- **Limits.** Public, read only, rate limited by `rate_limit.search` per client address, and cached briefly per query. A malformed request is `400`.
 
-## 4. How it is indexed (proposed)
+## 4. How it is indexed (built)
 
-- **A search column per translation of the published revision** (title, standfirst, body text), kept by the worker from the `search.index` event after the commit that published or changed the news item. It is rebuildable from the stored text, and a **reindex command** is safe to run repeatedly. The lag is a metric.
-- **English:** PostgreSQL full-text search with the `english` configuration.
-- **Bangla:** PostgreSQL has no Bangla stemmer. Use the `simple` configuration (no stemming) for matching words, plus **trigram** matching (`pg_trgm`) on the title for typos and partial words. Word splitting for Bangla must follow the same rules as the reading-time count ([24](./24-reading-time.md)): by word with `Intl.Segmenter`, not by spaces, so the text is split before it is indexed.
-- **Other languages** (the `locale` rows are data, [ADR-020](./17-architecture-decisions.md)) use `simple` until a better configuration is chosen for them.
+- The API keeps one `news_search` document per live item and language. The worker sends `search.index` updates to `POST /internal/search/:id`; the API owns the SQL. The index is rebuildable, and `pnpm --filter @fact-lens/api search:reindex` is safe to run repeatedly (ADR-044).
+- **English:** PostgreSQL full-text search with the `english` configuration; other languages use `simple`.
+- **Typo matching:** the title has a trigram index. A title or body text match counts, as does a title similarity of at least 0.4. The API weights the title above the body.
 - **Only live news is searchable:** unpublishing or archiving removes the row from the results.
 - **When PostgreSQL stops being enough** (autocomplete latency, faceting, semantic search, corpus growth), OpenSearch takes over as a projection of the same documents, behind the same endpoint ([09](./09-search-and-discovery.md)). The documents and IDs stay in PostgreSQL.
 
-## 5. Trending search terms (proposed)
+## 5. Trending search terms
 
 Two sources, in this order of priority:
 
@@ -42,7 +41,7 @@ Two sources, in this order of priority:
 
 `GET /public/trending-searches/:locale` returns `{ terms: ["…"] }`, at most 6, in order, cached briefly. An empty list hides the row (the site's design already allows an empty row).
 
-**Why editorial first.** Raw queries can contain personal or offensive text; a new site has too little traffic for a computed list to be meaningful; and the mockup already assumes a short curated row.
+**Why editorial first.** Raw queries can contain personal or offensive text; a new site has too little traffic for a computed list to be meaningful; and the design assumes a short curated row. The editorial list is built; computed trending terms are not.
 
 ## 6. Privacy
 

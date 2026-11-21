@@ -1,6 +1,6 @@
 # Trending terms: the newsroom screen (Codex)
 
-Status: pending. Parent: [doc 26, section 5](../../../26-search-and-trending.md). The API is built (ADR-045): `GET /trending-searches/:locale` and `PUT /trending-searches/:locale` with body `{ terms: string[] }`, behind `config.manage`. The public read is `GET /public/trending-searches/:locale`.
+Status: built (API, public read and newsroom configuration screen; ADR-045). Parent: [doc 26, section 5](../../../26-search-and-trending.md). The API is built (ADR-045): `GET /trending-searches/:locale` and `PUT /trending-searches/:locale` with body `{ terms: string[] }`, behind `config.manage`. The public read is `GET /public/trending-searches/:locale`.
 
 ## Goal
 

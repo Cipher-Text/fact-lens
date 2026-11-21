@@ -22,7 +22,7 @@ Each task in a plan is one of: `pending`, `in progress`, `in review`, `merged`, 
 | [public-site-api](./public-site-api.md) | Done (the unavailable page answers 503; open question 30 resolved) |
 | [auth-in-app](./auth-in-app.md) | Built (A0 to A8): accounts, passwords, MFA and sessions inside the backend; the external security review is open |
 | [deployment](./deployment.md) | Awaiting decisions (platform, domains, migrations) |
-| [product/read-next](./product/read-next.md) | Built: RN1 to RN5 committed; manual check against a running API open |
+| [product/read-next](./product/read-next.md) | Built: RN1 to RN5 committed; English and Bangla manual checks passed |
 | [product/T10-reading-time](./product/T10-reading-time.md) | Built: steps 1 to 5 committed |
 | [card-duplicate-renders](./card-duplicate-renders.md) | Done: migration and upload change merged (ADR-036) |
 

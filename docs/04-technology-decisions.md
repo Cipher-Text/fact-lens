@@ -13,10 +13,10 @@
 | Jobs | BullMQ + Redis | Simple TypeScript queue with retry/backoff and delayed jobs. Operationally smaller than Kafka. |
 | Search | PostgreSQL FTS + `pg_trgm` first | Reduces moving parts and keeps writes transactional. Move to OpenSearch only with measured advanced query/scale requirements. |
 | Media | Cloudflare R2 + CDN/image transforms | Durable object storage, no egress fees when paired with Cloudflare's CDN, and immutable variants. Store metadata/rights in PostgreSQL. |
-| Auth | OIDC provider | Avoid custom password/session security. Evaluate managed provider and self-hosted Keycloak-style option against cost, availability and editorial admin requirements. |
+| Auth | Backend-managed accounts and sessions | Resolved by ADR-046: admin invitations, Argon2id passwords, TOTP, rotating refresh tokens, and newsroom sign-in. |
 | AI | Central AI Gateway/module, Google Gemini as initial provider | Provider-neutral calls, budgets, prompt versions, provenance and safety in one place. No direct provider calls from domain modules. The Gateway's adapter pattern keeps Gemini swappable/addable alongside other providers rather than hard-wired into business logic. |
 | Repo | pnpm + Turborepo-compatible TypeScript monorepo | Shared contracts/config/UI and coordinated changes are valuable. Start with workspace boundaries; add Turborepo caching when build graph justifies it. |
-| Infra | Docker, GitHub Actions, managed services | Fits current deployment skills and keeps operations small. Cloudflare is the confirmed edge/WAF/CDN and object storage provider (R2); choose managed PostgreSQL/Redis first. |
+| Infra | Docker Compose on one Hetzner VM, with Cloudflare R2 for media | Platform decision is recorded in [deployment plan](./plans/deployment.md). PostgreSQL and Redis run on the VM in the private Compose network; backups and restore drills remain to be built. |
 | Web analytics/SEO tracking | Google Analytics 4 tag + Google Search Console site verification | Carries forward CipherPress's current tag-based approach (`GoogleTag.tsx`/GTM) onto the public site; GSC verification plus the existing sitemap satisfies indexing needs. Tag/verification only for now — pulling GSC/GA4 performance data back into the newsroom via their APIs is a later enhancement, not a Phase 1/4 dependency. |
 
 ## Choices made while building
@@ -28,7 +28,7 @@
 | Language | TypeScript 7 in the API, worker and packages; TypeScript 5 in the Next.js apps | `typescript-eslint` does not support 7 yet |
 | API runtime | NestJS 12 on Fastify 5, `pg` for queries | |
 | Token validation | `jose`, asymmetric algorithms only, issuer and audience checked | |
-| Browser sign-in | `openid-client` (authorization code with PKCE) in the newsroom server | See ADR-012 |
+| Browser sign-in | Newsroom sign-in page with server-side API session proxy | See ADR-046 and ADR-047; OIDC remains for local development and tests. |
 | Queues | BullMQ 6 with ioredis | One queue per job family |
 | Editor | Tiptap 3 limited to the body contract | |
 | Images | `sharp` for decoding, re-encoding and variants; `@aws-sdk/client-s3` for storage | |

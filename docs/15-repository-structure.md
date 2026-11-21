@@ -6,7 +6,7 @@ Current shape (the target shape plus what was added while building):
 fact-lens/
   apps/
     web/                 # public Next.js; imported from fact-lens-web via git subtree (history kept), mock data until Phase 4 wires the API
-    newsroom/            # internal Next.js: server-side OIDC session, proxy to the API, editor, media library
+    newsroom/            # internal Next.js: backend-managed sign-in session, proxy to the API, editor, media library
     api/                 # NestJS + Fastify; owns the database schema (migrations/) and the seed
     worker/              # BullMQ processors and the outbox dispatcher
   packages/

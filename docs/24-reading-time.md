@@ -4,7 +4,7 @@
 
 ## 1. What it is
 
-"6 min read" on an article page and on the story cards. The public site already shows it: its mockup stores a number by hand on a story, and when there is none it works it out from the text (`apps/web`, `content/reader.ts`): `max(1, round(words / rate))`, with **230 words a minute for English and 170 for Bangla** (Bangla is read a little slower per word). The backend has nothing: no field, no calculation, and the public list items and news page do not return it.
+"6 min read" on an article page and on story cards. The public API calculates it per language version from the body, and the newsroom can override it. The public site displays the API value in API mode; mock content retains its own values.
 
 ## 2. The rule
 

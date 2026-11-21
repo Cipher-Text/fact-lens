@@ -29,7 +29,7 @@ Audit authentication, authorization changes, news item/revision state, publish/c
 
 Built and tested:
 
-- **Authentication:** the API accepts bearer tokens only, validates signature (asymmetric algorithms only), issuer, audience and expiry, and refuses everything not marked public (default deny). With no provider configured, protected routes answer 401; production refuses to start without one.
+- **Authentication:** the API accepts bearer tokens only, validates signature (asymmetric algorithms only), issuer, audience and expiry, and refuses everything not marked public (default deny). Protected routes answer 401 without a valid backend-managed token; production requires the backend signing and encryption keys, issuer, and newsroom URL.
 - **Authorization:** capabilities, never role names; roles are rows in `app_role`. Privileged capabilities need a multi-factor sign-in when `OIDC_REQUIRE_MFA` is on (the default). A denied attempt by a signed-in person is audited; anonymous failures are not, so they cannot flood the log.
 - **Browser sessions:** an encrypted, HttpOnly, SameSite=Lax cookie holding the token; writes need a matching `Origin`; the proxy reaches only the newsroom's routes; the internal worker endpoint uses a separate shared secret compared in constant time.
 - **Audit:** append-only in the database. Covered: news item create, transitions, revise, correct, metadata and source changes, assignments, source creation and validation, contributor creation, media upload, rights change and delete, feature-flag changes (with reason), and authorization denials.
@@ -38,4 +38,4 @@ Built and tested:
 
 Secrets locally live in one root `.env`, which git ignores and `pnpm env:init` creates with `0600` permissions and random values for the session and internal secrets. That file is for development; a deployment must give each service only its own variables, so the newsroom never holds the database password.
 
-Built: sign-in inside the backend with refresh, MFA and lockout (ADR-046, ADR-047). Not built: rate limits beyond sign-in and public search (the other seeded limits are not enforced), CSP for the public site, secret scanning, dependency and container scanning, malware scanning of uploads, the external security review, and CSRF protection beyond the origin check and SameSite. See [implementation status](./22-implementation-status.md).
+Built: sign-in inside the backend with refresh, MFA and lockout (ADR-046, ADR-047). Not built: rate limits beyond sign-in, public search and the view beacon (other seeded limits are not enforced), CSP/security-header review for the public site, secret scanning, dependency and container scanning, malware scanning of uploads, the external security review, and CSRF protection beyond the origin check and SameSite. See [implementation status](./22-implementation-status.md).

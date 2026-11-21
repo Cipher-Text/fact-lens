@@ -21,7 +21,7 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 
 ## Epic C — Authentication and authorization
 
-- Integrate OIDC callback/session flow. *Done in the newsroom (server-side code flow with PKCE); no refresh; only the fake provider tried.*
+- Integrate sign-in and session flow. *The original OIDC approach was superseded by backend-managed sign-in (ADR-046); the in-app flow is built through A0 to A8 in [the auth plan](./plans/auth-in-app.md).*
 - Map identities to capabilities/scopes and enforce in API guards/services. *Done (roles table, default-deny guard); desk-scoped roles not modeled.*
 - Add privileged-action audit events and MFA/provider configuration checks. *Done for audit and the MFA rule; no provider configuration checks.*
 

@@ -24,4 +24,4 @@ First-party news view counts (see [target architecture](./03-target-architecture
 
 The public search index is built (ADR-044): the worker's `search.index` job asks the API to keep one search document per live item and language, from the outbox publish and archive events. The newsroom side has no text search yet. The newsroom list can filter by status only; there is no text search over news items. Media library search is a simple case-insensitive match on file name, alt text, credit and rights owner. See [implementation status](./22-implementation-status.md).
 
-The public search endpoint, the indexing of the published text per language (including Bangla), and the trending search terms behind the site's search dialog are specified in [26](./26-search-and-trending.md). The endpoint is built; the site's results page and trending terms are not.
+The public search endpoint, the indexing of published text per language, and the editorial trending terms are built; the results page at `/search` is also built. Computed trending terms remain future work. See [26](./26-search-and-trending.md) and [implementation status](./22-implementation-status.md).

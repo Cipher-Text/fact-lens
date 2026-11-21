@@ -1,6 +1,6 @@
 # RN4: "Related news" panel in the newsroom (Codex)
 
-Status: pending. Parent: [read-next](../read-next.md). Runs in parallel with RN5.
+Status: built (commit 7ddbfff). Parent: [read-next](../read-next.md). Runs in parallel with RN5.
 
 ## Goal
 

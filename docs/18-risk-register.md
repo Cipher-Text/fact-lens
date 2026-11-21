@@ -26,7 +26,7 @@ Added while implementing:
 
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Only a fake identity provider has been used | Sign-in may fail against the real provider (claims, MFA claim name, token size, logout) | Provider-neutral code, claims names are configuration; test against the chosen provider before any launch (open question 7) |
+| In-app sign-in has not had an external security review | A security flaw could expose newsroom accounts or sessions | Commission an independent review before launch (auth plan A8); backend-managed sign-in is selected by ADR-046 |
 | The fake identity provider reaches a deployed environment | Anyone could sign in as an admin | It refuses to start with `NODE_ENV=production`, listens on loopback only, and is a dev dependency; keep it out of images |
 | Placeholder role capabilities are mistaken for policy | People can do more or less than the desks intend | Roles are data, marked provisional in the seed; settle open question 1 before launch |
 | Storage behaviour differs on the real object store | Uploads or serving fail in production | CI runs the storage tests against MinIO; run them against R2 in staging; the client avoids SDK defaults some stores reject |

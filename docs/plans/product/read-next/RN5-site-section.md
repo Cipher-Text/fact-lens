@@ -1,6 +1,6 @@
 # RN5: the Read next section on the site (Codex)
 
-Status: pending. Parent: [read-next](../read-next.md). Runs in parallel with RN4. Depends on RN3 (built, `a8b1493`).
+Status: built (commit 7ddbfff). Parent: [read-next](../read-next.md). Runs in parallel with RN4. Depends on RN3 (built, `a8b1493`).
 
 ## Goal
 

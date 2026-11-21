@@ -1,6 +1,6 @@
 # 23 — Read next (the related news under an article)
 
-**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Built (RN1 to RN5; [ADR-043](./17-architecture-decisions.md)). A manual check in English passed on 18 November 2026; the Bangla article check passed on 18 November 2026 (the article renders in Bangla, and the section is hidden when no other Bangla item exists).** This document records the concept and the decision to write it down before building it ([ADR-030](./17-architecture-decisions.md)). Nothing here is in the API, the newsroom or the contracts yet. The rules in section 3 are proposals that need approval (section 8).
+**Status: APPROVED on 17 November 2026 (decisions in [19](./19-open-questions.md), questions 22 to 28). Built (RN1 to RN5; [ADR-043](./17-architecture-decisions.md)). A manual check in English passed on 18 November 2026; the Bangla article check passed on 18 November 2026.** ADR-030 recorded the initial decision to specify this feature; the implementation and its final rules are recorded by ADR-043. The rules below describe the built behavior.
 
 ## 1. What it is
 
@@ -13,9 +13,9 @@ After an article, the public site shows a row called **Read next**: other news a
 
 ## 2. What the backend has today
 
-The picks table, the picks endpoints and the public related-news endpoint now exist (RN1 to RN3), and the newsroom panel and the site section use them (RN4, RN5). This section describes the state before those steps. The public list (`GET /public/news/:locale`) can filter by section, region, tag and format. Its items now carry the lead image ([25](./25-most-read-and-performance.md)), which the cards need. Topics (the site's managed "what or who" list) are not built; tags (146, from cipher-press) are the nearest thing ([gap list](./22-implementation-status.md)).
+The picks table, endpoints, newsroom panel, and public site section are built (RN1 to RN5). The public list (`GET /public/news/:locale`) can filter by section, region, tag and format. Its items carry the lead image ([25](./25-most-read-and-performance.md)). Topics remain unbuilt; tags are used as the related subject signal ([gap list](./22-implementation-status.md)).
 
-## 3. Proposed selection rules
+## 3. Selection rules
 
 The row is 3 stories. Fill it in this order and stop when it has 3:
 
@@ -40,10 +40,10 @@ Always excluded, at every step:
 
 Mix and variety:
 
-- News and analysis are allowed. **At most one opinion piece**, and only one that shares a topic with this article (the site keeps opinion out of its news lists; see question 24).
+- News and analysis are allowed. **At most one opinion piece**, and only one that shares a tag with this article.
 - No more than 2 from the same author, so the row does not look like a byline page.
 
-## 4. API (proposed)
+## 4. API (built)
 
 `GET /public/news/:locale/:ref/related?limit=3` — public, read only, cached.
 
@@ -52,7 +52,7 @@ Mix and variety:
 - A pinned item whose language version is missing, or that is no longer live, is skipped, not shown broken.
 - Cache: `public, max-age=60, stale-while-revalidate=300`, like the other public reads.
 
-## 5. Editor control (proposed)
+## 5. Editor control (built)
 
 - A **Related news** field on the news item's details in the newsroom: choose up to 3 other news items, order them, remove them. Stored per news item (`news_related(news_id, related_news_id, position)`, unique per pair, the item cannot relate to itself), like tags: it belongs to the news item, not to a revision.
 - Setting it needs `news.edit`, and writes an audit event with what was added and removed.
@@ -66,7 +66,7 @@ Mix and variety:
 
 ## 7. Decision and build order
 
-**Decision ([ADR-030](./17-architecture-decisions.md)):** write the concept down now, and build it after its inputs exist and the rules are approved. Reasons: it depends on decisions not taken (topics or tags, images on list items, multilingual authors); the weights and the opinion rule are untested proposals; the public site does not call the API yet, so nothing could show it working; and a written spec costs little and keeps the reasoning.
+**Decision:** ADR-030 specified the feature before implementation; ADR-043 records the built Read next behavior and selection rules.
 
 Build order:
 

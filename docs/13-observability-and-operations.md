@@ -14,11 +14,11 @@ Alert on sustained 5xx/latency, DB connection exhaustion, queue age/backlog, rep
 
 ## Backups and recovery
 
-Use managed PostgreSQL PITR plus scheduled snapshots, object-storage versioning/lifecycle and encrypted off-site backup where required. Test a restore into an isolated environment on a schedule and record RPO/RTO results. Redis can be rebuilt; outbox/audit/news item data cannot.
+The decided platform runs PostgreSQL on the Hetzner VM and stores encrypted scheduled backups in Cloudflare R2 ([deployment plan](./plans/deployment.md)). Build a restore drill into an isolated environment and record RPO/RTO results before launch. Redis can be rebuilt; outbox, audit and news item data cannot.
 
 ## Operations
 
-Docker images are built by GitHub Actions with pinned Node/pnpm and dependency scans. Prefer managed PostgreSQL/Redis/object storage and a managed container runtime initially. Deploy API/web/worker independently only when release and scaling benefits justify it, while preserving one repository and shared contracts.
+The target deployment builds Docker images with pinned Node/pnpm and deploys the public site, API, worker, newsroom, PostgreSQL and Redis in Compose on one Hetzner VM, with R2 for media ([deployment plan](./plans/deployment.md)). Images, dependency scans and deployment are not built yet. Scale services independently only when release or capacity needs justify it, while preserving one repository and shared contracts.
 
 ## Status
 

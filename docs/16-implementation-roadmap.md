@@ -10,9 +10,9 @@ Exit: representative bilingual news items round-trip, every current route class 
 
 ## Phase 1 — Foundation and newsroom shell
 
-**Status:** mostly done. Missing: OpenAPI generation, Docker images and a deployment skeleton, tracing, metrics and Sentry, and an external security review of sign-in (sign-in itself is built inside the backend, ADR-046).
+**Status:** mostly done. Missing: OpenAPI generation, Docker images, deployment, tracing, metrics, Sentry, backups and restore tests, and an external security review of sign-in (sign-in itself is built inside the backend, ADR-046).
 
-Deliverables: monorepo/tooling, NestJS/Fastify API, PostgreSQL migrations, OIDC, capability checks, audit/outbox, Redis/BullMQ skeleton, media abstraction, contracts package, newsroom shell and health/observability baseline.
+Deliverables: monorepo/tooling, NestJS/Fastify API, PostgreSQL migrations, authentication, capability checks, audit/outbox, Redis/BullMQ skeleton, media abstraction, contracts package, newsroom shell and health/observability baseline.
 
 Exit: authenticated users can create a draft news item/revision/translation through the API; tests cover authorization, audit and transaction/outbox behavior.
 
@@ -34,7 +34,7 @@ Exit: staging import passes data/SEO/media/relation checks for a full source sna
 
 ## Phase 4 — Public web and cutover
 
-**Status:** in progress. With the API configured, the homepage, article, category, analysis, topic and region pages read from it, media comes from the site's own origin, and an unavailable API answers 503 with a localized page. The ads are still open. The API serves a published news item by locale and slug, with its lead image and derivatives. The featured poll is built on both sides: the API, and the public site's daily poll. Search, reading time, Read next, the view beacon, sitemap and redirects, newsletter and GA4 are not built.
+**Status:** in progress. With the API configured, the homepage, article, category, analysis and region pages read from it, media comes from the site's own origin, and an unavailable API answers 503 with a localized page. The API serves published news by locale and slug with lead image and derivatives. The featured poll is built on both sides. Public search and its results page, editorial trending terms, reading time, Read next, sitemap and robots are built. The article page sends view beacons; the public site does not yet use Most read. Ads, legacy redirects, newsletter and GA4 are not built.
 
 Deliverables: Next.js public site (starts from `apps/web`, imported from `fact-lens-web`: homepage, design system and i18n already built on mock data; this phase adds article/category/tag/search routes and replaces mock content with the API), article/category/tag/search routes, SEO/schema/sitemap/robots, cache tags, GA4 tag and GSC site verification with analytics consent, legacy redirects, performance tests, Cloudflare/CDN configuration, ad serving/signed-redirect endpoints with strict target-URL validation, first-party news view tracking (beacon endpoint, Redis trending counters, `NewsPerformanceDaily` rollup) powering "most read"/trending surfaces, newsletter subscription capture (double opt-in, unsubscribe, `newsletter.dispatch` job), and the featured poll on the public site. Polls take votes without a login: one vote per browser (a cookie token), and one vote per network address for each poll (ADR-037).
 
@@ -42,7 +42,7 @@ Exit: URL coverage and representative page parity are signed off; rollback switc
 
 ## Phase 5 — Ingestion and AI assistance
 
-**Status:** not started. Flags, AI configuration rows and job stubs are in place.
+**Status:** in progress. RSS feed ingestion and the source inbox are built; the AI Gateway, AI classification and other ingestion connectors are not. Flags, AI configuration rows and some job stubs are in place.
 
 Deliverables: RSS/API connectors (including a Telegram channel connector via Bot API), source inbox, normalization/dedupe, AI Gateway, proposals, provenance/cost controls and worker dashboards.
 
@@ -50,7 +50,7 @@ Exit: ingestion is rate-limited/idempotent, AI cannot publish silently, failures
 
 ## Phase 6 — Distribution and analytics
 
-**Status:** not started.
+**Status:** in progress: first-party news performance analytics are built; social distribution and advanced campaign analytics are not.
 
 Deliverables: automated distribution of already-generated photocards/posters to social channels, distribution jobs/connectors, publication analytics, advanced campaign analytics/optimization and operational dashboards. Facebook Page connector: a `distribution.social_post` job publishes already-generated photocards/posters to FactLens's own Facebook Page via the Graph API using a Business Manager System User access token (managed secret, not env-committed, per [configuration and feature flags](./21-configuration-and-feature-flags.md)); a companion `analytics.facebook_sync` job pulls Page- and post-level Insights (reach, reactions, clicks) back for posts FactLens published, checkpointed by post ID/since-timestamp, and rolls them up against the originating News item/GeneratedCard alongside `NewsPerformanceDaily`.
 

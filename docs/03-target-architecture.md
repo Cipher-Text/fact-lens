@@ -22,7 +22,7 @@ flowchart LR
   WORKER --> AI[AI Gateway]
   WORKER --> IDX[PostgreSQL search index initially]
   IDX -. later .-> OS[OpenSearch]
-  API --> OIDC[OIDC provider]
+  API --> AUTH[Backend-managed accounts and sessions]
 ```
 
 ## Component responsibilities
@@ -30,7 +30,7 @@ flowchart LR
 | Component | Responsibility | Boundary |
 |---|---|---|
 | Public web | Render approved news items, listing pages, metadata, sitemap, redirects and cache tags | No editorial writes; safe public API only |
-| Newsroom | Editor, source inbox, assignments, review, media and analytics screens | Server-side OIDC session; the browser reaches the API only through the newsroom's own proxy |
+| Newsroom | Editor, source inbox, assignments, review, media and analytics screens | Backend-managed session; the browser reaches the API only through the newsroom's own proxy |
 | API | Domain commands/queries, authz, REST contracts, transactions, outbox records | Stateless; no direct UI-specific database coupling |
 | Worker | Ingestion, media variants, search indexing, AI proposals, notifications, newsletter dispatch, distribution | Idempotent jobs with retry/backoff; changes news item state only through the API's internal endpoints |
 | PostgreSQL | News items, revisions, translations, taxonomy, sources, media metadata, workflow, audit, outbox | Source of truth |
@@ -78,6 +78,6 @@ Run multiple stateless API replicas behind a managed load balancer when traffic 
 
 ## Status
 
-Built: the API, the PostgreSQL schema, the transactional outbox and its dispatcher, the worker runtime (scheduled publishing works; cache invalidation and notifications are logging stubs; search indexing is built (ADR-044)), the newsroom, and object storage for media (a local folder or any S3-compatible store). Not built: the CDN and cache invalidation target, OpenSearch (deferred by design), the AI Gateway, ingestion connectors, news item performance tracking (beacon, Redis counters, `analytics.rollup`) and the public site's use of the API. Details in [implementation status](./22-implementation-status.md).
+Built: the API, PostgreSQL schema, transactional outbox and dispatcher, worker runtime (scheduled publishing, RSS fetch, search indexing and analytics rollup; cache invalidation and notifications are logging stubs), newsroom, media storage, public news performance API, and API-backed public site features listed in [22](./22-implementation-status.md). Not built: CDN and a real cache purge, OpenSearch (deferred by design), AI Gateway, non-RSS ingestion connectors, and the public site's use of the Most read API. The public site sends the view beacon. Details in [implementation status](./22-implementation-status.md).
 
 The sequence diagram above matches what is built up to "Claim NewsPublished outbox row": publishing writes state, audit and an outbox row in one transaction, and the worker turns the row into cache and search jobs. A scheduled publish adds one step in front: the worker calls the API to publish, and the API does the transaction.

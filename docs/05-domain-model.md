@@ -67,7 +67,7 @@ Entity types can include PERSON, ORGANIZATION, COMPANY, GOVERNMENT_AGENCY, POLIT
 
 ## Status
 
-Built as tables: everything in "Committed entities" except Topic, NewsletterSubscriber and NewsPerformanceDaily. Differences and additions:
+Built as tables: everything in "Committed entities" except Topic and NewsletterSubscriber. NewsPerformanceDaily is built (migration 27). Differences and additions:
 
 - **Slugs and redirects** are in `news_slug`, one row per locale and slug, with one current slug per news item and locale. SEO fields are columns on the translation, not a separate table. There is no canonical-URL or legacy-redirect registry yet.
 - **Added tables:** `locale` (a row per supported locale, not an enum), `app_role` and `app_role_capability`, `news_contributor`, `revision_media`, `correction_notice` (notice text per locale), `ad_category_target`, `processed_job` (consumer idempotency). The outbox has lease and dead-letter columns.

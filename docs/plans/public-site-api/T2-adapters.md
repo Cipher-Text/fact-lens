@@ -30,7 +30,7 @@ Pure functions that turn API responses into the site's `Story` type. Nothing cal
 5. **Title and summary.** `title` is the item's title. `summary` is `dek` (omitted when null).
 6. **Dates.** `publishedAt` is the item's `publishedAt` unchanged (ISO string).
 7. **Author.** `storyFromNews` sets `author` from the first contributor whose role is `author`, as `{ name: displayName, slug: id }` (the contributor's id). `storyFromListItem` leaves `author` unset; the list does not carry contributors.
-8. **Reading time.** Left unset. Reading time is not built (doc 24, T4 owns it later).
+8. **Reading time.** This plan step originally left it unset; reading time was subsequently built in steps 1 to 5 (doc 24, ADR-031).
 9. **Rank.** Left unset. Most-read adds it later.
 
 ## Do NOT touch
