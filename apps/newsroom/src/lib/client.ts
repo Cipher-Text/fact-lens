@@ -39,9 +39,9 @@ async function send<T>(method: Method, path: string, payload?: { type: string; b
     return { ok: false, status: 0, message: 'Could not reach the server. Check your connection.', issues: [] };
   }
   if (res.status === 401) {
-    // A full page load on purpose: /auth/login is a route handler, not a Next.js page.
+    // A full page load on purpose: the sign-in page is outside the app's own navigation.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-    window.location.assign(`/auth/login?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+    window.location.assign(`/sign-in?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`);
     return { ok: false, status: 401, message: 'Signing you in again…', issues: [] };
   }
   const json: unknown = await res.json().catch(() => null);

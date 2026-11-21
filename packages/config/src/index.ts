@@ -153,8 +153,9 @@ export const newsroomEnvSchema = z.object({
   NEWSROOM_BASE_URL: z.string().url(),
   /** Where the browser's requests are forwarded to, over the private network. */
   API_BASE_URL: z.string().url(),
-  OIDC_ISSUER: z.string().url(),
-  OIDC_CLIENT_ID: z.string().min(1),
+  /** Unused since sign-in moved into the backend (ADR-046); kept so existing environment files still load. */
+  OIDC_ISSUER: z.string().url().optional(),
+  OIDC_CLIENT_ID: z.string().min(1).optional(),
   /** Unset for a public client using PKCE only. */
   OIDC_CLIENT_SECRET: z.string().min(1).optional(),
   OIDC_SCOPE: z.string().min(1).default('openid profile'),

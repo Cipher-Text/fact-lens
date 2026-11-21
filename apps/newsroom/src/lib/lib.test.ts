@@ -5,10 +5,13 @@ import { dateFromExpiry, expiryFromDate, formatBytes, mediaFileUrl, rightsStatus
 import { formatDateTime, formatLabel, pickTitle, relativeTime, statusTone } from './format';
 import { visibleNav } from './nav';
 import { apiUrl, isAllowedApiRequest } from './proxy-allow';
-import { cookieNames, MAX_COOKIE_VALUE, openFlow, openSession, safeReturnTo, sealFlow, sealSession, type Session } from './session';
+import { cookieNames, MAX_COOKIE_VALUE, openSession, openSignInFlow, readSession, safeReturnTo, sealSession, sealSignInFlow, type Session } from './session';
 
 const secret = 'a'.repeat(32);
-const session: Session = { sub: 'u1', name: 'Una', accessToken: 'tok', expiresAt: Math.floor(Date.now() / 1000) + 600 };
+const session: Session = {
+  sub: 'u1', accessToken: 'tok', refreshToken: 'refresh-token', expiresAt: Math.floor(Date.now() / 1000) + 600,
+  sessionExpiresAt: Math.floor(Date.now() / 1000) + 8 * 3600,
+};
 
 describe('session cookies', () => {
   it('round-trips and rejects tampering, the wrong secret, and expiry', async () => {
@@ -18,15 +21,16 @@ describe('session cookies', () => {
     expect(await openSession(sealed, 'b'.repeat(32))).toBeNull();
     expect(await openSession(undefined, secret)).toBeNull();
     expect(await openSession('garbage', secret)).toBeNull();
-    const old = await sealSession({ ...session, expiresAt: Math.floor(Date.now() / 1000) + 30 }, secret);
+    const old = await sealSession({ ...session, sessionExpiresAt: Math.floor(Date.now() / 1000) + 30 }, secret);
     expect(await openSession(old, secret, Date.now() + 60_000)).toBeNull();
   });
 
   it('does not let a login-flow cookie pass as a session, or the reverse', async () => {
-    const flow = await sealFlow({ state: 's', nonce: 'n', codeVerifier: 'v', returnTo: '/' }, secret);
+    const flow = await sealSignInFlow({ returnTo: '/', challengeToken: 'c' }, secret);
     expect(await openSession(flow, secret)).toBeNull();
-    expect(await openFlow(await sealSession(session, secret), secret)).toBeNull();
-    expect(await openFlow(flow, secret)).toMatchObject({ state: 's', returnTo: '/' });
+    expect(await openSignInFlow(await sealSession(session, secret), secret)).toBeNull();
+    expect(await openSignInFlow(flow, secret)).toMatchObject({ challengeToken: 'c', returnTo: '/' });
+    expect(await readSession(flow, secret)).toBeNull();
   });
 
   it('encrypts: the token is not readable in the cookie', async () => {

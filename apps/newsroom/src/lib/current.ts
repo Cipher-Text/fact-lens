@@ -25,7 +25,7 @@ export async function getSession(): Promise<Session | null> {
 
 export async function requireSession(returnTo = '/'): Promise<Session> {
   const session = await getSession();
-  if (!session) redirect(`/auth/login?returnTo=${encodeURIComponent(returnTo)}`);
+  if (!session) redirect(`/sign-in?returnTo=${encodeURIComponent(returnTo)}`);
   return session;
 }
 
@@ -36,7 +36,7 @@ export async function api<T>(path: string, schema: ZodType<T>, opts: { returnTo?
     headers: { authorization: `Bearer ${session.accessToken}`, accept: 'application/json' },
     cache: 'no-store',
   });
-  if (res.status === 401) redirect(`/auth/login?returnTo=${encodeURIComponent(opts.returnTo ?? '/')}`);
+  if (res.status === 401) redirect(`/sign-in?returnTo=${encodeURIComponent(opts.returnTo ?? '/')}`);
   const body = await res.json().catch(() => null);
   if (!res.ok) throw new ApiError(res.status, body?.error?.message ?? `API answered ${res.status}`, body);
   const parsed = schema.safeParse(body);

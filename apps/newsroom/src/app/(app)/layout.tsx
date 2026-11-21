@@ -1,13 +1,13 @@
 import { NavLinks } from '@/components/NavLinks';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { getPrincipal, getSession } from '@/lib/current';
+import { getPrincipal } from '@/lib/current';
 import { visibleNav } from '@/lib/nav';
 
 // Every page here depends on who is signed in, so none may be built ahead of time.
 export const dynamic = 'force-dynamic';
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
-  const [principal, session] = await Promise.all([getPrincipal(), getSession()]);
+  const principal = await getPrincipal();
   const items = visibleNav(principal);
   return (
     <>
@@ -27,7 +27,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <header className="flex flex-wrap items-center justify-end gap-3 border-b border-line bg-panel px-4 py-2.5 text-sm">
             <ThemeToggle />
             <span title={principal.capabilities.join(', ') || 'No permissions'} className="leading-tight">
-              <span className="block font-medium">{session?.name ?? principal.subject}</span>
+              <span className="block font-medium">{principal.subject}</span>
               <span className="block text-xs text-muted">{principal.roles.join(', ') || 'no role'}</span>
             </span>
             <form action="/auth/logout" method="post">
