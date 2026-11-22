@@ -21,6 +21,9 @@ const FILE_PATH = /\.[^/]+$/;
 // An article path, /story/<slug>-<id>, after the language prefix (layout 7C).
 const STORY_PATH = /^\/story\/([^/]+)$/;
 
+// The address of an article on the old cipher-press site, /news/<slug>. It moves to /story/<slug> in the same language.
+const LEGACY_NEWS_PATH = /^\/news\/([^/]+)$/;
+
 const apiBase = process.env.FACTLENS_API_URL?.trim();
 const apiHealth = apiBase ? createApiHealth({ base: apiBase }) : undefined;
 
@@ -81,6 +84,12 @@ export async function proxy(request: NextRequest) {
   // A wrong or old slug gets a 301 to the current URL (DR-413). A 301, not the 308 of
   // Next.js permanentRedirect(), so it is done here and not in the page.
   const lang = isLang(first) ? first : defaultLang;
+  const legacy = LEGACY_NEWS_PATH.exec(stripLang(pathname));
+  if (legacy) {
+    const url = request.nextUrl.clone();
+    url.pathname = localizedPath(lang, `/story/${legacy[1]}`);
+    return NextResponse.redirect(url, 301);
+  }
   const story = STORY_PATH.exec(stripLang(pathname));
   const current = process.env.FACTLENS_API_URL?.trim() ? null : story && currentStoryRef(story[1], lang);
   if (current) {

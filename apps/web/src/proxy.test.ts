@@ -50,6 +50,15 @@ describe("proxy (DR-17, DR-270, DR-328)", () => {
     return proxy(request("/?lang=fr")).then((response) => expect(response.headers.get("set-cookie")).toBeNull());
   });
 
+  it("moves an old /news/<slug> address to /story/<slug> with a 301, in the same language", () => {
+    return Promise.all([proxy(request("/news/iraq-war-24-years-us-withdrawal")), proxy(request("/en/news/iraq-war-24-years-us-withdrawal"))]).then(([bn, en]) => {
+      expect(bn.status).toBe(301);
+      expect(bn.headers.get("location")).toBe("http://localhost:3000/story/iraq-war-24-years-us-withdrawal");
+      expect(en.status).toBe(301);
+      expect(en.headers.get("location")).toBe("http://localhost:3000/en/story/iraq-war-24-years-us-withdrawal");
+    });
+  });
+
   it("leaves files from public/ alone", () => {
     return proxy(request("/mock/a.jpg", "fl-lang=en")).then((response) => {
       expect(response.headers.get("x-middleware-rewrite")).toBeNull();
