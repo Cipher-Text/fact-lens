@@ -32,12 +32,30 @@ describe("POST /api/poll/:id/vote", () => {
     expect((await POST(request(), ctx)).status).toBe(404);
   });
 
+  it("answers 403, not an error, to a request whose Origin is not a web address", async () => {
+    vi.stubEnv("FACTLENS_API_URL", "http://api.test");
+    const f = upstream();
+    vi.stubGlobal("fetch", f);
+    const res = await POST(request({ headers: { origin: "null" } }), ctx);
+    expect(res.status).toBe(403);
+    expect(f).not.toHaveBeenCalled();
+  });
+
+  it("sends no address to the API when the site is not behind a proxy", async () => {
+    vi.stubEnv("FACTLENS_API_URL", "http://api.test");
+    const f = upstream();
+    vi.stubGlobal("fetch", f);
+    await POST(request({ headers: { "x-forwarded-for": "203.0.113.7" } }), ctx);
+    expect(f.mock.calls[0]![1].headers).not.toHaveProperty("x-forwarded-for");
+  });
+
   it("passes the vote to the API with the voter cookie, the reader's address and the API language", async () => {
     vi.stubEnv("FACTLENS_API_URL", "http://api.test");
+    vi.stubEnv("SITE_TRUST_PROXY", "true");
     const f = upstream(200, { myVote: "o1", options: [] }, [`fl_voter=${TOKEN}; Path=/; HttpOnly; SameSite=Lax`]);
     vi.stubGlobal("fetch", f);
     const res = await POST(
-      request({ headers: { cookie: `other=1; fl_voter=${TOKEN}`, "x-forwarded-for": "203.0.113.7, 10.0.0.1" } }),
+      request({ headers: { cookie: `other=1; fl_voter=${TOKEN}`, "x-forwarded-for": "192.0.2.66, 203.0.113.7" } }),
       ctx,
     );
     expect(res.status).toBe(200);

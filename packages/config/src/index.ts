@@ -67,7 +67,10 @@ export const apiEnvSchema = z.object({
   SITE_CONTACT_ADDRESS: optionalText(300),
   /** The public site's own host names, comma separated, so a visit from one of its pages to another counts as internal in the view statistics. */
   PUBLIC_SITE_HOSTS: z.string().optional().transform((v) => (v ?? '').split(',').map((h) => h.trim().toLowerCase()).filter(Boolean)),
-  /** Read the client address from X-Forwarded-For. Only behind a proxy you control: otherwise anyone can fake it. */
+  /**
+   * Set when the API sits behind the public site, which passes on the reader's address in X-Forwarded-For
+   * (the API then uses it for poll votes and view counts). Only behind a proxy you control: otherwise anyone can fake it.
+   */
   TRUST_PROXY: z.stringbool().default(false),
 }).superRefine((env, ctx) => {
   if (env.STORAGE_DRIVER === 's3') {

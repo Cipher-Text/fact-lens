@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { viewBeaconSchema } from "@fact-lens/contracts";
 import { apiBase } from "@/lib/api/client";
+import { clientAddressHeaders, siteClientAddress } from "@/lib/client-address";
 
 export const dynamic = "force-dynamic";
 
@@ -28,13 +29,13 @@ export async function POST(request: NextRequest) {
         referrer = undefined;
       }
     }
-    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "";
+    const address = siteClientAddress(request.headers);
     try {
       await fetch(`${base}/public/views`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          ...(ip ? { "x-forwarded-for": ip } : {}),
+          ...clientAddressHeaders(address),
         },
         body: JSON.stringify({ ...parsed.data, ...(referrer ? { referrer } : { referrer: undefined }) }),
         cache: "no-store",

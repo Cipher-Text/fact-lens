@@ -21,6 +21,7 @@ import { createStorage, OBJECT_STORAGE } from './media/storage';
 import { ContributorsController } from './contributors/contributors.controller';
 import { ReferenceController } from './reference/reference.controller';
 import { INTERNAL_TOKEN, InternalController } from './internal/internal.controller';
+import { TRUST_PROXY } from './common/reader-address';
 import { CardsService } from './cards/cards.service';
 import { CardsController } from './cards/cards.controller';
 import { CardRequestsService } from './cards/card-requests.service';
@@ -59,6 +60,7 @@ import type { Pool } from 'pg';
   providers: [
     { provide: SITE_INFO, useFactory: () => siteFromEnv(loadApiEnv()) },
     { provide: INTERNAL_TOKEN, useFactory: () => loadApiEnv().INTERNAL_API_TOKEN ?? null },
+    { provide: TRUST_PROXY, useFactory: () => loadApiEnv().TRUST_PROXY },
     { provide: OBJECT_STORAGE, useFactory: () => createStorage(loadApiEnv()) },
     { provide: MEDIA_OPTIONS, useFactory: () => ({ maxBytes: loadApiEnv().MAX_UPLOAD_MB * 1024 * 1024 }) },
     { provide: GEMINI_OPTIONS, useFactory: () => ({ apiKey: loadApiEnv().GEMINI_API_KEY ?? null, model: loadApiEnv().GEMINI_MODEL }) },

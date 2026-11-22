@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Put, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Inject, Optional, Param, ParseUUIDPipe, Post, Put, Query, Req, Res } from '@nestjs/common';
 import {
   localeCodeSchema, pollFeatureSchema, pollInputSchema, pollListQuerySchema, pollVoteSchema, type Poll, type PollVoteResult, type Principal, type PublicPoll,
 } from '@fact-lens/contracts';
@@ -6,6 +6,7 @@ import { NotFoundException } from '@nestjs/common';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { CurrentPrincipal, Public, RequireAnyCapability, RequireCapability } from '../auth/decorators';
 import { actorOf as actor, parse } from '../common/http';
+import { readerAddress, TRUST_PROXY } from '../common/reader-address';
 import { newVoterToken, PollsService, voterCookie, voterTokenFrom } from './polls.service';
 
 /** The newsroom side: editors write polls, managing editors open, close and feature them. */
@@ -76,7 +77,10 @@ export class PollsController {
 @Public()
 @Controller('public/polls')
 export class PublicPollsController {
-  constructor(@Inject(PollsService) private readonly polls: PollsService) {}
+  constructor(
+    @Inject(PollsService) private readonly polls: PollsService,
+    @Optional() @Inject(TRUST_PROXY) private readonly trustProxy: boolean = false,
+  ) {}
 
   private locale(value: string): string {
     const parsed = localeCodeSchema.safeParse(value);
@@ -103,7 +107,7 @@ export class PublicPollsController {
     const input = parse(pollVoteSchema, body);
     const existing = voterTokenFrom(req.headers.cookie);
     const token = existing ?? newVoterToken();
-    const result = await this.polls.vote(id, input.optionId, input.locale, token, req.ip);
+    const result = await this.polls.vote(id, input.optionId, input.locale, token, readerAddress(req, this.trustProxy) ?? '');
     // The browser keeps its token so a second vote from it is recognised; set it only when it was new.
     if (!existing) void reply.header('set-cookie', voterCookie(token, process.env.NODE_ENV === 'production'));
     void reply.header('cache-control', 'no-store');

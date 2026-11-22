@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Inject, NotFoundException, Param, ParseUUIDPipe, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Inject, NotFoundException, Optional, Param, ParseUUIDPipe, Post, Query, Req, Res } from '@nestjs/common';
 import {
   localeCodeSchema, mostReadQuerySchema, performanceQuerySchema, performanceSummaryQuerySchema, viewBeaconSchema,
   type MostRead, type NewsPerformanceDetail, type NewsPerformanceList, type PerformanceSummary,
@@ -7,6 +7,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
 import { Public, RequireCapability } from '../auth/decorators';
 import { parse } from '../common/http';
+import { readerAddress, TRUST_PROXY } from '../common/reader-address';
 import { AnalyticsService } from './analytics.service';
 import { ViewsService } from './views.service';
 
@@ -16,7 +17,10 @@ const dayParam = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional();
 @Public()
 @Controller('public')
 export class PublicAnalyticsController {
-  constructor(@Inject(ViewsService) private readonly views: ViewsService) {}
+  constructor(
+    @Inject(ViewsService) private readonly views: ViewsService,
+    @Optional() @Inject(TRUST_PROXY) private readonly trustProxy: boolean = false,
+  ) {}
 
   /**
    * One view of a news item, sent by the site after the page was shown. The answer is the same whether the view
@@ -28,7 +32,7 @@ export class PublicAnalyticsController {
     const beacon = parse(viewBeaconSchema, body);
     const purpose = `${req.headers['sec-purpose'] ?? ''} ${req.headers.purpose ?? ''} ${req.headers['x-purpose'] ?? ''}`;
     await this.views.record(beacon, {
-      ip: req.ip || null,
+      ip: readerAddress(req, this.trustProxy),
       userAgent: typeof req.headers['user-agent'] === 'string' ? req.headers['user-agent'] : null,
       prefetch: /prefetch|prerender/i.test(purpose),
     });
