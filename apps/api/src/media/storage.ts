@@ -56,7 +56,7 @@ export class FsStorage implements ObjectStorage {
   }
 }
 
-/** Any S3-compatible store: Cloudflare R2, MinIO, S3. */
+/** Any S3-compatible store: Cloudflare R2, RustFS, S3. */
 export class S3Storage implements ObjectStorage {
   constructor(private readonly client: S3Client, private readonly bucket: string) {}
 

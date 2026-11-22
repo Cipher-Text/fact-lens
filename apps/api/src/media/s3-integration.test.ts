@@ -9,16 +9,16 @@ import { createStorage, type ObjectStorage } from './storage';
 import { makeImage } from './test-images';
 
 /**
- * Runs against a real S3-compatible server (MinIO in CI) when TEST_S3_ENDPOINT is set, so the
+ * Runs against a real S3-compatible server (RustFS, in docker-compose and in CI) when TEST_S3_ENDPOINT is set, so the
  * AWS client, request signing, path-style addressing and error names are checked for real.
  *   TEST_S3_ENDPOINT   e.g. http://localhost:9000
  *   TEST_S3_ACCESS_KEY / TEST_S3_SECRET_KEY   credentials that may create buckets
- *   TEST_S3_REGION     defaults to us-east-1 (MinIO's default region)
- *   TEST_S3_VERIFIES_SIGNATURES=true   the server checks signatures (MinIO does); the local stand-in does not
+ *   TEST_S3_REGION     defaults to us-east-1
+ *   TEST_S3_VERIFIES_SIGNATURES=true   the server checks signatures (RustFS does); the local stand-in does not
  */
 const endpoint = process.env.TEST_S3_ENDPOINT;
-const accessKeyId = process.env.TEST_S3_ACCESS_KEY ?? 'minioadmin';
-const secretAccessKey = process.env.TEST_S3_SECRET_KEY ?? 'minioadmin';
+const accessKeyId = process.env.TEST_S3_ACCESS_KEY ?? 'factlens';
+const secretAccessKey = process.env.TEST_S3_SECRET_KEY ?? 'factlens-local';
 const region = process.env.TEST_S3_REGION ?? 'us-east-1';
 const verifiesSignatures = process.env.TEST_S3_VERIFIES_SIGNATURES === 'true';
 const databaseUrl = process.env.TEST_DATABASE_URL;

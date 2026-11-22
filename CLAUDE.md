@@ -61,7 +61,7 @@ codex exec -C <repo-dir> --approve-for-me -o <result-file> - < docs/plans/<slug>
 - All work is done directly on `main`. Do not create task branches or worktrees. Tasks run one after another in the main checkout.
 - Keep the main checkout installed with `pnpm install --config.strict-dep-builds=false`, because plain `pnpm install` can fail with `ERR_PNPM_IGNORED_BUILDS` (`msgpackr-extract` is not in `allowBuilds`). Build the shared packages after their sources change (`pnpm --filter @fact-lens/config build` and `pnpm --filter @fact-lens/contracts build`), since workspace packages resolve to their `dist/`.
 - Codex must NOT run `./run.sh` or start dev servers while another run is using them, because the ports clash. Verification is by tests and checks only.
-- Shared local infra (PostgreSQL, Redis, MinIO from `pnpm infra:up`) can be used from the main checkout.
+- Shared local infra (PostgreSQL, Redis, RustFS from `pnpm infra:up`) can be used from the main checkout.
 - `../fact-lens-web` is a separate repository (the design source for `apps/web`). It is NOT a worktree. Never remove it, never run `git worktree remove` on it, and never copy into it. Only remove paths that `git worktree list` shows for this repo.
 
 ## Verification

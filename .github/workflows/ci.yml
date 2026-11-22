@@ -30,11 +30,11 @@ jobs:
     env:
       TEST_DATABASE_URL: postgres://factlens:factlens@localhost:5432/postgres
       TEST_REDIS_URL: redis://localhost:6379
-      # A real S3-compatible server (MinIO, started below). It checks request signatures, unlike the
+      # A real S3-compatible server (RustFS, started below). It checks request signatures, unlike the
       # in-process stand-in used for the fast unit tests.
       TEST_S3_ENDPOINT: http://localhost:9000
-      TEST_S3_ACCESS_KEY: minioadmin
-      TEST_S3_SECRET_KEY: minioadmin-secret
+      TEST_S3_ACCESS_KEY: rustfsadmin
+      TEST_S3_SECRET_KEY: rustfsadmin-secret
       TEST_S3_REGION: us-east-1
       TEST_S3_VERIFIES_SIGNATURES: 'true'
     steps:
@@ -44,20 +44,22 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      # GitHub service containers cannot take a command, and MinIO needs `server /data`, so it is started here.
-      - name: Start MinIO
+      # GitHub service containers cannot take a command, so the S3 server is started here. The image is the
+      # one in infrastructure/docker-compose.yml (pinned by digest); MinIO's image can no longer be pulled anonymously.
+      - name: Start the S3-compatible server
         run: |
-          docker run -d --name minio -p 9000:9000 \
-            -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=minioadmin-secret \
-            minio/minio server /data
+          docker run -d --name s3 -p 9000:9000 \
+            -e RUSTFS_ACCESS_KEY=rustfsadmin -e RUSTFS_SECRET_KEY=rustfsadmin-secret \
+            -e RUSTFS_VOLUMES=/data -e RUSTFS_ADDRESS=:9000 -e RUSTFS_CONSOLE_ENABLE=false \
+            rustfs/rustfs@sha256:ee717072290bec9b11abfc0365f8310b00df1cd9b3639943edae47bdef05044a
           for i in $(seq 1 30); do
-            curl -sf http://localhost:9000/minio/health/ready && exit 0
+            curl -sf http://localhost:9000/health && exit 0
             sleep 2
           done
-          docker logs minio
+          docker logs s3
           exit 1
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
-      - name: MinIO log on failure
+      - name: S3 server log on failure
         if: failure()
-        run: docker logs minio
+        run: docker logs s3

@@ -143,7 +143,7 @@ ensure_infra() {
   if port_open "$port" "$host"; then ok "PostgreSQL answers on $host:$port"; check_login; return; fi
   [ "$SKIP_INFRA" = "1" ] && die "PostgreSQL is not answering on $host:$port and --no-infra was given."
   if command -v docker >/dev/null 2>&1 && docker info >/dev/null 2>&1; then
-    say "Starting PostgreSQL, Redis and MinIO with Docker"
+    say "Starting PostgreSQL, Redis and RustFS (S3 storage) with Docker"
     pnpm infra:up >/dev/null
     local i
     for ((i = 0; i < 60; i++)); do port_open "$port" "$host" && break; sleep 1; done

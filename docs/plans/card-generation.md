@@ -59,7 +59,7 @@ Specs are in [`card-generation/`](./card-generation/).
 ## Verification
 
 - Per task: the filtered typecheck, lint and tests for that workspace.
-- Database tests: `TEST_DATABASE_URL` (and `TEST_S3_*` for storage tests, which run against MinIO in CI).
+- Database tests: `TEST_DATABASE_URL` (and `TEST_S3_*` for storage tests, which run against RustFS in CI).
 - Before merge: `pnpm check` at the root, with the test variables set.
 - After merge: render a card by hand against `./run.sh` in the main repo, and check the output image visually.
 

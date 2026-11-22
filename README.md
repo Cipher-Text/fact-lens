@@ -11,12 +11,12 @@ Bangla and English news platform. This is the main repository; the rebuild plan 
 | `tools/dev-idp` | A fake OpenID Connect provider for local sign-in. Development only. |
 | `packages/config` | Typed environment validation for each app. |
 | `packages/contracts` | Shared schemas, enums and the news item body contract. |
-| `infrastructure/` | Local PostgreSQL, Redis and MinIO (`pnpm infra:up`). |
+| `infrastructure/` | Local PostgreSQL, Redis and RustFS, an S3-compatible server (`pnpm infra:up`). |
 | `docs/` | The plan and what is built: start at [`docs/README.md`](docs/README.md) and [`docs/22-implementation-status.md`](docs/22-implementation-status.md). |
 
 ## Start
 
-The quickest way is one command. It checks the tools, creates `.env` if needed, starts PostgreSQL, Redis and MinIO with Docker if they are not already running, applies the migrations and seed, then starts the apps one after another (dev identity provider, API, worker, newsroom, web), each only after the previous one answers its health check:
+The quickest way is one command. It checks the tools, creates `.env` if needed, starts PostgreSQL, Redis and RustFS (S3-compatible storage) with Docker if they are not already running, applies the migrations and seed, then starts the apps one after another (dev identity provider, API, worker, newsroom, web), each only after the previous one answers its health check:
 
 ```bash
 pnpm install
@@ -31,7 +31,7 @@ Options: `--no-infra` (do not start Docker services), `--no-web`, `-d`/`--detach
 ```bash
 pnpm install
 pnpm env:init       # creates the root .env from .env.example, with random secrets
-pnpm infra:up       # PostgreSQL, Redis and MinIO; needs Docker
+pnpm infra:up       # PostgreSQL, Redis and RustFS; needs Docker
 pnpm --filter @fact-lens/api migrate up   # apply migrations
 pnpm --filter @fact-lens/api seed         # desks, categories, default config, feature flags (idempotent)
 
@@ -70,9 +70,9 @@ TEST_DATABASE_URL=postgres://factlens:factlens@localhost:5432/postgres TEST_REDI
 
 Agent and contributor rules: [`AGENTS.md`](AGENTS.md). `apps/web` has its own rules in `apps/web/AGENTS.md`.
 
-## Testing storage against MinIO
+## Testing storage against an S3-compatible server
 
-CI runs the storage tests against a real MinIO server. To do the same locally (needs Docker):
+CI runs the storage tests against a real S3-compatible server (RustFS, the same image as `infrastructure/docker-compose.yml`). To do the same locally (needs Docker):
 
 ```bash
 pnpm infra:up

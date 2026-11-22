@@ -19,15 +19,18 @@ services:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       retries: 10
-  minio:
-    # R2-compatible object storage in S3-API mode
-    image: minio/minio
-    command: server /data --console-address ":9001"
+  object-storage:
+    # S3-compatible server for local development and the storage tests. RustFS, because the MinIO image
+    # can no longer be pulled anonymously. It checks request signatures, as the tests require.
+    image: rustfs/rustfs@sha256:ee717072290bec9b11abfc0365f8310b00df1cd9b3639943edae47bdef05044a
     environment:
-      MINIO_ROOT_USER: factlens
-      MINIO_ROOT_PASSWORD: factlens-local
-    ports: ["9000:9000", "9001:9001"]
-    volumes: [miniodata:/data]
+      RUSTFS_ACCESS_KEY: factlens
+      RUSTFS_SECRET_KEY: factlens-local
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: ":9000"
+      RUSTFS_CONSOLE_ENABLE: "false"
+    ports: ["9000:9000"]
+    volumes: [s3data:/data]
 volumes:
   pgdata:
-  miniodata:
+  s3data:

@@ -72,7 +72,7 @@ What exists in this repository today, how much of it has been checked, and what 
 | Workflow, readiness rules, slugs, corrections, scheduling | Tested (database tests, including concurrency) |
 | Authentication, capabilities, MFA rule, audit | Existing bearer-token authorization tested with signed test tokens; in-app sign-in and account/session flows covered by tests; newsroom sign-in checked by hand on the local stack |
 | Outbox dispatcher, jobs, idempotency, scheduled publish | Tested against real PostgreSQL and Redis; a real API and worker run was also hand-checked |
-| Media upload, sanitizing, variants, rights, public serving | Tested. Storage tests run against a stand-in S3 server; the real MinIO run is added to CI and **has not yet been seen to pass** |
+| Media upload, sanitizing, variants, rights, public serving | Tested. Storage tests run against a stand-in S3 server; the real S3 run uses RustFS, an S3-compatible server: it passes locally (6 tests, with signature checks), and CI runs it on the same image, not yet seen green in CI |
 | Newsroom screens and the editor | Libraries, renderer and proxy rules tested; the screens themselves are **hand-checked only**, there are no browser tests. The tag picture chooser has not been hand-checked |
 | Branded cards: requests, templates, render, compositor | Tested: database tests for requests, templates and rendering, and compositor tests on fixtures. The newsroom card panel is hand-checked only, with no browser test. |
 | Full check (`pnpm check`) | Passes three runs in a row (exit 0, about a minute each) since packages and database files were made to run one at a time (ADR-038). |

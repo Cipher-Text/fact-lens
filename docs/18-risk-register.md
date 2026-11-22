@@ -29,7 +29,7 @@ Added while implementing:
 | In-app sign-in has not had an external security review | A security flaw could expose newsroom accounts or sessions | Commission an independent review before launch (auth plan A8); backend-managed sign-in is selected by ADR-046 |
 | The fake identity provider reaches a deployed environment | Anyone could sign in as an admin | It refuses to start with `NODE_ENV=production`, listens on loopback only, and is a dev dependency; keep it out of images |
 | Placeholder role capabilities are mistaken for policy | People can do more or less than the desks intend | Roles are data, marked provisional in the seed; settle open question 1 before launch |
-| Storage behaviour differs on the real object store | Uploads or serving fail in production | CI runs the storage tests against MinIO; run them against R2 in staging; the client avoids SDK defaults some stores reject |
+| Storage behaviour differs on the real object store | Uploads or serving fail in production | CI runs the storage tests against RustFS, an S3-compatible server; run them against R2 in staging; the client avoids SDK defaults some stores reject |
 | No rate limits yet, though limits are seeded | Upload, sign-in and public-route abuse | Build Redis-backed enforcement before any public exposure; the upload size cap and image pixel cap exist now |
 | Synchronous image processing during upload | Slow requests, memory spikes on large images | 40-megapixel and configured size caps; move to the worker (`media.variant`) before heavy use |
 | Screens are hand-checked only | Regressions in the newsroom go unnoticed | Add browser tests (Playwright) before the newsroom has real users |

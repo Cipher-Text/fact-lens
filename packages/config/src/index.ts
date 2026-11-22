@@ -39,7 +39,7 @@ export const apiEnvSchema = z.object({
   /** Shared secret for the worker's calls to /internal. Unset disables those endpoints. */
   INTERNAL_API_TOKEN: z.string().min(32).optional(),
   // Object storage for media. `fs` writes to a local folder (development); `s3` is any S3-compatible
-  // store such as Cloudflare R2 or MinIO.
+  // store such as Cloudflare R2 or RustFS.
   STORAGE_DRIVER: z.enum(['fs', 's3']).default('fs'),
   FS_STORAGE_DIR: z.string().min(1).default('.data/media'),
   S3_ENDPOINT: z.string().url().optional(),

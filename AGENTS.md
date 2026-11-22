@@ -13,7 +13,7 @@ Fact Lens is a Bangla and English news platform. This repository is the main pro
 | `tools/dev-idp` | Fake OIDC provider for local development and tests. Refuses to run when `NODE_ENV=production`. Never deploy it. |
 | `packages/config` | Typed environment validation for the API, worker and newsroom. All three read the single root `.env`. |
 | `packages/contracts` | Zod schemas and enums shared across apps, including the news item body contract and job and event contracts. |
-| `infrastructure/` | Local PostgreSQL, Redis and MinIO (docker compose). |
+| `infrastructure/` | Local PostgreSQL, Redis and an S3-compatible server, RustFS (docker compose). |
 | `docs/` | The plan (docs 01 to 26) and `22-implementation-status.md`, which says what is built. `docs/15-repository-structure.md` has the layout and ownership rules. |
 
 `packages/{ui,domain,shared}` are planned and not created.

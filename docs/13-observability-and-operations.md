@@ -22,6 +22,6 @@ The target deployment builds Docker images with pinned Node/pnpm and deploys the
 
 ## Status
 
-Built: request IDs on every API response (accepted from the caller when well-formed), JSON request logs from Fastify, JSON logs from the worker with job type, id, attempt and duration, API liveness and readiness endpoints (readiness checks PostgreSQL and Redis, with a timeout on each), a worker health endpoint with queue counts, outbox backlog, dead letters and oldest pending age, and GitHub Actions CI against real PostgreSQL and Redis, plus MinIO (that step has not yet been seen to pass).
+Built: request IDs on every API response (accepted from the caller when well-formed), JSON request logs from Fastify, JSON logs from the worker with job type, id, attempt and duration, API liveness and readiness endpoints (readiness checks PostgreSQL and Redis, with a timeout on each), a worker health endpoint with queue counts, outbox backlog, dead letters and oldest pending age, and GitHub Actions CI against real PostgreSQL and Redis, plus an S3-compatible server, RustFS (the storage step; it passes locally and runs in CI on the same image).
 
 Not built: OpenTelemetry traces, Sentry, metrics, dashboards, alerts, Docker images, deployment, backups and restore tests, retention jobs (for `processed_job`, old outbox rows and orphaned stored files), and log redaction rules beyond not logging tokens. See [implementation status](./22-implementation-status.md).
