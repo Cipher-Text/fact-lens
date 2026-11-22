@@ -349,6 +349,12 @@
   max-height: var(--rd-lead-media-max);
 }
 
+/* No picture: the hero slot keeps a 3:2 ratio, never taller than the largest lead image. */
+.rd-hero-placeholder {
+  height: min(var(--rd-lead-media-max), calc(var(--rd-wide) * 2 / 3));
+  background: var(--surface-alt);
+}
+
 .rd-caption {
   font-family: var(--font-ui-active);
   font-size: calc(var(--text-xs-size) * var(--reader-scale));

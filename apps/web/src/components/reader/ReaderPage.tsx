@@ -133,7 +133,11 @@ export function ReaderPage({ lang, article, readNext }: Props) {
                 </span>
               </figcaption>
             </figure>
-          ) : null}
+          ) : (
+            // No picture (an imported article, ADR-051): the same slot in the layout, a flat surface-alt fill,
+            // as the no-image placeholder of the cards (DR-338). Decorative, so hidden from assistive tech.
+            <div className="rd-hero-figure rd-hero-placeholder" aria-hidden="true" />
+          )}
 
           <div className="rd-byrow rd-wrap">
             <div className="rd-hero__text">
