@@ -7,7 +7,7 @@ fact-lens/
   apps/
     web/                 # public Next.js; imported from fact-lens-web via git subtree (history kept), mock data until Phase 4 wires the API
     newsroom/            # internal Next.js: backend-managed sign-in session, proxy to the API, editor, media library
-    api/                 # NestJS + Fastify; owns the database schema (migrations/) and the seed
+    api/                 # NestJS + Fastify; owns the database schema (migrations/), the seed and its legacy export (seed-data/legacy)
     worker/              # BullMQ processors and the outbox dispatcher
   packages/
     contracts/           # Zod schemas and shared enums (transport only); no OpenAPI generation yet
