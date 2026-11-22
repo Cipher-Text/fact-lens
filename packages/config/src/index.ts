@@ -120,6 +120,24 @@ export function loadDatabaseEnv(source: Record<string, string | undefined> = pro
   return parsed.data;
 }
 
+/** Settings for the public site's server side (apps/web). Read from its own environment, never from the root .env. */
+export const webEnvSchema = z.object({
+  /**
+   * Set when the site runs behind one proxy that appends the reader's address to X-Forwarded-For. The site then passes
+   * that address to the API for poll votes and view counts. Only behind a proxy you control: otherwise anyone can fake it.
+   */
+  SITE_TRUST_PROXY: z.stringbool().default(false),
+});
+export type WebEnv = z.infer<typeof webEnvSchema>;
+
+export function loadWebEnv(source: Record<string, string | undefined> = process.env): WebEnv {
+  const parsed = webEnvSchema.safeParse(source);
+  if (!parsed.success) {
+    throw new Error(`Invalid environment: ${parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ')}`);
+  }
+  return parsed.data;
+}
+
 export const workerEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   DATABASE_URL: z.string().url(),

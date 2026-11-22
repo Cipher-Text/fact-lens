@@ -1,3 +1,5 @@
+import { loadWebEnv } from "@fact-lens/config";
+
 /**
  * The reader's address, as the site may pass it on to the API for the per-address rules (one vote per
  * network address per poll, the view limit).
@@ -11,7 +13,7 @@ const IP_SHAPED = /^[0-9a-fA-F:.]{2,45}$/;
 
 export function siteClientAddress(
   headers: Headers,
-  trustProxy: boolean = process.env.SITE_TRUST_PROXY === "true",
+  trustProxy: boolean = loadWebEnv().SITE_TRUST_PROXY,
 ): string | null {
   if (!trustProxy) return null;
   const forwarded = headers

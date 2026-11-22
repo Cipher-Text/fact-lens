@@ -43,7 +43,7 @@ Status as of commit `48092a5` (pushed to `origin/main`). Each item says what is 
 19. **Observability (Epic E).** Metrics, tracing, Sentry and dashboards.
 20. **Delivery.** Docker images, deployment, backups and restore tests.
 21. **Security.** External review of sign-in, public-site security headers, and secret and dependency scanning.
-22. **`SITE_TRUST_PROXY` config location.** It is read from `process.env` in `apps/web`, not from `packages/config`.
+22. **`SITE_TRUST_PROXY` config location.** Done: the setting is validated in `packages/config` (`loadWebEnv`), and `apps/web` reads it through that loader.
 
 ## Committed scope after launch
 

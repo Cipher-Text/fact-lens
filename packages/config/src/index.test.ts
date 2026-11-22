@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadApiEnv, loadDatabaseEnv, loadNewsroomEnv, loadWorkerEnv } from './index';
+import { loadApiEnv, loadDatabaseEnv, loadNewsroomEnv, loadWebEnv, loadWorkerEnv } from './index';
 
 const base = { DATABASE_URL: 'postgres://u:p@localhost:5432/db', REDIS_URL: 'redis://localhost:6379' };
 
@@ -75,5 +75,17 @@ describe('loadApiEnv', () => {
     const prodBase = { ...base, NODE_ENV: 'production', AUTH_SIGNING_KEY: 'k', AUTH_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString('base64'), AUTH_ISSUER: 'https://api.example.org', NEWSROOM_BASE_URL: 'https://newsroom.example.org', INTERNAL_API_TOKEN: 'x'.repeat(32) };
     expect(() => loadApiEnv(prodBase)).toThrow(/STORAGE_DRIVER/);
     expect(loadApiEnv({ ...prodBase, STORAGE_DRIVER: 's3', S3_BUCKET: 'm', S3_ACCESS_KEY_ID: 'k', S3_SECRET_ACCESS_KEY: 's', S3_FORCE_PATH_STYLE: 'true' }).S3_FORCE_PATH_STYLE).toBe(true);
+  });
+});
+
+describe('web (public site) settings', () => {
+  it('reads SITE_TRUST_PROXY as a boolean, off by default', () => {
+    expect(loadWebEnv({}).SITE_TRUST_PROXY).toBe(false);
+    expect(loadWebEnv({ SITE_TRUST_PROXY: 'true' }).SITE_TRUST_PROXY).toBe(true);
+    expect(loadWebEnv({ SITE_TRUST_PROXY: 'false' }).SITE_TRUST_PROXY).toBe(false);
+  });
+
+  it('refuses a value that is not a boolean, at start-up rather than per request', () => {
+    expect(() => loadWebEnv({ SITE_TRUST_PROXY: 'maybe' })).toThrow(/SITE_TRUST_PROXY/);
   });
 });
