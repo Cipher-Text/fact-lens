@@ -592,8 +592,9 @@ export class NewsService {
 
   /**
    * Only a published translation is ever returned. `ref` is `<slug>-<id>` (the id is the item's short id and
-   * decides which item it is) or, for old links, a bare slug. A replaced slug, or a wrong slug with a known id,
-   * redirects to the current address. A whole slug is matched before an id: its last word can look like an id.
+   * decides which item it is) or, for old links, a bare slug. The canonical address is `<slug>-<id>` (ADR-027), so
+   * a bare slug, a replaced slug, or a wrong slug with a known id all redirect to the current `<slug>-<id>`.
+   * A whole slug is matched before an id: its last word can look like an id.
    */
   async publicNews(locale: string, ref: string): Promise<{ news: PublicNews } | { redirectTo: string }> {
     const live = 'p.published_revision_id IS NOT NULL AND p.status = ANY($3)';
@@ -604,14 +605,13 @@ export class NewsService {
     );
     let newsId: string;
     if (bySlug.rows[0]) {
+      // A bare slug is not the canonical address: send it to the current `<slug>-<id>`.
       const row = bySlug.rows[0];
-      if (!row.is_current) {
-        const current = await this.pool.query<{ slug: string }>(
-          'SELECT slug FROM news_slug WHERE news_id = $1 AND locale = $2 AND is_current', [row.news_id, locale]);
-        if (!current.rows[0]) throw new NotFoundException('Not found');
-        return { redirectTo: current.rows[0].slug };
-      }
-      newsId = row.news_id;
+      const current = await this.pool.query<{ slug: string; short_id: string }>(
+        `SELECT ss.slug, p.short_id FROM news_slug ss JOIN news p ON p.id = ss.news_id
+          WHERE ss.news_id = $1 AND ss.locale = $2 AND ss.is_current`, [row.news_id, locale]);
+      if (!current.rows[0]) throw new NotFoundException('Not found');
+      return { redirectTo: `${current.rows[0].slug}-${current.rows[0].short_id}` };
     } else {
       const parsed = SHORT_REF.exec(ref);
       if (!parsed) throw new NotFoundException('Not found');

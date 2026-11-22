@@ -88,7 +88,8 @@ describe.skipIf(!adminUrl)('collaboration endpoints (database)', () => {
       await move(id, 'EDITOR_REVIEW', ['reporter']);
       await move(id, 'READY', ['fact_checker']);
       expect((await move(id, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
-      const page = await t.anonymous('GET', '/public/news/en/commented');
+      const shortId = (await t.call({ method: 'GET', url: `/news/${id}`, roles: ['reporter'] })).body.news.shortId as string;
+      const page = await t.anonymous('GET', `/public/news/en/commented-${shortId}`);
       expect(page.statusCode).toBe(200);
       expect(page.body).not.toContain('internal note');
       expect(page.json()).not.toHaveProperty('comments');
@@ -228,7 +229,8 @@ describe.skipIf(!adminUrl)('collaboration endpoints (database)', () => {
       await move(id, 'EDITOR_REVIEW', ['reporter']);
       await move(id, 'READY', ['fact_checker']);
       await move(id, 'PUBLISHED', ['managing_editor']);
-      const page = await t.anonymous('GET', '/public/news/en/with-source');
+      const shortId = (await t.call({ method: 'GET', url: `/news/${id}`, roles: ['reporter'] })).body.news.shortId as string;
+      const page = await t.anonymous('GET', `/public/news/en/with-source-${shortId}`);
       expect(page.statusCode).toBe(200);
       expect(page.body).not.toContain('confidential');
       expect(page.body).not.toContain('Private memo');

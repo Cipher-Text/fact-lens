@@ -57,7 +57,10 @@ describe("article API adapter", () => {
     });
     const noLead = publicNewsSchema.parse({ ...fixture, leadImage: null, body: { type: "doc", content: [{ type: "image", attrs: { mediaAssetId: mediaId, alt: "Inline" } }] } });
     expect(articleFromNews(noLead, "en")?.story.image.src).toBe("/card");
-    expect(articleFromNews(publicNewsSchema.parse({ ...fixture, leadImage: null, media: [] }), "en")).toBeNull();
+    // An imported article with no picture is still an article; it has no hero image (ADR-051).
+    const noPicture = articleFromNews(publicNewsSchema.parse({ ...fixture, leadImage: null, media: [] }), "en");
+    expect(noPicture?.story.title).toBe("Sample story");
+    expect(noPicture?.story.image).toBeUndefined();
   });
 
   it("uses the API reading time, including a one minute value", () => {

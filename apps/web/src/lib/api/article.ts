@@ -69,14 +69,14 @@ function mediaImage(media: PublicMedia) {
 export function articleFromNews(item: PublicNews, lang: Lang): Article | null {
   const { blocks } = blocksFromBody(item.body, item.media, lang);
   const lead = item.leadImage ?? item.media.find((m) => blocks.some((b) => b.type === "figure" && (b.image as unknown as { src?: string }).src === m.urls.card));
-  if (!lead) return null;
   const story = storyFromNews(item, lang);
   if (!story) return null;
   const contributor = item.contributors.find(({ role }) => role === "author");
   const authorName = contributor?.contributor.displayName ?? "";
   const topics: Topic[] = item.tags.map(({ slug, name }) => ({ id: slug, slug, label: name }));
   return {
-    story: { ...story, image: mediaImage(lead) },
+    // An imported article may have no picture at all (ADR-051): the page then shows no hero.
+    story: { ...story, image: lead ? mediaImage(lead) : undefined },
     summary: item.dek ?? "",
     updatedAt: item.updatedAt,
     author: { name: authorName, role: contributor?.role ?? "", bio: contributor?.contributor.bio ?? "", initials: initials(authorName) },
@@ -99,10 +99,7 @@ export async function articleFromApi(ref: string, lang: Lang): Promise<{ article
       if (dropped.length) console.warn("Dropped unsupported public article body nodes", { ref, lang, dropped });
     }
     const article = articleFromNews(item, lang);
-    if (!article) {
-      console.error(`Public article has no lead or body image: ${ref} (${apiLocale(lang)})`);
-      throw new Error(`Public article has no usable image: ${ref} (${apiLocale(lang)})`);
-    }
+    if (!article) throw new Error(`Public article has no story: ${ref} (${apiLocale(lang)})`);
     return { article };
   } catch (error) {
     if (error instanceof ApiRedirect) {

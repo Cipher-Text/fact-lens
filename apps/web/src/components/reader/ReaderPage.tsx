@@ -111,27 +111,29 @@ export function ReaderPage({ lang, article, readNext }: Props) {
             </div>
           </header>
 
-          {/* The lead image is required (tajmin, 24 Oct 2026). It keeps its own ratio,
-              centered, up to --rd-lead-media-max tall. */}
-          <figure className="rd-hero-figure">
-            <Image
-              src={story.image.src}
-              // The caption says what the image shows, so with no alt text of its own the
-              // image is decorative here rather than read twice.
-              alt={story.image.alt}
-              width={story.image.width}
-              height={story.image.height}
-              preload
-              fetchPriority="high"
-              className="rd-hero-img"
-            />
-            <figcaption className="rd-caption rd-caption--hero">
-              <span>
-                {article.caption}{" "}
-                <span className="rd-credit">{article.credit}</span>
-              </span>
-            </figcaption>
-          </figure>
+          {/* The lead image is required (tajmin, 24 Oct 2026) for every article except imported ones with no
+              picture (ADR-051), which show no hero. It keeps its own ratio, centered, up to --rd-lead-media-max tall. */}
+          {story.image ? (
+            <figure className="rd-hero-figure">
+              <Image
+                src={story.image.src}
+                // The caption says what the image shows, so with no alt text of its own the
+                // image is decorative here rather than read twice.
+                alt={story.image.alt}
+                width={story.image.width}
+                height={story.image.height}
+                preload
+                fetchPriority="high"
+                className="rd-hero-img"
+              />
+              <figcaption className="rd-caption rd-caption--hero">
+                <span>
+                  {article.caption}{" "}
+                  <span className="rd-credit">{article.credit}</span>
+                </span>
+              </figcaption>
+            </figure>
+          ) : null}
 
           <div className="rd-byrow rd-wrap">
             <div className="rd-hero__text">

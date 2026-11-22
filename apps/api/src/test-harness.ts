@@ -146,8 +146,16 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
     const res = await app.inject({ method: 'GET', url, headers: { authorization: `Bearer ${await sign(roles, 'user-1', true)}` } });
     return { status: res.statusCode, bytes: res.rawPayload, headers: res.headers };
   };
-  const anonymous = (method: 'GET' | 'POST', url: string, body?: unknown) =>
-    app.inject({ method, url, payload: body as object | undefined });
+  const anonymous = async (method: 'GET' | 'POST', url: string, body?: unknown) => {
+    const res = await app.inject({ method, url, payload: body as object | undefined });
+    // A bare slug of a news item redirects to its canonical <slug>-<id> (ADR-027). Reads of an item by slug follow
+    // that one redirect; the redirects of list filters carry a query string and are left for the tests to see.
+    const location = String(res.headers.location ?? '');
+    if (method === 'GET' && res.statusCode === 301 && !url.includes('?') && location.startsWith('/public/news/') && !location.includes('?')) {
+      return app.inject({ method, url: location });
+    }
+    return res;
+  };
 
   const views = app.get(ViewsService);
   return {

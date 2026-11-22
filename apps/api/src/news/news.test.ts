@@ -74,10 +74,19 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     });
     return { status: res.statusCode, body: res.json() as any, headers: res.headers };
   };
-  const pub = async (locale: string, slug: string) => {
+  const raw = async (locale: string, slug: string) => {
     const res = await app.inject({ method: 'GET', url: `/public/news/${locale}/${encodeURIComponent(slug)}` });
     return { status: res.statusCode, body: res.json() as any, headers: res.headers };
   };
+  // Reads an address and follows one canonical redirect: a bare slug goes to <slug>-<id>.
+  const pub = async (locale: string, slug: string) => {
+    const first = await raw(locale, slug);
+    const to = first.status === 301 ? String(first.headers.location ?? '') : '';
+    if (!to.startsWith('/public/news/')) return first;
+    return raw(locale, decodeURIComponent(to.split('/').pop()!));
+  };
+  const shortIdOf = async (newsId: string) => (await call({ method: 'GET', url: `/news/${newsId}`, roles: ['reporter'] })).body.news.shortId as string;
+  const suffixed = async (newsId: string, slug: string) => `${slug}-${await shortIdOf(newsId)}`;
 
   /** Creates a news item that is complete enough to pass review. */
   async function draftNews(slug: string, title = `Title ${slug}`) {
@@ -117,11 +126,11 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     expect((await move(id, 'EDITOR_REVIEW', ['reporter'])).status).toBe(201);
     expect((await move(id, 'READY', ['fact_checker'])).status).toBe(201);
     expect((await move(id, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
-    const shown = await app.inject({ method: 'GET', url: '/public/news/en/lead-photo' });
+    const shown = await app.inject({ method: 'GET', url: `/public/news/en/${await suffixed(id, 'lead-photo')}` });
     expect(shown.statusCode).toBe(200);
     expect(shown.json().leadImage).toMatchObject({ id: assetId, alt: 'A test photo', attribution: 'Photo: Test' });
     await db.pool.query(`UPDATE media_asset SET rights_expires_at = now() - interval '1 day' WHERE id = $1`, [assetId]);
-    const lapsed = await app.inject({ method: 'GET', url: '/public/news/en/lead-photo' });
+    const lapsed = await app.inject({ method: 'GET', url: `/public/news/en/${await suffixed(id, 'lead-photo')}` });
     expect(lapsed.json().leadImage).toBeNull();
   });
 
@@ -154,13 +163,13 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     expect((await move(id, 'EDITOR_REVIEW', ['reporter'])).status).toBe(201);
     expect((await move(id, 'READY', ['fact_checker'])).status).toBe(201);
     expect((await move(id, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
-    const shown = await app.inject({ method: 'GET', url: '/public/news/en/reading-save' });
+    const shown = await app.inject({ method: 'GET', url: `/public/news/en/${await suffixed(id, 'reading-save')}` });
     expect(shown.json().readingMinutes).toBe(9);
     const detail = await call({ method: 'GET', url: `/news/${id}`, roles: ['reporter'] });
     expect(detail.body.translations[0]).toMatchObject({ readingMinutesOverride: 9, readingMinutesAuto: 1, readingMinutes: 9 });
 
-    await publishedNews('reading-calc');
-    const calc = await app.inject({ method: 'GET', url: '/public/news/en/reading-calc' });
+    const calcId = await publishedNews('reading-calc');
+    const calc = await app.inject({ method: 'GET', url: `/public/news/en/${await suffixed(calcId, 'reading-calc')}` });
     expect(calc.json().readingMinutes).toBe(1);
   });
 
@@ -373,30 +382,35 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     expect((await move(id, 'PUBLISHED', ['reporter'])).status).toBe(403);
     expect((await move(id, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
     expect((await pub('en', 'update-me-new')).body.title).toBe('Updated title');
-    const old = await pub('en', 'update-me');
+    const old = await raw('en', 'update-me');
     expect(old.status).toBe(301);
-    expect(old.headers.location).toBe('/public/news/en/update-me-new');
+    expect(old.headers.location).toBe(`/public/news/en/update-me-new-${await shortIdOf(id)}`);
   });
 
-  it('addresses a news item as <slug>-<id>: the id finds it, a wrong or old slug redirects, a bare slug still works', async () => {
+  it('addresses a news item as <slug>-<id>: the id finds it, and a bare, wrong or old slug redirects to it', async () => {
     const id = await publishedNews('addressed');
-    const page = (await pub('en', 'addressed')).body;
+    const shortOf = async (newsId: string) => (await call({ method: 'GET', url: `/news/${newsId}`, roles: ['reporter'] })).body.news.shortId as string;
+    const shortId = await shortOf(id);
     // The id is the creation time in ms, in base 36: 8 characters, readable back.
-    expect(page.shortId).toMatch(/^[0-9a-z]{8}$/);
-    expect(Math.abs(Date.now() - parseInt(page.shortId, 36))).toBeLessThan(10 * 60_000);
+    expect(shortId).toMatch(/^[0-9a-z]{8}$/);
+    expect(Math.abs(Date.now() - parseInt(shortId, 36))).toBeLessThan(10 * 60_000);
     const second = await publishedNews('addressed-later');
-    expect((await pub('en', 'addressed-later')).body.shortId > page.shortId).toBe(true);
+    expect((await shortOf(second)) > shortId).toBe(true);
     expect(second).not.toBe(id);
-    const ref = `addressed-${page.shortId}`;
+    const ref = `addressed-${shortId}`;
     const byRef = await pub('en', ref);
     expect(byRef.status).toBe(200);
-    expect(byRef.body.id).toBe(page.id);
+    expect(byRef.body.id).toBe(id);
     expect(byRef.body.slug).toBe('addressed');
+    // The bare slug is not the canonical address: it redirects to <slug>-<id>.
+    const bare = await raw('en', 'addressed');
+    expect(bare.status).toBe(301);
+    expect(bare.headers.location).toBe(`/public/news/en/${ref}`);
     // The id is the same in every language and is on the news object the newsroom sees.
-    expect((await call({ method: 'GET', url: `/news/${id}`, roles: ['reporter'] })).body.news.shortId).toBe(page.shortId);
+    expect(await shortOf(id)).toBe(shortId);
 
     // A wrong slug with a known id goes to the current address; an unknown id is a 404.
-    const wrong = await pub('en', `some-old-words-${page.shortId}`);
+    const wrong = await raw('en', `some-old-words-${shortId}`);
     expect(wrong.status).toBe(301);
     expect(wrong.headers.location).toBe(`/public/news/en/${ref}`);
     expect((await pub('en', 'addressed-zzzzzzz')).status).toBe(404);
@@ -408,10 +422,12 @@ describe.skipIf(!adminUrl)('news (database)', () => {
     await call({ method: 'POST', url: `/news/${id}/revisions`, roles: ['reporter'], body: { reason: 'Rename the address' } });
     await call({ method: 'PUT', url: `/news/${id}/translations/en`, roles: ['reporter'], body: { title: 'Renamed', body: doc('b'), slug: 'addressed-renamed', expectedVersion: 1 } });
     expect((await move(id, 'PUBLISHED', ['managing_editor'])).status).toBe(201);
-    const old = await pub('en', ref);
+    const old = await raw('en', ref);
     expect(old.status).toBe(301);
-    expect(old.headers.location).toBe(`/public/news/en/addressed-renamed-${page.shortId}`);
-    expect((await pub('en', `addressed-renamed-${page.shortId}`)).body.title).toBe('Renamed');
+    expect(old.headers.location).toBe(`/public/news/en/addressed-renamed-${shortId}`);
+    expect((await pub('en', `addressed-renamed-${shortId}`)).body.title).toBe('Renamed');
+    // A bare old slug also goes to the current address.
+    expect((await raw('en', 'addressed')).headers.location).toBe(`/public/news/en/addressed-renamed-${shortId}`);
   });
 
   it('records a correction and shows its notice once the corrected revision is published', async () => {
