@@ -58,3 +58,23 @@ describe("public search adapters", () => {
     await expect(searchFromApi("news", "en")).rejects.toThrow();
   });
 });
+
+describe("searchFromApi and the reader's address", () => {
+  it("passes only the address the site vouches for, as X-Forwarded-For, and no other header", async () => {
+    vi.stubEnv("FACTLENS_API_URL", "https://api.example");
+    const fetch = vi.fn(async () => new Response(JSON.stringify({ query: "x", items: [], nextCursor: null }), { status: 200, headers: { "content-type": "application/json" } }));
+    vi.stubGlobal("fetch", fetch);
+    await searchFromApi("x", "en", undefined, "203.0.113.7");
+    const init = (fetch.mock.calls[0] as unknown as [string, RequestInit])[1];
+    expect(new Headers(init.headers).get("x-forwarded-for")).toBe("203.0.113.7");
+  });
+
+  it("sends no address when the site has none", async () => {
+    vi.stubEnv("FACTLENS_API_URL", "https://api.example");
+    const fetch = vi.fn(async () => new Response(JSON.stringify({ query: "x", items: [], nextCursor: null }), { status: 200, headers: { "content-type": "application/json" } }));
+    vi.stubGlobal("fetch", fetch);
+    await searchFromApi("x", "en");
+    const init = (fetch.mock.calls[0] as unknown as [string, RequestInit])[1];
+    expect(new Headers(init.headers).has("x-forwarded-for")).toBe(false);
+  });
+});

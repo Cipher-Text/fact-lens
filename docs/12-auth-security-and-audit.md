@@ -47,4 +47,12 @@ Poll votes (ADR-037) and view counts (ADR-032) apply per-address rules. The read
 - **The site** (`SITE_TRUST_PROXY=true`, web only) runs behind one proxy that appends the address it saw to `X-Forwarded-For`. The site takes the last entry, which the proxy wrote, and passes only that single value to the API. The reader's own `X-Forwarded-For` entries are never passed on. With the setting off, the site passes no address.
 - **The API** (`TRUST_PROXY=true`) reads the address from `X-Forwarded-For`, and only when the API is reachable through the site. A request with no `X-Forwarded-For` has no address, so the per-address rules are skipped for it instead of applying to the site's own address.
 
-Without `TRUST_PROXY`, the API uses its socket address. With the site in front, that is the site's own address, so every reader would share one bucket. Set both settings together when the site is in front of the API. Sign-in, search and the newsroom's proxy still read the address in the older way and are not changed by this fix.
+Without `TRUST_PROXY`, the API uses its socket address. With the site in front, that is the site's own address, so every reader would share one bucket. Set both settings together when the site is in front of the API.
+
+### Client addresses for sign-in, search and the newsroom (ADR-050)
+
+The same two-step rule applies to the other paths, with a different fallback:
+
+- **Newsroom** (`NEWSROOM_TRUST_PROXY=true`) passes on the last `X-Forwarded-For` entry only when it sits behind one proxy that appends to the header. Otherwise it passes no address.
+- **Sign-in, accounts and token refresh** (credential endpoints) always count an attempt. With no address from the newsroom, the API uses its socket address, which is the newsroom's own. So the sign-in limit can only be shared between editors, never skipped. Sign-in is also always limited in production because `REDIS_URL` is required by the environment check; with Redis unreachable, sign-in answers an error, it does not run unlimited.
+- **Public search** (the reader path) works like votes and views: the site passes its reader address on search requests, and with no address the per-address search limit is skipped for that request.

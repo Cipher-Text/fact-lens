@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 
 import { Footer } from "@/components/footer/Footer";
@@ -14,6 +15,7 @@ import { Wrapper } from "@/components/layout/Wrapper";
 import { MoreStoriesList } from "@/components/more-stories/MoreStoriesList";
 import { getDictionary, isLang, localizedPath } from "@/i18n";
 import { ApiBadResponse, ApiNotFound, ApiUnavailable, apiBase } from "@/lib/api/client";
+import { siteClientAddress } from "@/lib/client-address";
 import { searchFromApi, trendingFromApi } from "@/lib/api/search";
 
 type SearchParams = Promise<{ q?: string | string[]; cursor?: string | string[] }>;
@@ -43,7 +45,7 @@ export default async function SearchRoute({
   let error = false;
   if (apiMode && query.length >= 2 && query.length <= 200) {
     try {
-      results = await searchFromApi(query, lang, cursor);
+      results = await searchFromApi(query, lang, cursor, siteClientAddress(await headers()));
     } catch (cause) {
       if (cause instanceof ApiUnavailable || cause instanceof ApiNotFound || cause instanceof ApiBadResponse) error = true;
       else throw cause;

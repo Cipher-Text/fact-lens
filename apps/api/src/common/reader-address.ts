@@ -17,3 +17,12 @@ export function readerAddress(req: Pick<FastifyRequest, 'ip' | 'headers'>, trust
   if (!trustProxy) return req.ip || null;
   return req.headers['x-forwarded-for'] ? req.ip || null : null;
 }
+
+/**
+ * The address for the sign-in limits (ADR-050). Unlike readerAddress, a request with no address still counts:
+ * it falls back to the socket address, which is the newsroom's own when the newsroom is in front. Sign-in attempts
+ * are never left unlimited, so a missing header can only make the limit shared, not absent.
+ */
+export function limiterAddress(req: Pick<FastifyRequest, 'ip' | 'headers'>, trustProxy: boolean): string | null {
+  return readerAddress(req, trustProxy) ?? (req.ip || null);
+}

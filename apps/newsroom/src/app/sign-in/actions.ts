@@ -10,7 +10,7 @@ import { cookieNames, openSignInFlow, safeReturnTo, sealSession, sealSignInFlow,
 /** The editor's address, forwarded to the API so its limits count per editor and not per newsroom. */
 async function editorAddress(): Promise<string | null> {
   const h = await headers();
-  return clientAddress(h.get('x-forwarded-for'));
+  return clientAddress(h.get('x-forwarded-for'), getEnv().NEWSROOM_TRUST_PROXY);
 }
 
 export interface FormState {

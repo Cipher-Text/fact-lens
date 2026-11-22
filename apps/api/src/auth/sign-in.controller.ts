@@ -1,8 +1,9 @@
-import { Body, Controller, HttpCode, Inject, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, HttpCode, Inject, Optional, Post, Req, Res } from '@nestjs/common';
 import { mfaVerifySchema, recoverySignInSchema, signInSchema, type SignInResult, type SignedIn } from '@fact-lens/contracts';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Public } from './decorators';
 import { parse } from '../common/http';
+import { limiterAddress, TRUST_PROXY } from '../common/reader-address';
 import { SignInService, type Issued } from './sign-in.service';
 import { REFRESH_COOKIE, SESSION_SECONDS, type SignInOptions, SIGNIN_OPTIONS } from './sign-in.options';
 
@@ -40,6 +41,7 @@ export class SignInController {
   constructor(
     @Inject(SignInService) private readonly signIn: SignInService,
     @Inject(SIGNIN_OPTIONS) private readonly options: SignInOptions | null,
+    @Optional() @Inject(TRUST_PROXY) private readonly trustProxy: boolean = false,
   ) {}
 
   /** The password step. */
@@ -47,7 +49,7 @@ export class SignInController {
   @HttpCode(200)
   async password(@Body() body: unknown, @Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<SignInResult> {
     const input = parse(signInSchema, body);
-    return this.finish(await this.signIn.signIn(input.email, input.password, req.ip || null), reply);
+    return this.finish(await this.signIn.signIn(input.email, input.password, limiterAddress(req, this.trustProxy)), reply);
   }
 
   /** The code step: an authenticator-app code. */
@@ -55,7 +57,7 @@ export class SignInController {
   @HttpCode(200)
   async code(@Body() body: unknown, @Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<SignedIn> {
     const input = parse(mfaVerifySchema, body);
-    return this.finish(await this.signIn.verifyAuthenticatorCode(input.challengeToken, input.code, req.ip || null), reply);
+    return this.finish(await this.signIn.verifyAuthenticatorCode(input.challengeToken, input.code, limiterAddress(req, this.trustProxy)), reply);
   }
 
   /** The code step with a recovery code, which works once. */
@@ -63,7 +65,7 @@ export class SignInController {
   @HttpCode(200)
   async recovery(@Body() body: unknown, @Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<SignedIn> {
     const input = parse(recoverySignInSchema, body);
-    return this.finish(await this.signIn.verifyRecoveryCode(input.challengeToken, input.recoveryCode, req.ip || null), reply);
+    return this.finish(await this.signIn.verifyRecoveryCode(input.challengeToken, input.recoveryCode, limiterAddress(req, this.trustProxy)), reply);
   }
 
   /** A new access token and a new refresh token, from the refresh cookie. */
@@ -71,7 +73,7 @@ export class SignInController {
   @HttpCode(200)
   async refresh(@Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<SignedIn> {
     const token = readCookie(req.headers.cookie, REFRESH_COOKIE);
-    return this.finish(await this.signIn.refresh(token, req.ip || null), reply);
+    return this.finish(await this.signIn.refresh(token, limiterAddress(req, this.trustProxy)), reply);
   }
 
   /** Ends the sign-in. Always clears the cookie, so the browser forgets it even if the sign-in was already over. */

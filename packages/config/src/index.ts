@@ -164,6 +164,11 @@ export const newsroomEnvSchema = z.object({
   OIDC_SCOPE: z.string().min(1).default('openid profile'),
   /** Encrypts the session cookie. 32+ characters, random, never reused across environments. */
   SESSION_SECRET: z.string().min(32),
+  /**
+   * Set when the newsroom sits behind one proxy that appends the editor's address to X-Forwarded-For. Off, the newsroom
+   * passes no address on, and the API counts sign-in attempts per the newsroom's own address (fail-closed).
+   */
+  NEWSROOM_TRUST_PROXY: z.stringbool().default(false),
 });
 export type NewsroomEnv = z.infer<typeof newsroomEnvSchema>;
 

@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   const env = getEnv();
   const names = cookieNames(isSecure(env));
   const session = await readSession(request.cookies.get(names.session)?.value, env.SESSION_SECRET);
-  await endSignIn(session?.refreshToken ?? null, clientAddress(request.headers.get('x-forwarded-for')));
+  await endSignIn(session?.refreshToken ?? null, clientAddress(request.headers.get('x-forwarded-for'), env.NEWSROOM_TRUST_PROXY));
   const response = NextResponse.redirect(new URL('/signed-out', env.NEWSROOM_BASE_URL));
   response.cookies.delete(names.session);
   return response;

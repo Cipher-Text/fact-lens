@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readerAddress } from './reader-address';
+import { limiterAddress, readerAddress } from './reader-address';
 
 const req = (ip: string, headers: Record<string, string | undefined> = {}) =>
   ({ ip, headers }) as unknown as Parameters<typeof readerAddress>[0];
@@ -22,3 +22,23 @@ describe('readerAddress', () => {
     expect(readerAddress(req('', { 'x-forwarded-for': '203.0.113.7' }), false)).toBeNull();
   });
 });
+
+describe('limiterAddress (sign-in limits)', () => {
+  it('uses the reader address the site passed on when TRUST_PROXY is on', () => {
+    // With TRUST_PROXY on, Fastify sets req.ip to the leftmost X-Forwarded-For entry, which the site passed on.
+    expect(limiterAddress(req('203.0.113.7', { 'x-forwarded-for': '203.0.113.7' }), true)).toBe('203.0.113.7');
+  });
+
+  it('falls back to the socket address when TRUST_PROXY is on and no header came, so the attempt is still counted', () => {
+    expect(limiterAddress(req('10.0.0.5'), true)).toBe('10.0.0.5');
+  });
+
+  it('uses the socket address when TRUST_PROXY is off', () => {
+    expect(limiterAddress(req('198.51.100.4', { 'x-forwarded-for': '203.0.113.7' }), false)).toBe('198.51.100.4');
+  });
+
+  it('gives null only when there is no socket address at all', () => {
+    expect(limiterAddress(req(''), true)).toBeNull();
+  });
+});
+

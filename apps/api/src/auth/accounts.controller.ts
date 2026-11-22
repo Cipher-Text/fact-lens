@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Inject, Param, ParseUUIDPipe, Post, Put, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, Inject, Optional, Param, ParseUUIDPipe, Post, Put, Req, Res } from '@nestjs/common';
 import {
   accountRolesSchema, accountStatusChangeSchema, enrolmentConfirmSchema, invitationAcceptSchema, invitationCreateSchema,
   type Account, type Invitation, type InvitationAccepted, type Principal, type RecoveryCodes,
@@ -6,6 +6,7 @@ import {
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { parse } from '../common/http';
 import { actorOf } from '../common/http';
+import { limiterAddress, TRUST_PROXY } from '../common/reader-address';
 import { CurrentPrincipal, Public, RequireCapability } from './decorators';
 import { AccountsService } from './accounts.service';
 import { SignInService } from './sign-in.service';
@@ -54,12 +55,13 @@ export class InvitationsController {
   constructor(
     @Inject(AccountsService) private readonly accounts: AccountsService,
     @Inject(SignInService) private readonly signIn: SignInService,
+    @Optional() @Inject(TRUST_PROXY) private readonly trustProxy: boolean = false,
   ) {}
 
   @Post('accept')
   @HttpCode(200)
   async accept(@Body() body: unknown, @Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<InvitationAccepted> {
-    await this.signIn.throttle(req.ip || null);
+    await this.signIn.throttle(limiterAddress(req, this.trustProxy));
     const input = parse(invitationAcceptSchema, body);
     void reply.header('cache-control', 'no-store');
     return this.accounts.accept(input.token, input.password);
@@ -68,7 +70,7 @@ export class InvitationsController {
   @Post('confirm')
   @HttpCode(200)
   async confirm(@Body() body: unknown, @Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<RecoveryCodes> {
-    await this.signIn.throttle(req.ip || null);
+    await this.signIn.throttle(limiterAddress(req, this.trustProxy));
     const input = parse(enrolmentConfirmSchema, body);
     void reply.header('cache-control', 'no-store');
     return this.accounts.confirmEnrolment(input.enrolmentToken, input.code);

@@ -49,7 +49,7 @@ export async function proxy(request: NextRequest) {
   if (session.expiresAt - now > REFRESH_BEFORE_SECONDS) return NextResponse.next();
 
   try {
-    const fresh = await refreshShared(session.refreshToken, clientAddress(request.headers.get('x-forwarded-for')));
+    const fresh = await refreshShared(session.refreshToken, clientAddress(request.headers.get('x-forwarded-for'), env.NEWSROOM_TRUST_PROXY));
     const value = await sealSession(fresh, env.SESSION_SECRET);
     return continueWith(request, names.session, value, secure, Math.max(1, fresh.sessionExpiresAt - now));
   } catch {
