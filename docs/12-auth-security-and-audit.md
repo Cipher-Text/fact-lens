@@ -38,4 +38,13 @@ Built and tested:
 
 Secrets locally live in one root `.env`, which git ignores and `pnpm env:init` creates with `0600` permissions and random values for the session and internal secrets. That file is for development; a deployment must give each service only its own variables, so the newsroom never holds the database password.
 
-Built: sign-in inside the backend with refresh, MFA and lockout (ADR-046, ADR-047). Not built: rate limits beyond sign-in, public search and the view beacon (other seeded limits are not enforced), CSP/security-header review for the public site, secret scanning, dependency and container scanning, malware scanning of uploads, the external security review, and CSRF protection beyond the origin check and SameSite. See [implementation status](./22-implementation-status.md).
+Built: sign-in inside the backend with refresh, MFA and lockout (ADR-046, ADR-047). Rate limits: sign-in has a fixed limit in code, and public search and the view beacon read their seeded limits; the other seeded limits are not enforced yet ([21](./21-configuration-and-feature-flags.md)). Not built: CSP/security-header review for the public site, secret scanning, dependency and container scanning, malware scanning of uploads, the external security review, and CSRF protection beyond the origin check and SameSite. See [implementation status](./22-implementation-status.md).
+
+### Known gap: client addresses behind the public site
+
+Poll votes (ADR-037) and view counts (ADR-032) use the client address the API sees. The public site's own routes (`apps/web/src/app/api/poll/[id]/vote/route.ts`, `apps/web/src/app/api/views/route.ts`) forward the browser's `X-Forwarded-For` to the API, and the API reads it only when `TRUST_PROXY` is on:
+
+- With `TRUST_PROXY` off (the default), every vote and view reaches the API from the site server's own address. The one-vote-per-address rule then allows one vote per poll in total, and the view limit (`rate_limit.news_view_beacon`) is shared by all readers.
+- With `TRUST_PROXY` on, the first value in `X-Forwarded-For` is taken, and the site passes that value on unchecked, so a client can choose its address and vote again or pass the view limit.
+
+Neither setting is correct yet. The fix is for the site to send one trusted client-address header from the proxy it sits behind, and for the API to trust that header only from the site's address. Until then, treat the per-address rule and the view limit as unreliable in production.
