@@ -1,0 +1,21 @@
+id,name,slug,sync_key,description,order,show_in_menu,created_at,updated_at,created_by_id,updated_by_id,locale
+1,Local,en-local,93af38cd-21a8-411f-809f-bde8b23a1172,"Local news from Jessore and other districts covering administration, community affairs and public life.",1,true,2026-01-27 15:15:40.097000,2026-01-27 15:15:40.097000,,,en
+2,National,en-national,8e21ff13-1b63-48b3-8646-23ef68c1be84,"Major national news of Bangladesh including government, administration and public affairs.",2,true,2026-01-27 15:15:40.116000,2026-01-27 15:15:40.116000,,,en
+3,Politics,en-politics,1d7dc7a6-4010-469b-9ab2-4365acf31eb8,"Political developments, elections, parliament updates and policy debates.",3,true,2026-01-27 15:15:40.130000,2026-01-27 15:15:40.130000,,,en
+4,Economy,en-economy,0b2580d9-63d1-41b5-8559-e4d45b7829f6,"Economic trends including inflation, trade, remittance and fiscal policy.",4,true,2026-01-27 15:15:40.141000,2026-01-27 15:15:40.141000,,,en
+6,International,en-international,ba651526-65dd-4011-a3cc-983c6939cd7d,"Global politics, diplomacy and world events relevant to Bangladesh.",6,true,2026-01-27 15:15:40.169000,2026-01-27 15:15:40.169000,,,en
+7,Sports,en-sports,b90467b7-191f-4f95-821c-e1098f2e6465,"Cricket, football, tournaments, match reports and athlete updates.",7,true,2026-01-27 15:15:40.182000,2026-01-27 15:15:40.182000,,,en
+8,Technology,en-technology,353579cd-f943-4825-9083-0abbdb5d10e9,"AI, software, gadgets, startups and cybersecurity.",8,true,2026-01-27 15:15:40.195000,2026-01-27 15:15:40.195000,,,en
+9,Health,en-health,c439b396-afed-4e9c-b2b1-a09cd85e440a,"Public health, hospitals, medical research and healthcare awareness.",9,true,2026-01-27 15:15:40.209000,2026-01-27 15:15:40.209000,,,en
+10,স্থানীয়,bn-bd-local,93af38cd-21a8-411f-809f-bde8b23a1172,"যশোরসহ বিভিন্ন জেলার স্থানীয় খবর, প্রশাসন, জনজীবন ও সামাজিক ঘটনা।",1,true,2026-01-27 15:15:42.493000,2026-01-27 15:15:42.493000,,,bn-BD
+11,জাতীয়,bn-bd-national,8e21ff13-1b63-48b3-8646-23ef68c1be84,"বাংলাদেশের জাতীয় গুরুত্বপূর্ণ খবর—সরকার, প্রশাসন ও জনজীবনের আপডেট।",2,true,2026-01-27 15:15:42.505000,2026-01-27 15:15:42.505000,,,bn-BD
+12,রাজনীতি,bn-bd-politics,1d7dc7a6-4010-469b-9ab2-4365acf31eb8,"নির্বাচন, সংসদ, রাজনৈতিক দল ও নীতিগত সিদ্ধান্তের খবর।",3,true,2026-01-27 15:15:42.516000,2026-01-27 15:15:42.516000,,,bn-BD
+13,অর্থনীতি,bn-bd-economy,0b2580d9-63d1-41b5-8559-e4d45b7829f6,"বাংলাদেশের অর্থনীতি, বাজেট, মূল্যস্ফীতি ও বাজার বিশ্লেষণ।",4,true,2026-01-27 15:15:42.528000,2026-01-27 15:15:42.528000,,,bn-BD
+15,আন্তর্জাতিক,bn-bd-international,ba651526-65dd-4011-a3cc-983c6939cd7d,"বিশ্ব রাজনীতি, কূটনীতি ও আন্তর্জাতিক গুরুত্বপূর্ণ ঘটনা।",6,true,2026-01-27 15:15:42.550000,2026-01-27 15:15:42.550000,,,bn-BD
+16,খেলা,bn-bd-sports,b90467b7-191f-4f95-821c-e1098f2e6465,"ক্রিকেট, ফুটবলসহ জাতীয় ও আন্তর্জাতিক ক্রীড়া সংবাদ।",7,true,2026-01-27 15:15:42.563000,2026-01-27 15:15:42.563000,,,bn-BD
+17,প্রযুক্তি,bn-bd-technology,353579cd-f943-4825-9083-0abbdb5d10e9,"এআই, সফটওয়্যার, গ্যাজেট ও ডিজিটাল নিরাপত্তা।",8,true,2026-01-27 15:15:42.573000,2026-01-27 15:15:42.573000,,,bn-BD
+18,স্বাস্থ্য,bn-bd-health,c439b396-afed-4e9c-b2b1-a09cd85e440a,"জনস্বাস্থ্য, চিকিৎসা, হাসপাতাল ও স্বাস্থ্য সচেতনতা।",9,true,2026-01-27 15:15:42.586000,2026-01-27 15:15:42.586000,,,bn-BD
+14,ব্যবসা,bn-bd-business,f793e78e-bb0a-4f98-b774-58080b626616,"কোম্পানি, বিনিয়োগ, শিল্প ও বাণিজ্য সংক্রান্ত খবর।",99,false,2026-01-27 15:15:42.538000,2026-04-04 14:23:48.300000,,1,bn-BD
+5,Business,en-business,f793e78e-bb0a-4f98-b774-58080b626616,"Corporate news, startups, investments, industries and trade.",99,false,2026-01-27 15:15:40.156000,2026-04-04 14:23:48.314000,,,en
+19,বিশ্লেষণ,bn-bd-analysis,6f8c24ae-cfcb-4d9f-824d-7568a3a5c754,"তথ্য, প্রেক্ষাপট ও গভীর বিশ্লেষণে সমসাময়িক ঘটনা ও গুরুত্বপূর্ণ ইস্যু।",10,true,2026-04-04 17:34:06.211000,2026-04-04 18:06:53.213000,1,1,bn-BD
+20,Analysis,en-analysis,6f8c24ae-cfcb-4d9f-824d-7568a3a5c754,"Current events and important issues with information, context, and in-depth analysis.",10,true,2026-04-04 17:35:27.772000,2026-04-04 18:06:53.233000,1,1,en

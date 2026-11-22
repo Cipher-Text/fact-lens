@@ -33,7 +33,7 @@ pnpm install
 pnpm env:init       # creates the root .env from .env.example, with random secrets
 pnpm infra:up       # PostgreSQL, Redis and RustFS; needs Docker
 pnpm --filter @fact-lens/api migrate up   # apply migrations
-pnpm --filter @fact-lens/api seed         # desks, categories, default config, feature flags (idempotent)
+pnpm --filter @fact-lens/api seed         # desks, categories, default config, feature flags, and the cipher-press articles from apps/api/seed-data/legacy (idempotent)
 
 pnpm dev:idp        # fake sign-in provider on :4300 (development only)
 pnpm dev:api        # http://localhost:4000/health/live (uploads go to .data/media)

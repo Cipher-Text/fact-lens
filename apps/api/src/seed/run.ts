@@ -1,5 +1,6 @@
 import { loadDatabaseEnv } from '@fact-lens/config';
 import { createPool } from '../db/pool';
+import { importLegacyArticles } from './legacy-articles';
 import { seedReferenceData } from './seed';
 
 async function main() {
@@ -7,6 +8,8 @@ async function main() {
   try {
     const result = await seedReferenceData(pool);
     console.log('Seeded (new rows):', result);
+    const legacy = await importLegacyArticles(pool);
+    console.log('Legacy articles (cipher-press export):', legacy);
   } finally {
     await pool.end();
   }

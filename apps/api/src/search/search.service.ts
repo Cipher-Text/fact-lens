@@ -9,20 +9,9 @@ import { REDIS_CLIENT, VIEWS_OPTIONS, type ViewsOptions } from '../analytics/vie
 import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
+import { projectNewsSearch } from './projection';
 
-/** The text of a Tiptap document, with a space between blocks. Words are kept whole; the text configuration splits them. */
-export function plainTextOf(node: unknown): string {
-  const parts: string[] = [];
-  const walk = (value: unknown): void => {
-    if (!value || typeof value !== 'object') return;
-    const n = value as { text?: unknown; content?: unknown };
-    if (typeof n.text === 'string') parts.push(n.text);
-    if (Array.isArray(n.content)) n.content.forEach(walk);
-    parts.push(' ');
-  };
-  walk(node);
-  return parts.join('').replace(/\s+/g, ' ').trim();
-}
+export { plainTextOf } from './projection';
 
 /** Queries shorter than this return nothing: one letter matches almost everything. */
 const MIN_QUERY = 2;
@@ -51,31 +40,7 @@ export class SearchService {
    * same published version always gives the same rows.
    */
   async project(newsId: string, operation: 'upsert' | 'delete'): Promise<SearchIndexResult> {
-    return withTransaction(this.pool, async (db) => {
-      const { rows } = await db.query<{ status: string; published_revision_id: string | null }>(
-        'SELECT status, published_revision_id FROM news WHERE id = $1', [newsId]);
-      const news = rows[0];
-      const live = operation === 'upsert' && !!news?.published_revision_id && (searchLiveStatuses as readonly string[]).includes(news.status);
-      if (!live || !news) {
-        await db.query('DELETE FROM news_search WHERE news_id = $1', [newsId]);
-        return { indexed: false };
-      }
-      const translations = await db.query<{ locale: string; title: string; body: unknown }>(
-        'SELECT locale, title, body FROM news_translation WHERE revision_id = $1', [news.published_revision_id]);
-      const locales = translations.rows.map((t) => t.locale);
-      await db.query('DELETE FROM news_search WHERE news_id = $1 AND NOT (locale = ANY($2::text[]))', [newsId, locales]);
-      for (const t of translations.rows) {
-        await db.query(
-          `INSERT INTO news_search (news_id, locale, revision_id, title, body_text, document, indexed_at)
-           VALUES ($1, $2, $3, $4, $5,
-                   setweight(to_tsvector($6::regconfig, $4), 'A') || setweight(to_tsvector($6::regconfig, $5), 'B'), now())
-           ON CONFLICT (news_id, locale) DO UPDATE SET revision_id = EXCLUDED.revision_id, title = EXCLUDED.title,
-             body_text = EXCLUDED.body_text, document = EXCLUDED.document, indexed_at = now()`,
-          [newsId, t.locale, news.published_revision_id, t.title, plainTextOf(t.body), searchConfigFor(t.locale)],
-        );
-      }
-      return { indexed: true };
-    });
+    return withTransaction(this.pool, (db) => projectNewsSearch(db, newsId, operation, searchLiveStatuses));
   }
 
   /** Rebuilds every search document from the stored text, and removes rows of items that are no longer live. Safe to repeat. */
