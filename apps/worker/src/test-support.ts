@@ -19,6 +19,7 @@ export async function createTestDb(adminUrl: string) {
   pool.on('error', () => {});
   return {
     pool,
+    url: url.toString(),
     async drop() {
       await pool.end();
       await admin.query(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`);

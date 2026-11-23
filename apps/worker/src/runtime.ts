@@ -1,7 +1,7 @@
 import { jobEnvelopeSchema, jobQueue, queueNames, type JobType, type QueueName } from '@fact-lens/contracts';
 import { Worker, type ConnectionOptions, type Job } from 'bullmq';
 import { PermanentJobError } from './errors';
-import { runOnce } from './idempotency';
+import { JobBusyError, runOnce } from './idempotency';
 import { errorFields } from './log';
 import { handlers, parsePayload, type Services } from './processors';
 
@@ -25,7 +25,9 @@ export async function processJob(job: Job, services: Services): Promise<void> {
       log.debug('job.done', { ...fields, ms: Date.now() - started });
     }
   } catch (err) {
-    log.error('job.failed', { ...fields, permanent: err instanceof PermanentJobError, ms: Date.now() - started, ...errorFields(err) });
+    // A job running in another worker is not a failure: the queue retries it once that run has finished or its claim has expired.
+    if (err instanceof JobBusyError) log.info('job.busy', { ...fields, ms: Date.now() - started });
+    else log.error('job.failed', { ...fields, permanent: err instanceof PermanentJobError, ms: Date.now() - started, ...errorFields(err) });
     throw err;
   }
 }
