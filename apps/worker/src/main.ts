@@ -10,6 +10,8 @@ import { QueueRegistry } from './queues';
 import { redisOptionsFromUrl } from './redis';
 import { startWorkers } from './runtime';
 
+const SHUTDOWN_DEADLINE_MS = 20_000;
+
 async function main() {
   const env = loadWorkerEnv();
   const log = createLogger(env.LOG_LEVEL);
@@ -47,6 +49,13 @@ async function main() {
     if (stopping) return;
     stopping = true;
     log.info('worker.stopping', { signal });
+    // A call that hangs (a Redis or database connection that never answers) must not keep the process alive past
+    // the orchestrator's kill: after the deadline the worker exits, and its queued work is retried by the next start.
+    const deadline = setTimeout(() => {
+      log.error('worker.shutdown_timeout', { signal, deadlineMs: SHUTDOWN_DEADLINE_MS });
+      process.exit(1);
+    }, SHUTDOWN_DEADLINE_MS);
+    deadline.unref();
     health.close();
     await dispatcher.stop();
     await Promise.all(workers.map((w) => w.close()));

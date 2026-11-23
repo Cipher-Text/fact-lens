@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { MAX_MEDIA_BYTES, mediaUploadTypes } from '@fact-lens/contracts';
 import { isTrustedRequest } from '@/lib/csrf';
+import { readCapped } from '@/lib/read-capped';
 import { getSession } from '@/lib/current';
 import { getEnv } from '@/lib/env';
 import { apiUrl, isAllowedApiRequest } from '@/lib/proxy-allow';
@@ -32,16 +33,19 @@ async function handle(request: NextRequest, context: { params: Promise<{ path: s
     if (!(mediaUploadTypes as readonly string[]).includes(contentType)) return problem(415, 'unsupported_media_type', 'Upload a JPEG, PNG or WebP image');
     const declared = Number(request.headers.get('content-length') ?? 0);
     if (declared > MAX_MEDIA_BYTES) return problem(413, 'payload_too_large', 'The image is too large');
-    body = new Uint8Array(await request.arrayBuffer());
-    if (body.length > MAX_MEDIA_BYTES) return problem(413, 'payload_too_large', 'The image is too large');
+    // Read at most the limit: a body without a length can be any size, and must stop at the cap.
+    const image = await readCapped(request, MAX_MEDIA_BYTES);
+    if (!image) return problem(413, 'payload_too_large', 'The image is too large');
+    body = image;
     upstreamType = contentType;
   } else if (request.method === 'POST' || request.method === 'PUT') {
     // A DELETE has no body, so it needs no content type either (the API rejects an empty JSON body).
-    const text = await request.text();
+    const raw = await readCapped(request, MAX_BODY);
+    if (!raw) return problem(413, 'payload_too_large', 'Request too large');
+    const text = new TextDecoder().decode(raw);
     // An action with nothing to send (open, close, archive) has no body and needs no content type.
     if (text !== '') {
       if (contentType !== 'application/json') return problem(415, 'unsupported_media_type', 'JSON only');
-      if (text.length > MAX_BODY) return problem(413, 'payload_too_large', 'Request too large');
       body = text;
     }
   }

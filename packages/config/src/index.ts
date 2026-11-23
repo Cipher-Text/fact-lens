@@ -156,6 +156,10 @@ export const workerEnvSchema = z.object({
   ANALYTICS_ROLLUP_MS: z.coerce.number().int().min(10000).default(300000),
   /** Development only: allow a feed on this machine or network. Off, a feed on a private address is refused. */
   FEED_ALLOW_PRIVATE_HOSTS: z.stringbool().default(false),
+}).superRefine((env, ctx) => {
+  if (env.NODE_ENV === 'production' && env.FEED_ALLOW_PRIVATE_HOSTS) {
+    ctx.addIssue({ code: 'custom', path: ['FEED_ALLOW_PRIVATE_HOSTS'], message: 'must be off in production: a feed on a private address would reach inside the network' });
+  }
 });
 export type WorkerEnv = z.infer<typeof workerEnvSchema>;
 
