@@ -8,6 +8,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
+  // The dev server compiles each route on first request, so many workers at once make page loads slow.
+  workers: process.env.CI ? 2 : undefined,
+  globalSetup: "./tests/e2e/global-setup.ts",
   reporter: process.env.CI ? "github" : "list",
   use: {
     baseURL,
@@ -18,9 +21,7 @@ export default defineConfig({
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],
   webServer: {
-    // CI serves the production build (`pnpm build` runs first in the check). The dev server compiles
-    // pages on first request, which makes page loads slow enough to hit the test timeout.
-    command: process.env.CI ? "pnpm start" : "pnpm dev",
+    command: "pnpm dev",
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,

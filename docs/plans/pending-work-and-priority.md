@@ -39,7 +39,7 @@ Status as of commit `fc1783e` (pushed to `origin/main`). Each item says what is 
 
 ## Before launch
 
-16. **Browser tests in CI.** `apps/web` has Playwright specs in `tests/e2e/` and a `test:e2e` script, but neither `pnpm check` nor CI runs them. The newsroom has no browser tests.
+16. **Browser tests in CI.** Done for `apps/web`: the CI workflow runs the Chromium suite after `pnpm check`, against the dev server, with two workers and a warm-up of the main pages. The full run passed (1,099 tests). WebKit is not in CI yet, and the newsroom has no browser tests.
 17. **Rate limits.** Seven of the nine seeded `rate_limit.*` rows are not read by any code: login, ingestion, upload, ad_redirect, newsletter_subscribe, card_generation and ai. Upload and ad-redirect limits are therefore not enforced. Search and the view beacon read theirs. Either enforce the seven or remove their rows.
 18. **Search without Redis.** Done (see above).
 19. **Observability (Epic E).** Metrics, tracing, Sentry and dashboards.

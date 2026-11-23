@@ -28,8 +28,8 @@ type Props = {
 
 /**
  * The search field with its attached submit button, the clear button and, in the dialog,
- * the trending row (component-system.md C-19, C-20). Mock only (DR-01): a search shows a
- * note instead of results. The field is type="text": a type="search" field takes the
+ * the trending row (component-system.md C-19, C-20). A search opens the results page for the
+ * query (/search?q=). The field is type="text": a type="search" field takes the
  * first Escape to clear itself, so Escape would not close the dialog in one press
  * (DR-246). The label is hidden; the placeholder is the visible hint.
  */

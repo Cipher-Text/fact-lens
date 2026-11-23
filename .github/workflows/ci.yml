@@ -60,6 +60,18 @@ jobs:
           exit 1
       - run: pnpm install --frozen-lockfile
       - run: pnpm check
+      # Browser tests (apps/web, Chromium: the gate, DR-289). The dev server is started by Playwright.
+      - name: Install the Chromium browser
+        run: pnpm --filter fact-lens-web exec playwright install --with-deps chromium
+      - name: Browser tests (Chromium)
+        run: pnpm --filter fact-lens-web test:e2e:chromium
+      - name: Browser test output on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: apps/web/test-results
+          retention-days: 7
       - name: S3 server log on failure
         if: failure()
         run: docker logs s3

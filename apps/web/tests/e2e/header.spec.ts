@@ -79,6 +79,11 @@ async function expectClosed(panel: Locator) {
   await expect(panel).toHaveCount(0);
 }
 
+/** The results page for a query: /search?q=... under the language prefix (the Bangla home has none). */
+function searchResultsUrl(path: string, query: string): RegExp {
+  return new RegExp(`${path === "/" ? "" : "/en"}/search\\?q=${query}$`);
+}
+
 /** The drawn logo size: its font size times the scale of its transform (C-17, DR-349). */
 async function logoSize(logo: Locator) {
   return logo.evaluate((el) => {
@@ -852,16 +857,8 @@ for (const p of PAGES) {
       await expect(field).toHaveValue("");
       await expect(field).toBeFocused();
 
-      // Mock search: a note in the page language, no results page (DR-01).
-      await terms.first().click();
-      await expect(field).not.toHaveValue("");
-      await expect(dialog.getByRole("status")).not.toBeEmpty();
-      await field.fill("Bay of Bengal");
-      await page.keyboard.press("Enter");
-      await expect(dialog.getByRole("status")).not.toBeEmpty();
-      await expect(page).toHaveURL(
-        new RegExp(`${p.path === "/" ? "/$" : "/en$"}`),
-      );
+      // Each trending term is a button that opens the results page for that term (see the Enter test below).
+      await expect(terms.first()).toBeVisible();
 
       await expectNoBlockingAxe(page);
 
@@ -938,12 +935,22 @@ for (const p of PAGES) {
           "border-bottom-color",
           "rgb(153, 51, 20)",
         );
-        // Enter runs the search.
+        // Enter opens the results page for the query.
         await field.fill("Bay of Bengal");
         await page.keyboard.press("Enter");
-        await expect(drawer.getByRole("status")).not.toBeEmpty();
+        await expect(page).toHaveURL(searchResultsUrl(p.path, "Bay%20of%20Bengal"));
       });
     }
+
+    test("Enter in the search dialog opens the results page for the query", async ({ page }) => {
+      await page.setViewportSize({ width: 1024, height: 800 });
+      await page.goto(p.path);
+      await page.getByRole("button", { name: p.search, exact: true }).click();
+      const dialog = page.locator("[data-search-dialog]");
+      await dialog.locator('input[name="q"]').fill("Bay of Bengal");
+      await page.keyboard.press("Enter");
+      await expect(page).toHaveURL(searchResultsUrl(p.path, "Bay%20of%20Bengal"));
+    });
 
     test("the theme starts light and does not follow the system (DR-201)", async ({
       page,
