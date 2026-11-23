@@ -137,6 +137,24 @@ describe.skipIf(!adminUrl)('polls (database)', () => {
     }
   });
 
+  it('lets one address win a race for its one vote, and refuses the other rather than counting it', async () => {
+    const p = await open();
+    const o = p.options[0].id as string;
+    const [a, b] = await Promise.all([vote(p.id, o), vote(p.id, o)]);
+    expect([a.statusCode, b.statusCode].sort()).toEqual([200, 429]);
+    expect((await publicGet(`/public/polls/${p.id}/en`)).json().totalVotes).toBe(1);
+  });
+
+  it('counts a double click from one browser once, and answers both clicks as a vote', async () => {
+    const p = await open();
+    const o = p.options[0].id as string;
+    const first = await vote(p.id, o);
+    const cookie = String(first.headers['set-cookie']).split(';')[0];
+    const [a, b] = await Promise.all([vote(p.id, o, { cookie }), vote(p.id, o, { cookie })]);
+    expect([a.statusCode, b.statusCode]).toEqual([200, 200]);
+    expect((await publicGet(`/public/polls/${p.id}/en`)).json().totalVotes).toBe(1);
+  });
+
   it('locks the wording once there are votes, and stops voting when a poll closes', async () => {
     const p = await open();
     const edited = await t.call({ method: 'PUT', url: `/polls/${p.id}`, roles: ['reporter'], body: wording({ questions: { en: 'New question?', 'bn-BD': 'নতুন প্রশ্ন?' } }) });

@@ -5,7 +5,7 @@ import { createHmac, randomBytes } from 'node:crypto';
 import type { Poll, PollInput, PollVoteResult, PublicPoll } from '@fact-lens/contracts';
 import type { Pool, PoolClient } from 'pg';
 import { AuditService } from '../audit/audit.service';
-import type { Actor } from '../common/http';
+import { isPgError, type Actor } from '../common/http';
 import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
 
@@ -197,20 +197,34 @@ export class PollsService {
       const tokenHash = this.hash('t', token);
       const ipHash = ip ? this.hash(`i:${id}`, ip) : null;
 
-      // Serialise votes on one poll so the per-address count below cannot be raced past.
-      await db.query('SELECT 1 FROM poll WHERE id = $1 FOR UPDATE', [id]);
+      // Two unique indexes decide the race, not a lock on the poll (ADR-060): one vote per browser (poll_id, token_hash) and
+      // one per network address (poll_id, ip_hash). The insert runs in a savepoint, so a refused insert leaves the
+      // transaction usable.
       const earlier = await db.query('SELECT 1 FROM poll_vote WHERE poll_id = $1 AND token_hash = $2', [id, tokenHash]);
-      if (earlier.rowCount === 0) {
+      let alreadyVoted = earlier.rowCount !== 0;
+      if (!alreadyVoted) {
         if (ipHash) {
-          // One vote per network address per poll. A new browser from an address that already voted is refused.
+          // A new browser from an address that already voted is refused, before the insert is tried.
           const seen = await db.query('SELECT 1 FROM poll_vote WHERE poll_id = $1 AND ip_hash = $2 LIMIT 1', [id, ipHash]);
           if (seen.rowCount) {
             throw new HttpException({ message: 'This network has already voted in this poll.', reason: 'poll_ip_limit' }, HttpStatus.TOO_MANY_REQUESTS);
           }
         }
-        await db.query('INSERT INTO poll_vote (poll_id, option_id, token_hash, ip_hash) VALUES ($1, $2, $3, $4)', [id, optionId, tokenHash, ipHash]);
+        await db.query('SAVEPOINT poll_vote');
+        try {
+          await db.query('INSERT INTO poll_vote (poll_id, option_id, token_hash, ip_hash) VALUES ($1, $2, $3, $4)', [id, optionId, tokenHash, ipHash]);
+          await db.query('RELEASE SAVEPOINT poll_vote');
+        } catch (err) {
+          await db.query('ROLLBACK TO SAVEPOINT poll_vote');
+          if (!isPgError(err) || err.code !== '23505') throw err;
+          // A racing insert won one of the indexes. If it was this browser's own vote (a double click can lose on either
+          // index), that vote is the answer. Otherwise another browser on this address won the race.
+          const mine = await db.query('SELECT 1 FROM poll_vote WHERE poll_id = $1 AND token_hash = $2', [id, tokenHash]);
+          if (mine.rowCount) alreadyVoted = true;
+          else throw new HttpException({ message: 'This network has already voted in this poll.', reason: 'poll_ip_limit' }, HttpStatus.TOO_MANY_REQUESTS);
+        }
       }
-      return { ...(await this.publicPoll(id, locale, token, db)), alreadyVoted: earlier.rowCount !== 0 };
+      return { ...(await this.publicPoll(id, locale, token, db)), alreadyVoted };
     });
   }
 

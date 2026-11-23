@@ -15,7 +15,6 @@ Status as of commit `8e740a2` (pushed to `origin/main`). Each item says what is 
 
 ## Architecture review: what is still open
 
-- **Poll vote lock.** Votes on one poll are serialised by a row lock. The lock guards the one-vote-per-address rule against a race, and it limits throughput on a busy poll. A unique index on the address hash would enforce the rule without the lock; that needs a migration.
 - **Tests for the newsroom proxy and logout route.** The proxy's body cap and the logout origin check are covered only by typecheck.
 - **End-to-end 503 tests.** The sign-in and upload refusals during a Redis outage are covered by reading the code, not by a test with a broken Redis.
 - **Health count per probe.** The outbox count runs on every probe. Not measured; the retention job should keep the table small.
