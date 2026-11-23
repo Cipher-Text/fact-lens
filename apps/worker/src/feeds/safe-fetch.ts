@@ -25,9 +25,36 @@ export function isPrivateAddress(ip: string): boolean {
       const hi = parseInt(mapped[2]!, 16), lo = parseInt(mapped[3]!, 16);
       return isPrivateAddress(`${hi >> 8}.${hi & 255}.${lo >> 8}.${lo & 255}`);
     }
+    const g = ipv6Groups(lower);
+    const ipv4At = (i: number) => `${g[i]! >> 8}.${g[i]! & 255}.${g[i + 1]! >> 8}.${g[i + 1]! & 255}`;
+    const zeroTo = (end: number) => g.slice(0, end).every((x) => x === 0);
+    // IPv4-compatible (::/96, deprecated) and NAT64 (64:ff9b::/96) addresses carry an IPv4 address in their last 32 bits.
+    if (zeroTo(6)) return isPrivateAddress(ipv4At(6));
+    if (g[0] === 0x64 && g[1] === 0xff9b && g.slice(2, 6).every((x) => x === 0)) return isPrivateAddress(ipv4At(6));
+    if (g[0] === 0x64 && g[1] === 0xff9b && g[2] === 1) return true; // NAT64 local-use prefix (RFC 8215)
+    // 6to4 (2002::/16) routes to the IPv4 address in its next 32 bits.
+    if (g[0] === 0x2002) return isPrivateAddress(ipv4At(1));
+    if (g[0] === 0x2001 && g[1] === 0) return true; // Teredo: refused outright
+    if (g[0] === 0x100 && g[1] === 0 && g[2] === 0 && g[3] === 0) return true; // discard prefix 100::/64
+    if ((g[0]! & 0xffc0) === 0xfec0) return true; // site-local fec0::/10, deprecated
     return /^f[cd]/.test(lower) || /^fe[89ab]/.test(lower) || lower.startsWith('ff');
   }
   return true; // not an address at all: do not connect
+}
+
+/** The eight 16-bit groups of an IPv6 address, with `::` expanded and a trailing dotted IPv4 turned into two groups. */
+function ipv6Groups(ip: string): number[] {
+  let text = ip;
+  const dotted = /(\d+)\.(\d+)\.(\d+)\.(\d+)$/.exec(text);
+  if (dotted) {
+    const [a, b, c, d] = dotted.slice(1).map(Number) as [number, number, number, number];
+    text = `${text.slice(0, dotted.index)}${((a << 8) | b).toString(16)}:${((c << 8) | d).toString(16)}`;
+  }
+  const [head, tail] = text.split('::') as [string, string | undefined];
+  const headParts = head ? head.split(':') : [];
+  const tailParts = tail ? tail.split(':') : [];
+  const missing = 8 - headParts.length - tailParts.length;
+  return [...headParts, ...Array<string>(missing).fill('0'), ...tailParts].map((part) => parseInt(part, 16));
 }
 
 type Resolve = (host: string, options: dns.LookupAllOptions, cb: (err: NodeJS.ErrnoException | null, addrs: dns.LookupAddress[]) => void) => void;
