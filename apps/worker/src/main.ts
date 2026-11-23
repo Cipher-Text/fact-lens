@@ -4,6 +4,7 @@ import { createApiClient } from './api-client';
 import { startHealthServer } from './health';
 import { createLogger, errorFields } from './log';
 import { startDispatcher } from './outbox/dispatcher';
+import { startRetention } from './retention';
 import { loggingCacheInvalidator } from './processors';
 import { createFeedFetcher } from './feeds/safe-fetch';
 import { QueueRegistry } from './queues';
@@ -28,6 +29,7 @@ async function main() {
 
   const workers = startWorkers(services, { connection, prefix: queues.prefix, concurrency: env.JOB_CONCURRENCY });
   const dispatcher = startDispatcher(pool, queues.enqueue, log, env.OUTBOX_POLL_MS);
+  const retention = startRetention(pool, log);
   // One repeatable scheduler in Redis, so several worker instances never scan twice per tick.
   await queues.queue('maintenance').upsertJobScheduler(
     'schedule-scan', { every: env.SCHEDULE_SCAN_MS },
@@ -57,6 +59,7 @@ async function main() {
     }, SHUTDOWN_DEADLINE_MS);
     deadline.unref();
     health.close();
+    retention.stop();
     await dispatcher.stop();
     await Promise.all(workers.map((w) => w.close()));
     await queues.close();
