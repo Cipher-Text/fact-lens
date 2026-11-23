@@ -5,10 +5,12 @@ import {
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import {
-  mediaVariantNames, publicMediaVariants, type MediaDetail, type MediaList, type MediaListQuery, type MediaRightsUpdate,
+  mediaVariantNames, parseConfigValue, publicMediaVariants, type MediaDetail, type MediaList, type MediaListQuery, type MediaRightsUpdate,
   type MediaVariantName,
 } from '@fact-lens/contracts';
+import type { Redis } from 'ioredis';
 import type { Pool } from 'pg';
+import { REDIS_CLIENT, VIEWS_OPTIONS, type ViewsOptions } from '../analytics/views.service';
 import { AuditService } from '../audit/audit.service';
 import type { Actor } from '../common/http';
 import { isPgError } from '../common/http';
@@ -72,9 +74,39 @@ export class MediaService {
     @Inject(OBJECT_STORAGE) private readonly storage: ObjectStorage,
     @Inject(AuditService) private readonly audit: AuditService,
     @Inject(MEDIA_OPTIONS) private readonly options: MediaOptions,
+    @Inject(REDIS_CLIENT) private readonly redis: Redis | null,
+    @Inject(VIEWS_OPTIONS) private readonly redisKeys: ViewsOptions,
   ) {}
 
+  /**
+   * The upload limit (`rate_limit.upload`, default 30 a minute) per signed-in account, counted in Redis in windows.
+   * Every attempt counts, including one that is then refused. Without Redis nothing is limited. If Redis is
+   * unreachable the upload still runs and the outage is logged (fail-open, as for search: ADR-050).
+   */
+  private async underUploadLimit(subject: string): Promise<void> {
+    if (!this.redis) return;
+    const { rows } = await this.pool.query<{ value: unknown }>(
+      `SELECT value FROM configuration WHERE key = 'rate_limit.upload' AND scope = 'global'`);
+    const set = rows[0]
+      ? (parseConfigValue('rate_limit.upload', rows[0].value) as { limit: number; windowSeconds: number })
+      : { limit: 30, windowSeconds: 60 };
+    const slot = Math.floor(Date.now() / 1000 / set.windowSeconds);
+    const hash = createHash('sha256').update(subject).digest('hex');
+    const key = `${this.redisKeys.prefix}:rl:upload:${slot}:${hash}`;
+    let answers: Array<[Error | null, unknown]> | null;
+    try {
+      answers = await this.redis.multi().incr(key).expire(key, set.windowSeconds + 1).exec();
+    } catch (err) {
+      this.logger.warn(`upload limit skipped, Redis unavailable: ${(err as Error).message}`);
+      return;
+    }
+    if (Number(answers?.[0]?.[1] ?? 0) > set.limit) {
+      throw new HttpException('Too many uploads. Try again shortly.', HttpStatus.TOO_MANY_REQUESTS);
+    }
+  }
+
   async upload(input: unknown, filename: string | undefined, actor: Actor): Promise<{ asset: MediaDetail; created: boolean }> {
+    await this.underUploadLimit(actor.principal.subject);
     if (!Buffer.isBuffer(input) || input.length === 0) {
       throw new UnsupportedMediaTypeException('Send the image itself as the request body, with an image content type');
     }

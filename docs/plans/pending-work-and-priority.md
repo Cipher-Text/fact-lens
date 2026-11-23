@@ -40,7 +40,7 @@ Status as of commit `fc1783e` (pushed to `origin/main`). Each item says what is 
 ## Before launch
 
 16. **Browser tests in CI.** Done for `apps/web`: the CI workflow runs the Chromium suite after `pnpm check`, against the dev server, with two workers and a warm-up of the main pages. The full run passed (1,099 tests). WebKit is not in CI yet, and the newsroom has no browser tests.
-17. **Rate limits.** Seven of the nine seeded `rate_limit.*` rows are not read by any code: login, ingestion, upload, ad_redirect, newsletter_subscribe, card_generation and ai. Upload and ad-redirect limits are therefore not enforced. Search and the view beacon read theirs. Either enforce the seven or remove their rows.
+17. **Rate limits.** Upload is enforced now, per signed-in account (ADR-052). Search and the view beacon read their limits. Still unread: `rate_limit.ad_redirect` (there is no ad redirect endpoint until the advertising module exists), and `ingestion`, `newsletter_subscribe`, `card_generation` and `ai`, which wait for their endpoints. `rate_limit.login` is unread too: sign-in uses its own built-in limit. Each unread row either gets enforced with its endpoint or is removed.
 18. **Search without Redis.** Done (see above).
 19. **Observability (Epic E).** Metrics, tracing, Sentry and dashboards.
 20. **Delivery.** Docker images, deployment, backups and restore tests.

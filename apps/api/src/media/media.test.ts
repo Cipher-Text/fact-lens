@@ -19,6 +19,8 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
     t = await startTestApp(adminUrl!, { maxUploadBytes: 400 * 1024 });
     deskId = (await t.db.pool.query(`SELECT id FROM desk WHERE key = 'opinion'`)).rows[0].id;
     authorId = (await t.db.pool.query(`INSERT INTO contributor (display_name) VALUES ('A. Writer') RETURNING id`)).rows[0].id;
+    // The upload limit is high for the other tests here; the limit test below lowers it and puts it back.
+    await t.db.pool.query(`UPDATE configuration SET value = '{"limit":100000,"windowSeconds":60}' WHERE key = 'rate_limit.upload' AND scope = 'global'`);
   });
   afterAll(() => t?.close());
 
@@ -326,6 +328,20 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
 
       await t.call({ method: 'POST', url: `/news/${id}/transitions`, roles: ['managing_editor'], body: { to: 'ARCHIVED', reason: 'Withdrawn' } });
       expect((await publicImage(a.id, 'thumb')).statusCode).toBe(404);
+    });
+
+    it.skipIf(!process.env.TEST_REDIS_URL)('refuses an account past rate_limit.upload, counting the refused attempt too', async () => {
+      const sub = 'upload-limit-user';
+      await t.db.pool.query(`UPDATE configuration SET value = '{"limit":2,"windowSeconds":60}' WHERE key = 'rate_limit.upload' AND scope = 'global'`);
+      try {
+        expect((await t.upload(await fresh(), { filename: 'a.jpg', sub })).status).toBe(201);
+        expect((await t.upload(await fresh(), { filename: 'b.jpg', sub })).status).toBe(201);
+        expect((await t.upload(await fresh(), { filename: 'c.jpg', sub })).status).toBe(429);
+        // Another account is not held back by this one.
+        expect((await t.upload(await fresh(), { filename: 'd.jpg', sub: 'upload-limit-other' })).status).toBe(201);
+      } finally {
+        await t.db.pool.query(`UPDATE configuration SET value = '{"limit":100000,"windowSeconds":60}' WHERE key = 'rate_limit.upload' AND scope = 'global'`);
+      }
     });
   });
 });
