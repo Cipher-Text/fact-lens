@@ -4,6 +4,7 @@ import type { SignInResult, SignedIn } from '@fact-lens/contracts';
 import { jwtVerify, SignJWT } from 'jose';
 import type { Redis } from 'ioredis';
 import type { Pool, PoolClient } from 'pg';
+import { countInWindow, RateLimitUnavailableError } from '../common/rate-limit';
 import { AuditService } from '../audit/audit.service';
 import { REDIS_CLIENT, VIEWS_OPTIONS, type ViewsOptions } from '../analytics/views.service';
 import { PG_POOL } from '../db/pool';
@@ -264,8 +265,15 @@ export class SignInService {
     if (!this.redis || !ip) return;
     const slot = Math.floor(Date.now() / 60000);
     const key = `${this.views.prefix}:rl:signin:${slot}:${this.addressHash(ip)}`;
-    const answers = await this.redis.multi().incr(key).expire(key, 61).exec();
+    let count: number;
+    try {
+      count = await countInWindow(this.redis, key, 60);
+    } catch (err) {
+      if (!(err instanceof RateLimitUnavailableError)) throw err;
+      // Refused, not let through: this limit is what stops guessing (ADR-058).
+      throw new ServiceUnavailableException('Sign-in is temporarily unavailable. Try again shortly.');
+    }
     const allowed = this.options?.attemptsPerMinute ?? ATTEMPTS_PER_MINUTE;
-    if (Number(answers?.[0]?.[1] ?? 0) > allowed) throw new HttpException('Too many attempts. Try again shortly.', 429);
+    if (count > allowed) throw new HttpException('Too many attempts. Try again shortly.', 429);
   }
 }

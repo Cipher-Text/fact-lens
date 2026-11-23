@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { basename } from 'node:path';
 import {
   BadRequestException, ConflictException, HttpException, HttpStatus, Inject, Injectable, Logger, NotFoundException,
+  ServiceUnavailableException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import {
@@ -14,6 +15,7 @@ import { REDIS_CLIENT, VIEWS_OPTIONS, type ViewsOptions } from '../analytics/vie
 import { AuditService } from '../audit/audit.service';
 import type { Actor } from '../common/http';
 import { isPgError } from '../common/http';
+import { countInWindow, RateLimitUnavailableError } from '../common/rate-limit';
 import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
 import { EXT, ImageRejected, processImage, sniffImage } from './image';
@@ -81,7 +83,7 @@ export class MediaService {
   /**
    * The upload limit (`rate_limit.upload`, default 30 a minute) per signed-in account, counted in Redis in windows.
    * Every attempt counts, including one that is then refused. Without Redis nothing is limited. If Redis is
-   * unreachable the upload still runs and the outage is logged (fail-open, as for search: ADR-050).
+   * unreachable the upload is refused until it answers again (fail-closed for writes, ADR-058).
    */
   private async underUploadLimit(subject: string): Promise<void> {
     if (!this.redis) return;
@@ -93,14 +95,14 @@ export class MediaService {
     const slot = Math.floor(Date.now() / 1000 / set.windowSeconds);
     const hash = createHash('sha256').update(subject).digest('hex');
     const key = `${this.redisKeys.prefix}:rl:upload:${slot}:${hash}`;
-    let answers: Array<[Error | null, unknown]> | null;
+    let count: number;
     try {
-      answers = await this.redis.multi().incr(key).expire(key, set.windowSeconds + 1).exec();
+      count = await countInWindow(this.redis, key, set.windowSeconds);
     } catch (err) {
-      this.logger.warn(`upload limit skipped, Redis unavailable: ${(err as Error).message}`);
-      return;
+      if (!(err instanceof RateLimitUnavailableError)) throw err;
+      throw new ServiceUnavailableException('Uploads are temporarily unavailable. Try again shortly.');
     }
-    if (Number(answers?.[0]?.[1] ?? 0) > set.limit) {
+    if (count > set.limit) {
       throw new HttpException('Too many uploads. Try again shortly.', HttpStatus.TOO_MANY_REQUESTS);
     }
   }

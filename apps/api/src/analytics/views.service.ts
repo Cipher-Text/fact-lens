@@ -1,3 +1,4 @@
+import { countInWindow, RateLimitUnavailableError } from '../common/rate-limit';
 import { createHash, randomBytes } from 'node:crypto';
 import { Inject, Injectable } from '@nestjs/common';
 import { parseConfigValue, type AnalyticsRollupResult, type MostRead, type MostReadQuery, type ViewBeacon, type ViewSource } from '@fact-lens/contracts';
@@ -163,8 +164,13 @@ export class ViewsService {
     const { limit, windowSeconds } = this.limitCache.value;
     const slot = Math.floor(now / 1000 / windowSeconds);
     const k = this.key('rl', 'view', String(slot), this.hash('ip', ip));
-    const answers = await this.redis!.multi().incr(k).expire(k, windowSeconds + 1).exec();
-    return Number(answers?.[0]?.[1] ?? 0) <= limit;
+    try {
+      return (await countInWindow(this.redis!, k, windowSeconds)) <= limit;
+    } catch (err) {
+      if (!(err instanceof RateLimitUnavailableError)) throw err;
+      // Readers go through during an outage: the view is counted without its limit (ADR-058).
+      return true;
+    }
   }
 
   /** The id of a live news item that has a version in this language, remembered for a minute. */

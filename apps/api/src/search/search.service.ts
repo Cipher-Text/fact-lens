@@ -6,6 +6,7 @@ import {
 import type { Redis } from 'ioredis';
 import type { Pool, PoolClient } from 'pg';
 import { REDIS_CLIENT, VIEWS_OPTIONS, type ViewsOptions } from '../analytics/views.service';
+import { countInWindow, RateLimitUnavailableError } from '../common/rate-limit';
 import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
@@ -148,13 +149,14 @@ export class SearchService {
     const slot = Math.floor(Date.now() / 1000 / set.windowSeconds);
     const hash = createHash('sha256').update(`${this.options.hashSecret ?? ''}|${ip}`).digest('hex');
     const key = `${this.options.prefix}:rl:search:${slot}:${hash}`;
-    let answers: Array<[Error | null, unknown]> | null;
+    let count: number;
     try {
-      answers = await this.redis.multi().incr(key).expire(key, set.windowSeconds + 1).exec();
+      count = await countInWindow(this.redis, key, set.windowSeconds);
     } catch (err) {
-      this.logger.warn(`search limit skipped, Redis unavailable: ${(err as Error).message}`);
+      if (!(err instanceof RateLimitUnavailableError)) throw err;
+      this.logger.warn(`search limit skipped, Redis unavailable: ${err.message}`);
       return;
     }
-    if (Number(answers?.[0]?.[1] ?? 0) > set.limit) throw new HttpException('Too many searches. Try again shortly.', 429);
+    if (count > set.limit) throw new HttpException('Too many searches. Try again shortly.', 429);
   }
 }
