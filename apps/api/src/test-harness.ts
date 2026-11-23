@@ -165,8 +165,12 @@ export async function startTestApp<S extends ObjectStorage = MemoryStorage>(
     token: (roles: string[], sub = 'user-1', mfa = true) => sign(roles, sub, mfa),
     async close() {
       if (redis) {
-        const keys = await redis.keys(`${viewsOptions.prefix}:*`);
-        if (keys.length) await redis.del(...keys);
+        try {
+          const keys = await redis.keys(`${viewsOptions.prefix}:*`);
+          if (keys.length) await redis.del(...keys);
+        } catch {
+          // A test that takes Redis down on purpose leaves nothing to clean up; the app and database still close.
+        }
         redis.disconnect();
       }
       await app.close();
