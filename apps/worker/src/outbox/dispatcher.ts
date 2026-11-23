@@ -122,11 +122,14 @@ export async function requeueParked(pool: Pool, ids?: string[]): Promise<number>
 export function startDispatcher(pool: Pool, enqueue: Enqueue, log: Logger, pollMs: number, opts: DispatchOptions = defaultDispatchOptions) {
   let stopped = false;
   let wake: (() => void) | undefined;
+  // When the last pass that completed without an error finished: the health endpoint reads it as liveness.
+  let lastPassAt = Date.now();
   const done = (async () => {
     while (!stopped) {
       let again = false;
       try {
         const r = await dispatchOnce(pool, enqueue, log, opts);
+        lastPassAt = Date.now();
         again = r.claimed >= opts.batchSize;
       } catch (err) {
         log.error('outbox.pass_failed', errorFields(err));
@@ -135,6 +138,7 @@ export function startDispatcher(pool: Pool, enqueue: Enqueue, log: Logger, pollM
     }
   })();
   return {
+    lastPassAt: () => lastPassAt,
     async stop() {
       stopped = true;
       wake?.();

@@ -52,7 +52,7 @@ describe('loadApiEnv', () => {
 
   it('loads worker config and rejects a short internal token', () => {
     const worker = { ...base, API_BASE_URL: 'http://api.internal:4000', INTERNAL_API_TOKEN: 'y'.repeat(32) };
-    expect(loadWorkerEnv(worker)).toMatchObject({ OUTBOX_POLL_MS: 1000, JOB_CONCURRENCY: 5 });
+    expect(loadWorkerEnv(worker)).toMatchObject({ OUTBOX_POLL_MS: 1000, JOB_CONCURRENCY: 5, WORKER_HEALTH_HOST: '127.0.0.1' });
     expect(() => loadWorkerEnv({ ...worker, INTERNAL_API_TOKEN: 'short' })).toThrow(/INTERNAL_API_TOKEN/);
     // A feed on a private address is for development only: production refuses it.
     expect(() => loadWorkerEnv({ ...worker, NODE_ENV: 'production', FEED_ALLOW_PRIVATE_HOSTS: 'true' })).toThrow(/FEED_ALLOW_PRIVATE_HOSTS/);

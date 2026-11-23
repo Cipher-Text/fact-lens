@@ -147,6 +147,8 @@ export const workerEnvSchema = z.object({
   INTERNAL_API_TOKEN: z.string().min(32),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
   WORKER_HEALTH_PORT: z.coerce.number().int().min(1).max(65535).default(4100),
+  /** The address the health endpoint listens on. Loopback by default: a probe from another host needs a wider address. */
+  WORKER_HEALTH_HOST: z.string().min(1).default('127.0.0.1'),
   OUTBOX_POLL_MS: z.coerce.number().int().min(100).default(1000),
   SCHEDULE_SCAN_MS: z.coerce.number().int().min(1000).default(30000),
   JOB_CONCURRENCY: z.coerce.number().int().min(1).max(50).default(5),

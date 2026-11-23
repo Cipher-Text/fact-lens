@@ -41,7 +41,7 @@ async function main() {
     'analytics-rollup', { every: env.ANALYTICS_ROLLUP_MS },
     { name: 'analytics.rollup', data: { id: crypto.randomUUID(), type: 'analytics.rollup', version: 1, idempotencyKey: 'analytics.rollup', occurredAt: new Date().toISOString(), payload: {} } },
   );
-  const health = startHealthServer(pool, queues, env.WORKER_HEALTH_PORT);
+  const health = startHealthServer(pool, queues, env.WORKER_HEALTH_PORT, env.WORKER_HEALTH_HOST, () => dispatcher.lastPassAt());
   log.info('worker.started', { queues: workers.map((w) => w.name), healthPort: env.WORKER_HEALTH_PORT });
 
   let stopping = false;
