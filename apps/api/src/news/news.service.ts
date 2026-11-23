@@ -4,7 +4,7 @@ import {
 } from '@nestjs/common';
 import {
   bodyMediaAssetIds, defaultWorkflowPolicy, parseConfigValue, socialNetworks,
-  type AvailableTransition, type NewsFormat, type CorrectionCreate, type Principal, type PublicNews, type RevisionCreate, type NewsCreate, type NewsDetail,
+  type AvailableTransition, type Capability, type NewsFormat, type CorrectionCreate, type Principal, type PublicNews, type RevisionCreate, type NewsCreate, type NewsDetail,
   type NewsCounts, type NewsList, type NewsListQuery, type NewsMeta, type NewsStatus, type TransitionRequest,
   type ScheduledPublishResult, type TimelineEntry, type TranslationSave, type WorkflowPolicy,
 } from '@fact-lens/contracts';
@@ -17,9 +17,11 @@ import { withTransaction } from '../db/transaction';
 import { TaxonomyService } from '../taxonomy/taxonomy.service';
 import { effectiveReadingMinutes, loadReadingRates, readingMinutesFor } from './reading-time';
 import { publishIssues, reviewIssues, slugify, type RevisionSnapshot } from './validation';
-import { capabilityFor, findTransition, LIVE_STATUSES, movesFrom } from './workflow';
+import { capabilityFor, findTransition, LIVE_STATUSES, movesFrom, recordedTransition } from './workflow';
 
 type Db = Pool | PoolClient;
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 interface NewsRow {
   id: string; canonical_key: string; short_id: string; format: NewsFormat; status: NewsStatus; category_id: string | null; category_ids: string[]; desk_id: string | null;
@@ -444,15 +446,16 @@ export class NewsService {
   async createRevision(id: string, input: RevisionCreate, actor: Actor): Promise<NewsDetail> {
     await withTransaction(this.pool, async (db) => {
       const news = await this.lockNews(db, id);
-      if (news.status !== 'PUBLISHED') {
+      const move = recordedTransition(news.status, 'UPDATED');
+      if (!move) {
         throw conflict('invalid_state', `Only a published news item can be revised (status is ${news.status})`);
       }
       const latest = await this.latestRevision(db, id);
       await this.copyRevision(db, latest, { changedBy: actor.principal.subject, reason: input.reason, isCorrection: false });
-      await db.query(`UPDATE news SET status = 'UPDATED', updated_at = now() WHERE id = $1`, [id]);
+      await db.query('UPDATE news SET status = $2, updated_at = now() WHERE id = $1', [id, move.to]);
       await this.audit.record(
         { actorType: 'human', actorId: actor.principal.subject, action: 'news.revise', objectType: 'news', objectId: id,
-          newsId: id, previousState: 'PUBLISHED', newState: 'UPDATED', reason: input.reason, requestId: actor.requestId },
+          newsId: id, previousState: news.status, newState: move.to, reason: input.reason, requestId: actor.requestId },
         db,
       );
     });
@@ -463,7 +466,8 @@ export class NewsService {
     await this.authz.requireAll(actor.principal, ['news.correct'], { requestId: actor.requestId, objectType: 'news', objectId: id });
     await withTransaction(this.pool, async (db) => {
       const news = await this.lockNews(db, id);
-      if (news.status !== 'PUBLISHED') {
+      const move = recordedTransition(news.status, 'CORRECTED');
+      if (!move) {
         throw conflict('invalid_state', `Only a published news item can be corrected (status is ${news.status})`);
       }
       const latest = await this.latestRevision(db, id);
@@ -479,10 +483,10 @@ export class NewsService {
       } catch (e) {
         asBadRequest(e);
       }
-      await db.query(`UPDATE news SET status = 'CORRECTED', updated_at = now() WHERE id = $1`, [id]);
+      await db.query('UPDATE news SET status = $2, updated_at = now() WHERE id = $1', [id, move.to]);
       await this.audit.record(
         { actorType: 'human', actorId: actor.principal.subject, action: 'news.correct', objectType: 'news', objectId: id,
-          newsId: id, revisionId: rev.id, previousState: 'PUBLISHED', newState: 'CORRECTED', reason: input.reason, requestId: actor.requestId },
+          newsId: id, revisionId: rev.id, previousState: news.status, newState: move.to, reason: input.reason, requestId: actor.requestId },
         db,
       );
     });
@@ -536,8 +540,8 @@ export class NewsService {
   async publishScheduled(scheduleId: string, requestId: string): Promise<ScheduledPublishResult> {
     const by = 'system:scheduler';
     return withTransaction(this.pool, async (db) => {
-      const found = await db.query<{ id: string; news_id: string; status: string; scheduled_for: Date; last_error: string | null }>(
-        'SELECT id, news_id, status, scheduled_for, last_error FROM publishing_schedule WHERE id = $1 FOR UPDATE', [scheduleId]);
+      const found = await db.query<{ id: string; news_id: string; status: string; scheduled_for: Date; last_error: string | null; created_by: string }>(
+        'SELECT id, news_id, status, scheduled_for, last_error, created_by FROM publishing_schedule WHERE id = $1 FOR UPDATE', [scheduleId]);
       const schedule = found.rows[0];
       if (!schedule) throw new NotFoundException('Schedule not found');
       const newsId = schedule.news_id;
@@ -552,16 +556,19 @@ export class NewsService {
         return { result: 'cancelled', newsId, detail: `news is ${news.status}` };
       }
       const revision = await this.latestRevision(db, newsId);
+      const move = findTransition('SCHEDULED', 'PUBLISHED')!;
+      const policy = await this.policyFor(db, news.desk_id);
 
       await db.query('SAVEPOINT scheduled_publish');
       try {
+        await this.assertScheduleStillAllowed(db, schedule.created_by, capabilityFor(move, policy));
         const event = await this.publish(db, news, revision, by);
         await db.query(`UPDATE publishing_schedule SET status = 'published', executed_at = now(), last_error = NULL WHERE id = $1`, [scheduleId]);
-        await db.query(`UPDATE news SET status = 'PUBLISHED', updated_at = now() WHERE id = $1`, [newsId]);
+        await db.query('UPDATE news SET status = $2, updated_at = now() WHERE id = $1', [newsId, move.to]);
         await this.audit.record(
           { actorType: 'system', actorId: by, action: 'news.transition', objectType: 'news', objectId: newsId, newsId,
-            revisionId: revision.id, previousState: 'SCHEDULED', newState: 'PUBLISHED', reason: 'scheduled publish', requestId,
-            metadata: { scheduleId } },
+            revisionId: revision.id, previousState: 'SCHEDULED', newState: move.to, reason: 'scheduled publish', requestId,
+            metadata: { scheduleId, scheduledBy: schedule.created_by } },
           db,
         );
         await db.query(`INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload) VALUES ('news', $1, $2, $3)`,
@@ -574,11 +581,12 @@ export class NewsService {
         const issues = typeof body === 'object' && body !== null && 'issues' in body ? (body as { issues: string[] }).issues : [];
         const reason = [err.message, ...issues].join(' ').slice(0, 500);
         await db.query(`UPDATE publishing_schedule SET status = 'failed', executed_at = now(), last_error = $2 WHERE id = $1`, [scheduleId, reason]);
-        await db.query(`UPDATE news SET status = 'READY', updated_at = now() WHERE id = $1`, [newsId]);
+        const back = findTransition('SCHEDULED', 'READY')!;
+        await db.query('UPDATE news SET status = $2, updated_at = now() WHERE id = $1', [newsId, back.to]);
         await this.audit.record(
           { actorType: 'system', actorId: by, action: 'news.transition', objectType: 'news', objectId: newsId, newsId,
-            revisionId: revision.id, previousState: 'SCHEDULED', newState: 'READY', reason: `scheduled publish failed: ${reason}`, requestId,
-            metadata: { scheduleId } },
+            revisionId: revision.id, previousState: 'SCHEDULED', newState: back.to, reason: `scheduled publish failed: ${reason}`, requestId,
+            metadata: { scheduleId, scheduledBy: schedule.created_by } },
           db,
         );
         await db.query(`INSERT INTO outbox_event (aggregate_type, aggregate_id, event_type, payload) VALUES ('news', $1, 'news.schedule_failed', $2)`,
@@ -586,6 +594,26 @@ export class NewsService {
         return { result: 'failed', newsId, detail: reason };
       }
     });
+  }
+
+  /**
+   * A schedule is published under the rights of the editor who made it, so those rights are checked again now. An
+   * account of this backend must still be active and hold the capability. A creator with no account here is an external
+   * identity this backend cannot check: that is a known gap (docs/12).
+   */
+  private async assertScheduleStillAllowed(db: Db, createdBy: string, capability: Capability): Promise<void> {
+    if (!UUID.test(createdBy)) return;
+    const { rows } = await db.query<{ status: string; holds: boolean }>(
+      `SELECT u.status,
+              EXISTS (SELECT 1 FROM user_role ur JOIN app_role_capability rc ON rc.role_key = ur.role_key
+                       WHERE ur.user_id = u.id AND rc.capability = $2) AS holds
+         FROM app_user u
+        WHERE u.id = $1::uuid`,
+      [createdBy, capability]);
+    if (!rows[0]) return;
+    if (rows[0].status !== 'active' || !rows[0].holds) {
+      throw new HttpException('The editor who scheduled this no longer has the rights to publish it', 403);
+    }
   }
 
   // ------------------------------------------------------------ public read

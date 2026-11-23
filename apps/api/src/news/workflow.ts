@@ -31,11 +31,15 @@ export interface Transition {
   reasonRequired?: boolean;
   /** Only allowed when the policy does not make fact-checking mandatory. */
   skipsFactCheck?: boolean;
+  /** False for a move the system records (a revision or a correction makes it): in the table, never requested. */
+  requestable?: boolean;
 }
 
-// PUBLISHED -> UPDATED and PUBLISHED -> CORRECTED are not moves: creating a revision or a
-// correction makes them, so they cannot be requested here.
+// PUBLISHED -> UPDATED and PUBLISHED -> CORRECTED are recorded, not requested: creating a revision or a
+// correction makes them. They are here so that the status is only ever set through this table.
 const base: Transition[] = [
+  { from: 'PUBLISHED', to: 'UPDATED', effect: 'none', requestable: false },
+  { from: 'PUBLISHED', to: 'CORRECTED', effect: 'none', requestable: false },
   { from: 'INGESTED', to: 'RESEARCHING', effect: 'none', fixed: 'news.edit' },
   { from: 'RESEARCHING', to: 'DRAFT', effect: 'none', fixed: 'news.edit' },
   { from: 'DRAFT', to: 'EDITOR_REVIEW', effect: 'submit', policyKey: 'editor_review' },
@@ -59,11 +63,16 @@ const archive: Transition[] = newsStatuses
 export const transitions: readonly Transition[] = [...base, ...archive];
 
 export function findTransition(from: NewsStatus, to: NewsStatus): Transition | undefined {
-  return transitions.find((t) => t.from === from && t.to === to);
+  return transitions.find((t) => t.from === from && t.to === to && t.requestable !== false);
+}
+
+/** The move the system records for this change of status, or undefined when the table does not allow it. */
+export function recordedTransition(from: NewsStatus, to: NewsStatus): Transition | undefined {
+  return transitions.find((t) => t.from === from && t.to === to && t.requestable === false);
 }
 
 export function movesFrom(from: NewsStatus): NewsStatus[] {
-  return transitions.filter((t) => t.from === from).map((t) => t.to);
+  return transitions.filter((t) => t.from === from && t.requestable !== false).map((t) => t.to);
 }
 
 export function capabilityFor(t: Transition, policy: WorkflowPolicy): Capability {

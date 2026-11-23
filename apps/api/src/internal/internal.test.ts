@@ -109,6 +109,26 @@ describe.skipIf(!adminUrl)('internal scheduled publish (database)', () => {
     expect((await publish(a.scheduleId)).json()).toMatchObject({ result: 'failed' });
   });
 
+  it('refuses to publish a schedule whose editor has lost the publish right since scheduling', async () => {
+    const a = await scheduled('rights-gone');
+    // The editor who scheduled it is a backend account that holds the publish capability.
+    const editorId = (await t.db.pool.query(
+      `INSERT INTO app_user (email, display_name, password_hash, status) VALUES ('scheduler@example.org', 'Scheduler', 'not-verified-in-this-test', 'active') RETURNING id`)).rows[0].id as string;
+    await t.db.pool.query(`INSERT INTO app_role (key, name) VALUES ('scheduler_test_role', 'Scheduler test') ON CONFLICT DO NOTHING`);
+    await t.db.pool.query(`INSERT INTO app_role_capability (role_key, capability) VALUES ('scheduler_test_role', 'news.publish') ON CONFLICT DO NOTHING`);
+    await t.db.pool.query('INSERT INTO user_role (user_id, role_key) VALUES ($1, $2)', [editorId, 'scheduler_test_role']);
+    await t.db.pool.query('UPDATE publishing_schedule SET created_by = $2 WHERE id = $1', [a.scheduleId, editorId]);
+    // The right is taken away before the schedule falls due.
+    await t.db.pool.query('DELETE FROM user_role WHERE user_id = $1', [editorId]);
+
+    const res = await publish(a.scheduleId);
+    expect(res.json()).toMatchObject({
+      result: 'failed', newsId: a.id, detail: 'The editor who scheduled this no longer has the rights to publish it',
+    });
+    expect(await status(a.id)).toBe('READY');
+    expect(await outbox(a.id)).toEqual(['news.schedule_failed']);
+  });
+
   it('skips a cancelled schedule and a news item that is no longer scheduled', async () => {
     const a = await scheduled('changed-mind');
     expect((await move(a.id, 'READY', ['managing_editor'])).status).toBe(201);
