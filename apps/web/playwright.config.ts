@@ -18,7 +18,9 @@ export default defineConfig({
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
   ],
   webServer: {
-    command: "pnpm dev",
+    // CI serves the production build (`pnpm build` runs first in the check). The dev server compiles
+    // pages on first request, which makes page loads slow enough to hit the test timeout.
+    command: process.env.CI ? "pnpm start" : "pnpm dev",
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
