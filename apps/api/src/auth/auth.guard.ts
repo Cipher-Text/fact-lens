@@ -4,7 +4,8 @@ import { PG_POOL } from '../db/pool';
 import { Reflector } from '@nestjs/core';
 import type { Capability } from '@fact-lens/contracts';
 import { AuthorizationService } from './authorization.service';
-import { AuthService } from './auth.service';
+import { AuthService, CAPABILITY_STORE, type CapabilityStore } from './auth.service';
+import { currentPrincipal } from './current-principal';
 import { IS_PUBLIC, REQUIRED_ANY_CAPABILITIES, REQUIRED_CAPABILITIES, type AuthedRequest } from './decorators';
 
 /**
@@ -18,6 +19,7 @@ export class AuthGuard implements CanActivate {
     @Inject(AuthService) private readonly auth: AuthService,
     @Inject(AuthorizationService) private readonly authz: AuthorizationService,
     @Inject(PG_POOL) private readonly pool: Pool,
+    @Inject(CAPABILITY_STORE) private readonly store: CapabilityStore,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -29,11 +31,11 @@ export class AuthGuard implements CanActivate {
     const match = typeof header === 'string' ? /^Bearer ([\w\-.~+/]+=*)$/i.exec(header) : null;
     if (!match) throw new UnauthorizedException('Authentication required');
 
-    const principal = await this.auth.authenticate(match[1]!);
+    const signedIn = await this.auth.authenticate(match[1]!);
+    if (!signedIn) throw new UnauthorizedException('Authentication required');
+    // The roles the database holds now: a removed role loses its power at once, and a disabled account loses access.
+    const principal = await currentPrincipal(this.pool, this.store, signedIn);
     if (!principal) throw new UnauthorizedException('Authentication required');
-    // An account of the backend's own that has been turned off loses access at once, not when its token runs out.
-    const account = await this.pool.query<{ status: string }>('SELECT status FROM app_user WHERE id::text = $1', [principal.subject]);
-    if (account.rows[0] && account.rows[0].status !== 'active') throw new UnauthorizedException('Authentication required');
     request.principal = principal;
 
     const ctx = {

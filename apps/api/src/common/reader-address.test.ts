@@ -25,7 +25,7 @@ describe('readerAddress', () => {
 
 describe('limiterAddress (sign-in limits)', () => {
   it('uses the reader address the site passed on when TRUST_PROXY is on', () => {
-    // With TRUST_PROXY on, Fastify sets req.ip to the leftmost X-Forwarded-For entry, which the site passed on.
+    // With TRUST_PROXY on, Fastify sets req.ip to the entry the one proxy (the site) appended, which is the reader address.
     expect(limiterAddress(req('203.0.113.7', { 'x-forwarded-for': '203.0.113.7' }), true)).toBe('203.0.113.7');
   });
 

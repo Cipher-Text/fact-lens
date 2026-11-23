@@ -1,7 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { capabilitySchema, type Capability, type Principal } from '@fact-lens/contracts';
+import { type Capability, type Principal } from '@fact-lens/contracts';
 import type { JWTPayload } from 'jose';
 import { TOKEN_VERIFIER, type TokenVerifier } from './token-verifier';
+import { grantedCapabilities } from './current-principal';
 
 export const CAPABILITY_STORE = Symbol('CAPABILITY_STORE');
 export const AUTH_OPTIONS = Symbol('AUTH_OPTIONS');
@@ -54,10 +55,9 @@ export class AuthService {
     if (!subject) return null;
 
     const roles = rolesFromClaim(readClaim(payload, this.options.rolesClaim));
-    const granted = await this.store.capabilitiesFor(roles);
-    const capabilities = granted.filter((c) => capabilitySchema.safeParse(c).success);
+    const capabilities = await grantedCapabilities(this.store, roles);
     const amr = Array.isArray(payload.amr) ? payload.amr : [];
     const mfa = amr.some((m) => typeof m === 'string' && MFA_METHODS.has(m));
-    return { subject, roles, capabilities: [...new Set(capabilities)], mfa };
+    return { subject, roles, capabilities, mfa };
   }
 }
