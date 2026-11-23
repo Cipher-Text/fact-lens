@@ -1,6 +1,6 @@
 # Pending work and implementation priority
 
-Status as of commit `fc1783e` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
+Status as of commit `b2d4109` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
 
 ## Done since the previous revision
 
@@ -66,5 +66,5 @@ Status as of commit `fc1783e` (pushed to `origin/main`). Each item says what is 
 ## Suggested order
 
 - **Next:** decisions 1, 2 and 6, and verification items 7 and 8.
-- **Then:** item 16 (wire the existing Playwright specs into CI), item 9, and item 12 once its decisions are made. These unblock launch testing and migration.
+- **Then:** item 9 and item 12, once their decisions are made. Item 12 unblocks migration.
 - **Then:** the rest of the migration and launch items, in the order above.

@@ -75,8 +75,8 @@ What exists in this repository today, how much of it has been checked, and what 
 | Media upload, sanitizing, variants, rights, public serving | Tested. Unit tests use an in-process stand-in; the real S3 tests run against RustFS, an S3-compatible server that checks signatures (6 tests, passing locally with `docker compose`). CI runs them on the same pinned image; that CI run has not been seen green yet |
 | Newsroom screens and the editor | Libraries, renderer and proxy rules tested; the screens themselves are **hand-checked only**, there are no browser tests. The tag picture chooser has not been hand-checked |
 | Branded cards: requests, templates, render, compositor | Tested: database tests for requests, templates and rendering, and compositor tests on fixtures. The newsroom card panel is hand-checked only, with no browser test. |
-| Full check (`pnpm check`) | Passes with PostgreSQL, Redis and RustFS all set (exit 0). API: 341 tests pass and 2 are skipped (the CI-only service guards). Packages and database files run one at a time (ADR-038). |
-| Public web | 488 unit tests passed in `pnpm check` (mock mode); the Playwright suite was not run in this check. With `FACTLENS_API_URL` set, the menu, social links, poll, homepage, article, category, analysis and region pages come from the API; ads are still mock content |
+| Full check (`pnpm check`) | Passes with PostgreSQL, Redis and RustFS all set (exit 0). API: 347 tests pass and 8 are skipped with PostgreSQL and Redis set. Packages and database files run one at a time (ADR-038). |
+| Public web | 488 unit tests passed in `pnpm check` (mock mode). The Chromium Playwright suite runs in CI after `pnpm check`, against the dev server: 1,099 tests passed in CI mode. With `FACTLENS_API_URL` set, the menu, social links, poll, homepage, article, category, analysis and region pages come from the API; ads are still mock content |
 
 ## Not built, in one place
 

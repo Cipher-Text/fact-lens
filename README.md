@@ -42,6 +42,8 @@ pnpm dev:newsroom   # http://localhost:3100
 pnpm dev:web        # http://localhost:3000 (Bangla), /en (English); has its own setup
 
 pnpm check          # lint, typecheck, test, build for every workspace
+pnpm --filter fact-lens-web exec playwright install chromium   # once: the browser for the public site tests
+pnpm --filter fact-lens-web test:e2e:chromium                    # browser tests (Chromium); CI runs them after pnpm check
 ```
 
 ## Configuration

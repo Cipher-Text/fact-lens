@@ -33,7 +33,7 @@
 | Editor | Tiptap 3 limited to the body contract | |
 | Images | `sharp` for decoding, re-encoding and variants; `@aws-sdk/client-s3` for storage | |
 | Frontends | Next.js 16, React 19, Tailwind 4 | `apps/web` follows its own design-system rules |
-| Tests | Vitest everywhere; real PostgreSQL, Redis and (in CI and locally) an S3-compatible server, RustFS, for integration tests | No browser tests yet |
+| Tests | Vitest everywhere; real PostgreSQL, Redis and (in CI and locally) an S3-compatible server, RustFS, for integration tests | Chromium browser tests for `apps/web` run in CI; WebKit and the newsroom have none yet |
 
 ## Alternatives considered
 
