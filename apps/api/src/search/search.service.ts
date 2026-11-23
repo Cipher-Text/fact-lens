@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { BadRequestException, HttpException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   parseConfigValue, searchConfigFor, searchLiveStatuses, type PublicNewsList, type PublicSearch, type PublicSearchQuery, type SearchIndexResult,
 } from '@fact-lens/contracts';
@@ -28,6 +28,8 @@ type Db = Pool | PoolClient;
  */
 @Injectable()
 export class SearchService {
+  private readonly logger = new Logger(SearchService.name);
+
   constructor(
     @Inject(PG_POOL) private readonly pool: Pool,
     @Inject(TaxonomyService) private readonly taxonomy: TaxonomyService,
@@ -133,6 +135,8 @@ export class SearchService {
   /**
    * The search limit (`rate_limit.search`) per client address, counted in Redis in windows. Without Redis, or with no
    * address, nothing is limited. The address is hashed before it is used as a key.
+   * If Redis is unreachable the search still runs without its limit (fail-open for readers, ADR-050): search is a
+   * public read, and an outage of the counter must not take the search down with it. The outage is logged.
    */
   private async underLimit(ip: string | null): Promise<void> {
     if (!this.redis || !ip) return;
@@ -144,7 +148,13 @@ export class SearchService {
     const slot = Math.floor(Date.now() / 1000 / set.windowSeconds);
     const hash = createHash('sha256').update(`${this.options.hashSecret ?? ''}|${ip}`).digest('hex');
     const key = `${this.options.prefix}:rl:search:${slot}:${hash}`;
-    const answers = await this.redis.multi().incr(key).expire(key, set.windowSeconds + 1).exec();
+    let answers: Array<[Error | null, unknown]> | null;
+    try {
+      answers = await this.redis.multi().incr(key).expire(key, set.windowSeconds + 1).exec();
+    } catch (err) {
+      this.logger.warn(`search limit skipped, Redis unavailable: ${(err as Error).message}`);
+      return;
+    }
     if (Number(answers?.[0]?.[1] ?? 0) > set.limit) throw new HttpException('Too many searches. Try again shortly.', 429);
   }
 }

@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { INTERNAL_TOKEN_HEADER } from '@fact-lens/contracts';
+import { Redis } from 'ioredis';
 import { startTestApp, TEST_INTERNAL_TOKEN } from '../test-harness';
 import { plainTextOf, SearchService } from './search.service';
 
@@ -155,5 +156,27 @@ describe.skipIf(!adminUrl)('public search (database)', () => {
     expect(ids((await search('stray')).body)).not.toContain(archived);
     const again = await service.reindex();
     expect(again.removed).toBe(0);
+  });
+  it('still answers a search when Redis is unreachable, without the per-address limit, and logs the outage', async () => {
+    await published('sr-outage', { title: 'Outage drill', body: 'Searching while the counter is down.' });
+    const service = t.app.get(SearchService) as unknown as { redis: unknown; logger: { warn: (m: string) => void } };
+    const real = service.redis;
+    // A client that cannot connect: its commands fail at once instead of queueing.
+    const broken = new Redis('redis://127.0.0.1:1', { enableOfflineQueue: false, maxRetriesPerRequest: 0, lazyConnect: true });
+    broken.on('error', () => {});
+    const warnings: string[] = [];
+    const originalWarn = service.logger.warn;
+    service.logger.warn = (m: string) => warnings.push(m);
+    service.redis = broken;
+    try {
+      const res = await search('outage');
+      expect(res.status).toBe(200);
+      expect(res.body.items).toHaveLength(1);
+      expect(warnings.some((w) => w.includes('Redis unavailable'))).toBe(true);
+    } finally {
+      service.redis = real;
+      service.logger.warn = originalWarn;
+      broken.disconnect();
+    }
   });
 });

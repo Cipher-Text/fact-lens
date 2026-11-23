@@ -39,7 +39,7 @@ Status as of commit `48092a5` (pushed to `origin/main`). Each item says what is 
 
 16. **Browser tests in CI.** The newsroom and public site are hand-checked only, and Playwright is not in `pnpm check`.
 17. **Rate limits.** Upload and ad-redirect limits are not enforced. Seven seeded rows are unused.
-18. **Search without Redis.** Search errors when Redis is down. It should degrade.
+18. **Search without Redis.** Done: when Redis is unreachable, search runs without its per-address limit and logs the outage (ADR-050).
 19. **Observability (Epic E).** Metrics, tracing, Sentry and dashboards.
 20. **Delivery.** Docker images, deployment, backups and restore tests.
 21. **Security.** External review of sign-in, public-site security headers, and secret and dependency scanning.
