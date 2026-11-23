@@ -3,7 +3,7 @@ import { outboxEventSchemas, outboxEventTypes } from '@fact-lens/contracts';
 import { silentLogger } from '../log';
 import type { JobRequest } from '../queues';
 import { createTestDb } from '../test-support';
-import { defaultDispatchOptions, dispatchOnce, outboxStats, type DispatchOptions } from './dispatcher';
+import { defaultDispatchOptions, dispatchOnce, outboxStats, requeueParked, type DispatchOptions } from './dispatcher';
 import { planJobs, UnroutableEventError } from './routes';
 
 const adminUrl = process.env.TEST_DATABASE_URL;
@@ -88,19 +88,36 @@ describe.skipIf(!adminUrl)('outbox dispatcher (database)', () => {
     expect(await row(eventId)).toMatchObject({ attempts: 2, last_error: null });
   });
 
-  it('parks a row after the maximum attempts and keeps it for inspection', async () => {
+  it('parks a row only after it has been failing for the whole window, and keeps it for inspection', async () => {
     const eventId = await insert('news.archived');
     const enqueue = async () => {
       throw new Error('still down');
     };
-    const opts = { ...fast, maxAttempts: 2 };
-    expect((await dispatchOnce(db.pool, enqueue, silentLogger, opts)).retried).toBe(1);
+    const opts = { ...fast, maxAgeSeconds: 3600 };
+    // Failed tries inside the window are retried, however many there are.
+    for (let i = 0; i < 10; i++) expect((await dispatchOnce(db.pool, enqueue, silentLogger, opts)).retried).toBe(1);
+    expect((await row(eventId)).failed_at).toBeNull();
+    await db.pool.query(`UPDATE outbox_event SET created_at = now() - interval '2 hours' WHERE id = $1`, [eventId]);
     expect((await dispatchOnce(db.pool, enqueue, silentLogger, opts)).parked).toBe(1);
     const parked = await row(eventId);
     expect(parked.failed_at).toBeTruthy();
-    expect(parked).toMatchObject({ attempts: 2, last_error: 'still down', dispatched_at: null });
+    expect(parked).toMatchObject({ last_error: 'still down', dispatched_at: null });
     expect((await dispatchOnce(db.pool, enqueue, silentLogger, opts)).claimed).toBe(0);
     expect((await outboxStats(db.pool)).parked).toBeGreaterThanOrEqual(1);
+  });
+
+  it('requeues a parked row, and a working enqueue then delivers it', async () => {
+    const eventId = await insert('news.archived');
+    const failing = async () => {
+      throw new Error('down');
+    };
+    const opts = { ...fast, maxAgeSeconds: 0 };
+    expect((await dispatchOnce(db.pool, failing, silentLogger, opts)).parked).toBe(1);
+    expect(await requeueParked(db.pool, [eventId])).toBe(1);
+    const { calls, enqueue } = recorder();
+    await dispatchOnce(db.pool, enqueue, silentLogger, opts);
+    expect(calls.map((c) => c.idempotencyKey)).toContain(`outbox:${eventId}:search.index`);
+    expect((await row(eventId)).dispatched_at).toBeTruthy();
   });
 
   it('parks an unknown event type or a malformed payload at once, without enqueuing', async () => {

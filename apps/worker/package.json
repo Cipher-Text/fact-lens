@@ -8,7 +8,8 @@
     "start": "node dist/main.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "outbox:requeue": "tsx --env-file-if-exists=../../.env src/outbox/requeue.ts"
   },
   "dependencies": {
     "@fact-lens/config": "workspace:*",

@@ -38,6 +38,7 @@ pnpm --filter @fact-lens/api seed         # desks, categories, default config, f
 pnpm dev:idp        # fake sign-in provider on :4300 (development only)
 pnpm dev:api        # http://localhost:4000/health/live (uploads go to .data/media)
 pnpm dev:worker     # health at :4100/health; needs the API running
+pnpm --filter @fact-lens/worker outbox:requeue   # puts parked outbox rows back in the queue (optional ids after it)
 pnpm dev:newsroom   # http://localhost:3100
 pnpm dev:web        # http://localhost:3000 (Bangla), /en (English); has its own setup
 

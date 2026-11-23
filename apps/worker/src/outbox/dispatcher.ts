@@ -6,8 +6,8 @@ import { planJobs, UnroutableEventError } from './routes';
 export interface DispatchOptions {
   batchSize: number;
   leaseSeconds: number;
-  /** Tries before a row is parked in the dead-letter set. */
-  maxAttempts: number;
+  /** A row that has been failing for this long (measured from when it was written) is parked in the dead-letter set. */
+  maxAgeSeconds: number;
   /** Retry delay for a row's nth failed try, in seconds. */
   backoffSeconds: (attempt: number) => number;
 }
@@ -15,7 +15,8 @@ export interface DispatchOptions {
 export const defaultDispatchOptions: DispatchOptions = {
   batchSize: 50,
   leaseSeconds: 60,
-  maxAttempts: 8,
+  // A day: an outage of the queue or the database shorter than that is retried, not parked.
+  maxAgeSeconds: 24 * 60 * 60,
   // 2s, 4s, 8s ... capped at 5 minutes, with up to 50% jitter.
   backoffSeconds: (attempt) => Math.min(300, 2 ** attempt) * (0.5 + Math.random() * 0.5),
 };
@@ -33,6 +34,7 @@ interface Claimed {
   aggregate_id: string;
   payload: unknown;
   attempts: number;
+  age_seconds: number;
 }
 
 /**
@@ -50,7 +52,8 @@ export async function dispatchOnce(pool: Pool, enqueue: Enqueue, log: Logger, op
      UPDATE outbox_event o
         SET lease_until = now() + make_interval(secs => $2), attempts = o.attempts + 1
        FROM due WHERE o.id = due.id
-     RETURNING o.id::text, o.event_type, o.aggregate_id, o.payload, o.attempts`,
+     RETURNING o.id::text, o.event_type, o.aggregate_id, o.payload, o.attempts,
+               EXTRACT(EPOCH FROM now() - o.created_at)::float AS age_seconds`,
     [opts.batchSize, opts.leaseSeconds],
   );
   const result: DispatchResult = { claimed: claimed.rowCount ?? 0, dispatched: 0, retried: 0, parked: 0 };
@@ -66,7 +69,7 @@ export async function dispatchOnce(pool: Pool, enqueue: Enqueue, log: Logger, op
       log.debug('outbox.dispatched', { outboxEventId: Number(row.id), eventType: row.event_type, jobs: jobs.map((j) => j.type) });
     } catch (err) {
       const message = (err instanceof Error ? err.message : String(err)).slice(0, 1000);
-      if (err instanceof UnroutableEventError || row.attempts >= opts.maxAttempts) {
+      if (err instanceof UnroutableEventError || row.age_seconds >= opts.maxAgeSeconds) {
         await pool.query('UPDATE outbox_event SET failed_at = now(), lease_until = NULL, last_error = $2 WHERE id = $1', [row.id, message]);
         result.parked++;
         log.error('outbox.parked', { outboxEventId: Number(row.id), eventType: row.event_type, attempts: row.attempts, ...errorFields(err) });
@@ -99,6 +102,20 @@ export async function outboxStats(pool: Pool): Promise<OutboxStats> {
   );
   const r = rows[0]!;
   return { pending: r.pending, parked: r.parked, oldestPendingSeconds: r.oldest };
+}
+
+/**
+ * Puts parked rows back in the queue, once the cause is fixed. With no ids, every parked row. The row keeps its
+ * age, so a requeued row that still fails is parked again at once; the first try after requeue is the test.
+ */
+export async function requeueParked(pool: Pool, ids?: string[]): Promise<number> {
+  const { rowCount } = await pool.query(
+    `UPDATE outbox_event
+        SET failed_at = NULL, available_at = now(), lease_until = NULL
+      WHERE failed_at IS NOT NULL AND ($1::bigint[] IS NULL OR id = ANY($1::bigint[]))`,
+    [ids ?? null],
+  );
+  return rowCount ?? 0;
 }
 
 /** Polls until stopped. Draining a full batch loops again at once instead of sleeping. */
