@@ -301,7 +301,9 @@ describe.skipIf(!adminUrl)('media library (database)', () => {
       await move(id, 'EDITOR_REVIEW', ['reporter']);
       await move(id, 'READY', ['fact_checker']);
       await move(id, 'PUBLISHED', ['managing_editor']);
-      expect((await publicImage(a.id, 'thumb')).statusCode).toBe(200);
+      const shown = await publicImage(a.id, 'thumb');
+      expect(shown.statusCode).toBe(200);
+      expect(shown.headers['cache-control']).toBe('public, max-age=300');
 
       await t.db.pool.query(`UPDATE media_asset SET rights_expires_at = now() - interval '1 day' WHERE id = $1`, [a.id]);
       expect((await publicImage(a.id, 'thumb')).statusCode).toBe(404);

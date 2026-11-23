@@ -67,7 +67,9 @@ export class MediaController {
   @Get('public/media/:id/:variant')
   async publicFile(@Param('id', ParseUUIDPipe) id: string, @Param('variant') variant: string, @Res({ passthrough: true }) reply: FastifyReply) {
     const { body, contentType } = await this.media.publicFile(id, variant, LIVE_STATUSES);
-    void reply.header('content-type', contentType).header('cache-control', 'public, max-age=3600').header('x-content-type-options', 'nosniff');
+    // Five minutes, not an hour: a withdrawn right stops being served by the next request, and the bytes a browser
+    // already holds are gone within this window (ADR-059).
+    void reply.header('content-type', contentType).header('cache-control', 'public, max-age=300').header('x-content-type-options', 'nosniff');
     return body;
   }
 }
