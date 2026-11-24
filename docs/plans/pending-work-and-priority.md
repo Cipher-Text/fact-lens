@@ -1,6 +1,6 @@
 # Pending work and implementation priority
 
-Status as of commit `8e740a2` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
+Status as of commit `c39a1dd` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
 
 ## Done since the previous revision
 
@@ -11,13 +11,11 @@ Status as of commit `8e740a2` (pushed to `origin/main`). Each item says what is 
 - Item 16: the Chromium browser suite runs in CI after `pnpm check` (`96c3918`).
 - Item 18: search runs without its per-address limit when Redis is unreachable (ADR-050).
 - Item 22: `SITE_TRUST_PROXY` is validated in `packages/config` (`loadWebEnv`).
-- Architecture review (see the section below): all high and medium findings are fixed and pushed, from ADR-052 to ADR-059.
+- Architecture review (see the section below): all findings are fixed and pushed, from ADR-052 to ADR-060.
 
-## Architecture review: what is still open
+## Architecture review: all findings addressed
 
-- **Tests for the newsroom proxy and logout route.** The proxy's body cap and the logout origin check are covered only by typecheck.
-- **End-to-end 503 tests.** The sign-in and upload refusals during a Redis outage are covered by reading the code, not by a test with a broken Redis.
-- **Health count per probe.** The outbox count runs on every probe. Not measured; the retention job should keep the table small.
+The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusals and the proxy and logout route now have tests. The health probe's outbox count took 45 to 60 ms on a scratch database with about 1.4 million rows, so it needs no change yet; a partial index on pending rows is the next step if the table grows, and ADR-057's retention keeps it small.
 
 ## Decisions needed
 
@@ -75,4 +73,4 @@ Status as of commit `8e740a2` (pushed to `origin/main`). Each item says what is 
 
 - **Next:** decisions 1, 2 and 6, and verification items 7 and 8.
 - **Then:** item 9 and item 12, once their decisions are made. Item 12 unblocks migration.
-- **Then:** the architecture review's open items (the poll lock, the proxy and logout tests, the 503 tests), and the rest of the migration and launch items, in the order above.
+- **Then:** the rest of the migration and launch items, in the order above.
