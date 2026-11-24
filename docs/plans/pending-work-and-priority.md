@@ -50,7 +50,7 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 18. **Search without Redis.** Done (see above).
 19. **Observability (Epic E).** Metrics, tracing, Sentry and dashboards. Dead-letter alerting waits for this (ADR-053).
 20. **Delivery.** Docker images, deployment, backups and restore tests.
-21. **Security.** Dependency and secret scanning are in CI (ADR-061). Still open: an external review of sign-in and public-site security headers.
+21. **Security.** Dependency and secret scanning are in CI (ADR-061). Public-site headers are sent (ADR-062); its script policy needs nonces. Still open: an external review of sign-in.
 22. **`SITE_TRUST_PROXY` config location.** Done (see above).
 
 ## Committed scope after launch
