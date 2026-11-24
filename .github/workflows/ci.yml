@@ -39,6 +39,8 @@ jobs:
       TEST_S3_VERIFIES_SIGNATURES: 'true'
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the secret scan reads the whole history
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
@@ -59,6 +61,12 @@ jobs:
           docker logs s3
           exit 1
       - run: pnpm install --frozen-lockfile
+      # A production dependency with a high or critical advisory fails the build (ADR-061).
+      - name: Dependency audit
+        run: pnpm audit --prod --audit-level high
+      # Secrets anywhere in the history. The allowlist of test fixtures is in .gitleaks.toml; the image is pinned.
+      - name: Secret scan
+        run: docker run --rm -v "$GITHUB_WORKSPACE:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 detect --source /repo --redact --no-banner --config /repo/.gitleaks.toml
       - run: pnpm check
       # Browser tests (apps/web, Chromium: the gate, DR-289). The dev server is started by Playwright.
       - name: Install the Chromium browser

@@ -1,0 +1,15 @@
+# Secret scan for CI (see .github/workflows/ci.yml). The default rules, plus an allowlist of the test fixtures that
+# the scan flags. Each entry is an exact value the tests use on purpose; a real secret is not one of them.
+title = "Fact Lens secret scan"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Test fixtures: obviously fake values used by the API tests, and the RFC 6238 test secret."
+regexes = [
+  '''test-internal-token-0123456789abcdef''',
+  '''test-poll-secret-0123456789abcdef0123456789''',
+  '''test-views-secret''',
+  '''GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ''',
+]
