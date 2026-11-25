@@ -12,6 +12,7 @@ Status as of commit `67228fe` (pushed to `origin/main`). Each item says what is 
 - Item 18: search runs without its per-address limit when Redis is unreachable (ADR-050).
 - Item 22: `SITE_TRUST_PROXY` is validated in `packages/config` (`loadWebEnv`).
 - Decision 1: a lead image is not required to publish, for any article (26 Nov 2026). The design owner still has to update §7A.5.
+- Decision 6: email is sent through Resend, behind a provider-neutral sender in the worker (ADR-063).
 - Item 21 (part): dependency and secret scanning run in CI, and the public site sends security headers (ADR-061, ADR-062). Both apps moved to Next.js 16.4.6 after two critical advisories.
 - Architecture review (see the section below): all findings are fixed and pushed, from ADR-052 to ADR-060.
 
@@ -26,7 +27,7 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 3. **Roles and fact-checking (Q1, Q15).** The seeded roles are provisional. `DR-18` forbids a fact-check feature, while docs 02 and 05 list one.
 4. **Retention and consent (Q9, Q10, Q16).** The operational retention for the outbox and job keys is decided (ADR-057). Consent and retention for analytics, GA4 and ad events are still needed.
 5. **Section mapping.** About 1,540 imported articles sit under Geopolitics. The mapping was approved but has not been checked on the live site.
-6. **Email provider.** Needed for the newsletter. Not yet in the open questions.
+6. **Email provider.** Decided: Resend (ADR-063). Still to check before building: its current prices and limits for a large list, and the sending domain.
 
 ## Verify
 
@@ -58,11 +59,12 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 ## Committed scope after launch
 
 23. **Advertising (Epic G).** Needs item 4.
-24. **Newsletter with double opt-in.** Needs item 6.
+24. **Newsletter with double opt-in.** Needs the email sender (item 33) and the consent decision (item 4).
 25. **Analytics consent and GA4.** Needs item 4.
 26. **Newsroom screens.** Calendar (still a placeholder), revision comparison, configuration screen.
 27. **Media variants in the worker.** Still generated in the request.
 28. **Public features.** Topic pages, computed trending terms, Bangla review of new strings.
+33. **Email sender.** A provider-neutral sender in the worker, with Resend as the first adapter (ADR-063), bounce and complaint webhooks and a suppression list. The newsletter (24) and email for account invitations and password resets need it.
 
 ## Later
 
@@ -73,6 +75,6 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 
 ## Suggested order
 
-- **Next:** decisions 2 and 6, and verification items 7 and 8.
+- **Next:** decision 2, and verification items 7 and 8.
 - **Then:** item 9 and item 12, once their decisions are made. Item 12 unblocks migration.
 - **Then:** the rest of the migration and launch items, in the order above.

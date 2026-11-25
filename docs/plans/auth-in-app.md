@@ -23,12 +23,12 @@ The backend manages accounts, passwords, multi-factor sign-in, sessions and auth
 | Passwords | Argon2id. At least 12 characters. Checked against a list of common passwords. |
 | Failed sign-ins | After 5 failures in 15 minutes, the account is locked for 15 minutes. Sign-in attempts are rate limited per address. |
 | Accounts | Admin creates an invitation. No self sign-up. An invitation expires after 72 hours and is used once. |
-| Invitation delivery | Until an email provider is chosen, the admin copies a one-time invitation link and sends it personally. Password reset by email waits for the same provider. |
-| Password reset | By email, once an email provider exists. Until then an admin issues a reset link. |
+| Invitation delivery | Until the email sender is built (Resend is chosen, ADR-063), the admin copies a one-time invitation link and sends it personally. Password reset by email waits for the same sender. |
+| Password reset | By email, once the email sender exists (ADR-063). Until then an admin issues a reset link. |
 
 ## Decisions still open (do not block the steps below)
 
-- Which email provider sends invitations and resets (needs an account, a user action).
+- Which email provider sends invitations and resets: decided, Resend (ADR-063). It needs an account and a sending domain, which are a user action.
 - Signing key storage: a key file or secret on the VM. Rotation procedure written before launch.
 
 ## Tasks, in order
