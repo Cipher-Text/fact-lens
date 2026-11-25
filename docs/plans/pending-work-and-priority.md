@@ -1,6 +1,6 @@
 # Pending work and implementation priority
 
-Status as of commit `67228fe` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
+Status as of commit `928c684` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
 
 ## Done since the previous revision
 

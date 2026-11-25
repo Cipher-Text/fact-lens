@@ -6,9 +6,9 @@ Bangla and English news platform. This is the main repository; the rebuild plan 
 | --- | --- |
 | `apps/web` | Public site (Next.js 16), imported from `fact-lens-web` with its history. Mock data for now; it does not call the API yet. |
 | `apps/api` | NestJS on Fastify API. News items and the editorial workflow, comments, assignments, sources, the media library, a public read model, feature flags, audit. Owns the PostgreSQL schema (`apps/api/migrations`) and the seed. |
-| `apps/newsroom` | The editorial workspace (Next.js): OIDC sign-in, desk queue, news item workspace with a rich-text editor, media library, configuration. Reaches the API only through its own server. |
+| `apps/newsroom` | The editorial workspace (Next.js): sign-in (a password and an authenticator code; a one-click quick sign-in in development), desk queue, news item workspace with a rich-text editor, media library, configuration. Reaches the API only through its own server. |
 | `apps/worker` | BullMQ worker: outbox dispatcher, job runtime, scheduled publishing. Changes news item state only through the API. |
-| `tools/dev-idp` | A fake OpenID Connect provider for local sign-in. Development only. |
+| `tools/dev-idp` | A fake OpenID Connect provider for local use and tests. The newsroom no longer signs in through it (ADR-046). Development only. |
 | `packages/config` | Typed environment validation for each app. |
 | `packages/contracts` | Shared schemas, enums and the news item body contract. |
 | `infrastructure/` | Local PostgreSQL, Redis and RustFS, an S3-compatible server (`pnpm infra:up`). |
@@ -24,6 +24,8 @@ pnpm install
 ./run.sh status     # what is running      ./run.sh logs api   # follow a log      ./run.sh stop
 ```
 
+To sign in to the newsroom (http://localhost:3100): with `DEV_QUICK_LOGIN=true` pick an account under **Quick sign-in**, one per role. Without it, create the first administrator with `pnpm --filter @fact-lens/api auth:bootstrap -- --email <address> --name "<name>"`, which prints a one-time link.
+
 If PostgreSQL is already running on the port in `DATABASE_URL`, `run.sh` uses it, but first checks that the login in `.env` works. When it does not (for example your own PostgreSQL has no `factlens` login), it prints the exact `psql` commands that create it, or you can point `DATABASE_URL` at a login you already have. It changes nothing in your database. A login that is used for the test suites also needs `CREATEDB`.
 
 Options: `--no-infra` (do not start Docker services), `--no-web`, `-d`/`--detach`. Logs and process ids are in `.run/`. If a service does not come up, `run.sh` prints its last log lines and stops the ones it started. To start the pieces yourself:
@@ -35,7 +37,7 @@ pnpm infra:up       # PostgreSQL, Redis and RustFS; needs Docker
 pnpm --filter @fact-lens/api migrate up   # apply migrations
 pnpm --filter @fact-lens/api seed         # desks, categories, default config, feature flags, and the cipher-press articles from apps/api/seed-data/legacy (idempotent)
 
-pnpm dev:idp        # fake sign-in provider on :4300 (development only)
+pnpm dev:idp        # fake OpenID Connect provider on :4300 (development only; the newsroom signs in through the backend)
 pnpm dev:api        # http://localhost:4000/health/live (uploads go to .data/media)
 pnpm dev:worker     # health at :4100/health; needs the API running
 pnpm --filter @fact-lens/worker outbox:requeue   # puts parked outbox rows back in the queue (optional ids after it)

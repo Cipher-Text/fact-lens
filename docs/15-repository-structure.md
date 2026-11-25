@@ -13,7 +13,7 @@ fact-lens/
     contracts/           # Zod schemas and shared enums (transport only); no OpenAPI generation yet
     config/              # typed environment/deployment config only — not editorial/runtime configuration or feature flags (those are DB-backed, see docs/21)
   tools/
-    dev-idp/             # fake OIDC provider for local sign-in and tests; never deployed
+    dev-idp/             # fake OIDC provider for local use and tests; never deployed
   infrastructure/        # local PostgreSQL, Redis and RustFS, an S3-compatible server (docker-compose); deployment and IaC later
   docs/
 ```
