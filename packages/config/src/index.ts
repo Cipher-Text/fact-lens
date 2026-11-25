@@ -72,6 +72,8 @@ export const apiEnvSchema = z.object({
    * (the API then uses it for poll votes and view counts). Only behind a proxy you control: otherwise anyone can fake it.
    */
   TRUST_PROXY: z.stringbool().default(false),
+  /** Development only (ADR-064): lets the newsroom sign in as a seeded dev account without a password or a code. Refused in production. */
+  DEV_QUICK_LOGIN: z.stringbool().default(false),
 }).superRefine((env, ctx) => {
   if (env.STORAGE_DRIVER === 's3') {
     for (const key of ['S3_BUCKET', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const) {
@@ -92,6 +94,7 @@ export const apiEnvSchema = z.object({
   }
   if (env.NODE_ENV === 'production') {
     if (!env.INTERNAL_API_TOKEN) ctx.addIssue({ code: 'custom', path: ['INTERNAL_API_TOKEN'], message: 'required in production' });
+    if (env.DEV_QUICK_LOGIN) ctx.addIssue({ code: 'custom', path: ['DEV_QUICK_LOGIN'], message: 'must be off in production: it signs in without a password or a code' });
   }
 });
 
@@ -109,7 +112,14 @@ export function loadApiEnv(source: Record<string, string | undefined> = process.
 }
 
 /** For CLI tools (migrations, seed) that need the database but not Redis. */
-export const databaseEnvSchema = z.object({ DATABASE_URL: z.string().url() });
+export const databaseEnvSchema = z.object({
+  DATABASE_URL: z.string().url(),
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  /** Seeds one dev account per role for the newsroom's quick sign-in (ADR-064). Refused in production. */
+  DEV_QUICK_LOGIN: z.stringbool().default(false),
+}).superRefine((env, ctx) => {
+  if (env.NODE_ENV === 'production' && env.DEV_QUICK_LOGIN) ctx.addIssue({ code: 'custom', path: ['DEV_QUICK_LOGIN'], message: 'must be off in production: it signs in without a password or a code' });
+});
 export type DatabaseEnv = z.infer<typeof databaseEnvSchema>;
 
 export function loadDatabaseEnv(source: Record<string, string | undefined> = process.env): DatabaseEnv {
@@ -193,6 +203,10 @@ export const newsroomEnvSchema = z.object({
    * passes no address on, and the API counts sign-in attempts per the newsroom's own address (fail-closed).
    */
   NEWSROOM_TRUST_PROXY: z.stringbool().default(false),
+  /** Development only (ADR-064): shows the dev accounts on the sign-in page, one click each. Refused in production. */
+  DEV_QUICK_LOGIN: z.stringbool().default(false),
+}).superRefine((env, ctx) => {
+  if (env.NODE_ENV === 'production' && env.DEV_QUICK_LOGIN) ctx.addIssue({ code: 'custom', path: ['DEV_QUICK_LOGIN'], message: 'must be off in production: it signs in without a password or a code' });
 });
 export type NewsroomEnv = z.infer<typeof newsroomEnvSchema>;
 

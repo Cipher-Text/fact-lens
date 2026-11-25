@@ -214,7 +214,11 @@ cmd_start() {
 
   echo
   say "Everything is running"
-  echo "  Newsroom   $(env_get NEWSROOM_BASE_URL http://localhost:3100)   (sign in with the dev provider's user picker)"
+  if [ "$(env_get DEV_QUICK_LOGIN false)" = "true" ]; then
+    echo "  Newsroom   $(env_get NEWSROOM_BASE_URL http://localhost:3100)   (development: pick an account under Quick sign-in)"
+  else
+    echo "  Newsroom   $(env_get NEWSROOM_BASE_URL http://localhost:3100)   (sign in with an account; the README shows how to create the first administrator)"
+  fi
   echo "  Public web http://localhost:3000"
   echo "  API        http://localhost:$(svc_port api)/health/ready"
   echo "  Worker     http://localhost:$(svc_port worker)/health"

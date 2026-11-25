@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import { HttpException, Inject, Injectable, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
-import type { SignInResult, SignedIn } from '@fact-lens/contracts';
+import { HttpException, Inject, Injectable, NotFoundException, ServiceUnavailableException, UnauthorizedException } from '@nestjs/common';
+import type { DevAccount, SignInResult, SignedIn } from '@fact-lens/contracts';
 import { jwtVerify, SignJWT } from 'jose';
 import type { Redis } from 'ioredis';
 import type { Pool, PoolClient } from 'pg';
@@ -11,7 +11,7 @@ import { PG_POOL } from '../db/pool';
 import { withTransaction } from '../db/transaction';
 import { verifyAgainstDummy, verifyPassword } from './credentials';
 import {
-  ATTEMPTS_PER_MINUTE, CHALLENGE_SECONDS, LOCK_AFTER_FAILURES, LOCK_SECONDS, SESSION_SECONDS, SIGNIN_OPTIONS, type SignInOptions,
+  ATTEMPTS_PER_MINUTE, CHALLENGE_SECONDS, DEV_ACCOUNT_DOMAIN, LOCK_AFTER_FAILURES, LOCK_SECONDS, SESSION_SECONDS, SIGNIN_OPTIONS, type SignInOptions,
 } from './sign-in.options';
 import { decryptSecret } from './tokens';
 import { hashRefreshToken, issueAccessToken, newRefreshToken } from './tokens';
@@ -227,6 +227,49 @@ export class SignInService {
     } catch {
       throw new UnauthorizedException(SIGN_IN_AGAIN);
     }
+  }
+
+  /**
+   * Development only (ADR-064): the dev accounts, for the newsroom's sign-in page. Answers 404 unless DEV_QUICK_LOGIN is on.
+   * Only accounts on the reserved dev address are listed.
+   */
+  async devAccounts(): Promise<DevAccount[]> {
+    this.requireDevQuickLogin();
+    const { rows } = await this.pool.query<{ email: string; display_name: string; roles: string[] }>(
+      `SELECT u.email, u.display_name,
+              COALESCE(array_agg(ur.role_key ORDER BY ur.role_key) FILTER (WHERE ur.role_key IS NOT NULL), '{}') AS roles
+         FROM app_user u
+         LEFT JOIN user_role ur ON ur.user_id = u.id
+        WHERE u.status = 'active' AND lower(u.email) LIKE '%@' || $1
+        GROUP BY u.id, u.email, u.display_name
+        ORDER BY u.email`,
+      [DEV_ACCOUNT_DOMAIN],
+    );
+    return rows.map((r) => ({ email: r.email, displayName: r.display_name, roles: r.roles }));
+  }
+
+  /**
+   * Development only (ADR-064): signs in as a dev account with no password and no code, and issues the same session as a
+   * full sign-in. Three gates: the setting is on (the environment check refuses it in production), the account is on the
+   * reserved dev address, and it is active. Anything else answers 404, so the endpoint does not confirm which accounts exist.
+   * Every use is written to the audit log.
+   */
+  async devSignIn(email: string, ip: string | null): Promise<Issued<SignedIn>> {
+    this.requireDevQuickLogin();
+    const address = email.trim().toLowerCase();
+    if (!address.endsWith(`@${DEV_ACCOUNT_DOMAIN}`)) throw new NotFoundException();
+    const { rows } = await this.pool.query<{ id: string; status: string }>('SELECT id, status FROM app_user WHERE lower(email) = $1', [address]);
+    const account = rows[0];
+    if (!account || account.status !== 'active') throw new NotFoundException();
+    await this.audit.record({
+      actorType: 'human', actorId: account.id, action: 'auth.dev_sign_in', objectType: 'account', objectId: account.id,
+      metadata: { ip: this.addressHash(ip) },
+    }, this.pool);
+    return this.complete(account.id, ip, async () => true);
+  }
+
+  private requireDevQuickLogin(): void {
+    if (!this.options?.devQuickLogin) throw new NotFoundException();
   }
 
   /** Counts one attempt from an address; throws 429 past the limit. Also used by the enrolment step. */

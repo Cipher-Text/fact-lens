@@ -1,7 +1,8 @@
 'use client';
 
 import { useActionState } from 'react';
-import { acceptSetup, confirmSetupCode, signIn, verifyCode, type FormState } from '@/app/sign-in/actions';
+import type { DevAccount } from '@fact-lens/contracts';
+import { acceptSetup, confirmSetupCode, devSignIn, signIn, verifyCode, type FormState } from '@/app/sign-in/actions';
 import { buttonClass, inputClass } from '@/components/ui';
 
 const initial: FormState = {};
@@ -26,6 +27,31 @@ export function SignInForm({ returnTo }: { returnTo: string }) {
       </label>
       <FormError message={state.error} />
       <button type="submit" disabled={pending} className={buttonClass('primary')}>{pending ? 'Checking…' : 'Continue'}</button>
+    </form>
+  );
+}
+
+/**
+ * Development only (ADR-064): one button per dev account, each signing in with no password and no code. The sign-in page
+ * shows it only when DEV_QUICK_LOGIN is on, which the environment check refuses in production.
+ */
+export function DevQuickLogin({ accounts, returnTo }: { accounts: DevAccount[]; returnTo: string }) {
+  const [state, action, pending] = useActionState(devSignIn, initial);
+  return (
+    <form action={action} className="space-y-3 border-t pt-6" aria-label="Quick sign-in for development">
+      <input type="hidden" name="returnTo" value={returnTo} />
+      <h2 className="text-sm font-semibold">Quick sign-in <span className="font-normal text-muted">(development only)</span></h2>
+      <ul className="space-y-2">
+        {accounts.map((account) => (
+          <li key={account.email}>
+            <button type="submit" name="email" value={account.email} disabled={pending} className={`${buttonClass('secondary')} flex w-full items-center justify-between gap-3 text-left`}>
+              <span>{account.displayName}</span>
+              <span className="text-xs text-muted">{account.roles.join(', ')}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <FormError message={state.error} />
     </form>
   );
 }

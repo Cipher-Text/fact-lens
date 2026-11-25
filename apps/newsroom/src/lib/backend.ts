@@ -1,5 +1,6 @@
 import 'server-only';
 import { createHash } from 'node:crypto';
+import { devAccountSchema, type DevAccount } from '@fact-lens/contracts';
 import { decodeJwt } from 'jose';
 import { getEnv } from './env';
 import { API_REFRESH_COOKIE, refreshTokenFromSetCookie } from './refresh-cookie';
@@ -75,6 +76,25 @@ export async function passwordStep(email: string, password: string, ip: string |
 /** The code step with an authenticator code. */
 export async function codeStep(challengeToken: string, code: string, ip: string | null): Promise<Session> {
   const { data, response } = await post('/auth/mfa', { challengeToken, code }, { ip });
+  return sessionFrom(data, response);
+}
+
+/** Development only (ADR-064): the dev accounts the sign-in page lists. Empty when the API does not offer them. */
+export async function devAccounts(): Promise<DevAccount[]> {
+  try {
+    const response = await fetch(`${getEnv().API_BASE_URL.replace(/\/$/, '')}/auth/dev/users`, {
+      headers: { accept: 'application/json' }, cache: 'no-store', signal: AbortSignal.timeout(5_000),
+    });
+    if (!response.ok) return [];
+    return devAccountSchema.array().parse(await response.json());
+  } catch {
+    return [];
+  }
+}
+
+/** Development only (ADR-064): signs in as a dev account, with no password and no code. */
+export async function devSignInStep(email: string, ip: string | null): Promise<Session> {
+  const { data, response } = await post('/auth/dev/sign-in', { email }, { ip });
   return sessionFrom(data, response);
 }
 

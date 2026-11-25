@@ -1,5 +1,5 @@
-import { Body, Controller, HttpCode, Inject, Optional, Post, Req, Res } from '@nestjs/common';
-import { mfaVerifySchema, recoverySignInSchema, signInSchema, type SignInResult, type SignedIn } from '@fact-lens/contracts';
+import { Body, Controller, Get, HttpCode, Inject, Optional, Post, Req, Res } from '@nestjs/common';
+import { devSignInSchema, mfaVerifySchema, recoverySignInSchema, signInSchema, type DevAccount, type SignInResult, type SignedIn } from '@fact-lens/contracts';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { Public } from './decorators';
 import { parse } from '../common/http';
@@ -50,6 +50,20 @@ export class SignInController {
   async password(@Body() body: unknown, @Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<SignInResult> {
     const input = parse(signInSchema, body);
     return this.finish(await this.signIn.signIn(input.email, input.password, limiterAddress(req, this.trustProxy)), reply);
+  }
+
+  /** Development only (ADR-064): the dev accounts the newsroom lists on its sign-in page. 404 unless DEV_QUICK_LOGIN is on. */
+  @Get('dev/users')
+  async devUsers(): Promise<DevAccount[]> {
+    return this.signIn.devAccounts();
+  }
+
+  /** Development only (ADR-064): signs in as a dev account without a password or a code. 404 unless DEV_QUICK_LOGIN is on. */
+  @Post('dev/sign-in')
+  @HttpCode(200)
+  async devSignInRoute(@Body() body: unknown, @Req() req: FastifyRequest, @Res({ passthrough: true }) reply: FastifyReply): Promise<SignedIn> {
+    const input = parse(devSignInSchema, body);
+    return this.finish(await this.signIn.devSignIn(input.email, limiterAddress(req, this.trustProxy)), reply);
   }
 
   /** The code step: an authenticator-app code. */

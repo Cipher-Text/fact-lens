@@ -2,7 +2,7 @@
 
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { acceptInvitation, BackendError, codeStep, confirmSetup, passwordStep, recoveryStep } from '@/lib/backend';
+import { acceptInvitation, BackendError, codeStep, confirmSetup, devSignInStep, passwordStep, recoveryStep } from '@/lib/backend';
 import { clientAddress } from '@/lib/client-address';
 import { getEnv, isSecure } from '@/lib/env';
 import { cookieNames, openSignInFlow, safeReturnTo, sealSession, sealSignInFlow, type SignInFlow } from '@/lib/session';
@@ -68,6 +68,21 @@ export async function signIn(_previous: FormState, formData: FormData): Promise<
   }
   await setFlow({ returnTo, challengeToken });
   redirect('/sign-in/code');
+}
+
+/** Development only (ADR-064): signs in as a dev account in one click. Refused unless DEV_QUICK_LOGIN is on. */
+export async function devSignIn(_previous: FormState, formData: FormData): Promise<FormState> {
+  if (!getEnv().DEV_QUICK_LOGIN) return { error: 'Quick sign-in is not turned on.' };
+  const email = String(formData.get('email') ?? '').trim();
+  const returnTo = safeReturnTo(String(formData.get('returnTo') ?? '/'));
+  let session;
+  try {
+    session = await devSignInStep(email, await editorAddress());
+  } catch (err) {
+    return { error: messageOf(err) };
+  }
+  await startSession(session);
+  redirect(returnTo);
 }
 
 /** The code step: an authenticator code, or a recovery code when the authenticator is not to hand. */

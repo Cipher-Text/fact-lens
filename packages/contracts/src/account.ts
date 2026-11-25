@@ -116,3 +116,13 @@ export type InvitationAccepted = z.infer<typeof invitationAcceptedSchema>;
 /** Confirming the authenticator app: the enrolment token from the step before, and the first code from the app. */
 export const enrolmentConfirmSchema = z.object({ enrolmentToken: z.string().min(1).max(1024), code: mfaCodeSchema }).strict();
 export type EnrolmentConfirm = z.infer<typeof enrolmentConfirmSchema>;
+
+/**
+ * Development only (ADR-064): signing in as a seeded dev account without a password or a code. The endpoints answer 404
+ * unless DEV_QUICK_LOGIN is on, and only accounts on the reserved dev address can be used.
+ */
+export const devSignInSchema = z.object({ email: emailSchema }).strict();
+export type DevSignIn = z.infer<typeof devSignInSchema>;
+
+export const devAccountSchema = z.object({ email: z.string(), displayName: z.string(), roles: z.array(z.string()) });
+export type DevAccount = z.infer<typeof devAccountSchema>;

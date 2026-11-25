@@ -92,3 +92,25 @@ describe('web (public site) settings', () => {
     expect(() => loadWebEnv({ SITE_TRUST_PROXY: 'maybe' })).toThrow(/SITE_TRUST_PROXY/);
   });
 });
+
+describe('development quick sign-in setting (ADR-064)', () => {
+  const newsroom = { NEWSROOM_BASE_URL: 'http://localhost:3100', API_BASE_URL: 'http://localhost:4000', SESSION_SECRET: 's'.repeat(32) };
+
+  it('is off by default in every app that reads it', () => {
+    expect(loadApiEnv(base).DEV_QUICK_LOGIN).toBe(false);
+    expect(loadNewsroomEnv(newsroom).DEV_QUICK_LOGIN).toBe(false);
+    expect(loadDatabaseEnv({ DATABASE_URL: base.DATABASE_URL }).DEV_QUICK_LOGIN).toBe(false);
+  });
+
+  it('can be turned on in development', () => {
+    expect(loadApiEnv({ ...base, DEV_QUICK_LOGIN: 'true' }).DEV_QUICK_LOGIN).toBe(true);
+    expect(loadNewsroomEnv({ ...newsroom, DEV_QUICK_LOGIN: 'true' }).DEV_QUICK_LOGIN).toBe(true);
+    expect(loadDatabaseEnv({ DATABASE_URL: base.DATABASE_URL, DEV_QUICK_LOGIN: 'true' }).DEV_QUICK_LOGIN).toBe(true);
+  });
+
+  it('is refused in production, in the API, the newsroom and the seed', () => {
+    expect(() => loadApiEnv({ ...base, NODE_ENV: 'production', DEV_QUICK_LOGIN: 'true' })).toThrow(/DEV_QUICK_LOGIN/);
+    expect(() => loadNewsroomEnv({ ...newsroom, NODE_ENV: 'production', DEV_QUICK_LOGIN: 'true' })).toThrow(/DEV_QUICK_LOGIN/);
+    expect(() => loadDatabaseEnv({ DATABASE_URL: base.DATABASE_URL, NODE_ENV: 'production', DEV_QUICK_LOGIN: 'true' })).toThrow(/DEV_QUICK_LOGIN/);
+  });
+});

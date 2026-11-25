@@ -13,6 +13,7 @@ Status as of commit `67228fe` (pushed to `origin/main`). Each item says what is 
 - Item 22: `SITE_TRUST_PROXY` is validated in `packages/config` (`loadWebEnv`).
 - Decision 1: a lead image is not required to publish, for any article (26 Nov 2026). The design owner still has to update §7A.5.
 - Decision 6: email is sent through Resend, behind a provider-neutral sender in the worker (ADR-063).
+- Newsroom quick sign-in for development: one seeded account per role, one click each (`DEV_QUICK_LOGIN`, ADR-064).
 - Item 21 (part): dependency and secret scanning run in CI, and the public site sends security headers (ADR-061, ADR-062). Both apps moved to Next.js 16.4.6 after two critical advisories.
 - Architecture review (see the section below): all findings are fixed and pushed, from ADR-052 to ADR-060.
 

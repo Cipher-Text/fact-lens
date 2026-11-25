@@ -27,5 +27,6 @@ export function signInOptionsFromEnv(env: ApiEnv): SignInOptions | null {
     encryptionKey: Buffer.from(env.AUTH_ENCRYPTION_KEY, 'base64'),
     secureCookies: env.NODE_ENV === 'production',
     newsroomUrl: env.NEWSROOM_BASE_URL,
+    devQuickLogin: env.DEV_QUICK_LOGIN,
   };
 }

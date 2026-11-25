@@ -23,6 +23,8 @@ export interface SignInOptions {
   newsroomUrl: string;
   /** Sign-in attempts from one address per minute. Defaults to ATTEMPTS_PER_MINUTE. */
   attemptsPerMinute?: number;
+  /** Development only (ADR-064): the dev sign-in endpoints work. Off, they answer 404. Refused in production by the environment check. */
+  devQuickLogin?: boolean;
 }
 
 export const SIGNIN_OPTIONS = Symbol('SIGNIN_OPTIONS');
@@ -36,3 +38,6 @@ export const LOCK_SECONDS = 15 * 60;
 export const ATTEMPTS_PER_MINUTE = 20;
 
 export const REFRESH_COOKIE = 'fl_refresh';
+
+/** Only accounts on this reserved address can be signed in without a password (ADR-064). `.test` never resolves on the internet. */
+export const DEV_ACCOUNT_DOMAIN = 'dev.factlens.test';
