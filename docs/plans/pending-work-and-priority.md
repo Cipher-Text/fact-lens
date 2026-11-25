@@ -1,6 +1,6 @@
 # Pending work and implementation priority
 
-Status as of commit `c39a1dd` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
+Status as of commit `a93cbab` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
 
 ## Done since the previous revision
 
@@ -11,6 +11,8 @@ Status as of commit `c39a1dd` (pushed to `origin/main`). Each item says what is 
 - Item 16: the Chromium browser suite runs in CI after `pnpm check` (`96c3918`).
 - Item 18: search runs without its per-address limit when Redis is unreachable (ADR-050).
 - Item 22: `SITE_TRUST_PROXY` is validated in `packages/config` (`loadWebEnv`).
+- Item 21 (part): dependency and secret scanning run in CI, and the public site sends security headers (ADR-061, ADR-062). Both apps moved to Next.js 16.4.6 after two critical advisories.
+- Decision 1: only imported articles may lack a picture (option A, 26 Nov 2026). A new article still needs a lead image.
 - Architecture review (see the section below): all findings are fixed and pushed, from ADR-052 to ADR-060.
 
 ## Architecture review: all findings addressed
@@ -19,7 +21,7 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 
 ## Decisions needed
 
-1. **Design rule for pictures.** `apps/web/docs/design-system/spacing-layout-system.md` §7A.5 says the lead image is required. The exception for imported articles is recorded in ADR-051 but not in the design system, which the web app's rules do not let us edit. The design owner must record it.
+1. **Design rule for pictures.** Decided: only imported articles may lack a picture (ADR-051). Still open for the design owner: `apps/web/docs/design-system/spacing-layout-system.md` §7A.5 says the lead image is required, and the exception is not in the design system, which the web app's rules do not let us edit.
 2. **Redirect status.** The article page sends a 307, and the spec asks for a 301. The old `/news/<slug>` path therefore goes 301 then 307. Search engines treat 307 as temporary.
 3. **Roles and fact-checking (Q1, Q15).** The seeded roles are provisional. `DR-18` forbids a fact-check feature, while docs 02 and 05 list one.
 4. **Retention and consent (Q9, Q10, Q16).** The operational retention for the outbox and job keys is decided (ADR-057). Consent and retention for analytics, GA4 and ad events are still needed.
@@ -33,8 +35,8 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 
 ## Known gaps
 
-9. **Re-publishing imported articles.** The API still requires a lead image to publish, so an editor who re-publishes one is stopped until a picture is added.
-10. **Lead-image rule in the newsroom.** Only the API enforces it, not the editor's interface.
+9. **Re-publishing imported articles.** By design: the API requires a lead image to publish, so an editor who re-publishes an imported article must add a picture first.
+10. **Lead-image rule in the newsroom.** Only the API enforces it, so an editor learns of the rule when publishing is refused. The newsroom should show the requirement on the item.
 
 ## Migration (Phases 0 and 3)
 
@@ -71,6 +73,6 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 
 ## Suggested order
 
-- **Next:** decisions 1, 2 and 6, and verification items 7 and 8.
-- **Then:** item 9 and item 12, once their decisions are made. Item 12 unblocks migration.
+- **Next:** decisions 2 and 6, and verification items 7 and 8.
+- **Then:** item 10 (show the lead-image requirement in the newsroom) and item 12, once its decisions are made. Item 12 unblocks migration.
 - **Then:** the rest of the migration and launch items, in the order above.
