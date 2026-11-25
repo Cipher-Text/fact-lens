@@ -47,6 +47,8 @@ pnpm --filter fact-lens-web exec playwright install chromium   # once: the brows
 pnpm --filter fact-lens-web test:e2e:chromium                    # browser tests (Chromium); CI runs them after pnpm check
 ```
 
+CI also runs a production dependency audit (`pnpm audit --prod --audit-level high`) and a gitleaks scan of the whole history (`gitleaks detect --source . --config .gitleaks.toml`; the allowlist of test fixtures is in `.gitleaks.toml`). A high or critical advisory, or a secret, fails the build (ADR-061).
+
 ## Configuration
 
 The API, the worker, the newsroom and the dev identity provider share **one** file: `.env` in the repository root. Copy `.env.example` (or run `pnpm env:init`) and edit it. Each app reads only its own variables, and the file is ignored by git. `pnpm env:init` never replaces a value in an existing `.env`; it only fills secrets that are still blank.

@@ -5,7 +5,7 @@ This is a capability backlog, not an estimate. Each item is tagged with where it
 ## Epic A — Repository and delivery foundation
 
 - Create pnpm workspace and app/package boundaries. *Done.*
-- Add TypeScript config, lint/test/build conventions, environment validation and secret scanning. *Partial: all but secret scanning.*
+- Add TypeScript config, lint/test/build conventions, environment validation and secret scanning. *Done: secret scanning runs in CI (ADR-061).*
 - Add Docker images, local PostgreSQL/Redis emulators, an R2-compatible local object-storage emulator (e.g. Miniflare/Wrangler R2 or MinIO in S3-API mode), GitHub Actions CI and managed deployment skeleton. *Partial: local PostgreSQL, Redis and MinIO (compose) and CI are done; Docker images and a deployment skeleton are not.*
 - Add OpenAPI generation and contract compatibility checks. *Not started (see ADR-018).*
 

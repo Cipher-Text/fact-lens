@@ -1,6 +1,6 @@
 # Pending work and implementation priority
 
-Status as of commit `a93cbab` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
+Status as of commit `67228fe` (pushed to `origin/main`). Each item says what is needed and what it depends on. Items keep their numbers across revisions; done items stay listed so the numbers do not move.
 
 ## Done since the previous revision
 
@@ -52,7 +52,7 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 18. **Search without Redis.** Done (see above).
 19. **Observability (Epic E).** Metrics, tracing, Sentry and dashboards. Dead-letter alerting waits for this (ADR-053).
 20. **Delivery.** Docker images, deployment, backups and restore tests.
-21. **Security.** Dependency and secret scanning are in CI (ADR-061). Public-site headers are sent (ADR-062); its script policy needs nonces. Still open: an external review of sign-in.
+21. **Security.** Dependency and secret scanning are in CI (ADR-061), and the public site sends security headers (ADR-062). Still open: a nonce-based script policy for the public site (it needs the proxy and the browser suite), and an external review of sign-in.
 22. **`SITE_TRUST_PROXY` config location.** Done (see above).
 
 ## Committed scope after launch

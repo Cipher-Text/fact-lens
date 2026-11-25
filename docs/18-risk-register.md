@@ -13,7 +13,7 @@
 | Queue duplication or stuck jobs | Duplicate posts/distribution | Idempotency keys, leases, retries, dead-letter inspection and alerts |
 | PostgreSQL search bottleneck | Slow newsroom/public search | Index/rank benchmarks, caching, read replica later, OpenSearch trigger |
 | Dual-run divergence | Inconsistent public truth | Read-only old source, reconciliation IDs, controlled delta import and rollback |
-| Secret exposure | Account/data compromise | Rotate identified metabase credential, secret scanning, managed vault, least privilege |
+| Secret exposure | Account/data compromise | Rotate identified metabase credential, secret scanning (in CI, ADR-061), managed vault, least privilege |
 | In-memory current rate limits do not scale | Abuse/uneven protection | Redis-backed limits in target and edge/WAF controls |
 | Ad redirect abuse/open-redirect surface carried forward from CipherPress | Click fraud, malicious redirects, reputational harm | Strict target-URL allowlisting, HMAC-signed tokens, Redis-backed rate limits on ad redirects, abuse-control review before Phase 4 cutover |
 | Strapi undocumented behavior | Import surprises | Inspect schemas/lifecycles/routes, staging export, fixture-based comparison |
