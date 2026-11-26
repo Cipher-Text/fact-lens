@@ -1,0 +1,26 @@
+D1 result (Dockerfiles). Executed directly by Claude: the Codex run was refused by the auto-mode classifier, so docs/plans/deployment/D1-dockerfiles.md was not run through codex exec.
+
+Files: .dockerignore, apps/api/Dockerfile, apps/worker/Dockerfile, apps/web/Dockerfile.
+
+Builds (host Docker Desktop, arm64 host, so images are linux/arm64):
+- factlens-api:d1 builds (485 MB); factlens-worker:d1 builds (414 MB); factlens-web:d1 builds (1.07 GB).
+- pnpm deploy: `pnpm --filter <pkg> deploy --prod --config.strict-dep-builds=false /out`.
+
+Checks:
+- No .env or .env.* file in any image.
+- All three run as uid 1000.
+- No dev dependencies (typescript, vitest, tsx, @playwright/test) in node_modules.
+- API: migrations (36 files) and seed-data present; no src/, no Dockerfile.
+- Worker: assets/fonts (Noto Sans, Noto Sans Bengali) present.
+- Web: .next present; `next start` answers HTTP 200 on / and /en.
+- API and worker exit 1 with a clear "Invalid environment" message when started without configuration.
+
+Not verified:
+- pnpm check was not run after adding these files (they touch no JS source).
+- FACTLENS_API_URL as a build argument (rewrites are baked at next build) was not tested with a value set.
+- Images are arm64 only. Production hosts are likely amd64; a linux/amd64 build is needed (D2).
+- The base image is node:24-bookworm-slim, not pinned to a patch release or digest.
+
+Discrepancies found:
+- CI (.github/workflows/ci.yml) runs Node 22. The API needs Node 24.7+ for node:crypto argon2 (docs/plans/deployment.md). Not changed here.
+- The worker image needed --config.strict-dep-builds=false on deploy (msgpackr-extract, bullmq), as in CLAUDE.md.

@@ -1,0 +1,19 @@
+# Keep the build context small and keep secrets out of every image.
+.git
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+**/dist
+**/.next
+**/*.tsbuildinfo
+**/coverage
+**/.turbo
+**/test-results
+**/playwright-report
+**/.DS_Store
+**/.data
+**/.run
+docs
+infrastructure
+cipher-press

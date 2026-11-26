@@ -57,3 +57,8 @@ D1 and the decisions run first. D2 needs D1. D3 and D5 can run in parallel with 
 - Create the first administrator with `pnpm --filter @fact-lens/api auth:bootstrap -- --email <address> --name "<name>"`. It prints a one-time link (valid 72 hours) to set a password and an authenticator app. It refuses once an administrator exists.
 - The API should not be reachable from the internet except through the public site or the newsroom. Behind them, set `TRUST_PROXY=true` on the API and `SITE_TRUST_PROXY=true` on the site (only behind one proxy that appends to `X-Forwarded-For`); set `NEWSROOM_TRUST_PROXY=true` on the newsroom when it sits behind one (ADR-048, ADR-050). Without these, poll votes, view counts and search share one address, and every editor's sign-in shares the newsroom's limit.
 - Before launch: the external security review, and the full common-password list (docs/plans/auth-in-app.md, A8).
+
+## Status
+
+- **D1 (Dockerfiles): done, not committed.** `.dockerignore`, `apps/api/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/Dockerfile`. All three images build and pass the checks in `docs/plans/deployment/results/D1.txt`. Node 24 (not the Node 22 in the table above) because the API needs `node:crypto` argon2 (Node 24.7+). CI still runs Node 22.
+- Open for D2: build `linux/amd64`, pin the base image, and fix the Node version in CI.
