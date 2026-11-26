@@ -44,7 +44,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
       # GitHub service containers cannot take a command, so the S3 server is started here. The image is the
       # one in infrastructure/docker-compose.yml (pinned by digest); MinIO's image can no longer be pulled anonymously.
@@ -83,3 +83,48 @@ jobs:
       - name: S3 server log on failure
         if: failure()
         run: docker logs s3
+
+  # Images for the three services (D1), built for linux/amd64 on main only. Each must build, start
+  # (the API and the worker refuse to start without configuration, the site serves) and pass a scan
+  # for high and critical advisories with a fix (ADR-061). The pinned Trivy image is by digest.
+  images:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the images
+        run: |
+          for svc in api worker web; do
+            docker build --platform linux/amd64 -f "apps/$svc/Dockerfile" -t "factlens-$svc:ci" .
+          done
+      - name: The images start
+        run: |
+          for svc in api worker; do
+            set +e
+            out=$(docker run --rm "factlens-$svc:ci" 2>&1)
+            code=$?
+            set -e
+            echo "$out" | tail -3
+            if [ "$code" -eq 0 ] || ! echo "$out" | grep -q "Invalid environment"; then
+              echo "$svc did not refuse a missing configuration with a clear message"
+              exit 1
+            fi
+          done
+          docker run -d --name web -p 3000:3000 factlens-web:ci
+          for i in $(seq 1 60); do
+            if curl -sf -o /dev/null http://localhost:3000/; then
+              echo "web answers on /"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs web
+          exit 1
+      - name: Scan the images for high and critical advisories
+        run: |
+          for svc in api worker web; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              aquasec/trivy:0.66.0@sha256:086971aaf400beebd94e8300fd8ea623774419597169156cec56eec5b00dfb1e \
+              image --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 "factlens-$svc:ci"
+          done

@@ -24,3 +24,10 @@ Not verified:
 Discrepancies found:
 - CI (.github/workflows/ci.yml) runs Node 22. The API needs Node 24.7+ for node:crypto argon2 (docs/plans/deployment.md). Not changed here.
 - The worker image needed --config.strict-dep-builds=false on deploy (msgpackr-extract, bullmq), as in CLAUDE.md.
+
+D2 (CI image job), run directly by Claude:
+- Base image pinned: node:24-bookworm-slim@sha256:873f586f3794f52281bd039bf02c048a0be08fde619338f9941bad1eb6b34530.
+- Runtime stage removes npm and corepack (no run-time use; they carried undici 6.28.0 and brace-expansion advisories). Trivy gate (HIGH,CRITICAL, unfixed ignored) exits 0 for api, worker and web locally.
+- Start checks: api and worker exit 1 with "Invalid environment"; web answers HTTP 200 on /.
+- ci.yml: test job Node 22 -> 24 (crypto.argon2 is undefined on Node 22; present on Node 24.22.3 checked in node:24-bookworm-slim). New images job on main only, needs check, linux/amd64 builds, start checks, Trivy scan pinned to aquasec/trivy:0.66.0 by digest.
+- Not verified: the workflow on GitHub (no gh CLI here); the test job's checks on Node 24 in CI.

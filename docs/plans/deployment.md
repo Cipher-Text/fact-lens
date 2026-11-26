@@ -60,5 +60,6 @@ D1 and the decisions run first. D2 needs D1. D3 and D5 can run in parallel with 
 
 ## Status
 
-- **D1 (Dockerfiles): done, not committed.** `.dockerignore`, `apps/api/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/Dockerfile`. All three images build and pass the checks in `docs/plans/deployment/results/D1.txt`. Node 24 (not the Node 22 in the table above) because the API needs `node:crypto` argon2 (Node 24.7+). CI still runs Node 22.
-- Open for D2: build `linux/amd64`, pin the base image, and fix the Node version in CI.
+- **D1 (Dockerfiles): committed (`f46d2db`), pushed.** `.dockerignore`, `apps/api/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/Dockerfile`. Checks in `docs/plans/deployment/results/D1.txt`. Node 24 (not the Node 22 in the table above) because the API needs `node:crypto` argon2 (Node 24.7+).
+- **D2 (CI image job): done locally, not committed.** The base image is pinned by digest. The runtime stage removes npm and corepack, which carried high advisories (undici 6.28.0, brace-expansion) that were not in the app. The test job in `ci.yml` moves from Node 22 to 24: on Node 22 `crypto.argon2` is undefined, so `hashPassword` cannot run in CI. The new `images` job (main only, after `check`) builds the three images for linux/amd64, checks that the API and worker refuse to start without configuration and that the site answers, and runs a Trivy scan (high and critical, unfixed ignored, pinned by digest). Locally: all three pass the start checks and the Trivy gate (exit 0). The workflow itself has not run on GitHub yet.
+- Still open: the CI test job's checks on Node 24 are unconfirmed until the next green run.

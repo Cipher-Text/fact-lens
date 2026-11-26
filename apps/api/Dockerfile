@@ -3,7 +3,7 @@
 #   docker build -f apps/api/Dockerfile -t factlens-api .
 # Node 24.7+ is required: password hashing uses node:crypto argon2.
 
-ARG NODE_IMAGE=node:24-bookworm-slim
+ARG NODE_IMAGE=node:24-bookworm-slim@sha256:873f586f3794f52281bd039bf02c048a0be08fde619338f9941bad1eb6b34530
 
 FROM ${NODE_IMAGE} AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH CI=true
@@ -34,6 +34,8 @@ FROM ${NODE_IMAGE} AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=build --chown=node:node /out ./
+# npm, corepack and their bundled packages are not needed at run time, and they carry advisories (undici, brace-expansion).
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 USER node
 EXPOSE 4000
 CMD ["node", "dist/main.js"]
