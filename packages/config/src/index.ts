@@ -12,6 +12,36 @@ const optionalHttpsUrl = optionalText(300).pipe(
   z.string().url().refine((v) => v.startsWith('https://'), 'must be an https address').optional(),
 );
 
+export type ServiceName = 'api' | 'worker' | 'newsroom' | 'web';
+
+/**
+ * The secrets each service owns (docs/plans/deployment/env-matrix.md). In production a service refuses to start when
+ * it is given a secret that belongs to another service, so one shared environment file cannot widen what a service
+ * holds. The worker and the API share INTERNAL_API_TOKEN, and the API also owns the database and Redis addresses.
+ */
+export const SERVICE_SECRETS: Record<ServiceName, readonly string[]> = {
+  api: ['DATABASE_URL', 'REDIS_URL', 'INTERNAL_API_TOKEN', 'AUTH_SIGNING_KEY', 'AUTH_ENCRYPTION_KEY', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'GEMINI_API_KEY', 'POLL_HASH_SECRET'],
+  worker: ['DATABASE_URL', 'REDIS_URL', 'INTERNAL_API_TOKEN'],
+  newsroom: ['SESSION_SECRET', 'OIDC_CLIENT_SECRET'],
+  web: [],
+};
+
+/** Production only: refuses a secret that belongs to another service. Unset and blank values are fine. */
+export function refuseForeignSecrets(source: Record<string, string | undefined>, service: ServiceName): void {
+  if (source.NODE_ENV !== 'production') return;
+  const owned = new Set<string>(SERVICE_SECRETS[service]);
+  const issues: string[] = [];
+  for (const other of Object.keys(SERVICE_SECRETS) as ServiceName[]) {
+    if (other === service) continue;
+    for (const key of SERVICE_SECRETS[other]) {
+      if (!owned.has(key) && source[key]?.trim()) {
+        issues.push(`${key}: must not be set in the ${service} service: it is the ${other} service's secret`);
+      }
+    }
+  }
+  if (issues.length > 0) throw new Error(`Invalid environment: ${issues.join('; ')}`);
+}
+
 export const apiEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   API_HOST: z.string().default('0.0.0.0'),
@@ -101,6 +131,7 @@ export const apiEnvSchema = z.object({
 export type ApiEnv = z.infer<typeof apiEnvSchema>;
 
 export function loadApiEnv(source: Record<string, string | undefined> = process.env): ApiEnv {
+  refuseForeignSecrets(source, 'api');
   const parsed = apiEnvSchema.safeParse(source);
   if (!parsed.success) {
     const issues = parsed.error.issues
@@ -141,6 +172,7 @@ export const webEnvSchema = z.object({
 export type WebEnv = z.infer<typeof webEnvSchema>;
 
 export function loadWebEnv(source: Record<string, string | undefined> = process.env): WebEnv {
+  refuseForeignSecrets(source, 'web');
   const parsed = webEnvSchema.safeParse(source);
   if (!parsed.success) {
     throw new Error(`Invalid environment: ${parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ')}`);
@@ -176,6 +208,7 @@ export const workerEnvSchema = z.object({
 export type WorkerEnv = z.infer<typeof workerEnvSchema>;
 
 export function loadWorkerEnv(source: Record<string, string | undefined> = process.env): WorkerEnv {
+  refuseForeignSecrets(source, 'worker');
   const parsed = workerEnvSchema.safeParse(source);
   if (!parsed.success) {
     throw new Error(`Invalid environment: ${parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ')}`);
@@ -211,6 +244,7 @@ export const newsroomEnvSchema = z.object({
 export type NewsroomEnv = z.infer<typeof newsroomEnvSchema>;
 
 export function loadNewsroomEnv(source: Record<string, string | undefined> = process.env): NewsroomEnv {
+  refuseForeignSecrets(source, 'newsroom');
   const parsed = newsroomEnvSchema.safeParse(source);
   if (!parsed.success) {
     throw new Error(`Invalid environment: ${parsed.error.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ')}`);

@@ -114,3 +114,51 @@ describe('development quick sign-in setting (ADR-064)', () => {
     expect(() => loadDatabaseEnv({ DATABASE_URL: base.DATABASE_URL, NODE_ENV: 'production', DEV_QUICK_LOGIN: 'true' })).toThrow(/DEV_QUICK_LOGIN/);
   });
 });
+
+describe('production: a service refuses another service\'s secrets (D3, docs/plans/deployment/env-matrix.md)', () => {
+  const urls = { DATABASE_URL: 'postgres://u:p@db.internal:5432/factlens', REDIS_URL: 'redis://redis.internal:6379' };
+  const apiProd = {
+    ...urls, NODE_ENV: 'production', AUTH_SIGNING_KEY: 'k', AUTH_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString('base64'),
+    AUTH_ISSUER: 'https://api.example.org', NEWSROOM_BASE_URL: 'https://newsroom.example.org', INTERNAL_API_TOKEN: 'x'.repeat(32),
+    STORAGE_DRIVER: 's3', S3_BUCKET: 'media', S3_ACCESS_KEY_ID: 'k', S3_SECRET_ACCESS_KEY: 's',
+  };
+  const workerProd = { ...urls, NODE_ENV: 'production', API_BASE_URL: 'http://api.internal:4000', INTERNAL_API_TOKEN: 'x'.repeat(32) };
+  const newsroomProd = { NODE_ENV: 'production', NEWSROOM_BASE_URL: 'https://newsroom.example.org', API_BASE_URL: 'http://api.internal:4000', SESSION_SECRET: 's'.repeat(32) };
+
+  it('loads each service with its own production settings', () => {
+    expect(() => loadApiEnv(apiProd)).not.toThrow();
+    expect(() => loadWorkerEnv(workerProd)).not.toThrow();
+    expect(() => loadNewsroomEnv(newsroomProd)).not.toThrow();
+    expect(() => loadWebEnv({ NODE_ENV: 'production' })).not.toThrow();
+  });
+
+  it('the worker refuses the API\'s sign-in keys and storage keys', () => {
+    expect(() => loadWorkerEnv({ ...workerProd, AUTH_SIGNING_KEY: 'k' })).toThrow(/AUTH_SIGNING_KEY: must not be set in the worker service: it is the api service's secret/);
+    expect(() => loadWorkerEnv({ ...workerProd, S3_SECRET_ACCESS_KEY: 's' })).toThrow(/S3_SECRET_ACCESS_KEY/);
+    expect(() => loadWorkerEnv({ ...workerProd, SESSION_SECRET: 's'.repeat(32) })).toThrow(/SESSION_SECRET/);
+  });
+
+  it('the newsroom refuses the database address and the internal token', () => {
+    expect(() => loadNewsroomEnv({ ...newsroomProd, DATABASE_URL: urls.DATABASE_URL })).toThrow(/DATABASE_URL: must not be set in the newsroom service: it is the api service's secret/);
+    expect(() => loadNewsroomEnv({ ...newsroomProd, INTERNAL_API_TOKEN: 'x'.repeat(32) })).toThrow(/INTERNAL_API_TOKEN/);
+    expect(() => loadNewsroomEnv({ ...newsroomProd, AUTH_ENCRYPTION_KEY: 'k' })).toThrow(/AUTH_ENCRYPTION_KEY/);
+  });
+
+  it('the API refuses the newsroom\'s session secret', () => {
+    expect(() => loadApiEnv({ ...apiProd, SESSION_SECRET: 's'.repeat(32) })).toThrow(/SESSION_SECRET: must not be set in the api service/);
+  });
+
+  it('the public site refuses every other service\'s secret', () => {
+    expect(() => loadWebEnv({ NODE_ENV: 'production', DATABASE_URL: urls.DATABASE_URL })).toThrow(/DATABASE_URL/);
+    expect(() => loadWebEnv({ NODE_ENV: 'production', SESSION_SECRET: 's'.repeat(32) })).toThrow(/SESSION_SECRET/);
+  });
+
+  it('names every offending key in one message', () => {
+    expect(() => loadWorkerEnv({ ...workerProd, AUTH_SIGNING_KEY: 'k', GEMINI_API_KEY: 'g' })).toThrow(/AUTH_SIGNING_KEY[\s\S]*GEMINI_API_KEY/);
+  });
+
+  it('treats a blank foreign value as not set, and allows foreign secrets in development', () => {
+    expect(() => loadNewsroomEnv({ ...newsroomProd, DATABASE_URL: '  ' })).not.toThrow();
+    expect(() => loadWorkerEnv({ ...workerProd, NODE_ENV: 'development', AUTH_SIGNING_KEY: 'k' })).not.toThrow();
+  });
+});

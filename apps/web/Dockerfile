@@ -2,7 +2,7 @@
 # Production image for the public site (fact-lens-web, apps/web). Build from the repository root:
 #   docker build -f apps/web/Dockerfile --build-arg FACTLENS_API_URL=https://api.example.org -t factlens-web .
 # FACTLENS_API_URL is read at build time: next.config.ts turns it into rewrites() when `next build` runs,
-# so it cannot be changed by setting it on the running container.
+# the site also reads it at run time (lib/api/client.ts, proxy.ts), so set the same value on the running container.
 
 ARG NODE_IMAGE=node:24-bookworm-slim@sha256:873f586f3794f52281bd039bf02c048a0be08fde619338f9941bad1eb6b34530
 
