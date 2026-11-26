@@ -99,6 +99,6 @@ describe("proxy (DR-17, DR-270, DR-328)", () => {
   });
 
   it("runs on every path except api/, _next/ and public media", () => {
-    expect(config.matcher).toEqual(["/((?!api/|_next/|public/media/).*)"]);
+    expect(config.matcher).toEqual(["/((?!api/|_next/|public/media/|health$).*)"]);
   });
 });

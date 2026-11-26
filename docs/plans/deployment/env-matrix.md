@@ -48,7 +48,7 @@ Columns: **API** (`apps/api`), **Worker** (`apps/worker`), **Newsroom** (`apps/n
 | `SITE_SOCIAL_*`, `SITE_CONTACT_*` | opt | — | — | — | public social and contact details (https only) |
 | `LOG_LEVEL` | default | default | — | — | `info` |
 | `OIDC_*` (issuer, audience, JWKS, roles claim, MFA) | opt | — | — | — | external provider, not used by the default setup |
-| `WORKER_HEALTH_HOST`, `WORKER_HEALTH_PORT` | — | default | — | — | `0.0.0.0` inside the container network, `4100` |
+| `WORKER_HEALTH_HOST`, `WORKER_HEALTH_PORT` | — | default | — | — | `127.0.0.1` (the image's HEALTHCHECK runs inside the container), `4100` |
 | `OUTBOX_POLL_MS`, `SCHEDULE_SCAN_MS`, `JOB_CONCURRENCY`, `FEED_SCAN_MS`, `ANALYTICS_ROLLUP_MS` | — | default | — | — | defaults |
 | `FEED_ALLOW_PRIVATE_HOSTS` | — | refused | — | — | must be off (production refuses it) |
 | `OIDC_CLIENT_ID`, `OIDC_SCOPE`, `OIDC_ISSUER` | — | — | opt (unused) | — | not needed; sign-in is in the backend |

@@ -1,0 +1,13 @@
+D4 result (health for the platform), run directly by Claude.
+
+Code: apps/web/src/app/health/route.ts (+ route.test.ts), apps/web/src/proxy.ts matcher excludes health (proxy.test.ts updated), HEALTHCHECK in apps/api, apps/worker and apps/web Dockerfiles.
+
+Checks:
+- vitest: proxy.test.ts and route.test.ts pass (12 tests).
+- Site: /health 200 {"status":"ok"} with no locale rewrite; / and /en 200.
+- Worker: /health 200 with queue and outbox counts (against migrated Postgres and Redis).
+- API (NODE_ENV=development for this test; production refuses it without S3 and sign-in keys, as designed): /health/live 200; /health/ready 200 with database and redis up; with Postgres stopped, live 200 and ready 503; after restart, ready 200 and the container reports healthy.
+- Migrations run from the API image (node-pg-migrate up) against Postgres 17: complete.
+- Docker health status: api healthy, worker healthy, web healthy.
+
+Not verified: the platform's own probe wiring (Docker Compose or the VPS), which is part of D6 and the compose setup; a worker outage with the database stopped.

@@ -117,6 +117,6 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Every path except api/, _next/ and public media. Files from public/ pass through in the proxy.
-  matcher: ["/((?!api/|_next/|public/media/).*)"],
+  // Every path except api/, _next/, public media and the platform's /health probe. Files from public/ pass through in the proxy.
+  matcher: ["/((?!api/|_next/|public/media/|health$).*)"],
 };

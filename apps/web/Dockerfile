@@ -41,4 +41,7 @@ COPY --from=build --chown=node:node /out ./
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 USER node
 EXPOSE 3000
+# Liveness probe for the platform (D4). The site answers even when the API is down.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+  CMD ["node", "-e", "fetch('http://127.0.0.1:3000/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
 CMD ["node_modules/.bin/next", "start", "--port", "3000", "--hostname", "0.0.0.0"]
