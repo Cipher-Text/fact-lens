@@ -14,7 +14,8 @@
     "search:reindex": "tsx --env-file-if-exists=../../.env src/search/reindex.ts",
     "auth:keygen": "tsx src/auth/keygen.ts",
     "auth:bootstrap": "tsx --env-file-if-exists=../../.env src/auth/bootstrap.ts",
-    "migrate:create": "node-pg-migrate --migrations-dir migrations --migration-file-language sql create"
+    "migrate:create": "node-pg-migrate --migrations-dir migrations --migration-file-language sql create",
+    "release:migrate": "node dist/release/migrate.js"
   },
   "devDependencies": {
     "@nestjs/testing": "^12.2.0",

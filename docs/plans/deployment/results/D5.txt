@@ -1,0 +1,15 @@
+D5 result (migration release step), run directly by Claude.
+
+Code: apps/api/src/release/migrate.ts (migrateUp, main), apps/api/src/release/migrate.test.ts (DB-gated), package.json script release:migrate.
+
+Checks:
+- vitest (against Postgres 17 via TEST_DATABASE_URL): shipped migrations apply once and a second run applies nothing; a failing migration rejects and is not recorded while the one before it is. 2 tests pass.
+- Typecheck of @fact-lens/api passes.
+- API image (factlens-api:d5) runs the step against a fresh database with only DATABASE_URL and NODE_ENV=production: exit 0, applied all 36 migrations.
+- Second run: "Database is up to date.", exit 0.
+- No DATABASE_URL: "Invalid environment: DATABASE_URL ...", exit 1.
+- A failing migration set mounted over /app/migrations: exit 1, the error names the missing relation, the first migration is recorded and the broken one is not.
+
+Behaviour to know: migrations are applied one at a time, so a failure leaves the earlier ones applied. Re-running the step after the fix applies the rest.
+
+Not verified: the platform waiting for exit 0 before starting the new API (D6); a concurrent second release (node-pg-migrate takes an advisory lock, not tested here).
