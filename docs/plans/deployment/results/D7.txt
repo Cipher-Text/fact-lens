@@ -1,0 +1,15 @@
+D7 result (backups and restore drill), run by Claude on this Mac. Stand-ins: Postgres 17 containers, RustFS (the repo's S3 server) for R2, amazon/aws-cli 2.22.35 for uploads.
+
+Drill steps:
+1. Source database migrated (36) and seeded from the API image. Row counts recorded (results/D7-row-counts.tsv: 62 tables, 19,009 rows).
+2. backup.sh: pg_dump from the running container, encrypted (10.3 MB), checksum uploaded. Exit 0.
+3. Negative checks (all refused, exit 1):
+   - restore into the live container (refused by name);
+   - wrong passphrase (openssl "bad decrypt");
+   - an object whose checksum does not match (refused before decryption).
+4. restore.sh into a scratch database: checksum OK, decrypted, restored. Exit 0.
+5. Row counts after the restore: identical to the source on all 62 tables (diff empty). pgmigrations has 36 rows.
+
+Bugs found and fixed while drilling: the aws CLI needs path-style addressing for RustFS (and R2 accepts it), so both scripts write an aws config file. An early upload attempt with no bucket failed, and backup.sh exited non-zero as it should.
+
+Not verified: real R2, the lifecycle rule, the nightly cron on a host, the time a restore takes at production size, and a restore into a database that is in use.
