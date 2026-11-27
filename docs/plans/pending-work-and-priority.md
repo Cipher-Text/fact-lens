@@ -26,7 +26,7 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 1. **Design rule for pictures.** Decided 26 Nov 2026: a lead image is not required to publish, for any article. The placeholder covers one without it (ADR-033, ADR-051). Still open for the design owner: `apps/web/docs/design-system/spacing-layout-system.md` §7A.5 says it is required, and our rules do not let us edit the design system.
 2. **Redirect status.** The article page sends a 307, and the spec asks for a 301. The old `/news/<slug>` path therefore goes 301 then 307. Search engines treat 307 as temporary.
 3. **Roles and fact-checking (Q1, Q15).** The seeded roles are provisional. `DR-18` forbids a fact-check feature, while docs 02 and 05 list one.
-4. **Retention and consent (Q9, Q10, Q16).** The operational retention for the outbox and job keys is decided (ADR-057). Consent and retention for analytics, GA4 and ad events are still needed.
+4. **Retention and consent (Q9, Q10, Q16).** The operational retention for the outbox and job keys is decided (ADR-057). Decided (ADR-065): analytics and view tracking run without a consent prompt. Still needed: a privacy notice, and retention for analytics, GA4 and ad events. Revisit ADR-065 before any third-party tag, advertising, or readers in consent-regulated regions.
 5. **Section mapping.** About 1,540 imported articles sit under Geopolitics. The mapping was approved but has not been checked on the live site.
 6. **Email provider.** Decided: Resend (ADR-063). Still to check before building: its current prices and limits for a large list, and the sending domain.
 
