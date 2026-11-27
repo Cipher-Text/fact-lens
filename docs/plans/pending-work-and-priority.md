@@ -53,7 +53,7 @@ The review's findings are fixed and pushed (ADR-052 to ADR-060). The 503 refusal
 17. **Rate limits.** Enforced: uploads (per account, ADR-052), search, the view counter and sign-in. Readers go through during a Redis outage and sign-in and uploads are refused (ADR-058). Still unread, each waiting for its endpoint: `rate_limit.ad_redirect` (no ad redirect endpoint until the advertising module exists), `ingestion`, `newsletter_subscribe`, `card_generation` and `ai`. `rate_limit.login` is unread too: sign-in uses its own built-in limit. Each unread row is enforced with its endpoint or removed.
 18. **Search without Redis.** Done (see above).
 19. **Observability (Epic E).** Metrics, tracing, Sentry and dashboards. Dead-letter alerting waits for this (ADR-053).
-20. **Delivery.** Docker images, deployment, backups and restore tests.
+20. **Delivery.** D1 to D7 are built (images, CI image job, environment guard, health probes, release step, staging stack, backups; see [deployment.md](./deployment.md)). Open: a staging host and domains, the first real run of the smoke runbook, real R2 and its lifecycle rule, the nightly cron on a host, and a production host.
 21. **Security.** Dependency and secret scanning are in CI (ADR-061), and the public site sends security headers (ADR-062). Still open: a nonce-based script policy for the public site (it needs the proxy and the browser suite), and an external review of sign-in.
 22. **`SITE_TRUST_PROXY` config location.** Done (see above).
 

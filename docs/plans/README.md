@@ -21,7 +21,7 @@ Each task in a plan is one of: `pending`, `in progress`, `in review`, `merged`, 
 | [test-reliability](./test-reliability.md) | Done: runs are serial (ADR-038) |
 | [public-site-api](./public-site-api.md) | Done (the unavailable page answers 503; open question 30 resolved) |
 | [auth-in-app](./auth-in-app.md) | Built (A0 to A8): accounts, passwords, MFA and sessions inside the backend; the external security review is open |
-| [deployment](./deployment.md) | Awaiting decisions (platform, domains, migrations) |
+| [deployment](./deployment.md) | D1 to D7 built and committed (locally verified); awaiting a staging host and domains (decisions 1 and 2) and the first real run of the smoke runbook |
 | [product/read-next](./product/read-next.md) | Built: RN1 to RN5 committed; English and Bangla manual checks passed |
 | [product/T10-reading-time](./product/T10-reading-time.md) | Built: steps 1 to 5 committed |
 | [card-duplicate-renders](./card-duplicate-renders.md) | Done: migration and upload change merged (ADR-036) |
