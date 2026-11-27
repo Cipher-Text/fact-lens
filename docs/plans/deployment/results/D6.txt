@@ -1,0 +1,28 @@
+D6 result (staging stack and smoke runbook), run directly by Claude on this Mac with Docker Desktop, not on a staging host.
+
+Built: apps/newsroom/Dockerfile (new, the D1 gap), apps/newsroom/src/app/health (liveness), newsroom proxy excludes /health from sign-in.
+Fixed: apps/api/src/auth/bootstrap.ts ran only as .ts; the compiled bootstrap.js (the image) never ran it. It now matches both.
+Added: deploy/staging/compose.yaml (postgres, redis, migrate, api, worker, web, newsroom, caddy), Caddyfile, env examples, .gitignore entries for real env files.
+Runbook: docs/plans/deployment/runbook-smoke.md.
+
+Dry run (local, values generated, nothing kept):
+- Compose config valid. Release step applied 36 migrations, exit 0. API, worker, web, newsroom healthy. Only Caddy publishes ports (80, 443).
+- Caddy routing: site /health 200, newsroom /sign-in 200, newsroom /health 200 (no sign-in redirect), newsroom / redirects to sign-in.
+- Seed from the image: exit 0 and repeatable.
+- Bootstrap from the image after the seed: prints a one-time link (the link was not recorded).
+- With the API stopped: site / 503 with the Bangla unavailable page, site /health 200. After restart: site / 200.
+
+Blocked / not done:
+- The site image cannot be built with a real FACTLENS_API_URL: next build prerenders API-backed pages and fails with ApiNotFound while the API is not running. The dry run used an empty build argument (mock content). Needs a decision on the site's caching (apps/web).
+- No real staging host or domains (deployment.md decisions 1 and 2). Nothing was provisioned.
+- Smoke checks 2 to 5 (sign-in, published item, card render, poll vote) need a browser and a person; not run.
+- caddy:2 is not pinned to a digest.
+- The dry run used S3 placeholder values; the API did not contact storage.
+- Bootstrap before the seed fails with "Unknown role: admin"; the runbook orders the seed first.
+
+Update (site caching decided: render on request):
+- apps/web/src/app/[lang]/layout.tsx and apps/web/src/app/sitemap.ts: dynamic = "force-dynamic" (was prerendered). The build route table now shows every public route as dynamic.
+- next build succeeds with FACTLENS_API_URL empty and with an unreachable URL (127.0.0.1:9).
+- apps/web: lint, typecheck, unit tests (54 files, 493 tests) and build pass.
+- Chromium browser suite: 1098 passed, 1 failed in the full run (article.spec.ts "a click on the lead story logs no script tag error", en). It passes 50 of 50 when re-run alone; the full run overlapped with Docker builds, so treated as a timing flake, not confirmed.
+- Staging dry run with the site image built using FACTLENS_API_URL=http://api:4000: stack healthy, migrate exit 0, seed exit 0, site / 200 with the API up, 503 with the API stopped, /health 200 throughout, 200 after restart. Dry-run stack torn down and its secrets removed.

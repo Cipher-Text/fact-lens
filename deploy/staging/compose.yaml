@@ -1,0 +1,114 @@
+# Single-host stack for staging and production (D6, docs/plans/deployment.md). Run from this folder:
+#   docker compose up -d --build        (the release step runs first, and the API waits for it)
+# Only Caddy publishes ports (80, 443). PostgreSQL, Redis, the API and the worker are reachable on the compose network only.
+# Secrets come from env/*.env (never in git; see env/*.env.example). SITE_HOST and NEWSROOM_HOST come from .env here.
+name: factlens-staging
+
+services:
+  postgres:
+    image: postgres:17
+    env_file: env/postgres.env
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # The database release step (D5): applies pending migrations and exits. It sees DATABASE_URL and nothing else.
+  migrate:
+    image: factlens-api:staging
+    command: ["node", "dist/release/migrate.js"]
+    env_file: env/migrate.env
+    healthcheck:
+      disable: true
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  api:
+    build:
+      context: ../..
+      dockerfile: apps/api/Dockerfile
+    image: factlens-api:staging
+    env_file: env/api.env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: ../..
+      dockerfile: apps/worker/Dockerfile
+    image: factlens-worker:staging
+    env_file: env/worker.env
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+      # Read at build time for the media rewrites; the same value is set at run time (env/web.env).
+      args:
+        FACTLENS_API_URL: http://api:4000
+    image: factlens-web:staging
+    env_file: env/web.env
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  newsroom:
+    build:
+      context: ../..
+      dockerfile: apps/newsroom/Dockerfile
+    image: factlens-newsroom:staging
+    env_file: env/newsroom.env
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_HOST: ${SITE_HOST:?set SITE_HOST in deploy/staging/.env}
+      NEWSROOM_HOST: ${NEWSROOM_HOST:?set NEWSROOM_HOST in deploy/staging/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      web:
+        condition: service_healthy
+      newsroom:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pg-data:
+  caddy-data:
+  caddy-config:

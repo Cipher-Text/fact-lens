@@ -67,5 +67,5 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   // Everything except the sign-in pages, the sign-out route, static assets and the signed-out page.
-  matcher: ['/((?!sign-in|auth/|_next/|signed-out|favicon\\.ico).*)'],
+  matcher: ['/((?!sign-in|auth/|_next/|signed-out|health$|favicon\\.ico).*)'],
 };

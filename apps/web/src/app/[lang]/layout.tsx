@@ -21,6 +21,10 @@ const fontVariables = [
   notoSansBengali.variable,
 ].join(" ");
 
+// Rendered on request (D6 decision): the pages read the API, and the API is not running while the image is built,
+// so nothing here is prerendered. Caching can come back later with revalidate, once the API is up at build time.
+export const dynamic = "force-dynamic";
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {

@@ -1,0 +1,9 @@
+# TLS and routing for the two public sites. Caddy is the only proxy in front of the site and the newsroom, so
+# SITE_TRUST_PROXY and NEWSROOM_TRUST_PROXY are true in env/*.env; the API is not published at all.
+{$SITE_HOST} {
+	reverse_proxy web:3000
+}
+
+{$NEWSROOM_HOST} {
+	reverse_proxy newsroom:3100
+}

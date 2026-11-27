@@ -10,3 +10,7 @@ coverage/
 dist/
 .data/
 .run/
+
+# Real service secrets for the single-host stack (D6): copy the *.env.example files here and fill them in.
+deploy/staging/env/*.env
+deploy/staging/.env

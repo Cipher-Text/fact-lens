@@ -56,4 +56,5 @@ async function main(): Promise<void> {
   }
 }
 
-if (process.argv[1]?.endsWith('bootstrap.ts')) void main();
+// Runs as a command (ts-node/tsx in development, dist/auth/bootstrap.js in the image), not when a test imports it.
+if (/bootstrap\.(ts|js)$/.test(process.argv[1] ?? '')) void main();
